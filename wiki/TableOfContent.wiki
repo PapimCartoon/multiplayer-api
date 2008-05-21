@@ -3,7 +3,7 @@ This wiki contains documentation about the Multiplayer API, the emulator, and tu
 
 = Multiplayer API =
 The Multiplayer API is a set of APIs to develop multiplayer flash games.
-Each API is a set of functions in actionscript (AS) that communicate using !LocalConnection with a container that should communicate these operations to a multiplayer server. 
+Each API is a set of functions in actionscript (AS) that communicate using LocalConnection with a container that should communicate these operations to a multiplayer server. 
 The resulting game is a SWF file, written either in actionscript2 (AS2) or actionscript3 (AS3), published for flash version 8 or higher.
 
 The API is open source, and we hope that many companies will endorse it, and game developers will have many places to submit their multiplayer games.
@@ -18,7 +18,7 @@ The Multiplayer API will be composed of 3 APIs:
 The current version of the Emulator only supports ClientGameAPI.
 In the near future the Emulator will support ScriptGameAPI and ConnectedGameAPI.
 
-Although AS2 and AS3 have major differences, we tried to abstract away these differences by hiding them behind a !LocalConnection and using almost identical signatures for the class ClientGameAPI.
+Although AS2 and AS3 have major differences, we tried to abstract away these differences by hiding them behind a LocalConnection and using almost identical signatures for the class ClientGameAPI.
 The only difference in the signatures between the AS2 and AS3 versions, is that the type `Number` in AS2 was changed into `int` in AS3.
 The remainder of this wiki describes the AS3 version.
 We recommend using AS3 because it is more stable, fast, and easier to debug.
@@ -26,7 +26,7 @@ We recommend using AS3 because it is more stable, fast, and easier to debug.
 You should write a class that extends one of the above APIs,
 and when your SWF is loaded, it should create one instance of that class.
 
-[MultiplayerAPI_Implementation The Multiplayer API Implementation] describes the internal implementation that uses !LocalConnection. The implementation details should not concern game developers, but they are important for other companies that wish to endorse the API and offer their servers for game developers.
+[MultiplayerAPI_Implementation The Multiplayer API Implementation] describes the internal implementation that uses LocalConnection. The implementation details should not concern game developers, but they are important for other companies that wish to endorse the API and offer their servers for game developers.
 
 = Emulator =
 When developing your game, you should use the Emulator.

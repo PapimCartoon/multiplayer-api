@@ -1,0 +1,73 @@
+See first [ClientGameAPI].
+The changes from ClientGameAPI are as follows:
+Removed these:
+{{{
+do_agree_on_match_over
+do_start_my_turn
+do_end_my_turn
+do_client_protocol_error_with_description
+}}}
+And added these:
+{{{
+do_send_to_script(message:String)
+got_from_script(type:String, player_id:user_id, message:String)
+got_error_in_script_output(timed_out_url:Array/*String*/, url:String, url_output:String, url_output_headers:String, error_message:String)
+}}}
+
+{{{
+do_send_to_script(message:String)
+}}}
+Calls the script and pass to it the string @message.
+Only players can call this method.
+The script can pass back messages to any of the players and viewers, set the timeouts, and determine who is the winner.
+
+
+{{{
+got_from_script(type:String, player_id:user_id, message:String)
+}}}
+@message is a string sent from the script to this player/viewer.
+
+@type explains what was the message that was sent to the script:
+* @type=msg_to_new_viewer	 : when a viewer joins the game, the server sends him the latest msg_to_new_viewer
+* @type=msg_to_viewer	: when the script replied with msg_to_viewer
+* @type=msg_to_player	: when the script replied with msg_to_player 
+* @type=msg_to_all		: when the script replied with msg_to_all
+* @type=msg_to_me		: when the script replied with msg_to_COLOR
+
+@player_id is the user_id of the player that sent the message (using @do_send_to_script), or -1 in case the message is new_game or load_game or @type=msg_to_new_viewer.
+
+
+
+
+
+{{{
+got_error_in_script_output(timed_out_url:Array/*String*/, url:String, url_output:String, url_output_headers:String, error_message:String)
+}}}
+
+@timed_out_url includes urls that timed out, i.e., didn't return any output in 2 seconds.
+@timed_out_url may be an empty array.
+
+@error_message is an error message or a stack trace showing the error.
+
+@url is the url that returned the erroneous output,
+and @url_output is the erroneous output.
+Both @url, @url_output, and @url_output_headers may be null.
+
+For example, in TicTacToe, if a user sends an illegal message to the script, 
+then the script may produce illegal output.
+When the script produces an illegal output, then:
+* if msg_type=made_move (the user called @do_send_to_script), then the user that sent that illegal message loses (with reason=SCRIPT_ERROR).
+* otherwise, the game ends with SCRIPT_ERROR, the match is saved, and all the stakes are returned like in calling @do_client_protocol_error.
+E.g., suppose the 1th player calls @do_send_to_script with "aX2" instead of "2X2",
+then the server may call this @url:
+  http://www.come2play.com/Shared/java_calls/api/TicTacToeGameLogic.asp?milli_time_stamp=123&amp;msg_type=made_move&amp;from_color_id=1&amp;msg=aX2&amp;old_game_state=WWEWEEBBE&amp;stakes=9
+And the @url_output will be an ASP error:
+  Microsoft VBScript runtime error '800a000d' 
+  Type mismatch: '[string: "a"]' 
+  /Shared/java_calls/api/TicTacToeGameLogic.asp, line 106 
+
+You can see the headers the script returned in @url_output_headers.
+The only important Header that the server must have is
+Content-Length: ...
+Make sure your script returns this header correctly by using buffering, e.g., in ASP do:
+Response.Buffer = true

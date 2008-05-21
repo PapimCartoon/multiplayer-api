@@ -1,0 +1,42 @@
+This page describes the Multiplayer API implementation details using LocalConnection.
+
+We use LocalConnection to pass commands, therefore, there is a 40K limit on arguments to these methods.
+
+In [TableOfContent Multiplayer API] section we explained that the API is a bridge between the _game_ (written by game developers) and the _container_ (written by the website hosting the game).
+The game SWF is loaded by a _container_ that communicates with the _game_ 
+using a LocalConnection. 
+To make sure the container and game use the same LocalConnection, there is a protocol to determine the channel name.
+This protocol supports multiple browser window or even multiple games in the same flash container. 
+The communication protocol (hand-shake) between the game and container is described below.
+
+The difficulty in the protocol is handling the case you have multiple _containers_, and that each _container_ may communicate with multiple _games_.
+For example, suppose you open multiple emulator windows. Then you have multiple _containers_ (emulators), and in each emulator you have multiple _games_.
+
+=== High level description of the protocol == 
+ * Both _game_ and _container_ get the same parameter, and use this parameter to talk to one another. On this talk, the _container_ tells the _game_ what will be the channel name that they will use for all future communication.
+
+The communication is two-way (thus we use two LocalConnection objects): the _game_ sends operations to the _container_, and the _container_ may call callbacks on the _game_.
+
+=== Low level description of the protocol == 
+ * Determining `sPrefix`
+Both _game_ and _container_ get the same flashvar (or url) parameter:
+`prefix_local_connection_id=XXXX`. `XXXX` is either a number or a or the name of a javascript function. If it is a function, then we call that function (using `ExternalInterface.call` available from flash 8), and it should return a fixed number. For example, the function below returns a fixed random number:
+{{{
+		var prefix_random_number = 1+ Math.ceil(1000000*Math.random());
+		function javascript_get_prefix_method() {
+			return prefix_random_number;
+		}
+}}}
+We denote by `sPrefix` the number that is either `XXXX` or the number returned by the javascript function.
+The reason we use a function name (instead of a number) is to allow the browser to cache the SWF file. If we had used a different number each time, then the browser won't cache the SWF file.
+
+ * Determining `iChanel`
+The _container_ connects to:
+`"container_SWF"+sPrefix`
+
+The _game_ calls (using the above connection name) `do_register_on_server(iChannel)`, where `iChannel` is a randomly chosen number
+
+ * _game_ and _container_ communicate 
+The communication between the container and game is done using two connection-names:
+"DO_CHANEL"+sPrefix+"_" + iChanel
+"GOT_CHANEL"+sPrefix+"_" + iChanel

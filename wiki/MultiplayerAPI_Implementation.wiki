@@ -36,7 +36,8 @@ The _container_ connects to:
 
 The _game_ calls (using the above connection name) `do_register_on_server(iChannel)`, where `iChannel` is a randomly chosen number
 
- * _game_ and _container_ communicate 
-The communication between the container and game is done using two connection-names:
-"DO_CHANEL"+sPrefix+"_" + iChanel
-"GOT_CHANEL"+sPrefix+"_" + iChanel
+ * _game_ and _container_ communicate using two LocalConnection objects whose channel names are:
+{{{
+`"DO_CHANEL" + sPrefix + "_" + iChanel`
+`"GOT_CHANEL" + sPrefix + "_" + iChanel`
+}}}

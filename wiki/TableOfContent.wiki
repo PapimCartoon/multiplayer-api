@@ -1,0 +1,38 @@
+This wiki contains documentation about the Multiplayer API, the emulator, and tutorials for creating multiplayer games.
+
+
+= Multiplayer API =
+The Multiplayer API is a set of APIs to develop multiplayer flash games.
+Each API is a set of functions in actionscript (AS) that communicate using LocalConnection with a container that should communicate these operations to a multiplayer server. 
+The resulting game is a SWF file, written either in actionscript2 (AS2) or actionscript3 (AS3), published for flash version 8 or higher.
+
+The API is open source, and we hope that many companies will endorse it, and game developers will have many places to submit their multiplayer games.
+[http://www.come2play.com Come2Play] is a company that freely distribute multiplayer games (as widgets and in social networks) and share the advertising revenue with the game developers.
+[http://www.come2play.com Come2Play] officially endorse this API, and has opened sourced its Emulator with the purpose of creating an open source standard for developing multiplayer games that other companies can endorse as well.
+
+The Multiplayer API will be composed of 3 APIs:
+# ClientGameAPI - for developing games using only client-side code.
+# ScriptGameAPI - uses both client-side and server-side code.
+# ConnectedGameAPI - for single-player games that can be made multiplayer using a small set of functions to report to the server the current state and score.
+
+The current version of the Emulator only supports ClientGameAPI.
+We hope that in the near future the Emulator will support ScriptGameAPI and ConnectedGameAPI.
+
+You should write a class that extends either [ClientGameAPI_AS3_version_1] or [ClientGameAPI_AS2_version_1],
+and when your SWF is loaded it should create one instance of that class.
+
+Although AS2 and AS3 have major differences, we tried to abstract away these differences by hiding them behind a LocalConnection and using almost identical signatures for the class ClientGameAPI.
+The only difference in the signatures between the AS2 and AS3 versions, is that the type `Number` in AS2 was changed into `int` in AS3.
+The remainder of this wiki describes the AS3 version.
+We recommend using AS3 because it is more stable, fast, and easier to debug.
+
+
+= Emulator =
+When developing your game, you should use the Emulator.
+After you finished testing in the emulator, you may submit the game to any company that endorse this multiplayer API.
+One such company is [http://www.come2play.com Come2Play].
+
+Coming soon (TODO): a video showing how to use the emulator.
+
+= Creating multiplayer games =
+Coming soon (TODO): this section will contain tutorials on creating both turn-based and real-time games.

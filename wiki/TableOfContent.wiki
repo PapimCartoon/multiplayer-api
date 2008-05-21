@@ -1,4 +1,3 @@
-#labels Phase-Design
 This wiki contains documentation about the Multiplayer API, the emulator, and tutorials for creating multiplayer games.
 
 
@@ -27,29 +26,51 @@ The _container_ is in charge of:
  * allowing the players to end the match in a tie, to cancel the match, or to save the match
  * handling turn-based games, i.e., limit the time per move or per match, display who has the current turn, who much time he has left to make his move, etc
 
-
+=== Multiplayer APIs ===
 The Multiplayer API will be composed of 3 APIs:
  * [ClientGameAPI] - for developing games using only client-side code.
  * [ScriptGameAPI] - uses both client-side and server-side code.
  * [ConnectedGameAPI] - for single-player games that can be made multiplayer using a small set of functions to report to the server the current state and score.
-
-The current version of the Emulator only supports [ClientGameAPI].
-In the near future the Emulator will support [ScriptGameAPI] and [ConnectedGameAPI].
-
-Although AS2 and AS3 have major differences, we tried to abstract away these differences by hiding them behind a LocalConnection and using almost identical signatures for the class ClientGameAPI.
-The only difference in the signatures between the AS2 and AS3 versions, is that the type `Number` in AS2 was changed into `int` in AS3.
-The remainder of this wiki describes the AS3 version.
-We recommend using AS3 because it is more stable, fast, and easier to debug.
 
 You should write a class that extends one of the above APIs,
 and when your SWF is loaded, it should create one instance of that class.
 
 [MultiplayerAPI_Implementation The Multiplayer API Implementation] describes the internal implementation that uses LocalConnection. The implementation details should not concern game developers, but they are important for websites hosting the games.
 
+The current version of the Emulator only supports [ClientGameAPI].
+In the near future the Emulator will support [ScriptGameAPI] and [ConnectedGameAPI].
+
+ClientGameAPI uses only client-side code, and therefore hackers (black-hat players) may be able to send illegal messages to other players
+and create a protocol error (see @do_client_protocol_error_with_description).
+In case of a protocol error, the game is canceled and the original stakes are returned to all players.
+
+ScriptGameAPI also uses server-side code, in contrast to ClientGameAPI that uses only client-side.
+If security is critical in your game, consider using ScriptGameAPI instead.
+You will need access to a server that can run server-side logic in a language such as ASP, PHP, Perl, or Java. 
+
+=== AS2 vs AS3 ===
+Although AS2 and AS3 have major differences, we tried to abstract away these differences by hiding them behind a LocalConnection and using almost identical signatures for the class ClientGameAPI.
+The only difference in the signatures between the AS2 and AS3 versions, is that the type `Number` in AS2 was changed into `int` in AS3, and `void` to `Void`.
+The remainder of this wiki describes the AS3 version.
+We recommend using AS3 because it is more stable, fast, and easier to debug.
+
+=== FPS ===
+Frame per seconds (FPS):
+Your game may run in any fps you may choose.
+We recommend using less than 40 fps to avoid overloading slow computers.
+
+=== obfuscate ===
+We suggest that you encrypt/obfuscate your code to make it difficult for users to crack or steal your code.
+There are many programs for that purpose, one of them is Amayeta (http://www.amayeta.com/). 
+
+
+
 = Emulator =
 When developing your game, you should use the Emulator.
 After you finished testing in the emulator, you may submit the game to any company that endorse this multiplayer API.
 One such company is [http://www.come2play.com Come2Play].
+
+[Online_vs_Emulator Online testing vs the Emulator] discusses the differences you may find between the emulator and the online version, and common pitfalls.
 
 Coming soon (TODO): a video showing how to use the emulator.
 

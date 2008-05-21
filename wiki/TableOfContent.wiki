@@ -1,4 +1,6 @@
+#labels Phase-Design
 This wiki contains documentation about the Multiplayer API, the emulator, and tutorials for creating multiplayer games.
+
 
 
 = Multiplayer API =
@@ -10,13 +12,29 @@ The API is open source, and we hope that many companies will endorse it, and gam
 [http://www.come2play.com Come2Play] is a company that freely distribute multiplayer games (as widgets and in social networks) and share the advertising revenue with the game developers.
 [http://www.come2play.com Come2Play] officially endorse this API, and has opened sourced its Emulator with the purpose of creating an open source standard for developing multiplayer games that other companies can endorse as well.
 
+The Multiplayer API is a bridge between two parties:
+ * Game developers that develop a _game_ as a SWF
+ * Website hosting the game, that develop a _container_ that includes the _game_ SWF.
+The _game_ and _container_ communicate using a LocalConnection, and thus each can use either AS2 or AS3.
+
+[http://www.come2play.com Come2Play] developed a _container_ for games that saves a lot of development time for game developers. 
+The _container_ is in charge of:
+ * communicating with the gaming server
+ * displaying the players and viewers information
+ * displaying a common chat area for all users
+ * displaying game messages, e.g., if a player disconnects or the match ends
+ * allowing the players to bet on the outcome of the game and change the stakes
+ * allowing the players to end the match in a tie, to cancel the match, or to save the match
+ * handling turn-based games, i.e., limit the time per move or per match, display who has the current turn, who much time he has left to make his move, etc
+
+
 The Multiplayer API will be composed of 3 APIs:
  * [ClientGameAPI] - for developing games using only client-side code.
  * [ScriptGameAPI] - uses both client-side and server-side code.
  * [ConnectedGameAPI] - for single-player games that can be made multiplayer using a small set of functions to report to the server the current state and score.
 
-The current version of the Emulator only supports ClientGameAPI.
-In the near future the Emulator will support ScriptGameAPI and ConnectedGameAPI.
+The current version of the Emulator only supports [ClientGameAPI].
+In the near future the Emulator will support [ScriptGameAPI] and [ConnectedGameAPI].
 
 Although AS2 and AS3 have major differences, we tried to abstract away these differences by hiding them behind a LocalConnection and using almost identical signatures for the class ClientGameAPI.
 The only difference in the signatures between the AS2 and AS3 versions, is that the type `Number` in AS2 was changed into `int` in AS3.
@@ -26,7 +44,7 @@ We recommend using AS3 because it is more stable, fast, and easier to debug.
 You should write a class that extends one of the above APIs,
 and when your SWF is loaded, it should create one instance of that class.
 
-[MultiplayerAPI_Implementation The Multiplayer API Implementation] describes the internal implementation that uses LocalConnection. The implementation details should not concern game developers, but they are important for other companies that wish to endorse the API and offer their servers for game developers.
+[MultiplayerAPI_Implementation The Multiplayer API Implementation] describes the internal implementation that uses LocalConnection. The implementation details should not concern game developers, but they are important for websites hosting the games.
 
 = Emulator =
 When developing your game, you should use the Emulator.

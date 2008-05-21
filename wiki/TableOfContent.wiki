@@ -11,9 +11,10 @@ The API is open source, and we hope that many companies will endorse it, and gam
 [http://www.come2play.com Come2Play] officially endorse this API, and has opened sourced its Emulator with the purpose of creating an open source standard for developing multiplayer games that other companies can endorse as well.
 
 The Multiplayer API will be composed of 3 APIs:
- * ClientGameAPI - for developing games using only client-side code.
- * ScriptGameAPI - uses both client-side and server-side code.
- * ConnectedGameAPI - for single-player games that can be made multiplayer using a small set of functions to report to the server the current state and score.
+ * [ClientGameAPI] - for developing games using only client-side code.
+ * [ScriptGameAPI] - uses both client-side and server-side code.
+ * [ConnectedGameAPI] - for single-player games that can be made multiplayer using a small set of functions to report to the server the current state and score.
+
 The current version of the Emulator only supports ClientGameAPI.
 We hope that in the near future the Emulator will support ScriptGameAPI and ConnectedGameAPI.
 

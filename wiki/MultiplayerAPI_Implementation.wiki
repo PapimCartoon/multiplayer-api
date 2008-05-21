@@ -18,7 +18,7 @@ For example, suppose you open multiple emulator windows. Then you have multiple 
 The communication is two-way (thus we use two LocalConnection objects): the _game_ sends operations to the _container_, and the _container_ may call callbacks on the _game_.
 
 === Low level description of the protocol == 
- * Determining `sPrefix`
+First step: Determining `sPrefix`.
 Both _game_ and _container_ get the same flashvar (or url) parameter:
 `prefix_local_connection_id=XXXX`. `XXXX` is either a number or a or the name of a javascript function. If it is a function, then we call that function (using `ExternalInterface.call` available from flash 8), and it should return a fixed number. For example, the function below returns a fixed random number:
 {{{
@@ -30,14 +30,14 @@ Both _game_ and _container_ get the same flashvar (or url) parameter:
 We denote by `sPrefix` the number that is either `XXXX` or the number returned by the javascript function.
 The reason we use a function name (instead of a number) is to allow the browser to cache the SWF file. If we had used a different number each time, then the browser won't cache the SWF file.
 
- * Determining `iChanel`
+Second step:  Determining `iChanel`.
 The _container_ connects to:
 `"container_SWF"+sPrefix`
 
 The _game_ calls (using the above connection name) `do_register_on_server(iChannel)`, where `iChannel` is a randomly chosen number
 
- * _game_ and _container_ communicate using two LocalConnection objects whose channel names are:
+Final step: _game_ and _container_ communicate using two LocalConnection objects whose channel names are:
 {{{
-`"DO_CHANEL" + sPrefix + "_" + iChanel`
-`"GOT_CHANEL" + sPrefix + "_" + iChanel`
+"DO_CHANEL" + sPrefix + "_" + iChanel
+"GOT_CHANEL" + sPrefix + "_" + iChanel
 }}}

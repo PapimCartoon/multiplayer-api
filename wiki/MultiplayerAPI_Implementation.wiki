@@ -20,7 +20,7 @@ The communication is two-way (thus we use two LocalConnection objects): the _gam
 === Low level description of the protocol == 
 First step: Determining `sPrefix`.
 Both _game_ and _container_ get the same flashvar (or url) parameter:
-`prefix_local_connection_id=XXXX`. `XXXX` is either a number or a or the name of a javascript function. If it is a function, then we call that function (using `ExternalInterface.call` available from flash 8), and it should return a fixed number. For example, the function below returns a fixed random number:
+`prefix=XXXX`. `XXXX` is either a number or a or the name of a javascript function. If it is a function, then we call that function (using `ExternalInterface.call` available from flash 8), and it should return a fixed number. For example, the function below returns a fixed random number:
 {{{
 		var prefix_random_number = 1+ Math.ceil(1000000*Math.random());
 		function javascript_get_prefix_method() {

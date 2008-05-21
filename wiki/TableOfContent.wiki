@@ -16,16 +16,17 @@ The Multiplayer API will be composed of 3 APIs:
  * [ConnectedGameAPI] - for single-player games that can be made multiplayer using a small set of functions to report to the server the current state and score.
 
 The current version of the Emulator only supports ClientGameAPI.
-We hope that in the near future the Emulator will support ScriptGameAPI and ConnectedGameAPI.
-
-You should write a class that extends either [ClientGameAPI_AS3_version_1] or [ClientGameAPI_AS2_version_1],
-and when your SWF is loaded it should create one instance of that class.
+In the near future the Emulator will support ScriptGameAPI and ConnectedGameAPI.
 
 Although AS2 and AS3 have major differences, we tried to abstract away these differences by hiding them behind a !LocalConnection and using almost identical signatures for the class ClientGameAPI.
 The only difference in the signatures between the AS2 and AS3 versions, is that the type `Number` in AS2 was changed into `int` in AS3.
 The remainder of this wiki describes the AS3 version.
 We recommend using AS3 because it is more stable, fast, and easier to debug.
 
+You should write a class that extends one of the above APIs,
+and when your SWF is loaded, it should create one instance of that class.
+
+[MultiplayerAPI_Implementation The Multiplayer API Implementation] describes the internal implementation that uses !LocalConnection. The implementation details should not concern game developers, but they are important for other companies that wish to endorse the API and offer their servers for game developers.
 
 = Emulator =
 When developing your game, you should use the Emulator.

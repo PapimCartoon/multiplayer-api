@@ -1,0 +1,117 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Test emulator</title>
+
+    <script language="javascript" src="FlashObject.js"></script>
+
+    <script language="javascript">
+function getParametersFromURL() {
+	var res = new Array();
+	var searchStr = window.location.search;
+	if (searchStr.length<2) return res;
+	var parameters = searchStr.substring(1);
+	var arr = parameters.split("&");
+	for(var i=0; i<arr.length; i++) {	
+		var key_val = arr[i].split("=");
+		key_val[0] = unescape(key_val[0]);
+		key_val[1] = unescape(key_val[1]);
+		res[ key_val[0] ] = key_val[1];
+	}			
+	return res;
+}
+    </script>
+
+    <script language="javascript">
+function parseObj(str){
+    var obj=new Object();
+    var arr=str.split(";");
+    if(arr==null){
+        arr=new Array();
+        arr[0]=str;
+    }
+    var arr1;
+    for(var i=0;i<arr.length;i++){
+        try{
+            arr1=arr[i].split(":");
+            eval("obj."+arr1[0]+"="+arr1[1]+";");
+        }catch(err){}
+    }
+    alert(obj);
+    return(obj);
+}
+var txt="";
+function toClipboard(text){
+    txt=text;
+    window.open("Log.htm","_blank","width=450,height=450,menubar=0,titlebar=0,toolbar=0,resizable=1,scrollbars=1");
+}
+function getText(){
+    return txt;
+}
+    </script>
+
+</head>
+<body>
+    <div id="divTable">
+    </div>
+    <script language="JavaScript">
+var param_arr = getParametersFromURL();
+if (param_arr['game'] !=null){
+    var flashvars="prefix="+Math.floor(Math.random()*1000000);
+    try{
+        viewers_num=parseInt(param_arr["viewers_num"]);
+    }catch(err){}
+    if(isNaN(viewers_num)){
+        viewers_num=1;
+    }
+    try{
+        players_num=parseInt(param_arr["players_num"]);
+    }catch(err){}
+    if(isNaN(players_num)){
+        players_num=2;
+    }
+    var addparams="&players_num="+players_num+"&viewers_num="+viewers_num+"&logo="+param_arr["logo"];
+    var swf_width=520,swf_height=442;
+    try{
+        swf_width=parseInt(param_arr["test_file_width"]);
+    }catch(err){
+        swf_width=520;
+    }
+    try{
+        swf_height=parseInt(param_arr["test_file_height"]);
+    }catch(err){
+        swf_height=442;
+    }
+    var i,j,paramnum;
+    param_num=parseInt(param_arr["param_num"]);
+    for(j=0;j<param_num;j++){
+        addparams+="&col"+j+"="+param_arr["col"+j];
+        for(i=0;i<(players_num+viewers_num);i++){
+            try{
+                addparams+="&val"+i+j+"="+param_arr["val"+i+j];
+            }catch(err){
+                addparams+="&val"+i+j+"=";
+            }
+        }
+    }
+    var row,cell;
+    var tbl=document.createElement("table");
+    for(i=0;i<((players_num+viewers_num)/2+1);i++){
+        row=tbl.insertRow(i);
+        for(j=0;j<2;j++){
+            cell=row.insertCell(j);
+            cell.style.verticalAlign="top";
+            if(i*2+j<(players_num+viewers_num)+1){
+                if(i==0 && j==0){
+                    writeFlash(cell,"../EmulatorSource/Server.swf","570","470",flashvars+addparams+"&game="+param_arr["game"]+"&oldgame="+param_arr["oldgame"]+"&fps="+param_arr["fps"]+"&delay_from="+param_arr["delay_from"]+"&delay_to="+param_arr["delay_to"]+"&xml=Server.xml","server");
+                }else{
+                    writeFlash(cell,"../EmulatorSource/InfoContainer.swf",swf_width,swf_height,flashvars+"&game="+param_arr["game"]+"&oldgame="+param_arr["oldgame"]+"&delay_from="+param_arr["delay_from"]+"&delay_to="+param_arr["delay_to"]+"&fps="+param_arr["fps"]+"&xml=Client.xml","client"+i+j);
+                }
+            }
+        }
+    }
+    document.getElementById("divTable").appendChild(tbl);
+}
+    </script>
+</body>
+</html>

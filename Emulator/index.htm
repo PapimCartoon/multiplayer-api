@@ -1,0 +1,464 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Test emulator</title>
+
+    <script language="javascript">
+function getParams(arr){
+    var obj;
+    var vals=new Array();
+    for(var i=0;i<arr.length;i++){
+        switch(arr[i][0]){
+            case "players_num":
+                document.getElementById("players_num").value=arr[i][1];
+                clientNumChanged();
+                break;
+            case "viewers_num":
+                document.getElementById("viewers_num").value=arr[i][1];
+                clientNumChanged();
+                break;
+            case "oldgame":
+                if(arr[i][1]=="1"){
+                    document.getElementById("old_game").checked=true;
+                }else{
+                    document.getElementById("old_game").checked=false;                
+                }
+                break;
+            case "logo":
+                document.getElementById("logo").value=arr[i][1];
+                break;
+            case "fps":
+                document.getElementById("fps").value=arr[i][1];
+                break;
+            case "game":
+                document.getElementById("test_file_name").value=arr[i][1];
+                break;
+            case "test_file_width":
+                document.getElementById("test_file_width").value=arr[i][1];
+                break;
+            case "test_file_height":
+                document.getElementById("test_file_height").value=arr[i][1];
+                break;
+            case "delay_from":
+                document.getElementById("delay_from").value=arr[i][1];
+                break;
+            case "delay_to":
+                document.getElementById("delay_to").value=arr[i][1];
+                break;
+            case "single_popup":
+                if(arr[i][1]=="1"){
+                    document.getElementById("single_popup").checked=true;
+                }else{
+                    document.getElementById("multiple_popups").checked=true;
+                }
+                break;
+            default:
+                if(arr[i][0].substring(0,3)=="col"){
+                    if(!document.getElementById(arr[i][0])){
+                        addParam();
+                    } 
+                }
+                vals.push(arr[i]);
+                break;
+        }
+    }
+    for(var i=0;i<vals.length;i++){
+        obj=document.getElementById(vals[i][0]);
+        if(obj){
+            obj.value=vals[i][1];
+        }
+    }
+}
+var param_num=2;
+function clientNumChanged(){
+    var num1=parseInt(document.getElementById("players_num").value);
+    if(isNaN(num1) || num1<=0){
+        num1=2;
+        document.getElementById("players_num").value="2";
+    }
+    var num2=parseInt(document.getElementById("viewers_num").value);
+    if(isNaN(num2) || num2<0){
+        num2=0;
+        document.getElementById("viewers_num").value="1";
+    }
+    var tbl=document.getElementById("tblClients");
+    var row,cell;
+    for(var i=tbl.rows.length-1;i<num1+num2;i++){
+        row=tbl.insertRow(-1);
+        for(var j=0;j<param_num;j++){
+            cell=row.insertCell(j);
+            cell.innerHTML="<input id=\"val"+i+j+"\" name=\"val"+i+j+"\" size=\"50\" style=\"width: 150px;\" type=\"text\" value=\"\"/>";
+        }
+    }
+    for(var i=tbl.rows.length-1;i>num1+num2;i--){
+        tbl.deleteRow(i);
+    }
+}
+function addParam(){
+    var tbl=document.getElementById("tblClients");
+    var row=tbl.rows[0];
+    var cell=row.insertCell(param_num);
+    cell.innerHTML="<input id=\"col"+param_num+"\" name=\"col"+param_num+"\" size=\"50\" style=\"width: 130px;\" type=\"text\" value=\"param"+param_num+"\" />&nbsp;<a style=\"cursor:pointer;color:blue;\" onclick=\"removeParam("+param_num+",this);\">x</a>";
+    for(var i=1;i<tbl.rows.length;i++){
+        row=tbl.rows[i];
+        cell=row.insertCell(param_num);
+        cell.innerHTML="<input id=\"val"+(i-1)+param_num+"\" name=\"val"+(i-1)+param_num+"\" size=\"50\" style=\"width: 150px;\" type=\"text\" value=\"\"/>";
+    }
+    param_num++;
+}
+function removeParam(num,obj){
+    obj.style.display="none";
+    var tbl=document.getElementById("tblClients");
+    var row=tbl.rows[0];
+    var cell=document.getElementById("col"+num);
+    cell.style.display="none";
+    for(var i=1;i<tbl.rows.length;i++){
+        row=tbl.rows[i];
+        cell=document.getElementById("val"+(i-1)+num);
+        cell.style.display="none";
+    }
+}
+    </script>
+    <script language="javascript" src="FlashObject.js"></script>
+</head>
+<body onunload="unloadServer();">
+    <div id="divForm">
+        <form target="_self" method="get">
+            <table border="0" cellpadding="10" cellspacing="0">
+                <tr>
+                    <td style="background-color: #c3e958; padding: 10px;">
+                        <table border="0" width="100%">
+                            <tr>
+                                <td style="text-align: left;">
+                                    <img src="title.jpg" alt="Client-side API Emulator" />
+                                </td>
+                                <td style="text-align: left; color: #5b8a2a; width: 115px;" nowrap="nowrap">
+                                    Version 1.0.0<br />
+                                    <a href="#" style="color: #5b8a2a;">Check for updates...</a>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="border-bottom: dotted 1px black;">
+                        Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <table cellpadding="5" cellspacing="5" border="0">
+                            <tr>
+                                <td>
+                                    The file name:
+                                </td>
+                                <td>
+                                    <input id="test_file_name" name="test_file_name" size="50" type="text" value="../AS3/TicTacToe/TicTacToe_board.swf" /><a href="#"><img src="question.gif" style="border-width:0px;" /></a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Old game:
+                                </td>
+                                <td>
+                                    <input id="old_game" name="old_game" type="checkbox" /><a href="#"><img src="question.gif" style="border-width:0px;" /></a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Size:
+                                </td>
+                                <td>
+                                    <input id="test_file_width" name="test_file_width" size="5" type="text" value="500" /> x <input id="test_file_height" name="test_file_height" size="5" type="text" value="400" /><a href="#"><img src="question.gif" style="border-width:0px;" /></a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Logo:
+                                </td>
+                                <td>
+                                    <input name="logo" id="logo" size="50" type="text" value="elipses.jpg" /><a href="#"><img src="question.gif" style="border-width:0px;" /></a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Number of Players:
+                                </td>
+                                <td>
+                                    <input id="players_num" name="players_num" onchange="clientNumChanged();" size="2" type="text" value="2" /><a href="#"><img src="question.gif" style="border-width:0px;" /></a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Number of Viewers:
+                                </td>
+                                <td>
+                                    <input id="viewers_num" name="viewers_num" onchange="clientNumChanged();" size="2" type="text" value="1" /><a href="#"><img src="question.gif" style="border-width:0px;" /></a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Client parameters:<a href="#"><img src="question.gif" style="border-width:0px;" /></a>
+                                </td>
+                                <td>
+                                    <table cellpadding="0" cellspacing="0" style="border: solid 1px black; border-collapse: collapse;" id="tblClients">
+                                        <tr>
+                                            <th>
+                                                <input id="col0" name="col0" size="50" style="width: 150px;" type="text" value="nick_name" readonly="readonly" />
+                                            </th>
+                                            <th>
+                                                <input id="col1" name="col1" size="50" style="width: 150px;" type="text" value="avatar_full_url" readonly="readonly" />
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <input id="val00" name="val00" size="50" style="width: 150px;" type="text" value="" />
+                                            </td>
+                                            <td>
+                                                <input id="val01" name="val01" size="50" style="width: 150px;" type="text" value="" />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <input id="val10" name="val10" size="50" style="width: 150px;" type="text" value="" />
+                                            </td>
+                                            <td>
+                                                <input id="val11" name="val11" size="50" style="width: 150px;" type="text" value="" />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <input id="val20" name="val20" size="50" style="width: 150px;" type="text" value="" />
+                                            </td>
+                                            <td>
+                                                <input id="val21" name="val21" size="50" style="width: 150px;" type="text" value="" />
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <a style="cursor:pointer;color:blue;" onclick="addParam();">Add parameter</a><a href="#"><img src="question.gif" style="border-width:0px;" /></a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    How do you wish to test the game?
+                                </td>
+                                <td>
+                                    <input type="radio" name="windows" value="same" checked="checked" id="single_popup" /><label for="rdbSameWindow">In a single popup, using several frames</label><br />
+                                    <input type="radio" name="windows" value="separate" id="multiple_popups" /><label for="rdbSeparateWindow">In multiple popups, one for the server and one for each player and viewer.</label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Game board frame per seconds (FPS):
+                                </td>
+                                <td>
+                                    <input type="text" id="fps" name="fps" size="2" value="10" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Server Delay time:
+                                </td>
+                                <td nowrap="nowrap">
+                                    Between <input type="text" id="delay_from" name="delay_from" size="2" value="0" /> milliseconds and <input type="text" id="delay_to" name="delay_to" size="2" value="2" /> milliseconds<a href="#"><img src="question.gif" style="border-width:0px;" /></a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input value="Launch game" type="button" onclick="btn_click();" />
+                                </td>
+                                <td>
+                                    <div id="divLinks">
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="background-color: #5d8a2b; padding: 10px;">
+                        <table border="0" width="100%">
+                            <tr>
+                                <td style="text-align: left;">
+                                    <table border="0">
+                                        <tr>
+                                            <td style="padding: 0px 10px; border-right: solid 1px white;">
+                                                <a href="#" style="color: White; text-decoration: none;">Emulator help</a>
+                                            </td>
+                                            <td style="padding: 0px 10px; border-right: solid 1px white;">
+                                                <a href="#" style="color: White; text-decoration: none;">Developers</a>
+                                            </td>
+                                            <td style="padding: 0px 10px; border-right: solid 1px white;">
+                                                <a href="#" style="color: White; text-decoration: none;">Developers Forum</a>
+                                            </td>
+                                            <td style="padding: 0px 10px;">
+                                                <a href="#" style="color: White; text-decoration: none;">Come2play</a>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td style="text-align: right;">
+                                    <img src="logo.jpg" alt="Com2play" />
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+
+    <script language="JavaScript">
+var viewers_num=0,players_num=0;
+var clients=new Array();
+var server;
+var single_popup;
+var flashvars="prefix="+Math.floor(Math.random()*1000000);
+var swf_width=520,swf_height=442;
+var unloading=false;
+function btn_click(){
+    document.getElementById("divLinks").innerHTML="";
+    try{
+        viewers_num=parseInt(document.getElementById("viewers_num").value);
+    }catch(err){}
+    if(isNaN(viewers_num)){
+        viewers_num=1;
+    }
+    try{
+        players_num=parseInt(document.getElementById("players_num").value);
+    }catch(err){}
+    if(isNaN(players_num)){
+        players_num=2;
+    }
+    var fps=document.getElementById("fps").value;
+    var old;
+    if(document.getElementById("old_game").checked){
+        old="&oldgame=1";
+    }else{
+        old="&oldgame=0";
+    }
+    var from,to;
+    from=parseInt(document.getElementById("delay_from").value);
+    if(isNaN(from)){
+        from=0;
+    }
+    if(from<0){
+        from=0;
+    }
+    document.getElementById("delay_from").value=from;
+    to=parseInt(document.getElementById("delay_to").value);
+    if(isNaN(to)){
+        to=0;
+    }
+    if(to<0){
+        to=0;
+    }
+    if(from>to){
+        to=from;
+    }
+    document.getElementById("delay_to").value=to;
+    var addparams="players_num="+players_num+"&viewers_num="+viewers_num+"&logo="+document.getElementById("logo").value+"&game="+document.getElementById("test_file_name").value+"&test_file_width="+document.getElementById("test_file_width").value+"&test_file_height="+document.getElementById("test_file_height").value+"&fps="+fps+"&delay_from="+from+"&delay_to="+to;
+    try{
+        swf_width=parseInt(document.getElementById("test_file_width").value)+20;
+    }catch(err){
+        swf_width=520;
+    }
+    try{
+        swf_height=parseInt(document.getElementById("test_file_height").value)+42;
+    }catch(err){
+        swf_height=442;
+    }
+    var i,j,k=0;
+    for(j=0;j<param_num;j++){
+        if(document.getElementById("col"+j).style.display=="none"){
+            continue;
+        }
+        if(document.getElementById("col"+j).value==""){
+            continue;
+        }
+        addparams+="&col"+k+"="+document.getElementById("col"+j).value;
+        for(i=0;i<(players_num+viewers_num);i++){
+            try{
+                addparams+="&val"+i+""+k+"="+document.getElementById("val"+i+""+j).value;
+            }catch(err){
+                addparams+="&val"+i+""+k+"=";
+            }
+        }
+        k++;
+    }
+    addparams+="&param_num="+k+"&test_file_width="+swf_width+"&test_file_height="+swf_height;
+    if(document.getElementById("single_popup").checked){
+        single_popup=window.open("SinglePopup.htm?"+addparams+old+"&single_popup=1","_blank","menubar=0,titlebar=0,toolbar=0,resizable=1,scrollbars=1");
+    }else{
+        server=window.open("ServerWindow.htm?"+flashvars+"&"+addparams+old+"&single_popup=0","_blank","width=570,height=470,menubar=0,titlebar=0,toolbar=0,resizable=1,statusbar=0");
+        var str="<a style=\"cursor:pointer;color:blue;\" onclick=\"serverClick();\">Server</a>";
+	clients=new Array();
+	for(i=0;i<(players_num+viewers_num);i++){
+	    str+=", <a style=\"cursor:pointer;color:blue;\" onclick=\"clientClick("+i+");\">Client"+i+"</a>";
+        }
+	document.getElementById("divLinks").innerHTML=str;
+	/*for(i=0;i<(players_num+viewers_num);i++){
+	    clients[i]=window.open("ClientWindow.htm?game="+document.getElementById("test_file_name").value+"&width="+swf_width+"&height="+swf_height+"&"+flashvars,"_blank","width="+swf_width+",height="+swf_height+",left="+(50*(i+1))+",top="+(50*(i+1))+",menubar=0,titlebar=0,toolbar=0,resizable=1");
+        }*/
+    }
+    unloading=false;
+}
+function serverClick(){
+    server.focus();
+}
+function clientClick(num){
+    if(clients[num]==null){
+    var old;
+    if(document.getElementById("old_game").checked){
+        old="&oldgame=1";
+    }else{
+        old="&oldgame=0";
+    }
+    document.getElementById("delay_from").value=from;
+    var from,to;
+    to=parseInt(document.getElementById("delay_to").value);
+    if(isNaN(to)){
+        to=0;
+    }
+    if(to<0){
+        to=0;
+    }
+    if(from>to){
+        to=from;
+    }
+	clients[num]=window.open("ClientWindow.htm?game="+document.getElementById("test_file_name").value+"&width="+swf_width+"&height="+swf_height+"&"+flashvars+old+"&delay_from="+from+"&delay_to="+to,"_blank","width="+swf_width+",height="+swf_height+",left="+(50*(num+1))+",top="+(50*(num+1))+",menubar=0,titlebar=0,toolbar=0,resizable=1");
+    }else{
+	clients[num].focus();
+
+    }
+}
+function unloadServer(){
+    unloading=true;
+    document.getElementById("divLinks").innerHTML="";
+    for(var i=0;i<players_num+viewers_num;i++){
+        try{
+            if(clients[i]!=null){
+                clients[i].silent=true;
+                clients[i].close();
+            }
+        }catch(err){}
+    }
+    try{
+        if(server!=null){
+            server.close();
+        }
+    }catch(err){}
+}
+function beforeUnloadServer(){
+    if(!unloading){
+        return "All game windows will be closed.";
+    }
+    return null;
+}
+    </script>
+    <div id="divGetParams"></div>
+    <script language="javascript">
+        writeFlash(document.getElementById("divGetParams"),"../EmulatorSource/GetParams.swf","1","1","","getClient");
+    </script>
+</body>
+</html>

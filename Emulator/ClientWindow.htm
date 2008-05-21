@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+    <title>Client</title>
+    <script language="javascript" src="FlashObject.js"></script>
+    <script language="javascript">
+function getParametersFromURL() {
+	var res = new Array();
+	var searchStr = window.location.search;
+	if (searchStr.length<2) return res;
+	var parameters = searchStr.substring(1);
+	var arr = parameters.split("&");
+	for(var i=0; i<arr.length; i++) {	
+		var key_val = arr[i].split("=");
+		if (key_val.length!=2) window.alert("Error in getParametersFromURL:"+arr[i]);
+		key_val[0] = unescape(key_val[0]);
+		key_val[1] = unescape(key_val[1]);
+		res[ key_val[0] ] = key_val[1];
+	}			
+	return res;
+}
+    </script>
+    <script language="javascript">
+function parseObj(str){
+    var obj=new Object();
+    var arr=str.split(";");
+    if(arr==null){
+        arr=new Array();
+        arr[0]=str;
+    }
+    var arr1;
+    for(var i=0;i<arr.length;i++){
+        try{
+            arr1=arr[i].split(":");
+            eval("obj."+arr1[0]+"="+arr1[1]+";");
+        }catch(err){}
+    }
+    return(obj);
+}
+    </script>
+</head>
+<body onbeforeunload="var str=window.opener.beforeUnloadServer();if(str!=null)event.returnValue =str;" onunload="window.opener.unloadServer();" style="width: 100%; height: 100%;">
+    <div style="width:100%;height:100%;position:absolute;padding:0px 20px 10px 0px;">
+    <div id="divGame" style="width:100%;height:100%;">
+    </div></div>
+    <script language="JavaScript">
+var param_arr = getParametersFromURL();
+try{
+    writeFlash(document.getElementById("divGame"),"../EmulatorSource/InfoContainer.swf","100%","100%","prefix="+param_arr["prefix"]+"&game="+param_arr["game"]+"&oldgame="+param_arr["oldgame"]+"&fps="+param_arr["fps"]+"&delay_from="+param_arr["delay_from"]+"&delay_to="+param_arr["delay_to"]+"&xml=Client.xml","client");
+}catch(err){
+}
+var silent=false;
+function unloadAll(){
+    if(!silent){
+        window.opener.unloadWindow();
+    }
+}
+function beforeUnloadWindow(){
+    if(!silent){
+        return "Close this window?";
+    }
+    return "";
+}
+    </script>
+</body>
+</html>

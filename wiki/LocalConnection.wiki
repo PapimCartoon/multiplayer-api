@@ -1,4 +1,4 @@
-LocalConnection is an AS class used for communication between two SWF files.
+LocalConnection is an AS class used for communication between two SWF files, see [http://www.adobe.com/support/flash/action_scripts/actionscript_dictionary/actionscript_dictionary437.html Macromedia Flash - ActionScript Dictionary].
 The API uses LocalConnection as the channel for passing commands between the _game_ and its _container_. 
 LocalConnection is also the only way that AS2 and AS3 can communicate.
 Therefore, both _game_ and _container_ can choose if they prefer to use AS2 or AS3.

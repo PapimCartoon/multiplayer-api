@@ -13,10 +13,10 @@ How to use this project:
   * Look at the [http://code.google.com/p/multiplayer-api/issues/list issue tracker] to check for future releases, bugs, and requested features.
   * Mailing list: If you join, you will receive emails from codesite-noreply@google.com
   These are the current mailing lists:
-    * [http://groups.google.com/group/multiplayer-api Game developers]
-    * [http://groups.google.com/group/multiplayer-api-developers API and Emulator developers]    
-    * [http://groups.google.com/group/multiplayer-api-svn-commit SVN commits]     
-    * [http://groups.google.com/group/multiplayer-api-issue-changes Issue changes]
+    * [http://groups.google.com/group/multiplayer-api Game developers] - game developers who use this API and wish to share their experiences
+    * [http://groups.google.com/group/multiplayer-api-developers API and Emulator developers] - programmers who work on extending this API and its Emulator
+    * [http://groups.google.com/group/multiplayer-api-svn-commit SVN commits] - those who wish to get notifications on each commit in the SVN
+    * [http://groups.google.com/group/multiplayer-api-issue-changes Issue changes] - those who wish to get notifications on each change in an Issue (e.g., if a new issue opens, or an old one being fixed)
 
 How to contribute:
   * Comment on the wiki pages, create issues, request enhancements, reports bugs, etc

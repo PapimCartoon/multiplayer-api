@@ -1,0 +1,224 @@
+#summary The communication protocol between the server and the script in ScriptGameAPI
+
+This document describes the communication protocol between
+  * the server (the come2play gaming server), and
+  * the script (the script you wrote with the server-side logic of your game)
+
+Your script should handle GET requests of this form:
+{{{
+  GET /*?milli_time_stamp=*&msg_type=*&...
+}}}
+The script should be stateless, because the server may send the request several times and/or to different URLs (if you defined several backup urls).
+
+You have an option to use POST requests (by starting your url with "POST:")
+Prefer POST over GET only if your "old_game_state" is really long (and your web-browser have a limitation on the length of GET requests).
+GET requests are better for several reasons:
+  * they are easier to debug (you can just copy&paste the url in your browser)
+  * GET request can (and should) be cached by various agents; POST requests are usually not cached because they are intended for data manipulation.
+
+The server must respond with either status:
+{{{
+HTTP/1.1 200 OK
+HTTP/1.1 100 Continue
+}}}
+
+These are the possible message types (some messages have extra parameters): 
+{{{
+msg_type = new_game | load_game | made_move | keep_alive
+made_move:		playing_user_ids, stakes, old_game_state, from_user_id, msg
+load_game:		playing_user_ids, old_game_state
+new_game:		playing_user_ids
+}}}
+
+Players can only disconnect during the match (new players cannot join; only viewers can join).
+Note that the script is not notified when a user disconnects. 
+If the script needs to know when a user disconnects, then other users can send the script a special message,
+and the server will pass in playing_user_ids the users that are currently playing.
+
+Each message type should return different variables:
+{{{
+new_game or load_game: milli_time_stamp, new_game_state, turn_of, (msg_to_XXX | msg_to_viewer | msg_to_all)
+made_move:             milli_time_stamp, new_game_state, turn_of, (msg_to_XXX | msg_to_viewer | msg_to_all), msg_to_new_viewer, match_result_XXX
+keep_alive:	       milli_time_stamp
+}}}
+
+You should replace `XXX` with the user_id, e.g., if you want to send a message to user_id=`666` then the script should output `msg_to_666`.
+The turn_of sets a timer for a certain player, and when the timer expires than that player loses.
+(For more info on the script output, see `Class MyResponse` in `ServerSideLogic.asp`)
+
+To make communication between the server and the script more efficient, 
+the come2play server keeps the connection alive as long as ongoing games exist.
+To know how to seperate between the GET responses, we use this header:
+{{{
+Content-Length: ...
+}}}
+Therefore, make sure your script returns this header correctly by using buffering 
+(i.e., your script should buffer its response, and send the response only when it is complete.)
+It is done like this in various languages:
+{{{
+ASP: Response.Buffer = true
+ASP.Net: Page.Response.BufferOutput = true
+PHP: ob_start()
+JSP: <%@ page autoFlush="false" buffer="50kb" ... %>    Make sure your buffer is big enough (otherwise, an exception will be raised when the buffer overflows)
+Python, Perl: plug in a StringIO instance on sys.stdout, or use cgi_buffer.py
+}}}
+
+Note that the script should be stateless.
+E.g., in ASP, you should not use (or disable) session, cookies or application.
+You can disable cookies in IIS like this:
+{{{
+HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\W3SVC\ASP\Parameters\AllowSessionState
+}}}
+
+Make sure your server supports "HTTP Keep-Alives".
+In IIS 6.0, HTTP Keep-Alives are enabled by default, which complies with the HTTP/1.1 specification for HTTP Keep-Alives. 
+IIS holds open an inactive connection for as long as the ConnectionTimeout metabase property specifies (the default value is 120 seconds).
+
+Our server uses pipelining, i.e., several GET requests may be sent to the script even before the script sent its first response.
+See http://www.mozilla.org/projects/netlib/http/pipelining-faq.html
+
+About the encoding:
+The default encoding that our server assumes is ISO-8859-1
+(HTTP 1.1 says that the default charset is ISO-8859-1)
+Because the entire output is url-encoded, the encoding doesn't matter.
+However, in case of errors, your script might produce illegal output that is not url-encoded,
+and you should make sure the encoding is ISO-8859-1, i.e., make sure you have the header:
+Content-Type: text/html; charset=ISO-8859-1
+This can be done in this way:
+{{{
+Java Servlets: resource.setContentType ("text/html;charset=ISO-8859-1");
+JSP: <%@ page contentType="text/html; charset=ISO-8859-1" %>
+ASP and ASP.Net: <%@ Language="VBScript" codepage=1252 %><%Response.charset="ISO-8859-1"%>
+PHP: header('Content-type: text/html; charset=ISO-8859-1');
+Perl and Python: print "Content-Type: text/html; charset=ISO-8859-1\n\n"
+}}}
+
+
+Authentication:
+To make sure a certain GET request indeed originiated from the server (and not from some impostor),
+the server passes another parameter in the GET request called "md5", which is equal to:
+MD5( md5_secret + milli_time_stamp )
+The md5_secret is different for each game, and can be found online in the come2play website; it is a secret shared between the server and the script.
+Remember that the script is stateless, and therefore imposters cannot cause any harm 
+except wasting the script time and perhaps causing a denial-of-service attack.
+
+For example, for TicTacToe in the url below:
+{{{
+TicTacToeGameLogic.asp?milli_time_stamp=1199367696671&...&md5=8cbe04852672a2210df30a87d6b3ef25
+md5_secret = "mxgyhs5238fjhsrqofksy6er45p"
+MD5("mxgyhs5238fjhsrqofksy6er45p1199367696671") = "8cbe04852672a2210df30a87d6b3ef25"
+}}}
+
+=== Example of TicTacToe game ===
+A move in TicTacToe is when a player selects a cell, e.g., the cell in row 0 and column 2,
+ which is encoded as 0X2.
+The board is encoded as a string of length 9, each character describes the state of a cell 
+(each cell can be Empty, White, or Black.)
+For example, this string "EEWBEEEEW" describes this board:
+{{{
+-------
+| | |W|
+-------
+|B| | |
+-------
+| | |W|
+-------
+}}}
+And the string "EEEEEEEEE" describes the empty board.
+
+The state of a match in a single-player game is:
+`<USER_ID>x<BOARD_STATE>`
+For example, "55xEEEEEEEEE" represents a single-player match where the player is 55, and the board is empty. 
+
+The state of a match in a two-player game is:
+`<WHITE_USER_ID>x<BLACK_USER_ID>x<BOARD_STATE>`
+For example, "55x66xEEEEEEEEE" represents a match where the white player is 55, the black is 66, and the board is empty. 
+
+For example, consider the following operations for the TicTacToe two-player game:
+(on the come2play server the link is: http://www.come2play.com/Shared/java_calls/api/TicTacToeGameLogic.asp)
+
+  * Starting a new game
+{{{
+> TicTacToeGameLogic.asp?milli_time_stamp=123&msg_type=new_game&playing_user_ids=55x66
+< turn_of=55&new_game_state=55x66xEEEEEEEEE&msg_to_all=55x66xEEEEEEEEE&msg_to_new_viewer=55x66xEEEEEEEEE&milli_time_stamp=123
+}}}
+The empty board is broadcasted to all players and viewers.
+User 55 will have a timer of 100 seconds to complete his move.
+
+
+  * Loading a saved game:
+{{{
+> TicTacToeGameLogic.asp?milli_time_stamp=123&msg_type=load_game&playing_user_ids=66x55&old_game_state=55x66xEEWBEEEEW
+< turn_of=66&new_game_state=55x66xEEWBEEEEW&msg_to_all=55x66xEEWBEEEEW&msg_to_new_viewer=55x66xEEWBEEEEW&milli_time_stamp=123
+}}}
+
+This saved game is broadcasted to all players and viewers.
+User 66 will have a timer of 70 seconds to complete his move.
+
+
+  * Loading a saved game that already ended:
+{{{
+> TicTacToeGameLogic.asp?milli_time_stamp=123&msg_type=load_game&playing_user_ids=66x55&old_game_state=55x66xWWEWEEBBB
+< new_game_state=55x66xWWEWEEBBB&match_result_66=1xWIN&match_result_55=-1x0&msg_to_all=55x66xWWEWEEBBB&milli_time_stamp=123
+}}}
+
+
+  * Making a move, afterwhich the game is still in progress:
+{{{
+> TicTacToeGameLogic.asp?milli_time_stamp=123&msg_type=made_move&playing_user_ids=66x55&from_user_id=66&msg=1X2&old_game_state=55x66xEEWBEEEEW&stakes=10
+< turn_of=55&new_game_state=55x66xEEWBEBEEW&msg_to_new_viewer=55x66xEEWBEBEEW&msg_to_55=1X2&msg_to_viewer=1X2&milli_time_stamp=123
+}}}
+
+The black chose the cell 1X2 , and this is the new game state:
+{{{
+-------
+| | |W|
+-------
+|B| |B|
+-------
+| | |W|
+-------
+}}}
+This move is sent to user 55 (white player) and any viewer.
+A new viewer that might join the game in this stage will get this match state "55x66xEEWBEBEEW".
+User 55 will have a timer of 60 seconds to complete his move.
+
+  * Making a move, afterwhich the game ends in tie:
+{{{
+> TicTacToeGameLogic.asp?milli_time_stamp=123&msg_type=made_move&playing_user_ids=66x55&from_user_id=55&msg=0X2&old_game_state=55x66xWBEWBBBWW&stakes=9
+< new_game_state=55x66xWBWWBBBWW&match_result_55=0xReturnStakes&match_result_66=0xReturnStakes&msg_to_66=0X2&msg_to_viewer=0X2&milli_time_stamp=123
+}}}
+
+The white chose the cell 0X2 , and this is the new game state:
+{{{
+-------
+|W|B|W|
+-------
+|W|B|B|
+-------
+|B|W|W|
+-------
+}}}
+
+  * Making a move, afterwhich the game ends in black winning:
+{{{
+> TicTacToeGameLogic.asp?milli_time_stamp=123&msg_type=made_move&playing_user_ids=66x55&from_user_id=66&msg=2X2&old_game_state=55x66xWWEWEEBBE&stakes=9
+< new_game_state=55x66xWWEWEEBBB&match_result_66=1x9&match_result_55=-1x0&msg_to_55=2X2&msg_to_viewer=2X2&milli_time_stamp=123
+}}}
+
+  * Keeping the connection alive:
+{{{
+> TicTacToeGameLogic.asp?milli_time_stamp=123&msg_type=keep_alive
+< milli_time_stamp=123
+}}}
+
+
+For single-player TicTacToe:
+{{{
+TicTacToeGameLogic.asp?milli_time_stamp=123&msg_type=new_game&playing_user_ids=55
+TicTacToeGameLogic.asp?milli_time_stamp=123&msg_type=load_game&playing_user_ids=55&old_game_state=55xEEWBEEEEW
+TicTacToeGameLogic.asp?milli_time_stamp=123&msg_type=load_game&playing_user_ids=55&old_game_state=55xWWEWEEBBB
+TicTacToeGameLogic.asp?milli_time_stamp=123&msg_type=made_move&playing_user_ids=55&from_user_id=55&msg=1X2&old_game_state=55xEEWBEEEEW&stakes=10
+TicTacToeGameLogic.asp?milli_time_stamp=123&msg_type=made_move&playing_user_ids=55&from_user_id=55&msg=0X2&old_game_state=55xWBEWBBBWW&stakes=9
+TicTacToeGameLogic.asp?milli_time_stamp=123&msg_type=made_move&playing_user_ids=55&from_user_id=55&msg=2X2&old_game_state=55xWWEWEEBBE&stakes=9
+}}}

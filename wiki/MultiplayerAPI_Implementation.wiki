@@ -13,7 +13,7 @@ The difficulty in the protocol is handling the case you have multiple _container
 For example, suppose you open multiple emulator windows. Then you have multiple _containers_ (emulators), and in each emulator you have multiple _games_.
 
 === High level description of the protocol == 
- * Both _game_ and _container_ get the same parameter, and use this parameter to talk to one another. On this talk, the _container_ tells the _game_ what will be the channel name that they will use for all future communication.
+Both _game_ and _container_ get the same parameter, and use this parameter to talk to one another. On this talk, the _container_ tells the _game_ what will be the channel name that they will use for all future communication.
 
 The communication is two-way (thus we use two LocalConnection objects): the _game_ sends operations to the _container_, and the _container_ may call callbacks on the _game_.
 

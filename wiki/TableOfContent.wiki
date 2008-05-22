@@ -1,18 +1,18 @@
 #summary Table of contents: Multiplayer API, emulator, and tutorials
 
 This wiki contains documentation about the Multiplayer API, the emulator, and tutorials for creating multiplayer games in flash.
+This project main target audience is game developers that wish to create new multiplayer flash games, or to convert single-player flash games to multiplayer.
 
 The Multiplayer API is a bridge between two parties:
  * *Game developers*, that develop a _game_ as a SWF
  * *Websites that host games*, that develop a _container_ that includes the _game_ SWF.
 The _game_ and _container_ communicate using a LocalConnection, and thus each can use either AS2 or AS3.
 
-This project main target audience is game developers that wish to create new multiplayer flash games, or to convert single-player flash games to multiplayer.
 
 How to use this project:
  * Read the wiki pages
- * Download the emulator, and start developing your game!
- * Look in the issue tracker to check for future releases, bugs, and requested features.
+ * [http://code.google.com/p/multiplayer-api/downloads/list Download] the emulator, and start developing your game! If you wish to be up-to-date, you can also checkout the latest version from the SVN: https://multiplayer-api.googlecode.com/svn/trunk
+ * Look at the [http://code.google.com/p/multiplayer-api/issues/list issue tracker] to check for future releases, bugs, and requested features.
  * Mailing list: If you join, you will receive emails from codesite-noreply@google.com
  These are the current mailing lists:
   * [http://groups.google.com/group/multiplayer-api Game developers]

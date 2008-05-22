@@ -39,4 +39,5 @@ The _container_ is in charge of:
   * displaying game messages, e.g., if a player disconnects or the match ends
   * allowing the players to bet on the outcome of the game and change the stakes
   * allowing the players to end the match in a tie, to cancel the match, or to save the match
-  * handling turn-based games, i.e., limit the time per move or per match, display who has the current turn, who much time he has left to make his move, etc
+  * handling turn-based games, e.g., limit the time per move or per match, 
+    display who has the current turn, who much time he has left to make his move, etc

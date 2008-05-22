@@ -1,4 +1,4 @@
-#summary Call it to start your turn (For Turn-based games)
+#summary Handling who has the current turn (For Turn-based games)
 
 {{{
 do_start_my_turn()

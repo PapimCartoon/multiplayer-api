@@ -39,7 +39,7 @@ Your class may override some of the callbacks and respond appropriately to them;
 || *Function* || *Description* ||
 || [do_register_on_server] || Call it after your _game_ finished loading ||
 || [do_store_trace] || Call it to store traces to help you debug your application in the emulator and online ||
-|| [got_general_info] || Called to pass general info, e.g., log url for branding your game ||
+|| [got_general_info] || Called to pass general info, e.g., url of a logo for branding your game ||
 || [got_user_info] || Called to pass user specific info, e.g., user name or avatar ||
 || [got_my_user_id] || Called to pass your user_id ||
 || [got_match_started] || Called when a match starts ||
@@ -324,6 +324,4 @@ Used to store traces to help debug the game.
 Note that in the online version, we store only the last 100 traces (and discard old traces).
 </comment>
 <function>do_store_trace(functionName:String, args:Object)</function>
-
-
 

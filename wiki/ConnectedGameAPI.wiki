@@ -1,23 +1,17 @@
 #summary An API that converts single-player games to multiplayer
 
-<function>got_operation_done(operation_id:operation_id, result:Object, operation_answer:EnumOperationAnswer, free_text_explanation:String, time_stamp_milliseconds:long)</function>
+{{{
+got_general_info(keys:Array/*String*/, values:Array/*Object*/)
+got_connected_user_info(keys:Array/*String*/, values:Array/*Object*/)
+got_connected_match_started(extra_match_info:Object, match_started_time:Number)
+got_connected_match_over()
+got_connected_stored_match_state(keys:Array/*String*/, values:Array/*Object*/)
 
-<function>got_general_info(key:String, data:Object)</function>
-<function>got_my_user_info(key:String, data:Object)</function>
+do_store_match_state(key:String, value:Object)
+do_connected_match_over(score:int, did_win:Boolean)
+}}}
 
-<function>got_match_started()</function>
-<function>got_match_over()</function>
-<function>do_match_over(did_won:boolean)</function>
-
-
-<comment>
-The score must be higher than 0 (and not equal to 0)
+The score must be strictly higher than 0.
 As the user advances, his score should get higher.
-</comment>
-<function>do_set_score(score:int)</function>
 
-<comment>
 If you want to be able to save the game, you should store the match state occasionally.
-</comment>
-<function>do_store_match_state(key:String, data:Object)</function>
-<function>got_stored_match_state(keys:String[], datas:Object[])</function>

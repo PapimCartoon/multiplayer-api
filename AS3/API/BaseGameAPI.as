@@ -1,5 +1,4 @@
-package
-{
+package {
 	import flash.events.*;
 	import flash.external.ExternalInterface;
 	import flash.net.LocalConnection;

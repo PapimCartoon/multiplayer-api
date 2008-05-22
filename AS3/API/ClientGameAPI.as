@@ -1,5 +1,4 @@
-package
-{
+package {
 	public class ClientGameAPI extends BaseGameAPI
 	{
 		public function ClientGameAPI(parameters:Object):void {

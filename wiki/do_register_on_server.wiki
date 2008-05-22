@@ -1,0 +1,5 @@
+#summary Call it once after your game finished loading.
+
+The first operation that your game should call is `do_register_on_server()`.
+Call it after your game SWF and any other resources finished loading completely.
+The server may start a new match only after all players have called `do_register_on_server`.

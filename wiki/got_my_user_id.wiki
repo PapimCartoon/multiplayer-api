@@ -8,6 +8,3 @@ got_my_user_id(my_user_id:int)
 It lets the game know what is the `user_id` of the user that is running this game.
 Users can be partitioned into players and viewers.
 Every user is identified by a unique `user_id`.
-
-  * very long line very long line very long line very long line very long line very long line very long line very long line very long line very long line very long line very long line very long line very long line very long line very long line very long line very long line very long line very long line very long line
-  * very long line very long line very long line very long line very long line very long line very long line very long line very long line very long line very long line very long line very long line very long line very long line very long line very long line very long line very long line very long line very long line

@@ -2,6 +2,7 @@
 
 {{{
 do_store_match_state(key:String, value:Object)
+got_stored_match_state(user_ids:Array/*int*/, keys:Array/*String*/, values:Array/*Object*/)
 }}}
 
 Use `do_store_match_state` to store match state on the server.

@@ -11,7 +11,7 @@ do_store_match_state(key:String, value:Object)
 do_connected_match_over(score:int, did_win:Boolean)
 }}}
 
-The score must be strictly higher than 0.
-As the user advances, his score should get higher.
+The `score` must be strictly higher than 0.
+As the user advances, his `score` should get higher.
 
 If you want to be able to save the game, you should store the match state occasionally.

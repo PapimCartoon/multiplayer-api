@@ -22,10 +22,10 @@ First step: Determining `sPrefix`.
 Both _game_ and _container_ get the same flashvar (or url) parameter:
 `prefix=XXXX`. `XXXX` is either a number or a or the name of a javascript function. If it is a function, then we call that function (using `ExternalInterface.call` available from flash 8), and it should return a fixed number. For example, the function below returns a fixed random number:
 {{{
-		var prefix_random_number = 1+ Math.ceil(1000000*Math.random());
-		function javascript_get_prefix_method() {
-			return prefix_random_number;
-		}
+var prefix_random_number = 1+ Math.ceil(1000000*Math.random());
+function javascript_get_prefix_method() {
+	return prefix_random_number;
+}
 }}}
 We denote by `sPrefix` the number that is either `XXXX` or the number returned by the javascript function.
 The reason we use a function name (instead of a number) is to allow the browser to cache the SWF file. If we had used a different number each time, then the browser won't cache the SWF file.

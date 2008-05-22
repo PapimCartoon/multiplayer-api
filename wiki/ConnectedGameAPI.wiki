@@ -1,4 +1,4 @@
-Summary: blabla zxcvcx.
+#summary An API that converts single-player games to multiplayer
 
 <function>got_operation_done(operation_id:operation_id, result:Object, operation_answer:EnumOperationAnswer, free_text_explanation:String, time_stamp_milliseconds:long)</function>
 

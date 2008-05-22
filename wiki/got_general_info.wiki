@@ -14,7 +14,7 @@ These are the keys that are currently supported:
   Because the logo is vector based, it can be placed in a rectangular space of any size,
   e.g., if you want to put the logo in a 40x40 space, 
   then modify the logo the movie clip (called `logoMovieClip`):
-  {{
+  {{{
   logoMovieClip._xscale = 40;
   logoMovieClip._yscale = 40;
-  }}
+  }}}

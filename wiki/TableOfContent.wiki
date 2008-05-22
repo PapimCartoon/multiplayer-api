@@ -1,6 +1,6 @@
+#summary Table of contents: Multiplayer API, emulator, and tutorials
+
 This wiki contains documentation about the Multiplayer API, the emulator, and tutorials for creating multiplayer games.
-
-
 
 = Multiplayer API =
 The Multiplayer API is a set of APIs to develop multiplayer flash games.

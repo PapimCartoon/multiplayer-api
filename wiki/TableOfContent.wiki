@@ -14,7 +14,7 @@ The resulting game is a SWF file, written either in actionscript2 (AS2) or actio
 The Multiplayer API will be composed of 3 APIs:
   * [ClientGameAPI] - for developing games using only client-side code.
   * [ScriptGameAPI] - uses both client-side and server-side code.
-  * [ConnectedGameAPI] - for single-player games that can be made multiplayer using a small set of functions to report to the server the current state and score.
+  * [ConnectedGameAPI] - for converting single-player games to multiplayer.
 
 You should write a class that extends one of the above APIs,
 and when your SWF is loaded, it should create one instance of that class.

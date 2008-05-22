@@ -1,0 +1,22 @@
+#summary Called when a match starts
+
+{{{
+got_match_started(user_ids:Array/*int*/, extra_match_info:Object, match_started_time:int) 
+}}}
+
+`got_match_started` is called when a new match has started.
+
+`user_ids` is the set of the user_id of the players.
+
+If the game needs to make the same random choices in all the players (e.g., the order of a deck of cards),
+then your game should use a random seed that is identical in all players.
+You can use `match_started_time` as such a random seed. 
+If the match is saved and then loaded, the value of `match_started_time` will be the same.
+
+If your game has many versions, you may use `extra_match_info` to pass your game extra parameters.
+E.g., in the game of Go it can contain: the size of the board (9x9, 13x13, or 19x19), the komi, etc.
+In the game of Puzzle it can be the picture domain (animal pictures, travel pictures, etc).
+This mechanism is useful if you want to develop many variants of the same game.
+With a single SWF you can create many game variants (by choosing different `extra_match_info` for each game variant).
+The `extra_match_info` will be entered when you submit the game online, 
+or in the emulator when you start a new match.

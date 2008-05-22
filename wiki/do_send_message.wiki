@@ -1,0 +1,13 @@
+#summary Call it to send a message to a given set of users
+
+{{{
+do_send_message(to_user_ids:Array/*int*/, value:Object)
+}}}
+
+To send a message to set of users, call `do_send_message`.
+
+`to_user_ids` is the set of users that should receive the message.
+If `to_user_ids`=null, then the message is sent to all users (both players and viewers).
+Otherwise, the command will be sent to the users in `to_user_ids`.
+
+Note the difference between `do_store_match_state` and `do_send_message` [Match_state_vs_messages here]

@@ -1,3 +1,5 @@
+#summary A multiplayer API using both client-side and server-side code
+
 See first [ClientGameAPI].
 The changes from ClientGameAPI are as follows:
 Removed these:

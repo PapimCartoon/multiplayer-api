@@ -1,0 +1,20 @@
+#summary Called to pass general info, e.g., url of a logo for branding your game
+
+{{{
+got_general_info(keys:Array/*String*/, values:Array/*Object*/)
+}}}
+
+`got_general_info` is used to pass parameters (key-value pairs) to the game.
+These are the keys that are currently supported:
+  # `logo_swf_full_url`
+  `logo_swf_full_url` is a full url (starting with "http://") 
+  that contains a logo in a flash SWF file of size 100x100 pixels, and it is vector based.
+  The game should place the logo in various places in the game
+  (e.g., in every square in a TicTacToe game, or on every Chess piece, etc)
+  Because the logo is vector based, it can be placed in a rectangular space of any size,
+  e.g., if you want to put the logo in a 40x40 space, 
+  then modify the logo the movie clip (called `logoMovieClip`):
+  {{
+  logoMovieClip._xscale = 40;
+  logoMovieClip._yscale = 40;
+  }}

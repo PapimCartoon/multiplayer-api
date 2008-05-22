@@ -1,0 +1,13 @@
+#summary Called to pass user specific info, e.g., user name or avatar
+
+{{{
+got_user_info(user_id:int, keys:Array/*String*/, values:Array/*Object*/)  
+}}}
+
+`got_user_info` is used to pass user info to the game; it will be called for each user (players and viewers) of the game.
+
+The keys that are currently supported:
+  # `avatar_full_url`
+    Full url of the avatar of the user.
+  # `nick_name`
+    The nick name of the user.

@@ -2,6 +2,7 @@
 
 {{{
 do_set_timer(key:String, in_seconds:int, pass_back:Object)
+got_timer(from_user_id:int, key:String, pass_back:Object)  
 }}}
 
 When a user calls `do_set_timer`, the server will call `got_timer` on *all* users after `in_seconds` seconds passed.

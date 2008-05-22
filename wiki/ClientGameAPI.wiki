@@ -1,7 +1,9 @@
-The communication between your game and our server is done by writing a class that extends `ClientGameAPI`.
+#summary A multiplayer API using only client-side code
 
-The functions in `ClientGameAPI` can be divided into two categories:
- # Operations: functions starting with `do_`
+The communication between your game and our server is done by writing a class that extends `ClientGameAPI.as`, and instantiating one instance of your class.
+
+The functions in `ClientGameAPI` can be divided into two categories: Operations and Callbacks.
+Operations are functions starting with `do_`
 {{{
 do_register_on_server()
 do_store_trace(funcname:String, args:Object)
@@ -13,7 +15,7 @@ do_store_match_state(key:String, value:Object)
 do_send_message(to_user_ids:Array/*int*/, value:Object)
 do_set_timer(key:String, in_seconds:int, pass_back:Object)
 }}}
- # Callbacks: functions starting with `got_`
+Callbacks are functions starting with `got_`
 {{{
 got_error(in_function_name:String, err:Error)
 got_general_info(keys:Array/*String*/, values:Array/*Object*/)   
@@ -28,9 +30,35 @@ got_message(user_id:int, value:Object)
 got_timer(from_user_id:int, key:String, pass_back:Object)  
 }}}
 
-Operations are functions that your game may call,
-and callbacks are functions that our server may call on your game.
-Your class should override the callbacks and respond appropriately to them; it is not required to override _all_ the callbacks.
+Operations are functions that your _game_ may call,
+and callbacks are functions that the _container_ may call on your game.
+Your class may override some of the callbacks and respond appropriately to them; it is not mandatory to override _all_ the callbacks.
+
+=== High level description of the functions === 
+
+|| *Function* || *Description* ||
+|| [do_register_on_server] || Call it after your _game_ finished loading ||
+|| [do_store_trace] || Call it to store traces to help you debug your application in the emulator and online ||
+|| [got_general_info] || Called to pass general info, e.g., log url for branding your game ||
+|| [got_user_info] || Called to pass user specific info, e.g., user name or avatar ||
+|| [got_my_user_id] || Called to pass your user_id ||
+|| [got_match_started] || Called when a match starts ||
+|| [do_agree_on_match_over] || Call it to end the match. The match will be over when all players called it ||
+|| [got_match_over] || Called when the match is over ||
+|| [do_store_match_state] || Call it to store/update/delete you match state ||
+|| [got_stored_match_state] || Called when a user changed the match state ||
+|| [do_send_message] || Call it to send a message to a given set of users ||
+|| [got_message] || Called when a user get a message ||
+|| [do_set_timer] || Call it to set a timer on the server (similar to `setTimeout` in AS) ||
+|| [got_timer] || Called on all users when when the timer ticks/expires ||
+|| [do_start_my_turn] || For Turn-based games. Call it to start your turn ||
+|| [got_start_turn_of] || Called to acknowledge you have the turn ||
+|| [do_end_my_turn] || Call it to end your turn, and set who may play next ||
+|| [got_end_turn_of] || Called to acknowledge your turn ended ||
+|| [got_error] || Called when one of the callbacks threw an error ||
+|| [do_client_protocol_error_with_description] || Call it when you have to cancel the game due to an unrecoverable error ||
+
+Read here about [Match_state_vs_messages Match state vs Sending messages].
 
 
 === Viewers and players === 
@@ -296,8 +324,6 @@ Used to store traces to help debug the game.
 Note that in the online version, we store only the last 100 traces (and discard old traces).
 </comment>
 <function>do_store_trace(functionName:String, args:Object)</function>
-
-
 
 
 

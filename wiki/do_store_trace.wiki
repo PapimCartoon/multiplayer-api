@@ -1,0 +1,4 @@
+#summary Call it to store traces to help you debug your application in the emulator and online
+
+Used to store traces to help debug the game.
+Note that in the online version, we store only the last 100 traces (and discard old traces).

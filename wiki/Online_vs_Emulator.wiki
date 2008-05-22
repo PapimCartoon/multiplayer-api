@@ -1,3 +1,5 @@
+#summary A comparison between testing in the Emulator and testing online
+
 Note that testing online and on the emulator have differences,
 and the game should always be tested online as well.
 

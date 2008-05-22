@@ -1,0 +1,11 @@
+#summary Storing match state vs. sending messages
+
+Note the difference between [do_store_match_state] and [do_send_message]:
+Messages are not stored in the server memory, they are simply sent to the recipients.
+Match-state is stored on the server, and when a new player/viewer connects, he gets the entire match state.
+
+We recommend using [do_store_match_state] for everything that is the game state, and [do_send_message] only in the rare cases you need to send a message to a specific user (that other players or viewers should not see).
+
+The difference is critical when your game needs to support *viewers*.
+Think of a TicTacToe game between players A and B.
+You can either use _messages_ ([do_send_message]) to pass moves of players A and B, or you can store _match state_ ([do_store_match_state]) on the server. The difference appears when a new viewer C joins the match. If you use _match state_, then viewer C will get the entire match state when he connects, and he will be up-to-date on the game. However, if you use _messages_, then either player A or player B will need to send the match state to viewer C, and it can even become more complicated because players A and B game-play must not be disrupted (imagine a real-time shooter game, instead of TicTacToe, and you will understand the problem).

@@ -1,7 +1,6 @@
-
-	class ClientGameAPI extends BaseGameAPI
+	public class ScriptGameAPI extends BaseGameAPI
 	{
-		public function ClientGameAPI(parameters:Object) {
+		public function ScriptGameAPI(parameters:Object):Void {
 			super(parameters);
 		}
 
@@ -16,19 +15,12 @@
 		public function got_stored_match_state(user_ids:Array/*Number*/, keys:Array/*String*/, values:Array/*Object*/):Void {}
 		public function got_message(user_id:Number, value:Object):Void {}
 		public function got_timer(from_user_id:Number, key:String, pass_back:Object):Void {}
+		public function got_from_script(type:String, player_id:user_id, message:String):Void {}
+		public function got_error_in_script_output(timed_out_url:Array/*String*/, url:String, url_output:String, url_output_headers:String, error_message:String):Void {}
 
 		// Do functions. You may call these functions.
-		public function do_agree_on_match_over(user_ids:Array/*Number*/, scores:Array/*Number*/, pot_percentages:Array/*Number*/):Void {
-			sendDoOperation("do_agree_on_match_over", arguments);
-		}
-		public function do_start_my_turn():Void {
-			sendDoOperation("do_start_my_turn", arguments);
-		}
-		public function do_end_my_turn(next_turn_of_player_ids:Array/*Number*/):Void {
-			sendDoOperation("do_end_my_turn", arguments);
-		}
-		public function do_client_protocol_error_with_description(error_description:Object):Void {			
-			sendDoOperation("do_client_protocol_error_with_description", arguments);
+		public function do_send_to_script(message:String):Void {
+			sendDoOperation("do_send_to_script", arguments);
 		}
 		public function do_store_match_state(key:String, value:Object):Void {
 			sendDoOperation("do_store_match_state", arguments);

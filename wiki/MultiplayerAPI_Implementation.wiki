@@ -1,4 +1,4 @@
-#summary The Multiplayer API implementation details using LocalConnection (the protocol between the _game_ and the _container_).
+#summary The Multiplayer API implementation details using LocalConnection (the protocol between the game and the container).
 
 We use LocalConnection to pass commands, therefore, there is a 40K limit on arguments to these methods.
 

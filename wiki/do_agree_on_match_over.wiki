@@ -1,0 +1,33 @@
+#summary Call it to end the match. The match will be over when all players called it
+
+{{{
+do_agree_on_match_over(user_ids:Array/*int*/, scores:Array/*int*/, pot_percentages:Array/*int*/)
+}}}
+
+To end a match, all players must call `do_agree_on_match_over` with the same exact parameters.
+
+`user_ids` is the set of the users that end the match.
+In the common scenario, `user_ids` contains all the players in the match.
+However, it is possible that only a subset of the players end the match (but in any case, all players must call `do_agree_on_match_over`).
+
+`scores` determines the score of each of the users ending the match.
+The user with the highest score is the winner, and if all scores are identical than we have a tie.
+
+`pot_percentages` determines how the stake (or betting pot) should be divided among the players.
+If `pot_percentages` is null, then the users in `user_ids` should get their stakes back (e.g., if the game was tied).
+Otherwise, `pot_percentages[i]` contains a number between 0 and 100, 
+that represents the percentage of the pot that user `user_ids[i]` should receive.
+
+For example, suppose you have 3 players with user_ids=41, 42, 43. 
+Suppose user_id=42 ended the match with score 90, and he should get 20% of the pot.
+Then all the players (users 41, 42, 43) should call:
+{{{
+  do_agree_on_match_over([42], [90], [20])
+}}}
+Now users 41 and 43 continue to play, 
+and the match is over with the score=100 to user_id=41, and score=10 to user_id=43,
+and you wish to give 90% of the pot to user 41.
+Then all players (users 41 and 43) should call:
+{{{
+  do_agree_on_match_over([41,43], [100,10], [90, 10])
+}}}

@@ -1,3 +1,5 @@
+Summary: blabla zxcvcx.
+
 <function>got_operation_done(operation_id:operation_id, result:Object, operation_answer:EnumOperationAnswer, free_text_explanation:String, time_stamp_milliseconds:long)</function>
 
 <function>got_general_info(key:String, data:Object)</function>

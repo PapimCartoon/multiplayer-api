@@ -1,7 +1,0 @@
-#summary Called when a user changed the match state
-
-{{{
-got_stored_match_state(user_ids:Array/*int*/, keys:Array/*String*/, values:Array/*Object*/)
-}}}
-
-See [do_store_match_state]

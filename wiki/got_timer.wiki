@@ -1,7 +1,0 @@
-#summary Called on all users when when the timer ticks/expires
-
-{{{
-got_timer(from_user_id:int, key:String, pass_back:Object)  
-}}}
-
-See [do_set_timer]

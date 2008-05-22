@@ -1,7 +1,0 @@
-#summary Called when a user get a message
-
-{{{
-got_message(user_id:int, value:Object)
-}}}
-
-See [do_send_message]

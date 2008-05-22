@@ -7,7 +7,7 @@ got_general_info(keys:Array/*String*/, values:Array/*Object*/)
 `got_general_info` is used to pass parameters (key-value pairs) to the game.
 These are the keys that are currently supported:
   # `logo_swf_full_url`
-  `logo_swf_full_url` is a full url (starting with "http://") 
+  `logo_swf_full_url` is a full url (starting with `http://`) 
   that contains a logo in a flash SWF file of size 100x100 pixels, and it is vector based.
   The game should place the logo in various places in the game
   (e.g., in every square in a TicTacToe game, or on every Chess piece, etc)

@@ -4,6 +4,7 @@ This document describes the communication protocol between
   * the server (the come2play gaming server), and
   * the script (the script you wrote with the server-side logic of your game)
 
+=== GET or POST requests ===
 Your script should handle GET requests of this form:
 {{{
   ?milli_time_stamp=*&msg_type=*&...
@@ -16,25 +17,40 @@ GET requests are better for several reasons:
   * they are easier to debug (you can just copy&paste the url in your browser)
   * GET request can (and should) be cached by various agents; POST requests are usually not cached because they are intended for data manipulation.
 
+
 The server must respond with either status:
 {{{
 HTTP/1.1 200 OK
 HTTP/1.1 100 Continue
 }}}
 
+=== Script input ===
 These are the possible message types (some messages have extra parameters): 
 {{{
 msg_type = new_game | load_game | made_move | keep_alive
-made_move:		playing_user_ids, stakes, old_game_state, from_user_id, msg
-load_game:		playing_user_ids, old_game_state
-new_game:		playing_user_ids
+new_game:  playing_user_ids
+load_game: playing_user_ids, old_game_state
+made_move: playing_user_ids, old_game_state, stakes, from_user_id, msg
 }}}
 
-Players can only disconnect during the match (new players cannot join; only viewers can join).
-Note that the script is not notified when a user disconnects. 
-If the script needs to know when a user disconnects, then other users can send the script a special message,
-and the server will pass in playing_user_ids the users that are currently playing.
+`msg_type` 
 
+`playing_user_ids` is an integer list of user ids, e.g., '23541,48254,122334'.
+This list contains only the users that are currently playing, i.e., it doesn't contain users that already disconnected or quit the match.
+
+Players can only disconnect during the match (new players cannot join; only viewers can join, but viewers cannot communicate with the script).
+Note that the script is not notified when a user disconnects. 
+If the script needs to know when a user disconnects, then other players can send the script a special message.
+
+`old_game_state` is a string describing the game state. This string was returned in a previous script output (the script output is described below).
+
+The players can bet on the outcome of the game. `stakes` is the amount in the current betting pot. The syntax of `stakes` number of tokens the 
+
+`from_user_id` is the user_id that sent the message.
+
+`msg` is the string that was passed in [do_send_to_script].
+
+=== Script output ===
 Each message type should return different variables:
 {{{
 new_game or load_game: milli_time_stamp, new_game_state, turn_of, (msg_to_XXX | msg_to_viewer | msg_to_all)

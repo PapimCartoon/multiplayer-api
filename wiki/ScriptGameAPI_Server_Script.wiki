@@ -6,7 +6,7 @@ This document describes the communication protocol between
 
 Your script should handle GET requests of this form:
 {{{
-  GET /*?milli_time_stamp=*&msg_type=*&...
+  ?milli_time_stamp=*&msg_type=*&...
 }}}
 The script should be stateless, because the server may send the request several times and/or to different URLs (if you defined several backup urls).
 

@@ -11,7 +11,7 @@ The resulting game is a SWF file, written either in actionscript2 (AS2) or actio
 
 
 === Multiplayer APIs ===
-The Multiplayer API will be composed of 3 APIs:
+The Multiplayer API is composed of 3 APIs:
   * [ClientGameAPI] - for developing games using only client-side code.
   * [ScriptGameAPI] - uses both client-side and server-side code.
   * [ConnectedGameAPI] - for converting single-player games to multiplayer.
@@ -25,11 +25,11 @@ You may either test the games in the [Emulator], or submit your game online to a
 The current version of the [Emulator] only supports [ClientGameAPI].
 Coming soon (TODO): In the near future the [Emulator] will support [ScriptGameAPI] and [ConnectedGameAPI].
 
-ClientGameAPI uses only client-side code, and therefore hackers (black-hat players) may be able to send illegal messages to other players
+[ClientGameAPI] uses only client-side code, and therefore hackers (black-hat players) may be able to send illegal messages to other players
 and create a protocol error (see @do_client_protocol_error_with_description).
 In case of a protocol error, the game is canceled and the original stakes are returned to all players.
 
-ScriptGameAPI also uses server-side code, in contrast to ClientGameAPI that uses only client-side.
+[ScriptGameAPI] also uses server-side code, in contrast to [ClientGameAPI] that uses only client-side.
 If security is critical in your game, consider using ScriptGameAPI instead.
 You will need access to a server that can run server-side logic in a language such as ASP, PHP, Perl, or Java. 
 

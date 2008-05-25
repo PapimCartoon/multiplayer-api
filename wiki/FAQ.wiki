@@ -1,7 +1,6 @@
 #summary Frequently Asked Questions.
 
-=== How did you ensure that people cannot break
-your API and cheat in games? ===
+=== How did you ensure that people cannot break your API and cheat in games? ===
 
 First, the Multiplayer API is only an API to write games, i.e., if you write games with security holes then it will be easier to cheat in them. Also, the API does not define the communication protocol with the server (it only defines the communication between the _game_ and its _container_).
 On the [Come2Play] platform, the communication is encrypted and the _container_ SWF is encrypted and obfuscated. Therefore it is unlikely that hackers will be able to cheat.

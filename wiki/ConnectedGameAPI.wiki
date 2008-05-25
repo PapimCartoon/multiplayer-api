@@ -1,7 +1,7 @@
 #summary An API that converts single-player games to multiplayer
 
-ConnectedGameAPI is used to easily convert a score-based single-player game to a multiplayer game.
-The functions below are similar to those in ClientGameAPI (the only difference is that `user_id` was removed because you only have a single user):
+ConnectedGameAPI is used to easily convert a score-based *single-player* game to a multiplayer game.
+The functions below are similar to those in [ClientGameAPI] (the only difference is that `user_id` was removed because you only have a single user):
   * `got_general_info` is identical to [got_general_info]
   * `got_connected_user_info` is similar to [got_user_info]
   * `got_connected_match_started` is similar to [got_match_started]

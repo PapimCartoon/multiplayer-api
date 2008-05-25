@@ -14,7 +14,7 @@ The script should be stateless, because the server may send the request several 
 You have an option to use POST requests.
 Prefer POST over GET only if your `old_game_state` is really long (and your IIS/Apache have a limitation on the length of GET requests).
 GET requests are better for several reasons:
-  * they are easier to debug (you can just copy&paste the url in your browser)
+  * They are easier to debug (you can just copy&paste the url in your browser).
   * GET request can (and should) be cached by various agents; POST requests are usually not cached because they are intended for data manipulation.
 
 
@@ -34,10 +34,10 @@ made_move: playing_user_ids, old_game_state, stakes, from_user_id, msg
 }}}
 
 `msg_type` has 4 possible values:
-  * `new_game` to start a new game
-  * `load_game` to load an old game
-  * `made_move` to make a move by some player
-  * `keep_alive` to keep the TCP connection between the server and script alive
+  * `new_game` to start a new game.
+  * `load_game` to load an old game.
+  * `made_move` to make a move by some player.
+  * `keep_alive` to keep the TCP connection between the server and script alive.
 
 `playing_user_ids` is an integer list of user ids, e.g., '23541,48254,122334'.
 This list contains only the users that are currently playing, i.e., it doesn't contain users that already disconnected or quit the match.
@@ -48,33 +48,43 @@ If the script needs to know when a user disconnects, then other players can send
 
 `old_game_state` is a string describing the game state. This string was returned in a previous script output (the script output is described below).
 
-The players can bet on the outcome of the game. `stakes` is the amount in the current betting pot. The syntax of `stakes` number of tokens the 
+The players can bet on the outcome of the game. `stakes` is the amount in the current betting pot. The syntax of `stakes` is `id1:quantity1,id2:quantity2,...`, e.g., `1:100,2:30,9:59`.
 
-`from_user_id` is the user_id that sent the message.
-
-`msg` is the string that was passed in [do_send_to_script].
+`from_user_id` is the user_id that sent the message, and `msg` is the string that was passed in [do_send_to_script].
 
 === Script output ===
-Each message type should return different a different output.
+The output is different for each message type.
   * All message types should return the same `milli_time_stamp` the script got as input.
-  * All messages but `keep_alive` should return `new_game_state`, `turn_of`, and may return any of the following: `msg_to_XXX`, `msg_to_viewer`, or `msg_to_all`.
+  * All messages, except `keep_alive`, should return `new_game_state`, `turn_of`, and may return any of the following: `msg_to_XXX`, `msg_to_viewer`, or `msg_to_all`.
   * `made_move` must also return `msg_to_new_viewer`, and may return `match_result_XXX`.
 
 You should replace `XXX` with the user_id, e.g., if you want to send a message to `user_id=666` then the script should output `msg_to_666`.
-The turn_of sets a timer for a certain player, and when the timer expires than that player loses.
-(For more info on the script output, see `Class MyResponse` in `ServerSideLogic.asp`)
+
+Here is the explanation on each variable in the output:
+  * `milli_time_stamp` is the same value that was passed in the input.
+  * `new_game_state` is the state of the game after the message was processed (see `old_game_state` in the input).
+  * `turn_of` is relevant in turn-based games. It sets a timer for a certain player, and when the timer expires than that player loses.
+  * `msg_to_XXX` is a string to send only to user_id `XXX` (see [got_from_script]).
+  * `msg_to_viewer` is a message to send to all viewers. 
+  * `msg_to_player` is a message to send to all players.
+  * `msg_to_all` is a message to send to all players and viewers.
+  * `msg_to_new_viewer` is the first message to send to a future new viewer (that will start viewing the match). Note that `msg_to_viewer` is sent to existing viewers. 
+  * `match_result_XXX` is the outcome of the match for user_id `XXX` (if the match is over for that user). The value of `match_result_XXX` is `<score>x<stake>`, where `<stake>` is either `ReturnStakes` (the stakes should be returned; useful in case of Tie/Draw), or `Win` (the user get the entire pot, i.e., all the stakes), or `%<percentage>` (e.g., `%30` means the user gets `%30` percents of the pot), or a specific stake (e.g., `1:70,2:30`. See the input parameter `stake`)
+
+
 
 
 === Keep alive ===
 To make communication between the server and the script more efficient, 
-the come2play server keeps the connection alive as long as ongoing games exist.
+the gaming server keeps the connection alive as long as an ongoing games exist.
+
 To know how to seperate between the GET responses, we use this header:
 {{{
 Content-Length: ...
 }}}
 Therefore, make sure your script returns this header correctly by using buffering 
 (i.e., your script should buffer its response, and send the response only when it is complete.)
-It is done like this in various languages:
+It is done as follows in various scripting languages:
 {{{
 ASP: Response.Buffer = true
 ASP.Net: Page.Response.BufferOutput = true

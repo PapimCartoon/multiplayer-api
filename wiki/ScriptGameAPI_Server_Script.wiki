@@ -169,7 +169,7 @@ For example, "55x66xEEEEEEEEE" represents a match where the white player is 55, 
 For example, consider the following operations for the TicTacToe two-player game:
 (on the Come2Play server the link is: http://www.come2play.com/Shared/java_calls/api/TicTacToeGameLogic.asp)
 
-  * [http://www.come2play.com/Shared/java_calls/api/TicTacToeGameLogic.asp?milli_time_stamp=123&msg_type=new_game&playing_user_ids=55x66 Starting a new game]
+[http://www.come2play.com/Shared/java_calls/api/TicTacToeGameLogic.asp?milli_time_stamp=123&msg_type=new_game&playing_user_ids=55x66 Starting a new game]
 {{{
 > TicTacToeGameLogic.asp?milli_time_stamp=123&msg_type=new_game&playing_user_ids=55x66
 < turn_of=55&new_game_state=55x66xEEEEEEEEE&msg_to_all=55x66xEEEEEEEEE&msg_to_new_viewer=55x66xEEEEEEEEE&milli_time_stamp=123
@@ -178,7 +178,7 @@ The empty board is broadcasted to all players and viewers.
 User 55 will have a timer of 100 seconds to complete his move.
 
 
-  * [http://www.come2play.com/Shared/java_calls/api/TicTacToeGameLogic.asp?milli_time_stamp=123&msg_type=load_game&playing_user_ids=66x55&old_game_state=55x66xEEWBEEEEW  Loading a saved game]:
+[http://www.come2play.com/Shared/java_calls/api/TicTacToeGameLogic.asp?milli_time_stamp=123&msg_type=load_game&playing_user_ids=66x55&old_game_state=55x66xEEWBEEEEW  Loading a saved game]:
 {{{
 > TicTacToeGameLogic.asp?milli_time_stamp=123&msg_type=load_game&playing_user_ids=66x55&old_game_state=55x66xEEWBEEEEW
 < turn_of=66&new_game_state=55x66xEEWBEEEEW&msg_to_all=55x66xEEWBEEEEW&msg_to_new_viewer=55x66xEEWBEEEEW&milli_time_stamp=123
@@ -188,14 +188,14 @@ This saved game is broadcasted to all players and viewers.
 User 66 will have a timer of 70 seconds to complete his move.
 
 
-  * [http://www.come2play.com/Shared/java_calls/api/TicTacToeGameLogic.asp?milli_time_stamp=123&msg_type=load_game&playing_user_ids=66x55&old_game_state=55x66xWWEWEEBBB Loading a saved game that already ended]:
+[http://www.come2play.com/Shared/java_calls/api/TicTacToeGameLogic.asp?milli_time_stamp=123&msg_type=load_game&playing_user_ids=66x55&old_game_state=55x66xWWEWEEBBB Loading a saved game that already ended]:
 {{{
 > TicTacToeGameLogic.asp?milli_time_stamp=123&msg_type=load_game&playing_user_ids=66x55&old_game_state=55x66xWWEWEEBBB
 < new_game_state=55x66xWWEWEEBBB&match_result_66=1xWIN&match_result_55=-1x0&msg_to_all=55x66xWWEWEEBBB&milli_time_stamp=123
 }}}
 
 
-  * [http://www.come2play.com/Shared/java_calls/api/TicTacToeGameLogic.asp?milli_time_stamp=123&msg_type=made_move&playing_user_ids=66x55&from_user_id=66&msg=1X2&old_game_state=55x66xEEWBEEEEW&stakes=10   Making a move, afterwhich the game is still in progress]:
+[http://www.come2play.com/Shared/java_calls/api/TicTacToeGameLogic.asp?milli_time_stamp=123&msg_type=made_move&playing_user_ids=66x55&from_user_id=66&msg=1X2&old_game_state=55x66xEEWBEEEEW&stakes=10   Making a move, afterwhich the game is still in progress]:
 {{{
 > TicTacToeGameLogic.asp?milli_time_stamp=123&msg_type=made_move&playing_user_ids=66x55&from_user_id=66&msg=1X2&old_game_state=55x66xEEWBEEEEW&stakes=10
 < turn_of=55&new_game_state=55x66xEEWBEBEEW&msg_to_new_viewer=55x66xEEWBEBEEW&msg_to_55=1X2&msg_to_viewer=1X2&milli_time_stamp=123
@@ -215,7 +215,7 @@ This move is sent to user 55 (white player) and any viewer.
 A new viewer that might join the game in this stage will get this match state "55x66xEEWBEBEEW".
 User 55 will have a timer of 60 seconds to complete his move.
 
-  * [http://www.come2play.com/Shared/java_calls/api/TicTacToeGameLogic.asp?milli_time_stamp=123&msg_type=made_move&playing_user_ids=66x55&from_user_id=55&msg=0X2&old_game_state=55x66xWBEWBBBWW&stakes=9  Making a move, afterwhich the game ends in tie]:
+[http://www.come2play.com/Shared/java_calls/api/TicTacToeGameLogic.asp?milli_time_stamp=123&msg_type=made_move&playing_user_ids=66x55&from_user_id=55&msg=0X2&old_game_state=55x66xWBEWBBBWW&stakes=9  Making a move, afterwhich the game ends in tie]:
 {{{
 > TicTacToeGameLogic.asp?milli_time_stamp=123&msg_type=made_move&playing_user_ids=66x55&from_user_id=55&msg=0X2&old_game_state=55x66xWBEWBBBWW&stakes=9
 < new_game_state=55x66xWBWWBBBWW&match_result_55=0xReturnStakes&match_result_66=0xReturnStakes&msg_to_66=0X2&msg_to_viewer=0X2&milli_time_stamp=123
@@ -232,13 +232,13 @@ The white chose the cell 0X2 , and this is the new game state:
 -------
 }}}
 
-  * [http://www.come2play.com/Shared/java_calls/api/TicTacToeGameLogic.asp?milli_time_stamp=123&msg_type=made_move&playing_user_ids=66x55&from_user_id=66&msg=2X2&old_game_state=55x66xWWEWEEBBE&stakes=9 Making a move, afterwhich the game ends in black winning]:
+[http://www.come2play.com/Shared/java_calls/api/TicTacToeGameLogic.asp?milli_time_stamp=123&msg_type=made_move&playing_user_ids=66x55&from_user_id=66&msg=2X2&old_game_state=55x66xWWEWEEBBE&stakes=9 Making a move, afterwhich the game ends in black winning]:
 {{{
 > TicTacToeGameLogic.asp?milli_time_stamp=123&msg_type=made_move&playing_user_ids=66x55&from_user_id=66&msg=2X2&old_game_state=55x66xWWEWEEBBE&stakes=9
 < new_game_state=55x66xWWEWEEBBB&match_result_66=1x9&match_result_55=-1x0&msg_to_55=2X2&msg_to_viewer=2X2&milli_time_stamp=123
 }}}
 
-  * [http://www.come2play.com/Shared/java_calls/api/TicTacToeGameLogic.asp?milli_time_stamp=123&msg_type=keep_alive   Keeping the connection alive]:
+[http://www.come2play.com/Shared/java_calls/api/TicTacToeGameLogic.asp?milli_time_stamp=123&msg_type=keep_alive   Keeping the connection alive]:
 {{{
 > TicTacToeGameLogic.asp?milli_time_stamp=123&msg_type=keep_alive
 < milli_time_stamp=123

@@ -78,6 +78,13 @@ Here is the explanation on each variable in the output:
 To make communication between the server and the script more efficient, 
 the gaming server keeps the connection alive as long as an ongoing games exist.
 
+Our server uses pipelining, i.e., several GET requests may be sent to the script even before the script sent its first response.
+See http://www.mozilla.org/projects/netlib/http/pipelining-faq.html
+
+Make sure your server supports "HTTP Keep-Alives".
+In IIS 6.0, HTTP Keep-Alives are enabled by default, which complies with the HTTP/1.1 specification for HTTP Keep-Alives. 
+IIS holds open an inactive connection for as long as the ConnectionTimeout metabase property specifies (the default value is 120 seconds).
+
 To know how to seperate between the GET responses, we use this header:
 {{{
 Content-Length: ...
@@ -93,21 +100,17 @@ JSP: <%@ page autoFlush="false" buffer="50kb" ... %>    Make sure your buffer is
 Python, Perl: plug in a StringIO instance on sys.stdout, or use cgi_buffer.py
 }}}
 
+=== Stateless ===
 Note that the script should be stateless.
 E.g., in ASP, you should not use (or disable) session, cookies or application.
+If you want to be absolutely sure that you script does not use cookies, you can disable cookies completely.
 You can disable cookies in IIS like this:
 {{{
 HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\W3SVC\ASP\Parameters\AllowSessionState
 }}}
 
-Make sure your server supports "HTTP Keep-Alives".
-In IIS 6.0, HTTP Keep-Alives are enabled by default, which complies with the HTTP/1.1 specification for HTTP Keep-Alives. 
-IIS holds open an inactive connection for as long as the ConnectionTimeout metabase property specifies (the default value is 120 seconds).
 
-Our server uses pipelining, i.e., several GET requests may be sent to the script even before the script sent its first response.
-See http://www.mozilla.org/projects/netlib/http/pipelining-faq.html
-
-About the encoding:
+=== Character encoding ===
 The default encoding that our server assumes is ISO-8859-1
 (HTTP 1.1 says that the default charset is ISO-8859-1)
 Because the entire output is url-encoded, the encoding doesn't matter.
@@ -123,12 +126,13 @@ PHP: header('Content-type: text/html; charset=ISO-8859-1');
 Perl and Python: print "Content-Type: text/html; charset=ISO-8859-1\n\n"
 }}}
 
-
-Authentication:
-To make sure a certain GET request indeed originiated from the server (and not from some impostor),
-the server passes another parameter in the GET request called "md5", which is equal to:
+=== Authentication ===
+The gaming server add an `md5` signature to every GET request, so your script can verify that a certain request came from the server.
+The parameter `md5` is equal to:
+{{{
 MD5( md5_secret + milli_time_stamp )
-The md5_secret is different for each game, and can be found online in the come2play website; it is a secret shared between the server and the script.
+}}}
+The `md5_secret` is different for each game, and can be found online in the [Come2Play] website; it is a secret shared between the server and the script.
 Remember that the script is stateless, and therefore imposters cannot cause any harm 
 except wasting the script time and perhaps causing a denial-of-service attack.
 
@@ -139,11 +143,9 @@ md5_secret = "mxgyhs5238fjhsrqofksy6er45p"
 MD5("mxgyhs5238fjhsrqofksy6er45p1199367696671") = "8cbe04852672a2210df30a87d6b3ef25"
 }}}
 
-=== Example of TicTacToe game ===
-A move in TicTacToe is when a player selects a cell, e.g., the cell in row 0 and column 2,
- which is encoded as 0X2.
-The board is encoded as a string of length 9, each character describes the state of a cell 
-(each cell can be Empty, White, or Black.)
+== Example of TicTacToe game ==
+A move in TicTacToe occurs when a player selects a cell, e.g., the cell in row 0 and column 2, which is encoded as `0X2`.
+The board is encoded as a string of length 9, each character describes the state of a cell: each cell can be Empty (`E`), White (`W`), or Black (`B`).
 For example, this string "EEWBEEEEW" describes this board:
 {{{
 -------
@@ -156,18 +158,18 @@ For example, this string "EEWBEEEEW" describes this board:
 }}}
 And the string "EEEEEEEEE" describes the empty board.
 
-The state of a match in a single-player game is:
-`<USER_ID>x<BOARD_STATE>`
+The state of a match in a *single-player* game is:
+`<USER_ID>x<BOARD_STATE>`. (In a single-player TicTacToe game, a single player plays both white and black.)
 For example, "55xEEEEEEEEE" represents a single-player match where the player is 55, and the board is empty. 
 
-The state of a match in a two-player game is:
-`<WHITE_USER_ID>x<BLACK_USER_ID>x<BOARD_STATE>`
+The state of a match in a *two-player* game is:
+`<WHITE_USER_ID>x<BLACK_USER_ID>x<BOARD_STATE>`.
 For example, "55x66xEEEEEEEEE" represents a match where the white player is 55, the black is 66, and the board is empty. 
 
 For example, consider the following operations for the TicTacToe two-player game:
-(on the come2play server the link is: http://www.come2play.com/Shared/java_calls/api/TicTacToeGameLogic.asp)
+(on the Come2Play server the link is: http://www.come2play.com/Shared/java_calls/api/TicTacToeGameLogic.asp)
 
-  * Starting a new game
+  * [http://www.come2play.com/Shared/java_calls/api/TicTacToeGameLogic.asp?milli_time_stamp=123&msg_type=new_game&playing_user_ids=55x66 Starting a new game]
 {{{
 > TicTacToeGameLogic.asp?milli_time_stamp=123&msg_type=new_game&playing_user_ids=55x66
 < turn_of=55&new_game_state=55x66xEEEEEEEEE&msg_to_all=55x66xEEEEEEEEE&msg_to_new_viewer=55x66xEEEEEEEEE&milli_time_stamp=123
@@ -176,7 +178,7 @@ The empty board is broadcasted to all players and viewers.
 User 55 will have a timer of 100 seconds to complete his move.
 
 
-  * Loading a saved game:
+  * [http://www.come2play.com/Shared/java_calls/api/TicTacToeGameLogic.asp?milli_time_stamp=123&msg_type=load_game&playing_user_ids=66x55&old_game_state=55x66xEEWBEEEEW  Loading a saved game]:
 {{{
 > TicTacToeGameLogic.asp?milli_time_stamp=123&msg_type=load_game&playing_user_ids=66x55&old_game_state=55x66xEEWBEEEEW
 < turn_of=66&new_game_state=55x66xEEWBEEEEW&msg_to_all=55x66xEEWBEEEEW&msg_to_new_viewer=55x66xEEWBEEEEW&milli_time_stamp=123
@@ -186,14 +188,14 @@ This saved game is broadcasted to all players and viewers.
 User 66 will have a timer of 70 seconds to complete his move.
 
 
-  * Loading a saved game that already ended:
+  * [http://www.come2play.com/Shared/java_calls/api/TicTacToeGameLogic.asp?milli_time_stamp=123&msg_type=load_game&playing_user_ids=66x55&old_game_state=55x66xWWEWEEBBB Loading a saved game that already ended]:
 {{{
 > TicTacToeGameLogic.asp?milli_time_stamp=123&msg_type=load_game&playing_user_ids=66x55&old_game_state=55x66xWWEWEEBBB
 < new_game_state=55x66xWWEWEEBBB&match_result_66=1xWIN&match_result_55=-1x0&msg_to_all=55x66xWWEWEEBBB&milli_time_stamp=123
 }}}
 
 
-  * Making a move, afterwhich the game is still in progress:
+  * [http://www.come2play.com/Shared/java_calls/api/TicTacToeGameLogic.asp?milli_time_stamp=123&msg_type=made_move&playing_user_ids=66x55&from_user_id=66&msg=1X2&old_game_state=55x66xEEWBEEEEW&stakes=10   Making a move, afterwhich the game is still in progress]:
 {{{
 > TicTacToeGameLogic.asp?milli_time_stamp=123&msg_type=made_move&playing_user_ids=66x55&from_user_id=66&msg=1X2&old_game_state=55x66xEEWBEEEEW&stakes=10
 < turn_of=55&new_game_state=55x66xEEWBEBEEW&msg_to_new_viewer=55x66xEEWBEBEEW&msg_to_55=1X2&msg_to_viewer=1X2&milli_time_stamp=123
@@ -213,7 +215,7 @@ This move is sent to user 55 (white player) and any viewer.
 A new viewer that might join the game in this stage will get this match state "55x66xEEWBEBEEW".
 User 55 will have a timer of 60 seconds to complete his move.
 
-  * Making a move, afterwhich the game ends in tie:
+  * [http://www.come2play.com/Shared/java_calls/api/TicTacToeGameLogic.asp?milli_time_stamp=123&msg_type=made_move&playing_user_ids=66x55&from_user_id=55&msg=0X2&old_game_state=55x66xWBEWBBBWW&stakes=9  Making a move, afterwhich the game ends in tie]:
 {{{
 > TicTacToeGameLogic.asp?milli_time_stamp=123&msg_type=made_move&playing_user_ids=66x55&from_user_id=55&msg=0X2&old_game_state=55x66xWBEWBBBWW&stakes=9
 < new_game_state=55x66xWBWWBBBWW&match_result_55=0xReturnStakes&match_result_66=0xReturnStakes&msg_to_66=0X2&msg_to_viewer=0X2&milli_time_stamp=123
@@ -230,13 +232,13 @@ The white chose the cell 0X2 , and this is the new game state:
 -------
 }}}
 
-  * Making a move, afterwhich the game ends in black winning:
+  * [http://www.come2play.com/Shared/java_calls/api/TicTacToeGameLogic.asp?milli_time_stamp=123&msg_type=made_move&playing_user_ids=66x55&from_user_id=66&msg=2X2&old_game_state=55x66xWWEWEEBBE&stakes=9 Making a move, afterwhich the game ends in black winning]:
 {{{
 > TicTacToeGameLogic.asp?milli_time_stamp=123&msg_type=made_move&playing_user_ids=66x55&from_user_id=66&msg=2X2&old_game_state=55x66xWWEWEEBBE&stakes=9
 < new_game_state=55x66xWWEWEEBBB&match_result_66=1x9&match_result_55=-1x0&msg_to_55=2X2&msg_to_viewer=2X2&milli_time_stamp=123
 }}}
 
-  * Keeping the connection alive:
+  * [http://www.come2play.com/Shared/java_calls/api/TicTacToeGameLogic.asp?milli_time_stamp=123&msg_type=keep_alive   Keeping the connection alive]:
 {{{
 > TicTacToeGameLogic.asp?milli_time_stamp=123&msg_type=keep_alive
 < milli_time_stamp=123

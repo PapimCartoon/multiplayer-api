@@ -28,15 +28,4 @@ How to contribute:
 The API and Emulator are open source, and anyone can use, modify, or distribute them, both in open source projects or in commercial projects. Phrased differently, you may develop commercial games using this API, or develop a commercial container for API games; you do not even have to mention you are using this open source API.
 
 The API is open source, and we hope that many companies will endorse it, and game developers will have many places to submit their multiplayer games.
-[http://www.come2play.com Come2Play] is a company that freely distribute multiplayer games (as widgets and in social networks) and share the advertising revenue with the game developers.
-[http://www.come2play.com Come2Play] officially endorse this API, and has opened sourced its Emulator with the purpose of creating an open source standard for developing multiplayer games that other companies can endorse as well.
-
-[http://www.come2play.com Come2Play] developed a _container_ for games that saves a lot of development time for game developers. 
-The _container_ is in charge of:
-  * communicating with the gaming server
-  * displaying the players and viewers information
-  * displaying a common chat area for all users
-  * displaying game messages, e.g., if a player disconnects or the match ends
-  * allowing the players to bet on the outcome of the game and change the stakes
-  * allowing the players to end the match in a tie, to cancel the match, or to save the match
-  * handling turn-based games, i.e., games that proceeds in turns where only one player at a time has the turn. The _container_ limits the time per move or per match, displays who has the current turn, how much time he has left to make his move, etc.
+[Come2Play] is a company that started this Multiplayer API project, and it opened-sourced its documentation and Emulator. 

@@ -154,19 +154,15 @@ class TicTacToe_API extends ClientGameAPI {
 		do_store_trace("got_general_info", "Error: Logo file doesn't exist");
 	}
 	private function resetBoard():void {
-		try{
-			iFilledNum = 0;
-			var sqr:Square;
-			for(var i:int=0; i<3; i++){
-				for (var j:int = 0; j < 3; j++) {
-					aGameState[i][j] = -1;
-					sqr = aBoardSquares[i][j];
-					sqr.visible = true;
-					sqr.renew(false, -1);
-				}
+		iFilledNum = 0;
+		var sqr:Square;
+		for(var i:int=0; i<3; i++){
+			for (var j:int = 0; j < 3; j++) {
+				aGameState[i][j] = -1;
+				sqr = aBoardSquares[i][j];
+				sqr.visible = true;
+				sqr.renew(false, -1);
 			}
-		}catch (err:Error) {
-			do_store_trace("resetBoard", "Error: " + err.message);
 		}
 	}
 	private function doMove(i:int, j:int):void {

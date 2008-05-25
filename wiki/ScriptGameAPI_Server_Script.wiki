@@ -261,79 +261,86 @@ TicTacToeGameLogic.asp?milli_time_stamp=123&msg_type=made_move&playing_user_ids=
 
 
 
+
+
+
+
+
+
+
 === Code of ServerSideLogic.asp ===
 {{{
 <%@ Language="VBScript" codepage=1252 %>
 <% 
 OPTION EXPLICIT
-' The charset must be ISO-8859-1. Because the output is URL-encoded, the charset is not important (it's important only in error cases)
+' The charset must be ISO-8859-1. Because the output is URL-encoded, the charset is not important (it's important only in error cases) '
 Response.charset="ISO-8859-1"
 
-' VERY IMPORTANT: your script must buffer its output!
-' There is no reason to send incomplete messages to the server,
-' and more importantly, this makes sure the IIS adds the header "Content-Length: " to its response.
-' (this header is critical when keeping the connection alive)
+' VERY IMPORTANT: your script must buffer its output! '
+' There is no reason to send incomplete messages to the server, '
+' and more importantly, this makes sure the IIS adds the header "Content-Length: " to its response. '
+' (this header is critical when keeping the connection alive) '
 Response.Buffer = True
 
-' About cache control:
-' Between your Web server and a user requesting your page, there may be proxy servers configured to cache Web pages for faster response times.
-' The default cache control is "Private"
-' Private : A cache mechanism may cache this page in a Private cache and resend it only to a single client. This is the default value. Most proxy servers will not cache pages with this setting. 
-Response.CacheControl = "Public" 'Public: Shared caches, such as proxy servers, will cache pages with this setting. The cached page can be sent to any user.
-' Because the script is stateless, it is allowed to do caching
-' If you are still making corrections in your code, and you want to disallow caching, 
-' then uncomment the code below:
-'Response.Expires = 60
-'Response.Expiresabsolute = Now() - 1
-'Response.AddHeader "pragma","no-cache"
-'Response.AddHeader "cache-control","private"
-'Response.CacheControl = "no-cache"
+' About cache control: '
+' Between your Web server and a user requesting your page, there may be proxy servers configured to cache Web pages for faster response times. '
+' The default cache control is "Private" '
+' Private : A cache mechanism may cache this page in a Private cache and resend it only to a single client. This is the default value. Most proxy servers will not cache pages with this ' setting. 
+Response.CacheControl = "Public" 'Public: Shared caches, such as proxy servers, will cache pages with this setting. The cached page can be sent to any user. '
+' Because the script is stateless, it is allowed to do caching '
+' If you are still making corrections in your code, and you want to disallow caching,  '
+' then uncomment the code below: '
+'Response.Expires = 60 '
+'Response.Expiresabsolute = Now() - 1 '
+'Response.AddHeader "pragma","no-cache" '
+'Response.AddHeader "cache-control","private" '
+'Response.CacheControl = "no-cache" '
 %>
 <!--#include file="md5.asp" -->
 <%
 
-' MyResponse represents the result of new_game, load_game, or made_move in the game logic 
-' (see an example in TicTacToeGameLogic.asp)
+' MyResponse represents the result of new_game, load_game, or made_move in the game logic  '
+' (see an example in TicTacToeGameLogic.asp) '
 Class MyResponse 
     Private dic
     Private Sub Class_Initialize()
         Set dic = Server.CreateObject("Scripting.Dictionary")
     End Sub
 
-    ' @user_id_of_current_turn is the user that has the turn
-    ' It is relevant if the game is in progress. 
-    ' It sets a timer for @user_id_of_current_turn
-    ' If the timer expires, then player @user_id_of_current_turn will lose.
-    ' If another message is passed to the server, then the timer is canceled.
+    ' @user_id_of_current_turn is the user that has the turn '
+    ' It is relevant if the game is in progress.  '
+    ' It sets a timer for @user_id_of_current_turn '
+    ' If the timer expires, then player @user_id_of_current_turn will lose. '
+    ' If another message is passed to the server, then the timer is canceled. '
     Public Sub add_turn_of(user_id_of_current_turn)
         dic.Add "turn_of", clng(user_id_of_current_turn)
     End Sub 
-    ' The next state of the game
+    ' The next state of the game '
     Public Sub add_new_game_state(new_game_state)
         dic.Add "new_game_state", new_game_state
     End Sub 
-    ' the server will send msg_to_all to all the players and viewers.
+    ' the server will send msg_to_all to all the players and viewers. '
     Public Sub add_msg_to_all(msg_to_all)
         dic.Add "msg_to_all", msg_to_all
     End Sub 
-    ' the server will send msg_to_viewer to all the viewers.
+    ' the server will send msg_to_viewer to all the viewers. '
     Public Sub add_msg_to_viewer(msg_to_viewer)
         dic.Add "msg_to_viewer", msg_to_viewer
     End Sub 
-    ' the server will send msg_to_player to all the players.
+    ' the server will send msg_to_player to all the players. '
     Public Sub add_msg_to_player(msg_to_player)
         dic.Add "msg_to_player", msg_to_player
     End Sub 
-    ' When a new viewer connects, the server will send him msg_to_new_viewer as the first message
+    ' When a new viewer connects, the server will send him msg_to_new_viewer as the first message '
     Public Sub add_msg_to_new_viewer(msg_to_new_viewer)
         dic.Add "msg_to_new_viewer", msg_to_new_viewer
     End Sub 
-    ' When a new viewer connects, the server will send him msg_to_new_viewer as the first message
-    ' stake can also be the string "ReturnStakes", in which case the server will return the stakes of that player (useful in case of a TIE).
+    ' When a new viewer connects, the server will send him msg_to_new_viewer as the first message '
+    ' stake can also be the string "ReturnStakes", in which case the server will return the stakes of that player (useful in case of a TIE). '
     Public Sub add_match_result_(user_id, score, stake)
         dic.Add "match_result_"&user_id, clng(score)&"x"&stake
     End Sub 
-    ' When a new viewer connects, the server will send him msg_to_new_viewer as the first message
+    ' When a new viewer connects, the server will send him msg_to_new_viewer as the first message '
     Public Sub add_msg_to_(user_id, msg)
         dic.Add "msg_to_"&user_id, msg
     End Sub 
@@ -348,7 +355,7 @@ Class MyResponse
     End Function
 End Class
 
-' Helper functions
+' Helper functions '
 Function getArgument(arg_name)
     Dim arg
     arg = Request(arg_name)
@@ -362,8 +369,8 @@ Sub reportError(msg)
     Response.Write "Error report: "&msg
     Response.End
 End Sub
-' acceptOnlyRequestFromCome2play ends the script if the md5 parameter is not set correctly, i.e.,
-' it makes sure the conenction came from the come2play server.
+' acceptOnlyRequestFromCome2play ends the script if the md5 parameter is not set correctly, i.e., '
+' it makes sure the conenction came from the come2play server. '
 Sub acceptOnlyRequestFromCome2play
     Dim md5_value, is_come2play_server
     is_come2play_server = false
@@ -381,18 +388,18 @@ End Sub
 
         
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-' processRequest uses createLogic() to create some game logic,
-' when including ServerSideLogic.asp you must define this function, which must return an object with these functions:
-' 1) new_game(playing_user_ids)
-' 2) load_game(playing_user_ids, old_game_state)
-' 3) made_move(stakes, from_user_id, msg)
-' All the operations return an instance of MyResponse (that includes the current state of the game)
+' processRequest uses createLogic() to create some game logic, '
+' when including ServerSideLogic.asp you must define this function, which must return an object with these functions: '
+' 1) new_game(playing_user_ids) '
+' 2) load_game(playing_user_ids, old_game_state) '
+' 3) made_move(stakes, from_user_id, msg) '
+' All the operations return an instance of MyResponse (that includes the current state of the game) '
 Sub processRequest()
     Dim game_state, milli_time_stamp, msg_type, myResponse, game_logic, playing_user_ids
     
-    ' Comment the line below if you're doing testing and you don't pass an MD5 value
-    ' Uncomment the line below after finishing your testing, so your script will only process requests from come2play
-    'call acceptOnlyRequestFromCome2play
+    ' Comment the line below if you're doing testing and you don't pass an MD5 value '
+    ' Uncomment the line below after finishing your testing, so your script will only process requests from come2play '
+    'call acceptOnlyRequestFromCome2play '
 
     milli_time_stamp = getArgument("milli_time_stamp") 
     msg_type = getArgument("msg_type") 
@@ -433,33 +440,38 @@ End Sub
 
 
 
+
+
+
+
+
 === Code of TicTacToeGameLogic.asp ===
 {{{
 <!--#include file="ServerSideLogic.asp" -->
 <%
-' About MD5 and why it is needed:
-' MD5 is a mathematical hashing function that is very difficult to reverse (i.e., requires a lot of computation).
-' We use MD5 so your script can know that the request came from our Come2Play server
-' (and not from some impostor).
-' When you upload your game to our server using the Come2Play CMS, you will get an md5_secret for each game.
-' You should replace that md5_scret with the string that appears below.
+' About MD5 and why it is needed: '
+' MD5 is a mathematical hashing function that is very difficult to reverse (i.e., requires a lot of computation). '
+' We use MD5 so your script can know that the request came from our Come2Play server '
+' (and not from some impostor). '
+' When you upload your game to our server using the Come2Play CMS, you will get an md5_secret for each game. '
+' You should replace that md5_scret with the string that appears below. '
 const md5_secret = "64D4B66FC996BCF7D7CA5AC27FECF586"
 
-''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-' TicTacToeGameLogic class implements the server-side game-logic of TicTacToe 
-'  according to the Come2Play ServerSide API.
-''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+' TicTacToeGameLogic class implements the server-side game-logic of TicTacToe  '
+'  according to the Come2Play ServerSide API.                                   '
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 Function createLogic()
     Set createLogic = new TicTacToeGameLogic
 End Function
 
-' TicTacToe game, both for single-player and two-player (with multiple viewers)
+' TicTacToe game, both for single-player and two-player (with multiple viewers) '
 Class TicTacToeGameLogic
-    Private board(3,3) ' the board, each cell is either -1 (empty), 0 (white), or 1 (black)
-    Private current_move_num ' the current move number (starts at 0 and increases up to at most 9)
+    Private board(3,3) ' the board, each cell is either -1 (empty), 0 (white), or 1 (black) '
+    Private current_move_num ' the current move number (starts at 0 and increases up to at most 9) '
     Private white_user_id 
-    Private black_user_id ' In a single-player game, black_user_id=-1
+    Private black_user_id ' In a single-player game, black_user_id=-1 '
 
     Private Sub Class_Initialize()
     End Sub
@@ -471,12 +483,12 @@ Class TicTacToeGameLogic
     Public Function load_game(playing_user_ids, old_game_state)
         Dim currentPos, c, row, col, res, board_state, index, result
         if old_game_state="" then
-            old_game_state = playing_user_ids & "xEEEEEEEEE" ' empty board for these players
+            old_game_state = playing_user_ids & "xEEEEEEEEE" ' empty board for these players '
         end if
 
-        ' The state of a match is:
-        ' <WHITE_USER_ID>x<BLACK_USER_ID>x<BOARD_STATE>
-        ' For example, "55x66xEEEEEEEEE" represents a match where the white player is 55, the black is 66, and the board is empty. 
+        ' The state of a match is: '
+        ' <WHITE_USER_ID>x<BLACK_USER_ID>x<BOARD_STATE> '
+        ' For example, "55x66xEEEEEEEEE" represents a match where the white player is 55, the black is 66, and the board is empty.  '
         board_state = old_game_state
         index = INSTR(board_state, "x")
         assert index>0, "Illegal old_game_state"
@@ -498,8 +510,8 @@ Class TicTacToeGameLogic
             For col = 0 to 2
                 currentPos = currentPos + 1
                 c = MID(board_state, currentPos, 1)
-                board(row,col) = myIf(c="E", -1 , myIf(c="W", 0 , 1)) ' either Empty, White, or Black
-                if c<>"E" then current_move_num = current_move_num+1 ' If not Empty then someone made a move.
+                board(row,col) = myIf(c="E", -1 , myIf(c="W", 0 , 1)) ' either Empty, White, or Black '
+                if c<>"E" then current_move_num = current_move_num+1 ' If not Empty then someone made a move. '
             Next
         Next
         assert currentPos=LEN(board_state), "Illegal board_state"
@@ -553,7 +565,7 @@ Class TicTacToeGameLogic
                     res.add_match_result_ white_user_id, -1, "0"
                 end if
             end if
-        elseif current_move_num=9 then 'game ended in tie
+        elseif current_move_num=9 then 'game ended in tie '
             if black_user_id<>-1 then 
                 res.add_match_result_ white_user_id,0, "ReturnStakes"
                 res.add_match_result_ black_user_id,0, "ReturnStakes"
@@ -561,7 +573,7 @@ Class TicTacToeGameLogic
                 res.add_match_result_ white_user_id,0, "WIN"
             end if
         else        
-            ' game in progress
+            ' game in progress '
             res.add_msg_to_new_viewer new_game_state 
             add_turn_of res
         end if
@@ -570,7 +582,7 @@ Class TicTacToeGameLogic
     End Function
 
     Private Sub assert(condition, msg)
-        ' If you use cookies (though you should try to make the script stateless!), print them as well: " Request.Cookies="&Request.Cookies
+        ' If you use cookies (though you should try to make the script stateless!), print them as well: " Request.Cookies="&Request.Cookies '
         if Not condition then reportError "Request.QueryString="&Request.QueryString&" Request.Form="&Request.Form&" current_move_num="&current_move_num&" board="&save()&" msg="&msg
     End Sub
     Private Function myIf(condition, optionTrue, optionFalse)
@@ -582,7 +594,7 @@ Class TicTacToeGameLogic
     End Function    
     Private Sub add_turn_of(res)
         Dim turnOfColor, user_id_of_current_turn
-        ' The player who has the current turn is current_move_num mod 2 (when current_move_num is even it is the white player, otherwise it is the black player)
+        ' The player who has the current turn is current_move_num mod 2 (when current_move_num is even it is the white player, otherwise it is the black player) '
         turnOfColor = (current_move_num mod 2)
         user_id_of_current_turn = white_user_id
         if turnOfColor=1 AND black_user_id<>-1 then user_id_of_current_turn = black_user_id
@@ -602,8 +614,8 @@ Class TicTacToeGameLogic
         save = res
     End Function
 
-    ' checks if there is a winning row, column, or diagonal 
-    ' returns -1 if no, 0 if white won, or 1 if black won
+    ' checks if there is a winning row, column, or diagonal  '
+    ' returns -1 if no, 0 if white won, or 1 if black won '
     Private Function isGameOver() 
         Dim k
         For k = 0 to 2
@@ -655,14 +667,14 @@ Class TicTacToeGameLogic
         Response.Write res.toString() & "<br>"
         set res = gameLogic.made_move(stakes, 55, "2X0")
         Response.Write res.toString() & "<br>"
-        set res = gameLogic.made_move(stakes, 66, "4X1") ' should fail with an error
+        set res = gameLogic.made_move(stakes, 66, "4X1") ' should fail with an error '
         Response.Write res.toString() & "<br>"
     End sub
 End Class
 
-'Dim gameLogic
-'set gameLogic = new TicTacToeGameLogic
-'gameLogic.test
+'Dim gameLogic '
+'set gameLogic = new TicTacToeGameLogic '
+'gameLogic.test '
 
 call processRequest
 %>

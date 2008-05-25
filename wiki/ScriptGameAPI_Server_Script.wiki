@@ -10,8 +10,8 @@ Your script should handle GET requests of this form:
 }}}
 The script should be stateless, because the server may send the request several times and/or to different URLs (if you defined several backup urls).
 
-You have an option to use POST requests (by starting your url with "POST:")
-Prefer POST over GET only if your "old_game_state" is really long (and your web-browser have a limitation on the length of GET requests).
+You have an option to use POST requests.
+Prefer POST over GET only if your `old_game_state` is really long (and your IIS/Apache have a limitation on the length of GET requests).
 GET requests are better for several reasons:
   * they are easier to debug (you can just copy&paste the url in your browser)
   * GET request can (and should) be cached by various agents; POST requests are usually not cached because they are intended for data manipulation.

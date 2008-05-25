@@ -3,7 +3,7 @@
 [http://www.come2play.com Come2Play, http://www.come2play.com], is a company that freely distribute multiplayer games (as widgets and in social networks) and share the advertising revenue with the game developers.
 [http://www.come2play.com Come2Play] officially endorse this API, and has opened sourced its Emulator with the purpose of creating an open source standard for developing multiplayer games that other companies can endorse as well.
 
-You can visit [http://www.come2play.com Come2Play] to submit your game, and distirbute it on social networks and widgets.
+You can visit [http://www.come2play.com Come2Play] to submit your game, and distribute it on social networks and widgets.
 
 [http://www.come2play.com Come2Play] developed a _container_ for games that saves a lot of development time for game developers. 
 The _container_ is in charge of:

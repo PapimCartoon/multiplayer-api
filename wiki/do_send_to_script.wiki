@@ -4,6 +4,6 @@
 do_send_to_script(message:String)
 }}}
 
-Calls the script and pass to it the string `message`.
+Calls the script and pass to it the string `message`. 
 Only players can call this method.
-The script can pass back messages to any of the players and viewers, set the timeouts, and determine who is the winner.
+The script can pass back messages to any of the players and viewers (see [got_from_script]), set the timeouts, and determine the outcome of the match.

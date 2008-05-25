@@ -1,7 +1,7 @@
 #summary The communication protocol between the server and the script in ScriptGameAPI
 
 This document describes the communication protocol between
-  * the server (the come2play gaming server), and
+  * the server (the gaming server), and
   * the script (the script you wrote with the server-side logic of your game)
 
 === GET or POST requests ===
@@ -33,7 +33,11 @@ load_game: playing_user_ids, old_game_state
 made_move: playing_user_ids, old_game_state, stakes, from_user_id, msg
 }}}
 
-`msg_type` 
+`msg_type` has 4 possible values:
+  * `new_game` to start a new game
+  * `load_game` to load an old game
+  * `made_move` to make a move by some player
+  * `keep_alive` to keep the TCP connection between the server and script alive
 
 `playing_user_ids` is an integer list of user ids, e.g., '23541,48254,122334'.
 This list contains only the users that are currently playing, i.e., it doesn't contain users that already disconnected or quit the match.
@@ -51,17 +55,17 @@ The players can bet on the outcome of the game. `stakes` is the amount in the cu
 `msg` is the string that was passed in [do_send_to_script].
 
 === Script output ===
-Each message type should return different variables:
-{{{
-new_game or load_game: milli_time_stamp, new_game_state, turn_of, (msg_to_XXX | msg_to_viewer | msg_to_all)
-made_move:             milli_time_stamp, new_game_state, turn_of, (msg_to_XXX | msg_to_viewer | msg_to_all), msg_to_new_viewer, match_result_XXX
-keep_alive:	       milli_time_stamp
-}}}
+Each message type should return different a different output.
+  * All message types should return the same `milli_time_stamp` the script got as input.
+  * All messages but `keep_alive` should return `new_game_state`, `turn_of`, and may return any of the following: `msg_to_XXX`, `msg_to_viewer`, or `msg_to_all`.
+  * `made_move` must also return `msg_to_new_viewer`, and may return `match_result_XXX`.
 
-You should replace `XXX` with the user_id, e.g., if you want to send a message to user_id=`666` then the script should output `msg_to_666`.
+You should replace `XXX` with the user_id, e.g., if you want to send a message to `user_id=666` then the script should output `msg_to_666`.
 The turn_of sets a timer for a certain player, and when the timer expires than that player loses.
 (For more info on the script output, see `Class MyResponse` in `ServerSideLogic.asp`)
 
+
+=== Keep alive ===
 To make communication between the server and the script more efficient, 
 the come2play server keeps the connection alive as long as ongoing games exist.
 To know how to seperate between the GET responses, we use this header:

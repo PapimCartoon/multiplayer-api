@@ -8,7 +8,7 @@ The functions below are similar to those in ClientGameAPI (the only difference i
   * `do_connected_match_over` is similar to [do_agree_on_match_over], but no agreement is needed.
   * `got_connected_match_over` is similar to [got_match_over]  
   * `do_store_match_state` is identical to [do_store_match_state]
-  * `got_connected_stored_match_state` is similar to [got_stored_match_state]
+  * `got_connected_stored_match_state` is similar to [do_store_match_state got_stored_match_state]
 
 {{{
 got_general_info(keys:Array/*String*/, values:Array/*Object*/)

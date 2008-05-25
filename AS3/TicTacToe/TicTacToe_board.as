@@ -476,4 +476,8 @@ class TicTacToe_API extends ClientGameAPI {
 			setOnPress(false);
 		}
 	}
+	
+	public override function got_error(in_function_name:String, err:Error):void {		
+		do_client_protocol_error_with_description("got_error in function "+in_function_name+" err="+err);
+	}
 }

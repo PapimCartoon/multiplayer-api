@@ -273,7 +273,7 @@ TicTacToeGameLogic.asp?milli_time_stamp=123&msg_type=made_move&playing_user_ids=
 <%@ Language="VBScript" codepage=1252 %>
 <% 
 OPTION EXPLICIT
-' The charset must be ISO-8859-1. Because the output is URL-encoded, the charset is not important (it's important only in error cases) '
+' The charset must be ISO-8859-1. Because the output is URL-encoded, the charset is not important (it is important only in error cases) '
 Response.charset="ISO-8859-1"
 
 ' VERY IMPORTANT: your script must buffer its output! '
@@ -285,7 +285,8 @@ Response.Buffer = True
 ' About cache control: '
 ' Between your Web server and a user requesting your page, there may be proxy servers configured to cache Web pages for faster response times. '
 ' The default cache control is "Private" '
-' Private : A cache mechanism may cache this page in a Private cache and resend it only to a single client. This is the default value. Most proxy servers will not cache pages with this ' setting. 
+' Private : A cache mechanism may cache this page in a Private cache and resend it only to a single client. '
+' This is the default value. Most proxy servers will not cache pages with this  setting. '
 Response.CacheControl = "Public" 'Public: Shared caches, such as proxy servers, will cache pages with this setting. The cached page can be sent to any user. '
 ' Because the script is stateless, it is allowed to do caching '
 ' If you are still making corrections in your code, and you want to disallow caching,  '
@@ -387,7 +388,6 @@ Sub acceptOnlyRequestFromCome2play
 End Sub
 
         
-''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 ' processRequest uses createLogic() to create some game logic, '
 ' when including ServerSideLogic.asp you must define this function, which must return an object with these functions: '
 ' 1) new_game(playing_user_ids) '
@@ -397,7 +397,7 @@ End Sub
 Sub processRequest()
     Dim game_state, milli_time_stamp, msg_type, myResponse, game_logic, playing_user_ids
     
-    ' Comment the line below if you're doing testing and you don't pass an MD5 value '
+    ' Comment the line below if you are doing testing and you do not pass an MD5 value '
     ' Uncomment the line below after finishing your testing, so your script will only process requests from come2play '
     'call acceptOnlyRequestFromCome2play '
 
@@ -445,6 +445,10 @@ End Sub
 
 
 
+
+
+
+
 === Code of TicTacToeGameLogic.asp ===
 {{{
 <!--#include file="ServerSideLogic.asp" -->
@@ -457,10 +461,8 @@ End Sub
 ' You should replace that md5_scret with the string that appears below. '
 const md5_secret = "64D4B66FC996BCF7D7CA5AC27FECF586"
 
-''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 ' TicTacToeGameLogic class implements the server-side game-logic of TicTacToe  '
-'  according to the Come2Play ServerSide API.                                   '
-''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+'  according to the Come2Play ServerSide API.                                  '
 
 Function createLogic()
     Set createLogic = new TicTacToeGameLogic
@@ -608,7 +610,7 @@ Class TicTacToeGameLogic
         For row = 0 to 2
             For col = 0 to 2
                 owner = board(row,col)
-                res = res & myIf(owner=-1, "E", myIf(owner=0, "W", "B")) ' either Empty, White, or Black
+                res = res & myIf(owner=-1, "E", myIf(owner=0, "W", "B")) ' either Empty, White, or Black '
             Next
         Next
         save = res

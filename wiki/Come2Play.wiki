@@ -1,4 +1,6 @@
-#summary Come2Play is a company that implemented a container that supports the Multiplayer API.
+#summary Come2Play is a company that developed a multiplayer flash platform, with API for flash games developers and many distribution channels: as Social Applications, widgets/gadgets to the popular portals and a free full-featured multiplayer game channels for every web site.
+
+This google code project is focused on the container that supports the Multiplayer API.
 
 [http://www.come2play.com Come2Play, http://www.come2play.com], is a company that freely distribute multiplayer games (as widgets and in social networks) and share the advertising revenue with the game developers.
 [http://www.come2play.com Come2Play] officially endorse this API, and has opened sourced its Emulator with the purpose of creating an open source standard for developing multiplayer games that other companies can endorse as well.

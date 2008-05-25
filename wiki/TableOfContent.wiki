@@ -61,3 +61,5 @@ Coming soon (TODO): a video showing how to use the emulator.
 
 = Creating multiplayer games =
 Coming soon (TODO): this section will contain tutorials on creating both turn-based and real-time games.
+
+[TicTacToe] explains about the implementation of TicTacToe using [ClientGameAPI].

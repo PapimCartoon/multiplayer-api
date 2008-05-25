@@ -1,14 +1,23 @@
 #summary An API that converts single-player games to multiplayer
 
+ConnectedGameAPI is used to easily convert a score-based single-player game to a multiplayer game.
+The functions below are similar to those in ClientGameAPI (the only difference is that `user_id` was removed because you only have a single user):
+  * `got_general_info` is identical to [got_general_info]
+  * `got_connected_user_info` is similar to [got_user_info]
+  * `got_connected_match_started` is similar to [got_match_started]
+  * `do_connected_match_over` is similar to [do_agree_on_match_over], but no agreement is needed.
+  * `got_connected_match_over` is similar to [got_match_over]  
+  * `do_store_match_state` is identical to [do_store_match_state]
+  * `got_connected_stored_match_state` is similar to [got_stored_match_state]
+
 {{{
 got_general_info(keys:Array/*String*/, values:Array/*Object*/)
 got_connected_user_info(keys:Array/*String*/, values:Array/*Object*/)
 got_connected_match_started(extra_match_info:Object, match_started_time:Number)
-got_connected_match_over()
-got_connected_stored_match_state(keys:Array/*String*/, values:Array/*Object*/)
-
-do_store_match_state(key:String, value:Object)
 do_connected_match_over(score:int, did_win:Boolean)
+got_connected_match_over()
+do_store_match_state(key:String, value:Object)
+got_connected_stored_match_state(keys:Array/*String*/, values:Array/*Object*/)
 }}}
 
 The `score` must be strictly higher than 0.

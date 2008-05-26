@@ -94,17 +94,17 @@ You may not pass a floating point number (`Number`), or any other classes.
 To avoid overloading the server, you can send at most 10 operations every second.
 The message size should generally be smaller than 1KB (and must always be smaller than 10KB!).
 
-=== Saved games ===
-About saved matches:
-A saved match contains the following:
- * the game name (in the emulator we use the SWF name as the identifier for the game)
- * match state (users, keys, values)
- * user_ids are all players (including those that ended their match)
- * player_ids are those that are still playing
- * who has the current turn (a single user_id), or which users can have the next turn (next_turn_of_player_ids). Note that the current timers are lost!
+=== Saved matches ===
+The users may agree to save their match, and may decide to load it later.
+A saved match contains the following information:
+  * the game name (in the emulator we use the SWF name as the identifier for the game)
+  * match state (user ids, keys, values)
+  * ids of current players and the ids of players that already ended the match
+  * who has the current turn (a single user_id), or which users can have the next turn (next_turn_of_player_ids). 
+Note that the current timers are not saved, and should be restarted after the match is loaded.
 
-When a saved match is loaded, the game the following callbacks:
- * got_match_started
- * got_match_over for those users that are no longer playing
- * got_stored_match_state with the match state
- * got_start_turn_of is there is a single player that has the turn or next_turn_of_player_ids is of size 1
+When a saved match is loaded, the game gets the following callbacks:
+ * `got_match_started`
+ * `got_match_over` for those users that are no longer playing
+ * `got_stored_match_state` with the match state
+ * `got_start_turn_of` if there is a single player that currently has the turn, or if `next_turn_of_player_ids` is of size 1

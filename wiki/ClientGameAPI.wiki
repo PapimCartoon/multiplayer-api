@@ -6,7 +6,7 @@ The functions in `ClientGameAPI` can be divided into two categories: Operations 
 Operations are functions starting with `do_`
 {{{
 do_register_on_server()
-do_store_trace(funcname:String, args:Object)
+do_store_trace(function_name:String, argument:Object)
 do_agree_on_match_over(user_ids:Array/*int*/, scores:Array/*int*/, pot_percentages:Array/*int*/)
 do_start_my_turn()
 do_end_my_turn(next_turn_of_player_ids:Array/*int*/)

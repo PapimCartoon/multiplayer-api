@@ -8,5 +8,7 @@ got_user_info(user_id:int, keys:Array/*String*/, values:Array/*Object*/)
 
 The keys that are currently supported:
 || *Key* || *Description* ||
-|| `avatar_full_url` || Full url of the avatar of the user ||
-|| `nick_name` || The nick name of the user ||
+|| `name` || The nick name of the user ||
+|| `avatar_url` || Full url of the avatar of the user ||
+|| `supervisor` || What is the supervisor status of this user (either NormalUser, MiniSupervisor, Supervisor, or Admin)  ||
+|| `credibility` || The credibility of the user is a number between 0 and 100 ||

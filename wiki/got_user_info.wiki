@@ -10,5 +10,5 @@ The keys that are currently supported:
 || *Key* || *Description* ||
 || `name` || The nick name of the user ||
 || `avatar_url` || Full url of the avatar of the user ||
-|| `supervisor` || What is the supervisor status of this user (either NormalUser, MiniSupervisor, Supervisor, or Admin)  ||
+|| `supervisor` || What is the supervisor status of this user (either !NormalUser, !MiniSupervisor, !Supervisor, or !Admin)  ||
 || `credibility` || The credibility of the user is a number between 0 and 100 ||

@@ -935,6 +935,9 @@ package main{
 					prm.Label = "key:String";
 					prm.visible = true;
 					prm = aParams[2];
+					prm.Label = "in_seconds:int";
+					prm.visible = true;
+					prm = aParams[3];
 					prm.Label = "pass_back:Object";
 					prm.visible = true;
 					btnSend.y = 32 * 3+ 35;
@@ -1673,19 +1676,27 @@ package main{
 							throw new Error("Can't convert from_user_id to int");
 						}
 						prm.Value = JSON.stringify(from_user_id);
-						prm = aParams[1]
+						
+						prm = aParams[1];
+						var in_seconds:int =  JSON.parse(prm.Value) as int;
+						if (isNaN(in_seconds)) {
+							throw new Error("Can't convert in_seconds to int");
+						}
+						prm.Value = JSON.stringify(in_seconds);
+
+						prm = aParams[2]
 						var key:String = JSON.parse(prm.Value) as String;
 						if (key == null) {
 							throw new Error("Can't convert key to String");
 						}
 						prm.Value = JSON.stringify(key);
-						prm = aParams[2];
+						prm = aParams[3];
 						var pass_back:Object = JSON.parse(prm.Value);
 						prm.Value = JSON.stringify(pass_back);
 						for (i = 0; i < aUsers.length; i++) {
 							usr = aUsers[i];
 							if(usr.ID==target || target==-1){
-								sendOperation(usr.GotChanel, "got_timer",[from_user_id,key,pass_back]);
+								sendOperation(usr.GotChanel, "got_timer",[from_user_id,key,in_seconds, pass_back]);
 							}
 						}
 						break;
@@ -2034,13 +2045,13 @@ package main{
 				}
 			}
 		}
-		public function do_timer(user_id:int, key:String, pass_back:Object):void {
+		public function do_timer(user_id:int, key:String, in_seconds:int, pass_back:Object):void {
 			addMessageLog("Server", "do_timer", "user_id=" + user_id + ",key="+key+", pass_back=" + JSON.stringify(pass_back));
 			var usr:User;
 			showTimers();
 			for (var i:int = 0; i < aUsers.length; i++) {
 				usr = aUsers[i];
-				sendOperation(usr.GotChanel, "got_timer", [user_id, key, pass_back]);
+				sendOperation(usr.GotChanel, "got_timer", [user_id, key, in_seconds, pass_back]);
 			}
 		}
 		public function do_set_timer(user:User, key:String, in_seconds:int, pass_back:Object):void {
@@ -2276,7 +2287,7 @@ class GameTimer {
 	
 	private function timer_tick(evt:TimerEvent):void {
 		tmr.stop();
-		on_tick(user_id,key,pass_back);
+		on_tick(user_id,key,in_seconds, pass_back);
 	}
 }
 

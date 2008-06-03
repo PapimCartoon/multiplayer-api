@@ -157,7 +157,13 @@ function removeParam(num,obj){
                                     The file name:
                                 </td>
                                 <td>
-                                    <input id="test_file_name" name="test_file_name" size="50" type="text" value="../AS3/TicTacToe/TicTacToe_board.swf" /><!-- <a href="#"><img src="question.gif" style="border-width:0px;" /> --></a>
+                                    <select id="test_file_name" name="test_file_name">
+					<option value="../AS3/TicTacToe/TicTacToe_board.swf">TicTacToe AS3
+					<option value="../AS2/TicTacToe/TicTacToe_AS2board.swf">TicTacToe AS2
+					<option value="../AS3/TestClientGameAPI/TestClientGameAPI.swf">TestClientGameAPI
+					<option value="../AS2/OldAPI_Converter/OldContainer_board.swf">OldContainer (old API)
+				    </select>
+					<!-- <a href="#"><img src="question.gif" style="border-width:0px;" /> --></a>
                                 </td>
                             </tr>
                                     <input type="hidden" id="old_game" name="old_game" type="checkbox" /></a>

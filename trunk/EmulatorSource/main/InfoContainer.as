@@ -806,7 +806,7 @@ package main{
 				do_store_trace("got_message","Error: " + err.message);
 			}
 		}
-		public function got_timer(from_user_id:int, key:String, pass_back:Object):void {
+		public function got_timer(from_user_id:int, key:String, in_seconds:int, pass_back:Object):void {
 			try{
 				sendGotOperation("got_timer", arguments);
 			}catch(err:Error) { 

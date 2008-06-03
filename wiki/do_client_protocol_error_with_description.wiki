@@ -1,7 +1,7 @@
 #summary Call it when you have to cancel the game due to an unrecoverable error
 
 {{{
-do_client_protocol_error_with_description(error_description:Object)
+do_client_protocol_error_with_description(error_description:String)
 }}}
 
 [ClientGameAPI] is inherently insecure, because all the logic is on the client side.

@@ -15,7 +15,7 @@ package {
 		public function got_end_turn_of(user_id:int):void { }
 		public function got_stored_match_state(user_ids:Array/*int*/, keys:Array/*String*/, values:Array/*Object*/):void { }
 		public function got_message(user_id:int, value:Object):void {}
-		public function got_timer(from_user_id:int, key:String, pass_back:Object):void {}			
+		public function got_timer(from_user_id:int, key:String, in_seconds:int, pass_back:Object):void {}			
 
 		// Do functions. You may call these functions.
 		public function do_agree_on_match_over(user_ids:Array/*int*/, scores:Array/*int*/, pot_percentages:Array/*int*/):void {

@@ -15,7 +15,7 @@ package {
 		public function got_end_turn_of(user_id:int):void {}
 		public function got_stored_match_state(user_ids:Array/*int*/, keys:Array/*String*/, values:Array/*Object*/):void {}
 		public function got_message(user_id:int, value:Object):void {}
-		public function got_timer(from_user_id:int, key:String, pass_back:Object):void {}
+		public function got_timer(from_user_id:int, key:String, in_seconds:int, pass_back:Object):void {}
 		public function got_from_script(type:String, from_player_id:user_id, message:String):void {}
 		public function got_error_in_script_output(timed_out_url:Array/*String*/, url:String, url_output:String, url_output_headers:String, error_message:String):void {}
 

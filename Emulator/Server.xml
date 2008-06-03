@@ -300,6 +300,18 @@
 		</param>
 		<param>
 			<name>
+				in_seconds
+			</name>
+			<type>
+				int
+			</type>
+			<description>
+			</description>
+			<defaultvalue>
+			</defaultvalue>
+		</param>
+		<param>
+			<name>
 				pass_back
 			</name>
 			<type>

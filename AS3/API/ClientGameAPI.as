@@ -27,7 +27,7 @@ package {
 		public function do_end_my_turn(next_turn_of_player_ids:Array/*int*/):void {
 			sendDoOperation("do_end_my_turn", arguments);
 		}
-		public function do_client_protocol_error_with_description(error_description:Object):void {			
+		public function do_client_protocol_error_with_description(error_description:String):void {			
 			sendDoOperation("do_client_protocol_error_with_description", arguments);
 		}
 		public function do_store_match_state(key:String, value:Object):void {

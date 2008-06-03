@@ -86,9 +86,9 @@ do_store_match_state
 
 === Serialization ===
 This remark is relevant to functions with parameters of type `Object` or `Array/*Object*/`.
-Objects are serialized when sent to the server, and therefore must contain only standard types: `Array`, `int`, `Boolean`, or `String`.
+Objects are serialized when sent to the server, and therefore must contain only standard types: `Array`, `int`, `Number` (double-precision), `Boolean`, or `String`.
 Important note: an `Array` may not contain anything except the above standard types.
-You may not pass a floating point number (`Number`), or any other classes.
+You may not pass any other classes.
 
 === Spamming the server ===
 To avoid overloading the server, you can send at most 10 operations every second.

@@ -29,3 +29,6 @@ Otherwise, only a player in `next_turn_of_player_ids` may later call `do_start_m
 The reason behind `next_turn_of_player_ids` is for email-based games,
 where only one player connects, makes a move, ends his turn, 
 and the platform notifies the players in `next_turn_of_player_ids` that they can make their next move.
+
+
+The Come2Play platform performs a check that an opponent should start his turn within a certain period of time (taking into account the network round trip time). Currently a player should start his turn within 10 seconds of getting `got_end_turn_of`. This will make sure that a turn-based game will not enter stagnation.

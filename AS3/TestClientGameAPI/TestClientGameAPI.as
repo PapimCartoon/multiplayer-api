@@ -26,6 +26,7 @@ import fl.controls.*;
 class MyAPI extends ClientGameAPI {
 	//public var dp:DataProvider = new DataProvider();
 	private var my_graphics:TestClientGameAPI;
+	private var show_localconnection_messages:Boolean;
 	/*
 		do_store_trace(function:String, arguments:Object)
 		do_agree_on_match_over(user_ids:int[], scores:int[], pot_percentages:int[])
@@ -44,6 +45,7 @@ class MyAPI extends ClientGameAPI {
 	}
 	public function MyAPI(parameters:Object, my_graphics:TestClientGameAPI) {
 		this.my_graphics = my_graphics;
+		show_localconnection_messages = parameters["show_localconnection_messages"]=="true";
 		var txtArea:TextArea = my_graphics.out_traces;
 		txtArea.wordWrap = false;
 		txtArea.horizontalScrollPolicy = ScrollPolicy.ON;
@@ -81,7 +83,7 @@ class MyAPI extends ClientGameAPI {
 			do_end_my_turn(getIntArr("next_turn_of_player_ids"));
 			break;
 		case "do_client_protocol_error_with_description":
-			do_client_protocol_error_with_description(getObject("error_description"));
+			do_client_protocol_error_with_description(getInputText("error_description"));
 			break;
 		case "do_store_match_state":
 			do_store_match_state(getInputText("state_key"), getObject("state_value"));
@@ -123,7 +125,7 @@ class MyAPI extends ClientGameAPI {
 		storeTrace(methodName, parameters.join(" , "));
 	}
 	override protected function sendOperation(connectionName:String, methodName:String, parameters:Array/*Object*/):void {
-		storeTrace("LOCALCONNECTION", "connectionName="+connectionName+" methodName="+methodName+" parameters="+parameters);
+		if (show_localconnection_messages) storeTrace("LOCALCONNECTION", "connectionName="+connectionName+" methodName="+methodName+" parameters="+parameters);
 		super.sendOperation(connectionName, methodName, parameters);
 	}
 }

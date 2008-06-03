@@ -66,7 +66,7 @@ package {
         protected function sendDoOperation(methodName:String, parameters:Array/*Object*/):void {
         	sendOperation(sDoChanel, methodName, parameters);
         }
-        private function sendOperation(connectionName:String, methodName:String, parameters:Array/*Object*/):void {
+        protected function sendOperation(connectionName:String, methodName:String, parameters:Array/*Object*/):void {
 			try{
 				lcUser.send(connectionName, "localconnection_callback", methodName, parameters);  
 			}catch(err:Error) { 

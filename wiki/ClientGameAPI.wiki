@@ -27,7 +27,7 @@ got_start_turn_of(user_id:int)
 got_end_turn_of(user_id:int)  
 got_stored_match_state(user_ids:Array/*int*/, keys:Array/*String*/, values:Array/*Object*/)
 got_message(user_id:int, value:Object)
-got_timer(from_user_id:int, key:String, pass_back:Object)  
+got_timer(from_user_id:int, key:String, in_seconds:int, pass_back:Object)  
 }}}
 
 Operations are functions that your _game_ may call,

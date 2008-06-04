@@ -3,6 +3,9 @@
 The communication between your game and our server is done by writing a class that extends `ClientGameAPI.as`, and instantiating one instance of your class.
 
 The functions in `ClientGameAPI` can be divided into two categories: Operations and Callbacks.
+We write `Array/*int*/` to denote an `Array` that contains only `int` objects;
+Similarly, `Array/*String*/` is an `Array` that contains only `String` objects.
+
 Operations are functions starting with `do_`
 {{{
 do_register_on_server()

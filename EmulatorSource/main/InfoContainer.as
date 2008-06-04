@@ -40,11 +40,9 @@ package main{
 		private var btnUp:SimpleButton;
 		private var txtMyName:TextField;
 		private var pnlBackground:MovieClip;
-		private var arrDoOperations:Array;
-		private var arrGotOperations:Array;
-		private var iDelayFrom:int;
-		private var iDelayTo:int;
 		private var lblWait:TextField;
+		private var ddsDoOperations:DelayDoSomething;
+		private var ddsGotOperations:DelayDoSomething;
 		
 		public function InfoContainer() {
 			
@@ -236,10 +234,12 @@ package main{
 			loader.addEventListener(IOErrorEvent.IO_ERROR, loaderError);
 			loader.load(new URLRequest(root.loaderInfo.parameters["xml"]));
 			
-			iDelayFrom = parseInt(root.loaderInfo.parameters["delay_from"]);
-			iDelayTo = parseInt(root.loaderInfo.parameters["delay_to"]);
-			arrDoOperations = new Array();
-			arrGotOperations = new Array();
+			var from:int = parseInt(root.loaderInfo.parameters["delay_from"])*1000;
+			var to:int = parseInt(root.loaderInfo.parameters["delay_to"])*1000;
+			
+			var ds:DelaySending = new DelaySending();
+			ddsDoOperations = new DelayDoSomething(ds, from, to);
+			ddsGotOperations = new DelayDoSomething(ds, from, to);
 			
 			resizeStage(null);
 		}
@@ -303,6 +303,10 @@ package main{
 			loaded = true;
 			ldr.y = 23;
 			ldr.x = 2;
+		}
+		
+		public function doSomething(obj:Object):void {
+			
 		}
 		
 		private function onCommandSelect(evt:Event):void {
@@ -631,61 +635,10 @@ package main{
 			}
         }
 		private function sendDoOperation(methodName:String, parameters:Array/*Object*/):void {
-			if (iDelayTo == 0) {
-				sendOperation(sOuterDoChanel, methodName, parameters);
-				return;
-			}
-        	arrDoOperations.push(new Operation(methodName, parameters));
-			if (arrDoOperations.length == 1) {
-				setRandomDelay(doOperation);
-			}
+			ddsDoOperations.doSomething(new MessageToSend(sOuterDoChanel,methodName,parameters));
         }
 		private function sendGotOperation(methodName:String, parameters:Array/*Object*/):void {
-        	if (iDelayTo == 0) {
-				sendOperation(sInnerGotChanel, methodName, parameters);
-				return;
-			}
-        	arrGotOperations.push(new Operation(methodName, parameters));
-			if (arrGotOperations.length == 1) {
-				setRandomDelay(gotOperation);
-			}
-        }
-		private function doOperation():void {
-			if (arrDoOperations.length == 0) {
-				MsgBox.Show("Internal error. Array of \"do\"-operations is empty.");
-				return;
-			}
-			var op:Operation = arrDoOperations.shift();
-			sendOperation(sOuterDoChanel, op.Name, op.Arguments);
-			if (arrDoOperations.length > 0) {
-				setRandomDelay(doOperation);
-			}
-		}
-		private function gotOperation():void {
-			if (arrGotOperations.length == 0) {
-				MsgBox.Show("Internal error. Array of \"got\"-operations is empty.");
-				return;
-			}
-			var op:Operation = arrGotOperations.shift();
-			sendOperation(sInnerGotChanel, op.Name, op.Arguments);
-			if (arrGotOperations.length > 0) {
-				setRandomDelay(gotOperation);
-			}
-		}
-		public static function rnd(fromInclusive:int, toExclusive:int):int {
-			var delta:int = toExclusive - fromInclusive;
-			return Math.floor( delta * Math.random() ) + fromInclusive;
-		}
-		private function setRandomDelay(fnc:Function):void {
-			var delay_milliseconds:int = rnd(iDelayFrom*1000, iDelayTo*1000);
-			setTimeout(fnc, delay_milliseconds);		
-		}
-        private function sendOperation(connectionName:String, methodName:String, parameters:Array/*Object*/):void {
-			try{
-				lcServer.send(connectionName, "localconnection_callback", methodName, parameters);  
-			}catch (err:Error) {
-				MsgBox.Show(err.message, "Error");
-			}      	
+        	ddsGotOperations.doSomething(new MessageToSend(sInnerGotChanel,methodName,parameters));
         }
 		
 		//Got functions
@@ -840,7 +793,7 @@ package main{
 				sInnerDoChanel="DO_CHANEL"+sInnerPrefix+"_" + iChanel;
 				sInnerGotChanel = "GOT_CHANEL" + sInnerPrefix + "_" + iChanel;
 				lcInner.connect(sInnerDoChanel);
-				sendOperation("FRAMEWORK_SWF" + sOuterPrefix, "do_register_on_server", arguments);
+				ddsDoOperations.doSomething(new MessageToSend("FRAMEWORK_SWF" + sOuterPrefix,"do_register_on_server",arguments));
 			}catch(err:Error) { 
 				do_store_trace("do_register_on_server","Error: " + err.message);
 			}
@@ -905,12 +858,29 @@ package main{
 	}
 }
 
-class Operation {
-	public var Name:String;
-	public var Arguments:Array;
+import flash.net.*;
+
+class DelaySending implements DoSomethingI {
+	private var lcSend:LocalConnection;
 	
-	public function Operation(name:String, args:Array) {
-		Name = name;
-		Arguments = args;
+	public function DelaySending() {
+		lcSend = new LocalConnection();
+	}
+	
+	public function doSomething(obj:Object):void {
+		var msg:MessageToSend = obj as MessageToSend;
+		lcSend.send(msg.channel, "localconnection_callback", msg.method, msg.args);
+	}
+}
+
+class MessageToSend extends Object{
+	public var channel:String;
+	public var method:String;
+	public var args:Array;
+	
+	public function MessageToSend(_channel:String,_method:String,_args:Array) {
+		channel = _channel;
+		method = _method;
+		args = _args;
 	}
 }

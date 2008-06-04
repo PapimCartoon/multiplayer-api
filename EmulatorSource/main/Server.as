@@ -2207,7 +2207,7 @@ class User {
 				(this[methodName] as Function).apply(this, parameters);
 			}
 		} catch (err:Error) { 
-			sServer.addMessageLog("Server", "User", "Error: " + err);
+			sServer.addMessageLog("Server", "localconnection_callback", "Error: " + err);
 		}  
 	}
 	

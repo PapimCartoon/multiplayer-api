@@ -9,6 +9,7 @@ class OldContainer_board extends ClientGameAPI{
 	private var mcl:MovieClipLoader;
 	private var waitToStartMatch:Boolean=false;
 	private var isMyTurn:Boolean = false;
+	private var iStartTurnSended:Boolean = false;
 	private var className;
 	private var server;
 	private var iColor:Number;
@@ -46,6 +47,7 @@ class OldContainer_board extends ClientGameAPI{
 	}
 	public function got_match_started(user_ids:Array, extra_match_info:Object, match_started_time:Number):Void {
 		bGameStarted = true;
+		iStartTurnSended = false;
 		players = user_ids;
 		iColor = -1;
 		for (var i:Number = 0; i < user_ids.length; i++) {
@@ -88,9 +90,9 @@ class OldContainer_board extends ClientGameAPI{
 			}
 		}
 		if (i < keys.length) {
-			if (datas[i][1] == iColor && !isMyTurn) {
+			if (datas[i][1] == iColor && !isMyTurn && !iStartTurnSended) {
 				do_start_my_turn();
-				isMyTurn = true;
+				iStartTurnSended = true;
 			}
 		}
 		if (i < keys.length) {
@@ -112,6 +114,17 @@ class OldContainer_board extends ClientGameAPI{
 	}
 	public function got_message(user_id:Number, data:Object):Void {
 		do_agree_on_match_over(data[0],data[1],data[2]);
+	}
+	public function got_start_turn_of(user_id:Number):Void {
+		iStartTurnSended = false;
+		if (user_id == iID) {
+			isMyTurn = true;
+		}
+	}
+	public function got_end_turn_of(user_id:Number):Void {
+		if (user_id == iID) {
+			isMyTurn = false;
+		}
 	}
 	
 	//Register game class
@@ -148,7 +161,6 @@ class OldContainer_board extends ClientGameAPI{
 				}
 			}
 			do_end_my_turn([i]);
-			isMyTurn = false;
 		}
 		do_store_match_state("CurrColor", [turnNumber, currColor, milliSeconds]);	
 	}

@@ -44,34 +44,66 @@ package
         private var text:String;
 
 		public static function doTest():void {
-			// I don't support real numbers!
-			doTestLine( "[ 1,2, -98, -03 , \n"+
-                   "true, false, \n"+
-                   "null, \n"+
-                   "\"\", '', \n"+
-                   "\"hi! I'm here!\", \"a\\\"ba\",\n"+
-                   "\"newline=\\n\",\n"+
-                   " \"unicode=\\u05D0\\u05D1\\u05d0 \",\n"+
-                   " {a:2,\"b\":[3,56], \"a b a\" : 9 ,  c : [] } , {}, {4:null}, [], 'dsf' ]" );
-           	doTestLine("player0-7 ");   
-           	doTestLine("'I\\'m a legal, string!\n'");
-			doTestLine("['an','array',42, null, true, false, -42, 'unicode=\u05D0']");
-			doTestLine("{ an : 'object field', 'foo bar' : 'other field' }");
-           	try {         
-           		doTestLine("player0-7 : sdsds");
-           	} catch(err:Error) {
-           		trace("Error="+err);
-           	}            
+			doTestLine( "[ 1,2, -98, -03 , 7.03951716561533e+2, -1.70839354210796e-3, \n"+
+				   "true, false, \n"+
+				   "null, \n"+
+				   "\"\", '', \n"+
+				   "\"hi! I'm here!\", \"a\\\"ba\",\n"+
+				   "\"newline=\\n\",\n"+
+				   " \"unicode=\\u05D0\\u05D1\\u05d0 \",\n"+
+				   " {a:2,b:[3,56], \"a_b_a\" : 9 ,  c : [] } , {}, {a4:null}, [], 'dsf' ]",
+				[ 1,2, -98, -03 , 7.03951716561533e+2, -1.70839354210796e-3, 
+				   true, false, 
+				   null,
+				   "", '', 
+				   "hi! I'm here!", "a\"ba",
+				   "newline=\n",
+				   "unicode=\u05D0\u05D1\u05d0 ",
+				   {a:2,b:[3,56], a_b_a : 9 ,  c : [] } , {}, {a4:null}, [], 'dsf' ]);
+			doTestLine("player0-7 ", "player0-7");   
+			doTestLine("'I\\'m a legal, string!\n'", 'I\'m a legal, string!\n');
+			doTestLine("['an','array',42, null, true, false, -42, 'unicode=\u05D0']", ['an','array',42, null, true, false, -42, 'unicode=\u05D0']);
+			doTestLine("{ an : 'object field', 'foo_bar' : 'other field' }", { an : 'object field', foo_bar : 'other field' });
+			try {         
+				doTestLine("player0-7 : sdsds", "player0-7");
+				trace("BAD: should have thrown an error!");
+			} catch(err:Error) {
+				//trace("Error="+err);
+			}            
   		}
-		public static function doTestLine(test:String):void {
+		public static function doTestLine(test:String, expectedRes:Object):void {
 			var o:Object = parse(test);
-            trace("Object = "+o+"\n\nstringify="+stringify(o));		
+			if (!deepCompare(o, expectedRes)) trace("BAD: objects are not equal! o="+o+" expectedRes="+expectedRes);
+			//trace("test="+test+" Object = "+o+"\n\nstringify="+stringifyJSON(o));
+		}  		
+	
+		public static function deepCompare(o1, o2):Boolean {
+			var t:String = typeof(o1);
+			if (t!=typeof(o2)) {
+				trace("BAD types: objects are not equal! o1="+o1+" o2="+o2);
+				return false;
+			}
+			if (t=="object") {
+				var x;
+				for(x in o1)
+					if (!deepCompare(o1[x], o2[x])) return false;
+				for(x in o2)
+					if (!deepCompare(o1[x], o2[x])) return false;
+				return true;
+			} else {
+				if (o1==o2 || ''+o1==''+o2) // for double numbers, equality doesn't hold (o1=-1.70839354210796e-180 o2=-1.70839354210796e-180)
+					return true
+				else {
+					trace("BAD: objects are not equal! o1="+o1+" o2="+o2);
+					return false;
+				}
+			}
 		}
-  		
+
                    
 	    public static function stringify(arg:Object):String{
 			if (arg==null) return 'null';
-			if (arg is int) return ''+arg;
+			if (arg is Number) return ''+arg; // this is not accurate for double-precision (there is an accurate string representation using ByteArray to convert to two-int's, but it is not understable by humans)
 	        var c:String, i:int, l:int, s:String = '', v:String;
 	
 	        switch (typeof arg) {
@@ -240,7 +272,7 @@ package
                     }
                 }
             } else {
-				// if the user didn't user "..." , then the string goes until we find a special symbol: ' " , : [ ] {}   
+				// if the user didn't use apostrophies ("...") , then the string goes until we find a special symbol: ' " , : [ ] {}   
 				do {
 					if (ch==',' || ch=='"' || ch=="'" || ch=='[' || ch=="]" || ch=='{' || ch=="}" || ch==':' || ch==' ' || ch=='\b' || ch=='\f' || ch=='\n' || ch=='\r' || ch=='\t') {
 						break;
@@ -311,9 +343,9 @@ package
             throw error("Bad object");
         }
 
-        private function num():int {
+        private function num():Number {
             var n:String = '';
-            var v:int;
+            var v:Number;
 
             if (ch == '-') {
                 n = '-';
@@ -323,7 +355,7 @@ package
                 n += ch;
                 this.next();
             }
-            /*if (ch == '.') {
+            if (ch == '.') {
                 n += '.';
                 this.next();
                 while (ch >= '0' && ch <= '9') {
@@ -342,8 +374,9 @@ package
                     n += ch;
                     this.next();
                 }
-            }*/
-            v = int(n);
+            }
+            v = Number(n);
+			//trace("v="+v+" n="+n);
             if (!isFinite(v)) {
                 throw error("Bad number");
             }

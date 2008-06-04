@@ -8,4 +8,5 @@
     <project_file path="./AS2/LocalConnectionTest/LocalConnectionTest.fla" filetype="fla" profile="" />
     <project_file path="./AS2/OldAPI_Converter/OldContainer_board.fla" filetype="fla" profile="" />
     <project_file path="./AS2/TicTacToe/TicTacToe_AS2board.fla" filetype="fla" profile="" />
+    <project_file path="./EmulatorSource/GetParams.fla" filetype="fla" profile="" />
 </flash_project>

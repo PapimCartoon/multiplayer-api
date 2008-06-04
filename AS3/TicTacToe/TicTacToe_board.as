@@ -39,6 +39,8 @@ class TicTacToe_API extends ClientGameAPI {
 	private var iID:int;
 	private var root:MovieClip;
 	private var bGameStarted:Boolean;
+    
+	private const iSize:int = 3;
 	
 	//Constructor
 	public function TicTacToe_API(_root:MovieClip ) {
@@ -111,15 +113,15 @@ class TicTacToe_API extends ClientGameAPI {
 			iCurTurn = -1;
 			bCanPress = false;
 			
-			aBoardSquares = new Array(3);
-			aGameState = new Array(3);
+			aBoardSquares = new Array(iSize);
+			aGameState = new Array(iSize);
 			var sqr:Square;
 			var _x:int = 100;
 			var _y:int = 100;
-			for(var i:int=0; i<3; i++) {
-				aBoardSquares[i] = new Array(3);
-				aGameState[i] = new Array(3);
-				for (var j:int = 0; j < 3; j++) {
+			for(var i:int=0; i<iSize; i++) {
+				aBoardSquares[i] = new Array(iSize);
+				aGameState[i] = new Array(iSize);
+				for (var j:int = 0; j < iSize; j++) {
 					aGameState[i][j] = -1;
 					
 					sqr = new Square(_x, _y,i,j);
@@ -140,8 +142,8 @@ class TicTacToe_API extends ClientGameAPI {
 			bmpdata.draw(Bitmap(ldrLogo.content), new Matrix);
 			
 			var sqr:Square;
-			for(var i:int=0; i<3; i++) {
-				for (var j:int = 0; j < 3; j++) {				
+			for(var i:int=0; i<iSize; i++) {
+				for (var j:int = 0; j < iSize; j++) {				
 					sqr = aBoardSquares[i][j];
 					sqr.addLogo(bmpdata);
 				}
@@ -154,15 +156,19 @@ class TicTacToe_API extends ClientGameAPI {
 		do_store_trace("got_general_info", "Error: Logo file doesn't exist");
 	}
 	private function resetBoard():void {
-		iFilledNum = 0;
-		var sqr:Square;
-		for(var i:int=0; i<3; i++){
-			for (var j:int = 0; j < 3; j++) {
-				aGameState[i][j] = -1;
-				sqr = aBoardSquares[i][j];
-				sqr.visible = true;
-				sqr.renew(false, -1);
+		 try{
+			iFilledNum = 0;
+			var sqr:Square;
+			for(var i:int=0; i<iSize; i++){
+				for (var j:int = 0; j < iSize; j++) {
+					aGameState[i][j] = -1;
+					sqr = aBoardSquares[i][j];
+					sqr.visible = true;
+					sqr.renew(false, -1);
+				}
 			}
+		}catch (err:Error) {
+				do_store_trace("resetBoard", "Error: " + err.message);
 		}
 	}
 	private function doMove(i:int, j:int):void {
@@ -174,23 +180,37 @@ class TicTacToe_API extends ClientGameAPI {
 			aGameState[i][j] = currTurn;
 			iFilledNum++;
 			setOnPress(false);
-			if (isGameOver()) {
-				var arr:Array;
-				if (iColor == 0) {
-					arr = new Array(100, 0);
-				}else {
-					arr = new Array(0, 100);
-				}
-				do_agree_on_match_over(aPlayers, [100,100], arr);
-				bGameStarted = false;
-			}else if (iFilledNum == 3 * 3) {
-				do_agree_on_match_over(aPlayers, [100,100], null);
-				bGameStarted = false;
-			}else{
-				do_end_my_turn([aPlayers[1-iColor]]);	
+			checkEndOfMatch();
+			if (bGameStarted) {
+				do_end_my_turn([aPlayers[1-iColor]]);   
 			}
 		}catch (err:Error) {
-			do_store_trace("doMove", "Error: " + err.message);
+            do_store_trace("doMove", "Error: " + err.message);
+        }
+    }
+	private function checkEndOfMatch():void {
+		try{
+			if (iColor == -1) {
+				return;
+			}
+			if (isGameOver()) {
+				var arr:Array;
+				var arr1:Array;
+				if (aPlayers[iColor]==iID) {
+					arr = new Array(0, 100);
+					arr1 = new Array( -1, 1);
+				}else {
+					arr = new Array(100, 0);
+					arr1 = new Array( 1, -1);
+				}
+				do_agree_on_match_over(aPlayers, arr1, arr);
+				bGameStarted = false;
+			}else if (isTie()) {
+				do_agree_on_match_over(aPlayers, [0,0], null);
+				bGameStarted = false;
+			}
+		}catch (err:Error) {
+			do_store_trace("checkEndOfMatch", "Error: " + err.message);
 		}
 	}
 	private function updateSquare(val:int, i:int, j:int):void {
@@ -210,8 +230,8 @@ class TicTacToe_API extends ClientGameAPI {
 			bCanPress = isOn;
 			var sqr:Square;
 			do_store_trace("setOnPress","isOn="+isOn);
-			for(var i:int=0; i<3; i++) {
-				for (var j:int = 0; j < 3; j++) {
+			for(var i:int=0; i<iSize; i++) {
+				for (var j:int = 0; j < iSize; j++) {
 					sqr = aBoardSquares[i][j];
 					if(bCanPress && !sqr.Checked){
 						sqr.addEventListener(MouseEvent.MOUSE_MOVE, onSquareEnter);
@@ -231,8 +251,8 @@ class TicTacToe_API extends ClientGameAPI {
 	private function showState():void {
 		var j:int, k:int;
 		iFilledNum = 0;
-		for (j = 0; j < 3; j++) {
-			for (k = 0; k < 3; k++) {
+		for (j = 0; j < iSize; j++) {
+			for (k = 0; k < iSize; k++) {
 				updateSquare(aGameState[j][k],j, k);
 				if (int(aGameState[j][k]) != -1) {
 					iFilledNum++;
@@ -246,14 +266,14 @@ class TicTacToe_API extends ClientGameAPI {
 				var x:int = data["x"];
 				var y:int = data["y"];
 				var state:int = data["state"];
-				if (x < 0 || x > 2) {
+				if (x < 0 || x > (iSize-1)) {
 					if(iColor!=-1){
 						do_client_protocol_error_with_description("X is out of range");
 					}
 					return false;
 
 				}
-				if (y < 0 || y > 2) {
+				if (y < 0 || y > (iSize-1)) {
 					if(iColor!=-1){
 						do_client_protocol_error_with_description("Y is out of range");
 					}
@@ -315,42 +335,42 @@ class TicTacToe_API extends ClientGameAPI {
 		try{
 			var ownedBy:int;
 			var i:int,j:int;
-			for (i = 0; i < 3; i++) {
+			for (i = 0; i < iSize; i++) {
 				ownedBy = aGameState [i][0];
-				for (j = 1; j < 3; j++) {
+				for (j = 1; j < iSize; j++) {
 					if (aGameState[i][j] != ownedBy) {
 						break;
 					}
 				}
-				if (j == 3 && ownedBy!=-1) {
+				if (j == iSize && ownedBy!=-1) {
 					return true;
 				}
 				ownedBy = aGameState [0][i];
-				for (j = 1; j < 3; j++) {
+				for (j = 1; j < iSize; j++) {
 					if (aGameState[j][i] != ownedBy) {
 						break;
 					}
 				}
-				if (j == 3 && ownedBy!=-1) {
+				if (j == iSize && ownedBy!=-1) {
 					return true;
 				}
 			}
 			ownedBy = aGameState [0][0];
-			for (j = 1; j < 3; j++) {
+			for (j = 1; j < iSize; j++) {
 				if (aGameState[j][j] != ownedBy) {
 					break;
 				}
 			}
-			if (j == 3 && ownedBy!=-1) {
+			if (j == iSize && ownedBy!=-1) {
 				return true;
 			}
-			ownedBy = aGameState [2][0];
-			for (j = 1; j < 3; j++) {
-				if (aGameState[2-j][j] != ownedBy) {
+			ownedBy = aGameState [(iSize-1)][0];
+			for (j = 1; j < iSize; j++) {
+				if (aGameState[(iSize-1)-j][j] != ownedBy) {
 					break;
 				}
 			}
-			if (j == 3 && ownedBy!=-1) {
+			if (j == iSize && ownedBy!=-1) {
 				return true;
 			}
 			return false;
@@ -358,6 +378,9 @@ class TicTacToe_API extends ClientGameAPI {
 			do_store_trace("isGameOver", "Error: " + err.message);
 		}
 		return false;
+	}
+	private function isTie():Boolean {
+		return (iFilledNum == iSize*iSize);
 	}
 	
 	//Got functions
@@ -433,19 +456,7 @@ class TicTacToe_API extends ClientGameAPI {
 		}
 		btnNext.visible = false;
 		if (iColor != -1 && bGameStarted) {
-			if (isGameOver()) {
-				var arr:Array;
-				if (iColor == 0) {
-					arr = new Array(0, 100);
-				}else {
-					arr = new Array(100, 0);
-				}
-				do_agree_on_match_over(aPlayers, [100,100], arr);
-				bGameStarted = false;
-			}else if (iFilledNum == 3 * 3) {
-				do_agree_on_match_over(aPlayers, [100,100], null);
-				bGameStarted = false;
-			}
+			checkEndOfMatch();
 		}
 		if (iCurTurn == -1 && iFilledNum==0 && iColor == 0) {
 			do_start_my_turn();
@@ -460,7 +471,7 @@ class TicTacToe_API extends ClientGameAPI {
 			do_client_protocol_error_with_description("Oponent didn't make his turn");
 			return;
 		}
-		if (iColor == getCurrentTurn() && !isGameOver() && iFilledNum!=3*3) {
+		if (iColor == getCurrentTurn() && !isGameOver() && !isTie()) {
 			do_start_my_turn();
 		}
 	}

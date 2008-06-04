@@ -105,7 +105,7 @@ if (param_arr['game'] !=null){
                 if(i==0 && j==0){
                     writeFlash(cell,"../EmulatorSource/Server.swf","570","470",flashvars+addparams+"&game="+param_arr["game"]+"&oldgame="+param_arr["oldgame"]+"&fps="+param_arr["fps"]+"&delay_from="+param_arr["delay_from"]+"&delay_to="+param_arr["delay_to"]+"&xml=Server.xml","server");
                 }else{
-                    writeFlash(cell,"../EmulatorSource/InfoContainer.swf",swf_width,swf_height,flashvars+"&game="+param_arr["game"]+"&oldgame="+param_arr["oldgame"]+"&delay_from="+param_arr["delay_from"]+"&delay_to="+param_arr["delay_to"]+"&fps="+param_arr["fps"]+"&xml=Client.xml","client"+i+j);
+                    writeFlash(cell,"../EmulatorSource/InfoContainer.swf",swf_width,swf_height,flashvars+"&game="+param_arr["game"]+"&oldgame="+param_arr["oldgame"]+"&delay_from="+param_arr["delay_from"]+"&delay_to="+param_arr["delay_to"]+"&fps="+param_arr["fps"]+"&old_container="+param_arr["old_container"]+"&xml=Client.xml","client"+i+j);
                 }
             }
         }

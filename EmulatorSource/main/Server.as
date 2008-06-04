@@ -533,6 +533,21 @@ package main{
 			
 			shrSavedGames = SharedObject.getLocal("SavedGames");
 			
+			if (shrSavedGames.data.savedGames == null) {
+				btnLoadGame.enabled = false;
+			}else {
+				var j:int = 0;
+				arr = shrSavedGames.data.savedGames;
+				for (i = 0; i < arr.length; i++) {
+					if (arr[i].playersNum == User.PlayersNum && arr[i].GameName == root.loaderInfo.parameters["game"]) {
+						j++;
+					}
+				}
+				if (j == 0) {
+					btnLoadGame.enabled = false;
+				}
+			}
+			
 			var arr:Array = new Array();
 			for (var p:String in root.loaderInfo.parameters) {
 				arr.push([p, root.loaderInfo.parameters[p]]);
@@ -1315,6 +1330,16 @@ package main{
 				showSavedGames();
 				MsgBox.Show("Saved game was deleted","Message");
 			}
+			var j:int = 0;
+			arr = shrSavedGames.data.savedGames;
+			for (i = 0; i < arr.length; i++) {
+				if (arr[i].playersNum == User.PlayersNum && arr[i].GameName == root.loaderInfo.parameters["game"]) {
+					j++;
+				}
+			}
+			if (j == 0) {
+				btnLoadGame.enabled = false;
+			}
 		}
 		
 		private function loadFocusOut(evt:FocusEvent):void {
@@ -1352,7 +1377,8 @@ package main{
 			txtSaveName.text = "";
 			pnlSave.visible = false;
 			showSavedGames();
-			MsgBox.Show("The game was saved","Message");
+			MsgBox.Show("The game was saved", "Message");
+			btnLoadGame.enabled = true;
 		}
 		
 		private function saveKeyDown(evt:KeyboardEvent):void {

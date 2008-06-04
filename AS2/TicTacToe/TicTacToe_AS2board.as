@@ -1,6 +1,6 @@
 import mx.controls.Button;
 
-class TicTacToe_AS2board extends ClientGameAPI {
+class TicTacToe_AS2board extends ClientGameAPI{
 	private var json:JSON_AS2;
 	private var swfRoot:MovieClip;
 	private var btnPrev:Button;
@@ -113,23 +113,37 @@ class TicTacToe_AS2board extends ClientGameAPI {
 			aGameState[i][j] = iColor;
 			iFilledNum++;
 			setOnPress(false);
-			if (isGameOver()) {
-				var arr:Array;
-				if (iColor == 0) {
-					arr = new Array(100, 0);
-				}else {
-					arr = new Array(0, 100);
-				}
-				do_agree_on_match_over(aPlayers, [100,100], arr);
-				bGameStarted = false;
-			}else if (isTie()) {
-				do_agree_on_match_over(aPlayers, [100,100], null);
-				bGameStarted = false;
-			}else{
-				do_end_my_turn([aPlayers[1-iColor]]);	
+			checkEndOfMatch();
+			if (bGameStarted) {
+				do_end_my_turn([aPlayers[1-iColor]]);   
 			}
 		}catch (err:Error) {
 			do_store_trace("doMove", "Error: " + err.message);
+		}
+	}
+	private function checkEndOfMatch():Void {
+		try {
+			if (iColor == -1) {
+				return;
+			}
+			if (isGameOver()) {
+				var arr:Array;
+				var arr1:Array;
+				if (aPlayers[iColor]==iID) {
+					arr = new Array(0, 100);
+					arr1 = new Array( -1, 1);
+				}else {
+					arr = new Array(100, 0);
+					arr1 = new Array( 1, -1);
+				}
+				do_agree_on_match_over(aPlayers, arr1, arr);
+				bGameStarted = false;
+			}else if (isTie()) {
+				do_agree_on_match_over(aPlayers, [0,0], null);
+				bGameStarted = false;
+			}
+		}catch (err:Error) {
+			do_store_trace("checkEndOfMatch", "Error: " + err.message);
 		}
 	}
 	private function updateSquare(val:Number, i:Number, j:Number):Void {
@@ -349,21 +363,7 @@ class TicTacToe_AS2board extends ClientGameAPI {
 			btnPrev.visible = false;
 		}
 		btnNext.visible = false;
-		if (iColor != -1 && bGameStarted) {
-			if (isGameOver()) {
-				var arr:Array;
-				if (iColor == 0) {
-					arr = new Array(0, 100);
-				}else {
-					arr = new Array(100, 0);
-				}
-				do_agree_on_match_over(aPlayers, [100,100], arr);
-				bGameStarted = false;
-			}else if (isTie()) {
-				do_agree_on_match_over(aPlayers, [100,100], null);
-				bGameStarted = false;
-			}
-		}
+		checkEndOfMatch();
 		
 		if (iCurTurn == -1 && iFilledNum==0 && iColor == 0) {
 			do_start_my_turn();

@@ -44,6 +44,7 @@ package main{
 		private var arrGotOperations:Array;
 		private var iDelayFrom:int;
 		private var iDelayTo:int;
+		private var lblWait:TextField;
 		
 		public function InfoContainer() {
 			
@@ -61,6 +62,12 @@ package main{
 			btnStart.label = "Start";
 			btnStart.addEventListener(MouseEvent.CLICK, btnStartClick);
 			this.addChild(btnStart);
+			
+			lblWait = new TextField();
+			lblWait.text = "Waiting for oponent...";
+			lblWait.visible = false;
+			lblWait.autoSize = TextFieldAutoSize.LEFT;
+			this.addChild(lblWait)
 			
 			ldr = new Loader();
 			ldr.y = 23;
@@ -261,10 +268,15 @@ package main{
 				return;
 			}
 			btnStart.visible = false;
+			lblWait.visible = true;
 			if(root.loaderInfo.parameters["oldgame"]=="0"){
 				var rqst:URLRequest = new URLRequest(root.loaderInfo.parameters["game"] + "?prefix=" + sInnerPrefix);
 			}else {
-				rqst = new URLRequest("OldContainer_board.swf?prefix=" + sInnerPrefix+"&oldgame="+root.loaderInfo.parameters["game"]);
+				if(root.loaderInfo.parameters["old_container"] == null){
+					rqst = new URLRequest("OldContainer_board.swf?prefix=" + sInnerPrefix + "&oldgame=" + root.loaderInfo.parameters["game"]);
+				}else {
+					rqst = new URLRequest(root.loaderInfo.parameters["old_container"]+"?prefix=" + sInnerPrefix + "&oldgame=" + root.loaderInfo.parameters["game"]);
+				}
 			}
 			ldr.contentLoaderInfo.addEventListener(Event.COMPLETE, onLoadComplete);
 			ldr.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, onLoadError);
@@ -436,7 +448,10 @@ package main{
 			pnlInfo.graphics.endFill();
 			
 			btnStart.x =(_x-btnStart.width)/2;
-			btnStart.y = ((_y-20)-btnStart.height)/2+20;
+			btnStart.y = ((_y - 20) - btnStart.height) / 2 + 20;
+            
+			lblWait.x =(_x-lblWait.width)/2;
+			lblWait.y = ((_y - 20) - lblWait.height) / 2 + 20;
 			
 			txtSize.text = "Game Size: " + Math.round(stage.stageWidth-20) + "x" + Math.round(stage.stageHeight-42);
 			txtSize.x = stage.stageWidth - txtSize.width - 13;
@@ -724,6 +739,7 @@ package main{
 			try {
 				sendGotOperation("got_match_started", arguments);
 				txtTurn.text = "";
+				lblWait.visible = false;
 				txtUsers.htmlText = "<b>Users:</b><br>";
 				var j:int,str:String,u:UserInfo;
 				for (var i:int = 0; i < aUsers.length; i++) {
@@ -781,6 +797,7 @@ package main{
 		public function got_end_turn_of(user_id:int):void { 
 			try{
 				sendGotOperation("got_end_turn_of", arguments);
+				txtTurn.text = "";
 			}catch(err:Error) { 
 				do_store_trace("got_end_turn_of","Error: " + err.message);
 			}

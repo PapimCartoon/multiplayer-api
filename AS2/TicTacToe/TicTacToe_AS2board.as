@@ -129,7 +129,7 @@ class TicTacToe_AS2board extends ClientGameAPI{
 			if (isGameOver()) {
 				var arr:Array;
 				var arr1:Array;
-				if (aPlayers[iColor]==iID) {
+				if ((iColor==1 && iCurTurn==iID) || (iColor==0 && iCurTurn!=iID)) {
 					arr = new Array(0, 100);
 					arr1 = new Array( -1, 1);
 				}else {

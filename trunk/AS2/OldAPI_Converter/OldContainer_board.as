@@ -139,8 +139,15 @@ class OldContainer_board extends ClientGameAPI{
 		if (!bGameStarted) {
 			return;
 		}
-		if(isMyTurn){
-			do_end_my_turn([(1-iColor)+1]);
+		if (isMyTurn) {
+			var i:Number;
+			for (var j:Number = 0; j < players.length; j++) {
+				if (players[j] != iID) {
+					i = players[j];
+					break;
+				}
+			}
+			do_end_my_turn([i]);
 			isMyTurn = false;
 		}
 		do_store_match_state("CurrColor", [turnNumber, currColor, milliSeconds]);	

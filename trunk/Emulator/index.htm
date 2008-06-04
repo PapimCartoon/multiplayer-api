@@ -52,6 +52,9 @@ function getParams(arr){
                     document.getElementById("multiple_popups").checked=true;
                 }
                 break;
+            case "old_container":
+                document.getElementById("old_container").value=arr[i][1];
+                break;
             default:
                 if(arr[i][0].substring(0,3)=="col"){
                     if(!document.getElementById(arr[i][0])){
@@ -124,6 +127,7 @@ function removeParam(num,obj){
 <body onunload="unloadServer();">
     <div id="divForm">
         <form target="_self" method="get">
+            <input type="hidden" id="old_container" value="OldContainer_board.swf" />
             <table border="0" cellpadding="10" cellspacing="0">
                 <tr>
                     <td style="background-color: #c3e958; padding: 10px;">
@@ -354,7 +358,7 @@ function btn_click(){
         to=from;
     }
     document.getElementById("delay_to").value=to;
-    var addparams="players_num="+players_num+"&viewers_num="+viewers_num+"&logo="+document.getElementById("logo").value+"&game="+document.getElementById("test_file_name").value+"&test_file_width="+document.getElementById("test_file_width").value+"&test_file_height="+document.getElementById("test_file_height").value+"&fps="+fps+"&delay_from="+from+"&delay_to="+to;
+    var addparams="players_num="+players_num+"&viewers_num="+viewers_num+"&logo="+document.getElementById("logo").value+"&game="+document.getElementById("test_file_name").value+"&test_file_width="+document.getElementById("test_file_width").value+"&test_file_height="+document.getElementById("test_file_height").value+"&fps="+fps+"&delay_from="+from+"&delay_to="+to+"&old_container="+document.getElementById("old_container").value;
     try{
         swf_width=parseInt(document.getElementById("test_file_width").value)+20;
     }catch(err){
@@ -423,7 +427,7 @@ function clientClick(num){
     if(from>to){
         to=from;
     }
-	clients[num]=window.open("ClientWindow.htm?game="+document.getElementById("test_file_name").value+"&width="+swf_width+"&height="+swf_height+"&"+flashvars+old+"&delay_from="+from+"&delay_to="+to,"_blank","width="+swf_width+",height="+swf_height+",left="+(50*(num+1))+",top="+(50*(num+1))+",menubar=0,titlebar=0,toolbar=0,resizable=1");
+	clients[num]=window.open("ClientWindow.htm?game="+document.getElementById("test_file_name").value+"&width="+swf_width+"&height="+swf_height+"&"+flashvars+old+"&delay_from="+from+"&delay_to="+to+"&old_container="+old_container,"_blank","width="+swf_width+",height="+swf_height+",left="+(50*(num+1))+",top="+(50*(num+1))+",menubar=0,titlebar=0,toolbar=0,resizable=1");
     }else{
 	clients[num].focus();
 

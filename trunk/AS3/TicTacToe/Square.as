@@ -93,16 +93,8 @@
 					this.graphics.endFill();
 				}
 			}
-			if (this.value == 0) {
-				symX.visible = true;
-				symO.visible = false;
-			}else if (this.value == 1) {
-				symX.visible = false;
-				symO.visible = true;
-			}else{
-				symX.visible = false;
-				symO.visible = false;
-			}
+			symX.visible = (this.value == 0);
+            symO.visible = (this.value == 1);
 		}
 	}
 }

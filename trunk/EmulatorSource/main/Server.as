@@ -570,7 +570,55 @@ package main{
 		
 		private function sendOperation(connectionName:String, methodName:String, parameters:Array/*Object*/):void {
 			try {
-				lcFramework.send(connectionName, "localconnection_callback", methodName, parameters);  
+				lcFramework.send(connectionName, "localconnection_callback", methodName, parameters); 
+				var args:String;
+				var name:String;
+				var u:User;
+				for (var i:int = 0; i < aUsers.length; i++) {
+					u = aUsers[i];
+					if (u.GotChanel == connectionName) {
+						name = u.Name;
+						break;
+					}
+				}
+				if (i == aUsers.length) {
+					return;
+				}
+				switch(methodName) {
+					case "got_general_info":
+						args = "keys=" + JSON.stringify(parameters[0]) + ", datas=" + JSON.stringify(parameters[1]);
+						break;
+					case "got_user_info":
+						args = "user_id="+JSON.stringify(parameters[0])+", keys=" + JSON.stringify(parameters[1]) + ", datas=" + JSON.stringify(parameters[2]);
+						break;
+					case "got_my_user_id":
+						args = "my_user_id=" + JSON.stringify(parameters[0]);
+						break;
+					case "got_match_started":
+						args = "players_user_id=" + JSON.stringify(parameters[0]) + ", extra_match_info=" + JSON.stringify(parameters[1]) + ", match_started_time=" + JSON.stringify(parameters[2]);
+						break;
+					case "got_match_over":
+						args = "user_ids=" + JSON.stringify(parameters[0]);
+						break;
+					case "got_start_turn_of":
+						args = "user_id=" + JSON.stringify(parameters[0]);
+						break;
+					case "got_end_turn_of":
+						args = "user_id=" + JSON.stringify(parameters[0]);
+						break;
+					case "got_stored_match_state":
+						args = "user_ids="+JSON.stringify(parameters[0])+", keys=" + JSON.stringify(parameters[1]) + ", datas=" + JSON.stringify(parameters[2]);
+						break;
+					case "got_message":
+						args = "user_id="+JSON.stringify(parameters[0])+", data=" + JSON.stringify(parameters[1]);
+						break;
+					case "got_timer":
+						args = "from_user_id=" + JSON.stringify(parameters[0]) + ", key=" + JSON.stringify(parameters[1]) + ", in_seconds=" + JSON.stringify(parameters[2]) + ", pass_back=" + JSON.stringify(parameters[3]);
+						break;
+					default:
+						return;
+				}
+				addMessageLog(name, methodName, args);
 			}catch(err:Error) { 
 				MsgBox.Show(err.message, "Error");
 			}      	
@@ -1795,6 +1843,8 @@ package main{
 						return;
 					}
 				}
+			}else {
+				next_turn_of_player_ids = new Array();
 			}
 			iCurTurn = -1;
 			addMessageLog(user.Name, "do_end_my_turn", "next_turn_of_player_ids={" + next_turn_of_player_ids + "}");

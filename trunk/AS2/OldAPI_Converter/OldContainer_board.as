@@ -9,10 +9,10 @@ class OldContainer_board extends ClientGameAPI{
 	private var mcl:MovieClipLoader;
 	private var waitToStartMatch:Boolean=false;
 	private var isMyTurn:Boolean = false;
-	private var iStartTurnSended:Boolean = false;
 	private var className;
 	private var server;
 	private var iColor:Number;
+	private var iCurColor:Number;
 	private var bGameStarted:Boolean;
 	private var players:Array;
 	private var iID:Number;
@@ -47,9 +47,9 @@ class OldContainer_board extends ClientGameAPI{
 	}
 	public function got_match_started(user_ids:Array, extra_match_info:Object, match_started_time:Number):Void {
 		bGameStarted = true;
-		iStartTurnSended = false;
 		players = user_ids;
 		iColor = -1;
+		iCurColor = -1;
 		for (var i:Number = 0; i < user_ids.length; i++) {
 			if (user_ids[i] == iID) {
 				iColor = i;
@@ -90,10 +90,10 @@ class OldContainer_board extends ClientGameAPI{
 			}
 		}
 		if (i < keys.length) {
-			if (datas[i][1] == iColor && !isMyTurn && !iStartTurnSended) {
+			if (datas[i][1] == iColor && !isMyTurn &&  iColor!=iCurColor) {
 				do_start_my_turn();
-				iStartTurnSended = true;
 			}
+			iCurColor = datas[i][1];
 		}
 		if (i < keys.length) {
 			classObj.receivedSetTurn(datas[i][0],datas[i][1],datas[i][2]);
@@ -116,7 +116,6 @@ class OldContainer_board extends ClientGameAPI{
 		do_agree_on_match_over(data[0],data[1],data[2]);
 	}
 	public function got_start_turn_of(user_id:Number):Void {
-		iStartTurnSended = false;
 		if (user_id == iID) {
 			isMyTurn = true;
 		}
@@ -162,7 +161,7 @@ class OldContainer_board extends ClientGameAPI{
 			}
 			do_end_my_turn([i]);
 		}
-		do_store_match_state("CurrColor", [turnNumber, currColor, milliSeconds]);	
+		do_store_match_state("CurrColor", [turnNumber, currColor, milliSeconds]);
 	}
 	private function sendMatchEnded(winningColor:Number, whiteScore:Number, blackScore:Number, whiteTokenPercentage:Number):Void {
 		do_store_trace("sendMatchEnded","winningColor="+json.stringify(winningColor)+", whiteScore="+json.stringify(whiteScore)+", blackScore="+json.stringify(blackScore)+", whiteTokenPercentage="+json.stringify(whiteTokenPercentage));

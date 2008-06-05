@@ -104,73 +104,66 @@ package
 	    public static function stringify(arg:Object):String{
 			if (arg==null) return 'null';
 			if (arg is Number) return ''+arg; // this is not accurate for double-precision (there is an accurate string representation using ByteArray to convert to two-int's, but it is not understable by humans)
-	        var c:String, i:int, l:int, s:String = '', v:String;
+	        var c:String, i:int, l:int, res:Array = [], v:String;
 	
 	        switch (typeof arg) {
 	        case 'object':
                 if (arg is Array) {
                     for (i = 0; i < arg.length; ++i) {
                         v = stringify(arg[i]);
-                        if (s) {
-                            s += ',';
-                        }
-                        s += v;
+                        res.push(v);
                     }
-                    return '[' + s + ']';
+                    return '[' + res.join(",") + ']';
                 }else if (typeof arg.toString() != 'undefined') {
                     for (var z:String in arg) {
                         v = arg[z];
                         if (typeof v != 'undefined' && typeof v != 'function') {
                             v = stringify(arg[z]);
-                            if (s) {
-                                s += ',';
-                            }
-                            s += z + ':' + v;
+                            res.push( z + ':' + v );
                         }
                     }
-                    return '{' + s + '}';
+                    return '{' + res.join(",") + '}';
                 }else{
 					return "null";
 				}
 	        case 'string':
 	            l = arg.length;
-	            s = '"';
 	            for (i = 0; i < l; i += 1) {
 	                c = arg.charAt(i);
 	                if (c >= ' ') {
 	                    if (c == '\\' || c == '"') {
-	                        s += '\\';
+	                        res.push('\\');
 	                    }
-	                    s += c;
+	                    res.push(c);
 	                } else {
 	                    switch (c) {
 	                        case '\b':
-	                            s += '\\b';
+	                            res.push('\\b');
 	                            break;
 	                        case '\f':
-	                            s += '\\f';
+	                            res.push('\\f');
 	                            break;
 	                        case '\n':
-	                            s += '\\n';
+	                            res.push('\\n');
 	                            break;
 	                        case '\r':
-	                            s += '\\r';
+	                            res.push('\\r');
 	                            break;
 	                        case '\t':
-	                            s += '\\t';
+	                            res.push('\\t');
 	                            break;
 	                        default:
 	                            var charCode:int = c.charCodeAt();
-	                            s += '\\u00' + Math.floor(charCode / 16).toString(16) +
-	                                (charCode % 16).toString(16);
+	                            res.push( '\\u00' + Math.floor(charCode / 16).toString(16) +
+	                                (charCode % 16).toString(16) );
 	                    }
 	                }
 	            }
-	            return s + '"';
+	            return '"' + res.join("") + '"';
 	        case 'boolean':
 	            return String(arg);
 	        default:
-	            return 'null';
+	            return stringify(arg.toString());
 	        }
 	    }
         private function white():void {

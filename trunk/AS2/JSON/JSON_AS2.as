@@ -1,4 +1,4 @@
-class JSON_AS2 {
+﻿class JSON_AS2 {
 	
 	public static function doTest() {		
 		doTestLine( "[ 1,2, -98, -03 , 7.03951716561533e+2, -1.70839354210796e-3, \n"+
@@ -86,7 +86,7 @@ class JSON_AS2 {
                             if (s) {
                                 s += ',';
                             }
-                            s += i + ':' + v;
+                            s += stringifyJSON(i) + ':' + v;
                         }
                     }
                     return '{' + s + '}';

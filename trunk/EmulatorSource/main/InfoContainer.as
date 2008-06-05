@@ -234,8 +234,8 @@ package main{
 			loader.addEventListener(IOErrorEvent.IO_ERROR, loaderError);
 			loader.load(new URLRequest(root.loaderInfo.parameters["xml"]));
 			
-			var from:int = parseInt(root.loaderInfo.parameters["delay_from"])*1000;
-			var to:int = parseInt(root.loaderInfo.parameters["delay_to"])*1000;
+			var from:int = parseInt(root.loaderInfo.parameters["delay_from"]);
+			var to:int = parseInt(root.loaderInfo.parameters["delay_to"]);
 			
 			var ds:DelaySending = new DelaySending();
 			ddsDoOperations = new DelayDoSomething(ds, from, to);

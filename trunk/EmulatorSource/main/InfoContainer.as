@@ -429,17 +429,14 @@ package main{
 			
 			pnlBackground.graphics.clear();
 			pnlBackground.graphics.beginFill(0xFFFFFF);
-			pnlBackground.graphics.drawRect(0, 0, stage.stageWidth, 22);
-			pnlBackground.graphics.drawRect(0, 0, 2, stage.stageHeight);
-			pnlBackground.graphics.drawRect(2 + _x + 1, 0, stage.stageHeight - (2 + _x + 1), stage.stageHeight);
-			pnlBackground.graphics.drawRect(0, _y, stage.stageWidth, stage.stageHeight - _y);
-			pnlBackground.graphics.endFill();
+			pnlBackground.graphics.drawRect(0, 0, stage.stageWidth, stage.stageHeight);
 			pnlBackground.graphics.lineStyle(1, 0xb9baba);
 			pnlBackground.graphics.moveTo(2, 22);
 			pnlBackground.graphics.lineTo(2 + _x+1, 22);
 			pnlBackground.graphics.lineTo(2 + _x+1, _y);
 			pnlBackground.graphics.lineTo(2, _y);
 			pnlBackground.graphics.lineTo(2, 22);			
+			pnlBackground.graphics.endFill();
 			
 			pnlInfo.graphics.clear();
 			pnlInfo.graphics.lineStyle(1, 0x000000, 0);

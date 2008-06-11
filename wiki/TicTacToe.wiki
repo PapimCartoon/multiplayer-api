@@ -1,6 +1,7 @@
 #summary The classic example of a turn-based game
 
-In the SVN you can see an implementation of TicTacToe in the AS3 directory.
+*In the SVN you can find a working [http://code.google.com/p/multiplayer-api/downloads/list examples of TicTacToe] in the AS2 and AS3 directory.*
+
 This page explains on some of the details of this implementation.
 
 

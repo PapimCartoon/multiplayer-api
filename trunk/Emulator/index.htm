@@ -162,16 +162,16 @@ function removeParam(num,obj){
                                 </td>
                                 <td>
                                     <select id="test_file_name" name="test_file_name">
-									<option value="../AS3/TicTacToe/TicTacToe_board.swf">TicTacToe AS3
-									<option value="../AS2/TicTacToe/TicTacToe_AS2board.swf">TicTacToe AS2
-									<option value="../AS2/LocalConnectionTest/LocalConnectionTest.swf">LocalConnectionTest AS2
-									<option value="../AS3/TestClientGameAPI/TestClientGameAPI.swf">TestClientGameAPI
-									<option value="../AS2/OldAPI_Converter/games/Bowling_board.swf">Bowling_board (old API)
-									<option value="../AS2/OldAPI_Converter/games/Dart_board.swf">Dart_board (old API)
-									<option value="../AS2/OldAPI_Converter/games/Kancha_board.swf">Kancha_board (old API)
-									<option value="../AS2/OldAPI_Converter/games/Pool_board.swf">Pool_board (old API)
-									<option value="../AS2/OldAPI_Converter/games/Snake_board.swf">Snake_board (old API)
-									<option value="../AS2/OldAPI_Converter/games/TicTacToeClientAPI_board.swf">TicTacToeClientAPI_board (old API)
+									<option value="../AS3/TicTacToe/TicTacToe_board.swf">TicTacToe AS3</option>
+									<option value="../AS2/TicTacToe/TicTacToe_AS2board.swf">TicTacToe AS2</option>
+									<option value="../AS2/LocalConnectionTest/LocalConnectionTest.swf">LocalConnectionTest AS2</option>
+									<option value="../AS3/TestClientGameAPI/TestClientGameAPI.swf">TestClientGameAPI</option>
+									<option value="../AS2/OldAPI_Converter/games/Bowling_board.swf">Bowling_board (old API)</option>
+									<option value="../AS2/OldAPI_Converter/games/Dart_board.swf">Dart_board (old API)</option>
+									<option value="../AS2/OldAPI_Converter/games/Kancha_board.swf">Kancha_board (old API)</option>
+									<option value="../AS2/OldAPI_Converter/games/Pool_board.swf">Pool_board (old API)</option>
+									<option value="../AS2/OldAPI_Converter/games/Snake_board.swf">Snake_board (old API)</option>
+									<option value="../AS2/OldAPI_Converter/games/TicTacToeClientAPI_board.swf">TicTacToeClientAPI_board (old API)</option>
 									</select>
                                     <input type="checkbox" id="old_game" name="old_game" value="checkbox" />Is old API?
 					<!-- <a href="#"><img src="question.gif" style="border-width:0px;" /> </a>-->
@@ -421,19 +421,10 @@ function clientClick(num){
     }else{
         old="&oldgame=0";
     }
-    document.getElementById("delay_from").value=from;
     var from,to;
-    to=parseInt(document.getElementById("delay_to").value);
-    if(isNaN(to)){
-        to=0;
-    }
-    if(to<0){
-        to=0;
-    }
-    if(from>to){
-        to=from;
-    }
-	clients[num]=window.open("ClientWindow.htm?game="+document.getElementById("test_file_name").value+"&width="+swf_width+"&height="+swf_height+"&"+flashvars+old+"&delay_from="+from+"&delay_to="+to+"&old_container="+old_container,"_blank","width="+swf_width+",height="+swf_height+",left="+(50*(num+1))+",top="+(50*(num+1))+",menubar=0,titlebar=0,toolbar=0,resizable=1");
+    to=document.getElementById("delay_to").value;
+    from=document.getElementById("delay_from").value;
+	clients[num]=window.open("ClientWindow.htm?game="+document.getElementById("test_file_name").value+"&width="+swf_width+"&height="+swf_height+"&"+flashvars+old+"&delay_from="+from+"&delay_to="+to+"&old_container="+document.getElementById("old_container").value,"_blank","width="+swf_width+",height="+swf_height+",left="+(50*(num+1))+",top="+(50*(num+1))+",menubar=0,titlebar=0,toolbar=0,resizable=1");
     }else{
 	clients[num].focus();
 

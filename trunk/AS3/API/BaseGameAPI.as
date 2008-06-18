@@ -80,7 +80,9 @@ package {
 					func.apply(this, parameters);
 			} catch(err:Error) { 
 				passError(methodName, err);
-			}  
+			} finally {
+				sendDoOperation("do_finished_callback", [methodName]);
+			}
         }
 		
 		// In case of an error, you should probably call do_client_protocol_error_with_description

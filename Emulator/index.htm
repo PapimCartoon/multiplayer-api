@@ -161,7 +161,11 @@ function removeParam(num,obj){
                                     The file name:
                                 </td>
                                 <td>
+
+                                    <input id="test_file_name" name="test_file_name" size=40 value="../AS3/MineSweeper/Mine.swf">
+									<!--
                                     <select id="test_file_name" name="test_file_name">
+									<option value="../AS3/MineSweeper/Mine.swf">MineSweeper AS3</option>
 									<option value="../AS3/TicTacToe/TicTacToe_board.swf">TicTacToe AS3</option>
 									<option value="../AS2/TicTacToe/TicTacToe_AS2board.swf">TicTacToe AS2</option>
 									<option value="../AS2/LocalConnectionTest/LocalConnectionTest.swf">LocalConnectionTest AS2</option>
@@ -173,6 +177,7 @@ function removeParam(num,obj){
 									<option value="../AS2/OldAPI_Converter/games/Snake_board.swf">Snake_board (old API)</option>
 									<option value="../AS2/OldAPI_Converter/games/TicTacToeClientAPI_board.swf">TicTacToeClientAPI_board (old API)</option>
 									</select>
+									-->
                                     <input type="checkbox" id="old_game" name="old_game" value="checkbox" />Is old API?
 					<!-- <a href="#"><img src="question.gif" style="border-width:0px;" /> </a>-->
                                 </td>
@@ -404,9 +409,6 @@ function btn_click(){
 	    str+=", <a style=\"cursor:pointer;color:blue;\" onclick=\"clientClick("+i+");\">Client"+i+"</a>";
         }
 	document.getElementById("divLinks").innerHTML=str;
-	/*for(i=0;i<(players_num+viewers_num);i++){
-	    clients[i]=window.open("ClientWindow.htm?game="+document.getElementById("test_file_name").value+"&width="+swf_width+"&height="+swf_height+"&"+flashvars,"_blank","width="+swf_width+",height="+swf_height+",left="+(50*(i+1))+",top="+(50*(i+1))+",menubar=0,titlebar=0,toolbar=0,resizable=1");
-        }*/
     }
     unloading=false;
 }

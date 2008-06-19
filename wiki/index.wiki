@@ -24,6 +24,13 @@ How to contribute:
   * Become a project member, and help us write the wiki pages, add new games, create more game tutorials, create videos of using the emulator
   * Become an API or Emulator developer, and help us add features to the emulator
 
+How to work with the SVN:
+  * Email us and ask to become a project member.
+  * Install an SVN client on your computer (I recommend [http://tortoisesvn.tigris.org Tortoise SVN])
+  * Find out what is your password [http://code.google.com/hosting/settings here] 
+  * Checkout the code from [https://multiplayer-api.googlecode.com/svn/trunk/] using your password.
+  * Work with the SVN in small cycles: first UPDATE (to make sure you have the latest version), then modify the code, and then COMMIT your changes.
+
 *License note:*
 The API and Emulator are open source, and anyone can use, modify, or distribute them, both in open source projects or in commercial projects. Phrased differently, you may develop commercial games using this API, or develop a commercial container for API games; you do not even have to mention you are using this open source API.
 

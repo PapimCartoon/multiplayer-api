@@ -22,7 +22,12 @@ class TicTacToe_AS2board extends ClientGameAPI{
 
 	public function TicTacToe_AS2board(root:MovieClip) {
 		super(root);
-		
+
+		var tictactoe:TicTacToe_AS2board = this;
+		var myListener:Object = new Object();
+		myListener.onKeyDown = function() { tictactoe.reportKeyDown(); }
+		Key.addListener( myListener );	
+
 		swfRoot = root;
 		json = new JSON_AS2();
 		
@@ -36,6 +41,21 @@ class TicTacToe_AS2board extends ClientGameAPI{
 		
 		initUser();
 	}
+	private function reportKeyDown():Void {
+		var charCode:Number = Key.getCode();
+		if (!bGameStarted) return;
+		do_store_trace("KeyboardEvent", "charCode="+charCode+" '1'.charCodeAt(0)="+'1'.charCodeAt(0));
+		var delta:Number = charCode - '1'.charCodeAt(0);
+		if (!(delta>=0 && delta<9)) delta = charCode - 97;
+		if (delta>=0 && delta<9) {
+			var i:Number =  2-Math.floor(delta/3);
+			var j:Number =  delta%3;
+			do_store_trace("KeyboardEvent", "delta="+delta+" i="+i+" j="+j);
+			if (aGameState[i][j]!=-1) return; // not empty
+			if (getCurrentTurn()!=iColor) return; // not my turn
+			doMove(i, j);
+		}
+	}	
 	
 	private function btnPrevClick():Void {
 		iCurStep--;

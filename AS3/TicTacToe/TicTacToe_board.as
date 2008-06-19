@@ -1,14 +1,18 @@
 package {
 	import flash.display.*;
+    import flash.utils.*;
 	
 	public class TicTacToe_board extends MovieClip {
 		private var api:ClientGameAPI;
 		
 		public function TicTacToe_board() {
-			api = new TicTacToe_API(this);
-		
 			this.stop();
+			setTimeout(init, 100); // this.stage is currently null, therefore we must wait until flash sets the stage.
 		}
+		private function init() {
+			api = new TicTacToe_API(this);
+		}
+
 	}
 }
 import flash.display.*;
@@ -47,8 +51,9 @@ class TicTacToe_API extends ClientGameAPI {
 		try {
 			super(_root.loaderInfo.parameters);
 		
-			root = _root;
-			
+			root = _root;			
+			root.stage.addEventListener(KeyboardEvent.KEY_DOWN, reportKeyDown);
+
 			initUser();
 			
 			btnPrev = new Button();
@@ -75,7 +80,20 @@ class TicTacToe_API extends ClientGameAPI {
 			_root.addChild(msg);
 		}
 	}
-	
+	private function reportKeyDown(event:KeyboardEvent):void {
+		if (!bGameStarted) return;
+		var charCode:int = event.charCode;
+		do_store_trace("KeyboardEvent", "charCode="+charCode);
+		var delta:int = charCode - '1'.charCodeAt(0)
+		if (delta>=0 && delta<9) {
+			var i:int =  2-int(delta/3);
+			var j:int =  delta%3;
+			do_store_trace("KeyboardEvent", "delta="+delta+" i="+i+" j="+j);
+			if (aGameState[i][j]!=-1) return; // not empty
+			if (getCurrentTurn()!=iColor) return; // not my turn
+			doMove(i, j);
+		}
+	}	
 	private function btnPrevClick(evt:MouseEvent):void {
 		iCurStep--;
 		resetBoard();

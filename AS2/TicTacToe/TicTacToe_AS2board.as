@@ -383,7 +383,9 @@ class TicTacToe_AS2board extends ClientGameAPI{
 			btnPrev.visible = false;
 		}
 		btnNext.visible = false;
-		checkEndOfMatch();
+		if(bGameStarted){
+			checkEndOfMatch();
+		}
 		
 		if (iCurTurn == -1 && iFilledNum==0 && iColor == 0) {
 			do_start_my_turn();

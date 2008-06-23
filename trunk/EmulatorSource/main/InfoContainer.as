@@ -1,6 +1,7 @@
 package main{
 	import flash.display.*;
 	import flash.events.*;
+	import flash.geom.Rectangle;
 	import flash.net.*;
 	import fl.controls.*;
 	import flash.text.*;
@@ -54,8 +55,6 @@ package main{
 				stage.frameRate = parseInt(root.loaderInfo.parameters["fps"]);
 			}
 			
-			this.stop();
-			
 			btnStart = new Button();
 			btnStart.label = "Start";
 			btnStart.addEventListener(MouseEvent.CLICK, btnStartClick);
@@ -65,7 +64,7 @@ package main{
 			lblWait.text = "Waiting for oponent...";
 			lblWait.visible = false;
 			lblWait.autoSize = TextFieldAutoSize.LEFT;
-			this.addChild(lblWait)
+			this.addChild(lblWait);
 			
 			ldr = new Loader();
 			ldr.y = 23;
@@ -78,6 +77,7 @@ package main{
 			txtTurn = new TextField();
 			txtTurn.autoSize = TextFieldAutoSize.LEFT;
 			txtTurn.width = 150;
+			txtTurn.height = 22;
 			txtTurn.x = 150;
 			txtTurn.y = 2;
 			txtTurn.textColor = 0xe31e69;
@@ -86,6 +86,7 @@ package main{
 			txtSize = new TextField();
 			txtSize.autoSize = TextFieldAutoSize.LEFT;
 			txtSize.y = 2;
+			txtSize.height = 22;
 			txtSize.textColor = 0xb9baba;
 			this.addChild(txtSize);
 			
@@ -96,6 +97,7 @@ package main{
 			txtUsers = new TextField();
 			txtUsers.autoSize = TextFieldAutoSize.LEFT;
 			txtUsers.width = 150;
+			txtUsers.height = 22;
 			txtUsers.y = 25;
 			txtUsers.x = 5;
 			txtUsers.htmlText = "<b>Users:</b><br>";
@@ -146,6 +148,7 @@ package main{
 			lblClient = new Label();
 			lblClient.x = 8;
 			lblClient.y = 2;
+			lblClient.height = 22;
 			this.addChild(lblClient);
 			
 			var hit:MovieClip = new MovieClip();
@@ -157,6 +160,7 @@ package main{
 			txt.textColor = 0xFFFFFF;
 			txt.autoSize = TextFieldAutoSize.LEFT;
 			txt.htmlText = "<b>|</b> Open Info";
+			txt.height = 22;
 			txt.x = -5;
 			txt.y = -3;
 			mov.addChild(txt);
@@ -177,6 +181,7 @@ package main{
 			txt.textColor = 0xFFFFFF;
 			txt.autoSize = TextFieldAutoSize.LEFT;
 			txt.htmlText = "<b>|</b> Close Info";
+			txt.height = 22;
 			txt.x = -5;
 			txt.y = -3;
 			mov.addChild(txt);
@@ -196,6 +201,7 @@ package main{
 			txtMyName = new TextField();
 			txtMyName.textColor = 0xFFFFFF;
 			txtMyName.width = 55;
+			txtMyName.height = 22;
 			txtMyName.x = 3;
 			lblClient.addChild(txtMyName);
 			
@@ -301,8 +307,6 @@ package main{
 		
 		private function onLoadComplete(evt:Event):void {
 			loaded = true;
-			ldr.y = 23;
-			ldr.x = 2;
 		}
 		
 		public function doSomething(obj:Object):void {
@@ -425,17 +429,13 @@ package main{
 		private function resizeStage(evt:Event):void {
 			var _x:int, _y:int;
 			_x = stage.stageWidth - 20;
-			_y = stage.stageHeight - 20;
+			_y = stage.stageHeight - 42;
 			
 			pnlBackground.graphics.clear();
 			pnlBackground.graphics.beginFill(0xFFFFFF);
 			pnlBackground.graphics.drawRect(0, 0, stage.stageWidth, stage.stageHeight);
 			pnlBackground.graphics.lineStyle(1, 0xb9baba);
-			pnlBackground.graphics.moveTo(2, 22);
-			pnlBackground.graphics.lineTo(2 + _x+1, 22);
-			pnlBackground.graphics.lineTo(2 + _x+1, _y);
-			pnlBackground.graphics.lineTo(2, _y);
-			pnlBackground.graphics.lineTo(2, 22);			
+			pnlBackground.graphics.drawRect(2, 22, _x, _y);			
 			pnlBackground.graphics.endFill();
 			
 			pnlInfo.graphics.clear();

@@ -18,17 +18,17 @@ How to use this project:
     * [http://groups.google.com/group/multiplayer-api-svn-commit SVN commits] - those who wish to get notifications on each commit in the SVN
     * [http://groups.google.com/group/multiplayer-api-issue-changes Issue changes] - those who wish to get notifications on each change in an Issue (e.g., if a new issue opens, or an old one being fixed)
 
-How to contribute:
+==== How to contribute: ====
   * Comment on the wiki pages, create issues, request enhancements, reports bugs, etc
   * Join the mailing list, and help other developers with problems
   * Become a project member, and help us write the wiki pages, add new games, create more game tutorials, create videos of using the emulator
   * Become an API or Emulator developer, and help us add features to the emulator
 
-How to work with the SVN:
-  * Email us and ask to become a project member.
+==== How to work with the SVN: ====
+  * Email us and ask to become a project member (you'll need a gmail account).
   * Install an SVN client on your computer (I recommend [http://tortoisesvn.tigris.org Tortoise SVN])
   * Find out what is your password [http://code.google.com/hosting/settings here] 
-  * Checkout the code from [https://multiplayer-api.googlecode.com/svn/trunk/] using your password.
+  * Checkout the code from [https://multiplayer-api.googlecode.com/svn/trunk/] using your gmail account and the special password you got.
   * Work with the SVN in small cycles: first UPDATE (to make sure you have the latest version), then modify the code, and then COMMIT your changes.
 
 *License note:*

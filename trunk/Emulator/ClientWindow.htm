@@ -46,7 +46,7 @@ function parseObj(str){
     <script language="JavaScript">
 var param_arr = getParametersFromURL();
 try{
-    writeFlash(document.getElementById("divGame"),"../EmulatorSource/InfoContainer.swf","100%","100%","prefix="+param_arr["prefix"]+"&game="+param_arr["game"]+"&oldgame="+param_arr["oldgame"]+"&fps="+param_arr["fps"]+"&delay_from="+param_arr["delay_from"]+"&delay_to="+param_arr["delay_to"]+"&old_container="+param_arr["old_container"]+"&xml=Client.xml","client");
+    writeFlash(document.getElementById("divGame"),"../Emulator/InfoContainer.swf","100%","100%","prefix="+param_arr["prefix"]+"&game="+param_arr["game"]+"&oldgame="+param_arr["oldgame"]+"&fps="+param_arr["fps"]+"&delay_from="+param_arr["delay_from"]+"&delay_to="+param_arr["delay_to"]+"&old_container="+param_arr["old_container"]+"&xml=Client.xml","client");
 }catch(err){
   alert(err.message);
 }

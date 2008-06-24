@@ -428,8 +428,8 @@ package main{
 		
 		private function resizeStage(evt:Event):void {
 			var _x:int, _y:int;
-			_x = stage.stageWidth - 20;
-			_y = stage.stageHeight - 42;
+			_x = stage.stageWidth - 20+2;
+			_y = stage.stageHeight - 42+2;
 			
 			pnlBackground.graphics.clear();
 			pnlBackground.graphics.beginFill(0xFFFFFF);

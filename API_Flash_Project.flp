@@ -1,4 +1,4 @@
-<flash_project name="API" version="1">
+﻿<flash_project name="API" version="1">
     <project_file path="./EmulatorSource/InfoContainer.fla" filetype="fla" profile="" />
     <project_file path="./EmulatorSource/JSON_AS3_Test.fla" filetype="fla" profile="" />
     <project_file path="./EmulatorSource/Server.fla" filetype="fla" profile="" />

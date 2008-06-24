@@ -441,11 +441,7 @@ package main{
 			pnlInfo.graphics.clear();
 			pnlInfo.graphics.lineStyle(1, 0x000000, 0);
 			pnlInfo.graphics.beginFill(0x80BE40);
-			pnlInfo.graphics.moveTo(2, 22);
-			pnlInfo.graphics.lineTo(175, 22);
-			pnlInfo.graphics.lineTo(175, _y);
-			pnlInfo.graphics.lineTo(2, _y);
-			pnlInfo.graphics.lineTo(2, 22);
+			pnlInfo.graphics.drawRect(2, 22,175,_y);
 			pnlInfo.graphics.endFill();
 			
 			btnStart.x =(_x-btnStart.width)/2;

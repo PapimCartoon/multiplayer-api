@@ -46,7 +46,7 @@ class TicTacToe_AS2board extends ClientGameAPI{
 		if (!bGameStarted) return;
 		do_store_trace("KeyboardEvent", "charCode="+charCode+" '1'.charCodeAt(0)="+'1'.charCodeAt(0));
 		var delta:Number = charCode - '1'.charCodeAt(0);
-		if (!(delta>=0 && delta<9)) delta = charCode - 97;
+		if (!(delta>=0 && delta<9)) delta = charCode - 97; // when you use the num-lock, the charCode for '1' is 97
 		if (delta>=0 && delta<9) {
 			var i:Number =  2-Math.floor(delta/3);
 			var j:Number =  delta%3;
@@ -383,9 +383,7 @@ class TicTacToe_AS2board extends ClientGameAPI{
 			btnPrev.visible = false;
 		}
 		btnNext.visible = false;
-		if(bGameStarted){
-			checkEndOfMatch();
-		}
+		checkEndOfMatch();
 		
 		if (iCurTurn == -1 && iFilledNum==0 && iColor == 0) {
 			do_start_my_turn();

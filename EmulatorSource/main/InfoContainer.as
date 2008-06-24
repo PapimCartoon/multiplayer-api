@@ -147,7 +147,7 @@ package main{
 			
 			lblClient = new Label();
 			lblClient.x = 8;
-			lblClient.y = 2;
+			lblClient.y = 1;
 			lblClient.height = 22;
 			this.addChild(lblClient);
 			
@@ -258,9 +258,11 @@ package main{
 		}
 		
 		private function btnDownClick(evt:MouseEvent):void {
-			btnDown.visible = false;
-			btnUp.visible = true;
-			pnlInfo.visible = true;
+			if(bStarted){
+				btnDown.visible = false;
+				btnUp.visible = true;
+				pnlInfo.visible = true;
+			}
 		}
 		
 		private function btnUpClick(evt:MouseEvent):void {

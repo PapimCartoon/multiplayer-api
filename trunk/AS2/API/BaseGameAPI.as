@@ -70,7 +70,7 @@ class BaseGameAPI
 	}
 	private function sendOperation(connectionName:String, methodName:String, parameters:Array/*Object*/):Void {
 		try {
-			//trace("sendOperation:"+connectionName+" methodName="+methodName+" parameters="+parameters);
+			trace(["sendOperation:",connectionName," methodName=",methodName," parameters=",parameters]);
 			lcUser.send(connectionName, "localconnection_callback", methodName, parameters);  
 		}catch(err:Error) { 
 			passError(methodName, err);

@@ -50,6 +50,16 @@ We recommend using less than 40 fps to avoid overloading slow computers.
 We suggest that you encrypt/obfuscate your code to make it difficult for users to crack or steal your code.
 There are many programs for that purpose, one of them is Amayeta (http://www.amayeta.com/). 
 
+=== Keyboard and Mouse events===
+Note that the game and chat might be in the same chat window.
+If you listen to events like this:
+`Key.addListener` or `Mouse.addListener`
+then you will receive events even when the user is entering a chat line
+or scrolling in the user list.
+Therefore your game should be careful and not do irreversible actions based 
+on such actions that might be done in the chat area.
+In a future version we are planning to add functions that will pass keyboard and mouse events to the game via the LocalConnection.
+
 
 
 = Emulator =

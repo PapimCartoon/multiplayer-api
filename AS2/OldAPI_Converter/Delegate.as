@@ -1,0 +1,13 @@
+// Yoav: example:		
+//	ball.onPress = Delegate.create(this, ballPress);
+class Delegate {
+	public static function create(target:Object, handler:Function):Function {
+		var extraArgs:Array = arguments.slice(2);
+		var delegate:Function;
+		delegate = function() {
+			var fullArgs:Array = arguments.concat(extraArgs); //, [delegate]
+			return handler.apply(target, fullArgs);
+		};
+		return delegate;
+	}
+}

@@ -1,9 +1,3 @@
-/**
-* ...
-* @author Default
-* @version 0.1
-*/
-
 class DelegateClass {
 	public static function create(target:Object, handler:Function):Function {
 		var extraArgs:Array = arguments.slice(2);

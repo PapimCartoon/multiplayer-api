@@ -1,12 +1,12 @@
 #summary Called when a match starts
 
 {{{
-got_match_started(user_ids:Array/*int*/, extra_match_info:Object, match_started_time:int) 
+got_match_started(player_ids:Array/*int*/, extra_match_info:Object, match_started_time:int) 
 }}}
 
 `got_match_started` is called when a new match has started.
 
-`user_ids` is the set of the user_id of the players.
+`player_ids` is the user_id's of the players.
 
 If the game needs to make the same random choices in all the players (e.g., the order of a deck of cards),
 then your game should use a random seed that is identical in all players.

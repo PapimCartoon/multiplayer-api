@@ -7,10 +7,10 @@ class ClientGameAPI extends BaseGameAPI {
 	public function got_general_info(keys:Array/*String[]*/, values:Array/*Serializable[]*/):Void {}
 	public function got_user_info(user_id:Number, keys:Array/*String[]*/, values:Array/*Serializable[]*/):Void {}
 	public function got_my_user_id(my_user_id:Number):Void {}
-	public function got_match_started(user_ids:Array/*int[]*/, extra_match_info:Object/*Serializable*/, match_started_time:Number):Void {}
+	public function got_match_started(player_ids:Array/*int[]*/, extra_match_info:Object/*Serializable*/, match_started_time:Number):Void {}
 	
-	public function do_agree_on_match_over(user_ids:Array/*int[]*/, scores:Array/*int[]*/, pot_percentages:Array/*int[]*/):Void { sendDoOperation('do_agree_on_match_over', arguments); }
-	public function got_match_over(user_ids:Array/*int[]*/):Void {}
+	public function do_agree_on_match_over(player_ids:Array/*int[]*/, scores:Array/*int[]*/, pot_percentages:Array/*int[]*/):Void { sendDoOperation('do_agree_on_match_over', arguments); }
+	public function got_match_over(player_ids:Array/*int[]*/):Void {}
 	
 	public function do_start_my_turn():Void { sendDoOperation('do_start_my_turn', arguments); }
 	public function got_start_turn_of(user_id:Number):Void {}

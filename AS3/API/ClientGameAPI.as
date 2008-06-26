@@ -8,10 +8,10 @@ package  {
 		public function got_general_info(keys:Array/*String[]*/, values:Array/*Serializable[]*/):void {}
 		public function got_user_info(user_id:int, keys:Array/*String[]*/, values:Array/*Serializable[]*/):void {}
 		public function got_my_user_id(my_user_id:int):void {}
-		public function got_match_started(user_ids:Array/*int[]*/, extra_match_info:Object/*Serializable*/, match_started_time:int):void {}
+		public function got_match_started(player_ids:Array/*int[]*/, extra_match_info:Object/*Serializable*/, match_started_time:int):void {}
 		
-		public function do_agree_on_match_over(user_ids:Array/*int[]*/, scores:Array/*int[]*/, pot_percentages:Array/*int[]*/):void { sendDoOperation('do_agree_on_match_over', arguments); }
-		public function got_match_over(user_ids:Array/*int[]*/):void {}
+		public function do_agree_on_match_over(player_ids:Array/*int[]*/, scores:Array/*int[]*/, pot_percentages:Array/*int[]*/):void { sendDoOperation('do_agree_on_match_over', arguments); }
+		public function got_match_over(player_ids:Array/*int[]*/):void {}
 		
 		public function do_start_my_turn():void { sendDoOperation('do_start_my_turn', arguments); }
 		public function got_start_turn_of(user_id:int):void {}

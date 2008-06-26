@@ -5,6 +5,9 @@ do_store_match_state(key:String, value:Object)
 got_stored_match_state(user_ids:Array/*int*/, keys:Array/*String*/, values:Array/*Object*/)
 }}}
 
+The length of `user_ids`, `keys`, and `values` is the same.
+Entry in index `i`, means that user `user_ids[i]` stored key `keys[i]` and value `values[i]`.
+
 Use `do_store_match_state` to store match state on the server.
 Both players and viewers can store match state, and only when the match is in progress.
 However, a viewer cannot override someone elses `key`, whereas players can use the same key-space.

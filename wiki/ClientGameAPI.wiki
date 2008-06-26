@@ -63,6 +63,11 @@ Your class may override some of the callbacks and respond appropriately to them;
 
 Read here about [Match_state_vs_messages Match state vs Sending messages].
 
+=== Initialization: order of the first callbacks === 
+The first callback is `got_my_user_id`,
+then you may get `got_general_info` and `got_user_info`.
+Then, when a match starts you will get `got_match_started` followed by `got_stored_match_state`, and then you will maybe get `got_start_turn_of` if a certain user has the turn.
+
 
 === Viewers and players === 
 The set of connected users is partitioned into players and viewers.
@@ -108,6 +113,6 @@ Note that the current timers are not saved, and should be restarted after the ma
 
 When a saved match is loaded, the game gets the following callbacks:
  * `got_match_started`
- * `got_match_over` for those users that are no longer playing
+ * maybe `got_match_over` if there are users that are no longer playing.
  * `got_stored_match_state` with the match state
  * `got_start_turn_of` if there is a single player that currently has the turn, or if `next_turn_of_player_ids` is of size 1

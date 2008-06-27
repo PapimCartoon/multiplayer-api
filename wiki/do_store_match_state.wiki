@@ -15,6 +15,12 @@ When the match ends, the state is cleared.
 
 The match state is given to new viewers and new players before any other broadcast is sent to them.
 
+
+If you start a new game, the callback `got_stored_match_state` will be with 3 empty arrays.
+If you load a saved game, the callback `got_stored_match_state` will contain all the keys of the match state.
+Later calls to `do_store_match_state`, will cause the callback `got_stored_match_state` where the keys will contain only those that were modified in `do_store_match_state` (in other words, the entire match-state is sent only at the beginning; afterwards the players and viewers will get only the DELTA that was modified.)
+
+
 To avoid running out of memory on the server,
 the number of keys is limited to 1000,
 and the total memory of the map is limited to 100KB.

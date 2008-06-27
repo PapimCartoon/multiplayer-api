@@ -2,6 +2,14 @@
 
 The communication between your game and our server is done by writing a class that extends `ClientGameAPI.as`, and instantiating one instance of your class.
 
+`ClientGameAPI` does not inherit from any other class.
+If you want your class to extend an extra class (in addition to `ClientGameAPI`), 
+then you can modify `ClientGameAPI` and make it inherit from the extra class.
+For example, if you want your class to extend `MovieClip` then you can modify `ClientGameAPI` like this:
+{{{
+... ClientGameAPI extends MovieClip ...
+}}}
+
 The functions in `ClientGameAPI` can be divided into two categories: Operations and Callbacks.
 We write `Array/*int*/` to denote an `Array` that contains only `int` objects;
 Similarly, `Array/*String*/` is an `Array` that contains only `String` objects.

@@ -64,6 +64,7 @@ package {
 			}
         }
         protected function sendDoOperation(methodName:String, parameters:Array/*Object*/):void {
+			trace('sendDoOperation for methodName='+methodName+' parameters='+parameters);
         	sendOperation(sDoChanel, methodName, parameters);
         }
         protected function sendOperation(connectionName:String, methodName:String, parameters:Array/*Object*/):void {

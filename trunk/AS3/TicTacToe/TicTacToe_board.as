@@ -1,16 +1,23 @@
 package {
 	import flash.display.*;
     import flash.utils.*;
+	import flash.events.*;
 	
 	public class TicTacToe_board extends MovieClip {
-		private var api:ClientGameAPI;
+		private var api:TicTacToe_API;
+		private var interval_id:uint;
 		
 		public function TicTacToe_board() {
 			this.stop();
-			setTimeout(init, 100); // this.stage is currently null, therefore we must wait until flash sets the stage.
+			api = new TicTacToe_API(this);
+			// this.stage is currently null, therefore we must wait until flash sets the stage.
+			interval_id = setInterval(init, 100); 
 		}
 		private function init() {
-			api = new TicTacToe_API(this);
+			if (stage!=null) {
+				clearInterval(interval_id);
+				stage.addEventListener(KeyboardEvent.KEY_DOWN, api.reportKeyDown);
+			}
 		}
 
 	}
@@ -49,11 +56,12 @@ class TicTacToe_API extends ClientGameAPI {
 	//Constructor
 	public function TicTacToe_API(_root:MovieClip ) {
 		try {
+			trace('TicTacToe_API!');
 			super(_root.loaderInfo.parameters);
 		
 			root = _root;			
-			root.stage.addEventListener(KeyboardEvent.KEY_DOWN, reportKeyDown);
 
+			trace('initUser!');
 			initUser();
 			
 			btnPrev = new Button();
@@ -74,13 +82,14 @@ class TicTacToe_API extends ClientGameAPI {
 			btnNext.visible = false;
 			root.addChild(btnNext);
 		} catch (err:Error) { 
+			trace('ERRROR: '+err+" stacktraces="+err.getStackTrace());
 			var msg:TextField = new TextField();
 			msg.autoSize = TextFieldAutoSize.LEFT;
 			msg.text = ''+err+" prefix="+_root.loaderInfo.parameters.prefix;
 			_root.addChild(msg);
 		}
 	}
-	private function reportKeyDown(event:KeyboardEvent):void {
+	public function reportKeyDown(event:KeyboardEvent):void {
 		if (!bGameStarted) return;
 		var charCode:int = event.charCode;
 		do_store_trace("KeyboardEvent", "charCode="+charCode);

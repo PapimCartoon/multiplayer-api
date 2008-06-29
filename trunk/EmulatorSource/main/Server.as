@@ -628,15 +628,17 @@ package main{
 			try{
 				addMessageLog("Server", "do_register_on_server", "chanel="+chanel);
 				var u:User = new User(chanel, sPrefix, this);
+				aUsers.push(u);
 				sendOperation(u.GotChanel, "got_my_user_id", [u.ID]);
 				var j:int;
 				sendOperation(u.GotChanel, "got_general_info", [aServerKeys, aServerDatas]);
 				for (j = 0; j < aUsers.length; j++) {
-					sendOperation(u.GotChanel, "got_user_info", [aUsers[j].ID,aUsers[j].Keys,aUsers[j].Params]);
-					sendOperation(aUsers[j].GotChanel, "got_user_info", [u.ID, u.Keys, u.Params]);
+					if(aUsers[j].ID!=u.ID){
+						sendOperation(u.GotChanel, "got_user_info", [aUsers[j].ID,aUsers[j].Keys,aUsers[j].Params]);
+						sendOperation(aUsers[j].GotChanel, "got_user_info", [u.ID, u.Keys, u.Params]);
+					}
 				}
 				sendOperation(u.GotChanel, "got_user_info", [u.ID, u.Keys, u.Params]);
-				aUsers.push(u);
 				showUserInfo();
 				cmbTarget.addItem( { label: u.Name, data:u.ID } );
 				if (bGameStarted) {

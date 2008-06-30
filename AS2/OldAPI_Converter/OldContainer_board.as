@@ -18,6 +18,9 @@ class OldContainer_board extends ClientGameAPI{
 	private var iID:Number;
 	private var json:JSON_AS2;
 	private var swfRoot:MovieClip;
+	private var _turnNumber:Number=-1;
+	private var _currColor:Number;
+	private var _milliSeconds:Number;
 
 	public function OldContainer_board(root:MovieClip) {
 		super(root);
@@ -160,8 +163,10 @@ class OldContainer_board extends ClientGameAPI{
 				}
 			}
 			do_end_my_turn([i]);
+			do_store_match_state("CurrColor", [turnNumber, currColor, milliSeconds]);
+		}else if (iCurColor = -1) {
+			do_store_match_state("CurrColor", [turnNumber, currColor, milliSeconds]);
 		}
-		do_store_match_state("CurrColor", [turnNumber, currColor, milliSeconds]);
 	}
 	private function sendMatchEnded(winningColor:Number, whiteScore:Number, blackScore:Number, whiteTokenPercentage:Number):Void {
 		do_store_trace("sendMatchEnded","winningColor="+json.stringify(winningColor)+", whiteScore="+json.stringify(whiteScore)+", blackScore="+json.stringify(blackScore)+", whiteTokenPercentage="+json.stringify(whiteTokenPercentage));

@@ -39,14 +39,28 @@ do_juror_store_match_state(key:String, value:Object, secret_level:int, for_user_
 do_user_store_match_state (key:String, value:Object, secret_level:int)
 got_secure_stored_match_state(user_ids:int[], keys:String[], values:Object[], secret_levels:int[])
 
-do_juror_unfold_top_secret(key:String, to_user_id:int)
-do_juror_reorder_top_secret(keys:String[])
+do_juror_unfold_match_state(key:String, to_user_id:int)
+do_juror_shuffle_match_state(keys:String[])
 
 do_juror_set_turn(turn_of_player_id:int)
 do_juror_end_match(finished_player_ids:int[], scores:int[], pot_percentages:int[])
 }}}
 
-Similarly to `do_store_match_state` in [ClientGameAPI],
-the server maintains a memory, that is a mapping from keys to values.
+`do_juror_` are operations for the juror only,
+and `do_user_store_match_state` is for the users (players/viewers) only.
+`got_secure_stored_match_state` is called on both jurors and users.
 
-`secret_level` is either `PUBLIC=0`, `SECRET=1`, or `TOPSECRET=2`.
+
+=== High level description of the functions === 
+
+|| *Function* || *Description* ||
+|| `do_juror_store_match_state` || The juror stores a match state for a certain user ||
+|| `do_user_store_match_state` || The user stores a match state for himself ||
+|| `got_secure_stored_match_state` || A user or a juror is updated on changes of match state ||
+|| `do_juror_unfold_match_state` || The values of certain keys are unfolded to a certain user ||
+|| `do_juror_shuffle_match_state` || The values of certain keys in the match state are shuffled ||
+|| [do_juror_set_turn] || The juror decides who has the turn (in turn-based games)  ||
+|| [do_juror_end_match] || The juror decides that the match ended ||
+
+[SecureMatchState] discusses the match state of SecureClientGameAPI. 
+ 

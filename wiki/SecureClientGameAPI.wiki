@@ -37,13 +37,13 @@ These are the new additions to SecureClientGameAPI:
 {{{
 do_juror_store_match_state(key:String, value:Object, secret_level:int, for_user_id:int)
 do_user_store_match_state (key:String, value:Object, secret_level:int)
-got_secure_stored_match_state(user_ids:int[], keys:String[], values:Object[], secret_levels:int[])
+got_secure_stored_match_state(user_ids:Array/*int*/, keys:Array/*String*/, values:Array/*Object*/, secret_levels:Array/*int*/)
 
 do_juror_unfold_match_state(key:String, to_user_id:int)
-do_juror_shuffle_match_state(keys:String[])
+do_juror_shuffle_match_state(keys:Array/*String*/)
 
 do_juror_set_turn(turn_of_player_id:int)
-do_juror_end_match(finished_player_ids:int[], scores:int[], pot_percentages:int[])
+do_juror_end_match(finished_player_ids:Array/*int*/, scores:Array/*int*/, pot_percentages:Array/*int*/)
 }}}
 
 `do_juror_` are operations for the juror only,
@@ -62,5 +62,6 @@ and `do_user_store_match_state` is for the users (players/viewers) only.
 || [do_juror_set_turn] || The juror decides who has the turn (in turn-based games)  ||
 || [do_juror_end_match] || The juror decides that the match ended ||
 
-[SecureMatchState] discusses the match state of SecureClientGameAPI. 
+[SecureMatchState] discusses the match state of SecureClientGameAPI 
+(and explains the first 5 functions above). 
  

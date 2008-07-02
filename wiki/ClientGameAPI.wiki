@@ -1,4 +1,4 @@
-#summary A multiplayer API using only client-side code
+#summary An insecure multiplayer API
 
 The communication between your game and our server is done by writing a class that extends `ClientGameAPI.as`, and instantiating one instance of your class.
 

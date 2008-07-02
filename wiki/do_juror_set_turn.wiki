@@ -1,0 +1,10 @@
+#summary The juror decides who has the turn
+
+{{{
+do_juror_set_turn(turn_of_player_id:int)
+}}}
+
+In [ClientGameAPI], a player had to call [do_start_my_turn] and [do_end_my_turn].
+In [SecureClientGameAPI], only the juror can call [do_juror_set_turn] to start or end the turn of a certain user.
+
+`turn_of_player_id` is either -1 to end the current turn, or the user_id of one the players.

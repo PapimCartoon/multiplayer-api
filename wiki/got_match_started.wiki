@@ -20,3 +20,6 @@ This mechanism is useful if you want to develop many variants of the same game.
 With a single SWF you can create many game variants (by choosing different `extra_match_info` for each game variant).
 The `extra_match_info` will be entered when you submit the game online, 
 or in the emulator when you start a new match.
+
+IMPORTANT: Your game should _not_ perform initialization when it gets `got_match_started`, because it should wait for the first call of `got_stored_match_state` in order to see if the players started a new game or loaded a saved game, see [do_store_match_state got_stored_match_state].
+If you start a new game, the callback `got_stored_match_state` will be with 3 empty arrays. If you load a saved game, the callback `got_stored_match_state` will contain all the keys of the match state.

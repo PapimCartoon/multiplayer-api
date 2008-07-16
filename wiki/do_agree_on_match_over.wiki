@@ -1,33 +1,38 @@
 #summary Call it to end the match. The match will be over when all players called it
 
 {{{
-do_agree_on_match_over(player_ids:Array/*int*/, scores:Array/*int*/, pot_percentages:Array/*int*/)
+do_agree_on_match_over(finished_players:Array/*PlayerMatchOver*/)
 }}}
 
 To end a match, all players must call `do_agree_on_match_over` with the same exact parameters.
 
-`player_ids` is the set of the users that end the match.
+`finished_players` is the set of the players that will quit the match.
 In the common scenario, `player_ids` contains all the players in the match.
 However, it is possible that only a subset of the players end the match (but in any case, all players must call `do_agree_on_match_over`).
 
-`scores` determines the score of each of the users ending the match.
+Each element of the array `finished_players` is of type `PlayerMatchOver`:
+{{{
+class PlayerMatchOver { var player_id:int, score:int, pot_percentage:int; }
+}}}
+`score` determines the winners and losers in the match.
 The user with the highest score is the winner, and if all scores are identical than we have a tie.
+The rating of the players is affected by the relative differences in the scores.
 
-`pot_percentages` determines how the stake (or betting pot) should be divided among the players.
-If `pot_percentages` is null, then the users in `player_ids` should get their stakes back (e.g., if the game was tied).
-Otherwise, `pot_percentages[i]` contains a number between 0 and 100, 
-that represents the percentage of the pot that user `player_ids[i]` should receive.
+`pot_percentage` determines how the stake (or betting pot) should be divided among the players,
+and it is a number between -1 and 100.
+If `pot_percentage` is -1, then the player should get his stake back (e.g., if the game was tied).
+Otherwise, `pot_percentage` represents the percentage of the pot that the player should receive.
 
 For example, suppose you have 3 players with player_ids=41, 42, 43. 
 Suppose user_id=42 ended the match with score 90, and he should get 20% of the pot.
 Then all the players (users 41, 42, 43) should call:
 {{{
-  do_agree_on_match_over([42], [90], [20])
+  do_agree_on_match_over([ new PlayerMatchOver(42, 90, 20) ])
 }}}
 Now users 41 and 43 continue to play, 
 and the match is over with the score=100 to user_id=41, and score=10 to user_id=43,
 and you wish to give 90% of the pot to user 41.
 Then all players (users 41 and 43) should call:
 {{{
-  do_agree_on_match_over([41,43], [100,10], [90, 10])
+  do_agree_on_match_over([ new PlayerMatchOver(41, 100, 10) , new PlayerMatchOver(43, 10, 10) ])
 }}}

@@ -2,9 +2,9 @@
 
 These 5 functions handle the match state:
 {{{
-do_juror_store_match_state(key:String, value:Object, secret_level:int, for_user_id:int)
-do_user_store_match_state (key:String, value:Object, secret_level:int)
-got_secure_stored_match_state(user_ids:Array/*int*/, keys:Array/*String*/, values:Array/*Object*/, secret_levels:Array/*int*/)
+do_juror_store_match_state(secret_level:int, user_entry:UserEntry)
+do_user_store_match_state(secret_level:int, entry:Entry)
+got_secure_stored_match_state(secret_level:int, user_entry:UserEntry)
 
 do_juror_unfold_match_state(key:String, to_user_id:int)
 do_juror_shuffle_match_state(keys:Array/*String*/)
@@ -42,21 +42,21 @@ when the server calls `got_secure_stored_match_state`
 Next we will explain what the server does for each operation.
 
 {{{
-do_user_store_match_state (key:String, value:Object, secret_level:int)
+do_user_store_match_state(secret_level:int, entry:Entry)
 DOES:
-MATCH_STATE[key] = {my_user_id,  value,   secret_level,  secret_level==TOPSECRET ? [my_user_id] : [] }
+MATCH_STATE[entry.key] = {my_user_id,  entry.value,   secret_level,  secret_level==TOPSECRET ? [my_user_id] : [] }
 }}}
 With similar restrictions on viewers like in [do_store_match_state] 
 
 
 {{{
-do_juror_store_match_state(key:String, value:Object, secret_level:int, for_user_id:int)
+do_juror_store_match_state(secret_level:int, user_entry:UserEntry)
 DOES:
-MATCH_STATE[key] = { for_user_id ,  value,   secret_level,  [] }
+MATCH_STATE[user_entry.key] = { user_entry.user_id ,  user_entry.value,   secret_level,  [] }
 }}}
 
 {{{
-got_secure_stored_match_state(user_ids:Array/*int*/, keys:Array/*String*/, values:Array/*Object*/, secret_levels:Array/*int*/)
+got_secure_stored_match_state(secret_level:int, user_entry:UserEntry)
 }}}
 Whenever a user or juror updates `MATCH_STATE`, then all users and jurors get the callback
    `got_secure_stored_match_state`.

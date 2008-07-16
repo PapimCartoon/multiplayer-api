@@ -1,9 +1,9 @@
 #summary The juror decides that the match ended
 
 {{{
-do_juror_end_match(finished_player_ids:Array/*int*/, scores:Array/*int*/, pot_percentages:Array/*int*/)
+do_juror_end_match(finished_players:Array/*PlayerMatchOver*/)
 }}}
 
 In [ClientGameAPI], all players had to call [do_agree_on_match_over] to end the match.
 In [SecureClientGameAPI], only the juror have to call [do_juror_end_match] to end the match.
-The arguments of the two functions are identical and explained in [do_agree_on_match_over].
+The argument of the two functions is identical and explained in [do_agree_on_match_over].

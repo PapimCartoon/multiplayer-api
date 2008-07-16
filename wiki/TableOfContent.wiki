@@ -41,6 +41,17 @@ The only difference in the signatures between the AS2 and AS3 versions, is that 
 The remainder of this wiki describes the AS3 version.
 We recommend using AS3 because it is more stable, fast, and easier to debug.
 
+=== Debugging and error handling in AS3 ===
+In "Publish Setting" you should select the option "Permit debugging".
+This will include the line number of the error in the stacktraces, e.g.,
+{{{
+	at MyAPI/sendDoOperation()[X:\Come2Play\API_GoogleCodeSVN\AS3\TestClientGameAPI\TestClientGameAPI.as:121]
+}}}
+Remember that the stack traces of an error are available only in the debugger version of the flash player (and not in the release version),
+see `Error.getStackTrace()`.
+Therefore you should run the emulator and do online testing using the [http://www.adobe.com/support/flashplayer/downloads.html Adobe Flash Player 9 — Debugger Versions].
+
+
 === FPS ===
 Frame per seconds (FPS):
 Your game may run in any fps you may choose.

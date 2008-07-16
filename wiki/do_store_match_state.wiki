@@ -1,30 +1,29 @@
 #summary Call it to store/update/delete you match state
 
 {{{
-do_store_match_state(key:String, value:Object)
-got_stored_match_state(user_ids:Array/*int*/, keys:Array/*String*/, values:Array/*Object*/)
+do_store_match_state(entry:Entry)
+got_stored_match_state(user_entry:UserEntry)
 }}}
-
-The length of `user_ids`, `keys`, and `values` is the same.
-Entry in index `i`, means that user `user_ids[i]` stored key `keys[i]` and value `values[i]`.
 
 Use `do_store_match_state` to store match state on the server.
 Both players and viewers can store match state, and only when the match is in progress.
 However, a viewer cannot override someone elses `key`, whereas players can use the same key-space.
 When the match ends, the state is cleared.
 
-The match state is given to new viewers and new players before any other broadcast is sent to them.
-
-
-If you start a new game, the callback `got_stored_match_state` will be with 3 empty arrays.
-If you load a saved game, the callback `got_stored_match_state` will contain all the keys of the match state.
-Later calls to `do_store_match_state`, will cause the callback `got_stored_match_state` where the keys will contain only those that were modified in `do_store_match_state` (in other words, the entire match-state is sent only at the beginning; afterwards the players and viewers will get only the DELTA that was modified.)
-
+The match state is given to new viewers and new players in [got_match_started].
 
 To avoid running out of memory on the server,
 the number of keys is limited to 1000,
 and the total memory of the map is limited to 100KB.
 
 To delete a key from the map, pass a value of null or ''.
+
+_Important note_:
+You can save user_ids in the match state, but do not save user_info in the match state.
+The reason is that a viewer may replace another player 
+(e.g., if one player disconnects, then a viewer may replace him).
+In such a case, the server will reuse the same user_id for the viewer,
+and it will call `got_user_info` with the viewer information.
+
 
 Note the difference between `do_store_match_state` and `do_send_message` [Match_state_vs_messages here]

@@ -1,10 +1,10 @@
 #summary Called to pass general info, e.g., url of a logo for branding your game
 
 {{{
-got_general_info(keys:Array/*String*/, values:Array/*Object*/)
+got_general_info(entries:Array/*Entry*/)  
 }}}
 
-`got_general_info` is used to pass parameters (key-value pairs) to the game.
+`got_general_info` is used to pass parameters (key-value entries) to the game.
 These are the keys that are currently supported:
   # `logo_swf_full_url`
   `logo_swf_full_url` is a full url (starting with `http://`) 

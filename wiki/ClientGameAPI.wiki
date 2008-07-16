@@ -14,31 +14,38 @@ The functions in `ClientGameAPI` can be divided into two categories: Operations 
 We write `Array/*int*/` to denote an `Array` that contains only `int` objects;
 Similarly, `Array/*String*/` is an `Array` that contains only `String` objects.
 
+Auxiliary classes:
+{{{
+class Entry { var key:String, value:Object; }
+class UserEntry extends Entry { var user_id:int; }
+class PlayerMatchOver { var player_id:int, score:int, pot_percentage:int; }
+}}}
 Operations are functions starting with `do_`
 {{{
 do_register_on_server()
 do_store_trace(function_name:String, argument:Object)
-do_agree_on_match_over(player_ids:Array/*int*/, scores:Array/*int*/, pot_percentages:Array/*int*/)
+do_agree_on_match_over(finished_players:Array/*PlayerMatchOver*/)
 do_start_my_turn()
 do_end_my_turn(next_turn_of_player_ids:Array/*int*/)
 do_client_protocol_error_with_description(error_description:String)
-do_store_match_state(key:String, value:Object)
+do_store_match_state(entry:Entry)
 do_send_message(to_user_ids:Array/*int*/, value:Object)
-do_set_timer(key:String, in_seconds:int, pass_back:Object)
+do_set_timer(in_seconds:int, entry:Entry)
 }}}
 Callbacks are functions starting with `got_`
 {{{
 got_error(in_function_name:String, err:Error)
-got_general_info(keys:Array/*String*/, values:Array/*Object*/)   
-got_user_info(user_id:int, keys:Array/*String*/, values:Array/*Object*/)  
+got_general_info(entries:Array/*Entry*/)  
+got_user_info(user_id:int, entries:Array/*Entry*/) 
+got_user_disconnected(user_id:int)
 got_my_user_id(my_user_id:int) 
-got_match_started(player_ids:Array/*int*/, extra_match_info:Object, match_started_time:int)
+got_match_started(player_ids:Array/*int*/, extra_match_info:Object, match_started_time:int, match_state:Array/*UserEntry*/)
 got_match_over(player_ids:Array/*int*/)
 got_start_turn_of(user_id:int)
 got_end_turn_of(user_id:int)  
-got_stored_match_state(user_ids:Array/*int*/, keys:Array/*String*/, values:Array/*Object*/)
+got_stored_match_state(user_entry:UserEntry)
 got_message(user_id:int, value:Object)
-got_timer(from_user_id:int, key:String, in_seconds:int, pass_back:Object)  
+got_timer(in_seconds:int, user_entry:UserEntry)
 }}}
 
 Operations are functions that your _game_ may call,
@@ -52,6 +59,7 @@ Your class may override some of the callbacks and respond appropriately to them;
 || [do_store_trace] || Call it to store traces to help you debug your application in the emulator and online ||
 || [got_general_info] || Called to pass general info, e.g., url of a logo for branding your game ||
 || [got_user_info] || Called to pass user specific info, e.g., user name or avatar ||
+|| [got_user_info got_user_disconnected] || Called to inform that the user disconnected ||
 || [got_my_user_id] || Called to pass your user_id ||
 || [got_match_started] || Called when a match starts ||
 || [do_agree_on_match_over] || Call it to end the match. The match will be over when all players called it ||
@@ -74,7 +82,7 @@ Read here about [Match_state_vs_messages Match state vs Sending messages].
 === Initialization: order of the first callbacks === 
 The first callback is `got_my_user_id`,
 then you may get `got_general_info` and `got_user_info`.
-Then, when a match starts you will get `got_match_started` followed by `got_stored_match_state`, and then you will maybe get `got_start_turn_of` if a certain user has the turn.
+Then, when a match starts you will get `got_match_started`, and then you will maybe get `got_start_turn_of` if a certain user has the turn.
 
 
 === Viewers and players === 
@@ -122,5 +130,5 @@ Note that the current timers are not saved, and should be restarted after the ma
 When a saved match is loaded, the game gets the following callbacks:
  * `got_match_started`
  * maybe `got_match_over` if there are users that are no longer playing.
- * `got_stored_match_state` with the match state
  * `got_start_turn_of` if there is a single player that currently has the turn, or if `next_turn_of_player_ids` is of size 1
+(see a more detailed example in [got_user_info])

@@ -16,9 +16,15 @@ function getParametersFromURL() {
 		var key_val = arr[i].split("=");
 		key_val[0] = unescape(key_val[0]);
 		key_val[1] = unescape(key_val[1]);
-		res[ key_val[0] ] = key_val[1];
+		res[ key_val[0] ] = ampSymb(key_val[1]);
 	}			
 	return res;
+}
+function ampSymb(str){
+  str=str.split("&").join("%26");
+  str=str.split("\"").join("%22");
+  str=str.split("\'").join("%27");
+  return str;
 }
     </script>
 

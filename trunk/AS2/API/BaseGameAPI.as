@@ -16,7 +16,8 @@ class BaseGameAPI
 	//Constructor
 	public function BaseGameAPI(parameters:Object) {
 		sPrefix = parameters["prefix"];
-		if (sPrefix==undefined || sPrefix==null)
+		if (sPrefix==null) sPrefix = parameters["?prefix"];
+		if (sPrefix==null)
 			throw new Error("You must pass the parameter 'prefix'. Please only test your games inside the Come2Play emulator");
 		if (!(sPrefix.charAt(0)>='0' && sPrefix.charAt(0)<='9')) {
 			// calling a javascript function that should return the random fixed id
@@ -41,6 +42,7 @@ class BaseGameAPI
 		sDoChanel = "DO_CHANEL"+sPrefix+"_" + iChanel;
 		sGotChanel = "GOT_CHANEL"+sPrefix+"_" + iChanel;
 		try{
+			trace("Board is listening on channel="+sGotChanel);
 			lcUser.connect(sGotChanel);
 		}catch (err:Error) { 
 			passError("Constructor",err);
@@ -70,7 +72,7 @@ class BaseGameAPI
 	}
 	private function sendOperation(connectionName:String, methodName:String, parameters:Array/*Object*/):Void {
 		try {
-			trace(["sendOperation:",connectionName," methodName=",methodName," parameters=",parameters]);
+			trace("sendOperation on channel="+connectionName+' for methodName='+methodName+' parameters='+parameters);
 			lcUser.send(connectionName, "localconnection_callback", methodName, parameters);  
 		}catch(err:Error) { 
 			passError(methodName, err);
@@ -90,10 +92,18 @@ class BaseGameAPI
 
 	// In case of an error, you should probably call do_client_protocol_error_with_description
 	// You should be very careful not to throw any exceptions in got_error, because they are silently ignored	
-	public function got_error(in_function_name:String, err:Error):Void {}
+	public function got_error(in_function_name:String, err:Error):Void {
+		trace("got_error in_function_name="+in_function_name+" err="+err);
+	}
 		
 	//Do functions. You may call these functions.
 	public function do_register_on_server():Void {
+		// Weird flash error (but it only happened to me on AS3! not AS2): 
+		// 1) Board is listening on channel=GOT_CHANEL1439604_2620
+		// 2) Board -> Container: called do_register_on_server on channel=FRAMEWORK_SWF1439604 with parameters=2620
+		// 3) Container -> Board: called got_my_user_id on GOT_CHANEL1439604_2620
+		// step 3 caused an error on the container localconnection (even if the container waited 10 seconds)
+		// the only solution for this problem, was that the board should wait before calling do_register_on_server
 		sendOperation("FRAMEWORK_SWF"+sPrefix, "do_register_on_server", [iChanel]);
 	}
 	public function do_store_trace(funcname:String, args:Object):Void {

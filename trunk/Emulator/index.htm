@@ -162,9 +162,11 @@ function removeParam(num,obj){
                                 </td>
                                 <td>
 
-                                    <input id="test_file_name" name="test_file_name" size="40" value="../AS3/TicTacToe/TicTacToe_board.swf"/>
+                                    <input id="test_file_name" name="test_file_name" size="40" value="../AS3/TicTacToe.swf?apiType=ClientGameAPI&ROWS=5&COLS=5&WIN_LENGTH=4&PLAYERS_NUM_IN_SINGLE_PLAYER=3&SQUARE_scaleX=66&SQUARE_scaleY=66&SQUARE_deltaX=66&SQUARE_deltaY=66"/>
 									<!--
                                     <select id="test_file_name" name="test_file_name">
+
+									<option value="../AS3/TicTacToe/TicTacToe.swf?apiType=ClientGameAPI&">TicTacToe AS3 (ClientGameAPI)</option>
 									<option value="../AS3/MineSweeper/Mine.swf">MineSweeper AS3</option>
 									<option value="../AS3/TicTacToe/TicTacToe_board.swf">TicTacToe AS3</option>
 									<option value="../AS2/TicTacToe/TicTacToe_AS2board.swf">TicTacToe AS2</option>
@@ -187,7 +189,7 @@ function removeParam(num,obj){
                                     Size:
                                 </td>
                                 <td>
-                                    <input id="test_file_width" name="test_file_width" size="5" type="text" value="500" /> x <input id="test_file_height" name="test_file_height" size="5" type="text" value="400" /><!-- <a href="#"><img src="question.gif" style="border-width:0px;" /> </a>-->
+                                    <input id="test_file_width" name="test_file_width" size="5" type="text" value="400" /> x <input id="test_file_height" name="test_file_height" size="5" type="text" value="400" /><!-- <a href="#"><img src="question.gif" style="border-width:0px;" /> </a>-->
                                 </td>
                             </tr>
                             <tr>
@@ -328,6 +330,11 @@ var single_popup;
 var flashvars="prefix="+Math.floor(Math.random()*1000000);
 var swf_width=520,swf_height=442;
 var unloading=false;
+function safeName() {
+    var res = document.getElementById("test_file_name").value;
+    if (res.indexOf('?')==-1) return res;
+    return res+'&';
+}
 function btn_click(){
     document.getElementById("divLinks").innerHTML="";
     try{
@@ -369,7 +376,7 @@ function btn_click(){
         to=from;
     }
     document.getElementById("delay_to").value=to;
-    var addparams="players_num="+players_num+"&viewers_num="+viewers_num+"&logo="+ampSymb(document.getElementById("logo").value)+"&game="+ampSymb(document.getElementById("test_file_name").value)+"&test_file_width="+document.getElementById("test_file_width").value+"&test_file_height="+document.getElementById("test_file_height").value+"&fps="+fps+"&delay_from="+from+"&delay_to="+to+"&old_container="+document.getElementById("old_container").value;
+    var addparams="players_num="+players_num+"&viewers_num="+viewers_num+"&logo="+ampSymb(document.getElementById("logo").value)+"&game="+ampSymb(safeName())+"&test_file_width="+document.getElementById("test_file_width").value+"&test_file_height="+document.getElementById("test_file_height").value+"&fps="+fps+"&delay_from="+from+"&delay_to="+to+"&old_container="+document.getElementById("old_container").value;
     try{
         swf_width=parseInt(document.getElementById("test_file_width").value)+20;
     }catch(err){
@@ -416,10 +423,10 @@ function serverClick(){
     server.focus();
 }
 function ampSymb(str){
-  str=str.split("&").join("%26");
+  /*str=str.split("&").join("%26");
   str=str.split("\"").join("%22");
-  str=str.split("\'").join("%27");
-  return str;
+  str=str.split("\'").join("%27");*/
+  return encodeURIComponent(str);
 }
 function clientClick(num){
     if(clients[num]==null){
@@ -432,7 +439,7 @@ function clientClick(num){
     var from,to;
     to=document.getElementById("delay_to").value;
     from=document.getElementById("delay_from").value;
-	clients[num]=window.open("ClientWindow.htm?game="+ampSymb(document.getElementById("test_file_name").value)+"&width="+swf_width+"&height="+swf_height+"&"+flashvars+old+"&delay_from="+from+"&delay_to="+to+"&old_container="+document.getElementById("old_container").value,"_blank","width="+swf_width+",height="+swf_height+",left="+(50*(num+1))+",top="+(50*(num+1))+",menubar=0,titlebar=0,toolbar=0,resizable=1");
+	clients[num]=window.open("ClientWindow.htm?game="+ampSymb(safeName())+"&width="+swf_width+"&height="+swf_height+"&"+flashvars+old+"&delay_from="+from+"&delay_to="+to+"&old_container="+document.getElementById("old_container").value,"_blank","width="+swf_width+",height="+swf_height+",left="+(50*(num+1))+",top="+(50*(num+1))+",menubar=0,titlebar=0,toolbar=0,resizable=1");
     }else{
 	clients[num].focus();
 

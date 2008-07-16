@@ -1,4 +1,4 @@
-﻿package {
+﻿package come2play_as3.tests {
 	import flash.display.*;
 	import flash.text.*;
 	import fl.data.DataProvider;
@@ -22,21 +22,14 @@ import flash.text.*;
 import flash.events.*;
 import fl.data.DataProvider;
 import fl.controls.*;
+import come2play_as3.api.*;
+import come2play_as3.tests.*;
 
 class MyAPI extends ClientGameAPI {
 	//public var dp:DataProvider = new DataProvider();
 	private var my_graphics:TestClientGameAPI;
 	private var show_localconnection_messages:Boolean;
-	/*
-		do_store_trace(function:String, arguments:Object)
-		do_agree_on_match_over(user_ids:int[], scores:int[], pot_percentages:int[])
-		do_start_my_turn()
-		do_end_my_turn(next_turn_of_player_ids:int[])
-		do_client_protocol_error_with_description(error_description:Object)
-		do_store_match_state(state_key:String, state_value:Object)
-		do_send_message(to_user_ids:int[], message_value:Object)
-		do_set_timer(timer_key:String, in_seconds:int, pass_back:Object)
-	 */
+	
 	private function storeTrace(func:String, args:String):void {
 		my_graphics.out_traces.appendText(
 			(new Date().toLocaleTimeString()) + "\t" + func + "\t" + args + "\n");
@@ -74,7 +67,14 @@ class MyAPI extends ClientGameAPI {
 			do_store_trace(getInputText("function"), getObject("arguments"));
 			break;
 		case "do_agree_on_match_over":
-			do_agree_on_match_over(getIntArr("user_ids"), getIntArr("scores"), getIntArr("pot_percentages"));
+			var finished_players:Array/*PlayerMatchOver*/ = [];
+			var finished_player_ids:Array/*int*/ = getIntArr("user_ids");
+			var scores:Array/*int*/ = getIntArr("scores");
+			var pot_percentages:Array/*int*/ = getIntArr("pot_percentages");
+			for (var i:int = 0; i<finished_player_ids.length; i++) {
+				finished_players[i] = new PlayerMatchOver(finished_player_ids[i], scores[i], pot_percentages[i]);
+			}
+			do_agree_on_match_over(finished_players);
 			break;
 		case "do_start_my_turn":
 			do_start_my_turn();
@@ -86,13 +86,13 @@ class MyAPI extends ClientGameAPI {
 			do_client_protocol_error_with_description(getInputText("error_description"));
 			break;
 		case "do_store_match_state":
-			do_store_match_state(getInputText("state_key"), getObject("state_value"));
+			do_store_match_state( new Entry(getInputText("state_key"), getObject("state_value")) );
 			break;
 		case "do_send_message":
 			do_send_message(getIntArr("to_user_ids"), getObject("message_value"));
 			break;
 		case "do_set_timer":
-			do_set_timer(getInputText("timer_key"), getInt("in_seconds"), getObject("pass_back"));
+			do_set_timer(getInt("in_seconds"), new Entry(getInputText("timer_key"), getObject("pass_back")) );
 			break;
 		}
 	}
@@ -123,6 +123,7 @@ class MyAPI extends ClientGameAPI {
 	}
     override public function localconnection_callback(methodName:String, parameters:Array/*Object*/):void {
 		storeTrace(methodName, parameters.join(" , "));
+		super.localconnection_callback(methodName, parameters); // to call do_finished_callback
 	}
 	override protected function sendOperation(connectionName:String, methodName:String, parameters:Array/*Object*/):void {
 		if (show_localconnection_messages) storeTrace("LOCALCONNECTION", "connectionName="+connectionName+" methodName="+methodName+" parameters="+parameters);

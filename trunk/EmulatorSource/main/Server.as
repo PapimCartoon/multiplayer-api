@@ -1796,18 +1796,18 @@ package main{
 				addMessageLog("Server", "do_start_my_turn", "Error: Can't start turn,  game already end");
 				return;
 			}
-			if (aNextPlayers.length > 0 && aNextPlayers.indexOf(user.ID) == -1) {
-				addMessageLog("Server", "do_start_my_turn", "Error: Can't start turn, user " + user.Name + " not exist in array next_turn_of_player_ids");
-				return;
-			}
+			//if (aNextPlayers.length > 0 && aNextPlayers.indexOf(user.ID) == -1) {
+			//	addMessageLog("Server", "do_start_my_turn", "Error: Can't start turn, user " + user.Name + " not exist in array next_turn_of_player_ids");
+			//	return;
+			//}
 			if (user.Ended) {
 				addMessageLog("Server", "do_start_my_turn", "Error: Can't start turn,  user " + user.Name + " already sends do_agree_on_match_over");
 				return;
 			}
-			if (iCurTurn != -1) {
-				addMessageLog("Server", "do_start_my_turn", "Error: Can't start turn, previous player didn't end his turn");
-				return;
-			}
+			//if (iCurTurn != -1) {
+			//	addMessageLog("Server", "do_start_my_turn", "Error: Can't start turn, previous player didn't end his turn");
+			//	return;
+			//}
 			if (aPlayers.indexOf(user.ID) == -1) {
 				addMessageLog("Server", "do_start_my_turn", "Error: "+user.Name+" is viewer. Only players can call this function.");
 				return;
@@ -1830,7 +1830,7 @@ package main{
 				return;
 			}
 			if (iCurTurn != user.ID) {
-				addMessageLog("Server", "do_end_my_turn", "Error: Can't end turn, user " + user.Name + " didn't start turn");
+			//	addMessageLog("Server", "do_end_my_turn", "Warning: Can't end turn, user " + user.Name + " didn't start turn");
 				return;
 			}
 			if (aPlayers.indexOf(user.ID) == -1) {
@@ -1941,7 +1941,7 @@ package main{
 			}
 			if (pot_percentages != null) {
 				for (i = 0; i < pot_percentages.length; i++) {
-					if (pot_percentages[i] < 0 || pot_percentages[i] > 100) {
+					if (pot_percentages[i] < -1 || pot_percentages[i] > 100) {
 						addMessageLog("Server", "do_agree_on_match_over", "Error: pot_percentages["+i+"] is out of range.");
 				return;
 					}

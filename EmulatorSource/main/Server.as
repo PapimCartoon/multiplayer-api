@@ -2001,7 +2001,14 @@ package main{
 			}
 			if (over.recieved_from.indexOf(user.ID) == -1) {
 				over.recieved_from.push(user.ID);
-				if (over.recieved_from.length == User.PlayersNum) {
+				var all_agreed:Boolean = true;
+				for (i = 0; i < aUsers.length; i++) {
+					if (!aUsers[i].Ended && over.recieved_from.indexOf(aUsers[i].ID) == -1) {
+						all_agreed = false;
+						break;
+					}
+				}
+				if (all_agreed) {
 					var cur_players = 0;
 					for (i = 0; i < aUsers.length; i++) {
 						usr = aUsers[i];

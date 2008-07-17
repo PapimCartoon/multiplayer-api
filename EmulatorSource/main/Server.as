@@ -2009,6 +2009,14 @@ package main{
 					}
 				}
 				if (all_agreed) {
+					if (over.user_ids.indexOf(iCurTurn) != -1) {
+						for (i = 0; i < aUsers.length; i++) {
+							if (aUsers[i].ID == iCurTurn) {
+								do_end_my_turn(aUsers[i], null);
+								break;
+							}
+						}
+					}
 					var cur_players = 0;
 					for (i = 0; i < aUsers.length; i++) {
 						usr = aUsers[i];

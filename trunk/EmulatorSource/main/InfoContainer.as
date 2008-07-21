@@ -295,7 +295,7 @@ package main{
 			try {
 				xmlFunctions = new XML(evt.target.data);
 			}catch(err:Error){ 
-				do_store_trace("loaderComplete","Error: " + err.message);
+				do_store_trace("loaderComplete","Error: " + err.getStackTrace());
 			}
 		}
 		
@@ -597,7 +597,7 @@ package main{
 				MsgBox.Show("The command was send", "Message");
 			}catch (err:Error) {
 				MsgBox.Show(err.message, "Error");
-				do_store_trace("btnSendClick", "Error: " + err.message);
+				do_store_trace("btnSendClick", "Error: " + err.getStackTrace());
 			}
 		}
 		
@@ -641,7 +641,7 @@ package main{
 			try {
 				sendGotOperation("got_general_info", arguments);
 			}catch(err:Error) { 
-				do_store_trace("got_general_info","Error: " + err.message);
+				do_store_trace("got_general_info","Error: " + err.getStackTrace());
 			}
 		}
 		public function got_user_info(user_id:int, keys:Array, values:Array):void {
@@ -671,7 +671,7 @@ package main{
 				cmbCommands.y = txtUsers.height + txtUsers.y + 5;
 				pnlParams.y = cmbCommands.y + cmbCommands.height + 5;
 			}catch (err:Error) { 
-				do_store_trace("got_user_info","Error: " + err.message);
+				do_store_trace("got_user_info","Error: " + err.getStackTrace());
 			}
 		}
 		public function got_my_user_id(my_user_id:int):void { 
@@ -680,7 +680,7 @@ package main{
 				iMyID = my_user_id;
 				sendGotOperation("got_my_user_id", arguments);
 			}catch(err:Error) { 
-				do_store_trace("got_my_user_id","Error: " + err.message);
+				do_store_trace("got_my_user_id","Error: " + err.getStackTrace());
 			}
 		}
 		public function got_match_started(players_user_id:Array, extra_match_info:Object, match_started_time:int):void { 
@@ -708,14 +708,14 @@ package main{
 				cmbCommands.y=txtUsers.height + txtUsers.y + 5;
 				pnlParams.y = cmbCommands.y + cmbCommands.height + 5;
 			}catch(err:Error) { 
-				do_store_trace("got_match_started","Error: " + err.message);
+				do_store_trace("got_match_started","Error: " + err.getStackTrace());
 			}
 		}
 		public function got_stored_match_state(user_ids:Array, keys:Array, datas:Array):void { 
 			try{
 				sendGotOperation("got_stored_match_state", arguments);
 			}catch(err:Error) { 
-				do_store_trace("got_stored_match_state","Error: " + err.message);
+				do_store_trace("got_stored_match_state","Error: " + err.getStackTrace());
 			}
 		}
 		public function got_match_over(user_ids:Array):void { 
@@ -739,7 +739,7 @@ package main{
 					txtTurn.text = "Game over";
 				}
 			}catch(err:Error) { 
-				do_store_trace("got_match_over","Error: " + err.message);
+				do_store_trace("got_match_over","Error: " + err.getStackTrace());
 			}
 		}
 		public function got_end_turn_of(user_id:int):void { 
@@ -747,7 +747,7 @@ package main{
 				sendGotOperation("got_end_turn_of", arguments);
 				txtTurn.text = "";
 			}catch(err:Error) { 
-				do_store_trace("got_end_turn_of","Error: " + err.message);
+				do_store_trace("got_end_turn_of","Error: " + err.getStackTrace());
 			}
 		}
 		public function got_start_turn_of(user_id:int):void { 
@@ -761,21 +761,21 @@ package main{
 					}
 				}
 			}catch(err:Error) { 
-				do_store_trace("got_start_turn_of","Error: " + err.message);
+				do_store_trace("got_start_turn_of","Error: " + err.getStackTrace());
 			}
 		}
 		public function got_message(user_id:int, data:Object):void {
 			try{
 				sendGotOperation("got_message", arguments);
 			}catch(err:Error) { 
-				do_store_trace("got_message","Error: " + err.message);
+				do_store_trace("got_message","Error: " + err.getStackTrace());
 			}
 		}
 		public function got_timer(from_user_id:int, key:String, in_seconds:int, pass_back:Object):void {
 			try{
 				sendGotOperation("got_timer", arguments);
 			}catch(err:Error) { 
-				do_store_trace("got_timer","Error: " + err.message);
+				do_store_trace("got_timer","Error: " + err.getStackTrace());
 			}
 		}
 		
@@ -790,42 +790,42 @@ package main{
 				lcInner.connect(sInnerDoChanel);
 				ddsDoOperations.doSomething(new MessageToSend("FRAMEWORK_SWF" + sOuterPrefix,"do_register_on_server",arguments));
 			}catch(err:Error) { 
-				do_store_trace("do_register_on_server","Error: " + err.message);
+				do_store_trace("do_register_on_server","Error: " + err.getStackTrace());
 			}
 		}
 		public function do_agree_on_match_over(user_ids:Array, scores:Array, pot_percentages:Array):void {
 			try {
 				sendDoOperation("do_agree_on_match_over", arguments);
 			}catch(err:Error) { 
-				do_store_trace("do_agree_on_match_over","Error: " + err.message);
+				do_store_trace("do_agree_on_match_over","Error: " + err.getStackTrace());
 			}
 		}
 		public function do_store_match_state(key:String, data:Object):void {
 			try{
 				sendDoOperation("do_store_match_state", arguments);
 			}catch(err:Error) { 
-				do_store_trace("do_store_match_state","Error: " + err.message);
+				do_store_trace("do_store_match_state","Error: " + err.getStackTrace());
 			}
 		}
 		public function do_start_my_turn():void {
 			try{
 				sendDoOperation("do_start_my_turn",arguments);
 			}catch(err:Error) { 
-				do_store_trace("do_start_my_turn","Error: " + err.message);
+				do_store_trace("do_start_my_turn","Error: " + err.getStackTrace());
 			}
 		}
 		public function do_end_my_turn(next_turn_of_player_ids:Array):void {
 			try{
 				sendDoOperation("do_end_my_turn", arguments);
 			}catch(err:Error) { 
-				do_store_trace("do_end_my_turn","Error: " + err.message);
+				do_store_trace("do_end_my_turn","Error: " + err.getStackTrace());
 			}
 		}
 		public function do_store_trace(funcname:String, message:String):void {
 			try{
 				sendDoOperation("do_store_trace", arguments);
 			}catch (err:Error) { 
-				trace(err.message);
+				trace(err.getStackTrace());
 			}
 		}
 		public function do_client_protocol_error_with_description(error_description:Object):void {
@@ -833,21 +833,21 @@ package main{
 				sendDoOperation("do_client_protocol_error_with_description", arguments);
 				MsgBox.Show(error_description.toString(), "Error");
 			}catch(err:Error) { 
-				do_store_trace("do_client_protocol_error_with_description","Error: " + err.message);
+				do_store_trace("do_client_protocol_error_with_description","Error: " + err.getStackTrace());
 			}
 		}
 		public function do_send_message(to_user_ids:Array, data:Object):void {
 			try {
 				sendDoOperation("do_send_message",arguments);
 			}catch(err:Error) { 
-				do_store_trace("do_send_message","Error: " + err.message);
+				do_store_trace("do_send_message","Error: " + err.getStackTrace());
 			}
 		}
 		public function do_set_timer(key:String, in_seconds:int, pass_back:Object):void {
 			try{
 				sendDoOperation("do_set_timer", arguments);
 			}catch(err:Error) { 
-				do_store_trace("do_set_timer","Error: " + err.message);
+				do_store_trace("do_set_timer","Error: " + err.getStackTrace());
 			}
 		}
 	}

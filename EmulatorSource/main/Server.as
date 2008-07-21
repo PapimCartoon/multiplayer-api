@@ -505,13 +505,13 @@ package main{
 					return;
 				}
 			}catch (err:Error) {
-				MsgBox.Show("Parameter 'players_num' must be passed in the url.");
+				MsgBox.Show("Parameter 'players_num' must be passed in the url.","Error");
 				return;
 			}
 			try{
 				User.ViewersNum = parseInt(root.loaderInfo.parameters["viewers_num"]);
 				if (isNaN(User.ViewersNum)) {
-					MsgBox.Show("Parameter 'viewers_num' must be passed in the url.");
+					MsgBox.Show("Parameter 'viewers_num' must be passed in the url.","Error");
 					return;
 				}
 			}catch (err:Error) {
@@ -686,7 +686,7 @@ package main{
 					}
 				}
 			}catch (err:Error) {
-				addMessageLog("Server", "do_register_on_server", "Error: " + err.message);
+				addMessageLog("Server", "do_register_on_server", "Error: " + err.getStackTrace());
 				MsgBox.Show(err.message, "Error");
 			}
 		}
@@ -856,7 +856,7 @@ package main{
 			try {
 				xmlFunctions = new XML(evt.target.data);
 			}catch (err:Error) {
-				addMessageLog("Server", "loaderComplete", "Error: " + err.message);
+				addMessageLog("Server", "loaderComplete", "Error: " + err.getStackTrace());
 				MsgBox.Show(err.message, "Error");
 			}
 			clearLogClick(null);
@@ -1782,7 +1782,7 @@ package main{
 				MsgBox.Show("Command was send", "Message");
 			}catch (err:Error) {
 				MsgBox.Show(err.message, "Error");
-				addMessageLog("Server", "btnSendClick", "Error: " + err.message);
+				addMessageLog("Server", "btnSendClick", "Error: " + err.getStackTrace());
 			}
 		}
 		
@@ -2003,7 +2003,7 @@ package main{
 				over.recieved_from.push(user.ID);
 				var all_agreed:Boolean = true;
 				for (i = 0; i < aUsers.length; i++) {
-					if (!aUsers[i].Ended && over.recieved_from.indexOf(aUsers[i].ID) == -1) {
+					if (!aUsers[i].Ended && aPlayers.indexOf(aUsers[i].ID)!=-1 && over.recieved_from.indexOf(aUsers[i].ID) == -1) {
 						all_agreed = false;
 						break;
 					}
@@ -2184,7 +2184,7 @@ package main{
 				}
 				showTimers();
 			}catch (err:Error) {
-				addMessageLog("Server", "do_set_timer", err.message);
+				addMessageLog("Server", "do_set_timer", "Error: "+err.getStackTrace());
 			}
 		}
 	}
@@ -2256,7 +2256,7 @@ class User {
 			lcData.connect(sDoChanel);
 			lcData.addEventListener(StatusEvent.STATUS, onConnectionStatus);
 		}catch (err:Error) {
-			sServer.addMessageLog("Server", "User", "Error: " + err);
+			sServer.addMessageLog("Server", "User", "Error: " + err.getStackTrace());
 		}
 	}
 	
@@ -2274,7 +2274,7 @@ class User {
 				(this[methodName] as Function).apply(this, parameters);
 			}
 		} catch (err:Error) { 
-			sServer.addMessageLog("Server", "localconnection_callback", "Error: " + err);
+			sServer.addMessageLog("Server", "localconnection_callback", "Error: " + err.getStackTrace());
 		}  
 	}
 	

@@ -2028,10 +2028,10 @@ package main{
 						}
 						sendOperation(usr.GotChanel, "got_match_over",[over.user_ids]);
 					}
-					if (cur_players == 0) {
+					if (cur_players == 0) {     
 						aNextPlayers=new Array();
-						bGameEnded = true;
 						txtMatchStartedTime.text = "";
+						bGameEnded = true;
 						txtExtraMatchInfo.visible = true;
 						txtMatchStartedTime.visible = true;
 						btnNewGame.visible = true;

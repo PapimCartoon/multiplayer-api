@@ -27,3 +27,8 @@ and it will call `got_user_info` with the viewer information.
 
 
 Note the difference between `do_store_match_state` and `do_send_message` [Match_state_vs_messages here]
+
+In [SecureClientGameAPI], calling `do_store_match_state(entry)` is identical to calling 
+{{{
+do_user_store_match_state(SecretLevel.PUBLIC, entry)
+}}}

@@ -15,3 +15,7 @@ This is always the case of the number of players is 2.
 However, there might be a rare scenario in games with more than 2 players, in which some of the players have already ended the match.
 If there are players that finished playing before the call to `do_client_protocol_error_with_description`
 the remaining pot will be divided among the current players.
+
+
+In [SecureClientGameAPI], if the jury calls `do_client_protocol_error_with_description`,
+then the user that sent the last message loses and is thrown out.

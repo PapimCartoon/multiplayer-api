@@ -34,6 +34,7 @@ do_set_timer(in_seconds:int, entry:Entry)
 }}}
 Callbacks are functions starting with `got_`
 {{{
+got_keyboard_event(is_key_down:Boolean, charCode:int, keyCode:int, keyLocation:int, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean)
 got_error(in_function_name:String, err:Error)
 got_general_info(entries:Array/*Entry*/)  
 got_user_info(user_id:int, entries:Array/*Entry*/) 
@@ -57,6 +58,7 @@ Your class may override some of the callbacks and respond appropriately to them;
 || *Function* || *Description* ||
 || [do_register_on_server] || Call it after your _game_ finished loading ||
 || [do_store_trace] || Call it to store traces to help you debug your application in the emulator and online ||
+|| [got_keyboard_event] || Called to pass keyboard down events (see KeyboardEvent) ||
 || [got_general_info] || Called to pass general info, e.g., url of a logo for branding your game ||
 || [got_user_info] || Called to pass user specific info, e.g., user name or avatar ||
 || [got_user_info got_user_disconnected] || Called to inform that the user disconnected ||

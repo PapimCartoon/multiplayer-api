@@ -2,28 +2,44 @@ package come2play_as3.api {
 	import come2play_as3.util.*;
 	
 	import flash.events.*;
-	import flash.external.ExternalInterface;
-	import flash.net.LocalConnection;
-	import flash.utils.setTimeout;
+	import flash.external.*;
+	import flash.net.*;
+	import flash.utils.*;
 	
 	/**
 	 * See http://code.google.com/p/multiplayer-api
 	 */ 
 	public class BaseGameAPI
 	{
+		public static function error(msg:String):void {
+			trace("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n An ERRRRRRRRRRROR occurred:\n"+msg+"\n\n\n\n\n\n\n\n\n");
+		}
+		public static function throwError(msg:String):void {
+			error("Throwing an error with message="+msg);
+			throw new Error(msg);
+		}
+		public static function getDoChanelString(sPrefix:String, iChanel:int):String {
+			return "DO_CHANEL"+sPrefix+"_" + iChanel;
+		}
+		public static function getGotChanelString(sPrefix:String, iChanel:int):String {
+			return "GOT_CHANEL"+sPrefix+"_" + iChanel;
+		}
+		public static function getHandshakeString(sPrefix:String):String {
+			return "FRAMEWORK_SWF"+sPrefix;
+		}
 		// we use a LocalConnection to communicate with the container
 		private var lcUser:LocalConnection;  
 		private var iChanel:int;
 		private var sDoChanel:String;
 		private var sGotChanel:String;
-		private var sPrefix:String="";
+		private var sPrefix:String;
 		
 		//Constructor
-		public function BaseGameAPI(parameters:Object):void {
+		public function BaseGameAPI(parameters:Object) {
 			sPrefix = parameters["prefix"];
 			if (sPrefix==null) sPrefix = parameters["?prefix"];
 			if (sPrefix==null) 
-				throw new Error("You must pass the parameter 'prefix'. Please only test your games inside the Come2Play emulator. parameters passed="+JSON.stringify(parameters));
+				throwError("You must pass the parameter 'prefix'. Please only test your games inside the Come2Play emulator. parameters passed="+JSON.stringify(parameters));
 			if (!(sPrefix.charAt(0)>='0' && sPrefix.charAt(0)<='9')) {
 				// calling a javascript function that should return the random fixed id
 				var js_result:Object = ExternalInterface.call(sPrefix);
@@ -31,50 +47,61 @@ package come2play_as3.api {
 			}
 			iChanel = Math.floor(Math.random() * 10000);
 			
-			lcUser = new LocalConnection();            
-			lcUser.addEventListener(StatusEvent.STATUS, onStatus);
-			lcUser.client = this;
-			sDoChanel = "DO_CHANEL"+sPrefix+"_" + iChanel;
-			sGotChanel = "GOT_CHANEL"+sPrefix+"_" + iChanel;
+			lcUser = new LocalConnection();
+			AS3_vs_AS2.addStatusListener(lcUser, this, ["localconnection_callback"]);
+			
+			sDoChanel = getDoChanelString(sPrefix, iChanel);
+			sGotChanel = getGotChanelString(sPrefix, iChanel);
 			try{
-				trace("Board is listening on channel="+sGotChanel);
+				trace("Board connected on channel="+sGotChanel);
 				lcUser.connect(sGotChanel);
 			}catch (err:Error) { 
 				passError("Constructor",err);
 			}
 		}
 		// Make sure all your Object arguments are serializable
-		public function isSerializable(obj:Object):Boolean {
-			if (obj is int || obj is Boolean || obj is String) return true;
-			if (obj is Array) {
-				for each (var o:Object in obj)
-					if (!isSerializable(o)) return false;
-				return true;
+		public static function makeSerializable(obj:Object):Object {
+			if (obj==null || 
+				AS3_vs_AS2.isNumber(obj) || 
+				AS3_vs_AS2.isBoolean(obj) || 
+				AS3_vs_AS2.isString(obj)) return obj;
+			if (AS3_vs_AS2.isArray(obj)) {
+				var res:Array = [];
+				for each (var o:Object in obj) {
+					res.push( makeSerializable(o) );
+				}
+				return res;
 			}			
-			return false;
+			return obj.toString();
 		}
-        private function onStatus(event:StatusEvent):void {
-        	trace("LocalConnection.onStatus event="+event);
-            switch (event.level) {
-                case "error":
-                    passError("LocalConnection-onStatus", new Error());
-                    break;
-            }
-        }
+		public static function assertSerializable(obj:Object):void {
+			if (obj==null || 
+				AS3_vs_AS2.isNumber(obj) || 
+				AS3_vs_AS2.isBoolean(obj) || 
+				AS3_vs_AS2.isString(obj)) return;
+			if (AS3_vs_AS2.isArray(obj)) {
+				for each (var o:Object in obj) {
+					assertSerializable(o);
+				}
+				return;
+			}			
+			throwError("The parameters to a do_* operation must be serializable! argument="+obj+" whose type="+AS3_vs_AS2.getClassName(obj));
+		}
         private function passError(in_function_name:String, err:Error):void {
         	try{
 				got_error(in_function_name, err);
 			} catch (err2:Error) { 
 				// to avoid an infinite loop, I can't call passError again.
-				trace("Error occurred when calling got_error("+in_function_name+","+err+"). The error is="+err2);
+				error("Error occurred when calling got_error("+in_function_name+","+AS3_vs_AS2.error2String(err)+"). The error is="+AS3_vs_AS2.error2String(err2));
 			}
         }
         protected function sendDoOperation(methodName:String, parameters:Array/*Object*/):void {
 			sendOperation(sDoChanel, methodName, translateCallbackParameters(methodName, parameters));
         }
         protected function sendOperation(connectionName:String, methodName:String, parameters:Array/*Object*/):void {
+			trace("sendOperation on channel="+connectionName+' for methodName='+methodName+' parameters='+parameters);
+			assertSerializable(parameters); // must be outside the try block or we'll get infinite recursion!			  
 			try{
-				trace("sendOperation on channel="+connectionName+' for methodName='+methodName+' parameters='+parameters);
 				lcUser.send(connectionName, "localconnection_callback", methodName, parameters);  
 			}catch(err:Error) { 
 				passError(methodName, err);
@@ -109,10 +136,13 @@ package come2play_as3.api {
 				sendDoOperation("do_finished_callback", [methodName]);
 			}
         }
+        private function getFunction(methodName:String):Function {
+        	if (!AS3_vs_AS2.hasOwnProperty(this,methodName)) return null;
+			return this[methodName] as Function;
+        }
 		private function safeApplyFunction(methodName:String, args:Array):Object {			
-			if (!this.hasOwnProperty(methodName)) return false;
-			var func:Function = this[methodName] as Function;
-			if (func==null) return false;
+			var func:Function = getFunction(methodName);
+			if (func==null) return null;
 			return func.apply(this, args);
 		}
 
@@ -120,28 +150,28 @@ package come2play_as3.api {
 		// In case of an error, you should probably call do_client_protocol_error_with_description
 		// You should be very careful not to throw any exceptions in got_error, because they are silently ignored	
 		public function got_error(in_function_name:String, err:Error):void {
-			trace("got_error in_function_name="+in_function_name+" err="+err+" stacktraces="+err.getStackTrace());
+			error("got_error in_function_name="+in_function_name+" err="+AS3_vs_AS2.error2String(err));
 		}
 
 		protected function translateCallbackParameters(methodName:String, parameters:Array/*Object*/):Array/*Object*/ {
-			var result:Object = safeApplyFunction("translate_"+methodName, parameters);
-			if (result is Boolean) return parameters;
-			return result as Array;
+			var translate_name:String = "translate_"+methodName;
+			if (getFunction(translate_name)==null) return parameters;
+			return AS3_vs_AS2.asArray(safeApplyFunction(translate_name, parameters));
 		}
 		private function translate_entries(keys:Array/*String*/, values:Array/*Serializable*/):Array {
 			var res:Array = [];
 			var len:int = keys.length;
-			if (len!=values.length) throw new Error("keys="+keys+" and values="+values+" must have the same length!");
+			if (len!=values.length) throwError("keys="+keys+" and values="+values+" must have the same length!");
 			for (var i:int = 0; i<len; i++)
-				res[i] = new Entry(keys[i] as String, values[i] as Object);
+				res[i] = new Entry(AS3_vs_AS2.asString(keys[i]), values[i]);
 			return res;
 		}
 		private function translate_user_entries(user_ids:Array/*int*/, keys:Array/*String*/, values:Array/*Serializable*/):Array {
 			var res:Array = [];
 			var len:int = keys.length;
-			if (len!=values.length || len!=user_ids.length) throw new Error("keys="+keys+" and values="+values+" and user_ids="+user_ids+" must have the same length!");
+			if (len!=values.length || len!=user_ids.length) throwError("keys="+keys+" and values="+values+" and user_ids="+user_ids+" must have the same length!");
 			for (var i:int = 0; i<len; i++)
-				res[i] = new UserEntry(keys[i] as String, values[i] as Object, user_ids[i] as int);
+				res[i] = new UserEntry(AS3_vs_AS2.asString(keys[i]), values[i], AS3_vs_AS2.as_int(user_ids[i]));
 			return res;
 		}
 		public function translate_got_general_info(keys:Array/*String*/, values:Array/*Serializable*/):Array {
@@ -159,10 +189,10 @@ package come2play_as3.api {
 			return [player_ids, extra_match_info, match_started_time, translate_user_entries(user_ids, keys, values) ];
 		}		
 		private function assert_length(arr:Array, len:int):void {
-			if (arr.length!=len) throw new Error("Array "+arr+" is not of length "+len);
+			if (arr.length!=len) throwError("Array "+arr+" length="+len);
 		}
 		public function translate_got_stored_match_state(user_ids:Array/*int*/, keys:Array/*String*/, values:Array/*Serializable*/):Array {
-			//"All arrays in got_stored_match_state (that is not the first after got_match_started) should be of length 1
+			//"All arrays in got_stored_match_state (except the first after got_match_started) should be of length 1
 			assert_length(user_ids,1);
 			assert_length(keys,1);
 			assert_length(values,1);
@@ -172,7 +202,7 @@ package come2play_as3.api {
 		public function translate_got_secure_stored_match_state(secret_levels:Array/*int*/, user_ids:Array/*int*/, keys:Array/*String*/, values:Array/*Serializable*/):Array {
 			assert_length(secret_levels,1);
 			//got_secure_stored_match_state(secret_level:int, user_entry:UserEntry)
-			return [secret_levels[0] as int].concat(translate_got_stored_match_state(user_ids, keys, values));
+			return [AS3_vs_AS2.as_int(secret_levels[0])].concat(translate_got_stored_match_state(user_ids, keys, values));
 		}
 		public function translate_do_set_timer(in_seconds:int, entry:Entry):Array {
 			//do_set_timer(key:String, in_seconds:int, pass_back:Object/*Serializable*/)
@@ -215,19 +245,21 @@ package come2play_as3.api {
 		
 		public function do_register_on_server():void {
 			// Weird flash error: 
-			// 1) Board is listening on channel=GOT_CHANEL1439604_2620
+			// 1) Board listens on channel=GOT_CHANEL1439604_2620
 			// 2) Board -> Container: called do_register_on_server on channel=FRAMEWORK_SWF1439604 with parameters=2620
 			// 3) Container -> Board: called got_my_user_id on GOT_CHANEL1439604_2620
 			// step 3 caused an error on the container localconnection (even if the container waited 10 seconds)
-			// the only solution for this problem, was that the board should wait before calling do_register_on_server  
-			setTimeout(waitBeforeRegister, 1000); 	
+			// the only solution for this problem, was that the board should wait before calling do_register_on_server
+			trace("Postponing calling  do_register_on_server"); 
+			AS3_vs_AS2.myTimeout(AS3_vs_AS2.delegate(this,this.waitBeforeRegister), 100); 	
 		}
 		private function waitBeforeRegister():void {
-			sendOperation("FRAMEWORK_SWF"+sPrefix, "do_register_on_server", [iChanel]);
+			trace("Now calling  do_register_on_server");
+			sendOperation(getHandshakeString(sPrefix), "do_register_on_server", [iChanel]);
 		}
 		
 		public function do_store_trace(funcname:String, args:Object):void {
-			sendDoOperation("do_store_trace", arguments);
+			sendDoOperation("do_store_trace", [funcname, makeSerializable(args)]);
 		}
 	}
 }

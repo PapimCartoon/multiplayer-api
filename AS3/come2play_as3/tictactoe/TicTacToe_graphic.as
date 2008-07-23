@@ -271,7 +271,6 @@ public final class TicTacToe_graphic extends CombinedClientAndSecureGameAPI {
 								percentage = 0;
 							} else {
 								// the board became full, so the remaining players split the pot between themselves.
-								assert(finished_players.length==0, ["finished_players must be of length 0: ",finished_players]);
 								score = 0;
 								percentage = 100/ongoing_colors.length;
 							}
@@ -308,7 +307,7 @@ public final class TicTacToe_graphic extends CombinedClientAndSecureGameAPI {
 		// 	and finally if the game is not over, 
 		//		we'll call either do_start_my_turn or do_juror_set_turn
 		if (!isSecureAPI && !isSinglePlayer())
-			do_end_my_turn( [getNextTurnOfColor()] );
+			do_end_my_turn( [all_player_ids[getNextTurnOfColor()]] );
 		if (shouldDoOperation())
 			do_store_match_state( new Entry(""+logic.getMoveNumber(), [row, col]) );		
 		makeMove(row, col);

@@ -45,7 +45,25 @@ package main{
 		private var ddsDoOperations:DelayDoSomething;
 		private var ddsGotOperations:DelayDoSomething;
 		
+		
+		private function reportKeyUp(event:KeyboardEvent):void {
+			reportKey(false, event);
+		}
+		private function reportKeyDown(event:KeyboardEvent):void {
+			reportKey(true, event);
+		}		
+		private function reportKey(is_key_down:Boolean,event:KeyboardEvent):void {
+			var charCode:int = event.charCode;
+			var keyCode:int = event.keyCode;
+			var keyLocation:int = event.keyLocation;
+			var altKey:Boolean = event.altKey;
+			var ctrlKey:Boolean = event.ctrlKey;
+			var shiftKey:Boolean = event.shiftKey;
+			sendGotOperation("got_keyboard_event",[is_key_down, charCode, keyCode, keyLocation, altKey, ctrlKey, shiftKey]);				
+		}
 		public function InfoContainer() {
+			stage.addEventListener(KeyboardEvent.KEY_UP, reportKeyUp);
+			stage.addEventListener(KeyboardEvent.KEY_DOWN, reportKeyDown);
 			
 			stage.scaleMode = StageScaleMode.NO_SCALE;
             stage.align = StageAlign.TOP_LEFT;

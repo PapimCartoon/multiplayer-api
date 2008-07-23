@@ -1,12 +1,13 @@
-//Do not change the code below because this class is automatically generated!
-
 package come2play_as3.api {
+//Do not change the code below because this class was generated automatically!
+
 	public  class SecureClientGameAPI extends BaseGameAPI {
 		public function SecureClientGameAPI(parameters:Object) {
 			super(parameters);
 		}
 		// For players and jurors
 		// user_id = -1 is for a juror, user_id>0 is for a user (player/viewer)
+		public function got_keyboard_event(is_key_down:Boolean, charCode:int, keyCode:int, keyLocation:int, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean):void {}
 		public function got_my_user_id(my_user_id:int):void {}
 		public function got_general_info(entries:Array/*Entry*/):void {}
 		public function got_user_info(user_id:int, entries:Array/*Entry*/):void {}

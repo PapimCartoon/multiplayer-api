@@ -28,13 +28,15 @@ public final class TicTacToe_logic {
 	private var gameState:Array;
 	// The number of squares which are not SQUARE_AVAILABLE
 	private var filledNum:int; 
-	private var isGameOverForColor:Object = {};
+	//private var isGameOverForColor:Object = {}; // huge bug in AS2: if you init here, then isGameOverForColor will be set to the same object even when creating a new TicTacToe_logic! 
+	private var isGameOverForColor:Object; 
 	
 	public function TicTacToe_logic(ROWS:int, COLS:int, WIN_LENGTH:int, PLAYERS_NUM:int) {
 		this.ROWS = ROWS;
 		this.COLS = COLS;
 		this.WIN_LENGTH = WIN_LENGTH;
 		this.PLAYERS_NUM = PLAYERS_NUM;
+		this.isGameOverForColor = {};
 		filledNum = 0;
 		gameState = new Array(ROWS);
 		for(var row:int=0; row<ROWS; row++) {
@@ -60,8 +62,8 @@ public final class TicTacToe_logic {
 	// Makes a move in TicTacToe by placing either X or O in square <row,col>
 	// it returns true if color have just won 
 	public function makeMove(color:int, row:int, col:int):Boolean {
-		if (!isSquareAvailable(row,col) || isGameOverForColor[color]!=null) throw new Error("Square "+row+"x"+col+" is not available");
-		if (color<0 || color>=PLAYERS_NUM) throw new Error("Illegal color="+color);
+		if (!isSquareAvailable(row,col) || isGameOverForColor[color]!=null) BaseGameAPI.throwError("Square "+row+"x"+col+" is not available");
+		if (color<0 || color>=PLAYERS_NUM) BaseGameAPI.throwError("Illegal color="+color);
 		gameState[row][col] = color;
 		filledNum++;
 		var didWin:Boolean = isWinner(row, col);

@@ -1,12 +1,11 @@
 ﻿<flash_project name="API" version="1">
+    <project_file path="./AS3/TestClientGameAPI_AS3.fla" filetype="fla" profile="" />
+    <project_file path="./AS2/TestClientGameAPI_AS2.fla" filetype="fla" profile="" />
+    <project_file path="./AS3/TicTacToe_AS3.fla" filetype="fla" profile="" def_file="true" />
+    <project_file path="./AS2/TicTacToe_AS2.fla" filetype="fla" profile="" />
+    <project_file path="./AS2/OldAPI_Converter/OldContainer_board.fla" filetype="fla" profile="" />
     <project_file path="./EmulatorSource/InfoContainer.fla" filetype="fla" profile="" />
     <project_file path="./EmulatorSource/JSON_AS3_Test.fla" filetype="fla" profile="" />
     <project_file path="./EmulatorSource/Server.fla" filetype="fla" profile="" />
-    <project_file path="./AS3/TestClientGameAPI.fla" filetype="fla" profile="" def_file="true" />
-    <project_file path="./AS3/TicTacToe.fla" filetype="fla" profile="" />
-    <project_file path="./AS2/JSON/JSON_AS2_Test.fla" filetype="fla" profile="" />
-    <project_file path="./AS2/LocalConnectionTest/LocalConnectionTest.fla" filetype="fla" profile="" />
-    <project_file path="./AS2/OldAPI_Converter/OldContainer_board.fla" filetype="fla" profile="" />
-    <project_file path="./AS2/TicTacToe/TicTacToe_AS2board.fla" filetype="fla" profile="" />
     <project_file path="./EmulatorSource/GetParams.fla" filetype="fla" profile="" />
 </flash_project>

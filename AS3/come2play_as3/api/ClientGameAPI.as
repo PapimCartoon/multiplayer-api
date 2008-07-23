@@ -1,12 +1,14 @@
-//Do not change the code below because this class is automatically generated!
-
 package come2play_as3.api {
+//Do not change the code below because this class was generated automatically!
+
 	public  class ClientGameAPI extends BaseGameAPI {
 		public function ClientGameAPI(parameters:Object) {
 			super(parameters);
 		}
+		public function got_keyboard_event(is_key_down:Boolean, charCode:int, keyCode:int, keyLocation:int, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean):void {}
 		public function got_general_info(entries:Array/*Entry*/):void {}
 		public function got_user_info(user_id:int, entries:Array/*Entry*/):void {}
+		public function got_user_disconnected(user_id:int):void {}
 		public function got_my_user_id(my_user_id:int):void {}
 		public function got_match_started(player_ids:Array/*int*/, extra_match_info:Object/*Serializable*/, match_started_time:int, match_state:Array/*UserEntry*/):void {}
 		

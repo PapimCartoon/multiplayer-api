@@ -106,24 +106,34 @@ import come2play_as2.api.*;
         }
 
 		private var saved_parameters_for_got_match_started:Array;
+		private var saved_finished_player_ids:Array;
         public function localconnection_callback(methodName:String, parameters:Array/*Object*/):Void {
         	try{
         		trace("got localconnection_callback methodName="+methodName+" parameters="+parameters);
 				if (methodName=="got_match_started") {
 					saved_parameters_for_got_match_started = parameters;
+					saved_finished_player_ids = null;
 					return;
 				}
 				
-				var is_got_secure_stored_match_state:Boolean = methodName=="got_secure_stored_match_state";
-				var is_got_stored_match_state:Boolean = methodName=="got_stored_match_state";
-				if (saved_parameters_for_got_match_started!=null && (is_got_stored_match_state || is_got_secure_stored_match_state)) {
+				if (saved_parameters_for_got_match_started!=null) {
+					if (methodName=="got_match_over") {
+						if (saved_finished_player_ids!=null) throwError("got_match_over can be called only once after got_match_started before we pass the match state");
+						saved_finished_player_ids = parameters[0];
+						return;						
+					}
+					var is_got_secure_stored_match_state:Boolean = methodName=="got_secure_stored_match_state";
+					var is_got_stored_match_state:Boolean = methodName=="got_stored_match_state";
+					if (!is_got_stored_match_state && !is_got_secure_stored_match_state)
+						throwError("The first API callback after got_match_started must be stored_match_state, and we got="+methodName);
 					methodName = "got_match_started";
 					if (is_got_secure_stored_match_state) {
-						//got_secure_stored_match_state(secret_levels:Array/*int*/, user_ids:Array/*int*/, keys:Array/*String*/, values:Array/*Serializable*/)
+						// got_secure_stored_match_state(secret_levels:Array/*int*/, user_ids:Array/*int*/, keys:Array/*String*/, values:Array/*Serializable*/)
 						// I remove secret_levels from parameters
 						parameters.shift();
 					}
-					parameters = saved_parameters_for_got_match_started.concat(parameters);
+					if (saved_finished_player_ids==null) saved_finished_player_ids = [];
+					parameters = [saved_finished_player_ids].concat(saved_parameters_for_got_match_started.concat(parameters));
 					saved_parameters_for_got_match_started = null;
 				}
 				safeApplyFunction(methodName, translateCallbackParameters(methodName, parameters) );
@@ -180,10 +190,11 @@ import come2play_as2.api.*;
 			return [user_id, translate_entries(keys, values)];
 		}
 		public function translate_got_match_started(
+			finished_player_ids:Array/*int*/,
 			player_ids:Array/*int*/, extra_match_info:Object/*Serializable*/, match_started_time:Number,
 			user_ids:Array/*int*/, keys:Array/*String*/, values:Array/*Serializable*/):Array {
 			//got_match_started(player_ids:Array/*int*/, extra_match_info:Object/*Serializable*/, match_started_time:Number, match_state:Array/*UserEntry*/)
-			return [player_ids, extra_match_info, match_started_time, translate_user_entries(user_ids, keys, values) ];
+			return [player_ids, finished_player_ids, extra_match_info, match_started_time, translate_user_entries(user_ids, keys, values) ];
 		}		
 		private function assert_length(arr:Array, len:Number):Void {
 			if (arr.length!=len) throwError("Array "+arr+" length="+len);

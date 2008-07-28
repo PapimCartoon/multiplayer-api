@@ -12,7 +12,6 @@ class come2play_as2.tictactoe.TicTacToe_SquareGraphic
 	private var row:Number;
 	private var col:Number;
 	private var logoContainer:MovieClip;
-	private var didAddLogoChild:Boolean;
 		
 	public function TicTacToe_SquareGraphic(graphic:TicTacToe_graphic, square:MovieClip, row:Number, col:Number) {
 		this.graphic = graphic;
@@ -20,8 +19,7 @@ class come2play_as2.tictactoe.TicTacToe_SquareGraphic
 		this.btn = AS3_vs_AS2.getMovieChild(square,"Btn_X_O");
 		this.logoContainer = AS3_vs_AS2.getMovieChild(square,"LogoContainer");
 		this.row = row;
-		this.col = col;
-		this.didAddLogoChild = false; 
+		this.col = col; 
 		if (AS3_vs_AS2.isAS3)
 			AS3_vs_AS2.addOnPress(btn,	AS3_vs_AS2.delegate(this, this.pressedOn));		
 		showOrHideLogo(false);

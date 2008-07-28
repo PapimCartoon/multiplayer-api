@@ -87,8 +87,10 @@ public final class AS3_vs_AS2
 		if (res==null) BaseGameAPI.throwError("Missing child="+childName+" in movieclip="+graphics.name);
 		return res;
 	}	
+	private static var prevent_garbage_collection:Array = [];
 	public static function loadMovie(graphics:MovieClip, url:String):void {
 		var loader:Loader = new Loader();
+		prevent_garbage_collection.push(loader);
 		var contentLoaderInfo:LoaderInfo = loader.contentLoaderInfo;
 		contentLoaderInfo.addEventListener(Event.COMPLETE, function (event:Event):void {
 		        graphics.addChild(loader.content);
@@ -136,10 +138,7 @@ public final class AS3_vs_AS2
 	}
 	
 	public static function IndexOf(arr:Array, val:Object):int {
-		for (var i:int=0; i<arr.length; i++)
-			if (arr[i]==val) return i;
-		return -1;
-	}
-	
+		return arr.indexOf(val);
+	}	
 }
 }

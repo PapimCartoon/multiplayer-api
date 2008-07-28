@@ -10,7 +10,8 @@ import flash.utils.*;
  * You have a board of ROWS x COLS squares. The board is empty at the beginning. 
  * Each player chooses a square and fills it with his color. 
  * (In the traditional game the "colors" are either X or O.)
- * A player that fills a whole row, column or diagonal, wins.
+ * A player that fills a whole row, column or diagonal, wins and finishes playing.
+ * The other players may continue playing.
  *
  * Written by: Yoav Zibin (yoav@zibin.net)
  */
@@ -28,15 +29,12 @@ public final class TicTacToe_logic {
 	private var gameState:Array;
 	// The number of squares which are not SQUARE_AVAILABLE
 	private var filledNum:int; 
-	//private var isGameOverForColor:Object = {}; // huge bug in AS2: if you init here, then isGameOverForColor will be set to the same object even when creating a new TicTacToe_logic! 
-	private var isGameOverForColor:Object; 
 	
 	public function TicTacToe_logic(ROWS:int, COLS:int, WIN_LENGTH:int, PLAYERS_NUM:int) {
 		this.ROWS = ROWS;
 		this.COLS = COLS;
 		this.WIN_LENGTH = WIN_LENGTH;
 		this.PLAYERS_NUM = PLAYERS_NUM;
-		this.isGameOverForColor = {};
 		filledNum = 0;
 		gameState = new Array(ROWS);
 		for(var row:int=0; row<ROWS; row++) {
@@ -60,20 +58,16 @@ public final class TicTacToe_logic {
 	}
 	
 	// Makes a move in TicTacToe by placing either X or O in square <row,col>
-	// it returns true if color have just won 
-	public function makeMove(color:int, row:int, col:int):Boolean {
-		if (!isSquareAvailable(row,col) || isGameOverForColor[color]!=null) BaseGameAPI.throwError("Square "+row+"x"+col+" is not available");
+	public function makeMove(color:int, row:int, col:int):void {
+		if (!isSquareAvailable(row,col)) BaseGameAPI.throwError("Square "+row+"x"+col+" is not available");
 		if (color<0 || color>=PLAYERS_NUM) BaseGameAPI.throwError("Illegal color="+color);
 		gameState[row][col] = color;
 		filledNum++;
-		var didWin:Boolean = isWinner(row, col);
-		if (didWin) 
-			isGameOverForColor[color] = true;		
-		return didWin;
 	}
 		
 	// checks if there is a winning row, column, or diagonal that passes through square <row,col>
-	private function isWinner(row:int, col:int):Boolean {
+	public function isWinner(row:int, col:int):Boolean {
+		if (gameState[row][col]==SQUARE_AVAILABLE) return false;
         return isConnectedDelta(row,col, 0, -1,   0,  1) || // LEFT & RIGHT
                isConnectedDelta(row,col, 1,  0,  -1,  0) || // UP & DOWN
                isConnectedDelta(row,col, 1,  1,  -1, -1) || // UP_LEFT & DOWN_RIGHT

@@ -11,8 +11,8 @@ package come2play_as3.api {
 		public function got_my_user_id(my_user_id:int):void {}
 		public function got_general_info(entries:Array/*Entry*/):void {}
 		public function got_user_info(user_id:int, entries:Array/*Entry*/):void {}
-		public function got_match_started(player_ids:Array/*int*/, extra_match_info:Object/*Serializable*/, match_started_time:int, match_state:Array/*UserEntry*/):void {}
-		public function got_match_over(player_ids:Array/*int*/):void {}
+		public function got_match_started(player_ids:Array/*int*/, finished_player_ids:Array/*int*/, extra_match_info:Object/*Serializable*/, match_started_time:int, match_state:Array/*UserEntry*/):void {}
+		public function got_match_over(finished_player_ids:Array/*int*/):void {}
 		public function got_start_turn_of(user_id:int):void {}
 		public function got_end_turn_of(user_id:int):void {}
 		

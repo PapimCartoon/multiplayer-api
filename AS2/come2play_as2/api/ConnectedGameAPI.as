@@ -9,7 +9,7 @@ import come2play_as2.api.*;
 		public function got_general_info(entries:Array/*Entry*/):Void {}
 		public function got_user_info(user_id:Number, entries:Array/*Entry*/):Void {}
 		public function got_my_user_id(my_user_id:Number):Void {}
-		public function got_match_started(player_ids:Array/*int*/, finished_player_ids:Array/*int*/, extra_match_info:Object/*Serializable*/, match_started_time:Number, match_state:Array/*UserEntry*/):Void {}
+		public function got_match_started(all_player_ids:Array/*int*/, finished_player_ids:Array/*int*/, extra_match_info:Object/*Serializable*/, match_started_time:Number, match_state:Array/*UserEntry*/):Void {}
 		
 		public function do_store_match_state(entry:Entry):Void { sendDoOperation('do_store_match_state', arguments); }
 		public function got_stored_match_state(user_entry:UserEntry):Void {}

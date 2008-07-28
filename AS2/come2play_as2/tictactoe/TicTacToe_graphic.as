@@ -117,11 +117,11 @@ class come2play_as2.tictactoe.TicTacToe_graphic extends CombinedClientAndSecureG
 			}		
 		}
 	}
-	/*override*/ public function got_match_started(player_ids:Array/*int*/, finished_player_ids:Array/*int*/, extra_match_info:Object/*Serializable*/, match_started_time:Number, match_state:Array/*UserEntry*/):Void {
-		this.all_player_ids = player_ids;
-		assert(player_ids.length<=4, ["The graphics of TicTacToe can handle at most 4 players. player_ids=", player_ids]);
+	/*override*/ public function got_match_started(all_player_ids:Array/*int*/, finished_player_ids:Array/*int*/, extra_match_info:Object/*Serializable*/, match_started_time:Number, match_state:Array/*UserEntry*/):Void {
+		this.all_player_ids = all_player_ids;
+		assert(all_player_ids.length<=4, ["The graphics of TicTacToe can handle at most 4 players. all_player_ids=", all_player_ids]);
 		turnOfColor = 0;
-		var index_of_my_user_id:Number = AS3_vs_AS2.IndexOf(player_ids,my_user_id);
+		var index_of_my_user_id:Number = AS3_vs_AS2.IndexOf(all_player_ids,my_user_id);
 		myColor = index_of_my_user_id==-1 ? VIEWER : 
 				index_of_my_user_id;
 		disconnected_num = 0;
@@ -228,12 +228,7 @@ class come2play_as2.tictactoe.TicTacToe_graphic extends CombinedClientAndSecureG
 		// update the graphics
 		var square:TicTacToe_SquareGraphic = squares[row][col];
 		square.setColor(turnOfColor);	
-		if (!isSavedGame) {
-			checkMatchOver(row, col);
-			setOnPress(true);	
-		}
-	}
-	private function checkMatchOver(row:Number, col:Number):Void {
+		
 		var didWin:Boolean = logic.isWinner(row, col);
 		var isBoardFull:Boolean = logic.isBoardFull();
 		if (!didWin && !isBoardFull) {
@@ -276,7 +271,7 @@ class come2play_as2.tictactoe.TicTacToe_graphic extends CombinedClientAndSecureG
 					}
 				}		
 				if (isBoardFull) { // Important: it can happen that someone won and the board has just filled up!					
-					for (var i281:Number=0; i281<ongoing_colors.length; i281++) { var ongoing_color:Number = ongoing_colors[i281]; 
+					for (var i276:Number=0; i276<ongoing_colors.length; i276++) { var ongoing_color:Number = ongoing_colors[i276]; 
 						var ongoing_player_id:Number = all_player_ids[ongoing_color];
 						if (!PlayerMatchOver.isInArr(finished_players, ongoing_player_id)) {
 							if (didWin) {
@@ -302,7 +297,7 @@ class come2play_as2.tictactoe.TicTacToe_graphic extends CombinedClientAndSecureG
 			
 			var finished_colors:Array/*int*/ = 
 				isGameOver ? arrayCopy(ongoing_colors) : [turnOfColor];
-			if (finished_players.length>0 && shouldDoOperation()) { 
+			if (!isSavedGame && finished_players.length>0 && shouldDoOperation()) { 
 				if (!isSecureAPI)
 					do_agree_on_match_over(finished_players);
 				else {
@@ -310,7 +305,9 @@ class come2play_as2.tictactoe.TicTacToe_graphic extends CombinedClientAndSecureG
 				}
 			}
 			matchOverForColors(finished_colors);	
-		}
+		}		
+		
+		if (!isSavedGame) setOnPress(true);
 	}
 	
 	public function dispatchMoveIfLegal(row:Number, col:Number):Void {		

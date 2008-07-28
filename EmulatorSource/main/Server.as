@@ -61,7 +61,6 @@ package main{
 		private var cmbCommand:ComboBox;
 		private var cmbTarget:ComboBox;
 		private var sPrefix:String;
-		private var xmlFunctions:XML;
 		private var txtTooltip:TextField;
 		private var startWidth:Number;
 		private var startHeight:Number;
@@ -107,16 +106,9 @@ package main{
 			cmbCommand = new ComboBox();
 			cmbCommand.setSize(150, 22);
 			cmbCommand.prompt = "Select command";
-			cmbCommand.addItem( { label:"got_general_info", data:"got_general_info" } );
-			cmbCommand.addItem( { label:"got_user_info", data:"got_user_info" } );
-			cmbCommand.addItem( { label:"got_my_user_id", data:"got_my_user_id" } );
-			cmbCommand.addItem( { label:"got_match_started", data:"got_match_started" } );
-			cmbCommand.addItem( { label:"got_match_over", data:"got_match_over" } );
-			cmbCommand.addItem( { label:"got_start_turn_of", data:"got_start_turn_of" } );
-			cmbCommand.addItem( { label:"got_end_turn_of", data:"got_end_turn_of" } );
-			cmbCommand.addItem( { label:"got_stored_match_state", data:"got_stored_match_state" } );
-			cmbCommand.addItem( { label:"got_message", data:"got_message" } );
-			cmbCommand.addItem( { label:"got_timer", data:"got_timer" } );
+			for each (var command_name:String in Commands.getCommandNames(true)) {
+				cmbCommand.addItem( { label:command_name, data:command_name } );
+			}
 			cmbCommand.addEventListener(Event.CHANGE, changeCommand);
 			pnlCommands.addChild(cmbCommand);
 			
@@ -444,7 +436,7 @@ package main{
 			
 			MsgBox = new MessageBox();
 			
-			aParams = new Array(6);
+			aParams = new Array(8);
 			var prm:Param;
 			for (var i:int = 0; i < aParams.length; i++) {
 				prm = new Param(MsgBox);
@@ -492,12 +484,6 @@ package main{
 			lcFramework.connect("FRAMEWORK_SWF" + sPrefix);
 			lcFramework.addEventListener(StatusEvent.STATUS, onConnectionStatus);
 			
-			var loader:URLLoader = new URLLoader();
-			loader.dataFormat = URLLoaderDataFormat.TEXT;
-			loader.addEventListener(Event.COMPLETE, loaderComplete);
-			loader.addEventListener(IOErrorEvent.IO_ERROR, loaderError);
-			loader.load(new URLRequest(root.loaderInfo.parameters["xml"]));
-			
 			try{
 				User.PlayersNum = parseInt(root.loaderInfo.parameters["players_num"]);
 				if (isNaN(User.PlayersNum)) {
@@ -533,6 +519,7 @@ package main{
 			
 			shrSavedGames = SharedObject.getLocal("SavedGames");
 			
+			var arr:Array;
 			if (shrSavedGames.data.savedGames == null) {
 				btnLoadGame.enabled = false;
 			}else {
@@ -548,7 +535,7 @@ package main{
 				}
 			}
 			
-			var arr:Array = new Array();
+			arr = new Array();
 			for (var p:String in root.loaderInfo.parameters) {
 				arr.push([p, root.loaderInfo.parameters[p]]);
 			}
@@ -567,7 +554,17 @@ package main{
 				MsgBox.Show(err.message, "Error");
 			}  
 		}
-		
+		private function arrays2string(arrs:Array):String {
+			var res:Array = [];
+			for each (var name_arr:Array in arrs) {
+				var name:String = name_arr[0];
+				var arr:Array = name_arr[1];
+				for (var i:int = 0; i<arr.length; i++) {
+					res[i] = (res[i]==null ? "" : res[i]+", ") + name +"="+ JSON.stringify(arr[i]);
+				}
+			}
+			return res.length==0 ? "[]" : "[{"+res.join("}, {")+"}]";
+		}
 		private function sendOperation(connectionName:String, methodName:String, parameters:Array/*Object*/):void {
 			try {
 				lcFramework.send(connectionName, "localconnection_callback", methodName, parameters); 
@@ -586,19 +583,22 @@ package main{
 				}
 				switch(methodName) {
 					case "got_general_info":
-						args = "keys=" + JSON.stringify(parameters[0]) + ", datas=" + JSON.stringify(parameters[1]);
+						args = "entries="+arrays2string([ ["key", parameters[0]] , ["value", parameters[1]] ]);
 						break;
 					case "got_user_info":
-						args = "user_id="+JSON.stringify(parameters[0])+", keys=" + JSON.stringify(parameters[1]) + ", datas=" + JSON.stringify(parameters[2]);
+						args = "user_id="+JSON.stringify(parameters[0])+", entries=" + arrays2string([ ["key", parameters[1]] , ["value", parameters[2]] ]);
 						break;
 					case "got_my_user_id":
 						args = "my_user_id=" + JSON.stringify(parameters[0]);
 						break;
 					case "got_match_started":
-						args = "players_user_id=" + JSON.stringify(parameters[0]) + ", extra_match_info=" + JSON.stringify(parameters[1]) + ", match_started_time=" + JSON.stringify(parameters[2]);
+						args = "all_player_ids=" + JSON.stringify(parameters[0]) + ", finished_player_ids=" + JSON.stringify(parameters[1]) + 
+							", extra_match_info=" + JSON.stringify(parameters[2]) +
+							", match_started_time=" + JSON.stringify(parameters[3]) +
+							", match_state=" + arrays2string([ ["key", parameters[5]] , ["value", parameters[6]] , ["user_id", parameters[4]] ]);
 						break;
 					case "got_match_over":
-						args = "user_ids=" + JSON.stringify(parameters[0]);
+						args = "finished_player_ids=" + JSON.stringify(parameters[0]);
 						break;
 					case "got_start_turn_of":
 						args = "user_id=" + JSON.stringify(parameters[0]);
@@ -607,13 +607,15 @@ package main{
 						args = "user_id=" + JSON.stringify(parameters[0]);
 						break;
 					case "got_stored_match_state":
-						args = "user_ids="+JSON.stringify(parameters[0])+", keys=" + JSON.stringify(parameters[1]) + ", datas=" + JSON.stringify(parameters[2]);
+						args = "user_id="+JSON.stringify(parameters[0])+", key=" + JSON.stringify(parameters[1]) + ", value=" + JSON.stringify(parameters[2]);
 						break;
 					case "got_message":
-						args = "user_id="+JSON.stringify(parameters[0])+", data=" + JSON.stringify(parameters[1]);
+						args = "user_id="+JSON.stringify(parameters[0])+", value=" + JSON.stringify(parameters[1]);
 						break;
 					case "got_timer":
-						args = "from_user_id=" + JSON.stringify(parameters[0]) + ", key=" + JSON.stringify(parameters[1]) + ", in_seconds=" + JSON.stringify(parameters[2]) + ", pass_back=" + JSON.stringify(parameters[3]);
+						args =  "in_seconds=" + JSON.stringify(parameters[2]) + 
+								", user_id=" + JSON.stringify(parameters[0]) + ", key=" + JSON.stringify(parameters[1]) +
+								", value=" + JSON.stringify(parameters[3]);
 						break;
 					default:
 						return;
@@ -624,6 +626,22 @@ package main{
 			}      	
         }
 		
+		private function send_got_match_started(u:User):void {			
+			var finished_player_ids:Array/*int*/ = [];
+			if (bGameEnded) {
+				finished_player_ids = [aPlayers];
+			}else {				
+				for each (var over:MatchOver in aMatchOvers) {
+					if (over.recieved_from.length == User.PlayersNum) {
+						finished_player_ids = finished_player_ids.concat( over.user_ids );
+					}
+				}
+			}				
+			sendOperation(u.GotChanel, "got_match_started", [aPlayers,finished_player_ids, extra_match_info, match_started_time, aDataUsers, aKeys, aData]);
+			//if (iCurTurn != -1) {
+			//	sendOperation(u.GotChanel, "got_start_turn_of", [iCurTurn]);
+			//}
+		}
 		public function do_register_on_server(chanel:int):void {
 			try{
 				addMessageLog("Server", "do_register_on_server", "chanel="+chanel);
@@ -641,24 +659,9 @@ package main{
 				sendOperation(u.GotChanel, "got_user_info", [u.ID, u.Keys, u.Params]);
 				showUserInfo();
 				cmbTarget.addItem( { label: u.Name, data:u.ID } );
-				if (bGameStarted) {
-					sendOperation(u.GotChanel, "got_match_started", [aPlayers,extra_match_info,match_started_time]);
-					sendOperation(u.GotChanel, "got_stored_match_state", [aDataUsers, aKeys, aData]);
-					if (iCurTurn != -1) {
-						sendOperation(u.GotChanel, "got_start_turn_of", [iCurTurn]);
-					}
-				}
-				if (bGameEnded) {
-					sendOperation(u.GotChanel, "got_match_over",[aPlayers]);
-				}else {
-					var over:MatchOver;
-					for (j = 0; j < aMatchOvers.length; j++) {
-						over = aMatchOvers[i];
-						if (over.recieved_from.length == User.PlayersNum) {
-							sendOperation(u.GotChanel, "got_match_over",[over.user_ids]);
-						}
-					}
-				}
+				
+				if (bGameStarted) send_got_match_started(u);
+				
 				if (aPlayers.length < User.PlayersNum) {
 					aPlayers.push(u.ID);
 					if (aPlayers.length == User.PlayersNum) {
@@ -677,11 +680,7 @@ package main{
 						btnLoadGame.visible = false;
 						for (var i:int = 0; i < aUsers.length; i++) {
 							aUsers[i].Ended = false;
-							sendOperation(aUsers[i].GotChanel, "got_match_started", [aPlayers, extra_match_info, match_started_time]);
-							sendOperation(aUsers[i].GotChanel, "got_stored_match_state", [aDataUsers, aKeys, aData]);
-							if (iCurTurn != -1) {
-								sendOperation(aUsers[i].GotChanel, "got_start_turn_of", [iCurTurn]);
-							}
+							send_got_match_started(aUsers[i]);
 						}
 					}
 				}
@@ -852,16 +851,6 @@ package main{
 			}
 		}
 		
-		private function loaderComplete(evt:Event):void {
-			try {
-				xmlFunctions = new XML(evt.target.data);
-			}catch (err:Error) {
-				addMessageLog("Server", "loaderComplete", "Error: " + err.getStackTrace());
-				MsgBox.Show(err.message, "Error");
-			}
-			clearLogClick(null);
-		}
-		
 		private function searchClick(evt:MouseEvent):void {
 			showResult();
 		}
@@ -895,7 +884,8 @@ package main{
 		
 		private function changeCommand(evt:Event):void {
 			var prm:Param;
-			for (var i:int = 0; i < aParams.length; i++) {
+			var i:int;
+			for (i = 0; i < aParams.length; i++) {
 				prm = aParams[i];
 				prm.y = i * 32+35;
 				prm.Value = "";
@@ -904,111 +894,21 @@ package main{
 			}
 			btnSend.visible = false;
 			txtTooltip.text = "";
-			switch(cmbCommand.selectedItem.data) {
-				case "got_general_info":
-					prm = aParams[0];
-					prm.Label = "keys:String[ ]";
-					prm.visible = true;
-					prm = aParams[1];
-					prm.Label = "datas:String[ ]";
-					prm.visible = true;
-					btnSend.y = 32 * 2+ 35;
-					btnSend.visible = true;
-					break;
-				case "got_user_info":
-					prm = aParams[0];
-					prm.Label = "user_id:int";
-					prm.visible = true;
-					prm = aParams[1];
-					prm.Label = "keys:String[ ]";
-					prm.visible = true;
-					prm = aParams[2];
-					prm.Label = "values:String[ ]";
-					prm.visible = true;
-					btnSend.y = 32 * 3+ 35;
-					btnSend.visible = true;
-					break;
-				case "got_my_user_id":
-					prm = aParams[0];
-					prm.Label = "user_id:int";
-					prm.visible = true;
-					btnSend.y = 32 * 1 + 35;
-					btnSend.visible = true;
-					break;
-				case "got_match_started":
-					prm = aParams[0];
-					prm.Label = "players_user_id:int[ ]";
-					prm.visible = true;
-					prm = aParams[1];
-					prm.Label = "extra_match_info:Object";
-					prm.visible = true;
-					prm = aParams[2];
-					prm.Label = "match_started_time:int";
-					prm.visible = true;
-					btnSend.y = 32 * 3+ 35;
-					btnSend.visible = true;
-					break;
-				case "got_match_over":
-					prm = aParams[0];
-					prm.Label = "user_ids:int[ ]";
-					prm.visible = true;
-					btnSend.y = 32 * 1+ 35;
-					btnSend.visible = true;
-					break;
-				case "got_start_turn_of":
-					prm = aParams[0];
-					prm.Label = "user_id:int";
-					prm.visible = true;
-					btnSend.y = 32 * 1+ 35;
-					btnSend.visible = true;
-					break;
-				case "got_end_turn_of":
-					prm = aParams[0];
-					prm.Label = "user_id:int";
-					prm.visible = true;
-					btnSend.y = 32 * 1+ 35;
-					btnSend.visible = true;
-					break;
-				case "got_stored_match_state":
-					prm = aParams[0];
-					prm.Label = "user_ids:int[ ]";
-					prm.visible = true;
-					prm = aParams[1];
-					prm.Label = "keys:String[ ]";
-					prm.visible = true;
-					prm = aParams[2];
-					prm.Label = "datas:Object[ ]";
-					prm.visible = true;
-					btnSend.y = 32 * 3+ 35;
-					btnSend.visible = true;
-					break;
-				case "got_message":
-					prm = aParams[0];
-					prm.Label = "user_id:int";
-					prm.visible = true;
-					prm = aParams[1];
-					prm.Label = "data:Object";
-					prm.visible = true;
-					btnSend.y = 32 * 2+ 35;
-					btnSend.visible = true;
-					break;
-				case "got_timer":
-					prm = aParams[0];
-					prm.Label = "from_user_id:int";
-					prm.visible = true;
-					prm = aParams[1];
-					prm.Label = "key:String";
-					prm.visible = true;
-					prm = aParams[2];
-					prm.Label = "in_seconds:int";
-					prm.visible = true;
-					prm = aParams[3];
-					prm.Label = "pass_back:Object";
-					prm.visible = true;
-					btnSend.y = 32 * 3+ 35;
-					btnSend.visible = true;
-					break;
+
+			var command_name:String = cmbCommand.selectedItem.data;
+			var parameters:Array = Commands.findCommand(command_name);
+			for (i=0; i<parameters.length; i++) {
+				var param_name:String = parameters[i][0];
+				var param_type:String = parameters[i][1];
+				prm = aParams[i];
+				prm.Label = param_name+":"+param_type;
+				prm.visible = true;
 			}
+			btnSend.y = 32 * parameters.length + 35;
+			btnSend.visible = true;
+
+			/*
+			If I'll ever want a tooltip:
 			var j:int;
 			for (i = 0; i < xmlFunctions["func"].length(); i++) {
 				if (xmlFunctions.func[i].name == cmbCommand.selectedItem.data) {
@@ -1028,7 +928,7 @@ package main{
 					}
 					break;
 				}
-			}
+			}*/
 		}
 		
 		private function btnLogClick(evt:MouseEvent):void {
@@ -1292,7 +1192,7 @@ package main{
 		}
 		
 		private function btnQuestionClick(evt:MouseEvent):void {
-			MsgBox.Show(xmlFunctions["new"].description);
+			MsgBox.Show("When starting a new game, you should enter two values that will be passed in the callback got_match_started: extra_match_info of type Object and match_started_time of type int");
 		}
 		
 		private function btnLoadGameClick(evt:MouseEvent):void {
@@ -1352,11 +1252,7 @@ package main{
 					btnLoadGame.visible = false;
 					for (i = 0; i < aUsers.length; i++) {
 						aUsers[i].Ended = false;
-						sendOperation(aUsers[i].GotChanel, "got_match_started", [aPlayers, extra_match_info, match_started_time]);
-						sendOperation(aUsers[i].GotChanel, "got_stored_match_state", [aDataUsers, aKeys, aData]);
-						if(iCurTurn!=-1){
-							sendOperation(aUsers[i].GotChanel, "got_start_turn_of", [iCurTurn]);
-						}
+						send_got_match_started(aUsers[i]);						
 					}
 				}
 				pnlLoad.visible = false;
@@ -1479,8 +1375,7 @@ package main{
 			for (var i:int = 0; i < aUsers.length; i++) {
 				usr = aUsers[i];
 				usr.Ended = false;
-				sendOperation(usr.GotChanel, "got_match_started", [aPlayers,extra_match_info, match_started_time]);
-				sendOperation(usr.GotChanel, "got_stored_match_state",[aDataUsers, aKeys, aData]);
+				send_got_match_started(usr);
 			}
 		}
 		
@@ -1505,6 +1400,7 @@ package main{
 			return true;
 		}
 		
+
 		private function btnSendClick(evt:MouseEvent):void {
 			try{
 				if (cmbTarget.selectedItem == null) {
@@ -1514,270 +1410,22 @@ package main{
 					throw new Error("Please, select command");
 				}
 				var target:int = cmbTarget.selectedItem.data;
-				var prm:Param;
+				var command_name:String = cmbCommand.selectedItem.data;
 				var usr:User;
 				var i:int;
-				var arr:Array;
-				switch(cmbCommand.selectedItem.data) {
-					case "got_general_info":
-						prm = aParams[0];
-						var keys:Array = JSON.parse(prm.Value) as Array;
-						if (keys == null) {
-							throw new Error("Can't convert keys to Array");
-						}
-						for (i = 0; i < keys.length; i++) {
-							if (! keys[i] is String) {
-								throw new Error("Can't convert keys[" + i + "] to String");
-							}
-						}
-						prm.Value = JSON.stringify(keys);
-						prm = aParams[1];
-						var datas:Array = JSON.parse(prm.Value) as Array;
-						if (datas == null) {
-							throw new Error("Can't convert datas to Array");
-						}
-						for (i = 0; i < datas.length; i++) {
-							if (! datas[i] is String) {
-								throw new Error("Can't convert datas[" + i + "] to String");
-							}
-						}
-						prm.Value = JSON.stringify(datas);
-						if (keys.length != datas.length) {
-							throw new Error("Length of keys doesn't equal to length of datas");
-						}
-						for (i = 0; i < aUsers.length; i++) {
-							usr = aUsers[i];
-							if(usr.ID==target || target==-1){
-								sendOperation(usr.GotChanel, "got_general_info",[keys,datas]);
-							}
-						}
-						break;
-					case "got_user_info":
-						prm = aParams[0];
-						var user_id:int = JSON.parse(prm.Value) as int;
-						if (isNaN(user_id)) {
-							throw new Error("Can't convert user_id to int");
-						}
-						prm.Value = JSON.stringify(user_id);
-						prm = aParams[1];
-						keys = JSON.parse(prm.Value) as Array;
-						if (keys == null) {
-							throw new Error("Can't convert keys to Array");
-						}
-						for (i = 0; i < keys.length; i++) {
-							if (! keys[i] is String) {
-								throw new Error("Can't convert keys[" + i + "] to String");
-							}
-						}
-						prm.Value = JSON.stringify(keys);
-						prm = aParams[2];
-						var values:Array = JSON.parse(prm.Value) as Array;
-						if (values == null) {
-							throw new Error("Can't convert values to Array");
-						}
-						for (i = 0; i < values.length; i++) {
-							if (! values[i] is String) {
-								throw new Error("Can't convert values[" + i + "] to String");
-							}
-						}
-						prm.Value = JSON.stringify(values);
-						if (keys.length != values.length) {
-							throw new Error("Length of keys doesn't equal to length of values");
-						}
-						for (i = 0; i < aUsers.length; i++) {
-							usr = aUsers[i];
-							if(usr.ID==target || target==-1){
-								sendOperation(usr.GotChanel, "got_user_info",[user_id,keys,values]);
-							}
-						}
-						break;
-					case "got_my_user_id":
-						prm = aParams[0];
-						var my_user_id:int = JSON.parse(prm.Value) as int;
-						if (isNaN(my_user_id)) {
-							throw new Error("Can't convert my_user_id to int");
-						}
-						prm.Value = JSON.stringify(my_user_id);
-						for (i = 0; i < aUsers.length; i++) {
-							usr = aUsers[i];
-							if(usr.ID==target || target==-1){
-								sendOperation(usr.GotChanel, "got_my_user_id",[my_user_id]);
-							}
-						}
-						break;
-					case "got_match_started":
-						prm = aParams[0];
-						var users_id:Array = JSON.parse(prm.Value) as Array;
-						if (users_id == null) {
-							throw new Error("Can't convert users_id to Array");
-						}
-						for (i = 0; i < users_id.length; i++) {
-							if (! users_id[i] is int) {
-								throw new Error("Can't convert users_id[" + i + "] to int");
-							}
-						}
-						prm.Value = JSON.stringify(users_id);
-						if (users_id.length == 0) {
-							throw new Error("Length of users_id can't be 0");
-						}
-						prm = aParams[1];
-						var _extra_match_info:Object = JSON.parse(prm.Value);
-						prm.Value = JSON.stringify(_extra_match_info);
-						prm = aParams[2];
-						var _match_started_time:int=JSON.parse(prm.Value) as int;
-						if (isNaN(_match_started_time)) {
-							throw new Error("Can't convert match_started_time to int");
-						}
-						prm.Value = JSON.stringify(_match_started_time);
-						for (i = 0; i < aUsers.length; i++) {
-							usr = aUsers[i];
-							if(usr.ID==target || target==-1){
-								sendOperation(usr.GotChanel, "got_match_started",[users_id,_extra_match_info,_match_started_time]);
-							}
-						}
-						break;
-					case "got_match_over":
-						prm = aParams[0];
-						user_ids = JSON.parse(prm.Value) as Array;
-						if (user_ids == null) {
-							throw new Error("Can't convert user_ids to Array");
-						}
-						for (i = 0; i < user_ids.length; i++) {
-							if (! user_ids[i] is int) {
-								throw new Error("Can't convert user_ids[" + i + "] to int");
-							}
-						}
-						prm.Value = JSON.stringify(user_ids);
-						if (user_ids.length == 0) {
-							throw new Error("Length of user_ids can't be 0");
-						}
-						for (i = 0; i < aUsers.length; i++) {
-							usr = aUsers[i];
-							if(usr.ID==target || target==-1){
-								sendOperation(usr.GotChanel, "got_match_over",[user_ids]);
-							}
-						}
-						break;
-					case "got_start_turn_of":
-						prm = aParams[0];
-						user_id = JSON.parse(prm.Value) as int;
-						if (isNaN(user_id)) {
-							throw new Error("Can't convert user_id to int");
-						}
-						prm.Value = JSON.stringify(user_id);
-						for (i = 0; i < aUsers.length; i++) {
-							usr = aUsers[i];
-							if(usr.ID==target || target==-1){
-								sendOperation(usr.GotChanel, "got_start_turn_of",[user_id]);
-							}
-						}
-						break;
-					case "got_end_turn_of":
-						prm = aParams[0];
-						user_id = JSON.parse(prm.Value) as int;
-						if (isNaN(user_id)) {
-							throw new Error("Can't convert user_id to int");
-						}
-						prm.Value = JSON.stringify(user_id);
-						for (i = 0; i < aUsers.length; i++) {
-							usr = aUsers[i];
-							if(usr.ID==target || target==-1){
-								sendOperation(usr.GotChanel, "got_end_turn_of",[user_id]);
-							}
-						}
-						break;
-					case "got_stored_match_state":
-						prm = aParams[0]; 
-						var user_ids:Array = JSON.parse(prm.Value) as Array;
-						if (user_ids == null) {
-							throw new Error("Can't convert user_ids to Array");
-						}
-						for (i = 0; i < user_ids.length; i++) {
-							if (! user_ids[i] is int) {
-								throw new Error("Can't convert user_ids[" + i + "] to int");
-							}
-						}
-						prm.Value = JSON.stringify(user_ids);
-						prm = aParams[1];
-						keys = JSON.parse(prm.Value) as Array;
-						if (keys == null) {
-							throw new Error("Can't convert keys to Array");
-						}
-						for (i = 0; i < keys.length; i++) {
-							if (! keys[i] is String) {
-								throw new Error("Can't convert keys[" + i + "] to String");
-							}
-						}
-						prm.Value = JSON.stringify(keys);
-						prm = aParams[2];
-						datas = JSON.parse(prm.Value) as Array;
-						if (datas == null) {
-							throw new Error("Can't convert datas to Array");
-						}
-						prm.Value = JSON.stringify(datas);
-						if (user_ids.length != keys.length) {
-							throw new Error("Length of user_ids doesn't equal to length of keys");
-						}
-						if (user_ids.length != datas.length) {
-							throw new Error("Length of user_ids doesn't equal to length of datas");
-						}
-						for (i = 0; i < aUsers.length; i++) {
-							usr = aUsers[i];
-							if(usr.ID==target || target==-1){
-								sendOperation(usr.GotChanel, "got_stored_match_state",[user_ids,keys,datas]);
-							}
-						}
-						break;
-					case "got_message":
-						prm = aParams[0];
-						user_id = JSON.parse(prm.Value) as int;
-						if (isNaN(user_id)) {
-							throw new Error("Can't convert user_id to int");
-						}
-						prm.Value = JSON.stringify(user_id);
-						prm = aParams[1];
-						var data:Object = JSON.parse(prm.Value);
-						prm.Value = JSON.stringify(data);
-						for (i = 0; i < aUsers.length; i++) {
-							usr = aUsers[i];
-							if(usr.ID==target || target==-1){
-								sendOperation(usr.GotChanel, "got_message",[user_id,data]);
-							}
-						}
-						break;
-					case "got_timer":
-						prm = aParams[0];
-						var from_user_id:int =  JSON.parse(prm.Value) as int;
-						if (isNaN(from_user_id)) {
-							throw new Error("Can't convert from_user_id to int");
-						}
-						prm.Value = JSON.stringify(from_user_id);
-						
-						prm = aParams[1];
-						var in_seconds:int =  JSON.parse(prm.Value) as int;
-						if (isNaN(in_seconds)) {
-							throw new Error("Can't convert in_seconds to int");
-						}
-						prm.Value = JSON.stringify(in_seconds);
+				var args:Array = Commands.findCommand(command_name);
+				var parameters:Array = [];
+				for (i=0; i< args.length; i++) {
+					var param:String = aParams[i].Value;
+					var param_type:String = args[i][1];
+					parameters.push( Commands.convertToType(param, param_type) );
+				}
 
-						prm = aParams[2]
-						var key:String = JSON.parse(prm.Value) as String;
-						if (key == null) {
-							throw new Error("Can't convert key to String");
-						}
-						prm.Value = JSON.stringify(key);
-						prm = aParams[3];
-						var pass_back:Object = JSON.parse(prm.Value);
-						prm.Value = JSON.stringify(pass_back);
-						for (i = 0; i < aUsers.length; i++) {
-							usr = aUsers[i];
-							if(usr.ID==target || target==-1){
-								sendOperation(usr.GotChanel, "got_timer",[from_user_id,key,in_seconds, pass_back]);
-							}
-						}
-						break;
-					default:
-						return;
+				for (i = 0; i < aUsers.length; i++) {
+					usr = aUsers[i];
+					if(usr.ID==target || target==-1){						
+						sendOperation(usr.GotChanel, command_name, parameters);
+					}
 				}
 				MsgBox.Show("Command was send", "Message");
 			}catch (err:Error) {
@@ -1904,7 +1552,7 @@ package main{
 			var usr:User;
 			for (i = 0; i < aUsers.length; i++) {
 				usr = aUsers[i];
-				sendOperation(usr.GotChanel, "got_stored_match_state", [[user.ID],[key],[data]]);
+				sendOperation(usr.GotChanel, "got_stored_match_state", [user.ID,key,data]);
 			}
 		}
 		public function do_agree_on_match_over(user:User, user_ids:Array, scores:Array, pot_percentages:Array):void {
@@ -2051,8 +1699,8 @@ package main{
 			}
 			showMatchOver();
 		}
-		public function do_store_trace(user:User, funcname:String,message:String):void {
-			addMessageLog(user.Name, funcname, message);
+		public function do_store_trace(user:User, funcname:String,message:Object):void {
+			addMessageLog(user.Name, funcname, JSON.stringify(message));
 		}
 		public function do_client_protocol_error_with_description(user:User, error_description:Object):void {
 			if (!bGameStarted) {
@@ -2298,7 +1946,7 @@ class User {
 	private function do_agree_on_match_over(user_ids:Array, scores:Array, pot_percentages:Array):void {
 		sServer.do_agree_on_match_over(this, user_ids, scores, pot_percentages);
 	}
-	private function do_store_trace(funcname:String,message:String):void {
+	private function do_store_trace(funcname:String,message:Object):void {
 		sServer.do_store_trace(this, funcname,message);
 	}
 	private function do_set_timer(key:String, in_seconds:int, pass_back:Object):void {

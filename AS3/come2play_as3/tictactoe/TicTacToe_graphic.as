@@ -121,11 +121,11 @@ public final class TicTacToe_graphic extends CombinedClientAndSecureGameAPI {
 			}		
 		}
 	}
-	override public function got_match_started(player_ids:Array/*int*/, finished_player_ids:Array/*int*/, extra_match_info:Object/*Serializable*/, match_started_time:int, match_state:Array/*UserEntry*/):void {
-		this.all_player_ids = player_ids;
-		assert(player_ids.length<=4, ["The graphics of TicTacToe can handle at most 4 players. player_ids=", player_ids]);
+	override public function got_match_started(all_player_ids:Array/*int*/, finished_player_ids:Array/*int*/, extra_match_info:Object/*Serializable*/, match_started_time:int, match_state:Array/*UserEntry*/):void {
+		this.all_player_ids = all_player_ids;
+		assert(all_player_ids.length<=4, ["The graphics of TicTacToe can handle at most 4 players. all_player_ids=", all_player_ids]);
 		turnOfColor = 0;
-		var index_of_my_user_id:int = AS3_vs_AS2.IndexOf(player_ids,my_user_id);
+		var index_of_my_user_id:int = AS3_vs_AS2.IndexOf(all_player_ids,my_user_id);
 		myColor = index_of_my_user_id==-1 ? VIEWER : 
 				index_of_my_user_id;
 		disconnected_num = 0;
@@ -232,12 +232,7 @@ public final class TicTacToe_graphic extends CombinedClientAndSecureGameAPI {
 		// update the graphics
 		var square:TicTacToe_SquareGraphic = squares[row][col];
 		square.setColor(turnOfColor);	
-		if (!isSavedGame) {
-			checkMatchOver(row, col);
-			setOnPress(true);	
-		}
-	}
-	private function checkMatchOver(row:int, col:int):void {
+		
 		var didWin:Boolean = logic.isWinner(row, col);
 		var isBoardFull:Boolean = logic.isBoardFull();
 		if (!didWin && !isBoardFull) {
@@ -306,7 +301,7 @@ public final class TicTacToe_graphic extends CombinedClientAndSecureGameAPI {
 			
 			var finished_colors:Array/*int*/ = 
 				isGameOver ? arrayCopy(ongoing_colors) : [turnOfColor];
-			if (finished_players.length>0 && shouldDoOperation()) { 
+			if (!isSavedGame && finished_players.length>0 && shouldDoOperation()) { 
 				if (!isSecureAPI)
 					do_agree_on_match_over(finished_players);
 				else {
@@ -314,7 +309,9 @@ public final class TicTacToe_graphic extends CombinedClientAndSecureGameAPI {
 				}
 			}
 			matchOverForColors(finished_colors);	
-		}
+		}		
+		
+		if (!isSavedGame) setOnPress(true);
 	}
 	
 	public function dispatchMoveIfLegal(row:int, col:int):void {		

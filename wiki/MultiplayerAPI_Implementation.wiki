@@ -2,10 +2,58 @@
 
 We use LocalConnection to pass commands, therefore, there is a 40K limit on arguments to these methods.
 
+
+
 In [TableOfContent Multiplayer API] section we explained that the API is a bridge between the _game_ (written by game developers) and the _container_ (written by the website hosting the game).
 The game SWF is loaded by a _container_ that communicates with the _game_ 
 using a LocalConnection. 
-To make sure the container and game use the same LocalConnection, there is a protocol to determine the channel name.
+There are two issues:
+  * how to determine the channel name that the container and game should use, and
+  * how to translate objects of `Entry`, `UserEntry`, and `PlayerMatchOver`, to basic data types that are supported by LocalConnection.
+
+The later question is easier to answer:
+`BaseGameAPI` class translates these objects to basic data types, e.g., 
+an array of `UserEntry` is translated to 3 arrays: 
+user_ids of type `int[]`, keys of type `String[]`, and values of type `Object[]`.
+These are the signatures of the translated functions:
+{{{
+do_finished_callback(method_name:String)
+do_register_on_server(chanel:int)
+do_store_trace(name:String, message:Object/*Serializable*/)
+do_agree_on_match_over(player_ids:Array/*int*/, scores:Array/*int*/, pot_percentages:Array/*int*/)
+do_start_my_turn()
+do_end_my_turn(next_turn_of_player_ids:Array/*int*/)
+do_store_match_state(key:String, value:Object/*Serializable*/)
+do_send_message(to_user_ids:Array/*int*/, value:Object/*Serializable*/)
+do_set_timer(key:String, in_seconds:int, value:Object/*Serializable*/)
+do_client_protocol_error_with_description(error_description:String)
+do_connected_set_score(score:int)
+do_connected_match_over(did_win:Boolean)
+do_juror_store_match_state(secret_level:int, key:String, value:Object/*Serializable*/, for_user_id:int)
+do_user_store_match_state(secret_level:int, key:String, value:Object/*Serializable*/)
+do_juror_unfold_match_state(key:String, to_user_id:int)
+do_juror_shuffle_match_state(keys:Array/*String*/)
+do_juror_set_turn(turn_of_player_id:int)
+do_juror_end_match(finished_player_ids:Array/*int*/, scores:Array/*int*/, pot_percentages:Array/*int*/)
+
+got_keyboard_event(is_key_down:Boolean, charCode:int, keyCode:int, keyLocation:int, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean)
+got_general_info(keys:Array/*String*/, values:Array/*Serializable*/)
+got_user_info(user_id:int, keys:Array/*String*/, values:Array/*Serializable*/)
+got_user_disconnected(user_id:int)
+got_my_user_id(my_user_id:int)
+got_match_started(all_player_ids:Array/*int*/, finished_player_ids:Array/*int*/, extra_match_info:Object/*Serializable*/, match_started_time:int, user_ids:Array/*int*/, keys:Array/*String*/, values:Array/*Serializable*/)
+got_match_over(finished_player_ids:Array/*int*/)
+got_start_turn_of(user_id:int)
+got_end_turn_of(user_id:int)
+got_stored_match_state(user_id:int, key:String, value:Object/*Serializable*/)
+got_message(user_id:int, value:Object/*Serializable*/)
+got_timer(user_id:int, key:String, in_seconds:int, value:Object/*Serializable*/)
+got_secure_stored_match_state(secret_level:int, user_id:int, key:String, value:Object/*Serializable*/)
+}}}
+`do_finished_callback` is called by the game after every time the container calls some callback `got_*`.
+
+The former question is slightly more complicated:
+To make sure the container and game use the same LocalConnection channel, there is a _handshake_ protocol to determine the channel name.
 This protocol supports multiple browser window or even multiple games in the same flash container. 
 The communication protocol (hand-shake) between the game and container is described below.
 

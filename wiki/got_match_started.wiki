@@ -1,19 +1,26 @@
 #summary Called when a match starts
 
 {{{
-got_match_started(player_ids:Array/*int*/, extra_match_info:Object, match_started_time:int, match_state:Array/*UserEntry*/)
+got_match_started(all_player_ids:Array/*int*/, finished_player_ids:Array/*int*/, extra_match_info:Object, match_started_time:int, match_state:Array/*UserEntry*/)
 }}}
 
 `got_match_started` is called when a new match has started.
 
-`player_ids` is the user_id's of the players.
+`all_player_ids` is the user_id's of all the players,
+and `finished_player_ids` are those that already finished playing.
+`finished_player_ids` is always a subset of `all_player_ids`.
+
+For example, if a viewer connects after some players already have disconnected, 
+then the viewer will get in `finished_player_ids` the set of players that have already disconnected.
+Same thing happens if the players load a saved match which was saved after some players have disconnected.
+See example in [got_user_info].
 
 If the game needs to make the same random choices in all the players (e.g., the order of a deck of cards),
 then your game should use a random seed that is identical in all players.
 You can use `match_started_time` as such a random seed. 
 If the match is saved and then loaded, the value of `match_started_time` will be the same.
 
-If your game has many versions, you may use `extra_match_info` to pass your game extra parameters.
+If your game has different variants, you may use `extra_match_info` to pass your game extra parameters.
 E.g., in the game of Go it can contain: the size of the board (9x9, 13x13, or 19x19), the komi, etc.
 In the game of Puzzle it can be the picture domain (animal pictures, travel pictures, etc).
 This mechanism is useful if you want to develop many variants of the same game.

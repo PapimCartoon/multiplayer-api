@@ -6,8 +6,8 @@ The functions below are identical to those in [ClientGameAPI]
 got_general_info(entries:Array/*Entry*/)
 got_user_info(user_id:int, entries:Array/*Entry*/)
 got_my_user_id(my_user_id:int)
-got_match_started(player_ids:Array/*int*/, extra_match_info:Object/*Serializable*/, match_started_time:int, match_state:Array/*UserEntry*/)
-got_match_over(player_ids:Array/*int*/)
+got_match_started(all_player_ids:Array/*int*/, finished_player_ids:Array/*int*/, extra_match_info:Object/*Serializable*/, match_started_time:int, match_state:Array/*UserEntry*/)
+got_match_over(finished_player_ids:Array/*int*/)
 do_store_match_state(entry:Entry)
 got_stored_match_state(user_entry:UserEntry)
 }}}

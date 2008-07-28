@@ -17,8 +17,7 @@ because some users may have already disconnected.
 For example, imagine a game of poker with 5 players, where 2 players disconnected, and now the game is saved.
 When the game is loaded by the remaining 3 players, then the game will get:
  * `got_user_info` for the 3 players that loaded the saved game,
- * `got_match_started` for the 5 players, with match state that includes all the state (including that of those players that disconnected)
- * `got_match_over` for the 2 players that disconnected.
+ * `got_match_started` where `all_player_ids` includes the 5 players and `finished_player_ids` is the 2 players that disconnected and `match_state` that includes also the state those 2 players that disconnected
 Therefore the game should not _require_ the existence of `user_info` to display the match state,
 and if some info is missing, the game should use default values.
 The game _might_ still get the info for the 2 players that disconnected, or some generic info, if those users are no longer in the system.

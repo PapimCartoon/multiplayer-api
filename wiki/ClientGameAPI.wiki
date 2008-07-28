@@ -40,8 +40,8 @@ got_general_info(entries:Array/*Entry*/)
 got_user_info(user_id:int, entries:Array/*Entry*/) 
 got_user_disconnected(user_id:int)
 got_my_user_id(my_user_id:int) 
-got_match_started(player_ids:Array/*int*/, extra_match_info:Object, match_started_time:int, match_state:Array/*UserEntry*/)
-got_match_over(player_ids:Array/*int*/)
+got_match_started(all_player_ids:Array/*int*/, finished_player_ids:Array/*int*/, extra_match_info:Object, match_started_time:int, match_state:Array/*UserEntry*/)
+got_match_over(finished_player_ids:Array/*int*/)
 got_start_turn_of(user_id:int)
 got_end_turn_of(user_id:int)  
 got_stored_match_state(user_entry:UserEntry)
@@ -84,7 +84,9 @@ Read here about [Match_state_vs_messages Match state vs Sending messages].
 === Initialization: order of the first callbacks === 
 The first callback is `got_my_user_id`,
 then you may get `got_general_info` and `got_user_info`.
-Then, when a match starts you will get `got_match_started`, and then you will maybe get `got_start_turn_of` if a certain user has the turn.
+Then, when a match starts you will get `got_match_started`.
+When a saved game is loaded, you may or may not get `got_start_turn_of`,
+therefore one of the players (in a turn-based game) should call `do_start_my_turn` after getting `got_match_started`.
 
 
 === Viewers and players === 
@@ -126,11 +128,7 @@ A saved match contains the following information:
   * the game name (in the emulator we use the SWF name as the identifier for the game)
   * match state (user ids, keys, values)
   * ids of current players and the ids of players that already ended the match
-  * who has the current turn (a single user_id), or which users can have the next turn (next_turn_of_player_ids). 
-Note that the current timers are not saved, and should be restarted after the match is loaded.
 
-When a saved match is loaded, the game gets the following callbacks:
- * `got_match_started`
- * maybe `got_match_over` if there are users that are no longer playing.
- * `got_start_turn_of` if there is a single player that currently has the turn, or if `next_turn_of_player_ids` is of size 1
-(see a more detailed example in [got_user_info])
+Note that the following is not saved and should be restarted after the match is loaded:
+  * who has the current turn,
+  * the timers.

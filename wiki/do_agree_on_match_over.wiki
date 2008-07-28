@@ -7,7 +7,7 @@ do_agree_on_match_over(finished_players:Array/*PlayerMatchOver*/)
 To end a match, all players must call `do_agree_on_match_over` with the same exact parameters.
 
 `finished_players` is the set of the players that will quit the match.
-In the common scenario, `player_ids` contains all the players in the match.
+In the common scenario, `finished_players` contains all the players in the match.
 However, it is possible that only a subset of the players end the match (but in any case, all players must call `do_agree_on_match_over`).
 
 Each element of the array `finished_players` is of type `PlayerMatchOver`:
@@ -23,7 +23,7 @@ and it is a number between -1 and 100.
 If `pot_percentage` is -1, then the player should get his stake back (e.g., if the game was tied).
 Otherwise, `pot_percentage` represents the percentage of the pot that the player should receive.
 
-For example, suppose you have 3 players with player_ids=41, 42, 43. 
+For example, suppose you have 3 players with `player_ids`=41, 42, 43. 
 Suppose user_id=42 ended the match with score 90, and he should get 20% of the pot.
 Then all the players (users 41, 42, 43) should call:
 {{{

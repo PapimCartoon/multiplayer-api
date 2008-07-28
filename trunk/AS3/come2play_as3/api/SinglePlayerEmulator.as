@@ -100,8 +100,7 @@ package come2play_as3.api
 	 		sendNewMatch();
   		}
   		private function sendNewMatch():void {	 	
-			sendCallback("got_match_started", [ [user_id], extra_match_info, match_started_time]);	 	
-  			sendInfo("got_stored_match_state", match_state);
+			sendInfo("got_match_started", match_state);	 	
   		}
   		private function sendCallback(methodName:String, parameters:Array):void {
   			trace("sendCallback on channel="+sGotChanel+' for methodName='+methodName+' parameters='+JSON.stringify(parameters));
@@ -110,11 +109,11 @@ package come2play_as3.api
   		private function sendInfo(name:String, entries:Array/*Entry*/):void {
   			var keys:Array = [];
 			var values:Array = [];
-			var user_ids:Array = name=="got_stored_match_state" ? [] : null;
+			var user_ids:Array = name=="got_match_started" ? [] : null;
 			translate_entries(entries, keys, values, user_ids);
 			var parameters:Array = [keys, values];
 			if (name=="got_user_info") parameters = [user_id].concat(parameters);
-			if (name=="got_stored_match_state") parameters = [user_ids].concat(parameters);
+			if (name=="got_match_started") parameters = [[user_id], [], extra_match_info, match_started_time, user_ids].concat(parameters);
 			sendCallback(name, parameters);			
   		}
 		private function translate_entries(entries:Array, keys:Array, values:Array, user_ids:Array):void {

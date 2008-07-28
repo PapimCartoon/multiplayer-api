@@ -99,6 +99,7 @@ package come2play_as3.api {
 			sendOperation(sDoChanel, methodName, translateCallbackParameters(methodName, parameters));
         }
         protected function sendOperation(connectionName:String, methodName:String, parameters:Array/*Object*/):void {
+        	store_api_trace(["send operation", arguments]);
 			trace("sendOperation on channel="+connectionName+' for methodName='+methodName+' parameters='+parameters);
 			assertSerializable(parameters); // must be outside the try block or we'll get infinite recursion!			  
 			try{
@@ -108,38 +109,12 @@ package come2play_as3.api {
 			}      	
         }
 
-		private var saved_parameters_for_got_match_started:Array;
-		private var saved_finished_player_ids:Array;
         public function localconnection_callback(methodName:String, parameters:Array/*Object*/):void {
         	try{
         		trace("got localconnection_callback methodName="+methodName+" parameters="+parameters);
-				if (methodName=="got_match_started") {
-					saved_parameters_for_got_match_started = parameters;
-					saved_finished_player_ids = null;
-					return;
-				}
-				
-				if (saved_parameters_for_got_match_started!=null) {
-					if (methodName=="got_match_over") {
-						if (saved_finished_player_ids!=null) throwError("got_match_over can be called only once after got_match_started before we pass the match state");
-						saved_finished_player_ids = parameters[0];
-						return;						
-					}
-					var is_got_secure_stored_match_state:Boolean = methodName=="got_secure_stored_match_state";
-					var is_got_stored_match_state:Boolean = methodName=="got_stored_match_state";
-					if (!is_got_stored_match_state && !is_got_secure_stored_match_state)
-						throwError("The first API callback after got_match_started must be stored_match_state, and we got="+methodName);
-					methodName = "got_match_started";
-					if (is_got_secure_stored_match_state) {
-						// got_secure_stored_match_state(secret_levels:Array/*int*/, user_ids:Array/*int*/, keys:Array/*String*/, values:Array/*Serializable*/)
-						// I remove secret_levels from parameters
-						parameters.shift();
-					}
-					if (saved_finished_player_ids==null) saved_finished_player_ids = [];
-					parameters = [saved_finished_player_ids].concat(saved_parameters_for_got_match_started.concat(parameters));
-					saved_parameters_for_got_match_started = null;
-				}
-				safeApplyFunction(methodName, translateCallbackParameters(methodName, parameters) );
+        		var params:Array = translateCallbackParameters(methodName, parameters);	
+        		store_api_trace(["got callback", methodName, params]);
+				safeApplyFunction(methodName, params);
 			} catch(err:Error) { 
 				passError(methodName, err);
 			} finally {
@@ -192,28 +167,21 @@ package come2play_as3.api {
 			//got_user_info(user_id:int, entries:Array/*Entry*/)
 			return [user_id, translate_entries(keys, values)];
 		}
-		public function translate_got_match_started(
+		public function translate_got_match_started(			
+			player_ids:Array/*int*/, 
 			finished_player_ids:Array/*int*/,
-			player_ids:Array/*int*/, extra_match_info:Object/*Serializable*/, match_started_time:int,
+			extra_match_info:Object/*Serializable*/, match_started_time:int,
 			user_ids:Array/*int*/, keys:Array/*String*/, values:Array/*Serializable*/):Array {
-			//got_match_started(player_ids:Array/*int*/, extra_match_info:Object/*Serializable*/, match_started_time:int, match_state:Array/*UserEntry*/)
+			//got_match_started(all_player_ids:Array/*int*/, finished_player_ids:Array/*int*/, extra_match_info:Object/*Serializable*/, match_started_time:int, match_state:Array/*UserEntry*/)
 			return [player_ids, finished_player_ids, extra_match_info, match_started_time, translate_user_entries(user_ids, keys, values) ];
-		}		
-		private function assert_length(arr:Array, len:int):void {
-			if (arr.length!=len) throwError("Array "+arr+" length="+len);
 		}
-		public function translate_got_stored_match_state(user_ids:Array/*int*/, keys:Array/*String*/, values:Array/*Serializable*/):Array {
-			//"All arrays in got_stored_match_state (except the first after got_match_started) should be of length 1
-			assert_length(user_ids,1);
-			assert_length(keys,1);
-			assert_length(values,1);
+		public function translate_got_stored_match_state(user_id:int, key:String, value:Object):Array {
 			//got_stored_match_state(user_entry:UserEntry)
-			return [new UserEntry(keys[0], values[0], user_ids[0])];
+			return [new UserEntry(key, value, user_id)];
 		}		
-		public function translate_got_secure_stored_match_state(secret_levels:Array/*int*/, user_ids:Array/*int*/, keys:Array/*String*/, values:Array/*Serializable*/):Array {
-			assert_length(secret_levels,1);
+		public function translate_got_secure_stored_match_state(secret_level:int, user_id:int, key:String, value:Object):Array {
 			//got_secure_stored_match_state(secret_level:int, user_entry:UserEntry)
-			return [AS3_vs_AS2.as_int(secret_levels[0])].concat(translate_got_stored_match_state(user_ids, keys, values));
+			return [AS3_vs_AS2.as_int(secret_level), new UserEntry(key, value, user_id)];
 		}
 		public function translate_do_set_timer(in_seconds:int, entry:Entry):Array {
 			//do_set_timer(key:String, in_seconds:int, pass_back:Object/*Serializable*/)
@@ -252,7 +220,22 @@ package come2play_as3.api {
 			//do_agree_on_match_over(player_ids:Array/*int*/, scores:Array/*int*/, pot_percentages:Array/*int*/)
 			return translate_do_juror_end_match(finished_players);
 		}
+		public function translate_got_keyboard_event(is_key_down:Boolean, charCode:int, keyCode:int, keyLocation:int, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean):Array {
+			if (is_key_down && (charCode==84 || charCode==116) // "T" or "t" 
+					&& altKey && ctrlKey && shiftKey) {
+				do_store_trace("API_TRACES", api_traces);
+			} 
+			return arguments;
+		}
 
+		private var api_traces:Array = [];
+		// do not use this trace mechanism to debug your game,
+		// use do_store_trace instead.
+		// we only use these traces to check bugs in the emulator.
+		private function store_api_trace(msg:Object):void {
+			if (api_traces.length>=100) api_traces.shift(); // I don't want the traces to occupy to much memory
+			api_traces.push(msg);
+		}
 		
 		public function do_register_on_server():void {
 			// Weird flash error: 

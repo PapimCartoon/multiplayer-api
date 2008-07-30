@@ -30,7 +30,7 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 			addBtnHandler("do_store_match_state");
 			addBtnHandler("do_send_message");
 			addBtnHandler("do_set_timer");
-			super(parameters);
+			super(my_graphics);
 			do_register_on_server();
 		} catch (err:Error) { 
 			handleError(err);

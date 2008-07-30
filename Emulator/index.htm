@@ -337,7 +337,7 @@ var swf_width=520,swf_height=442;
 var unloading=false;
 function safeName() {
     var res = document.getElementById("test_file_name").value;
-    if (res.indexOf('?')==-1) return res;
+    if (res.indexOf('?')==-1 || res.substring(res.length-1)=='&') return res;
     return res+'&';
 }
 function btn_click(){

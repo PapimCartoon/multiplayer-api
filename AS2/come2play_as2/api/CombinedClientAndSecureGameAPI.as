@@ -2,8 +2,8 @@
 
 import come2play_as2.api.*;
 	class come2play_as2.api.CombinedClientAndSecureGameAPI extends BaseGameAPI {
-		public function CombinedClientAndSecureGameAPI(parameters:Object) {
-			super(parameters);
+		public function CombinedClientAndSecureGameAPI(someMovieClip:MovieClip) {
+			super(someMovieClip);
 		}
 		public function got_keyboard_event(is_key_down:Boolean, charCode:Number, keyCode:Number, keyLocation:Number, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean):Void {}
 		public function got_general_info(entries:Array/*Entry*/):Void {}

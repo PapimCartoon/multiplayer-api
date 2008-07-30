@@ -2,8 +2,8 @@
 
 import come2play_as2.api.*;
 	class come2play_as2.api.SecureClientGameAPI extends BaseGameAPI {
-		public function SecureClientGameAPI(parameters:Object) {
-			super(parameters);
+		public function SecureClientGameAPI(someMovieClip:MovieClip) {
+			super(someMovieClip);
 		}
 		// For players and jurors
 		// user_id = -1 is for a juror, user_id>0 is for a user (player/viewer)

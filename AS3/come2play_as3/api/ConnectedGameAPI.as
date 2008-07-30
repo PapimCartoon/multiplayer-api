@@ -1,9 +1,10 @@
 package come2play_as3.api {
 //Do not change the code below because this class was generated automatically!
 
+	import flash.display.*;
 	public  class ConnectedGameAPI extends BaseGameAPI {
-		public function ConnectedGameAPI(parameters:Object) {
-			super(parameters);
+		public function ConnectedGameAPI(someMovieClip:MovieClip) {
+			super(someMovieClip);
 		}
 		public function got_keyboard_event(is_key_down:Boolean, charCode:int, keyCode:int, keyLocation:int, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean):void {}
 		public function got_general_info(entries:Array/*Entry*/):void {}

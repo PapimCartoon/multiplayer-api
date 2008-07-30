@@ -8,11 +8,17 @@
 import come2play_as2.api.*;
 	class come2play_as2.api.BaseGameAPI
 	{
+		public static var DEFAULT_LOCALCONNECTION_HANDSHAKE_PREFIX:String = "42";
+		
+		private static var someMovieClip:MovieClip;
 		public static function error(msg:String):Void {
-			trace("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n An ERRRRRRRRRRROR occurred:\n"+msg+"\n\n\n\n\n\n\n\n\n");
+			var msg:String = "An ERRRRRRRRRRROR occurred:\n"+msg;
+			System.setClipboard(msg);
+			AS3_vs_AS2.showError(someMovieClip, msg);
+			trace("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"+msg+"\n\n\n\n\n\n\n\n\n");
 		}
 		public static function throwError(msg:String):Void {
-			error("Throwing an error with message="+msg);
+			error("Throwing an error with message="+msg+"." + (!AS3_vs_AS2.isAS3 ? "" :  "The error was thrown in this location="+AS3_vs_AS2.error2String(new Error())));
 			throw new Error(msg);
 		}
 		public static function getDoChanelString(sPrefix:String, iChanel:Number):String {
@@ -32,24 +38,28 @@ import come2play_as2.api.*;
 		private var sPrefix:String;
 		
 		//Constructor
-		public function BaseGameAPI(parameters:Object) {
-			sPrefix = parameters["prefix"];
-			if (sPrefix==null) sPrefix = parameters["?prefix"];
-			if (sPrefix==null) 
-				throwError("You must pass the parameter 'prefix'. Please only test your games inside the Come2Play emulator. parameters passed="+JSON.stringify(parameters));
-			if (!(sPrefix.charAt(0)>='0' && sPrefix.charAt(0)<='9')) {
-				// calling a javascript function that should return the random fixed id
-				var js_result:Object = ExternalInterface.call(sPrefix);
-				sPrefix = ''+js_result;
-			}
-			iChanel = Math.floor(Math.random() * 10000);
-			
-			lcUser = new LocalConnection();
-			AS3_vs_AS2.addStatusListener(lcUser, this, ["localconnection_callback"]);
-			
-			sDoChanel = getDoChanelString(sPrefix, iChanel);
-			sGotChanel = getGotChanelString(sPrefix, iChanel);
+		public function BaseGameAPI(_someMovieClip:MovieClip) {
 			try{
+				someMovieClip = _someMovieClip;
+				var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(someMovieClip);
+				sPrefix = parameters["prefix"];
+				if (sPrefix==null) sPrefix = parameters["?prefix"];
+				if (sPrefix==null) {
+					trace("WARNING: didn't find 'prefix' in the loader info parameters. Probably because you are doing testing locally.");
+					sPrefix = DEFAULT_LOCALCONNECTION_HANDSHAKE_PREFIX;
+				}
+				if (!(sPrefix.charAt(0)>='0' && sPrefix.charAt(0)<='9')) {
+					// calling a javascript function that should return the random fixed id
+					var js_result:Object = ExternalInterface.call(sPrefix);
+					sPrefix = ''+js_result;
+				}
+				iChanel = Math.floor(Math.random() * 10000);
+				
+				lcUser = new LocalConnection();
+				AS3_vs_AS2.addStatusListener(lcUser, this, ["localconnection_callback"]);
+				
+				sDoChanel = getDoChanelString(sPrefix, iChanel);
+				sGotChanel = getGotChanelString(sPrefix, iChanel);
 				trace("Board connected on channel="+sGotChanel);
 				lcUser.connect(sGotChanel);
 			}catch (err:Error) { 
@@ -64,7 +74,7 @@ import come2play_as2.api.*;
 				AS3_vs_AS2.isString(obj)) return obj;
 			if (AS3_vs_AS2.isArray(obj)) {
 				var res:Array = [];
-				for (var i69:Number=0; i69<obj.length; i69++) { var o:Object = obj[i69]; 
+				for (var i81:Number=0; i81<obj.length; i81++) { var o:Object = obj[i81]; 
 					res.push( makeSerializable(o) );
 				}
 				return res;
@@ -77,7 +87,7 @@ import come2play_as2.api.*;
 				AS3_vs_AS2.isBoolean(obj) || 
 				AS3_vs_AS2.isString(obj)) return;
 			if (AS3_vs_AS2.isArray(obj)) {
-				for (var i82:Number=0; i82<obj.length; i82++) { var o:Object = obj[i82]; 
+				for (var i94:Number=0; i94<obj.length; i94++) { var o:Object = obj[i94]; 
 					assertSerializable(o);
 				}
 				return;
@@ -86,10 +96,11 @@ import come2play_as2.api.*;
 		}
         private function passError(in_function_name:String, err:Error):Void {
         	try{
+				error("Error occurred when calling "+in_function_name+", the error is="+AS3_vs_AS2.error2String(err));
 				got_error(in_function_name, err);
 			} catch (err2:Error) { 
 				// to avoid an infinite loop, I can't call passError again.
-				error("Error occurred when calling got_error("+in_function_name+","+AS3_vs_AS2.error2String(err)+"). The error is="+AS3_vs_AS2.error2String(err2));
+				error("Another error occurred when calling got_error("+in_function_name+","+AS3_vs_AS2.error2String(err)+"). The error is="+AS3_vs_AS2.error2String(err2));
 			}
         }
         private function sendDoOperation(methodName:String, parameters:Array/*Object*/):Void {
@@ -131,9 +142,7 @@ import come2play_as2.api.*;
 		
 		// In case of an error, you should probably call do_client_protocol_error_with_description
 		// You should be very careful not to throw any exceptions in got_error, because they are silently ignored	
-		public function got_error(in_function_name:String, err:Error):Void {
-			error("got_error in_function_name="+in_function_name+" err="+AS3_vs_AS2.error2String(err));
-		}
+		public function got_error(in_function_name:String, err:Error):Void {}
 
 		private function translateCallbackParameters(methodName:String, parameters:Array/*Object*/):Array/*Object*/ {
 			var translate_name:String = "translate_"+methodName;

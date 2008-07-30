@@ -13,6 +13,7 @@ package main{
 
 	public class Server extends MovieClip {
 		//Private variables
+		private var isTurnBasedGame:Boolean = false;
 		private var lcFramework:LocalConnection;
 		private var aUsers:Array;
 		private var aKeys:Array;
@@ -518,24 +519,18 @@ package main{
 			}
 			
 			shrSavedGames = SharedObject.getLocal("SavedGames");
-			
-			var arr:Array;
-			if (shrSavedGames.data.savedGames == null) {
-				btnLoadGame.enabled = false;
-			}else {
-				var j:int = 0;
-				arr = shrSavedGames.data.savedGames;
-				for (i = 0; i < arr.length; i++) {
-					if (arr[i].playersNum == User.PlayersNum && arr[i].GameName == root.loaderInfo.parameters["game"]) {
-						j++;
-					}
-				}
-				if (j == 0) {
-					btnLoadGame.enabled = false;
+			if (shrSavedGames.data.savedGames!=null) {
+				var gamesArr:Array = shrSavedGames.data.savedGames;
+				for each (var gameObject:Object in gamesArr) {
+					var game:SavedGame = new SavedGame();
+					for (var fieldName:String in gameObject)
+						game[fieldName] = gameObject[fieldName];
+					allSavedGames.push(game);
 				}
 			}
-			
-			arr = new Array();
+
+			enableSavedGames();
+			var arr:Array = [];
 			for (var p:String in root.loaderInfo.parameters) {
 				arr.push([p, root.loaderInfo.parameters[p]]);
 			}
@@ -544,12 +539,20 @@ package main{
 			shrParams.flush();
 		}
 		
+		
+
+		public function got_user_localconnection_callback(user:User, methodName:String, parameters:Array/*Object*/):void {			
+			try{
+				addMessageLog(user.Name, methodName, methodAndParams2String(methodName, parameters) );
+				(this[methodName] as Function).apply(this, [user].concat(parameters));
+			} catch (err:Error) { 
+				MsgBox.Show(err.message, "Error");
+			}  
+		}
 		public function localconnection_callback(methodName:String, parameters:Array/*Object*/):void {
 			try{
-				switch (methodName) {
-				case "do_register_on_server":
-					(this[methodName] as Function).apply(this, parameters);
-				}
+				// only do_register_on_server
+				(this[methodName] as Function).apply(this, parameters);
 			} catch (err:Error) { 
 				MsgBox.Show(err.message, "Error");
 			}  
@@ -565,68 +568,66 @@ package main{
 			}
 			return res.length==0 ? "[]" : "[{"+res.join("}, {")+"}]";
 		}
+		private function methodAndParams2String(methodName:String, paramValues:Array/*Object*/):String {
+			var parameters:Array = Commands.findCommand(methodName);
+			var res:Array = [];
+			var arr2str:Array = [];
+			var combinedName:String = null;
+			switch (methodName) {
+			case "got_general_info": 
+			case "got_user_info": 
+				combinedName = "match_state";
+			case "got_match_started": 
+				combinedName = "match_state";
+			case "do_agree_on_match_over": 
+			case "do_juror_end_match": 
+				combinedName = "finished_players";
+			}
+
+			for (var i:int=0; i<parameters.length; i++) {
+				var param_name:String = parameters[i][0];
+				var param_value:Object = paramValues[i];
+				
+				switch (param_name) {
+				case "user_ids": 
+				case "keys": 
+				case "values": 
+				case "finished_player_ids": 
+				case "scores": 
+				case "pot_percentages": 
+					if (combinedName!=null) {
+						// arrays2string([ ["key", parameters[5]] , ["value", parameters[6]] , ["user_id", parameters[4]] ])
+						arr2str.push( [ param_name.substring(0,param_name.length-1), param_value ] );
+						break;
+					}
+				default:
+					res.push(param_name+"="+JSON.stringify(param_value));
+				}
+			}
+			if (combinedName!=null) res.push(combinedName+"="+arrays2string(arr2str));
+			return res.join(", ");
+		}
 		private function sendOperation(connectionName:String, methodName:String, parameters:Array/*Object*/):void {
 			try {
 				lcFramework.send(connectionName, "localconnection_callback", methodName, parameters); 
-				var args:String;
-				var name:String;
+				var name:String = null;
 				var u:User;
-				for (var i:int = 0; i < aUsers.length; i++) {
-					u = aUsers[i];
+				for each (u in aUsers) {
 					if (u.GotChanel == connectionName) {
 						name = u.Name;
 						break;
 					}
 				}
-				if (i == aUsers.length) {
+				if (name == null) {
 					return;
 				}
-				switch(methodName) {
-					case "got_general_info":
-						args = "entries="+arrays2string([ ["key", parameters[0]] , ["value", parameters[1]] ]);
-						break;
-					case "got_user_info":
-						args = "user_id="+JSON.stringify(parameters[0])+", entries=" + arrays2string([ ["key", parameters[1]] , ["value", parameters[2]] ]);
-						break;
-					case "got_my_user_id":
-						args = "my_user_id=" + JSON.stringify(parameters[0]);
-						break;
-					case "got_match_started":
-						args = "all_player_ids=" + JSON.stringify(parameters[0]) + ", finished_player_ids=" + JSON.stringify(parameters[1]) + 
-							", extra_match_info=" + JSON.stringify(parameters[2]) +
-							", match_started_time=" + JSON.stringify(parameters[3]) +
-							", match_state=" + arrays2string([ ["key", parameters[5]] , ["value", parameters[6]] , ["user_id", parameters[4]] ]);
-						break;
-					case "got_match_over":
-						args = "finished_player_ids=" + JSON.stringify(parameters[0]);
-						break;
-					case "got_start_turn_of":
-						args = "user_id=" + JSON.stringify(parameters[0]);
-						break;
-					case "got_end_turn_of":
-						args = "user_id=" + JSON.stringify(parameters[0]);
-						break;
-					case "got_stored_match_state":
-						args = "user_id="+JSON.stringify(parameters[0])+", key=" + JSON.stringify(parameters[1]) + ", value=" + JSON.stringify(parameters[2]);
-						break;
-					case "got_message":
-						args = "user_id="+JSON.stringify(parameters[0])+", value=" + JSON.stringify(parameters[1]);
-						break;
-					case "got_timer":
-						args =  "in_seconds=" + JSON.stringify(parameters[2]) + 
-								", user_id=" + JSON.stringify(parameters[0]) + ", key=" + JSON.stringify(parameters[1]) +
-								", value=" + JSON.stringify(parameters[3]);
-						break;
-					default:
-						return;
-				}
-				addMessageLog(name, methodName, args);
+				addMessageLog(name, methodName, methodAndParams2String(methodName, parameters) );
 			}catch(err:Error) { 
 				MsgBox.Show(err.message, "Error");
 			}      	
         }
 		
-		private function send_got_match_started(u:User):void {			
+		private function getFinishedPlayerIds():Array/*int*/ {
 			var finished_player_ids:Array/*int*/ = [];
 			if (bGameEnded) {
 				finished_player_ids = [aPlayers];
@@ -636,8 +637,27 @@ package main{
 						finished_player_ids = finished_player_ids.concat( over.user_ids );
 					}
 				}
-			}				
-			sendOperation(u.GotChanel, "got_match_started", [aPlayers,finished_player_ids, extra_match_info, match_started_time, aDataUsers, aKeys, aData]);
+			}
+			return finished_player_ids;
+		}
+		private function getOngoingPlayerIds():Array/*int*/ {
+			var res:Array = [];
+			var finished_player_ids:Array = getFinishedPlayerIds();
+			for each (var id:int in aPlayers) {
+				var index:int = finished_player_ids.indexOf(id);
+				if (index==-1) {
+					res.push(id);
+				} else {
+					finished_player_ids.splice(index,1);
+				}
+			}
+			if (finished_player_ids.length!=0) throw new Error("Internal error! Illegal player_ids="+finished_player_ids);
+			return res;
+		}			
+		private function send_got_match_started(u:User):void {	
+			var finished_player_ids:Array = getFinishedPlayerIds();
+			u.Ended = finished_player_ids.indexOf(u.ID)!=-1;
+			sendOperation(u.GotChanel, "got_match_started", [aPlayers, finished_player_ids, extra_match_info, match_started_time, aDataUsers, aKeys, aData]);
 			//if (iCurTurn != -1) {
 			//	sendOperation(u.GotChanel, "got_start_turn_of", [iCurTurn]);
 			//}
@@ -648,12 +668,11 @@ package main{
 				var u:User = new User(chanel, sPrefix, this);
 				aUsers.push(u);
 				sendOperation(u.GotChanel, "got_my_user_id", [u.ID]);
-				var j:int;
 				sendOperation(u.GotChanel, "got_general_info", [aServerKeys, aServerDatas]);
-				for (j = 0; j < aUsers.length; j++) {
-					if(aUsers[j].ID!=u.ID){
-						sendOperation(u.GotChanel, "got_user_info", [aUsers[j].ID,aUsers[j].Keys,aUsers[j].Params]);
-						sendOperation(aUsers[j].GotChanel, "got_user_info", [u.ID, u.Keys, u.Params]);
+				for each (var user:User in aUsers) {
+					if(user.ID!=u.ID){
+						sendOperation(u.GotChanel, "got_user_info", [user.ID,user.Keys,user.Params]);
+						sendOperation(user.GotChanel, "got_user_info", [u.ID, u.Keys, u.Params]);
 					}
 				}
 				sendOperation(u.GotChanel, "got_user_info", [u.ID, u.Keys, u.Params]);
@@ -678,9 +697,9 @@ package main{
 						btnCancelGame.visible = true;
 						btnSaveGame.visible = true;
 						btnLoadGame.visible = false;
-						for (var i:int = 0; i < aUsers.length; i++) {
-							aUsers[i].Ended = false;
-							send_got_match_started(aUsers[i]);
+
+						for each (var usr:User in aUsers) {
+							send_got_match_started(usr);
 						}
 					}
 				}
@@ -846,7 +865,12 @@ package main{
 					txtInfo.text = "users_id: " + evt.target.selectedItem.users_id + "\n" + "score: " + evt.target.selectedItem.score + "\n" + "pot_percentage: " + evt.target.selectedItem.pot_percentage + "\n" + "called_by_user_ids: " + evt.target.selectedItem.called_by_user_ids;
 					break;
 				case 6:
-					txtInfo.text = "name: " + evt.target.selectedItem.name + "\n" + "number_of_players: " + evt.target.selectedItem.number_of_players + "\n" + "user_ids_that_are_still_playing: " + evt.target.selectedItem.user_ids_that_are_still_playing + "\n" + "next_turn_of_user_ids: " + evt.target.selectedItem.next_turn_of_user_ids + "\n" + "match_state: " + evt.target.selectedItem.match_state + "\n" + "match_started_time: " + evt.target.selectedItem.match_started_time + "\n" + "extra_match_info: " + evt.target.selectedItem.extra_match_info;
+					txtInfo.text = "name: " + evt.target.selectedItem.name + "\n" + 
+						"number_of_players: " + evt.target.selectedItem.number_of_players + "\n" + 
+						"user_ids_that_are_still_playing: " + evt.target.selectedItem.user_ids_that_are_still_playing + "\n" + 
+						"next_turn_of_user_ids: " + evt.target.selectedItem.next_turn_of_user_ids + "\n" + 
+						"match_state: " + evt.target.selectedItem.match_state + "\n" + 
+						"match_started_time: " + evt.target.selectedItem.match_started_time + "\n" + "extra_match_info: " + evt.target.selectedItem.extra_match_info;
 					break;
 			}
 		}
@@ -869,9 +893,8 @@ package main{
 				aFilters[i].text = aFilters[i].text.replace(/^\s+|\s+$/g, "");
 				aConditions[i] = aFilters[i].text;
 			}
-			for (i = 0; i < aMessages.length; i++) {
-				msg = aMessages[i];
-			if ((aConditions[0]=="" || msg.num==aConditions[0]) && (aConditions[1]=="" || msg.sender.indexOf(aConditions[1])>-1) && (aConditions[2]=="" || msg.funcname.indexOf(aConditions[2])>-1) && (aConditions[3]=="" || msg.message.indexOf(aConditions[3])>-1) && (aConditions[4]=="" || msg.time.indexOf(aConditions[4])>-1)) {
+			for each (msg in aMessages) {
+				if ((aConditions[0]=="" || msg.num==aConditions[0]) && (aConditions[1]=="" || msg.sender.indexOf(aConditions[1])>-1) && (aConditions[2]=="" || msg.funcname.indexOf(aConditions[2])>-1) && (aConditions[3]=="" || msg.message.indexOf(aConditions[3])>-1) && (aConditions[4]=="" || msg.time.indexOf(aConditions[4])>-1)) {
 					tblLog.addItem({Num:msg.num,User:msg.sender, FunctionName:msg.funcname, Arguments:msg.message, Time:msg.time});
 					tblLog.verticalScrollPosition = tblLog.maxVerticalScrollPosition+30;
 				}
@@ -1048,8 +1071,7 @@ package main{
 				tblInfo.removeAll();
 				
 				var tmr:GameTimer;
-				for(var i:int=0;i<aTimers.length;i++){
-					tmr=aTimers[i];
+				for each (tmr in aTimers){
 					tblInfo.addItem({user_id:tmr.UserID,key:tmr.Key, submition_time:tmr.Submition.toLocaleTimeString(), expiration_time:tmr.Expiration.toLocaleTimeString(), in_seconds:tmr.InSeconds, pass_back:JSON.stringify(tmr.PassBack),pending:tmr.Started});
 					tblInfo.verticalScrollPosition = tblInfo.maxVerticalScrollPosition+30;
 				}
@@ -1074,8 +1096,7 @@ package main{
 				tblInfo.removeAll();
 				
 				var usr:User;
-				for(var i:int=0;i<aUsers.length;i++){
-					usr=aUsers[i];
+				for each (usr in aUsers){
 					for(var j:int=0;j<usr.Keys.length;j++){
 						tblInfo.addItem({user_id:usr.ID,key:usr.Keys[j],data:usr.Params[j]});
 						tblInfo.verticalScrollPosition = tblInfo.maxVerticalScrollPosition+30;
@@ -1089,9 +1110,7 @@ package main{
 			if(iInfoMode==5){
 				tblInfo.removeAll();
 				
-				var match:MatchOver;
-				for(var i:int=0;i<aMatchOvers.length;i++){
-					match=aMatchOvers[i];
+				for each (var match:MatchOver in aMatchOvers){
 					tblInfo.addItem({users_id:match.user_ids, score:match.scores , pot_percentage:match.pot_percentages , called_by_user_ids:match.recieved_from});
 					tblInfo.verticalScrollPosition = tblInfo.maxVerticalScrollPosition+30;
 				}
@@ -1103,22 +1122,22 @@ package main{
 			if(iInfoMode==6){
 				tblInfo.removeAll();
 				
-				if (shrSavedGames.data.savedGames != null) {
-					var arr:Array = shrSavedGames.data.savedGames;
-					var arr1:Array;
-					for (var i:int = 0; i < arr.length; i++) {
-						try{
-							if (arr[i].playersNum == User.PlayersNum && arr[i].GameName==root.loaderInfo.parameters["game"]) {
-								arr1=new Array();
-								for(var j:int=0;j<arr[i].Keys.length;j++){
-									arr1.push("{user_id: "+arr[i].Users[j]+", key: "+arr[i].Keys[j]+", data: "+JSON.stringify(arr[i].Datas[j])+"}");
-								}
-								tblInfo.addItem({name:arr[i].Name, number_of_players:arr[i].playersNum, user_ids_that_are_still_playing:arr[i].Players, next_turn_of_user_ids:arr[i].curTurn, match_state:arr1, match_started_time:arr[i].match_started_time, extra_match_info:JSON.stringify(arr[i].extra_match_info)});
-								tblInfo.verticalScrollPosition = tblInfo.maxVerticalScrollPosition+30;
+				var arr1:Array;
+				var savedGame:SavedGame;
+				for each (savedGame in allSavedGames) {
+					try{
+						if (savedGame.playersNum == User.PlayersNum && savedGame.GameName==root.loaderInfo.parameters["game"]) {
+							arr1=new Array();
+							for(var j:int=0;j<savedGame.Keys.length;j++){
+								arr1.push("{user_id: "+savedGame.Users[j]+", key: "+savedGame.Keys[j]+", data: "+JSON.stringify(savedGame.Datas[j])+"}");
 							}
-						}catch (err:Error) {
-							MsgBox.Show(err.message, "Error");
+							tblInfo.addItem({name:savedGame.Name, number_of_players:savedGame.playersNum, 
+									user_ids_that_are_still_playing:savedGame.Players , 
+									next_turn_of_user_ids:savedGame.curTurn, match_state:arr1, match_started_time:savedGame.match_started_time, extra_match_info:JSON.stringify(savedGame.extra_match_info)});
+							tblInfo.verticalScrollPosition = tblInfo.maxVerticalScrollPosition+30;
 						}
+					}catch (err:Error) {
+						MsgBox.Show(err.message, "Error");
 					}
 				}
 				txtInfo.text="";
@@ -1127,8 +1146,8 @@ package main{
 		
 		private function fullLogClick(evt:MouseEvent):void {
 			var str:String = "";
-			for (var i:int = 0; i < aMessages.length; i++) {
-				str += aMessages[i].num + "\t" + aMessages[i].sender + "\t" + aMessages[i].funcname + "\t" + aMessages[i].message + "\t" + aMessages[i].time + "\n";
+			for each (var msg:Message in aMessages) {
+				str += msg.num + "\t" + msg.sender + "\t" + msg.funcname + "\t" + msg.message + "\t" + msg.time + "\n";
 			}
 			if(ExternalInterface.available){
 				ExternalInterface.call("toClipboard", str);
@@ -1178,15 +1197,13 @@ package main{
 			showTimers();
 			var usr:User;
 			var arr:Array = new Array();
-			for (var i:int = 0; i < aUsers.length; i++) {
-				usr = aUsers[i];
+			for each (usr in aUsers) {
 				if (aPlayers.indexOf(usr.ID) != -1 && !usr.Ended) {
 					arr.push(usr.ID);
 					usr.Ended = true;
 				}
 			}
-			for (i = 0; i < aUsers.length; i++) {
-				usr = aUsers[i];
+			for each (usr in aUsers) {
 				sendOperation(usr.GotChanel, "got_match_over", [arr]);
 			}
 		}
@@ -1197,12 +1214,9 @@ package main{
 		
 		private function btnLoadGameClick(evt:MouseEvent):void {
 			cmbLoadName.removeAll();
-			if (shrSavedGames.data.savedGames != null) {
-				var arr:Array = shrSavedGames.data.savedGames;
-				for (var i:int = 0; i < arr.length; i++) {
-					if (arr[i].playersNum == User.PlayersNum && arr[i].GameName==root.loaderInfo.parameters["game"]) {
-						cmbLoadName.addItem( { label:arr[i].Name,data:i } );
-					}
+			for each (var savedGame:SavedGame in allSavedGames) {
+				if (savedGame.playersNum == User.PlayersNum && savedGame.GameName==root.loaderInfo.parameters["game"]) {
+					cmbLoadName.addItem( { label:savedGame.Name,data:savedGame } );
 				}
 			}
 			pnlLoad.visible = true;
@@ -1213,79 +1227,95 @@ package main{
 			if (cmbLoadName.selectedIndex == -1) {
 				return;
 			}
-			var arr:Array = shrSavedGames.data.savedGames;
-			if (cmbLoadName.selectedItem.data < arr.length) {
-				var i:int = cmbLoadName.selectedItem.data;
-				aKeys = arr[i].Keys.slice();
-				aDataUsers = arr[i].Users.slice();
-				aData = arr[i].Datas.slice();
-				extra_match_info=arr[i].extra_match_info;
-				match_started_time = arr[i].match_started_time;
-				if(extra_match_info!=null){
-					txtExtraMatchInfo.text = JSON.stringify(extra_match_info);
-				}else {
-					txtExtraMatchInfo.text = "";
-				}
-				txtMatchStartedTime.text = match_started_time.toString();
-				showMatchState();
-				aNextPlayers = new Array();
-				iCurTurn = arr[i].curTurn;
-				aMatchOvers = new Array();
-				showMatchOver();
-				var tmr:GameTimer;
-				for (var j:int = 0; j < aTimers.length; j++ ) {
-					tmr = aTimers[j];
-					tmr.stop();
-				}
-				aTimers = new Array();
-				showTimers();
-				if (aPlayers.length == User.PlayersNum) {
-					bGameStarted = true;
-					bGameEnded = false;
-					txtExtraMatchInfo.visible = false;
-					txtMatchStartedTime.visible = false;
-					txtTooltipExtraMatchInfo.visible = false;
-					txtTooltipMatchStartedTime.visible = false;
-					btnNewGame.visible = false;
-					btnCancelGame.visible = true;
-					btnSaveGame.visible = true;
-					btnLoadGame.visible = false;
-					for (i = 0; i < aUsers.length; i++) {
-						aUsers[i].Ended = false;
-						send_got_match_started(aUsers[i]);						
+			var savedGame:SavedGame = cmbLoadName.selectedItem.data;
+			aKeys = savedGame.Keys.slice();
+			aDataUsers = savedGame.Users.slice();
+			aData = savedGame.Datas.slice();
+			extra_match_info=savedGame.extra_match_info;
+			match_started_time = savedGame.match_started_time;
+			if(extra_match_info!=null){
+				txtExtraMatchInfo.text = JSON.stringify(extra_match_info);
+			}else {
+				txtExtraMatchInfo.text = "";
+			}
+			txtMatchStartedTime.text = match_started_time.toString();
+			showMatchState();
+			aNextPlayers = new Array();
+			iCurTurn = savedGame.curTurn;
+			aMatchOvers = new Array();
+
+
+			// Yoav: I added a MatchOver for all the players that already finished playing
+			if (savedGame.Players.length < savedGame.playersNum) {
+				// some players have already finished playing
+				var ongoing_player_ids:Array = savedGame.Players;
+				var finished_player_ids:Array = [];
+				var over:MatchOver = new MatchOver();
+				over.user_ids = [];
+				over.scores = [];
+				over.pot_percentages = [];
+				over.recieved_from = [];
+				for (var user_id:int=1; user_id<=savedGame.playersNum; user_id++) {
+					over.recieved_from.push(user_id);
+					if (ongoing_player_ids.indexOf(user_id)==-1) {
+						//getUser(user_id).Ended = true; // see send_got_match_started
+						over.user_ids.push(user_id);
+						over.scores.push(-1);
+						over.pot_percentages.push(-1);
 					}
 				}
-				pnlLoad.visible = false;
-				MsgBox.Show("Saved game was loaded","Message");
+				aMatchOvers.push(over);
 			}
+
+
+
+			showMatchOver();
+			var tmr:GameTimer;
+			for each (tmr in aTimers) {
+				tmr.stop();
+			}
+			aTimers = new Array();
+			showTimers();
+			if (aPlayers.length == User.PlayersNum) {
+				bGameStarted = true;
+				bGameEnded = false;
+				txtExtraMatchInfo.visible = false;
+				txtMatchStartedTime.visible = false;
+				txtTooltipExtraMatchInfo.visible = false;
+				txtTooltipMatchStartedTime.visible = false;
+				btnNewGame.visible = false;
+				btnCancelGame.visible = true;
+				btnSaveGame.visible = true;
+				btnLoadGame.visible = false;
+				for each (var usr:User in aUsers) {
+					send_got_match_started(usr);						
+				}
+			}
+			pnlLoad.visible = false;
+			MsgBox.Show("Saved game was loaded","Message");
 		}
 		
+		private function enableSavedGames():void {
+			var j:int = 0;
+			for each (var savedGame:SavedGame in allSavedGames) {
+				if (savedGame.playersNum == User.PlayersNum && savedGame.GameName == root.loaderInfo.parameters["game"]) {
+					j++;
+				}
+			}
+			btnLoadGame.enabled = j>0;
+		}
 		private function loadDeleteClick(evt:MouseEvent):void {
 			if (cmbLoadName.selectedIndex == -1) {
 				return;
 			}
-			var arr:Array = shrSavedGames.data.savedGames;
-			if (cmbLoadName.selectedItem.data < arr.length) {
-				for (var i:int = cmbLoadName.selectedItem.data; i < arr.length - 1; i++) {
-					arr[i] = arr[i + 1];
-				}
-				arr.pop();
-				shrSavedGames.data.savedGames = arr;
-				shrSavedGames.flush();
-				pnlLoad.visible = false;
-				showSavedGames();
-				MsgBox.Show("Saved game was deleted","Message");
-			}
-			var j:int = 0;
-			arr = shrSavedGames.data.savedGames;
-			for (i = 0; i < arr.length; i++) {
-				if (arr[i].playersNum == User.PlayersNum && arr[i].GameName == root.loaderInfo.parameters["game"]) {
-					j++;
-				}
-			}
-			if (j == 0) {
-				btnLoadGame.enabled = false;
-			}
+			var savedGame:SavedGame = cmbLoadName.selectedItem.data;
+			allSavedGames.splice( allSavedGames.indexOf(savedGame), 1);
+			saveToSharedObject();
+
+			pnlLoad.visible = false;
+			showSavedGames();
+			MsgBox.Show("Saved game was deleted","Message");
+			enableSavedGames();
 		}
 		
 		private function loadFocusOut(evt:FocusEvent):void {
@@ -1299,6 +1329,12 @@ package main{
 			this.stage.focus=txtSaveName;
 		}
 		
+		private var allSavedGames:Array/*SavedGame*/ = [];
+		private function saveToSharedObject():void {
+			shrSavedGames.data.savedGames = allSavedGames;
+			shrSavedGames.flush();
+		}
+
 		private function saveOkClick(evt:MouseEvent):void {
 			if (txtSaveName.text == "") {
 				return;
@@ -1308,23 +1344,20 @@ package main{
 			game.Datas = aData.slice();
 			game.Users = aDataUsers.slice();
 			game.playersNum = User.PlayersNum;
-			game.Players=aPlayers;
+			game.Players = getOngoingPlayerIds();
 			game.extra_match_info=extra_match_info;
 			game.match_started_time=match_started_time;
 			game.Name = txtSaveName.text;
 			game.curTurn = iCurTurn;
 			game.GameName = root.loaderInfo.parameters["game"];
-			if (shrSavedGames.data.savedGames == null) {
-				shrSavedGames.data.savedGames = new Array();
-			}
-			var arr:Array = shrSavedGames.data.savedGames;
-			arr.push(game);
-			shrSavedGames.flush();
+			allSavedGames.push(game);
+			saveToSharedObject();
+
 			txtSaveName.text = "";
 			pnlSave.visible = false;
 			showSavedGames();
 			MsgBox.Show("The game was saved", "Message");
-			btnLoadGame.enabled = true;
+			enableSavedGames();
 		}
 		
 		private function saveKeyDown(evt:KeyboardEvent):void {
@@ -1362,9 +1395,8 @@ package main{
 			aDataUsers = new Array();
 			showMatchState();
 			aNextPlayers = new Array();
-			var tmr:GameTimer;
-			for (var j:int = 0; j < aTimers.length; j++ ) {
-				tmr = aTimers[j];
+			;
+			for each (var tmr:GameTimer in aTimers) {
 				tmr.stop();
 			}
 			aTimers = new Array();
@@ -1372,9 +1404,7 @@ package main{
 			aMatchOvers = new Array();
 			showMatchOver();
 			var usr:User;
-			for (var i:int = 0; i < aUsers.length; i++) {
-				usr = aUsers[i];
-				usr.Ended = false;
+			for each (usr in aUsers) {
 				send_got_match_started(usr);
 			}
 		}
@@ -1421,8 +1451,7 @@ package main{
 					parameters.push( Commands.convertToType(param, param_type) );
 				}
 
-				for (i = 0; i < aUsers.length; i++) {
-					usr = aUsers[i];
+				for each (usr in aUsers) {
 					if(usr.ID==target || target==-1){						
 						sendOperation(usr.GotChanel, command_name, parameters);
 					}
@@ -1436,6 +1465,7 @@ package main{
 		
 		//Do functions
 		public function do_start_my_turn(user:User):void {
+			isTurnBasedGame = true;
 			if (!bGameStarted) {
 				addMessageLog("Server", "do_start_my_turn", "Error: Can't start turn,  game not started");
 				return;
@@ -1460,15 +1490,14 @@ package main{
 				addMessageLog("Server", "do_start_my_turn", "Error: "+user.Name+" is viewer. Only players can call this function.");
 				return;
 			}
-			addMessageLog(user.Name, "do_start_my_turn", "");
 			iCurTurn = user.ID;
 			var usr:User;
-			for (var i:int = 0; i < aUsers.length; i++) {
-				usr = aUsers[i];
+			for each (usr in aUsers) {
 				sendOperation(usr.GotChanel, "got_start_turn_of", [user.ID]);
 			}
 		}
 		public function do_end_my_turn(user:User, next_turn_of_player_ids:Array):void {
+			isTurnBasedGame = true;
 			if (!bGameStarted) {
 				addMessageLog("Server", "do_end_my_turn", "Error: Can't end turn,  game not started");
 				return;
@@ -1485,11 +1514,10 @@ package main{
 				addMessageLog("Server", "do_end_my_turn", "Error: "+user.Name+" is viewer. Only players can call this function.");
 				return;
 			}
-			var i:int;
 			if (next_turn_of_player_ids != null) {
-				for (i = 0; i < next_turn_of_player_ids.length; i++) {
-					if (aPlayers.indexOf(next_turn_of_player_ids[i]) == -1) {
-						addMessageLog("Server", "do_end_my_turn", "Error: Player ID "+next_turn_of_player_ids[i]+" doesn't exist.");
+				for each (var next_id:int in next_turn_of_player_ids) {
+					if (aPlayers.indexOf(next_id) == -1) {
+						addMessageLog("Server", "do_end_my_turn", "Error: Player ID "+next_id+" doesn't exist.");
 						return;
 					}
 				}
@@ -1497,11 +1525,9 @@ package main{
 				next_turn_of_player_ids = new Array();
 			}
 			iCurTurn = -1;
-			addMessageLog(user.Name, "do_end_my_turn", "next_turn_of_player_ids={" + next_turn_of_player_ids + "}");
 			aNextPlayers = next_turn_of_player_ids;
 			var usr:User;
-			for (i = 0; i < aUsers.length; i++) {
-				usr = aUsers[i];
+			for each (usr in aUsers) {
 				sendOperation(usr.GotChanel, "got_end_turn_of", [user.ID]);
 			}
 		}
@@ -1518,40 +1544,34 @@ package main{
 				addMessageLog("Server", "do_store_match_state", "Error: Can't store match state, key is empty");
 				return;
 			}
-			addMessageLog(user.Name, "do_store_match_state", "key=" + key + ", data=" +JSON.stringify(data));
-			var i:int,j:int;
-			for (i = 0; i < aKeys.length; i++) {
-				if (aKeys[i] == key) {
-					if (aPlayers.indexOf(user.ID) == -1 && aDataUsers[i]!=user.ID) {
-						addMessageLog("Server", "do_store_match_state", "Error: only players can rewrite foreign data");
-						return;
-					}
-					for (j = i; j < aKeys.length - 1; j++) {
-						aKeys[j] = aKeys[j + 1];
-						aData[j] = aData[j + 1];
-						aDataUsers[j] = aDataUsers[j + 1];
-					}
-					if (data == null || data=="") {
-						aKeys.pop();
-						aData.pop();
-						aDataUsers.pop();
-					}else {
-						aKeys[j] = key;
-						aData[j] = data;
-						aDataUsers[j] = user.ID;
-					}
-					break;
+			if (iCurTurn!=user.ID && isTurnBasedGame) {
+				addMessageLog("Server", "do_store_match_state", "Warning: in a turn-based game, you should call do_store_match_state only during your turn");
+			}
+
+			var index:int = aKeys.indexOf(key);
+			if (index==-1) {
+				if (data!=null) {
+					aKeys.push(key);
+					aData.push(data);
+					aDataUsers.push(user.ID);
+				}
+			} else {
+				if (aPlayers.indexOf(user.ID)==-1 && aPlayers.indexOf(aDataUsers[index])!=-1) {
+					addMessageLog("Server", "do_store_match_state", "Error: a viewer cannot rewrite a player's data");
+					return;
+				}
+				if (data == null || data=="") {
+					aKeys.splice(index,1);
+					aData.splice(index,1);
+					aDataUsers.splice(index,1);
+				}else {
+					aKeys[index] = key;
+					aData[index] = data;
+					aDataUsers[index] = user.ID;
 				}
 			}
-			if (i == aKeys.length && data!=null) {
-				aKeys.push(key);
-				aData.push(data);
-				aDataUsers.push(user.ID);
-			}
 			showMatchState();
-			var usr:User;
-			for (i = 0; i < aUsers.length; i++) {
-				usr = aUsers[i];
+			for each (var usr:User in aUsers) {
 				sendOperation(usr.GotChanel, "got_stored_match_state", [user.ID,key,data]);
 			}
 		}
@@ -1572,10 +1592,9 @@ package main{
 				addMessageLog("Server", "do_agree_on_match_over", "Error: Array user_ids can't be empty.");
 				return;
 			}
-			var i:int;
-			for (i = 0; i < user_ids.length; i++) {
-				if (aPlayers.indexOf(user_ids[i]) == -1) {
-					addMessageLog("Server", "do_agree_on_match_over", "Error: Player with ID "+user_ids[i]+" doesn't exist.");
+			for each (var u_id:int in user_ids) {
+				if (aPlayers.indexOf(u_id) == -1) {
+					addMessageLog("Server", "do_agree_on_match_over", "Error: Player with ID "+u_id+" doesn't exist.");
 				return;
 				}
 			}
@@ -1588,23 +1607,24 @@ package main{
 				return;
 			}
 			if (pot_percentages != null) {
-				for (i = 0; i < pot_percentages.length; i++) {
-					if (pot_percentages[i] < -1 || pot_percentages[i] > 100) {
-						addMessageLog("Server", "do_agree_on_match_over", "Error: pot_percentages["+i+"] is out of range.");
-				return;
+				for each (var percent:int in pot_percentages) {
+					if (percent < -1 || percent > 100) {
+						addMessageLog("Server", "do_agree_on_match_over", "Error: "+percent+" is out of range.");
+						return;
 					}
 				}
 			}
-			addMessageLog(user.Name, "do_agree_on_match_over", "user_ids=[" + user_ids + "], scores=[" + scores + "], pot_percentages=[" + pot_percentages + "]");
+			var findMatchOver:MatchOver = null;
 			var over:MatchOver;
-			for (i = 0; i < aMatchOvers.length; i++) {
-				over = aMatchOvers[i];
+			var usr:User;
+			for each (over in aMatchOvers) {
 				if (compareArrays(over.user_ids, user_ids)) {
 					if(compareArrays(over.scores, scores) && compareArrays(over.pot_percentages, pot_percentages)) {
+						findMatchOver = over; 
 						break;
 					}else {
 						addMessageLog(user.Name, "do_agree_on_match_over", "Error: function parameters are different from previous call.");
-						MsgBox.Show("Function parameters are different from previous call.");
+						MsgBox.Show("do_agree_on_match_over: Function parameters are different from previous call.");
 						aNextPlayers=new Array();
 						bGameEnded = true;
 						txtMatchStartedTime.text = "";
@@ -1614,24 +1634,19 @@ package main{
 						btnCancelGame.visible = false;
 						btnLoadGame.visible = true;
 						btnSaveGame.visible = false;
-						var tmr:GameTimer;
-						for (var j:int = 0; j < aTimers.length; j++ ) {
-							tmr = aTimers[j];
+						for each (var tmr:GameTimer in aTimers) {
 							tmr.stop();
 						}
 						aTimers = new Array();
 						showTimers();
-						var usr:User;
 						var arr:Array = new Array();
-						for (i = 0; i < aUsers.length; i++) {
-							usr = aUsers[i];
+						for each (usr in aUsers) {
 							if (aPlayers.indexOf(usr.ID) != -1 && !usr.Ended) {
 								arr.push(usr.ID);
 								usr.Ended = true;
 							}
 						}
-						for (i = 0; i < aUsers.length; i++) {
-							usr = aUsers[i];
+						for each (usr in aUsers) {
 							sendOperation(usr.GotChanel, "got_match_over", [arr]);
 						}
 						showMatchOver();
@@ -1639,35 +1654,39 @@ package main{
 					}
 				}
 			}
-			if (i == aMatchOvers.length) {
+			over = findMatchOver;
+			if (over==null) {
 				over = new MatchOver();
 				over.user_ids = user_ids;
 				over.scores = scores;
 				over.pot_percentages = pot_percentages;
 				over.recieved_from = new Array();
 				aMatchOvers.push(over);
+				
+				if (iCurTurn==-1 && isTurnBasedGame) {
+					addMessageLog("Server", "do_agree_on_match_over", "Warning: in a turn-based game, the first call to do_agree_on_match_over should be during someone's turn");
+				}
 			}
 			if (over.recieved_from.indexOf(user.ID) == -1) {
 				over.recieved_from.push(user.ID);
 				var all_agreed:Boolean = true;
-				for (i = 0; i < aUsers.length; i++) {
-					if (!aUsers[i].Ended && aPlayers.indexOf(aUsers[i].ID)!=-1 && over.recieved_from.indexOf(aUsers[i].ID) == -1) {
+				for each (usr in aUsers) {
+					if (!usr.Ended && aPlayers.indexOf(usr.ID)!=-1 && over.recieved_from.indexOf(usr.ID) == -1) {
 						all_agreed = false;
 						break;
 					}
 				}
 				if (all_agreed) {
 					if (over.user_ids.indexOf(iCurTurn) != -1) {
-						for (i = 0; i < aUsers.length; i++) {
-							if (aUsers[i].ID == iCurTurn) {
-								do_end_my_turn(aUsers[i], null);
+						for each (usr in aUsers) {
+							if (usr.ID == iCurTurn) {
+								do_end_my_turn(usr, null);
 								break;
 							}
 						}
 					}
 					var cur_players = 0;
-					for (i = 0; i < aUsers.length; i++) {
-						usr = aUsers[i];
+					for each (usr in aUsers) {
 						if (over.user_ids.indexOf(usr.ID) != -1) {
 							usr.Ended = true;
 						}
@@ -1686,21 +1705,18 @@ package main{
 						btnCancelGame.visible = false;
 						btnLoadGame.visible = true;
 						btnSaveGame.visible = false;
-						for (j = 0; j < aTimers.length; j++ ) {
-							tmr = aTimers[j];
+						for each (tmr in aTimers) {
 							tmr.stop();
 						}
 						aTimers = new Array();
 						showTimers();
 					}
-				}else {
-					aMatchOvers[i] = over;
 				}
 			}
 			showMatchOver();
 		}
 		public function do_store_trace(user:User, funcname:String,message:Object):void {
-			addMessageLog(user.Name, funcname, JSON.stringify(message));
+			//addMessageLog(user.Name, funcname, JSON.stringify(message));
 		}
 		public function do_client_protocol_error_with_description(user:User, error_description:Object):void {
 			if (!bGameStarted) {
@@ -1715,7 +1731,6 @@ package main{
 				addMessageLog("Server", "do_client_protocol_error_with_description", "Error: "+user.Name+" is viewer. Only players can call this function.");
 				return;
 			}
-			addMessageLog(user.Name, "do_client_protocol_error_with_description", "error_description="+JSON.stringify(error_description));
 			MsgBox.Show(JSON.stringify(error_description));
 			aNextPlayers=new Array();
 			bGameEnded = true;
@@ -1735,18 +1750,28 @@ package main{
 			showTimers();
 			var usr:User;
 			var arr:Array = new Array();
-			for (var i:int = 0; i < aUsers.length; i++) {
-				usr = aUsers[i];
+			for each (usr in aUsers) {
 				if (aPlayers.indexOf(usr.ID) != -1 && !usr.Ended) {
 					arr.push(usr.ID);
 					usr.Ended = true;
 				}
 			}
-			for (i = 0; i < aUsers.length; i++) {
-				usr = aUsers[i];
+			for each (usr in aUsers) {
 				sendOperation(usr.GotChanel, "got_match_over", [arr]);
 			}
 		}
+		private function getAllUserIds():Array {
+			var res:Array = [];
+			for each (var usr:User in aUsers) 
+				res.push(usr.ID);
+			return res;
+		}
+		private function getUser(user_id:int):User {
+			for each (var usr:User in aUsers) {
+				if (usr.ID == user_id) return usr;
+			}
+			return null;
+		}			
 		public function do_send_message(user:User, to_user_ids:Array, data:Object):void {
 			if (!bGameStarted) {
 				addMessageLog("Server", "do_send_message", "Error: Can't send message,  game not started");
@@ -1756,42 +1781,30 @@ package main{
 				addMessageLog("Server", "do_send_message", "Error: Can't send message,  game already end");
 				return;
 			}
-			var i:int;
-			for (i = 0; i < to_user_ids.length; i++) {
-				for (var j:int = 0; j < aUsers.length; j++) {
-					if (aUsers[j].ID == to_user_ids[i]) {
-						break;
-					}
-					if (j == aUsers.length) {
-						addMessageLog("Server", "do_send_message", "Error: User ID "+to_user_ids[i]+"doesn't exist.");
-						return;
-					}
+			for each (var u_id:int in to_user_ids) {
+				if (getUser(u_id)==null) {
+					addMessageLog("Server", "do_send_message", "Error: User ID "+u_id+"doesn't exist.");
+					return;
 				}
 			}
-			addMessageLog(user.Name, "do_send_message", "to_user_ids=["+to_user_ids+"], data="+JSON.stringify(data));
 			var usr:User;
 			var arr:Array;
 			if (to_user_ids == null || to_user_ids.length == 0) {
-				arr = new Array;
-				for (i = 0; i < aUsers.length; i++) {
-					arr.push(aUsers[i].ID);
-				}
+				arr = getAllUserIds();
 			}else {
 				arr = to_user_ids;
 			}
-			for (i = 0; i < aUsers.length; i++) {
-				usr = aUsers[i];
+			for each (usr in aUsers) {
 				if(arr.indexOf(usr.ID)!=-1){
 					sendOperation(usr.GotChanel, "got_message", [user.ID,data]);
 				}
 			}
 		}
 		public function do_timer(user_id:int, key:String, in_seconds:int, pass_back:Object):void {
-			addMessageLog("Server", "do_timer", "user_id=" + user_id + ",key="+key+", pass_back=" + JSON.stringify(pass_back));
+			addMessageLog("Server", "doing timer", "user_id=" + user_id + ",key="+key+", pass_back=" + JSON.stringify(pass_back));
 			var usr:User;
 			showTimers();
-			for (var i:int = 0; i < aUsers.length; i++) {
-				usr = aUsers[i];
+			for each (usr in aUsers) {
 				sendOperation(usr.GotChanel, "got_timer", [user_id, key, in_seconds, pass_back]);
 			}
 		}
@@ -1807,33 +1820,26 @@ package main{
 			if (isNaN(in_seconds) || (in_seconds >= 0 && (in_seconds < 2 || in_seconds > 24 * 60 * 60))) {
 				addMessageLog("Server", "do_set_timer", "Error: timer delay is out of range");
 			}
-			addMessageLog(user.Name, "do_set_timer", "key=" + key + ", in_seconds=" + in_seconds + ", pass_back=" + JSON.stringify(pass_back));
-			try{
-				var tmr:GameTimer;
-				for (var j:int = 0; j < aTimers.length; j++ ) {
-					tmr = aTimers[j];
-					if (tmr.Key == key) {
-						if (in_seconds < 0) {
-							tmr.stop();
-						}else{
-							tmr.start(user.ID, in_seconds, pass_back);
-						}
-						showTimers();
-						return;
-					}
-				}
-				if (j == aTimers.length) {
+			
+			var tmr:GameTimer;
+			for each (tmr in aTimers) {
+				if (tmr.Key == key) {
 					if (in_seconds < 0) {
-						addMessageLog("Server", "do_set_timer", "Error: Can't stop timer. Timer with this key doesn't exist");
-						return;
+						tmr.stop();
+					}else{
+						tmr.start(user.ID, in_seconds, pass_back);
 					}
-					tmr = new GameTimer(user.ID, key, in_seconds, pass_back,do_timer);
-					aTimers.push(tmr);
+					showTimers();
+					return;
 				}
-				showTimers();
-			}catch (err:Error) {
-				addMessageLog("Server", "do_set_timer", "Error: "+err.getStackTrace());
 			}
+			if (in_seconds < 0) {
+				addMessageLog("Server", "do_set_timer", "Error: Can't stop timer. Timer with this key doesn't exist");
+				return;
+			}
+			tmr = new GameTimer(user.ID, key, in_seconds, pass_back,do_timer);
+			aTimers.push(tmr);
+			showTimers();
 		}
 	}
 }
@@ -1909,21 +1915,7 @@ class User {
 	}
 	
 	public function localconnection_callback(methodName:String, parameters:Array/*Object*/):void {
-		try{
-			switch (methodName) {
-			case "do_agree_on_match_over":
-			case "do_store_match_state":
-			case "do_start_my_turn":
-			case "do_end_my_turn":
-			case "do_store_trace":
-			case "do_client_protocol_error_with_description":
-			case "do_send_message":
-			case "do_set_timer":
-				(this[methodName] as Function).apply(this, parameters);
-			}
-		} catch (err:Error) { 
-			sServer.addMessageLog("Server", "localconnection_callback", "Error: " + err.getStackTrace());
-		}  
+		sServer.got_user_localconnection_callback(this, methodName, parameters);
 	}
 	
 	private function onConnectionStatus(evt:StatusEvent):void {
@@ -1931,32 +1923,6 @@ class User {
 			case "error":
 				trace("There is a LocalConnection error. Please test your game only inside the Come2Play emulator.");
 		}
-	}
-	
-	//Do functions
-	private function do_start_my_turn():void {
-		sServer.do_start_my_turn(this);
-	}
-	private function do_end_my_turn(next_turn_of_player_ids:Array):void {
-		sServer.do_end_my_turn(this, next_turn_of_player_ids);
-	}
-	private function do_store_match_state(key:String, data:Object):void {
-		sServer.do_store_match_state(this, key, data);
-	}
-	private function do_agree_on_match_over(user_ids:Array, scores:Array, pot_percentages:Array):void {
-		sServer.do_agree_on_match_over(this, user_ids, scores, pot_percentages);
-	}
-	private function do_store_trace(funcname:String,message:Object):void {
-		sServer.do_store_trace(this, funcname,message);
-	}
-	private function do_set_timer(key:String, in_seconds:int, pass_back:Object):void {
-		sServer.do_set_timer(this, key, in_seconds, pass_back);
-	}
-	private function do_send_message(to_user_ids:Array, data:Object):void {
-		sServer.do_send_message(this, to_user_ids,data);
-	}
-	private function do_client_protocol_error_with_description(error_description:Object):void {
-		sServer.do_client_protocol_error_with_description(this, error_description);
 	}
 }
 

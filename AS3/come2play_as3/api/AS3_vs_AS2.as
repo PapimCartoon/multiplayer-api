@@ -7,6 +7,8 @@ import flash.display.MovieClip;
 import flash.events.*;
 import flash.net.LocalConnection;
 import flash.net.URLRequest;
+import flash.system.System;
+import flash.text.TextField;
 import flash.utils.getDefinitionByName;
 import flash.utils.getQualifiedClassName;
 import flash.utils.setTimeout;
@@ -58,7 +60,7 @@ public final class AS3_vs_AS2
 		conn.addEventListener(StatusEvent.STATUS, 
 			function (event:StatusEvent):void {
         		if (event.level=='error')
-        			BaseGameAPI.error("LocalConnection.onStatus error="+event); 
+        			BaseGameAPI.error("LocalConnection.onStatus error="+event+" (Are you sure you are running this game inside the emulator?)"); 
   			});		
 	}
 	public static function hasOwnProperty(thisObj:Object, property:String):Boolean {
@@ -76,8 +78,8 @@ public final class AS3_vs_AS2
 	public static function getTimeString():String {
 		return new Date().toLocaleTimeString();
 	}
-	public static function getLoaderInfoParameters(graphics:MovieClip):Object {
-		return graphics.loaderInfo.parameters;
+	public static function getLoaderInfoParameters(someMovieClip:MovieClip):Object {
+		return someMovieClip.loaderInfo.parameters;
 	}
 	public static function getMovieChild(graphics:MovieClip, childName:String):MovieClip {
 		return getChild(graphics, childName) as MovieClip;
@@ -96,7 +98,7 @@ public final class AS3_vs_AS2
 		        graphics.addChild(loader.content);
 			}  );
 		contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, function (event:IOErrorEvent):void {
-		        trace("Error in loading logo:"+event.toString());
+		        trace("Error in loading movie from url="+url+" event="+event);
 		    }  );
 		loader.load(new URLRequest(url));
 	}
@@ -135,6 +137,16 @@ public final class AS3_vs_AS2
 				var shiftKey:Boolean = event.shiftKey;
 				func(is_key_down, charCode, keyCode, keyLocation, altKey, ctrlKey, shiftKey);
 			});	
+	}
+	public static function showError(graphics:MovieClip, msg:String):void {
+		if (graphics==null) return;
+		var child:TextField = new TextField();
+		child.text = msg;
+		child.width = 300;
+		child.height = 300;
+		//child.backgroundColor = 0xFF0000; // red
+		child.textColor = 0xFF0000; // red
+		graphics.addChild(child);
 	}
 	
 	public static function IndexOf(arr:Array, val:Object):int {

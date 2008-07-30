@@ -15,7 +15,7 @@ class come2play_as2.api.AS3_vs_AS2 {
 		return (typeof o)=="object" && o.length!=null;
 	}
 	public static function convertToInt(o):Number {
-		return o==null ? 0 : Number(o);
+		return o==null ? 0 : Math.round(o);
 	}
 	public static function asBoolean(o):Boolean {
 		return Boolean(o);
@@ -24,7 +24,7 @@ class come2play_as2.api.AS3_vs_AS2 {
 		return String(o);
 	}
 	public static function as_int(o):Number {
-		return o;
+		return Math.round(o);
 	}
 	public static function asArray(o):Array {
 		return o;
@@ -49,9 +49,9 @@ class come2play_as2.api.AS3_vs_AS2 {
 			var key:String = functions[i];
 			conn[key] = delegate(client, client[key]);
 		}
-		conn.onStatus = function(event:Object) { 
-			if (event.level=='error')
-				BaseGameAPI.error("LocalConnection.onStatus error="+event);
+		conn.onStatus = function(infoObject:Object) { 
+			if (infoObject.level=='error')
+				BaseGameAPI.error("LocalConnection.onStatus error! (Are you sure you are running this game inside the emulator?)");
 		};
 	}
 	
@@ -74,8 +74,9 @@ class come2play_as2.api.AS3_vs_AS2 {
 	public static function getTimeString():String {
 		return ''+getTimer();
 	}
+	
 	public static function getLoaderInfoParameters(graphics:MovieClip):Object {
-		return graphics;
+		return _root;
 	}	
 	public static function getMovieChild(graphics:MovieClip, childName:String):MovieClip {
 		return getChild(graphics, childName);
@@ -124,6 +125,14 @@ class come2play_as2.api.AS3_vs_AS2 {
 			var shiftKey:Boolean = Key.isDown(Key.SHIFT);
 			func(is_key_down, charCode, keyCode, keyLocation, altKey, ctrlKey, shiftKey);
 		}
+	}
+	public static function showError(graphics:MovieClip, msg:String):Void {
+		var container:MovieClip =
+			_root.createEmptyMovieClip("___error_message"+Math.random(), _root.getNextHighestDepth());
+			
+		var label:TextField = container.createTextField("label", 1, 0, 0, 300, 300);
+		label.text = msg;
+		label.textColor = 0xFF0000;
 	}
 
 	public static function IndexOf(arr:Array, val:Object):Number {

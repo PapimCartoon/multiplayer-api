@@ -44,7 +44,7 @@ class come2play_as2.tictactoe.TicTacToe_Main
 		
 		if (apiType==null) {
 			// creating a server for the single player			
-			var sPrefix:String = "42";
+			var sPrefix:String = BaseGameAPI.DEFAULT_LOCALCONNECTION_HANDSHAKE_PREFIX;
 			apiType = "ClientGameAPI";
 			parameters["prefix"] = sPrefix;
 			var general_info_entries:Array/*Entry*/ =
@@ -76,7 +76,7 @@ class come2play_as2.tictactoe.TicTacToe_Main
 				match_state);
 		}
 		var isSecureAPI:Boolean = apiType=="SecureClientGameAPI";
-		new TicTacToe_graphic(parameters, isSecureAPI, graphics, ROWS, COLS, WIN_LENGTH, PLAYERS_NUM_IN_SINGLE_PLAYER);
+		new TicTacToe_graphic(isSecureAPI, graphics, ROWS, COLS, WIN_LENGTH, PLAYERS_NUM_IN_SINGLE_PLAYER);
 	}
 
 }

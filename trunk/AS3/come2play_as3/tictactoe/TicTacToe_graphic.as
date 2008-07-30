@@ -58,10 +58,10 @@ public final class TicTacToe_graphic extends CombinedClientAndSecureGameAPI {
 	private var disconnected_num:int;
 	private var isSecureAPI:Boolean;
 	
-	public function TicTacToe_graphic(parameters:Object, isSecureAPI:Boolean,
+	public function TicTacToe_graphic(isSecureAPI:Boolean,
 			graphics:MovieClip, ROWS:int, COLS:int, 
 			WIN_LENGTH:int, PLAYERS_NUM_IN_SINGLE_PLAYER:int) {
-		super(parameters);
+		super(graphics);
 		this.isSecureAPI = isSecureAPI;
 		this.graphics = graphics;
 		this.ROWS = ROWS;
@@ -84,10 +84,6 @@ public final class TicTacToe_graphic extends CombinedClientAndSecureGameAPI {
 	public function myTrace(key:String, args:Array):void {
 		trace("MyTrace "+key+": "+args.join(" , "));
 		do_store_trace(key, args);
-	}
-	private function shouldDoOperation():Boolean {
-		return isJuror() ||
-			(myColor!=VIEWER && (isSinglePlayer() || AS3_vs_AS2.IndexOf(ongoing_colors, myColor)!=-1));		
 	}
 	private function isJuror():Boolean {
 		return my_user_id==-1;
@@ -184,6 +180,7 @@ public final class TicTacToe_graphic extends CombinedClientAndSecureGameAPI {
 			var ongoing_index:int = AS3_vs_AS2.IndexOf(ongoing_colors, color);
 			if (ongoing_index==-1) continue; // already finished (when the game ends normally, I immediately call matchOverForColors. see makeMove) 
 			ongoing_colors.splice(ongoing_index, 1);
+			if (color==myColor && !isSinglePlayer()) myColor = VIEWER; // I'm now a viewer
 			if (color==turnOfColor) {
 				shouldChange_turnOfColor = true;
 			}
@@ -193,7 +190,7 @@ public final class TicTacToe_graphic extends CombinedClientAndSecureGameAPI {
 			setOnPress(false); // turns off the squares
 			logic = null;
 		} else if (shouldChange_turnOfColor) {
-			update_turnOfColor();
+			turnOfColor = getNextTurnOfColor();
 		}		
 		return shouldChange_turnOfColor;
 	}
@@ -217,9 +214,6 @@ public final class TicTacToe_graphic extends CombinedClientAndSecureGameAPI {
 		}	
 		return next_turn_of_color;
 	}
-	private function update_turnOfColor():void {	
-		turnOfColor = getNextTurnOfColor();
-	}
 	private static function arrayCopy(arr:Array):Array {
 		var res:Array = [];
 		for each (var x:Object in arr) {
@@ -235,9 +229,7 @@ public final class TicTacToe_graphic extends CombinedClientAndSecureGameAPI {
 		
 		var didWin:Boolean = logic.isWinner(row, col);
 		var isBoardFull:Boolean = logic.isBoardFull();
-		if (!didWin && !isBoardFull) {
-			update_turnOfColor();		
-		} else {
+		if (didWin || isBoardFull) {
 			//game is over for one player (but the other players, if there are more than 2 remaining players, will continue playing)
 			var finished_players:Array/*PlayerMatchOver*/ = [];
 			var isGameOver:Boolean = 
@@ -259,7 +251,7 @@ public final class TicTacToe_graphic extends CombinedClientAndSecureGameAPI {
 						// 1<<5 = 32
 						var frac_top:int = 1 << (2*(playersNumber() - disconnected_num) - ongoing_colors.length - 2);
 						var frac_bottom:int = frac_top*2 - 1;
-						percentage = 100*Number(frac_top)/Number(frac_bottom);
+						percentage = AS3_vs_AS2.convertToInt(100*Number(frac_top)/Number(frac_bottom));
 					}
 					finished_players.push(
 						new PlayerMatchOver(all_player_ids[turnOfColor], score, percentage) );	
@@ -301,14 +293,17 @@ public final class TicTacToe_graphic extends CombinedClientAndSecureGameAPI {
 			
 			var finished_colors:Array/*int*/ = 
 				isGameOver ? arrayCopy(ongoing_colors) : [turnOfColor];
-			if (!isSavedGame && finished_players.length>0 && shouldDoOperation()) { 
-				if (!isSecureAPI)
-					do_agree_on_match_over(finished_players);
-				else {
+			if (!isSavedGame && finished_players.length>0) { 
+				if (!isSecureAPI) {
+					if (myColor!=VIEWER) do_agree_on_match_over(finished_players);
+				} else {
 					if (isJuror()) do_juror_end_match(finished_players);
 				}
 			}
 			matchOverForColors(finished_colors);	
+		} else {
+			// game still in progress
+			turnOfColor = getNextTurnOfColor();
 		}		
 		
 		if (!isSavedGame) setOnPress(true);
@@ -320,21 +315,24 @@ public final class TicTacToe_graphic extends CombinedClientAndSecureGameAPI {
 		if (myColor==VIEWER) return; // viewer cannot make a move
 		if (!isSinglePlayer() && myColor!=turnOfColor) return; // not my turn
 		if (!logic.isSquareAvailable(row, col)) return; // already filled this square (e.g., if you press on the keyboard, you may choose a cell that is already full)
-		// The order of events should be: 
-		//  do_end_my_turn, do_store_match_state, 
-		//	and then maybe do_agree_on_match_over or do_juror_end_match
-		// 	and finally if the game is not over, 
-		//		we'll call either do_start_my_turn or do_juror_set_turn
-		if (!isSecureAPI && !isSinglePlayer())
-			do_end_my_turn( [all_player_ids[getNextTurnOfColor()]] );
-		if (shouldDoOperation())
-			do_store_match_state( new Entry(""+logic.getMoveNumber(), [row, col]) );		
+		// The order of API calls should be: 
+		//  do_store_match_state, 
+		//	maybe do_agree_on_match_over or do_juror_end_match
+		// 	and finally do_end_my_turn
+		// The other players will get the state, and then call: 
+		// 	maybe do_agree_on_match_over or do_juror_end_match
+		//	and maybe either do_start_my_turn or do_juror_set_turn
+		do_store_match_state( new Entry(""+logic.getMoveNumber(), [row, col]) );		
 		makeMove(row, col, false);
+		// Important: note that do_end_my_turn is called after all other API calls (see its documentation)
+		if (logic!=null && !isSinglePlayer() && !isSecureAPI)
+			do_end_my_turn([all_player_ids[turnOfColor]]);
 	}
 	private function setOnPress(isInProgress:Boolean):void {
 		//trace("setOnPress with isInProgress="+isInProgress);
-		if (logic==null) return; 		
-		if (isInProgress && !isSinglePlayer() && shouldDoOperation()) {
+		if (logic==null) return; 
+						
+		if (isInProgress && !isSinglePlayer()) {
 			if (!isSecureAPI) {
 				if (myColor==turnOfColor) do_start_my_turn();
 			} else {

@@ -54,10 +54,10 @@ class come2play_as2.tictactoe.TicTacToe_graphic extends CombinedClientAndSecureG
 	private var disconnected_num:Number;
 	private var isSecureAPI:Boolean;
 	
-	public function TicTacToe_graphic(parameters:Object, isSecureAPI:Boolean,
+	public function TicTacToe_graphic(isSecureAPI:Boolean,
 			graphics:MovieClip, ROWS:Number, COLS:Number, 
 			WIN_LENGTH:Number, PLAYERS_NUM_IN_SINGLE_PLAYER:Number) {
-		super(parameters);
+		super(graphics);
 		this.isSecureAPI = isSecureAPI;
 		this.graphics = graphics;
 		this.ROWS = ROWS;
@@ -81,10 +81,6 @@ class come2play_as2.tictactoe.TicTacToe_graphic extends CombinedClientAndSecureG
 		trace("MyTrace "+key+": "+args.join(" , "));
 		do_store_trace(key, args);
 	}
-	private function shouldDoOperation():Boolean {
-		return isJuror() ||
-			(myColor!=VIEWER && (isSinglePlayer() || AS3_vs_AS2.IndexOf(ongoing_colors, myColor)!=-1));		
-	}
 	private function isJuror():Boolean {
 		return my_user_id==-1;
 	}
@@ -107,7 +103,7 @@ class come2play_as2.tictactoe.TicTacToe_graphic extends CombinedClientAndSecureG
 		this.my_user_id = my_user_id;
 	}
 	/*override*/ public function got_general_info(entries:Array/*Entry*/):Void {
-		for (var i112:Number=0; i112<entries.length; i112++) { var entry:Entry = entries[i112]; 
+		for (var i108:Number=0; i108<entries.length; i108++) { var entry:Entry = entries[i108]; 
 			if (entry.key=="logo_swf_full_url") {
 				var logo_swf_full_url:String = entry.value.toString();	
 				trace("logo_swf_full_url="+logo_swf_full_url)
@@ -130,7 +126,7 @@ class come2play_as2.tictactoe.TicTacToe_graphic extends CombinedClientAndSecureG
 		for (var color:Number=0; color<players_num; color++)
 			ongoing_colors.push(color);
 		logic = new TicTacToe_logic(ROWS,COLS,WIN_LENGTH, players_num);
-		for (var i135:Number=0; i135<match_state.length; i135++) { var user_entry:UserEntry = match_state[i135]; 
+		for (var i131:Number=0; i131<match_state.length; i131++) { var user_entry:UserEntry = match_state[i131]; 
 			if (!isSinglePlayer()) turnOfColor = getColor(user_entry.user_id);	// some users may have disconnected in the middle of the game	
 			doUserEntry(user_entry, true);	//we should not call do_agree_on_match_over when loading the match	
 		}
@@ -166,7 +162,7 @@ class come2play_as2.tictactoe.TicTacToe_graphic extends CombinedClientAndSecureG
 	private function matchOverForPlayers(finished_player_ids:Array/*int*/):Boolean {
 		if (logic==null) return false; // match already ended
 		var colors:Array/*int*/ = [];
-		for (var i171:Number=0; i171<finished_player_ids.length; i171++) { var p_id:Number = finished_player_ids[i171]; 
+		for (var i167:Number=0; i167<finished_player_ids.length; i167++) { var p_id:Number = finished_player_ids[i167]; 
 			var color_of_p_id:Number = getColor(p_id);
 			assert(color_of_p_id!=-1, ["Didn't find player_id=",p_id]); 
 			colors.push(color_of_p_id);
@@ -176,10 +172,11 @@ class come2play_as2.tictactoe.TicTacToe_graphic extends CombinedClientAndSecureG
 	}
 	private function matchOverForColors(colors:Array/*int*/):Boolean {	
 		var shouldChange_turnOfColor:Boolean = false;
-		for (var i181:Number=0; i181<colors.length; i181++) { var color:Number = colors[i181]; 
+		for (var i177:Number=0; i177<colors.length; i177++) { var color:Number = colors[i177]; 
 			var ongoing_index:Number = AS3_vs_AS2.IndexOf(ongoing_colors, color);
 			if (ongoing_index==-1) continue; // already finished (when the game ends normally, I immediately call matchOverForColors. see makeMove) 
 			ongoing_colors.splice(ongoing_index, 1);
+			if (color==myColor && !isSinglePlayer()) myColor = VIEWER; // I'm now a viewer
 			if (color==turnOfColor) {
 				shouldChange_turnOfColor = true;
 			}
@@ -189,7 +186,7 @@ class come2play_as2.tictactoe.TicTacToe_graphic extends CombinedClientAndSecureG
 			setOnPress(false); // turns off the squares
 			logic = null;
 		} else if (shouldChange_turnOfColor) {
-			update_turnOfColor();
+			turnOfColor = getNextTurnOfColor();
 		}		
 		return shouldChange_turnOfColor;
 	}
@@ -213,12 +210,9 @@ class come2play_as2.tictactoe.TicTacToe_graphic extends CombinedClientAndSecureG
 		}	
 		return next_turn_of_color;
 	}
-	private function update_turnOfColor():Void {	
-		turnOfColor = getNextTurnOfColor();
-	}
 	private static function arrayCopy(arr:Array):Array {
 		var res:Array = [];
-		for (var i223:Number=0; i223<arr.length; i223++) { var x:Object = arr[i223]; 
+		for (var i217:Number=0; i217<arr.length; i217++) { var x:Object = arr[i217]; 
 			res.push(x);
 		}
 		return res;			
@@ -231,9 +225,7 @@ class come2play_as2.tictactoe.TicTacToe_graphic extends CombinedClientAndSecureG
 		
 		var didWin:Boolean = logic.isWinner(row, col);
 		var isBoardFull:Boolean = logic.isBoardFull();
-		if (!didWin && !isBoardFull) {
-			update_turnOfColor();		
-		} else {
+		if (didWin || isBoardFull) {
 			//game is over for one player (but the other players, if there are more than 2 remaining players, will continue playing)
 			var finished_players:Array/*PlayerMatchOver*/ = [];
 			var isGameOver:Boolean = 
@@ -255,7 +247,7 @@ class come2play_as2.tictactoe.TicTacToe_graphic extends CombinedClientAndSecureG
 						// 1<<5 = 32
 						var frac_top:Number = 1 << (2*(playersNumber() - disconnected_num) - ongoing_colors.length - 2);
 						var frac_bottom:Number = frac_top*2 - 1;
-						percentage = 100*Number(frac_top)/Number(frac_bottom);
+						percentage = AS3_vs_AS2.convertToInt(100*Number(frac_top)/Number(frac_bottom));
 					}
 					finished_players.push(
 						new PlayerMatchOver(all_player_ids[turnOfColor], score, percentage) );	
@@ -271,7 +263,7 @@ class come2play_as2.tictactoe.TicTacToe_graphic extends CombinedClientAndSecureG
 					}
 				}		
 				if (isBoardFull) { // Important: it can happen that someone won and the board has just filled up!					
-					for (var i276:Number=0; i276<ongoing_colors.length; i276++) { var ongoing_color:Number = ongoing_colors[i276]; 
+					for (var i268:Number=0; i268<ongoing_colors.length; i268++) { var ongoing_color:Number = ongoing_colors[i268]; 
 						var ongoing_player_id:Number = all_player_ids[ongoing_color];
 						if (!PlayerMatchOver.isInArr(finished_players, ongoing_player_id)) {
 							if (didWin) {
@@ -297,14 +289,17 @@ class come2play_as2.tictactoe.TicTacToe_graphic extends CombinedClientAndSecureG
 			
 			var finished_colors:Array/*int*/ = 
 				isGameOver ? arrayCopy(ongoing_colors) : [turnOfColor];
-			if (!isSavedGame && finished_players.length>0 && shouldDoOperation()) { 
-				if (!isSecureAPI)
-					do_agree_on_match_over(finished_players);
-				else {
+			if (!isSavedGame && finished_players.length>0) { 
+				if (!isSecureAPI) {
+					if (myColor!=VIEWER) do_agree_on_match_over(finished_players);
+				} else {
 					if (isJuror()) do_juror_end_match(finished_players);
 				}
 			}
 			matchOverForColors(finished_colors);	
+		} else {
+			// game still in progress
+			turnOfColor = getNextTurnOfColor();
 		}		
 		
 		if (!isSavedGame) setOnPress(true);
@@ -316,21 +311,24 @@ class come2play_as2.tictactoe.TicTacToe_graphic extends CombinedClientAndSecureG
 		if (myColor==VIEWER) return; // viewer cannot make a move
 		if (!isSinglePlayer() && myColor!=turnOfColor) return; // not my turn
 		if (!logic.isSquareAvailable(row, col)) return; // already filled this square (e.g., if you press on the keyboard, you may choose a cell that is already full)
-		// The order of events should be: 
-		//  do_end_my_turn, do_store_match_state, 
-		//	and then maybe do_agree_on_match_over or do_juror_end_match
-		// 	and finally if the game is not over, 
-		//		we'll call either do_start_my_turn or do_juror_set_turn
-		if (!isSecureAPI && !isSinglePlayer())
-			do_end_my_turn( [all_player_ids[getNextTurnOfColor()]] );
-		if (shouldDoOperation())
-			do_store_match_state( new Entry(""+logic.getMoveNumber(), [row, col]) );		
+		// The order of API calls should be: 
+		//  do_store_match_state, 
+		//	maybe do_agree_on_match_over or do_juror_end_match
+		// 	and finally do_end_my_turn
+		// The other players will get the state, and then call: 
+		// 	maybe do_agree_on_match_over or do_juror_end_match
+		//	and maybe either do_start_my_turn or do_juror_set_turn
+		do_store_match_state( new Entry(""+logic.getMoveNumber(), [row, col]) );		
 		makeMove(row, col, false);
+		// Important: note that do_end_my_turn is called after all other API calls (see its documentation)
+		if (logic!=null && !isSinglePlayer() && !isSecureAPI)
+			do_end_my_turn([all_player_ids[turnOfColor]]);
 	}
 	private function setOnPress(isInProgress:Boolean):Void {
 		//trace("setOnPress with isInProgress="+isInProgress);
-		if (logic==null) return; 		
-		if (isInProgress && !isSinglePlayer() && shouldDoOperation()) {
+		if (logic==null) return; 
+						
+		if (isInProgress && !isSinglePlayer()) {
 			if (!isSecureAPI) {
 				if (myColor==turnOfColor) do_start_my_turn();
 			} else {

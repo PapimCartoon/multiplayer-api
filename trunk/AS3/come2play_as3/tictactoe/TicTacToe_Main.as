@@ -3,7 +3,7 @@ package come2play_as3.tictactoe
 import come2play_as3.api.*;
 import come2play_as3.util.JSON;
 
-import flash.display.MovieClip;
+import flash.display.*;
 	
 public final class TicTacToe_Main
 {
@@ -46,7 +46,7 @@ public final class TicTacToe_Main
 		
 		if (apiType==null) {
 			// creating a server for the single player			
-			var sPrefix:String = "42";
+			var sPrefix:String = BaseGameAPI.DEFAULT_LOCALCONNECTION_HANDSHAKE_PREFIX;
 			apiType = "ClientGameAPI";
 			parameters["prefix"] = sPrefix;
 			var general_info_entries:Array/*Entry*/ =
@@ -78,7 +78,7 @@ public final class TicTacToe_Main
 				match_state);
 		}
 		var isSecureAPI:Boolean = apiType=="SecureClientGameAPI";
-		new TicTacToe_graphic(parameters, isSecureAPI, graphics, ROWS, COLS, WIN_LENGTH, PLAYERS_NUM_IN_SINGLE_PLAYER);
+		new TicTacToe_graphic(isSecureAPI, graphics, ROWS, COLS, WIN_LENGTH, PLAYERS_NUM_IN_SINGLE_PLAYER);
 	}
 
 }

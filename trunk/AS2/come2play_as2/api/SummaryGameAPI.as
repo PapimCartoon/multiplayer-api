@@ -1,8 +1,7 @@
-package come2play_as3.api {
 //Do not change the code below because this class was generated automatically!
 
-	import flash.display.*;
-	public  class SummaryGameAPI  {
+import come2play_as2.api.*;
+	class come2play_as2.api.SummaryGameAPI  {
 		public static var SUMMARY_API:Array = [
 		['got_keyboard_event', [['is_key_down','boolean'], ['charCode','int'], ['keyCode','int'], ['keyLocation','int'], ['altKey','boolean'], ['ctrlKey','boolean'], ['shiftKey','boolean']] ]
 		,['got_general_info', [['keys','String[]'], ['values','Object[]']] ]
@@ -34,4 +33,3 @@ package come2play_as3.api {
 		,['do_juror_end_match', [['finished_player_ids','int[]'], ['scores','int[]'], ['pot_percentages','int[]']] ]
 		];
 	}
-}

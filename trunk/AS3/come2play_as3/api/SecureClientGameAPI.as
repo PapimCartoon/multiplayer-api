@@ -1,9 +1,10 @@
 package come2play_as3.api {
 //Do not change the code below because this class was generated automatically!
 
+	import flash.display.*;
 	public  class SecureClientGameAPI extends BaseGameAPI {
-		public function SecureClientGameAPI(parameters:Object) {
-			super(parameters);
+		public function SecureClientGameAPI(someMovieClip:MovieClip) {
+			super(someMovieClip);
 		}
 		// For players and jurors
 		// user_id = -1 is for a juror, user_id>0 is for a user (player/viewer)

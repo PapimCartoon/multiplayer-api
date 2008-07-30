@@ -30,5 +30,15 @@ The reason behind `next_turn_of_player_ids` is for email-based games,
 where only one player connects, makes a move, ends his turn, 
 and the platform notifies the players in `next_turn_of_player_ids` that they can make their next move.
 
+*IMPORTANT*: you should call `do_end_my_turn` after you made all other API calls,
+because when the container gets `do_end_my_turn` in a turn-based game 
+then it saves the match and notifies the users in `next_turn_of_player_ids`.
+The emulator will give a warning (in a turn-based game)
+if you called `do_store_match_state` not during your turn,
+or if the first call to `do_agree_on_match_over` is not during some player's turn.
 
-The Come2Play platform performs a check that an opponent should start his turn within a certain period of time (taking into account the network round trip time). Currently a player should start his turn within 10 seconds of getting `got_end_turn_of`. This will make sure that a turn-based game will not enter stagnation.
+
+The Come2Play platform performs a check that an opponent should start his turn within a certain period of time 
+(taking into account the network round trip time). 
+Currently a player should start his turn within 10 seconds of getting `got_end_turn_of`. 
+This will make sure that a turn-based game will not enter stagnation (freezing state where no one makes a turn).

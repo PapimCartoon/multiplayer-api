@@ -8,3 +8,8 @@ In [ClientGameAPI], a player had to call [do_start_my_turn] and [do_start_my_tur
 In [SecureClientGameAPI], only the juror can call [do_juror_set_turn] to start or end the turn of a certain user.
 
 `turn_of_player_id` is either -1 to end the current turn, or the user_id of one the players.
+
+*IMPORTANT*:
+Similarly to `do_end_my_turn`, the juror should call `do_juror_set_turn` only after he called `do_juror_end_match`,
+so that in a turn-based game the container will save the game.
+See [do_start_my_turn do_end_my_turn].

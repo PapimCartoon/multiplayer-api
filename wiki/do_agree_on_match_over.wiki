@@ -6,6 +6,8 @@ do_agree_on_match_over(finished_players:Array/*PlayerMatchOver*/)
 
 To end a match, all players must call `do_agree_on_match_over` with the same exact parameters.
 
+When any player calls `do_agree_on_match_over`, the current turn is over (relevant only to turn-based games).
+
 `finished_players` is the set of the players that will quit the match.
 In the common scenario, `finished_players` contains all the players in the match.
 However, it is possible that only a subset of the players end the match (but in any case, all players must call `do_agree_on_match_over`).

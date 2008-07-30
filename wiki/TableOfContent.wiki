@@ -49,7 +49,7 @@ This will include the line number of the error in the stacktraces, e.g.,
 }}}
 Remember that the stack traces of an error are available only in the debugger version of the flash player (and not in the release version),
 see `Error.getStackTrace()`.
-Therefore you should run the emulator and do online testing using the [http://www.adobe.com/support/flashplayer/downloads.html Adobe Flash Player 9 — Debugger Versions].
+Therefore you should run the emulator and do online testing using the [http://www.adobe.com/support/flashplayer/downloads.html Adobe Flash Player Debugger].
 
 === trace() function ===
 If your game is using the builtin `trace()` function, and you want to see the traces,

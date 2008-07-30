@@ -51,6 +51,25 @@ Remember that the stack traces of an error are available only in the debugger ve
 see `Error.getStackTrace()`.
 Therefore you should run the emulator and do online testing using the [http://www.adobe.com/support/flashplayer/downloads.html Adobe Flash Player 9 — Debugger Versions].
 
+=== trace() function ===
+If your game is using the builtin `trace()` function, and you want to see the traces,
+then you should create a file `mm.cfg` in
+{{{
+C:\Documents and Settings\<USER_NAME>
+}}}
+The content of `mm.cfg` should be
+{{{
+ErrorReportingEnable=1
+TraceOutputFileEnable=1
+}}}
+After creating this file, the traces should be written to
+{{{ 
+C:\Documents and Settings\<USER_NAME>\Application Data\Macromedia\Flash Player\Logs\flashlog.txt
+}}}
+
+See http://livedocs.adobe.com/flex/3/html/help.html?content=logging_04.html#196092
+for more explanations.
+
 
 === FPS ===
 Frame per seconds (FPS):

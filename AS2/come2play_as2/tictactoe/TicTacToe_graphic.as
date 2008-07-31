@@ -9,38 +9,22 @@ import come2play_as2.api.*;
  * 
  * When a player wins, he gets some of the stakes, and the rest continue playing, 
  * until only a single player remains (and he doesn't get any stakes).
- * Each winner gets half of what the previous winner got,
- * so if we have 4 players:
- * 1st place gets: 4/7
- * 2nd place gets: 2/7
- * 3rd place gets: 1/7
- * and 4th place gets nothing!
- * Because the percentage are accumilative 
- * (the percentage are from the remainder of what is left in the pot),
- * we should rephrase the above as: 
- * 1st place gets: 4/7
- * 2nd place gets: 2/3 of the remainder (3/7 of the pot)
- * 3rd place gets: the remainder (1/7 of the pot)
- * 4th place gets nothing.
- * If you have 5 players:
- * 1st place gets: 8/15
- * 2nd place gets: 4/7 of the remainder (7/15 of the pot)
- * 3rd place gets: 2/3 of the remainder (3/15 of the pot)
- * 4th place gets: the remainder (1/15 of the pot)
- * 5th place gets nothing.
- * The formula for the I-th place (except last place) out of N players is:
- *  2^(N-I-1) / (2^(N-I) - 1)
- *  
+ * The first winner will get 70% of the pot (can be changed using the flashvar "WINNER_PERCENTAGE"),
+ * the second one will get 70% of what remained,
+ * and so on, until the last winner will get the entire 100% of the remainder.
+ * (and the loser gets nothing).
+ * 
  * Written by: Yoav Zibin (yoav@zibin.net)
  */
 import come2play_as2.tictactoe.*;
 class come2play_as2.tictactoe.TicTacToe_graphic extends CombinedClientAndSecureGameAPI {
 	
 	// for example, you can have a board of size 5x5, with WIN_LENGTH=4
-	public var ROWS:Number;
-	public var COLS:Number;
-	public var WIN_LENGTH:Number;
-	public var PLAYERS_NUM_IN_SINGLE_PLAYER:Number;
+	private var ROWS:Number;
+	private var COLS:Number;
+	private var WIN_LENGTH:Number;
+	private var PLAYERS_NUM_IN_SINGLE_PLAYER:Number;
+	private var WINNER_PERCENTAGE:Number;
 	
 	private var graphics:MovieClip;
 	private var squares:Array/*TicTacToe_SquareGraphic[]*/;
@@ -49,21 +33,27 @@ class come2play_as2.tictactoe.TicTacToe_graphic extends CombinedClientAndSecureG
 	private var ongoing_colors:Array/*int*/;
 	private var my_user_id:Number = -42;
 	private var turnOfColor:Number; // a number between 0 and all_player_ids.length
-	public static var VIEWER:Number = -1; 	
+	private static var VIEWER:Number = -1; 	
 	private var myColor:Number; // either VIEWER, or a number between 0 and player_ids.length
-	private var disconnected_num:Number;
 	private var isSecureAPI:Boolean;
 	
-	public function TicTacToe_graphic(isSecureAPI:Boolean,
-			graphics:MovieClip, ROWS:Number, COLS:Number, 
-			WIN_LENGTH:Number, PLAYERS_NUM_IN_SINGLE_PLAYER:Number) {
+	public function TicTacToe_graphic(graphics:MovieClip, ROWS:Number, COLS:Number) {
 		super(graphics);
-		this.isSecureAPI = isSecureAPI;
 		this.graphics = graphics;
 		this.ROWS = ROWS;
 		this.COLS = COLS;
-		this.WIN_LENGTH = WIN_LENGTH;
-		this.PLAYERS_NUM_IN_SINGLE_PLAYER = PLAYERS_NUM_IN_SINGLE_PLAYER;
+		var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(graphics);
+		isSecureAPI = parameters["apiType"]=="SecureClientGameAPI";
+		
+		WIN_LENGTH = AS3_vs_AS2.convertToInt(parameters["WIN_LENGTH"]);
+		PLAYERS_NUM_IN_SINGLE_PLAYER = AS3_vs_AS2.convertToInt(parameters["PLAYERS_NUM_IN_SINGLE_PLAYER"]);
+		WINNER_PERCENTAGE = AS3_vs_AS2.convertToInt(parameters["WINNER_PERCENTAGE"]);
+		
+		if (WIN_LENGTH==0) WIN_LENGTH = 3; 
+		if (PLAYERS_NUM_IN_SINGLE_PLAYER==0) PLAYERS_NUM_IN_SINGLE_PLAYER = 3;
+		if (WINNER_PERCENTAGE==0) WINNER_PERCENTAGE = 70; 
+		
+		
 		
 		squares = new Array(ROWS);
 		for(var row:Number=0; row<ROWS; row++) {
@@ -103,7 +93,7 @@ class come2play_as2.tictactoe.TicTacToe_graphic extends CombinedClientAndSecureG
 		this.my_user_id = my_user_id;
 	}
 	/*override*/ public function got_general_info(entries:Array/*Entry*/):Void {
-		for (var i108:Number=0; i108<entries.length; i108++) { var entry:Entry = entries[i108]; 
+		for (var i98:Number=0; i98<entries.length; i98++) { var entry:Entry = entries[i98]; 
 			if (entry.key=="logo_swf_full_url") {
 				var logo_swf_full_url:String = entry.value.toString();	
 				trace("logo_swf_full_url="+logo_swf_full_url)
@@ -120,13 +110,12 @@ class come2play_as2.tictactoe.TicTacToe_graphic extends CombinedClientAndSecureG
 		var index_of_my_user_id:Number = AS3_vs_AS2.IndexOf(all_player_ids,my_user_id);
 		myColor = index_of_my_user_id==-1 ? VIEWER : 
 				index_of_my_user_id;
-		disconnected_num = 0;
 		var players_num:Number = playersNumber();
 		ongoing_colors = [];
 		for (var color:Number=0; color<players_num; color++)
 			ongoing_colors.push(color);
 		logic = new TicTacToe_logic(ROWS,COLS,WIN_LENGTH, players_num);
-		for (var i131:Number=0; i131<match_state.length; i131++) { var user_entry:UserEntry = match_state[i131]; 
+		for (var i120:Number=0; i120<match_state.length; i120++) { var user_entry:UserEntry = match_state[i120]; 
 			if (!isSinglePlayer()) turnOfColor = getColor(user_entry.user_id);	// some users may have disconnected in the middle of the game	
 			doUserEntry(user_entry, true);	//we should not call do_agree_on_match_over when loading the match	
 		}
@@ -162,17 +151,16 @@ class come2play_as2.tictactoe.TicTacToe_graphic extends CombinedClientAndSecureG
 	private function matchOverForPlayers(finished_player_ids:Array/*int*/):Boolean {
 		if (logic==null) return false; // match already ended
 		var colors:Array/*int*/ = [];
-		for (var i167:Number=0; i167<finished_player_ids.length; i167++) { var p_id:Number = finished_player_ids[i167]; 
+		for (var i156:Number=0; i156<finished_player_ids.length; i156++) { var p_id:Number = finished_player_ids[i156]; 
 			var color_of_p_id:Number = getColor(p_id);
 			assert(color_of_p_id!=-1, ["Didn't find player_id=",p_id]); 
 			colors.push(color_of_p_id);
 		}
-		disconnected_num += colors.length;
 		return matchOverForColors(colors);
 	}
 	private function matchOverForColors(colors:Array/*int*/):Boolean {	
 		var shouldChange_turnOfColor:Boolean = false;
-		for (var i177:Number=0; i177<colors.length; i177++) { var color:Number = colors[i177]; 
+		for (var i165:Number=0; i165<colors.length; i165++) { var color:Number = colors[i165]; 
 			var ongoing_index:Number = AS3_vs_AS2.IndexOf(ongoing_colors, color);
 			if (ongoing_index==-1) continue; // already finished (when the game ends normally, I immediately call matchOverForColors. see makeMove) 
 			ongoing_colors.splice(ongoing_index, 1);
@@ -212,7 +200,7 @@ class come2play_as2.tictactoe.TicTacToe_graphic extends CombinedClientAndSecureG
 	}
 	private static function arrayCopy(arr:Array):Array {
 		var res:Array = [];
-		for (var i217:Number=0; i217<arr.length; i217++) { var x:Object = arr[i217]; 
+		for (var i205:Number=0; i205<arr.length; i205++) { var x:Object = arr[i205]; 
 			res.push(x);
 		}
 		return res;			
@@ -238,16 +226,12 @@ class come2play_as2.tictactoe.TicTacToe_graphic extends CombinedClientAndSecureG
 				var score:Number;
 				var percentage:Number;
 				if (didWin) {
-					//2^(N-I) / (2^(N-I-1) - 1)
 					//winner is turnOfColor
-					score = ongoing_colors.length-disconnected_num;					
-					if (isBoardFull) {
+					score = ongoing_colors.length;					
+					if (isBoardFull || ongoing_colors.length==2) {
 						percentage = 100; // there won't be any other winners
 					} else {
-						// 1<<5 = 32
-						var frac_top:Number = 1 << (2*(playersNumber() - disconnected_num) - ongoing_colors.length - 2);
-						var frac_bottom:Number = frac_top*2 - 1;
-						percentage = AS3_vs_AS2.convertToInt(100*Number(frac_top)/Number(frac_bottom));
+						percentage = WINNER_PERCENTAGE; 
 					}
 					finished_players.push(
 						new PlayerMatchOver(all_player_ids[turnOfColor], score, percentage) );	
@@ -263,7 +247,7 @@ class come2play_as2.tictactoe.TicTacToe_graphic extends CombinedClientAndSecureG
 					}
 				}		
 				if (isBoardFull) { // Important: it can happen that someone won and the board has just filled up!					
-					for (var i268:Number=0; i268<ongoing_colors.length; i268++) { var ongoing_color:Number = ongoing_colors[i268]; 
+					for (var i252:Number=0; i252<ongoing_colors.length; i252++) { var ongoing_color:Number = ongoing_colors[i252]; 
 						var ongoing_player_id:Number = all_player_ids[ongoing_color];
 						if (!PlayerMatchOver.isInArr(finished_players, ongoing_player_id)) {
 							if (didWin) {

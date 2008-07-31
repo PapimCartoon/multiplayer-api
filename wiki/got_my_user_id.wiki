@@ -6,5 +6,11 @@ got_my_user_id(my_user_id:int)
 
 `got_my_user_id` is the first callback that is called.
 It lets the game know what is the `user_id` of the user that is running this game.
-Users can be partitioned into players and viewers.
+When a game is in progress, the users can be partitioned into players and viewers.
 Every user is identified by a unique `user_id`.
+
+*IMPORTANT*:
+The container may call `got_my_user_id` several times with different values for `my_user_id`.
+The reason is that the container may wish to support backward and forward when the game is in progress,
+and to achieve this the container tells the game that the game is over, 
+and starts a new game with another value for `my_user_id` so you will see the game as a viewer.

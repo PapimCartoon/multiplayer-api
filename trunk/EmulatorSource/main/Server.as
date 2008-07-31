@@ -1544,31 +1544,29 @@ package main{
 				addMessageLog("Server", "do_store_match_state", "Error: Can't store match state, key is empty");
 				return;
 			}
+			if (aKeys.length>=1000) {
+				addMessageLog("Server", "do_store_match_state", "Error: you stored more than a 1000 keys!");
+				return;
+			}
+			//todo: in the future, the developer should choose if he wants to be able to review the match (and if so, the number of calls to do_store_match_state can't exceed 1000)
 			if (iCurTurn!=user.ID && isTurnBasedGame) {
 				addMessageLog("Server", "do_store_match_state", "Warning: in a turn-based game, you should call do_store_match_state only during your turn");
 			}
 
 			var index:int = aKeys.indexOf(key);
-			if (index==-1) {
-				if (data!=null) {
-					aKeys.push(key);
-					aData.push(data);
-					aDataUsers.push(user.ID);
-				}
-			} else {
-				if (aPlayers.indexOf(user.ID)==-1 && aPlayers.indexOf(aDataUsers[index])!=-1) {
-					addMessageLog("Server", "do_store_match_state", "Error: a viewer cannot rewrite a player's data");
+			if (index!=-1) {
+				if (aPlayers.indexOf(user.ID)==-1 && aDataUsers[index]==user.ID) {
+					addMessageLog("Server", "do_store_match_state", "Error: a viewer cannot rewrite/delete other's data (not viewers nor players data)");
 					return;
 				}
-				if (data == null || data=="") {
-					aKeys.splice(index,1);
-					aData.splice(index,1);
-					aDataUsers.splice(index,1);
-				}else {
-					aKeys[index] = key;
-					aData[index] = data;
-					aDataUsers[index] = user.ID;
-				}
+				aKeys.splice(index,1);
+				aData.splice(index,1);
+				aDataUsers.splice(index,1);
+			}
+			if (data!=null && data!="") {
+				aKeys.push(key);
+				aData.push(data);
+				aDataUsers.push(user.ID);
 			}
 			showMatchState();
 			for each (var usr:User in aUsers) {

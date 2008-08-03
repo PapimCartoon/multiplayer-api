@@ -19,9 +19,6 @@ got_start_turn_of
 got_end_turn_of
 do_send_message
 got_message
-do_set_timer
-got_timer
-
 }}}
 
 These functions have different semantics:

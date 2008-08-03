@@ -12,10 +12,6 @@ When the match ends, the state is cleared.
 
 The match state is given to new viewers and new players in [got_match_started].
 
-To avoid running out of memory on the server,
-the number of keys is limited to 1000,
-and the total memory of the map is limited to 100KB.
-
 To delete a key from the map, pass a value of null or ''.
 
 _Important note_:

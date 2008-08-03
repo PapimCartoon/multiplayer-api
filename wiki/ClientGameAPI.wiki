@@ -30,7 +30,6 @@ do_end_my_turn(next_turn_of_player_ids:Array/*int*/)
 do_client_protocol_error_with_description(error_description:String)
 do_store_match_state(entry:Entry)
 do_send_message(to_user_ids:Array/*int*/, value:Object)
-do_set_timer(in_seconds:int, entry:Entry)
 }}}
 Callbacks are functions starting with `got_`
 {{{
@@ -46,12 +45,14 @@ got_start_turn_of(user_id:int)
 got_end_turn_of(user_id:int)  
 got_stored_match_state(user_entry:UserEntry)
 got_message(user_id:int, value:Object)
-got_timer(in_seconds:int, user_entry:UserEntry)
 }}}
 
 Operations are functions that your _game_ may call,
 and callbacks are functions that the _container_ may call on your game.
 Your class may override some of the callbacks and respond appropriately to them; it is not mandatory to override _all_ the callbacks.
+
+You may call an operation only when the game is in progress,
+i.e., there is a player that haven't finished playing.
 
 === High level description of the functions === 
 
@@ -70,8 +71,6 @@ Your class may override some of the callbacks and respond appropriately to them;
 || [do_store_match_state got_stored_match_state] || Called when a user changed the match state ||
 || [do_send_message] || Call it to send a message to a given set of users ||
 || [do_send_message got_message] || Called when a user get a message ||
-|| [do_set_timer] || Call it to set a timer on the server (similar to `setTimeout` in AS) ||
-|| [do_set_timer got_timer] || Called on all users when when the timer ticks/expires ||
 || [do_start_my_turn] || For Turn-based games. Call it to start your turn ||
 || [do_start_my_turn got_start_turn_of] || Called to acknowledge you have the turn ||
 || [do_start_my_turn do_end_my_turn] || Call it to end your turn, and set who may play next ||
@@ -93,7 +92,8 @@ therefore one of the players (in a turn-based game) should call `do_start_my_tur
 The set of connected users is partitioned into players and viewers.
 Viewers may not call all the operations and might have special restrictions when calling an operation.
 New players cannot join an existing match; players may only leave the match (either by disconnecting or losing/winning the match).
-When a player leaves the match he becomes a viewer.
+When a player leaves the match (e.g., by winning or choosing to lose) he becomes a viewer, 
+and all the viewer restrictions apply to him.
 
 The following operations may only be called by players (not by viewers):
 {{{
@@ -106,11 +106,10 @@ do_client_protocol_error_with_description
 A viewer may call:
 {{{
 do_send_message
-do_set_timer
 do_store_trace
 do_store_match_state
 }}}
-(Note that `do_store_match_state` have special limitations on viewers to prevent a viewer tempering with the match state.)
+(Note that `do_store_match_state` have special limitations on viewers to prevent a viewer from tempering with the match state.)
 
 === Serialization ===
 This remark is relevant to functions with parameters of type `Object` or `Array/*Object*/`.
@@ -118,9 +117,20 @@ Objects are serialized when sent to the server, and therefore must contain only 
 Important note: an `Array` may not contain anything except the above standard types.
 You may not pass any other classes.
 
-=== Spamming the server ===
+=== Harming the server ===
+Come2Play have several mechanisms to protect its servers from bad game developers:
+ * Spamming protection
+ * Limiting the size of the match state
+
 To avoid overloading the server, you can send at most 10 operations every second.
 The message size should generally be smaller than 1KB (and must always be smaller than 10KB!).
+
+To avoid running out of memory on the server,
+and the total memory of the map is limited to 1MB.
+The Come2Play platform tracks the maximum match state that your game uses,
+and automatically sends the game developer warning when the game is about to reach the maximum match state.
+
+
 
 === Saved matches ===
 The users may agree to save their match, and may decide to load it later.

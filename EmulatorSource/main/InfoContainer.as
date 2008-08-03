@@ -538,9 +538,6 @@ package main{
 		public function got_message(user_id:int, data:Object):void {
 				sendGotOperation("got_message", arguments);
 		}
-		public function got_timer(from_user_id:int, key:String, in_seconds:int, pass_back:Object):void {
-				sendGotOperation("got_timer", arguments);
-		}
 		
 		//Do functions
 		public function do_register_on_server(iChanel:int):void {
@@ -577,9 +574,6 @@ package main{
 		}
 		public function do_send_message(to_user_ids:Array, data:Object):void {
 				sendDoOperation("do_send_message",arguments);
-		}
-		public function do_set_timer(key:String, in_seconds:int, pass_back:Object):void {
-				sendDoOperation("do_set_timer", arguments);
 		}
 	}
 }

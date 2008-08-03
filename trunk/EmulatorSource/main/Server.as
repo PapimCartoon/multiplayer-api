@@ -46,7 +46,6 @@ package main{
 		private var btnCommands:SimpleButton;
 		private var btnGeneralInfo:SimpleButton;
 		private var btnUserInfo:SimpleButton;
-		private var btnTimers:SimpleButton;
 		private var btnMatchState:SimpleButton;
 		private var btnMatchOver:SimpleButton;
 		private var btnSavedGames:SimpleButton;
@@ -82,7 +81,6 @@ package main{
 		private var txtLabelLog:TextField;
 		private var txtLabelDetails:TextField;
 		private var aMatchOvers:Array;
-		private var aTimers:Array;
 		private var tblInfo:DataGrid;
 		private var txtInfo:TextArea;
 		private var pnlInfo:MovieClip;
@@ -252,9 +250,6 @@ package main{
 
 			btnMatchState = tbsPanel["_btnMatchState"];
 			btnMatchState.addEventListener(MouseEvent.CLICK, btnMatchStateClick);
-
-			btnTimers = tbsPanel["_btnTimers"];
-			btnTimers.addEventListener(MouseEvent.CLICK, btnTimersClick);
 
 			btnGeneralInfo = tbsPanel["_btnGeneralInfo"];
 			btnGeneralInfo.addEventListener(MouseEvent.CLICK, btnGeneralInfoClick);
@@ -466,7 +461,6 @@ package main{
 			aPlayers = new Array();
 			aNextPlayers = new Array();
 			aMatchOvers = new Array();
-			aTimers = new Array();
 			iCurTurn = -1;
 			
 			this.addChild(MsgBox);
@@ -544,6 +538,28 @@ package main{
 		public function got_user_localconnection_callback(user:User, methodName:String, parameters:Array/*Object*/):void {			
 			try{
 				addMessageLog(user.Name, methodName, methodAndParams2String(methodName, parameters) );
+								
+				if (!bGameStarted) {
+					addMessageLog("Server", methodName, "Error: game not started");
+					return;
+				}
+				if (bGameEnded) {
+					addMessageLog("Server", methodName, "Error: game already end");
+					return;
+				}
+				switch(methodName) {
+				case "do_agree_on_match_over":
+				case "do_start_my_turn":
+				case "do_end_my_turn":
+				case "do_client_protocol_error_with_description":
+					var ongoing_ids:Array = getOngoingPlayerIds();
+					if (ongoing_ids.indexOf(user.ID) == -1) {
+						addMessageLog("Server", methodName, "Error: "+user.Name+" is viewer. Only players can call "+methodName+".");
+						return;
+					}
+				}
+				// todo: if (methodName.substring(0,"do_juror_".length)=="do_juror_")
+
 				(this[methodName] as Function).apply(this, [user].concat(parameters));
 			} catch (err:Error) { 
 				MsgBox.Show(err.message, "Error");
@@ -984,19 +1000,6 @@ package main{
 			}
 		}
 		
-		private function btnTimersClick(evt:MouseEvent):void {
-			tbsPanel.gotoAndStop("Timers");
-			pnlCommands.visible = false;
-			pnlLog.visible = false;
-			pnlInfo.visible=true;
-			if(iInfoMode!=2){
-				iInfoMode=2;
-				
-				tblInfo.columns=["user_id","key","submition_time","expiration_time","in_seconds","pass_back","pending"];
-				
-				showTimers();
-			}
-		}
 		
 		private function btnGeneralInfoClick(evt:MouseEvent):void {
 			tbsPanel.gotoAndStop("GeneralInfo");
@@ -1066,18 +1069,6 @@ package main{
 			}
 		}
 		
-		private function showTimers():void{
-			if(iInfoMode==2){
-				tblInfo.removeAll();
-				
-				var tmr:GameTimer;
-				for each (tmr in aTimers){
-					tblInfo.addItem({user_id:tmr.UserID,key:tmr.Key, submition_time:tmr.Submition.toLocaleTimeString(), expiration_time:tmr.Expiration.toLocaleTimeString(), in_seconds:tmr.InSeconds, pass_back:JSON.stringify(tmr.PassBack),pending:tmr.Started});
-					tblInfo.verticalScrollPosition = tblInfo.maxVerticalScrollPosition+30;
-				}
-				txtInfo.text="";
-			}
-		}
 		
 		private function showGeneralInfo():void{
 			if(iInfoMode==3){
@@ -1188,13 +1179,6 @@ package main{
 			btnCancelGame.visible = false;
 			btnLoadGame.visible = true;
 			btnSaveGame.visible = false;
-			var tmr:GameTimer;
-			for (var j:int = 0; j < aTimers.length; j++ ) {
-				tmr = aTimers[j];
-				tmr.stop();
-			}
-			aTimers = new Array();
-			showTimers();
 			var usr:User;
 			var arr:Array = new Array();
 			for each (usr in aUsers) {
@@ -1270,12 +1254,6 @@ package main{
 
 
 			showMatchOver();
-			var tmr:GameTimer;
-			for each (tmr in aTimers) {
-				tmr.stop();
-			}
-			aTimers = new Array();
-			showTimers();
 			if (aPlayers.length == User.PlayersNum) {
 				bGameStarted = true;
 				bGameEnded = false;
@@ -1395,12 +1373,6 @@ package main{
 			aDataUsers = new Array();
 			showMatchState();
 			aNextPlayers = new Array();
-			;
-			for each (var tmr:GameTimer in aTimers) {
-				tmr.stop();
-			}
-			aTimers = new Array();
-			showTimers();
 			aMatchOvers = new Array();
 			showMatchOver();
 			var usr:User;
@@ -1466,14 +1438,6 @@ package main{
 		//Do functions
 		public function do_start_my_turn(user:User):void {
 			isTurnBasedGame = true;
-			if (!bGameStarted) {
-				addMessageLog("Server", "do_start_my_turn", "Error: Can't start turn,  game not started");
-				return;
-			}
-			if (bGameEnded) {
-				addMessageLog("Server", "do_start_my_turn", "Error: Can't start turn,  game already end");
-				return;
-			}
 			//if (aNextPlayers.length > 0 && aNextPlayers.indexOf(user.ID) == -1) {
 			//	addMessageLog("Server", "do_start_my_turn", "Error: Can't start turn, user " + user.Name + " not exist in array next_turn_of_player_ids");
 			//	return;
@@ -1486,10 +1450,6 @@ package main{
 			//	addMessageLog("Server", "do_start_my_turn", "Error: Can't start turn, previous player didn't end his turn");
 			//	return;
 			//}
-			if (aPlayers.indexOf(user.ID) == -1) {
-				addMessageLog("Server", "do_start_my_turn", "Error: "+user.Name+" is viewer. Only players can call this function.");
-				return;
-			}
 			iCurTurn = user.ID;
 			var usr:User;
 			for each (usr in aUsers) {
@@ -1498,20 +1458,8 @@ package main{
 		}
 		public function do_end_my_turn(user:User, next_turn_of_player_ids:Array):void {
 			isTurnBasedGame = true;
-			if (!bGameStarted) {
-				addMessageLog("Server", "do_end_my_turn", "Error: Can't end turn,  game not started");
-				return;
-			}
-			if (bGameEnded) {
-				addMessageLog("Server", "do_end_my_turn", "Error: Can't end turn,  game already end");
-				return;
-			}
 			if (iCurTurn != user.ID) {
 			//	addMessageLog("Server", "do_end_my_turn", "Warning: Can't end turn, user " + user.Name + " didn't start turn");
-				return;
-			}
-			if (aPlayers.indexOf(user.ID) == -1) {
-				addMessageLog("Server", "do_end_my_turn", "Error: "+user.Name+" is viewer. Only players can call this function.");
 				return;
 			}
 			if (next_turn_of_player_ids != null) {
@@ -1531,15 +1479,7 @@ package main{
 				sendOperation(usr.GotChanel, "got_end_turn_of", [user.ID]);
 			}
 		}
-		public function do_store_match_state(user:User, key:String, data:Object):void {
-			if (!bGameStarted) {
-				addMessageLog("Server", "do_store_match_state", "Error: Can't store match state,  game not started");
-				return;
-			}
-			if (bGameEnded) {
-				addMessageLog("Server", "do_store_match_state", "Error: Can't store match state,  game already end");
-				return;
-			}
+		public function do_store_match_state(user:User, key:String, data:Object):void {			
 			if (key == "") {
 				addMessageLog("Server", "do_store_match_state", "Error: Can't store match state, key is empty");
 				return;
@@ -1573,19 +1513,7 @@ package main{
 				sendOperation(usr.GotChanel, "got_stored_match_state", [user.ID,key,data]);
 			}
 		}
-		public function do_agree_on_match_over(user:User, user_ids:Array, scores:Array, pot_percentages:Array):void {
-			if (!bGameStarted) {
-				addMessageLog("Server", "do_agree_on_match_over", "Error: Can't end match,  game not started");
-				return;
-			}
-			if (bGameEnded) {
-				addMessageLog("Server", "do_agree_on_match_over", "Error: Can't end match,  game already end");
-				return;
-			}
-			if (aPlayers.indexOf(user.ID) == -1) {
-				addMessageLog("Server", "do_agree_on_match_over", "Error: "+user.Name+" is viewer. Only players can call this function.");
-				return;
-			}
+		public function do_agree_on_match_over(user:User, user_ids:Array, scores:Array, pot_percentages:Array):void {			
 			if (user_ids.length==0) {
 				addMessageLog("Server", "do_agree_on_match_over", "Error: Array user_ids can't be empty.");
 				return;
@@ -1632,11 +1560,6 @@ package main{
 						btnCancelGame.visible = false;
 						btnLoadGame.visible = true;
 						btnSaveGame.visible = false;
-						for each (var tmr:GameTimer in aTimers) {
-							tmr.stop();
-						}
-						aTimers = new Array();
-						showTimers();
 						var arr:Array = new Array();
 						for each (usr in aUsers) {
 							if (aPlayers.indexOf(usr.ID) != -1 && !usr.Ended) {
@@ -1703,11 +1626,6 @@ package main{
 						btnCancelGame.visible = false;
 						btnLoadGame.visible = true;
 						btnSaveGame.visible = false;
-						for each (tmr in aTimers) {
-							tmr.stop();
-						}
-						aTimers = new Array();
-						showTimers();
 					}
 				}
 			}
@@ -1717,18 +1635,6 @@ package main{
 			//addMessageLog(user.Name, funcname, JSON.stringify(message));
 		}
 		public function do_client_protocol_error_with_description(user:User, error_description:Object):void {
-			if (!bGameStarted) {
-				addMessageLog("Server", "do_client_protocol_error_with_description", "Error: Can't throw error,  game not started");
-				return;
-			}
-			if (bGameEnded) {
-				addMessageLog("Server", "do_client_protocol_error_with_description", "Error: Can't throw error,  game already end");
-				return;
-			}
-			if (aPlayers.indexOf(user.ID) == -1) {
-				addMessageLog("Server", "do_client_protocol_error_with_description", "Error: "+user.Name+" is viewer. Only players can call this function.");
-				return;
-			}
 			MsgBox.Show(JSON.stringify(error_description));
 			aNextPlayers=new Array();
 			bGameEnded = true;
@@ -1739,13 +1645,6 @@ package main{
 			btnCancelGame.visible = false;
 			btnLoadGame.visible = true;
 			btnSaveGame.visible = false;
-			var tmr:GameTimer;
-			for (var j:int = 0; j < aTimers.length; j++ ) {
-				tmr = aTimers[j];
-				tmr.stop();
-			}
-			aTimers = new Array();
-			showTimers();
 			var usr:User;
 			var arr:Array = new Array();
 			for each (usr in aUsers) {
@@ -1771,14 +1670,7 @@ package main{
 			return null;
 		}			
 		public function do_send_message(user:User, to_user_ids:Array, data:Object):void {
-			if (!bGameStarted) {
-				addMessageLog("Server", "do_send_message", "Error: Can't send message,  game not started");
-				return;
-			}
-			if (bGameEnded) {
-				addMessageLog("Server", "do_send_message", "Error: Can't send message,  game already end");
-				return;
-			}
+			
 			for each (var u_id:int in to_user_ids) {
 				if (getUser(u_id)==null) {
 					addMessageLog("Server", "do_send_message", "Error: User ID "+u_id+"doesn't exist.");
@@ -1798,47 +1690,6 @@ package main{
 				}
 			}
 		}
-		public function do_timer(user_id:int, key:String, in_seconds:int, pass_back:Object):void {
-			addMessageLog("Server", "doing timer", "user_id=" + user_id + ",key="+key+", pass_back=" + JSON.stringify(pass_back));
-			var usr:User;
-			showTimers();
-			for each (usr in aUsers) {
-				sendOperation(usr.GotChanel, "got_timer", [user_id, key, in_seconds, pass_back]);
-			}
-		}
-		public function do_set_timer(user:User, key:String, in_seconds:int, pass_back:Object):void {
-			if (!bGameStarted) {
-				addMessageLog("Server", "do_set_timer", "Error: Can't set timer,  game not started");
-				return;
-			}
-			if (bGameEnded) {
-				addMessageLog("Server", "do_set_timer", "Error: Can't set timer,  game already end");
-				return;
-			}
-			if (isNaN(in_seconds) || (in_seconds >= 0 && (in_seconds < 2 || in_seconds > 24 * 60 * 60))) {
-				addMessageLog("Server", "do_set_timer", "Error: timer delay is out of range");
-			}
-			
-			var tmr:GameTimer;
-			for each (tmr in aTimers) {
-				if (tmr.Key == key) {
-					if (in_seconds < 0) {
-						tmr.stop();
-					}else{
-						tmr.start(user.ID, in_seconds, pass_back);
-					}
-					showTimers();
-					return;
-				}
-			}
-			if (in_seconds < 0) {
-				addMessageLog("Server", "do_set_timer", "Error: Can't stop timer. Timer with this key doesn't exist");
-				return;
-			}
-			tmr = new GameTimer(user.ID, key, in_seconds, pass_back,do_timer);
-			aTimers.push(tmr);
-			showTimers();
-		}
 	}
 }
 
@@ -1847,7 +1698,6 @@ import flash.net.LocalConnection;
 import flash.text.TextField;
 import flash.text.TextFieldType;
 import main.*;
-import flash.utils.Timer;
 import flash.events.*;
 
 class User {
@@ -1924,77 +1774,6 @@ class User {
 	}
 }
 
-class GameTimer {
-	private var key:String;
-	private var pass_back:Object;
-	private var on_tick:Function;
-	private var user_id:int;
-	private var tmr:Timer;
-	private var expiration:Date;
-	private var submition:Date;
-	private var in_seconds:int;
-	
-	public function get Key():String {
-		return key;
-	}
-	
-	public function get UserID():int {
-		return user_id;
-	}
-	
-	public function get PassBack():Object{
-		return pass_back;
-	}
-	
-	public function get Submition():Date{
-		return submition;
-	}
-	
-	public function get Expiration():Date{
-		return expiration;
-	}
-	
-	public function get InSeconds():int{
-		return in_seconds;
-	}
-	
-	public function get Started():Boolean{
-		return tmr.running;
-	}
-	
-	public function GameTimer(_user_id:int, _key:String, _in_seconds:int, _pass_back:Object, _on_tick:Function) {
-		user_id = _user_id;
-		key = _key;
-		pass_back = _pass_back;
-		on_tick = _on_tick;
-		in_seconds=_in_seconds;
-		submition=new Date();
-		expiration=new Date(submition.getTime()+in_seconds*1000);
-		
-		tmr = new Timer(_in_seconds * 1000, 1);
-		tmr.addEventListener(TimerEvent.TIMER, timer_tick);
-		tmr.start();
-	}
-	
-	public function stop():void {
-		tmr.stop();
-	}
-	
-	public function start(_user_id:int, _in_seconds:int, _pass_back:Object):void {
-		user_id = _user_id;
-		pass_back = _pass_back;
-		tmr.delay = _in_seconds * 1000;
-		in_seconds=_in_seconds;
-		submition=new Date();
-		expiration=new Date(submition.getTime()+in_seconds*1000);
-		tmr.start();
-	}
-	
-	private function timer_tick(evt:TimerEvent):void {
-		tmr.stop();
-		on_tick(user_id,key,in_seconds, pass_back);
-	}
-}
 
 class Message {
 	public var sender:String;

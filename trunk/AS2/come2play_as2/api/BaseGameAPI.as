@@ -189,14 +189,6 @@ import come2play_as2.api.*;
 			//got_secure_stored_match_state(secret_level:Number, user_entry:UserEntry)
 			return [AS3_vs_AS2.as_int(secret_level), new UserEntry(key, value, user_id)];
 		}
-		public function translate_do_set_timer(in_seconds:Number, entry:Entry):Array {
-			//do_set_timer(key:String, in_seconds:Number, pass_back:Object/*Serializable*/)
-			return [entry.key, in_seconds, entry.value];
-		}
-		public function translate_got_timer(from_user_id:Number, key:String, in_seconds:Number, pass_back:Object/*Serializable*/):Array {
-			//got_timer(in_seconds:Number, user_entry:UserEntry)
-			return [in_seconds, new UserEntry(key, pass_back, from_user_id)];
-		}		
 		public function translate_do_juror_store_match_state(secret_level:Number, user_entry:UserEntry):Array {
 			//do_juror_store_match_state(secret_level:Number, key:String, value:Object/*Serializable*/, for_user_id:Number)
 			return [secret_level, user_entry.key, user_entry.value, user_entry.user_id];

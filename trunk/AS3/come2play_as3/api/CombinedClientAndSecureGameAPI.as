@@ -22,8 +22,6 @@ package come2play_as3.api {
 		public function got_stored_match_state(user_entry:UserEntry):void {}
 		public function do_send_message(to_user_ids:Array/*int*/, value:Object/*Serializable*/):void { sendDoOperation('do_send_message', arguments); }
 		public function got_message(user_id:int, value:Object/*Serializable*/):void {}
-		public function do_set_timer(in_seconds:int, entry:Entry):void { sendDoOperation('do_set_timer', arguments); }
-		public function got_timer(in_seconds:int, user_entry:UserEntry):void {}
 		public function do_client_protocol_error_with_description(error_description:String):void { sendDoOperation('do_client_protocol_error_with_description', arguments); }
 		// For players and jurors
 		// user_id = -1 is for a juror, user_id>0 is for a user (player/viewer)

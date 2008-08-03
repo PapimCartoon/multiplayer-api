@@ -20,8 +20,6 @@ package come2play_as3.api {
 		,['got_stored_match_state', [['user_id','int'], ['key','String'], ['value','Object']] ]
 		,['do_send_message', [['to_user_ids','int[]'], ['value','Object']] ]
 		,['got_message', [['user_id','int'], ['value','Object']] ]
-		,['do_set_timer', [['key','String'], ['in_seconds','int'], ['value','Object']] ]
-		,['got_timer', [['user_id','int'], ['key','String'], ['in_seconds','int'], ['value','Object']] ]
 		,['do_client_protocol_error_with_description', [['error_description','String']] ]
 		,['do_connected_set_score', [['score','int']] ]
 		,['do_connected_match_over', [['did_win','boolean']] ]

@@ -20,8 +20,6 @@ package come2play_as3.api {
 		public function do_send_message(to_user_ids:Array/*int*/, value:Object/*Serializable*/):void { sendDoOperation('do_send_message', arguments); }
 		public function got_message(user_id:int, value:Object/*Serializable*/):void {}
 		
-		public function do_set_timer(in_seconds:int, entry:Entry):void { sendDoOperation('do_set_timer', arguments); }
-		public function got_timer(in_seconds:int, user_entry:UserEntry):void {}
 		
 		// secret_level is either PUBLIC=0, SECRET=1, TOPSECRET=2
 		public function do_juror_store_match_state(secret_level:int, user_entry:UserEntry):void { sendDoOperation('do_juror_store_match_state', arguments); }

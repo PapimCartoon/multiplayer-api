@@ -29,7 +29,6 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 			addBtnHandler("do_client_protocol_error_with_description");
 			addBtnHandler("do_store_match_state");
 			addBtnHandler("do_send_message");
-			addBtnHandler("do_set_timer");
 			super(my_graphics);
 			do_register_on_server();
 		} catch (err:Error) { 
@@ -108,9 +107,6 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 			case "do_send_message":
 				do_send_message(getIntArr("to_user_ids"), getObject("message_value"));
 				break;
-			case "do_set_timer":
-				do_set_timer(getInt("in_seconds"), new Entry(getInputText("timer_key"), getObject("pass_back")) );
-				break;
 			}
 		} catch (err:Error) { 
 			handleError(err);			
@@ -130,7 +126,7 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 		if (txt=="") return null;
 		var txt_arr:Array = txt.split(",");
 		var res:Array = [];
-		for (var i134:Number=0; i134<txt_arr.length; i134++) { var t:String = txt_arr[i134]; 
+		for (var i130:Number=0; i130<txt_arr.length; i130++) { var t:String = txt_arr[i130]; 
 			res.push(int(t));
 		}
 		return res;

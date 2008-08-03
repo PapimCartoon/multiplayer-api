@@ -31,7 +31,6 @@ public class TestClientGameAPI extends ClientGameAPI {
 			addBtnHandler("do_client_protocol_error_with_description");
 			addBtnHandler("do_store_match_state");
 			addBtnHandler("do_send_message");
-			addBtnHandler("do_set_timer");
 			super(my_graphics);
 			do_register_on_server();
 		} catch (err:Error) { 
@@ -109,9 +108,6 @@ public class TestClientGameAPI extends ClientGameAPI {
 				break;
 			case "do_send_message":
 				do_send_message(getIntArr("to_user_ids"), getObject("message_value"));
-				break;
-			case "do_set_timer":
-				do_set_timer(getInt("in_seconds"), new Entry(getInputText("timer_key"), getObject("pass_back")) );
 				break;
 			}
 		} catch (err:Error) { 

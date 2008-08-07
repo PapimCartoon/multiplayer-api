@@ -592,12 +592,17 @@ package main{
 			switch (methodName) {
 			case "got_general_info": 
 			case "got_user_info": 
-				combinedName = "match_state";
+			case "do_store_match_state": 
+			case "got_stored_match_state": 
+				combinedName = "entries";
+				break;
 			case "got_match_started": 
 				combinedName = "match_state";
+				break;
 			case "do_agree_on_match_over": 
 			case "do_juror_end_match": 
 				combinedName = "finished_players";
+				break;
 			}
 
 			for (var i:int=0; i<parameters.length; i++) {
@@ -608,6 +613,7 @@ package main{
 				case "user_ids": 
 				case "keys": 
 				case "values": 
+				case "secret_levels":
 				case "finished_player_ids": 
 				case "scores": 
 				case "pot_percentages": 
@@ -1479,7 +1485,16 @@ package main{
 				sendOperation(usr.GotChanel, "got_end_turn_of", [user.ID]);
 			}
 		}
-		public function do_store_match_state(user:User, key:String, data:Object):void {			
+		public function do_store_match_state(user:User, keys:Array/*String*/, datas:Array/*Object*/):void {
+			for (var i:int=0; i<keys.length; i++)
+				do_store_one_match_state(user, keys[i], datas[i]);
+			
+			showMatchState();
+			for each (var usr:User in aUsers) {
+				sendOperation(usr.GotChanel, "got_stored_match_state", [user.ID,keys,datas]);
+			}
+		}
+		private function do_store_one_match_state(user:User, key:String, data:Object):void {			
 			if (key == "") {
 				addMessageLog("Server", "do_store_match_state", "Error: Can't store match state, key is empty");
 				return;
@@ -1507,10 +1522,6 @@ package main{
 				aKeys.push(key);
 				aData.push(data);
 				aDataUsers.push(user.ID);
-			}
-			showMatchState();
-			for each (var usr:User in aUsers) {
-				sendOperation(usr.GotChanel, "got_stored_match_state", [user.ID,key,data]);
 			}
 		}
 		public function do_agree_on_match_over(user:User, user_ids:Array, scores:Array, pot_percentages:Array):void {			

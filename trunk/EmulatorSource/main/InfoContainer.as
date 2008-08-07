@@ -408,7 +408,6 @@ package main{
 				}
 				sendDoOperation(command_name, parameters);
 
-
 				MsgBox.Show("The command was send", "Message");
 			}catch (err:Error) {
 				MsgBox.Show(err.message, "Error");
@@ -420,6 +419,13 @@ package main{
 			try{
 				if (this.hasOwnProperty(methodName))
 					(this[methodName] as Function).apply(this, parameters);
+
+				if (methodName.substring(0,"got".length)=="got")
+					sendGotOperation(methodName, parameters);
+				else if (methodName.substring(0,"do".length)=="do")
+					sendDoOperation(methodName, parameters);
+				else throw Error("Illegal message prefix!");
+
 			} catch (err:Error) { 
 				MsgBox.Show(err.message, "Error: "+ err.getStackTrace());
 			}
@@ -432,11 +438,7 @@ package main{
         }
 		
 		//Got functions
-		public function got_general_info(keys:Array, datas:Array):void {
-				sendGotOperation("got_general_info", arguments);
-		}
 		public function got_user_info(user_id:int, keys:Array, values:Array):void {
-				sendGotOperation("got_user_info", arguments);
 				var info:UserInfo = new UserInfo();
 				info.userID = user_id;
 				info.isPlayer = false;
@@ -464,13 +466,10 @@ package main{
 		public function got_my_user_id(my_user_id:int):void { 
 				bStarted = true;
 				iMyID = my_user_id;
-				sendGotOperation("got_my_user_id", arguments);
 		}
-		public function got_match_started(players_user_id:Array, 
-				finished_player_ids:Array,
-				extra_match_info:Object, match_started_time:int,
-				user_ids:Array, keys:Array, datas:Array):void { 
-				sendGotOperation("got_match_started", arguments);
+		public function 
+				got_match_started(all_player_ids:Array/*int*/, finished_player_ids:Array/*int*/, extra_match_info:Object/*Serializable*/, match_started_time:int, 
+				user_ids:Array/*int*/, keys:Array/*String*/, values:Array/*Serializable*/, secret_levels:Array/*int*/):void { 
 				txtTurn.text = "";
 				lblWait.visible = false;
 				txtUsers.htmlText = "<b>Users:</b><br>";
@@ -495,9 +494,6 @@ package main{
 				
 				matchOverForIds(finished_player_ids);
 		}
-		public function got_stored_match_state(user_id:int, key:String, data:Object):void { 
-				sendGotOperation("got_stored_match_state", arguments);
-		}
 		private function matchOverForIds(user_ids:Array):void { 
 			if(user_ids.indexOf(iMyID)!=-1){
 				txtTurn.text = "Game over";
@@ -518,25 +514,19 @@ package main{
 			}
 		}
 		public function got_match_over(user_ids:Array):void { 
-				sendGotOperation("got_match_over", arguments);
-				matchOverForIds(user_ids);
+			matchOverForIds(user_ids);
 		}
 		public function got_end_turn_of(user_id:int):void { 
-				sendGotOperation("got_end_turn_of", arguments);
-				txtTurn.text = "";
+			txtTurn.text = "";
 		}
 		public function got_start_turn_of(user_id:int):void { 
-				sendGotOperation("got_start_turn_of", arguments);
-				var u:UserInfo = new UserInfo();
-				for (var i:int = 0; i < aUsers.length; i++) {
-					u = aUsers[i];
-					if (u.userID == user_id) {
-						txtTurn.text = u.userName + "'s turn";
-					}
+			var u:UserInfo = new UserInfo();
+			for (var i:int = 0; i < aUsers.length; i++) {
+				u = aUsers[i];
+				if (u.userID == user_id) {
+					txtTurn.text = u.userName + "'s turn";
 				}
-		}
-		public function got_message(user_id:int, data:Object):void {
-				sendGotOperation("got_message", arguments);
+			}
 		}
 		
 		//Do functions
@@ -553,27 +543,8 @@ package main{
 				do_store_trace("do_register_on_server","Error: " + err.getStackTrace());
 			}
 		}
-		public function do_agree_on_match_over(user_ids:Array, scores:Array, pot_percentages:Array):void {
-				sendDoOperation("do_agree_on_match_over", arguments);
-		}
-		public function do_store_match_state(key:String, data:Object):void {
-				sendDoOperation("do_store_match_state", arguments);
-		}
-		public function do_start_my_turn():void {
-				sendDoOperation("do_start_my_turn",arguments);
-		}
-		public function do_end_my_turn(next_turn_of_player_ids:Array):void {
-				sendDoOperation("do_end_my_turn", arguments);
-		}
-		public function do_store_trace(funcname:String, message:Object):void {
-				sendDoOperation("do_store_trace", arguments);
-		}
 		public function do_client_protocol_error_with_description(error_description:Object):void {
-				sendDoOperation("do_client_protocol_error_with_description", arguments);
 				MsgBox.Show(error_description.toString(), "Error");
-		}
-		public function do_send_message(to_user_ids:Array, data:Object):void {
-				sendDoOperation("do_send_message",arguments);
 		}
 	}
 }

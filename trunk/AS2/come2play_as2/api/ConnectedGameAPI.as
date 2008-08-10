@@ -19,5 +19,4 @@ import come2play_as2.api.*;
 		public function got_match_over(finished_player_ids:Array/*int*/):Void {}
 		
 		
-		
 	}

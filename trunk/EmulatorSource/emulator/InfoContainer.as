@@ -20,7 +20,6 @@ package emulator {
 		private var sOuterGotChanel:String;
 		private var lcInner:LocalConnection;
 		private var lcOuter:LocalConnection;
-		private var lcServer:LocalConnection;
 		private var aUsers:Array;
 		private var txtUsers:TextField;
 		private var txtTurn:TextField;
@@ -238,27 +237,35 @@ package emulator {
 			
 			sOuterPrefix = root.loaderInfo.parameters["prefix"];
 			sInnerPrefix = sOuterPrefix +Math.floor(Math.random() * 10000);
+			
+						
 			lcInner = new LocalConnection();
 			lcInner.client = this;
 			lcInner.addEventListener(StatusEvent.STATUS, onConnectionStatus);
 			lcOuter = new LocalConnection();
 			lcOuter.client = this;
 			lcOuter.addEventListener(StatusEvent.STATUS, onConnectionStatus);
-			lcServer = new LocalConnection();
-			lcServer.client = this;
-			lcServer.addEventListener(StatusEvent.STATUS, onConnectionStatus);
-			lcServer.connect("FRAMEWORK_SWF" + sInnerPrefix);
+			
+			sOuterDoChanel=Commands.getDoChanelString(sOuterPrefix);
+			sOuterGotChanel=Commands.getGotChanelString(sOuterPrefix);
+			lcOuter.connect(sOuterGotChanel);
+			sInnerDoChanel=Commands.getDoChanelString(sInnerPrefix);
+			sInnerGotChanel =Commands.getGotChanelString(sInnerPrefix);
+			lcInner.connect(sInnerDoChanel);
 			
 			var fromDelay:int = parseInt(root.loaderInfo.parameters["delay_from"]);
 			var toDelay:int = parseInt(root.loaderInfo.parameters["delay_to"]);
 			
-			var ds:DelaySending = new DelaySending();
-			ddsDoOperations = new DelayDoSomething(ds, fromDelay, toDelay);
-			ddsGotOperations = new DelayDoSomething(ds, fromDelay, toDelay);
+			ddsDoOperations = new DelayDoSomething(doSomething, fromDelay, toDelay);
+			ddsGotOperations = new DelayDoSomething(doSomething, fromDelay, toDelay);
 			
 			resizeStage(null);
 		}
 		
+		public function doSomething(obj:Object):void {
+			var msg:MessageToSend = obj as MessageToSend;
+			if (msg.channel!=null) lcInner.send(msg.channel, "localconnection_callback", msg.method, msg.args);
+		}
 		public function onConnectionStatus(evt:StatusEvent):void {
 			switch(evt.level) {
 				case "error":
@@ -424,17 +431,7 @@ package emulator {
 				if (methodName.substring(0,"got".length)=="got")
 					sendGotOperation(methodName, parameters);
 				else if (methodName.substring(0,"do".length)=="do") {
-					if (methodName=="do_register_on_server") {
-						var iChanel:int = parameters[0];
-						sOuterDoChanel="DO_CHANEL"+sOuterPrefix+"_" + iChanel;
-						sOuterGotChanel="GOT_CHANEL"+sOuterPrefix+"_" + iChanel;
-						lcOuter.connect(sOuterGotChanel);
-						sInnerDoChanel="DO_CHANEL"+sInnerPrefix+"_" + iChanel;
-						sInnerGotChanel = "GOT_CHANEL" + sInnerPrefix + "_" + iChanel;
-						lcInner.connect(sInnerDoChanel);
-						ddsDoOperations.doSomething(new MessageToSend("FRAMEWORK_SWF" + sOuterPrefix,"do_register_on_server",parameters));					
-					} else 
-						sendDoOperation(methodName, parameters);
+					sendDoOperation(methodName, parameters);
 				} else throw Error("Illegal message prefix!");
 				
 				
@@ -552,26 +549,6 @@ package emulator {
 import flash.net.*;
 import emulator.*;
 import flash.events.StatusEvent;
-
-class DelaySending implements DoSomethingI {
-	private var lcSend:LocalConnection;
-	
-	public function DelaySending() {
-		lcSend = new LocalConnection();
-		lcSend.addEventListener(StatusEvent.STATUS, onConnectionStatus);		
-	}
-	public function onConnectionStatus(evt:StatusEvent):void {
-		switch(evt.level) {
-			case "error":
-				trace("There is a LocalConnection error. Please test your game only inside the Come2Play emulator.");
-		}
-	}
-	
-	public function doSomething(obj:Object):void {
-		var msg:MessageToSend = obj as MessageToSend;
-		if (msg.channel!=null) lcSend.send(msg.channel, "localconnection_callback", msg.method, msg.args);
-	}
-}
 
 class MessageToSend extends Object{
 	public var channel:String;

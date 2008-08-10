@@ -10,14 +10,14 @@ package emulator
 	 * The order between events is kept!
 	 * The implementation uses a queue and dispatches the events at a random interval.
 	 */
-	public final class DelayDoSomething implements DoSomethingI
+	public final class DelayDoSomething 
 	{
-		private var passTo:DoSomethingI;
+		private var passTo:Function;
 		private var delay_from_milliseconds:int;
 		private var delay_to_milliseconds:int;
 		private var queue:Array = new Array();
 		
-		public function DelayDoSomething(passTo:DoSomethingI, 
+		public function DelayDoSomething(passTo:Function, 
 					delay_from_milliseconds:int, delay_to_milliseconds:int)	{
 			this.passTo = passTo;
 			this.delay_from_milliseconds = delay_from_milliseconds;
@@ -40,7 +40,7 @@ package emulator
 		private function doOneEvent():void {			
 			if (queue.length==0) throw new Error("Internal DelayDoSomething error!");
 			var topObj:Object = queue.shift();
-			passTo.doSomething(topObj);
+			passTo(topObj);
 		}
 		private function passEvent():void {
 			doOneEvent();
@@ -56,20 +56,14 @@ package emulator
 		}
 		
 		public static function doTest():void {
-			var d:DoSomethingI = new DelayDoSomething( new TestDelayDoSomething(), 500, 1000);
+			var d:DelayDoSomething = new DelayDoSomething(doSomething, 500, 1000);
 			d.doSomething("event1");
 			d.doSomething("event2");
 			d.doSomething("event3");
 			d.doSomething("event4");			
 		}
+		public static function doSomething(obj:Object):void {
+			trace("Got obj="+obj+" time="+getTimer());
+		}	
 	}
-}
-import flash.utils.getTimer;
-import flash.utils.setTimeout;
-
-import emulator.*;
-class TestDelayDoSomething implements DoSomethingI {
-	public function doSomething(obj:Object):void {
-		trace("Got obj="+obj+" time="+getTimer());
-	}		
 }

@@ -24,7 +24,7 @@ package come2play_as3.api {
 		public static const GENERAL_INFO_KEY_logo_swf_full_url:String = "logo_swf_full_url";
 		
 		
-		public static var DEFAULT_LOCALCONNECTION_HANDSHAKE_PREFIX:String = "42";
+		public static var DEFAULT_LOCALCONNECTION_PREFIX:String = "42";
 		
 		private static var someMovieClip:MovieClip;
 		public static function error(msg:String):void {
@@ -40,46 +40,40 @@ package come2play_as3.api {
 		public static function assert(val:Boolean, args:Array):void {
 			if (!val) BaseGameAPI.throwError("Assertion failed with arguments: "+args.join(" , "));
 		}
-		public static function getDoChanelString(sPrefix:String, iChanel:int):String {
-			return "DO_CHANEL"+sPrefix+"_" + iChanel;
+		public static function getDoChanelString(sPrefix:String):String {
+			return "DO_CHANEL_"+sPrefix;
 		}
-		public static function getGotChanelString(sPrefix:String, iChanel:int):String {
-			return "GOT_CHANEL"+sPrefix+"_" + iChanel;
-		}
-		public static function getHandshakeString(sPrefix:String):String {
-			return "FRAMEWORK_SWF"+sPrefix;
+		public static function getGotChanelString(sPrefix:String):String {
+			return "GOT_CHANEL_"+sPrefix;
 		}
 		// we use a LocalConnection to communicate with the container
-		private var lcUser:LocalConnection;  
-		private var iChanel:int;
+		private var lcUser:LocalConnection; 
 		private var sDoChanel:String;
 		private var sGotChanel:String;
-		private var sPrefix:String;
 		
 		//Constructor
 		public function BaseGameAPI(_someMovieClip:MovieClip) {
 			try{
 				someMovieClip = _someMovieClip;
 				var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(someMovieClip);
-				sPrefix = parameters["prefix"];
+				var sPrefix:String = parameters["prefix"];
 				if (sPrefix==null) sPrefix = parameters["?prefix"];
 				if (sPrefix==null) {
 					trace("WARNING: didn't find 'prefix' in the loader info parameters. Probably because you are doing testing locally.\n\n\n\n\n\n");
-					sPrefix = DEFAULT_LOCALCONNECTION_HANDSHAKE_PREFIX;
+					sPrefix = DEFAULT_LOCALCONNECTION_PREFIX;
 					new SinglePlayerEmulator(_someMovieClip);
 				}
 				if (!(sPrefix.charAt(0)>='0' && sPrefix.charAt(0)<='9')) { //it is not necessarily a number (in InfoContainer we concatenate two numbers using '_')
-					// calling a javascript function that should return the random fixed id
+					trace("calling a javascript function that should return the random fixed id");
 					var js_result:Object = ExternalInterface.call(sPrefix);
 					sPrefix = ''+js_result;
 				}
-				iChanel = Math.floor(Math.random() * 10000);
 				
 				lcUser = new LocalConnection();
 				AS3_vs_AS2.addStatusListener(lcUser, this, ["localconnection_callback"]);
 				
-				sDoChanel = getDoChanelString(sPrefix, iChanel);
-				sGotChanel = getGotChanelString(sPrefix, iChanel);
+				sDoChanel = getDoChanelString(sPrefix);
+				sGotChanel = getGotChanelString(sPrefix);
 				trace("Board connected on channel="+sGotChanel);
 				lcUser.connect(sGotChanel);
 			}catch (err:Error) { 
@@ -124,14 +118,12 @@ package come2play_as3.api {
 			}
         }
         protected function sendDoOperation(methodName:String, parameters:Array/*Object*/):void {
-			sendOperation(sDoChanel, methodName, translateCallbackParameters(methodName, parameters));
-        }
-        protected function sendOperation(connectionName:String, methodName:String, parameters:Array/*Object*/):void {
+        	parameters = translateCallbackParameters(methodName, parameters);
         	store_api_trace(["send operation", arguments]);
-			trace("sendOperation on channel="+connectionName+' for methodName='+methodName+' parameters='+parameters);
+			trace("sendOperation on channel="+sDoChanel+' for methodName='+methodName+' parameters='+parameters);
 			assertSerializable(parameters); // must be outside the try block or we'll get infinite recursion!			  
 			try{
-				lcUser.send(connectionName, "localconnection_callback", methodName, parameters);  
+				lcUser.send(sDoChanel, "localconnection_callback", methodName, parameters);  
 			}catch(err:Error) { 
 				passError(methodName, err);
 			}      	
@@ -262,7 +254,7 @@ package come2play_as3.api {
 		}
 		private function waitBeforeRegister():void {
 			trace("Now calling  do_register_on_server");
-			sendOperation(getHandshakeString(sPrefix), "do_register_on_server", [iChanel]);
+			sendDoOperation("do_register_on_server", []);
 		}
 		
 		public function do_store_trace(funcname:String, args:Object):void {

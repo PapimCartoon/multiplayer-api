@@ -204,7 +204,7 @@ function removeParam(num,obj){
                                     Logo:
                                 </td>
                                 <td>
-                                    <input name="logo" id="logo" size="50" type="text" value="logo.jpg" /><!-- <a href="#"><img src="question.gif" style="border-width:0px;" /> </a>-->
+                                    <input name="logo" id="logo" size="50" type="text" value="example_logo.jpg" /><!-- <a href="#"><img src="question.gif" style="border-width:0px;" /> </a>-->
                                 </td>
                             </tr>
                             <tr>
@@ -334,7 +334,8 @@ var viewers_num=0,players_num=0;
 var clients=new Array();
 var server;
 var single_popup;
-var flashvars="prefix="+Math.floor(Math.random()*1000000);
+var initPrefix = Math.floor(Math.random()*1000000);
+var flashvars="prefix=";
 var swf_width=520,swf_height=442;
 var unloading=false;
 function safeName() {
@@ -416,7 +417,7 @@ function btn_click(){
     if(document.getElementById("single_popup").checked){
         single_popup=window.open("SinglePopup.htm?"+addparams+old+"&single_popup=1","_blank","menubar=0,titlebar=0,toolbar=0,resizable=1,scrollbars=1");
     }else{
-        server=window.open("ServerWindow.htm?"+flashvars+"&"+addparams+old+"&single_popup=0","_blank","width=570,height=470,menubar=0,titlebar=0,toolbar=0,resizable=1,statusbar=0");
+        server=window.open("ServerWindow.htm?"+flashvars+initPrefix+"&"+addparams+old+"&single_popup=0","_blank","width=570,height=470,menubar=0,titlebar=0,toolbar=0,resizable=1,statusbar=0");
         var str="<a style=\"cursor:pointer;color:blue;\" onclick=\"serverClick();\">Server</a>";
 	clients=new Array();
 	for(i=0;i<(players_num+viewers_num);i++){
@@ -446,7 +447,7 @@ function clientClick(num){
     var from,to;
     to=document.getElementById("delay_to").value;
     from=document.getElementById("delay_from").value;
-	clients[num]=window.open("ClientWindow.htm?game="+ampSymb(safeName())+"&width="+swf_width+"&height="+swf_height+"&"+flashvars+old+"&delay_from="+from+"&delay_to="+to+"&old_container="+document.getElementById("old_container").value,"_blank","width="+swf_width+",height="+swf_height+",left="+(50*(num+1))+",top="+(50*(num+1))+",menubar=0,titlebar=0,toolbar=0,resizable=1");
+	clients[num]=window.open("ClientWindow.htm?game="+ampSymb(safeName())+"&width="+swf_width+"&height="+swf_height+"&"+flashvars+(initPrefix+num)+old+"&delay_from="+from+"&delay_to="+to+"&old_container="+document.getElementById("old_container").value,"_blank","width="+swf_width+",height="+swf_height+",left="+(50*(num+1))+",top="+(50*(num+1))+",menubar=0,titlebar=0,toolbar=0,resizable=1");
     }else{
 	clients[num].focus();
 

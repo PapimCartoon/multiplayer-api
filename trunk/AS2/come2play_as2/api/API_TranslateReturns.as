@@ -9,5 +9,4 @@ import come2play_as2.api.*;
 		public static function returns_do_agree_on_match_over(finished_player_ids:Array/*int*/, scores:Array/*int*/, pot_percentages:Array/*int*/):Array { return arguments; }
 		public static function returns_do_store_match_state(keys:Array/*String*/, values:Array/*Serializable*/, secret_levels:Array/*int*/):Array { return arguments; }
 		public static function returns_got_stored_match_state(user_id:Number, entries:Array/*Entry*/):Array { return arguments; }
-		public static function returns_do_juror_end_match(finished_player_ids:Array/*int*/, scores:Array/*int*/, pot_percentages:Array/*int*/):Array { return arguments; }
 	}

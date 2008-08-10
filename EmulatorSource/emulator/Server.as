@@ -58,7 +58,6 @@ package emulator {
 		private var txtTooltipMatchStartedTime:TextField;
 		private var cmbCommand:ComboBox;
 		private var cmbTarget:ComboBox;
-		private var sPrefix:String;
 		private var txtTooltip:TextField;
 		private var startWidth:Number;
 		private var startHeight:Number;
@@ -85,6 +84,9 @@ package emulator {
 		private var txtInfoDetails:TextField;
 		private var iInfoMode:int;
 		
+		public function showMsg(msg:String, title:String = ""):void {
+			MsgBox.Show(msg, title);
+		}
 		//Constructor
 		public function Server() {
 			this.stop();
@@ -466,36 +468,38 @@ package emulator {
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, MsgBox.keyDown);
 			
 			if (root.loaderInfo.parameters["prefix"] == null) {
-				MsgBox.Show("Parameter 'prefix' must be passed in the url.","Error");
+				showMsg("Parameter 'prefix' must be passed in the url.","Error");
 				return;
 			}
-			
-			sPrefix = root.loaderInfo.parameters["prefix"];
-			
-			lcFramework = new LocalConnection();
-			lcFramework.client = this;
-			lcFramework.addEventListener(StatusEvent.STATUS, onConnectionStatus);
-			lcFramework.connect("FRAMEWORK_SWF" + sPrefix);
 			
 			try{
 				User.PlayersNum = parseInt(root.loaderInfo.parameters["players_num"]);
 				if (isNaN(User.PlayersNum)) {
-					MsgBox.Show("Parameter 'players_num' must be passed in the url.","Error");
+					showMsg("Parameter 'players_num' must be passed in the url.","Error");
 					return;
 				}
 			}catch (err:Error) {
-				MsgBox.Show("Parameter 'players_num' must be passed in the url.","Error");
+				showMsg("Parameter 'players_num' must be passed in the url.","Error");
 				return;
 			}
 			try{
 				User.ViewersNum = parseInt(root.loaderInfo.parameters["viewers_num"]);
 				if (isNaN(User.ViewersNum)) {
-					MsgBox.Show("Parameter 'viewers_num' must be passed in the url.","Error");
+					showMsg("Parameter 'viewers_num' must be passed in the url.","Error");
 					return;
 				}
 			}catch (err:Error) {
-				MsgBox.Show("Parameter 'viewers_num' must be passed in the url.","Error");
+				showMsg("Parameter 'viewers_num' must be passed in the url.","Error");
 				return;
+			}
+			
+			
+			var sPrefix:int = int(root.loaderInfo.parameters["prefix"]);
+						
+			var total_users:int = User.PlayersNum + User.ViewersNum;
+			for (var user_index:int=0; user_index<total_users; user_index++) {
+				var u:User = new User(sPrefix+user_index, this);			
+				aUsers.push(u);
 			}
 			
 			aServerKeys = new Array();
@@ -506,7 +510,7 @@ package emulator {
 			}
 			
 			if (root.loaderInfo.parameters["game"] == null) {
-				MsgBox.Show("Parameter 'game' must be passed in the url.","Error");
+				showMsg("Parameter 'game' must be passed in the url.","Error");
 				return;
 			}
 			
@@ -531,47 +535,27 @@ package emulator {
 			shrParams.flush();
 		}
 		
-		
-
-		public function localconnection_callback(methodName:String, parameters:Array/*Object*/):void {
-			try{
-				trace("localconnection_callback: methodName="+methodName);
-				// only do_register_on_server
-				var func:Function = this[methodName] as Function;
-				func.apply(this, parameters);
-			} catch (err:Error) { 
-				MsgBox.Show(err.getStackTrace(), "Error");
-			}  
-		}
 		public function got_user_localconnection_callback(user:User, methodName:String, parameters:Array/*Object*/):void {			
 			try{
-				if (methodName=="do_finished_callback") return;
 				trace("got_user_localconnection_callback: user="+user.Name+" methodName="+methodName);
 				addMessageLog(user.Name, methodName, methodAndParams2String(methodName, parameters) );
 								
-				if (!bGameStarted) {
-					addMessageLog("Server", methodName, "Error: game not started");
-					return;
-				}
-				if (bGameEnded) {
-					addMessageLog("Server", methodName, "Error: game already end");
-					return;
-				}
-				switch(methodName) {
-				case "do_agree_on_match_over":
-				case "do_start_my_turn":
-				case "do_end_my_turn":
-				case "do_client_protocol_error_with_description":
-					var ongoing_ids:Array = getOngoingPlayerIds();
-					if (ongoing_ids.indexOf(user.ID) == -1) {
-						addMessageLog("Server", methodName, "Error: "+user.Name+" is viewer. Only players can call "+methodName+".");
+				if (methodName!="do_finished_callback" && 
+					methodName!="do_register_on_server" && 
+					methodName!="do_store_trace") {
+					if (!bGameStarted) {
+						addMessageLog("Server", methodName, "Error: game not started");
+						return;
+					}
+					if (bGameEnded) {
+						addMessageLog("Server", methodName, "Error: game already end");
 						return;
 					}
 				}
 				var func:Function = this[methodName] as Function;
 				func.apply(this, [user].concat(parameters));
 			} catch (err:Error) { 
-				MsgBox.Show(err.getStackTrace(), "Error");
+				showMsg(err.getStackTrace(), "Error");
 			}  
 		}
 		private function arrays2string(arrs:Array):String {
@@ -588,7 +572,7 @@ package emulator {
 			}
 			return res.length==0 ? "[]" : "[{"+res.join("}, {")+"}]";
 		}
-		private function methodAndParams2String(methodName:String, paramValues:Array/*Object*/):String {
+		public function methodAndParams2String(methodName:String, paramValues:Array/*Object*/):String {
 			var parameters:Array = Commands.findCommand(methodName);
 			var res:Array = [];
 			var arr2str:Array = [];
@@ -633,25 +617,6 @@ package emulator {
 			if (combinedName!=null) res.push(combinedName+"="+arrays2string(arr2str));
 			return res.join(", ");
 		}
-		private function sendOperation(connectionName:String, methodName:String, parameters:Array/*Object*/):void {
-			try {
-				lcFramework.send(connectionName, "localconnection_callback", methodName, parameters); 
-				var name:String = null;
-				var u:User;
-				for each (u in aUsers) {
-					if (u.GotChanel == connectionName) {
-						name = u.Name;
-						break;
-					}
-				}
-				if (name == null) {
-					return;
-				}
-				addMessageLog(name, methodName, methodAndParams2String(methodName, parameters) );
-			}catch(err:Error) { 
-				MsgBox.Show(err.getStackTrace(), "Error");
-			}      	
-        }
 		
 		private function getFinishedPlayerIds():Array/*int*/ {
 			var finished_player_ids:Array/*int*/ = [];
@@ -683,62 +648,7 @@ package emulator {
 		private function send_got_match_started(u:User):void {	
 			var finished_player_ids:Array = getFinishedPlayerIds();
 			u.Ended = finished_player_ids.indexOf(u.ID)!=-1;
-			sendOperation(u.GotChanel, "got_match_started", [aPlayers, finished_player_ids, extra_match_info, match_started_time, aDataUsers, aKeys, aData, null]);
-			//if (iCurTurn != -1) {
-			//	sendOperation(u.GotChanel, "got_start_turn_of", [iCurTurn]);
-			//}
-		}
-		public function do_register_on_server(chanel:int):void {
-			addMessageLog("Server", "do_register_on_server", "chanel="+chanel);
-		
-			var u:User = new User(chanel, sPrefix, this);
-			
-			aUsers.push(u);
-			
-			sendOperation(u.GotChanel, "got_my_user_id", [u.ID]);
-			sendOperation(u.GotChanel, "got_general_info", [aServerKeys, aServerDatas]);
-				
-			for each (var user:User in aUsers) {
-				if(user.ID!=u.ID){
-					sendOperation(u.GotChanel, "got_user_info", [user.ID,user.Keys,user.Params]);
-					sendOperation(user.GotChanel, "got_user_info", [u.ID, u.Keys, u.Params]);
-				}
-			}
-			
-			sendOperation(u.GotChanel, "got_user_info", [u.ID, u.Keys, u.Params]);
-			showUserInfo();
-			cmbTarget.addItem( { label: u.Name, data:u.ID } );
-			
-			
-			
-			
-			if (bGameStarted) send_got_match_started(u);
-			
-			
-			
-			if (aPlayers.length < User.PlayersNum) {
-				aPlayers.push(u.ID);
-				if (aPlayers.length == User.PlayersNum) {
-					if (!getStartParams()) {
-						return;
-					}
-					bGameStarted = true;
-					bGameEnded = false;
-					txtExtraMatchInfo.visible = false;
-					txtMatchStartedTime.visible = false;
-					txtTooltipExtraMatchInfo.visible = false;
-					txtTooltipMatchStartedTime.visible = false;
-					btnNewGame.visible = false;
-					btnCancelGame.visible = true;
-					btnSaveGame.visible = true;
-					btnLoadGame.visible = false;
-
-					for each (var usr:User in aUsers) {
-						send_got_match_started(usr);
-					}
-				}
-			}
-			
+			u.sendOperation("got_match_started", [aPlayers, finished_player_ids, extra_match_info, match_started_time, aDataUsers, aKeys, aData, null]);			
 		}
 		
 		public function addMessageLog(user:String, funcname:String, message:String):void {
@@ -766,7 +676,7 @@ package emulator {
 				if(txtMatchStartedTime.text!=""){
 					match_started_time=JSON.parse(txtMatchStartedTime.text) as int;
 					if (isNaN(match_started_time)) {
-						MsgBox.Show("Can't convert match_started_time to int","Error");
+						showMsg("Can't convert match_started_time to int","Error");
 						return false;
 					}
 				}
@@ -776,7 +686,7 @@ package emulator {
 				txtMatchStartedTime.text = match_started_time.toString();
 				return true;
 			}catch (err:Error) {
-				MsgBox.Show(err.getStackTrace(), "Error");
+				showMsg(err.getStackTrace(), "Error");
 			}
 			return false;
 		}
@@ -789,7 +699,7 @@ package emulator {
 		}
 		
 		private function loaderError(evt:IOErrorEvent):void {
-			MsgBox.Show("Can't load XML file", "Error");
+			showMsg("Can't load XML file", "Error");
 		}
 		
 		private function resizeStage(evt:Event):void {
@@ -1144,7 +1054,7 @@ package emulator {
 							tblInfo.verticalScrollPosition = tblInfo.maxVerticalScrollPosition+30;
 						}
 					}catch (err:Error) {
-						MsgBox.Show(err.getStackTrace(), "Error");
+						showMsg(err.getStackTrace(), "Error");
 					}
 				}
 				txtInfo.text="";
@@ -1159,7 +1069,7 @@ package emulator {
 			if(ExternalInterface.available){
 				ExternalInterface.call("toClipboard", str);
 			}else {
-				MsgBox.Show("ExternalInterface doesn't available. Please, check your security settings.", "Security Error");
+				showMsg("ExternalInterface doesn't available. Please, check your security settings.", "Security Error");
 			}
 		}
 		
@@ -1203,13 +1113,11 @@ package emulator {
 					usr.Ended = true;
 				}
 			}
-			for each (usr in aUsers) {
-				sendOperation(usr.GotChanel, "got_match_over", [arr]);
-			}
+			broadcast("got_match_over", [arr]);
 		}
 		
 		private function btnQuestionClick(evt:MouseEvent):void {
-			MsgBox.Show("When starting a new game, you should enter two values that will be passed in the callback got_match_started: extra_match_info of type Object and match_started_time of type int");
+			showMsg("When starting a new game, you should enter two values that will be passed in the callback got_match_started: extra_match_info of type Object and match_started_time of type int");
 		}
 		
 		private function btnLoadGameClick(evt:MouseEvent):void {
@@ -1286,7 +1194,7 @@ package emulator {
 				}
 			}
 			pnlLoad.visible = false;
-			MsgBox.Show("Saved game was loaded","Message");
+			showMsg("Saved game was loaded","Message");
 		}
 		
 		private function enableSavedGames():void {
@@ -1308,7 +1216,7 @@ package emulator {
 
 			pnlLoad.visible = false;
 			showSavedGames();
-			MsgBox.Show("Saved game was deleted","Message");
+			showMsg("Saved game was deleted","Message");
 			enableSavedGames();
 		}
 		
@@ -1350,7 +1258,7 @@ package emulator {
 			txtSaveName.text = "";
 			pnlSave.visible = false;
 			showSavedGames();
-			MsgBox.Show("The game was saved", "Message");
+			showMsg("The game was saved", "Message");
 			enableSavedGames();
 		}
 		
@@ -1441,17 +1349,62 @@ package emulator {
 
 				for each (usr in aUsers) {
 					if(usr.ID==target || target==-1){						
-						sendOperation(usr.GotChanel, command_name, parameters);
+						usr.sendOperation(command_name, parameters);
 					}
 				}
-				MsgBox.Show("Command was send", "Message");
+				showMsg("Command was send", "Message");
 			}catch (err:Error) {
-				MsgBox.Show(err.getStackTrace(), "Error");
+				showMsg(err.getStackTrace(), "Error");
 				addMessageLog("Server", "btnSendClick", "Error: " + err.getStackTrace());
 			}
 		}
 		
 		//Do functions
+		
+		private function broadcast(method:String, parameters:Array):void {
+			for each (var user:User in aUsers) {
+				user.sendOperation(method, parameters);
+			}
+		}	
+		public function do_register_on_server(u:User):void {
+			if (u.wasRegistered) throw new Error("User "+u.Name+" called do_register_on_server twice!");
+			u.wasRegistered = true;		
+			u.sendOperation("got_my_user_id", [u.ID]);
+			u.sendOperation("got_general_info", [aServerKeys, aServerDatas]);
+				
+			// important: note that this is not a broadcast!
+			for each (var user:User in aUsers) {
+				u.sendOperation("got_user_info", [user.ID, user.Keys, user.Params]);
+			}			
+			showUserInfo();
+			cmbTarget.addItem( { label: u.Name, data:u.ID } );
+			
+			if (bGameStarted) send_got_match_started(u);
+			
+			if (aPlayers.length < User.PlayersNum) {
+				aPlayers.push(u.ID);
+				if (aPlayers.length == User.PlayersNum) {
+					if (!getStartParams()) {
+						return;
+					}
+					bGameStarted = true;
+					bGameEnded = false;
+					txtExtraMatchInfo.visible = false;
+					txtMatchStartedTime.visible = false;
+					txtTooltipExtraMatchInfo.visible = false;
+					txtTooltipMatchStartedTime.visible = false;
+					btnNewGame.visible = false;
+					btnCancelGame.visible = true;
+					btnSaveGame.visible = true;
+					btnLoadGame.visible = false;
+
+					for each (var usr:User in aUsers) {
+						send_got_match_started(usr);
+					}
+				}
+			}
+			
+		}
 		public function do_start_my_turn(user:User):void {
 			isTurnBasedGame = true;
 			//if (aNextPlayers.length > 0 && aNextPlayers.indexOf(user.ID) == -1) {
@@ -1467,10 +1420,7 @@ package emulator {
 			//	return;
 			//}
 			iCurTurn = user.ID;
-			var usr:User;
-			for each (usr in aUsers) {
-				sendOperation(usr.GotChanel, "got_start_turn_of", [user.ID]);
-			}
+			broadcast("got_start_turn_of", [user.ID]);
 		}
 		public function do_end_my_turn(user:User, next_turn_of_player_ids:Array):void {
 			isTurnBasedGame = true;
@@ -1491,18 +1441,14 @@ package emulator {
 			iCurTurn = -1;
 			aNextPlayers = next_turn_of_player_ids;
 			var usr:User;
-			for each (usr in aUsers) {
-				sendOperation(usr.GotChanel, "got_end_turn_of", [user.ID]);
-			}
+			broadcast("got_end_turn_of", [user.ID]);
 		}
-		public function do_store_match_state(user:User, keys:Array/*String*/, datas:Array/*Object*/):void {
+		public function do_store_match_state(user:User, keys:Array/*String*/, datas:Array/*Object*/, secret_levels:Array):void {
 			for (var i:int=0; i<keys.length; i++)
 				do_store_one_match_state(user, keys[i], datas[i]);
 			
 			showMatchState();
-			for each (var usr:User in aUsers) {
-				sendOperation(usr.GotChanel, "got_stored_match_state", [user.ID,keys,datas]);
-			}
+			broadcast("got_stored_match_state", [user.ID,keys,datas,secret_levels]);
 		}
 		private function do_store_one_match_state(user:User, key:String, data:Object):void {			
 			if (key == "") {
@@ -1571,7 +1517,7 @@ package emulator {
 						break;
 					}else {
 						addMessageLog(user.Name, "do_agree_on_match_over", "Error: function parameters are different from previous call.");
-						MsgBox.Show("do_agree_on_match_over: Function parameters are different from previous call.");
+						showMsg("do_agree_on_match_over: Function parameters are different from previous call.");
 						aNextPlayers=new Array();
 						bGameEnded = true;
 						txtMatchStartedTime.text = "";
@@ -1588,9 +1534,8 @@ package emulator {
 								usr.Ended = true;
 							}
 						}
-						for each (usr in aUsers) {
-							sendOperation(usr.GotChanel, "got_match_over", [arr]);
-						}
+						
+						broadcast("got_match_over", [arr]);
 						showMatchOver();
 						return;
 					}
@@ -1635,8 +1580,9 @@ package emulator {
 						if (aPlayers.indexOf(usr.ID)!=-1 && !usr.Ended) {
 							cur_players++;
 						}
-						sendOperation(usr.GotChanel, "got_match_over",[over.user_ids]);
 					}
+					
+					broadcast("got_match_over",[over.user_ids]);
 					if (cur_players == 0) {     
 						aNextPlayers=new Array();
 						txtMatchStartedTime.text = "";
@@ -1656,7 +1602,7 @@ package emulator {
 			//addMessageLog(user.Name, funcname, JSON.stringify(message));
 		}
 		public function do_client_protocol_error_with_description(user:User, error_description:Object):void {
-			MsgBox.Show(JSON.stringify(error_description));
+			showMsg(JSON.stringify(error_description));
 			aNextPlayers=new Array();
 			bGameEnded = true;
 			txtMatchStartedTime.text = "";
@@ -1674,9 +1620,7 @@ package emulator {
 					usr.Ended = true;
 				}
 			}
-			for each (usr in aUsers) {
-				sendOperation(usr.GotChanel, "got_match_over", [arr]);
-			}
+			broadcast("got_match_over", [arr]);
 		}
 		private function getAllUserIds():Array {
 			var res:Array = [];
@@ -1692,27 +1636,6 @@ package emulator {
 		}			
 		public function do_finished_callback(user:User, methodName:String):void {
 			// todo: make sure every call is eventaully ended, and that do_all are always as a result of getting match state
-		}
-		public function do_send_message(user:User, to_user_ids:Array, data:Object):void {
-			
-			for each (var u_id:int in to_user_ids) {
-				if (getUser(u_id)==null) {
-					addMessageLog("Server", "do_send_message", "Error: User ID "+u_id+"doesn't exist.");
-					return;
-				}
-			}
-			var usr:User;
-			var arr:Array;
-			if (to_user_ids == null || to_user_ids.length == 0) {
-				arr = getAllUserIds();
-			}else {
-				arr = to_user_ids;
-			}
-			for each (usr in aUsers) {
-				if(arr.indexOf(usr.ID)!=-1){
-					sendOperation(usr.GotChanel, "got_message", [user.ID,data]);
-				}
-			}
 		}
 	}
 }
@@ -1735,6 +1658,7 @@ class User {
 	public var Params:Array;
 	public var Keys:Array;
 	public var Ended:Boolean = false;
+	public var wasRegistered:Boolean = false;
 	public static var PlayersNum:int = 0;
 	public static var ViewersNum:int = 0;
 	
@@ -1752,7 +1676,7 @@ class User {
 	}
 	
 	//Constructor
-	public function User(chanel:int, prefix:String, _server:Server) {
+	public function User(prefix:int, _server:Server) {
 		try{
 			
 			if (iNextId > PlayersNum + ViewersNum) {
@@ -1778,12 +1702,11 @@ class User {
 			}
 			
 			Params[0] = sName;
-			sDoChanel = "DO_CHANEL" + prefix+"_"+chanel;
-			sGotChanel = "GOT_CHANEL" + prefix+"_"+chanel;
+			sDoChanel = Commands.getDoChanelString(""+prefix);
+			sGotChanel = Commands.getGotChanelString(""+prefix);
 			
 			lcData = new LocalConnection();
-			lcData.client = this;
-			
+			lcData.client = this;			
 			lcData.addEventListener(StatusEvent.STATUS, onConnectionStatus);
 			lcData.connect(sDoChanel);
 			
@@ -1791,6 +1714,16 @@ class User {
 			sServer.addMessageLog("Server", "User", "Error: " + err.getStackTrace());
 		}
 	}
+	
+	public function sendOperation(methodName:String, parameters:Array/*Object*/):void {
+		try {
+			if (!wasRegistered) return;
+			lcData.send(sGotChanel, "localconnection_callback", methodName, parameters);
+			sServer.addMessageLog(sName, methodName, sServer.methodAndParams2String(methodName, parameters) );
+		}catch(err:Error) { 
+			sServer.showMsg(err.getStackTrace(), "Error");
+		}      	
+    }
 	
 	public function localconnection_callback(methodName:String, parameters:Array/*Object*/):void {
 		sServer.got_user_localconnection_callback(this, methodName, parameters);

@@ -22,7 +22,5 @@ package come2play_as3.api
 		public function is_PUBLIC():Boolean { return this==PUBLIC; }
 		public static const SECRET:EnumSecretLevel = new EnumSecretLevel(1,"SECRET");	
 		public function is_SECRET():Boolean { return this==SECRET; }
-		public static const TOPSECRET:EnumSecretLevel = new EnumSecretLevel(2,"TOPSECRET");
-		public function is_TOPSECRET():Boolean { return this==TOPSECRET; }
 	}
 }

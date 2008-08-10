@@ -1,5 +1,23 @@
 package emulator {
 	public class Commands {
+		// see BaseGameAPI
+		public static function getDoChanelString(sPrefix:String):String {
+			return "DO_CHANEL_"+sPrefix;
+		}
+		public static function getGotChanelString(sPrefix:String):String {
+			return "GOT_CHANEL_"+sPrefix;
+		}
+		
+		public static const USER_INFO_KEY_name:String = "name";
+		public static const USER_INFO_KEY_avatar_url:String = "avatar_url";
+		public static const USER_INFO_KEY_supervisor:String = "supervisor";
+		public static const USER_INFO_KEY_credibility:String = "credibility";
+		public static const USER_INFO_KEY_game_rating:String = "game_rating";
+		
+		// See method ClientGameAPI.got_general_info
+		public static const GENERAL_INFO_KEY_logo_swf_full_url:String = "logo_swf_full_url";
+		
+		
 		/*		
 			for each (var command_name:String in Commands.getCommandNames(true)) {
 			}
@@ -26,8 +44,7 @@ package emulator {
 		{
 			all_commands.push(['do_store_trace', [['name','String'] , ['message','Object']] ] );
 			all_commands.push(['do_finished_callback', [['methodName','String']] ]);
-			all_commands.push(['do_register_on_server', [['channel_id','int']] ]);
-			
+			all_commands.push(['do_register_on_server', [] ]);			
 		}
 
 		public static function findCommand(name:String):Array {

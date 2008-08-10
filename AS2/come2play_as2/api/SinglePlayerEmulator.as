@@ -21,22 +21,19 @@ import come2play_as2.api.*;
 	class come2play_as2.api.SinglePlayerEmulator
 	{
 		public static var DEFAULT_GENERAL_INFO:Array =
-			[ new Entry(BaseGameAPI.GENERAL_INFO_KEY_logo_swf_full_url,"example_logo.jpg") ];
+			[ new Entry(BaseGameAPI.GENERAL_INFO_KEY_logo_swf_full_url,"../Emulator/example_logo.jpg") ];
 		public static var DEFAULT_USER_INFO:Array =
 				[ 	new Entry(BaseGameAPI.USER_INFO_KEY_name, "User name"),
-					new Entry(BaseGameAPI.USER_INFO_KEY_avatar_url, "Avatar_1.gif")
+					new Entry(BaseGameAPI.USER_INFO_KEY_avatar_url, "../Emulator/Avatar_1.gif")
 				];
 		public static var DEFAULT_MATCH_STATE:Array = []; // you can change this and load a saved match
 		public static var DEFAULT_USER_ID:Number = 42; 
 		public static var DEFAULT_EXTRA_MATCH_INFO:String = ""; 
 		public static var DEFAULT_MATCH_STARTED_TIME:Number = 999;
 				
-		private var lcHandshake:LocalConnection; 
 		private var lcDoChannel:LocalConnection;  
-		private var iChanel:Number;
 		private var sDoChanel:String;
 		private var sGotChanel:String;
-		private var sPrefix:String;
 		
 		private var general_info_entries:Array/*Entry*/;
 		private var user_id:Number; 
@@ -48,21 +45,21 @@ import come2play_as2.api.*;
 		
 		public function SinglePlayerEmulator(graphics:MovieClip) {
 			api = new API_GotDispatcher(AS3_vs_AS2.delegate(this,this.sendCallback));
-			this.sPrefix = BaseGameAPI.DEFAULT_LOCALCONNECTION_HANDSHAKE_PREFIX;
 			this.general_info_entries = DEFAULT_GENERAL_INFO;
 			this.user_id = DEFAULT_USER_ID;
 			this.user_info_entries = DEFAULT_USER_INFO;
 			this.extra_match_info = DEFAULT_EXTRA_MATCH_INFO;
 			this.match_started_time = DEFAULT_MATCH_STARTED_TIME;
 			this.match_state = DEFAULT_MATCH_STATE;			
-									
-			lcHandshake = new LocalConnection();
-			var thisObj:SinglePlayerEmulator = this;
-			AS3_vs_AS2.addStatusListener(lcHandshake, this, ["localconnection_callback"]);
 			
-			var handShakeStr:String = BaseGameAPI.getHandshakeString(sPrefix);
-			trace("SinglePlayerEmulator connected on channel="+handShakeStr);
-			lcHandshake.connect(handShakeStr);
+			var sPrefix:String = BaseGameAPI.DEFAULT_LOCALCONNECTION_PREFIX;									
+			sDoChanel = BaseGameAPI.getDoChanelString(sPrefix);
+			sGotChanel = BaseGameAPI.getGotChanelString(sPrefix);
+			
+  			lcDoChannel = new LocalConnection();
+			AS3_vs_AS2.addStatusListener(lcDoChannel, this, ["localconnection_callback"]);
+			trace("SinglePlayerEmulator connected on channel="+sDoChanel);
+			lcDoChannel.connect(sDoChanel);
 						
 			AS3_vs_AS2.addKeyboardListener(graphics, AS3_vs_AS2.delegate(this, this.reportKeyDown));	
 		}		
@@ -74,7 +71,6 @@ import come2play_as2.api.*;
 			try {
 				switch(methodName) {
 				case "do_agree_on_match_over":
-				case "do_juror_end_match":
 					AS3_vs_AS2.myTimeout(AS3_vs_AS2.delegate(this, this.sendNewMatch), 2000);
 					break;
 				case "do_register_on_server":
@@ -86,15 +82,7 @@ import come2play_as2.api.*;
 			}					
   		}
   		private function do_register_on_server(iChannel:Number):Void {
-  			this.iChanel = iChannel;
-			sDoChanel = BaseGameAPI.getDoChanelString(sPrefix, iChanel);
-			sGotChanel = BaseGameAPI.getGotChanelString(sPrefix, iChanel);
-			
-  			lcDoChannel = new LocalConnection();
-			AS3_vs_AS2.addStatusListener(lcDoChannel, this, ["localconnection_callback"]);
-			lcDoChannel.connect(sDoChanel);
-			
-			api.API_got_my_user_id(user_id);
+  			api.API_got_my_user_id(user_id);
 			sendInfo("got_general_info", general_info_entries);
 			sendInfo("got_user_info", user_info_entries);	
 	 		sendNewMatch();

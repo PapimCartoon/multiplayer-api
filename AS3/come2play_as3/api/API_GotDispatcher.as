@@ -25,6 +25,5 @@ package come2play_as3.api {
 		public function API_got_start_turn_of(user_id:int):void { func('got_start_turn_of',arguments); }
 		public function API_got_end_turn_of(user_id:int):void { func('got_end_turn_of',arguments); }
 		public function API_got_stored_match_state(user_id:int, keys:Array/*String*/, values:Array/*Serializable*/, secret_levels:Array/*int*/):void { func('got_stored_match_state',arguments); }
-		public function API_got_message(user_id:int, value:Object/*Serializable*/):void { func('got_message',arguments); }
 	}
 }

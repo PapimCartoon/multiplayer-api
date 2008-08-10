@@ -19,7 +19,7 @@ import come2play_as2.api.*;
 		public static var GENERAL_INFO_KEY_logo_swf_full_url:String = "logo_swf_full_url";
 		
 		
-		public static var DEFAULT_LOCALCONNECTION_HANDSHAKE_PREFIX:String = "42";
+		public static var DEFAULT_LOCALCONNECTION_PREFIX:String = "42";
 		
 		private static var someMovieClip:MovieClip;
 		public static function error(msg:String):Void {
@@ -35,45 +35,40 @@ import come2play_as2.api.*;
 		public static function assert(val:Boolean, args:Array):Void {
 			if (!val) BaseGameAPI.throwError("Assertion failed with arguments: "+args.join(" , "));
 		}
-		public static function getDoChanelString(sPrefix:String, iChanel:Number):String {
-			return "DO_CHANEL"+sPrefix+"_" + iChanel;
+		public static function getDoChanelString(sPrefix:String):String {
+			return "DO_CHANEL_"+sPrefix;
 		}
-		public static function getGotChanelString(sPrefix:String, iChanel:Number):String {
-			return "GOT_CHANEL"+sPrefix+"_" + iChanel;
-		}
-		public static function getHandshakeString(sPrefix:String):String {
-			return "FRAMEWORK_SWF"+sPrefix;
+		public static function getGotChanelString(sPrefix:String):String {
+			return "GOT_CHANEL_"+sPrefix;
 		}
 		// we use a LocalConnection to communicate with the container
-		private var lcUser:LocalConnection;  
-		private var iChanel:Number;
+		private var lcUser:LocalConnection; 
 		private var sDoChanel:String;
 		private var sGotChanel:String;
-		private var sPrefix:String;
 		
 		//Constructor
 		public function BaseGameAPI(_someMovieClip:MovieClip) {
 			try{
 				someMovieClip = _someMovieClip;
 				var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(someMovieClip);
-				sPrefix = parameters["prefix"];
+				var sPrefix:String = parameters["prefix"];
 				if (sPrefix==null) sPrefix = parameters["?prefix"];
 				if (sPrefix==null) {
-					trace("WARNING: didn't find 'prefix' in the loader info parameters. Probably because you are doing testing locally.");
-					sPrefix = DEFAULT_LOCALCONNECTION_HANDSHAKE_PREFIX;
+					trace("WARNING: didn't find 'prefix' in the loader info parameters. Probably because you are doing testing locally.\n\n\n\n\n\n");
+					sPrefix = DEFAULT_LOCALCONNECTION_PREFIX;
+					new SinglePlayerEmulator(_someMovieClip);
 				}
-				if (!(sPrefix.charAt(0)>='0' && sPrefix.charAt(0)<='9')) {
-					// calling a javascript function that should return the random fixed id
+				if (!(sPrefix.charAt(0)>='0' && sPrefix.charAt(0)<='9')) { //it is not necessarily a number (in InfoContainer we concatenate two numbers using '_')
+					trace("calling a javascript function that should return the random fixed id");
 					var js_result:Object = ExternalInterface.call(sPrefix);
 					sPrefix = ''+js_result;
 				}
-				iChanel = Math.floor(Math.random() * 10000);
 				
 				lcUser = new LocalConnection();
 				AS3_vs_AS2.addStatusListener(lcUser, this, ["localconnection_callback"]);
 				
-				sDoChanel = getDoChanelString(sPrefix, iChanel);
-				sGotChanel = getGotChanelString(sPrefix, iChanel);
+				sDoChanel = getDoChanelString(sPrefix);
+				sGotChanel = getGotChanelString(sPrefix);
 				trace("Board connected on channel="+sGotChanel);
 				lcUser.connect(sGotChanel);
 			}catch (err:Error) { 
@@ -88,7 +83,7 @@ import come2play_as2.api.*;
 				AS3_vs_AS2.isString(obj)) return obj;
 			if (AS3_vs_AS2.isArray(obj)) {
 				var res:Array = [];
-				for (var i95:Number=0; i95<obj.length; i95++) { var o:Object = obj[i95]; 
+				for (var i90:Number=0; i90<obj.length; i90++) { var o:Object = obj[i90]; 
 					res.push( makeSerializable(o) );
 				}
 				return res;
@@ -101,7 +96,7 @@ import come2play_as2.api.*;
 				AS3_vs_AS2.isBoolean(obj) || 
 				AS3_vs_AS2.isString(obj)) return;
 			if (AS3_vs_AS2.isArray(obj)) {
-				for (var i108:Number=0; i108<obj.length; i108++) { var o:Object = obj[i108]; 
+				for (var i103:Number=0; i103<obj.length; i103++) { var o:Object = obj[i103]; 
 					assertSerializable(o);
 				}
 				return;
@@ -118,14 +113,12 @@ import come2play_as2.api.*;
 			}
         }
         private function sendDoOperation(methodName:String, parameters:Array/*Object*/):Void {
-			sendOperation(sDoChanel, methodName, translateCallbackParameters(methodName, parameters));
-        }
-        private function sendOperation(connectionName:String, methodName:String, parameters:Array/*Object*/):Void {
+        	parameters = translateCallbackParameters(methodName, parameters);
         	store_api_trace(["send operation", arguments]);
-			trace("sendOperation on channel="+connectionName+' for methodName='+methodName+' parameters='+parameters);
+			trace("sendOperation on channel="+sDoChanel+' for methodName='+methodName+' parameters='+parameters);
 			assertSerializable(parameters); // must be outside the try block or we'll get infinite recursion!			  
 			try{
-				lcUser.send(connectionName, "localconnection_callback", methodName, parameters);  
+				lcUser.send(sDoChanel, "localconnection_callback", methodName, parameters);  
 			}catch(err:Error) { 
 				passError(methodName, err);
 			}      	
@@ -205,7 +198,7 @@ import come2play_as2.api.*;
 			var keys:Array/*String*/ = [];
 			var values:Array/*Serializable*/ = [];
 			var secret_levels:Array/*int*/ = [];
-			for (var i212:Number=0; i212<entries.length; i212++) { var entry:Entry = entries[i212]; 
+			for (var i205:Number=0; i205<entries.length; i205++) { var entry:Entry = entries[i205]; 
 				keys.push(entry.key);
 				values.push(entry.value);
 				secret_levels.push(entry.secret_level.id);
@@ -256,7 +249,7 @@ import come2play_as2.api.*;
 		}
 		private function waitBeforeRegister():Void {
 			trace("Now calling  do_register_on_server");
-			sendOperation(getHandshakeString(sPrefix), "do_register_on_server", [iChanel]);
+			sendDoOperation("do_register_on_server", []);
 		}
 		
 		public function do_store_trace(funcname:String, args:Object):Void {

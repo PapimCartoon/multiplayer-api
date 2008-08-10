@@ -12,21 +12,27 @@ import come2play_as2.api.*;
 		public function got_my_user_id(my_user_id:Number):Void {}
 		public function got_match_started(all_player_ids:Array/*int*/, finished_player_ids:Array/*int*/, extra_match_info:Object/*Serializable*/, match_started_time:Number, match_state:Array/*UserEntry*/):Void {}
 		
-		public function do_agree_on_match_over(finished_players:Array/*PlayerMatchOver*/):Void { sendDoOperation('do_agree_on_match_over', arguments); }
+		// agree_on_match_over
+		public function do_all_end_match(finished_players:Array/*PlayerMatchOver*/):Void { sendDoOperation('do_all_end_match', arguments); }
 		public function got_match_over(finished_player_ids:Array/*int*/):Void {}
 		
-		public function do_start_my_turn():Void { sendDoOperation('do_start_my_turn', arguments); }
+		// if user_id==-1, then nobody has the turn.
+		// if milliseconds_in_turn==-1 then the default time per turn is used,
+		// and if milliseconds_in_turn==0 then the user should do some actions immediately.
+		public function do_all_set_turn(user_id:Number, milliseconds_in_turn:Number):Void { sendDoOperation('do_all_set_turn', arguments); }
 		public function got_start_turn_of(user_id:Number):Void {}
-		public function do_end_my_turn(next_turn_of_player_ids:Array/*int*/):Void { sendDoOperation('do_end_my_turn', arguments); }
 		public function got_end_turn_of(user_id:Number):Void {}
 		
 		public function do_store_match_state(entries:Array/*Entry*/):Void { sendDoOperation('do_store_match_state', arguments); }
 		public function got_stored_match_state(user_id:Number, entries:Array/*Entry*/):Void {}
 		
-		public function do_send_message(to_user_ids:Array/*int*/, value:Object/*Serializable*/):Void { sendDoOperation('do_send_message', arguments); }
-		public function got_message(user_id:Number, value:Object/*Serializable*/):Void {}
+		// if to_user_id==-1, then the entry becomes PUBLIC
+		public function do_all_reveal_state(key:String, to_user_id:Number):Void { sendDoOperation('do_all_reveal_state', arguments); }
+		public function do_all_shuffle_state(keys:Array/*String*/):Void { sendDoOperation('do_all_shuffle_state', arguments); }
 		
-		public function do_client_protocol_error_with_description(error_description:String):Void { sendDoOperation('do_client_protocol_error_with_description', arguments); }
+		// old name: do_client_protocol_error_with_description
+		public function do_all_found_hacker(user_id:Number, error_description:String):Void { sendDoOperation('do_all_found_hacker', arguments); }
+		
 		
 		
 	}

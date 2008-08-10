@@ -18,17 +18,14 @@ package come2play_as3.api {
 		public function got_start_turn_of(user_id:int):void {}
 		public function do_end_my_turn(next_turn_of_player_ids:Array/*int*/):void { sendDoOperation('do_end_my_turn', arguments); }
 		public function got_end_turn_of(user_id:int):void {}
-		public function do_store_match_state(entry:Entry):void { sendDoOperation('do_store_match_state', arguments); }
-		public function got_stored_match_state(user_entry:UserEntry):void {}
+		public function do_store_match_state(entries:Array/*Entry*/):void { sendDoOperation('do_store_match_state', arguments); }
+		public function got_stored_match_state(user_id:int, entries:Array/*Entry*/):void {}
 		public function do_send_message(to_user_ids:Array/*int*/, value:Object/*Serializable*/):void { sendDoOperation('do_send_message', arguments); }
 		public function got_message(user_id:int, value:Object/*Serializable*/):void {}
 		public function do_client_protocol_error_with_description(error_description:String):void { sendDoOperation('do_client_protocol_error_with_description', arguments); }
 		// For players and jurors
 		// user_id = -1 is for a juror, user_id>0 is for a user (player/viewer)
-		// secret_level is either PUBLIC=0, SECRET=1, TOPSECRET=2
-		public function do_juror_store_match_state(secret_level:int, user_entry:UserEntry):void { sendDoOperation('do_juror_store_match_state', arguments); }
-		public function do_user_store_match_state(secret_level:int, entry:Entry):void { sendDoOperation('do_user_store_match_state', arguments); }
-		public function got_secure_stored_match_state(secret_level:int, user_entry:UserEntry):void {}
+		// to reveal secret match state
 		public function do_juror_unfold_match_state(key:String, to_user_id:int):void { sendDoOperation('do_juror_unfold_match_state', arguments); }
 		public function do_juror_shuffle_match_state(keys:Array/*String*/):void { sendDoOperation('do_juror_shuffle_match_state', arguments); }
 		public function do_juror_set_turn(turn_of_player_id:int):void { sendDoOperation('do_juror_set_turn', arguments); }

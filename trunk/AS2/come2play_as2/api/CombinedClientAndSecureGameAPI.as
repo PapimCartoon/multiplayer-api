@@ -17,17 +17,14 @@ import come2play_as2.api.*;
 		public function got_start_turn_of(user_id:Number):Void {}
 		public function do_end_my_turn(next_turn_of_player_ids:Array/*int*/):Void { sendDoOperation('do_end_my_turn', arguments); }
 		public function got_end_turn_of(user_id:Number):Void {}
-		public function do_store_match_state(entry:Entry):Void { sendDoOperation('do_store_match_state', arguments); }
-		public function got_stored_match_state(user_entry:UserEntry):Void {}
+		public function do_store_match_state(entries:Array/*Entry*/):Void { sendDoOperation('do_store_match_state', arguments); }
+		public function got_stored_match_state(user_id:Number, entries:Array/*Entry*/):Void {}
 		public function do_send_message(to_user_ids:Array/*int*/, value:Object/*Serializable*/):Void { sendDoOperation('do_send_message', arguments); }
 		public function got_message(user_id:Number, value:Object/*Serializable*/):Void {}
 		public function do_client_protocol_error_with_description(error_description:String):Void { sendDoOperation('do_client_protocol_error_with_description', arguments); }
 		// For players and jurors
 		// user_id = -1 is for a juror, user_id>0 is for a user (player/viewer)
-		// secret_level is either PUBLIC=0, SECRET=1, TOPSECRET=2
-		public function do_juror_store_match_state(secret_level:Number, user_entry:UserEntry):Void { sendDoOperation('do_juror_store_match_state', arguments); }
-		public function do_user_store_match_state(secret_level:Number, entry:Entry):Void { sendDoOperation('do_user_store_match_state', arguments); }
-		public function got_secure_stored_match_state(secret_level:Number, user_entry:UserEntry):Void {}
+		// to reveal secret match state
 		public function do_juror_unfold_match_state(key:String, to_user_id:Number):Void { sendDoOperation('do_juror_unfold_match_state', arguments); }
 		public function do_juror_shuffle_match_state(keys:Array/*String*/):Void { sendDoOperation('do_juror_shuffle_match_state', arguments); }
 		public function do_juror_set_turn(turn_of_player_id:Number):Void { sendDoOperation('do_juror_set_turn', arguments); }

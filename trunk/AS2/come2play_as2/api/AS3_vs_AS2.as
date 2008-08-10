@@ -106,6 +106,9 @@ class come2play_as2.api.AS3_vs_AS2 {
 		var dup:MovieClip = graphics.duplicateMovieClip(name, graphics._parent.getNextHighestDepth() );
 		//trace("duplicateMovieClip: graphics="+graphics+" name="+name+" dup="+dup+" _root.Square_0_0="+_root["Square_0_0"] );
 		return dup;		
+	}	
+	public static function removeMovie(graphics:MovieClip, name:String):Void {
+		graphics.removeMovieClip( graphics._parent[name] );
 	}
 	public static function addKeyboardListener(graphics:MovieClip, func:Function):Void {
 		var myListener:Object = {};

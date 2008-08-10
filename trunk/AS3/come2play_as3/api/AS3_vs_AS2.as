@@ -7,7 +7,6 @@ import flash.display.MovieClip;
 import flash.events.*;
 import flash.net.LocalConnection;
 import flash.net.URLRequest;
-import flash.system.System;
 import flash.text.TextField;
 import flash.utils.getDefinitionByName;
 import flash.utils.getQualifiedClassName;
@@ -116,11 +115,15 @@ public final class AS3_vs_AS2
 		target.y = y+y_delta;		
 	} 	
 	public static function duplicateMovie(graphics:MovieClip, name:String):MovieClip {
-		var _Class:Class = getDefinitionByName(getQualifiedClassName(graphics)) as Class;
+		var className:String = getQualifiedClassName(graphics);
+		var _Class:Class = getDefinitionByName(className) as Class;
 		var dup:MovieClip = new _Class();
 		dup.name = name;
 		graphics.parent.addChild(dup);
-		return dup;		
+		return dup;
+	}
+	public static function removeMovie(graphics:MovieClip, name:String):void {
+		graphics.parent.removeChild( graphics.parent.getChildByName(name) );
 	}
 	public static function addKeyboardListener(graphics:MovieClip, func:Function):void {
 		addKeyboardListener2(true, graphics, func);
@@ -139,6 +142,7 @@ public final class AS3_vs_AS2
 			});	
 	}
 	public static function showError(graphics:MovieClip, msg:String):void {
+		trace("Showing error: "+msg);
 		if (graphics==null) return;
 		var child:TextField = new TextField();
 		child.text = msg;

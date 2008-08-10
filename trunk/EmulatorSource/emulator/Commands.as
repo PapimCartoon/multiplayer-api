@@ -1,5 +1,4 @@
-package main{
-	import come2play_as3.api.*;
+package emulator {
 	public class Commands {
 		/*		
 			for each (var command_name:String in Commands.getCommandNames(true)) {
@@ -26,6 +25,9 @@ package main{
 		private static var all_commands:Array = SummaryGameAPI.SUMMARY_API;
 		{
 			all_commands.push(['do_store_trace', [['name','String'] , ['message','Object']] ] );
+			all_commands.push(['do_finished_callback', [['methodName','String']] ]);
+			all_commands.push(['do_register_on_server', [['channel_id','int']] ]);
+			
 		}
 
 		public static function findCommand(name:String):Array {

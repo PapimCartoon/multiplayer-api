@@ -104,7 +104,7 @@ public class TestClientGameAPI extends ClientGameAPI {
 				do_client_protocol_error_with_description(getInputText("error_description"));
 				break;
 			case "do_store_match_state":
-				do_store_match_state( new Entry(getInputText("state_key"), getObject("state_value")) );
+				do_store_match_state( [new Entry(getInputText("state_key"), getObject("state_value"))] );
 				break;
 			case "do_send_message":
 				do_send_message(getIntArr("to_user_ids"), getObject("message_value"));

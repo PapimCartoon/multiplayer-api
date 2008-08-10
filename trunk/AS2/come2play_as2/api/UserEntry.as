@@ -6,7 +6,8 @@ import come2play_as2.api.*;
 			super(key, value);
 			this.user_id = user_id;
 		}
-		/*override*/ public function toString():String {
-			return "UserEntry: user_id="+user_id+" key="+key+" value="+value;
+		/*override*/ public function fieldsToString():String {
+			return "user_id="+user_id+" "+super.fieldsToString();
 		}
+		/*override*/ public function getClassName():String { return "UserEntry"; }
 	}

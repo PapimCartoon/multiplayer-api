@@ -19,12 +19,7 @@ import come2play_as2.api.*;
 		public function do_send_message(to_user_ids:Array/*int*/, value:Object/*Serializable*/):Void { sendDoOperation('do_send_message', arguments); }
 		public function got_message(user_id:Number, value:Object/*Serializable*/):Void {}
 		
-		
-		// secret_level is either PUBLIC=0, SECRET=1, TOPSECRET=2
-		public function do_juror_store_match_state(secret_level:Number, user_entry:UserEntry):Void { sendDoOperation('do_juror_store_match_state', arguments); }
-		public function do_user_store_match_state(secret_level:Number, entry:Entry):Void { sendDoOperation('do_user_store_match_state', arguments); }
-		public function got_secure_stored_match_state(secret_level:Number, user_entry:UserEntry):Void {}
-		
+		// to reveal secret match state
 		public function do_juror_unfold_match_state(key:String, to_user_id:Number):Void { sendDoOperation('do_juror_unfold_match_state', arguments); }
 		public function do_juror_shuffle_match_state(keys:Array/*String*/):Void { sendDoOperation('do_juror_shuffle_match_state', arguments); }
 		

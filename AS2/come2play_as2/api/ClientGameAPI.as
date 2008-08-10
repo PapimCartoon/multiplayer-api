@@ -20,8 +20,8 @@ import come2play_as2.api.*;
 		public function do_end_my_turn(next_turn_of_player_ids:Array/*int*/):Void { sendDoOperation('do_end_my_turn', arguments); }
 		public function got_end_turn_of(user_id:Number):Void {}
 		
-		public function do_store_match_state(entry:Entry):Void { sendDoOperation('do_store_match_state', arguments); }
-		public function got_stored_match_state(user_entry:UserEntry):Void {}
+		public function do_store_match_state(entries:Array/*Entry*/):Void { sendDoOperation('do_store_match_state', arguments); }
+		public function got_stored_match_state(user_id:Number, entries:Array/*Entry*/):Void {}
 		
 		public function do_send_message(to_user_ids:Array/*int*/, value:Object/*Serializable*/):Void { sendDoOperation('do_send_message', arguments); }
 		public function got_message(user_id:Number, value:Object/*Serializable*/):Void {}

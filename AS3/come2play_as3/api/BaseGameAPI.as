@@ -11,8 +11,19 @@ package come2play_as3.api {
 	/**
 	 * See http://code.google.com/p/multiplayer-api
 	 */ 
-	public class BaseGameAPI
+	public class BaseGameAPI implements API_TranslateInterface
 	{
+		// See method ClientGameAPI.got_user_info
+		public static const USER_INFO_KEY_name:String = "name";
+		public static const USER_INFO_KEY_avatar_url:String = "avatar_url";
+		public static const USER_INFO_KEY_supervisor:String = "supervisor";
+		public static const USER_INFO_KEY_credibility:String = "credibility";
+		public static const USER_INFO_KEY_game_rating:String = "game_rating";
+		
+		// See method ClientGameAPI.got_general_info
+		public static const GENERAL_INFO_KEY_logo_swf_full_url:String = "logo_swf_full_url";
+		
+		
 		public static var DEFAULT_LOCALCONNECTION_HANDSHAKE_PREFIX:String = "42";
 		
 		private static var someMovieClip:MovieClip;
@@ -25,6 +36,9 @@ package come2play_as3.api {
 		public static function throwError(msg:String):void {
 			error("Throwing an error with message="+msg+"." + (!AS3_vs_AS2.isAS3 ? "" :  "The error was thrown in this location="+AS3_vs_AS2.error2String(new Error())));
 			throw new Error(msg);
+		}		
+		public static function assert(val:Boolean, args:Array):void {
+			if (!val) BaseGameAPI.throwError("Assertion failed with arguments: "+args.join(" , "));
 		}
 		public static function getDoChanelString(sPrefix:String, iChanel:int):String {
 			return "DO_CHANEL"+sPrefix+"_" + iChanel;
@@ -50,10 +64,11 @@ package come2play_as3.api {
 				sPrefix = parameters["prefix"];
 				if (sPrefix==null) sPrefix = parameters["?prefix"];
 				if (sPrefix==null) {
-					trace("WARNING: didn't find 'prefix' in the loader info parameters. Probably because you are doing testing locally.");
+					trace("WARNING: didn't find 'prefix' in the loader info parameters. Probably because you are doing testing locally.\n\n\n\n\n\n");
 					sPrefix = DEFAULT_LOCALCONNECTION_HANDSHAKE_PREFIX;
+					new SinglePlayerEmulator(_someMovieClip);
 				}
-				if (!(sPrefix.charAt(0)>='0' && sPrefix.charAt(0)<='9')) {
+				if (!(sPrefix.charAt(0)>='0' && sPrefix.charAt(0)<='9')) { //it is not necessarily a number (in InfoContainer we concatenate two numbers using '_')
 					// calling a javascript function that should return the random fixed id
 					var js_result:Object = ExternalInterface.call(sPrefix);
 					sPrefix = ''+js_result;
@@ -154,57 +169,54 @@ package come2play_as3.api {
 			if (getFunction(translate_name)==null) return parameters;
 			return AS3_vs_AS2.asArray(safeApplyFunction(translate_name, parameters));
 		}
-		private function translate_entries(keys:Array/*String*/, values:Array/*Serializable*/):Array {
+		private function translate_entries(keys:Array/*String*/, values:Array/*Serializable*/, secret_levels:Array/*int*/):Array {
 			var res:Array = [];
 			var len:int = keys.length;
 			if (len!=values.length) throwError("keys="+keys+" and values="+values+" must have the same length!");
-			for (var i:int = 0; i<len; i++)
-				res[i] = new Entry(AS3_vs_AS2.asString(keys[i]), values[i]);
+			for (var i:int = 0; i<len; i++) {
+				var entry:Entry = new Entry(AS3_vs_AS2.asString(keys[i]), values[i]);
+				if (secret_levels!=null) entry.secret_level = EnumSecretLevel.getFromId(secret_levels[i]);
+				res[i] = entry;
+			}
 			return res;
 		}
-		private function translate_user_entries(user_ids:Array/*int*/, keys:Array/*String*/, values:Array/*Serializable*/):Array {
+		private function translate_user_entries(user_ids:Array/*int*/, keys:Array/*String*/, values:Array/*Serializable*/, secret_levels:Array/*int*/):Array {
 			var res:Array = [];
 			var len:int = keys.length;
 			if (len!=values.length || len!=user_ids.length) throwError("keys="+keys+" and values="+values+" and user_ids="+user_ids+" must have the same length!");
-			for (var i:int = 0; i<len; i++)
-				res[i] = new UserEntry(AS3_vs_AS2.asString(keys[i]), values[i], AS3_vs_AS2.as_int(user_ids[i]));
+			for (var i:int = 0; i<len; i++) {
+				var entry:UserEntry = new UserEntry(AS3_vs_AS2.asString(keys[i]), values[i], AS3_vs_AS2.as_int(user_ids[i]));
+				if (secret_levels!=null) entry.secret_level = EnumSecretLevel.getFromId(secret_levels[i]); 
+				res[i] = entry;
+			}
 			return res;
 		}
 		public function translate_got_general_info(keys:Array/*String*/, values:Array/*Serializable*/):Array {
-			//got_general_info(entries:Array/*Entry*/)
-			return [translate_entries(keys, values)];
+			return API_TranslateReturns.returns_got_general_info(translate_entries(keys, values, null));
 		}
 		public function translate_got_user_info(user_id:int, keys:Array/*String*/, values:Array/*Serializable*/):Array {
-			//got_user_info(user_id:int, entries:Array/*Entry*/)
-			return [user_id, translate_entries(keys, values)];
+			return API_TranslateReturns.returns_got_user_info(user_id, translate_entries(keys, values, null) );
 		}
-		public function translate_got_match_started(			
-			player_ids:Array/*int*/, 
-			finished_player_ids:Array/*int*/,
-			extra_match_info:Object/*Serializable*/, match_started_time:int,
-			user_ids:Array/*int*/, keys:Array/*String*/, values:Array/*Serializable*/):Array {
-			//got_match_started(all_player_ids:Array/*int*/, finished_player_ids:Array/*int*/, extra_match_info:Object/*Serializable*/, match_started_time:int, match_state:Array/*UserEntry*/)
-			return [player_ids, finished_player_ids, extra_match_info, match_started_time, translate_user_entries(user_ids, keys, values) ];
+		public function translate_got_match_started(	
+			all_player_ids:Array/*int*/, finished_player_ids:Array/*int*/, 
+			extra_match_info:Object/*Serializable*/, match_started_time:int, 
+			user_ids:Array/*int*/, keys:Array/*String*/, values:Array/*Serializable*/, 
+			secret_levels:Array/*int*/):Array {
+			return API_TranslateReturns.returns_got_match_started(all_player_ids, finished_player_ids, extra_match_info, match_started_time, translate_user_entries(user_ids, keys, values, secret_levels) );
 		}
-		public function translate_got_stored_match_state(user_id:int, key:String, value:Object):Array {
-			//got_stored_match_state(user_entry:UserEntry)
-			return [new UserEntry(key, value, user_id)];
-		}		
-		public function translate_got_secure_stored_match_state(secret_level:int, user_id:int, key:String, value:Object):Array {
-			//got_secure_stored_match_state(secret_level:int, user_entry:UserEntry)
-			return [AS3_vs_AS2.as_int(secret_level), new UserEntry(key, value, user_id)];
+		public function translate_got_stored_match_state(user_id:int, keys:Array/*String*/, values:Array/*Serializable*/, secret_levels:Array/*int*/):Array {
+			return API_TranslateReturns.returns_got_stored_match_state(user_id, translate_entries(keys, values, secret_levels) );
 		}
-		public function translate_do_juror_store_match_state(secret_level:int, user_entry:UserEntry):Array {
-			//do_juror_store_match_state(secret_level:int, key:String, value:Object/*Serializable*/, for_user_id:int)
-			return [secret_level, user_entry.key, user_entry.value, user_entry.user_id];
-		}
-		public function translate_do_user_store_match_state(secret_level:int, entry:Entry):Array {
-			//do_user_store_match_state(secret_level:int, key:String, value:Object/*Serializable*/)
-			return [secret_level, entry.key, entry.value];
-		}
-		public function translate_do_store_match_state(entry:Entry):Array {
-			//do_store_match_state(key:String, value:Object/*Serializable*/)
-			return [entry.key, entry.value];
+		public function translate_do_store_match_state(entries:Array/*Entry*/):Array {
+			var keys:Array/*String*/ = [];
+			var values:Array/*Serializable*/ = [];
+			var secret_levels:Array/*int*/ = [];
+			for each (var entry:Entry in entries) {
+				keys.push(entry.key);
+				values.push(entry.value);
+				secret_levels.push(entry.secret_level.id);
+			}
+			return API_TranslateReturns.returns_do_store_match_state(keys, values, secret_levels);
 		}
 		public function translate_do_juror_end_match(finished_players:Array/*PlayerMatchOver*/):Array {
 			var finished_player_ids:Array/*int*/ = [];
@@ -216,11 +228,9 @@ package come2play_as3.api {
 				scores[i] = playerMatchOver.score;
 				pot_percentages[i] = playerMatchOver.pot_percentage;
 			}
-			//do_juror_end_match(finished_player_ids:Array/*int*/, scores:Array/*int*/, pot_percentages:Array/*int*/)
-			return [finished_player_ids, scores, pot_percentages];
-		}		
+			return API_TranslateReturns.returns_do_juror_end_match(finished_player_ids, scores, pot_percentages);
+		}
 		public function translate_do_agree_on_match_over(finished_players:Array/*PlayerMatchOver*/):Array {
-			//do_agree_on_match_over(player_ids:Array/*int*/, scores:Array/*int*/, pot_percentages:Array/*int*/)
 			return translate_do_juror_end_match(finished_players);
 		}
 		public function translate_got_keyboard_event(is_key_down:Boolean, charCode:int, keyCode:int, keyLocation:int, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean):Array {

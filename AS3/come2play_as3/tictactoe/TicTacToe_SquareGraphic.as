@@ -8,14 +8,14 @@ public final class TicTacToe_SquareGraphic
 {
 	public static const BTN_NONE:int = -2; 	
 	
-	private var graphic:TicTacToe_graphic;
+	private var graphic:TicTacToe_Main;
 	private var square:MovieClip;
 	private var btn:MovieClip;
 	private var row:int;
 	private var col:int;
 	private var logoContainer:MovieClip;
 		
-	public function TicTacToe_SquareGraphic(graphic:TicTacToe_graphic, square:MovieClip, row:int, col:int) {
+	public function TicTacToe_SquareGraphic(graphic:TicTacToe_Main, square:MovieClip, row:int, col:int) {
 		this.graphic = graphic;
 		this.square = square;
 		this.btn = AS3_vs_AS2.getMovieChild(square,"Btn_X_O");

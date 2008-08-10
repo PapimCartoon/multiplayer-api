@@ -1,4 +1,4 @@
-package main{
+package emulator {
 	import flash.display.*;
 	import flash.external.*;
 	import flash.net.SharedObject;

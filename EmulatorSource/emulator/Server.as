@@ -540,11 +540,12 @@ package emulator {
 				var func:Function = this[methodName] as Function;
 				func.apply(this, parameters);
 			} catch (err:Error) { 
-				MsgBox.Show(err.message, "Error");
+				MsgBox.Show(err.getStackTrace(), "Error");
 			}  
 		}
 		public function got_user_localconnection_callback(user:User, methodName:String, parameters:Array/*Object*/):void {			
 			try{
+				if (methodName=="do_finished_callback") return;
 				trace("got_user_localconnection_callback: user="+user.Name+" methodName="+methodName);
 				addMessageLog(user.Name, methodName, methodAndParams2String(methodName, parameters) );
 								
@@ -570,16 +571,19 @@ package emulator {
 				var func:Function = this[methodName] as Function;
 				func.apply(this, [user].concat(parameters));
 			} catch (err:Error) { 
-				MsgBox.Show(err.message, "Error");
+				MsgBox.Show(err.getStackTrace(), "Error");
 			}  
 		}
 		private function arrays2string(arrs:Array):String {
+			// keys, values, secret_levels
 			var res:Array = [];
 			for each (var name_arr:Array in arrs) {
 				var name:String = name_arr[0];
 				var arr:Array = name_arr[1];
-				for (var i:int = 0; i<arr.length; i++) {
-					res[i] = (res[i]==null ? "" : res[i]+", ") + name +"="+ JSON.stringify(arr[i]);
+				if (arr!=null) {
+					for (var i:int = 0; i<arr.length; i++) {
+						res[i] = (res[i]==null ? "" : res[i]+", ") + name +"="+ JSON.stringify(arr[i]);
+					}
 				}
 			}
 			return res.length==0 ? "[]" : "[{"+res.join("}, {")+"}]";
@@ -618,8 +622,8 @@ package emulator {
 				case "scores": 
 				case "pot_percentages": 
 					if (combinedName!=null) {
-						// arrays2string([ ["key", parameters[5]] , ["value", parameters[6]] , ["user_id", parameters[4]] ])
-						arr2str.push( [ param_name.substring(0,param_name.length-1), param_value ] );
+						var name_without_final_s:String = param_name.substring(0,param_name.length-1);
+						arr2str.push( [name_without_final_s , param_value ] );
 						break;
 					}
 				default:
@@ -645,7 +649,7 @@ package emulator {
 				}
 				addMessageLog(name, methodName, methodAndParams2String(methodName, parameters) );
 			}catch(err:Error) { 
-				MsgBox.Show(err.message, "Error");
+				MsgBox.Show(err.getStackTrace(), "Error");
 			}      	
         }
 		
@@ -686,21 +690,31 @@ package emulator {
 		}
 		public function do_register_on_server(chanel:int):void {
 			addMessageLog("Server", "do_register_on_server", "chanel="+chanel);
+		
 			var u:User = new User(chanel, sPrefix, this);
+			
 			aUsers.push(u);
+			
 			sendOperation(u.GotChanel, "got_my_user_id", [u.ID]);
 			sendOperation(u.GotChanel, "got_general_info", [aServerKeys, aServerDatas]);
+				
 			for each (var user:User in aUsers) {
 				if(user.ID!=u.ID){
 					sendOperation(u.GotChanel, "got_user_info", [user.ID,user.Keys,user.Params]);
 					sendOperation(user.GotChanel, "got_user_info", [u.ID, u.Keys, u.Params]);
 				}
 			}
+			
 			sendOperation(u.GotChanel, "got_user_info", [u.ID, u.Keys, u.Params]);
 			showUserInfo();
 			cmbTarget.addItem( { label: u.Name, data:u.ID } );
 			
+			
+			
+			
 			if (bGameStarted) send_got_match_started(u);
+			
+			
 			
 			if (aPlayers.length < User.PlayersNum) {
 				aPlayers.push(u.ID);
@@ -724,6 +738,7 @@ package emulator {
 					}
 				}
 			}
+			
 		}
 		
 		public function addMessageLog(user:String, funcname:String, message:String):void {
@@ -761,7 +776,7 @@ package emulator {
 				txtMatchStartedTime.text = match_started_time.toString();
 				return true;
 			}catch (err:Error) {
-				MsgBox.Show(err.message, "Error");
+				MsgBox.Show(err.getStackTrace(), "Error");
 			}
 			return false;
 		}
@@ -1129,7 +1144,7 @@ package emulator {
 							tblInfo.verticalScrollPosition = tblInfo.maxVerticalScrollPosition+30;
 						}
 					}catch (err:Error) {
-						MsgBox.Show(err.message, "Error");
+						MsgBox.Show(err.getStackTrace(), "Error");
 					}
 				}
 				txtInfo.text="";
@@ -1431,7 +1446,7 @@ package emulator {
 				}
 				MsgBox.Show("Command was send", "Message");
 			}catch (err:Error) {
-				MsgBox.Show(err.message, "Error");
+				MsgBox.Show(err.getStackTrace(), "Error");
 				addMessageLog("Server", "btnSendClick", "Error: " + err.getStackTrace());
 			}
 		}
@@ -1739,6 +1754,7 @@ class User {
 	//Constructor
 	public function User(chanel:int, prefix:String, _server:Server) {
 		try{
+			
 			if (iNextId > PlayersNum + ViewersNum) {
 				throw new Error("Too many users");
 			}
@@ -1753,19 +1769,24 @@ class User {
 					sName = "Viewer" + (iID - PlayersNum - 1);
 				}
 			}
+			
 			Keys = new Array();
 			Params = new Array();
 			for (var i:int = 0; sServer.root.loaderInfo.parameters["col" + i] != null;i++ ) {
 				Keys.push(sServer.root.loaderInfo.parameters["col" + i]);
 				Params.push(sServer.root.loaderInfo.parameters["val" + (iID - 1) + i]);
 			}
+			
 			Params[0] = sName;
 			sDoChanel = "DO_CHANEL" + prefix+"_"+chanel;
 			sGotChanel = "GOT_CHANEL" + prefix+"_"+chanel;
+			
 			lcData = new LocalConnection();
 			lcData.client = this;
+			
 			lcData.addEventListener(StatusEvent.STATUS, onConnectionStatus);
 			lcData.connect(sDoChanel);
+			
 		}catch (err:Error) {
 			sServer.addMessageLog("Server", "User", "Error: " + err.getStackTrace());
 		}

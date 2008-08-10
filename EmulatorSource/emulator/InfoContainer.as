@@ -311,10 +311,6 @@ package emulator {
 			loaded = true;
 		}
 		
-		public function doSomething(obj:Object):void {
-			
-		}
-		
 		private function onCommandSelect(evt:Event):void {
 			btnSend.visible = false;
 			txtTooltip.text = "";
@@ -427,9 +423,21 @@ package emulator {
 
 				if (methodName.substring(0,"got".length)=="got")
 					sendGotOperation(methodName, parameters);
-				else if (methodName.substring(0,"do".length)=="do")
-					sendDoOperation(methodName, parameters);
-				else throw Error("Illegal message prefix!");
+				else if (methodName.substring(0,"do".length)=="do") {
+					if (methodName=="do_register_on_server") {
+						var iChanel:int = parameters[0];
+						sOuterDoChanel="DO_CHANEL"+sOuterPrefix+"_" + iChanel;
+						sOuterGotChanel="GOT_CHANEL"+sOuterPrefix+"_" + iChanel;
+						lcOuter.connect(sOuterGotChanel);
+						sInnerDoChanel="DO_CHANEL"+sInnerPrefix+"_" + iChanel;
+						sInnerGotChanel = "GOT_CHANEL" + sInnerPrefix + "_" + iChanel;
+						lcInner.connect(sInnerDoChanel);
+						ddsDoOperations.doSomething(new MessageToSend("FRAMEWORK_SWF" + sOuterPrefix,"do_register_on_server",parameters));					
+					} else 
+						sendDoOperation(methodName, parameters);
+				} else throw Error("Illegal message prefix!");
+				
+				
 
 			} catch (err:Error) { 
 				MsgBox.Show(err.message, "Error: "+ err.getStackTrace());
@@ -535,19 +543,6 @@ package emulator {
 		}
 		
 		//Do functions
-		public function do_register_on_server(iChanel:int):void {
-			try {
-				sOuterDoChanel="DO_CHANEL"+sOuterPrefix+"_" + iChanel;
-				sOuterGotChanel="GOT_CHANEL"+sOuterPrefix+"_" + iChanel;
-				lcOuter.connect(sOuterGotChanel);
-				sInnerDoChanel="DO_CHANEL"+sInnerPrefix+"_" + iChanel;
-				sInnerGotChanel = "GOT_CHANEL" + sInnerPrefix + "_" + iChanel;
-				lcInner.connect(sInnerDoChanel);
-				ddsDoOperations.doSomething(new MessageToSend("FRAMEWORK_SWF" + sOuterPrefix,"do_register_on_server",arguments));
-			}catch(err:Error) { 
-				do_store_trace("do_register_on_server","Error: " + err.getStackTrace());
-			}
-		}
 		public function do_client_protocol_error_with_description(error_description:Object):void {
 				MsgBox.Show(error_description.toString(), "Error");
 		}
@@ -556,12 +551,20 @@ package emulator {
 
 import flash.net.*;
 import emulator.*;
+import flash.events.StatusEvent;
 
 class DelaySending implements DoSomethingI {
 	private var lcSend:LocalConnection;
 	
 	public function DelaySending() {
 		lcSend = new LocalConnection();
+		lcSend.addEventListener(StatusEvent.STATUS, onConnectionStatus);		
+	}
+	public function onConnectionStatus(evt:StatusEvent):void {
+		switch(evt.level) {
+			case "error":
+				trace("There is a LocalConnection error. Please test your game only inside the Come2Play emulator.");
+		}
 	}
 	
 	public function doSomething(obj:Object):void {

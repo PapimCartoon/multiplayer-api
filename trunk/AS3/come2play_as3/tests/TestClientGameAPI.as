@@ -1,4 +1,4 @@
-package come2play_as3.tests {
+﻿package come2play_as3.tests {
 import come2play_as3.api.*;
 import come2play_as3.util.*;
 

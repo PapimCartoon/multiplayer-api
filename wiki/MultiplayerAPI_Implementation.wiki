@@ -11,7 +11,7 @@ There are two issues:
   * how to determine the channel name that the container and game should use, and
   * how to translate objects of `Entry`, `UserEntry`, and `PlayerMatchOver`, to basic data types that are supported by LocalConnection.
 
-The later question is easier to answer:
+The later question:
 `BaseGameAPI` class translates these objects to basic data types, e.g., 
 an array of `UserEntry` is translated to 3 arrays: 
 `user_ids` of type `int[]`, `keys` of type `String[]`, and `values` of type `Object[]`.
@@ -20,40 +20,11 @@ what the translation should return is in `API_TranslateReturns.as`.
 
 `do_finished_callback` is called by the game after every time the container calls some callback `got_*`.
 
-The former question is slightly more complicated:
-To make sure the container and game use the same LocalConnection channel, there is a _handshake_ protocol to determine the channel name.
-This protocol supports multiple browser window or even multiple games in the same flash container. 
-The communication protocol (hand-shake) between the game and container is described below.
-
-The difficulty in the protocol is handling the case you have multiple _containers_, and that each _container_ may communicate with multiple _games_.
-For example, suppose you open multiple emulator windows. Then you have multiple _containers_ (emulators), and in each emulator you have multiple _games_.
-
-=== High level description of the protocol == 
-Both _game_ and _container_ get the same parameter, and use this parameter to talk to one another. On this talk, the _container_ tells the _game_ what will be the channel name that they will use for all future communication.
-
-The communication is two-way (thus we use two LocalConnection objects): the _game_ sends operations to the _container_, and the _container_ may call callbacks on the _game_.
-
-=== Low level description of the protocol == 
-First step: Determining `sPrefix`.
-Both _game_ and _container_ get the same flashvar (or url) parameter:
-`prefix=XXXX`. `XXXX` is either a number or a or the name of a javascript function. If it is a function, then we call that function (using `ExternalInterface.call` available from flash 8), and it should return a fixed number. For example, the function below returns a fixed random number:
+The former question:
+To make sure the container and game use the same LocalConnection channel, we use a flashvar parameter called `prefix`
+to determine the channel name.
+There is one channel for `do_` operations, and another for `got_` callbacks:
 {{{
-var prefix_random_number = 1+ Math.ceil(1000000*Math.random());
-function javascript_get_prefix_method() {
-	return prefix_random_number;
-}
-}}}
-We denote by `sPrefix` the number that is either `XXXX` or the number returned by the javascript function.
-The reason we use a function name (instead of a number) is to allow the browser to cache the SWF file. If we had used a different number each time, then the browser won't cache the SWF file.
-
-Second step:  Determining `iChanel`.
-The _container_ connects to:
-`"container_SWF"+sPrefix`
-
-The _game_ calls (using the above connection name) `do_register_on_server(iChannel)`, where `iChannel` is a randomly chosen number
-
-Final step: _game_ and _container_ communicate using two LocalConnection objects whose channel names are:
-{{{
-"DO_CHANEL" + sPrefix + "_" + iChanel
-"GOT_CHANEL" + sPrefix + "_" + iChanel
+"DO_CHANEL_" + prefix
+"GOT_CHANEL_" + prefix
 }}}

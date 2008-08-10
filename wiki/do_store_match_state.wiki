@@ -27,4 +27,9 @@ In such a case, the server will reuse the same user_id for the viewer,
 and it will call `got_user_info` with the viewer information.
 
 
-Note the difference between `do_store_match_state` and `do_send_message` [Match_state_vs_messages here]
+each `Entry` also has the field `secret_level:EnumSecretLevel`,
+which must be one of the values in `EnumSecretLevel`:
+{{{
+PUBLIC 
+SECRET
+}}}

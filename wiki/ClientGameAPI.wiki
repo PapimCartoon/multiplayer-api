@@ -29,7 +29,6 @@ do_start_my_turn()
 do_end_my_turn(next_turn_of_player_ids:Array/*int*/)
 do_client_protocol_error_with_description(error_description:String)
 do_store_match_state(entries:Array/*Entry*/)
-do_send_message(to_user_ids:Array/*int*/, value:Object)
 }}}
 Callbacks are functions starting with `got_`
 {{{
@@ -44,7 +43,6 @@ got_match_over(finished_player_ids:Array/*int*/)
 got_start_turn_of(user_id:int)
 got_end_turn_of(user_id:int)  
 got_stored_match_state(user_id:int, entries:Array/*Entry*/)
-got_message(user_id:int, value:Object)
 }}}
 
 Operations are functions that your _game_ may call,
@@ -69,8 +67,6 @@ i.e., there is a player that haven't finished playing.
 || [got_match_over] || Called when the match is over ||
 || [do_store_match_state] || Call it to store/update/delete you match state ||
 || [do_store_match_state got_stored_match_state] || Called when a user changed the match state ||
-|| [do_send_message] || Call it to send a message to a given set of users ||
-|| [do_send_message got_message] || Called when a user get a message ||
 || [do_start_my_turn] || For Turn-based games. Call it to start your turn ||
 || [do_start_my_turn got_start_turn_of] || Called to acknowledge you have the turn ||
 || [do_start_my_turn do_end_my_turn] || Call it to end your turn, and set who may play next ||
@@ -78,7 +74,6 @@ i.e., there is a player that haven't finished playing.
 || [got_error] || Called when one of the callbacks threw an error ||
 || [do_client_protocol_error_with_description] || Call it when you have to cancel the game due to an unrecoverable error ||
 
-Read here about [Match_state_vs_messages Match state vs Sending messages].
 
 === Initialization: order of the first callbacks === 
 The first callback is `got_my_user_id`,
@@ -90,26 +85,11 @@ therefore one of the players (in a turn-based game) should call `do_start_my_tur
 
 === Viewers and players === 
 The set of connected users is partitioned into players and viewers.
-Viewers may not call all the operations and might have special restrictions when calling an operation.
 New players cannot join an existing match; players may only leave the match (either by disconnecting or losing/winning the match).
-When a player leaves the match (e.g., by winning or choosing to lose) he becomes a viewer, 
-and all the viewer restrictions apply to him.
+When a player leaves the match (e.g., by winning or choosing to lose) he becomes a viewer.
 
-The following operations may only be called by players (not by viewers):
-{{{
-do_agree_on_match_over
-do_start_my_turn
-do_end_my_turn
-do_client_protocol_error_with_description
-}}}
+Viewers should call the `do_all_*` operations along with all the players.
 
-A viewer may call:
-{{{
-do_send_message
-do_store_trace
-do_store_match_state
-}}}
-(Note that `do_store_match_state` have special limitations on viewers to prevent a viewer from tempering with the match state.)
 
 === Serialization ===
 This remark is relevant to functions with parameters of type `Object` or `Array/*Object*/`.

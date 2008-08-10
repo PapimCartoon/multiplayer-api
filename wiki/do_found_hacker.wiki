@@ -1,0 +1,28 @@
+#summary Call it when you a player sent an illegal message
+
+{{{
+do_found_hacker(user_id:int, error_description:String)
+}}}
+
+In [ClientGameAPI] all the logic is on the client side,
+therefore the players themselves should check 
+that the other players make only legal moves.
+
+Both players and viewers should call `do_found_hacker`
+in case of a protocol error.
+
+Consider a game with two players: X and Y.
+Suppose that player Y stored an illegal match state.
+Then player X should call `do_found_hacker(Y,description)`.
+The server will randomly pick a jury that will judge whether
+player X or player Y is the hacker.
+
+The jury is a set of users that are playing in another game.
+The server will pass to the jury the match state
+and then the final message that caused player X to call `do_found_hacker`.
+If all members of the jury called `do_found_hacker`,
+then the server decides that player Y is a hacker.
+If no member of the jury called `do_found_hacker`
+then the server decides that player X is a hacker (that falsely reported on player Y).
+If the jury is in disagreement, then this is a bug of the game developer,
+and the the game is canceled.

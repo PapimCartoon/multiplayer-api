@@ -9,8 +9,7 @@ However, note that each `Entry` also has the field `secret_level:EnumSecretLevel
 which must be one of the values in `EnumSecretLevel`:
 {{{
 PUBLIC 
-SECRET 
-TOPSECRET
+SECRET
 }}}
 
 In addition, there are 2 new functions that only jurors can call:

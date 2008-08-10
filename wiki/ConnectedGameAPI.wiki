@@ -3,13 +3,13 @@
 ConnectedGameAPI is used to easily convert a score-based *single-player* game to a multiplayer game.
 The functions below are identical to those in [ClientGameAPI]
 {{{
-got_general_info(entries:Array/*Entry*/)
-got_user_info(user_id:int, entries:Array/*Entry*/)
-got_my_user_id(my_user_id:int)
-got_match_started(all_player_ids:Array/*int*/, finished_player_ids:Array/*int*/, extra_match_info:Object/*Serializable*/, match_started_time:int, match_state:Array/*UserEntry*/)
-got_match_over(finished_player_ids:Array/*int*/)
-do_store_match_state(entry:Entry)
-got_stored_match_state(user_entry:UserEntry)
+got_general_info
+got_user_info
+got_my_user_id
+got_match_started
+got_match_over
+do_store_match_state
+got_stored_match_state
 }}}
 The only two new functions are for handling the score of the single-player game:
 {{{

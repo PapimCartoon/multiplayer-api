@@ -1,14 +1,19 @@
 #summary Call it to store/update/delete you match state
 
 {{{
-do_store_match_state(entry:Entry)
-got_stored_match_state(user_entry:UserEntry)
+do_store_match_state(entries:Array/*Entry*/)
+got_stored_match_state(user_id:int, entries:Array/*Entry*/)
 }}}
 
 Use `do_store_match_state` to store match state on the server.
 Both players and viewers can store match state, and only when the match is in progress.
 However, a viewer cannot override someone elses `key`, whereas players can use the same key-space.
 When the match ends, the state is cleared.
+
+The container promises to update the match state atomically, i.e., 
+either to insert _all_ the entries, or not to insert any.
+Atomicity is important in rare cases where the player disconnects in the middle of sending a network packet.
+With the atomicity guarantee, the match state should always be consistent.
 
 The match state is given to new viewers and new players in [got_match_started].
 
@@ -23,8 +28,3 @@ and it will call `got_user_info` with the viewer information.
 
 
 Note the difference between `do_store_match_state` and `do_send_message` [Match_state_vs_messages here]
-
-In [SecureClientGameAPI], calling `do_store_match_state(entry)` is identical to calling 
-{{{
-do_user_store_match_state(SecretLevel.PUBLIC, entry)
-}}}

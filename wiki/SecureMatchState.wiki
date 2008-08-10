@@ -1,28 +1,33 @@
 #summary Match state in SecureClientGameAPI
 
-These 5 functions handle the match state:
+The match state is still handled with [do_store_match_state]:
 {{{
-do_juror_store_match_state(secret_level:int, user_entry:UserEntry)
-do_user_store_match_state(secret_level:int, entry:Entry)
-got_secure_stored_match_state(secret_level:int, user_entry:UserEntry)
+do_store_match_state
+got_stored_match_state
+}}}
+However, note that each `Entry` also has the field `secret_level:EnumSecretLevel`,
+which must be one of the values in `EnumSecretLevel`:
+{{{
+PUBLIC 
+SECRET 
+TOPSECRET
+}}}
 
+In addition, there are 2 new functions that only jurors can call:
+{{{
 do_juror_unfold_match_state(key:String, to_user_id:int)
 do_juror_shuffle_match_state(keys:Array/*String*/)
 }}}
 
 
-The first two functions sets values in the match state,
-in a similar way to [do_store_match_state] in [ClientGameAPI].
-`do_juror_store_match_state` is called by the juror,
-and `do_user_store_match_state` by the user.
-`got_secure_stored_match_state` is called on both users and jurors.
 
 The server maintains a memory, that is a mapping from keys to values,
 in addition to some extra information for each key (such as user_id, secret_level, and authorized_user_ids).
-`secret_level` is either `PUBLIC=0`, `SECRET=1`, or `TOPSECRET=2`.
+`secret_level` is either .
 
 `PUBLIC` memory is available to everyone, e.g., the state of a TicTacToe board.
-`SECRET` memory is used to pass information to the jurors (the other players don't see the values written to `SECRET` memory, e.g., the positions of suspected mines in a multiplayer minesweeper game.
+`SECRET` memory is used to pass information to the jurors (the other players don't see the values written to `SECRET` memory, e.g., 
+the positions of suspected mines in a multiplayer minesweeper game.
 Finally, `TOPSECRET` is used to hide information from everyone (even from jurors!) and to reveal it only when all the jurors unanimously decide to do so, e.g., your hand in a poker game or the dominoe pieces in your hand.
 (You can read more about the risk of secrecy theft by jurors in [http://multiplayer-api.googlecode.com/files/SecureClientGameAPI_version1.pdf this paper].)
 
@@ -30,7 +35,7 @@ Finally, `TOPSECRET` is used to hide information from everyone (even from jurors
 Formally, the memory is a dictionary denoted `MATCH_STATE` that maps
 each `key` to an object with fields `user_id`,`value`,`secret_level`, and `authorized_user_ids`:
 {{{
-MATCH_STATE[key] = {user_id:int, value:Object, secret_level:int, authorized_user_ids:Array/*int*/}
+MATCH_STATE[key] = {user_id:int, value:Object, secret_level:EnumSecretLevel, authorized_user_ids:Array/*int*/}
 }}}
 `user_id` may be -1 for jurors.
 `value` is an arbitrary object.
@@ -42,32 +47,22 @@ when the server calls `got_secure_stored_match_state`
 Next we will explain what the server does for each operation.
 
 {{{
-do_user_store_match_state(secret_level:int, entry:Entry)
+do_store_match_state(entry:Entry)
 DOES:
-MATCH_STATE[entry.key] = {my_user_id,  entry.value,   secret_level,  secret_level==TOPSECRET ? [my_user_id] : [] }
+MATCH_STATE[entry.key] = {my_user_id,  entry.value,   entry.secret_level,  entry.secret_level==TOPSECRET ? [my_user_id] : [] }
 }}}
 With similar restrictions on viewers like in [do_store_match_state] 
 
-
-{{{
-do_juror_store_match_state(secret_level:int, user_entry:UserEntry)
-DOES:
-MATCH_STATE[user_entry.key] = { user_entry.user_id ,  user_entry.value,   secret_level,  [] }
-}}}
-
-{{{
-got_secure_stored_match_state(secret_level:int, user_entry:UserEntry)
-}}}
 Whenever a user or juror updates `MATCH_STATE`, then all users and jurors get the callback
-   `got_secure_stored_match_state`.
+   `got_stored_match_state`.
 _However_, some of them will get `null` values (instead of the real `value` that was written),
 according to the rule below.
 
 Consider an entry  
 {{{
-MATCH_STATE[key] = {user_id:int, value:Object, secret_level:int, authorized_user_ids:Array/*int*/}
+MATCH_STATE[key] = {user_id:int, value:Object, secret_level:EnumSecretLevel, authorized_user_ids:Array/*int*/}
 }}}
-that is sent to user `my_user_id`.
+that is sent to user with id=`my_user_id`.
 Then, the value will *not* be `null` if and only if:
  * `secret_level` is `PUBLIC`, or
  * `secret_level` is `SECRET`   and  (`my_user_id==-1` or `my_user_id==user_id`), or

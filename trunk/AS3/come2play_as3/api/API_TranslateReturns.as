@@ -10,5 +10,6 @@ package come2play_as3.api {
 		public static function returns_do_agree_on_match_over(finished_player_ids:Array/*int*/, scores:Array/*int*/, pot_percentages:Array/*int*/):Array { return arguments; }
 		public static function returns_do_store_match_state(keys:Array/*String*/, values:Array/*Serializable*/, secret_levels:Array/*int*/):Array { return arguments; }
 		public static function returns_got_stored_match_state(user_id:int, entries:Array/*Entry*/):Array { return arguments; }
+		public static function returns_do_all_reveal_state(keys:Array/*String*/, user_ids:Array/*int*/):Array { return arguments; }
 	}
 }

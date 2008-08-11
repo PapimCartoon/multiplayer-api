@@ -10,5 +10,6 @@ package come2play_as3.api {
 		/*public*/ function translate_do_agree_on_match_over(finished_player_ids:Array/*int*/, scores:Array/*int*/, pot_percentages:Array/*int*/):Array; /*interface method*/
 		/*public*/ function translate_do_store_match_state(entries:Array/*Entry*/):Array; /*interface method*/
 		/*public*/ function translate_got_stored_match_state(user_id:int, keys:Array/*String*/, values:Array/*Serializable*/, secret_levels:Array/*int*/):Array; /*interface method*/
+		/*public*/ function translate_do_all_reveal_state(entries:Array/*RevealEntry*/):Array; /*interface method*/
 	}
 }

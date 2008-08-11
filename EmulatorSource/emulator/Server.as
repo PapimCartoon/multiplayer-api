@@ -12,13 +12,26 @@ package emulator {
 	public class Server extends MovieClip {
 		//Private variables
 		private var isTurnBasedGame:Boolean = false;
+		private var bGameStarted:Boolean = false;
+		private var bGameEnded:Boolean = false;
+		
 		private var lcFramework:LocalConnection;
+		
 		private var aUsers:Array;
 		private var aKeys:Array;
 		private var aData:Array;
 		private var aDataUsers:Array;
-		private var bGameStarted:Boolean = false;
-		private var bGameEnded:Boolean = false;
+		private var aNextPlayers:Array;
+		private var aServerKeys:Array;
+		private var aServerDatas:Array;
+		private var aParams:Array;
+		private var aPlayers:Array; //array of all the players
+		private var aMatchOvers:Array;
+		
+		//que related varibales
+		private var unverifiedQue:Array;
+		private var doAllQue:Array;
+		private var queTimer:Timer;
 		private var extra_match_info:Object;
 		private var match_started_time:int;
 		private var sCurMessageType:String;
@@ -30,11 +43,7 @@ package emulator {
 		private var aFilters:Array;
 		private var aConditions:Array;
 		private var btnSend:Button;
-		private var aParams:Array;
-		private var aPlayers:Array;
-		private var aNextPlayers:Array;
-		private var aServerKeys:Array;
-		private var aServerDatas:Array;
+
 		private var txtLog:TextArea;
 		private var tblLog:DataGrid;
 		private var btnSearch:Button;
@@ -77,7 +86,6 @@ package emulator {
 		private var txtLabelSearch:TextField;
 		private var txtLabelLog:TextField;
 		private var txtLabelDetails:TextField;
-		private var aMatchOvers:Array;
 		private var tblInfo:DataGrid;
 		private var txtInfo:TextArea;
 		private var pnlInfo:MovieClip;
@@ -90,7 +98,10 @@ package emulator {
 		//Constructor
 		public function Server() {
 			this.stop();
-			
+			unverifiedQue = new Array;
+			doAllQue = new Array;
+			queTimer=new Timer(10,0);
+			queTimer.addEventListener(TimerEvent.TIMER,queTimeoutError);
 			tbsPanel = new TabDialog();
 			tbsPanel.x = 3;
 			tbsPanel.y = 52;
@@ -534,7 +545,10 @@ package emulator {
 			shrParams.data.params = arr;
 			shrParams.flush();
 		}
-		
+		private function queTimeoutError(ev:TimerEvent):void
+		{
+			//error	
+		}
 		public function got_user_localconnection_callback(user:User, methodName:String, parameters:Array/*Object*/):void {			
 			try{
 				trace("got_user_localconnection_callback: user="+user.Name+" methodName="+methodName);
@@ -552,12 +566,51 @@ package emulator {
 						return;
 					}
 				}
-				var func:Function = this[methodName] as Function;
-				func.apply(this, [user].concat(parameters));
+				var tempFuncVals:Object;
+				var func:Function;
+				tempFuncVals.user = user.ID;
+				tempFuncVals.parameters = parameters;
+				parameters.methodName = methodName;
+				
+				if("do_store_match_state" == methodName)
+				{
+					if(!queTimer.running)
+					{
+						queTimer.reset();
+						queTimer.start();
+					}
+					tempFuncVals.unverifiedPlayers = aPlayers;
+					func= this[methodName] as Function;
+					func.apply(this, [user].concat(parameters));
+					unverifiedQue.push(tempFuncVals)	
+				}
+				else if((methodName == "do_all_end_match") ||
+						(methodName == "do_all_set_turn") ||
+						(methodName == "do_all_reveal_state") ||
+						(methodName == "do_all_shuffle_state") ||
+						(methodName == "do_all_found_hacker") )
+				{
+					doAllQue.push(tempFuncVals);
+					if(unverifiedQue.length == 0)
+					{
+						checkDoAlls();
+					}
+				}
+				else
+				{
+					func = this[methodName] as Function;
+					func.apply(this, [user].concat(parameters));	
+				}
+	
 			} catch (err:Error) { 
 				showMsg(err.getStackTrace(), "Error");
 			}  
 		}
+		private function checkDoAlls():void
+		{
+			
+		}
+		
 		private function arrays2string(arrs:Array):String {
 			// keys, values, secret_levels
 			var res:Array = [];
@@ -1613,6 +1666,8 @@ package emulator {
 			return null;
 		}			
 		public function do_finished_callback(user:User, methodName:String):void {
+
+			
 			user.do_finished_callback(methodName);
 		}
 	}

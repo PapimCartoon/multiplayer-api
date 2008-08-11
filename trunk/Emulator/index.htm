@@ -459,6 +459,7 @@ function unloadServer(){
     for(var i=0;i<players_num+viewers_num;i++){
         try{
             if(clients[i]!=null){
+				clients[i].document.getElementById("divGame").innerHTML="";
                 clients[i].silent=true;
                 clients[i].close();
             }
@@ -466,6 +467,7 @@ function unloadServer(){
     }
     try{
         if(server!=null){
+			server.document.getElementById("divGame").innerHTML="";
             server.close();
         }
     }catch(err){}

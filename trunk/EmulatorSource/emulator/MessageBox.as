@@ -32,6 +32,8 @@ package emulator {
 			this.addChild(txtScrollable);
 			
 			btnOK = new Button();
+			btnOK.label="Ok";
+			btnOK.width=45;
 			btnOK.addEventListener(MouseEvent.CLICK, btnOKClick);
 			this.addChild(btnOK);
 			
@@ -92,7 +94,7 @@ package emulator {
 			this.graphics.endFill();
 			
 			btnOK.y = txtTitle.y-3;
-			btnOK.x = txtTitle.x+w-17;
+			btnOK.x = txtTitle.x+w-40;
 			
 			this.graphics.lineStyle(1, 0x000000, 0);
 			this.graphics.beginFill(0xFFFFFF, 0.1);

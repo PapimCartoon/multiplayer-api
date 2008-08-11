@@ -22,7 +22,7 @@ import flash.utils.*;
  * 
  * Written by: Yoav Zibin (yoav@zibin.net)
  */
-public final class TicTacToe_Main extends CombinedClientAndSecureGameAPI {
+public final class TicTacToe_Main extends ClientGameAPI {
 	
 	// for example, you can have a board of size 5x5, with WIN_LENGTH=4
 	private var ROWS:int;
@@ -69,9 +69,6 @@ public final class TicTacToe_Main extends CombinedClientAndSecureGameAPI {
 		do_register_on_server();	 
 	}
 	
-	private function isJuror():Boolean {
-		return my_user_id==-1;
-	}
 	private function getColor(player_id:int):int {
 		return AS3_vs_AS2.IndexOf(all_player_ids, player_id);
 	}
@@ -101,7 +98,7 @@ public final class TicTacToe_Main extends CombinedClientAndSecureGameAPI {
 			}		
 		}
 	}
-	override public function got_match_started(all_player_ids:Array/*int*/, finished_player_ids:Array/*int*/, extra_match_info:Object/*Serializable*/, match_started_time:int, match_state:Array/*UserEntry*/):void {
+	override public function got_match_started(all_player_ids:Array/*int*/, finished_player_ids:Array/*int*/, extra_match_info:Object/*Serializable*/, match_started_time:int, match_state:Array/*UserStateEntry*/):void {
 		this.all_player_ids = all_player_ids;
 		assert(all_player_ids.length<=4, ["The graphics of TicTacToe can handle at most 4 players. all_player_ids=", all_player_ids]);
 		turnOfColor = 0;
@@ -113,9 +110,9 @@ public final class TicTacToe_Main extends CombinedClientAndSecureGameAPI {
 		for (var color:int=0; color<players_num; color++)
 			ongoing_colors.push(color);
 		logic = new TicTacToe_logic(ROWS,COLS,WIN_LENGTH, players_num);
-		for each (var user_entry:UserEntry in match_state) {
+		for each (var user_entry:UserStateEntry in match_state) {
 			if (!isSinglePlayer()) turnOfColor = getColor(user_entry.user_id);	// some users may have disconnected in the middle of the game	
-			doEntry(user_entry, true);	//we should not call do_agree_on_match_over when loading the match	
+			doEntry(user_entry.value, true);	//we should not call do_agree_on_match_over when loading the match	
 		}
 		if (finished_player_ids.length>0)
 			matchOverForPlayers(finished_player_ids);
@@ -129,11 +126,11 @@ public final class TicTacToe_Main extends CombinedClientAndSecureGameAPI {
 		// then I don't end the game because the container will give the user an option
 		// to either: win, cancel, or save the game.
 	}	
-	override public function got_stored_match_state(user_id:int, entries:Array/*Entry*/):void {
+	override public function got_stored_match_state(user_id:int, entries:Array/*StateEntry*/):void {
 		// the moves are done in alternating turns: color 0, then color 1 (in a round robin)	
 		assert(entries.length==1, ["there is one entry per move in TicTacToe"]);	
-		var entry:Entry = entries[0];
-		assert(entry.secret_level==EnumSecretLevel.PUBLIC, ["All communication in TicTacToe is PUBLIC, secret_level=",entry.secret_level]);
+		var entry:StateEntry = entries[0];
+		assert(!entry.is_secret, ["All communication in TicTacToe is PUBLIC"]);
 		if (user_id==my_user_id) return; // The player ignores his own got_stored_match_state, because he already updated the logic before he sent it to the server
 		var color_of_user:int = getColor(user_id);
 		if (color_of_user==-1) return;  // viewers can store match state, so we just ignore whatever a viewer placed in the match state
@@ -141,7 +138,7 @@ public final class TicTacToe_Main extends CombinedClientAndSecureGameAPI {
 		// In SinglePlayer: the player already called return before, but a viewer (there can be viewers even for singleplayer games!) still needs to call doEntry 
 		if (!isSinglePlayer()) 
 			assert(turnOfColor==color_of_user, ["Got an entry from player=",user_id," of color=",color_of_user," but expecting one from color=", turnOfColor]);			
-		doEntry(entry, false);
+		doEntry(entry.value, false);
 	}
 	
 	private function matchOverForPlayers(finished_player_ids:Array/*int*/):Boolean {
@@ -174,8 +171,8 @@ public final class TicTacToe_Main extends CombinedClientAndSecureGameAPI {
 		}		
 		return shouldChange_turnOfColor;
 	}
-	private function doEntry(entry:Entry, isSavedGame:Boolean):void {
-		var data:Array = AS3_vs_AS2.asArray(entry.value);
+	private function doEntry(value:Object, isSavedGame:Boolean):void {
+		var data:Array = AS3_vs_AS2.asArray(value);
 		makeMove(data[0], data[1], isSavedGame);		
 	}
 	// makeMove updates the logic and the graphics
@@ -221,6 +218,7 @@ public final class TicTacToe_Main extends CombinedClientAndSecureGameAPI {
 			} else {
 				var score:int;
 				var percentage:int;
+				var finished_players_ids:Array/*int*/ = [];
 				if (didWin) {
 					//winner is turnOfColor
 					score = ongoing_colors.length;					
@@ -229,8 +227,10 @@ public final class TicTacToe_Main extends CombinedClientAndSecureGameAPI {
 					} else {
 						percentage = WINNER_PERCENTAGE; 
 					}
+					var winner_id:int = all_player_ids[turnOfColor];
+					finished_players_ids.push(winner_id);
 					finished_players.push(
-						new PlayerMatchOver(all_player_ids[turnOfColor], score, percentage) );	
+						new PlayerMatchOver(winner_id, score, percentage) );	
 					
 					if (ongoing_colors.length==2) {
 						// last player gets nothing
@@ -238,6 +238,7 @@ public final class TicTacToe_Main extends CombinedClientAndSecureGameAPI {
 						var last_player_id:int = all_player_ids[last_color_id];
 						score = -1;
 						percentage = 0;
+						finished_players_ids.push(last_player_id);
 						finished_players.push(
 							new PlayerMatchOver(last_player_id, score, percentage) );
 					}
@@ -245,7 +246,7 @@ public final class TicTacToe_Main extends CombinedClientAndSecureGameAPI {
 				if (isBoardFull) { // Important: it can happen that someone won and the board has just filled up!					
 					for each (var ongoing_color:int in ongoing_colors) {
 						var ongoing_player_id:int = all_player_ids[ongoing_color];
-						if (!PlayerMatchOver.isInArr(finished_players, ongoing_player_id)) {
+						if (AS3_vs_AS2.IndexOf(finished_players_ids, ongoing_player_id)==-1) {
 							if (didWin) {
 								// someone just won, and now the board is full. the other players get nothing!
 								score = -1;
@@ -270,7 +271,7 @@ public final class TicTacToe_Main extends CombinedClientAndSecureGameAPI {
 			var finished_colors:Array/*int*/ = 
 				isGameOver ? arrayCopy(ongoing_colors) : [turnOfColor];
 			if (!isSavedGame && finished_players.length>0) { 
-				if (myColor!=VIEWER) do_agree_on_match_over(finished_players);				
+				do_all_end_match(finished_players);				
 			}
 			matchOverForColors(finished_colors);	
 		} else {
@@ -287,25 +288,15 @@ public final class TicTacToe_Main extends CombinedClientAndSecureGameAPI {
 		if (myColor==VIEWER) return; // viewer cannot make a move
 		if (!isSinglePlayer() && myColor!=turnOfColor) return; // not my turn
 		if (!logic.isSquareAvailable(row, col)) return; // already filled this square (e.g., if you press on the keyboard, you may choose a cell that is already full)
-		// The order of API calls should be: 
-		//  do_store_match_state, 
-		//	maybe do_agree_on_match_over or do_juror_end_match
-		// 	and finally do_end_my_turn
-		// The other players will get the state, and then call: 
-		// 	maybe do_agree_on_match_over or do_juror_end_match
-		//	and maybe either do_start_my_turn or do_juror_set_turn
-		do_store_match_state( [new Entry(""+logic.getMoveNumber(), [row, col])] );		
-		makeMove(row, col, false);
-		// Important: note that do_end_my_turn is called after all other API calls (see its documentation)
-		if (logic!=null && !isSinglePlayer())
-			do_end_my_turn([all_player_ids[turnOfColor]]);
+		do_store_match_state( [new StateEntry(""+logic.getMoveNumber(), [row, col], false)] );		
+		makeMove(row, col, false);		
 	}
 	private function setOnPress(isInProgress:Boolean):void {
 		//trace("setOnPress with isInProgress="+isInProgress);
 		if (logic==null) return; 
 						
 		if (isInProgress && !isSinglePlayer()) {
-			if (myColor==turnOfColor) do_start_my_turn();
+			do_all_set_turn(all_player_ids[turnOfColor],-1);
 		}		
 		for(var row:int=0; row<ROWS; row++)
 			for(var col:int=0; col<COLS; col++) {

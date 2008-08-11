@@ -154,7 +154,9 @@ package come2play_as3.api {
 		
 		// In case of an error, you should probably call do_client_protocol_error_with_description
 		// You should be very careful not to throw any exceptions in got_error, because they are silently ignored	
-		public function got_error(in_function_name:String, err:Error):void {}
+		public function got_error(in_function_name:String, err:Error):void {
+			//todo: do_found_hacker
+		}
 
 		protected function translateCallbackParameters(methodName:String, parameters:Array/*Object*/):Array/*Object*/ {
 			var translate_name:String = "translate_"+methodName;

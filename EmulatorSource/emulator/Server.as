@@ -963,7 +963,7 @@ package emulator {
 			if(iInfoMode!=5){
 				iInfoMode=5;
 				
-				tblInfo.columns=["users_id", "score" , "pot_percentage" , "called_by_user_ids"];
+				tblInfo.columns=["player_ids", "scores" , "pot_percentages" , "called_by_user_ids"];
 				
 				showMatchOver();
 			}
@@ -1368,14 +1368,19 @@ package emulator {
 		}	
 		public function do_register_on_server(u:User):void {
 			if (u.wasRegistered) throw new Error("User "+u.Name+" called do_register_on_server twice!");
+			// send the info of "u" to all registered users (without user "u")
+			broadcast("got_user_info", [u.ID, u.Keys, u.Params]); //note, this must be before you call u.wasRegistered = true 
 			u.wasRegistered = true;		
 			u.sendOperation("got_my_user_id", [u.ID]);
 			u.sendOperation("got_general_info", [aServerKeys, aServerDatas]);
 				
 			// important: note that this is not a broadcast!
+			// send to "u" the info of all the registered users
 			for each (var user:User in aUsers) {
-				u.sendOperation("got_user_info", [user.ID, user.Keys, user.Params]);
-			}			
+				if (user.wasRegistered)
+					u.sendOperation("got_user_info", [user.ID, user.Keys, user.Params]);
+			}		
+				
 			showUserInfo();
 			cmbTarget.addItem( { label: u.Name, data:u.ID } );
 			
@@ -1601,8 +1606,8 @@ package emulator {
 		public function do_store_trace(user:User, funcname:String,message:Object):void {
 			//addMessageLog(user.Name, funcname, JSON.stringify(message));
 		}
-		public function do_client_protocol_error_with_description(user:User, error_description:Object):void {
-			showMsg(JSON.stringify(error_description));
+		public function do_found_hacker(user:User, user_id:int, error_description:Object):void {
+			showMsg("Someone claimed he found a hacker:"+ JSON.stringify(error_description));
 			aNextPlayers=new Array();
 			bGameEnded = true;
 			txtMatchStartedTime.text = "";

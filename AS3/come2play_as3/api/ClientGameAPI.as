@@ -11,27 +11,31 @@ package come2play_as3.api {
 		public function got_user_info(user_id:int, entries:Array/*Entry*/):void {}
 		public function got_user_disconnected(user_id:int):void {}
 		public function got_my_user_id(my_user_id:int):void {}
-		public function got_match_started(all_player_ids:Array/*int*/, finished_player_ids:Array/*int*/, extra_match_info:Object/*Serializable*/, match_started_time:int, match_state:Array/*UserEntry*/):void {}
+		
+		// broadcasted to all players
+		public function got_match_started(all_player_ids:Array/*int*/, finished_player_ids:Array/*int*/, extra_match_info:Object/*Serializable*/, match_started_time:int, match_state:Array/*UserEntry*/):void {}		
+		public function got_match_over(finished_player_ids:Array/*int*/):void {}		
+		public function got_start_turn_of(user_id:int):void {}
+		public function got_end_turn_of(user_id:int):void {}		
+		public function got_stored_match_state(user_id:int, entries:Array/*Entry*/):void {}
+				
+				
+		// do_finished_callback
+		public function do_store_match_state(entries:Array/*Entry*/):void { sendDoOperation('do_store_match_state', arguments); }
 		
 		// agree_on_match_over
 		public function do_all_end_match(finished_players:Array/*PlayerMatchOver*/):void { sendDoOperation('do_all_end_match', arguments); }
-		public function got_match_over(finished_player_ids:Array/*int*/):void {}
 		
 		// if user_id==-1, then nobody has the turn.
 		// if milliseconds_in_turn==-1 then the default time per turn is used,
 		// and if milliseconds_in_turn==0 then the user should do some actions immediately.
 		public function do_all_set_turn(user_id:int, milliseconds_in_turn:int):void { sendDoOperation('do_all_set_turn', arguments); }
-		public function got_start_turn_of(user_id:int):void {}
-		public function got_end_turn_of(user_id:int):void {}
-		
-		public function do_store_match_state(entries:Array/*Entry*/):void { sendDoOperation('do_store_match_state', arguments); }
-		public function got_stored_match_state(user_id:int, entries:Array/*Entry*/):void {}
 		
 		// if to_user_id==-1, then the entry becomes PUBLIC
 		public function do_all_reveal_state(key:String, to_user_id:int):void { sendDoOperation('do_all_reveal_state', arguments); }
 		public function do_all_shuffle_state(keys:Array/*String*/):void { sendDoOperation('do_all_shuffle_state', arguments); }
 		
-		// old name: do_client_protocol_error_with_description
+		// old name: do_client_protocol_error_with_description		
 		public function do_all_found_hacker(user_id:int, error_description:String):void { sendDoOperation('do_all_found_hacker', arguments); }
 		
 		

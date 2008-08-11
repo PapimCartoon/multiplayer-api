@@ -1096,24 +1096,7 @@ package emulator {
 		}
 		
 		private function btnCancelGameClick(evt:MouseEvent):void {
-			aNextPlayers=new Array();
-			bGameEnded = true;
-			txtMatchStartedTime.text = "";
-			txtExtraMatchInfo.visible = true;
-			txtMatchStartedTime.visible = true;
-			btnNewGame.visible = true;
-			btnCancelGame.visible = false;
-			btnLoadGame.visible = true;
-			btnSaveGame.visible = false;
-			var usr:User;
-			var arr:Array = new Array();
-			for each (usr in aUsers) {
-				if (aPlayers.indexOf(usr.ID) != -1 && !usr.Ended) {
-					arr.push(usr.ID);
-					usr.Ended = true;
-				}
-			}
-			broadcast("got_match_over", [arr]);
+			gameOver();
 		}
 		
 		private function btnQuestionClick(evt:MouseEvent):void {
@@ -1485,7 +1468,30 @@ package emulator {
 				aDataUsers.push(user.ID);
 			}
 		}
-		public function do_agree_on_match_over(user:User, user_ids:Array, scores:Array, pot_percentages:Array):void {			
+		
+		public function gameOver():void
+		{
+			var usr:User;
+			var arr:Array = new Array();
+			for each (usr in aUsers) {
+				if (aPlayers.indexOf(usr.ID) != -1 && !usr.Ended) {
+					arr.push(usr.ID);
+					usr.Ended = true;
+				}
+			}
+			aNextPlayers=new Array();
+			bGameEnded = true;
+			txtMatchStartedTime.text = "";
+			txtExtraMatchInfo.visible = true;
+			txtMatchStartedTime.visible = true;
+			btnNewGame.visible = true;
+			btnCancelGame.visible = false;
+			btnLoadGame.visible = true;
+			btnSaveGame.visible = false;
+			broadcast("got_match_over", [arr]);
+		}
+		
+		public function do_all_end_match(user:User, user_ids:Array, scores:Array, pot_percentages:Array):void {			
 			if (user_ids.length==0) {
 				addMessageLog("Server", "do_agree_on_match_over", "Error: Array user_ids can't be empty.");
 				return;
@@ -1523,24 +1529,7 @@ package emulator {
 					}else {
 						addMessageLog(user.Name, "do_agree_on_match_over", "Error: function parameters are different from previous call.");
 						showMsg("do_agree_on_match_over: Function parameters are different from previous call.");
-						aNextPlayers=new Array();
-						bGameEnded = true;
-						txtMatchStartedTime.text = "";
-						txtExtraMatchInfo.visible = true;
-						txtMatchStartedTime.visible = true;
-						btnNewGame.visible = true;
-						btnCancelGame.visible = false;
-						btnLoadGame.visible = true;
-						btnSaveGame.visible = false;
-						var arr:Array = new Array();
-						for each (usr in aUsers) {
-							if (aPlayers.indexOf(usr.ID) != -1 && !usr.Ended) {
-								arr.push(usr.ID);
-								usr.Ended = true;
-							}
-						}
-						
-						broadcast("got_match_over", [arr]);
+						gameOver()
 						showMatchOver();
 						return;
 					}
@@ -1608,24 +1597,8 @@ package emulator {
 		}
 		public function do_found_hacker(user:User, user_id:int, error_description:Object):void {
 			showMsg("Someone claimed he found a hacker:"+ JSON.stringify(error_description));
-			aNextPlayers=new Array();
-			bGameEnded = true;
-			txtMatchStartedTime.text = "";
-			txtExtraMatchInfo.visible = true;
-			txtMatchStartedTime.visible = true;
-			btnNewGame.visible = true;
-			btnCancelGame.visible = false;
-			btnLoadGame.visible = true;
-			btnSaveGame.visible = false;
-			var usr:User;
-			var arr:Array = new Array();
-			for each (usr in aUsers) {
-				if (aPlayers.indexOf(usr.ID) != -1 && !usr.Ended) {
-					arr.push(usr.ID);
-					usr.Ended = true;
-				}
-			}
-			broadcast("got_match_over", [arr]);
+			gameOver()
+			//broadcast("got_match_over", [arr]);
 		}
 		private function getAllUserIds():Array {
 			var res:Array = [];
@@ -1640,7 +1613,7 @@ package emulator {
 			return null;
 		}			
 		public function do_finished_callback(user:User, methodName:String):void {
-			// todo: make sure every call is eventaully ended, and that do_all are always as a result of getting match state
+			user.do_finished_callback(methodName);
 		}
 	}
 }
@@ -1660,6 +1633,7 @@ class User {
 	private var sName:String;
 	private var sDoChanel:String;
 	private var sGotChanel:String;
+	private var actionQue:Array;
 	public var Params:Array;
 	public var Keys:Array;
 	public var Ended:Boolean = false;
@@ -1687,6 +1661,7 @@ class User {
 			if (iNextId > PlayersNum + ViewersNum) {
 				throw new Error("Too many users");
 			}
+			
 			iID = iNextId++;
 			sServer = _server;
 			sName = sServer.root.loaderInfo.parameters["val" + (iID - 1) + "0"];
@@ -1701,6 +1676,7 @@ class User {
 			
 			Keys = new Array();
 			Params = new Array();
+			actionQue = new Array();
 			for (var i:int = 0; sServer.root.loaderInfo.parameters["col" + i] != null;i++ ) {
 				Keys.push(sServer.root.loaderInfo.parameters["col" + i]);
 				Params.push(sServer.root.loaderInfo.parameters["val" + (iID - 1) + i]);
@@ -1721,13 +1697,36 @@ class User {
 	}
 	
 	public function sendOperation(methodName:String, parameters:Array/*Object*/):void {
-		try {
 			if (!wasRegistered) return;
-			lcData.send(sGotChanel, "localconnection_callback", methodName, parameters);
-			sServer.addMessageLog(sName, methodName, sServer.methodAndParams2String(methodName, parameters) );
+			var tempObj:Object= {_methodName:methodName,_parameters:parameters};
+			actionQue.push(tempObj);
+			if(actionQue.length==1)
+				doSendOperation();	
+    }
+	public function do_finished_callback(methodName:String):void {
+		var tempObj:Object = actionQue.shift();
+		if(methodName == tempObj._methodName)
+		{
+			doSendOperation();
+		}
+		else
+		{
+				sServer.showMsg("Expected"+tempObj._methodName+"to end,instead "+methodName+" ended", "Error");
+				sServer.gameOver();
+		}
+	}
+    private function doSendOperation(/*tempObj:Object*/):void
+    {
+    	try {
+    		if(actionQue.length>0)
+    		{
+    		var tempObj:Object = actionQue[0];
+			lcData.send(sGotChanel, "localconnection_callback", tempObj._methodName, tempObj._parameters);
+			sServer.addMessageLog(sName, tempObj._methodName, sServer.methodAndParams2String(tempObj._methodName, tempObj._parameters) );	
+    		}
 		}catch(err:Error) { 
 			sServer.showMsg(err.getStackTrace(), "Error");
-		}      	
+		}  	
     }
 	
 	public function localconnection_callback(methodName:String, parameters:Array/*Object*/):void {

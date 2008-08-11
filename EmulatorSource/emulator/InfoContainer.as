@@ -171,11 +171,11 @@ package emulator {
 			
 			var mov:MovieClip = new MovieClip();
 			var txt:TextField = new TextField();
-			txt.textColor = 0xFFFFFF;
+			txt.textColor = 0x000000;
 			txt.autoSize = TextFieldAutoSize.LEFT;
 			txt.htmlText = "<b>|</b> Open Info";
 			txt.height = 22;
-			txt.x = -5;
+			txt.x = -15;
 			txt.y = -3;
 			mov.addChild(txt);
 			var arr:MovieClip = new DownArrow();
@@ -192,11 +192,11 @@ package emulator {
 			
 			mov = new MovieClip();
 			txt = new TextField();
-			txt.textColor = 0xFFFFFF;
+			txt.textColor = 0x000000;
 			txt.autoSize = TextFieldAutoSize.LEFT;
 			txt.htmlText = "<b>|</b> Close Info";
 			txt.height = 22;
-			txt.x = -5;
+			txt.x = -15;
 			txt.y = -3;
 			mov.addChild(txt);
 			arr = new UpArrow();
@@ -213,7 +213,8 @@ package emulator {
 			lblClient.addChild(btnUp);
 			
 			txtMyName = new TextField();
-			txtMyName.textColor = 0xFFFFFF;
+			txtMyName.textColor = 0x000000;
+			txtMyName.selectable = false;
 			txtMyName.width = 55;
 			txtMyName.height = 22;
 			txtMyName.x = 3;

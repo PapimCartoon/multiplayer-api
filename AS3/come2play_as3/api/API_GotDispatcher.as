@@ -22,8 +22,8 @@ package come2play_as3.api {
 		public function API_got_my_user_id(my_user_id:int):void { func('got_my_user_id',arguments); }
 		public function API_got_match_started(all_player_ids:Array/*int*/, finished_player_ids:Array/*int*/, extra_match_info:Object/*Serializable*/, match_started_time:int, user_ids:Array/*int*/, keys:Array/*String*/, values:Array/*Serializable*/, secret_levels:Array/*int*/):void { func('got_match_started',arguments); }
 		public function API_got_match_over(finished_player_ids:Array/*int*/):void { func('got_match_over',arguments); }
-		public function API_got_start_turn_of(user_id:int):void { func('got_start_turn_of',arguments); }
-		public function API_got_end_turn_of(user_id:int):void { func('got_end_turn_of',arguments); }
+		public function API_got_turn_of(user_id:int):void { func('got_turn_of',arguments); }
 		public function API_got_stored_match_state(user_id:int, keys:Array/*String*/, values:Array/*Serializable*/, secret_levels:Array/*int*/):void { func('got_stored_match_state',arguments); }
+		public function API_got_request_impartial_state(secret_seed:int, value:Object/*Serializable*/):void { func('got_request_impartial_state',arguments); }
 	}
 }

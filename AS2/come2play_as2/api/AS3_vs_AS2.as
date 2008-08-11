@@ -1,4 +1,4 @@
-import come2play_as2.api.*;
+﻿import come2play_as2.api.*;
 
 class come2play_as2.api.AS3_vs_AS2 {
 	public static var isAS3:Boolean = false;
@@ -27,9 +27,6 @@ class come2play_as2.api.AS3_vs_AS2 {
 		return Math.round(o);
 	}
 	public static function asArray(o):Array {
-		return o;
-	}
-	public static function asUserEntry(o):UserEntry {
 		return o;
 	}
 	public static function delegate(target:Object, handler:Function):Function {

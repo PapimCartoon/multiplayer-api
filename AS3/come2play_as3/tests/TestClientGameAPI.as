@@ -9,15 +9,13 @@ import flash.text.*;
 public class TestClientGameAPI extends ClientGameAPI {
 	//public var dp:DataProvider = new DataProvider();
 	private var my_graphics:MovieClip;
-	private var show_localconnection_messages:Boolean;
 	private var test_Arr:Array;
 	private static const shouldTestPassNumbers:Boolean = false;
 	
 	public function TestClientGameAPI(my_graphics:MovieClip) {
 		trace("Constructor of TestClientGameAPI");
 		var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(my_graphics);
-		this.my_graphics = my_graphics;
-		show_localconnection_messages = parameters["show_localconnection_messages"]=="true";		
+		this.my_graphics = my_graphics;		
 		try {		
 			if (shouldTestPassNumbers) {	
 				test_Arr = getNumberArr();
@@ -39,11 +37,13 @@ public class TestClientGameAPI extends ClientGameAPI {
 	}
 	
 	override public function got_my_user_id(user_id:int):void {		
-		if (shouldTestPassNumbers) do_send_message([user_id], test_Arr);
+		if (shouldTestPassNumbers) do_store_match_state([ new StateEntry("test", test_Arr, false)]);
 	}
-	override public function got_message(user_id:int, value:Object):void {
+	override public function got_stored_match_state(user_id:int, entries:Array/*StateEntry*/):void { 
 		if (shouldTestPassNumbers) {
-			trace("got_message="+value);
+			trace("got_stored_match_state="+value);
+			var state:StateEntry = entries[0];
+			var value:Array = AS3_vs_AS2.asArray(state.value);  
 			for (var i:int=0; i<test_Arr.length; i++) {
 				var val:int = test_Arr[i];
 				var val2:int = value[i];
@@ -104,7 +104,7 @@ public class TestClientGameAPI extends ClientGameAPI {
 				do_client_protocol_error_with_description(getInputText("error_description"));
 				break;
 			case "do_store_match_state":
-				do_store_match_state( [new Entry(getInputText("state_key"), getObject("state_value"))] );
+				do_store_match_state( [new StateEntry(getInputText("state_key"), getObject("state_value"), false)] );
 				break;
 			case "do_send_message":
 				do_send_message(getIntArr("to_user_ids"), getObject("message_value"));
@@ -133,9 +133,6 @@ public class TestClientGameAPI extends ClientGameAPI {
 		}
 		return res;
 	}
-	override public function got_error(in_function_name:String, err:Error):void {
-		storeTrace("got_error", "In function "+in_function_name+" error="+err);
-	}	
     override protected function sendDoOperation(methodName:String, parameters:Array/*Object*/):void {
 		storeTrace(methodName, parameters.join(" , "));
 		super.sendDoOperation(methodName, parameters);
@@ -143,10 +140,6 @@ public class TestClientGameAPI extends ClientGameAPI {
     override public function localconnection_callback(methodName:String, parameters:Array/*Object*/):void {
 		storeTrace(methodName, parameters.join(" , "));
 		super.localconnection_callback(methodName, parameters); // to call do_finished_callback
-	}
-	override protected function sendOperation(connectionName:String, methodName:String, parameters:Array/*Object*/):void {
-		if (show_localconnection_messages) storeTrace("LOCALCONNECTION", "connectionName="+connectionName+" methodName="+methodName+" parameters="+parameters);
-		super.sendOperation(connectionName, methodName, parameters);
 	}
 }
 

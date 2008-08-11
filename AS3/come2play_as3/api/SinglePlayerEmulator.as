@@ -44,10 +44,8 @@ package come2play_as3.api
 		private var extra_match_info:Object/*Serializable*/;
 		private var match_started_time:int; 
 		private var match_state:Array/*UserEntry*/;
-		private var api:API_GotDispatcher;
 		
 		public function SinglePlayerEmulator(graphics:MovieClip) {
-			api = new API_GotDispatcher(AS3_vs_AS2.delegate(this,this.sendCallback));
 			this.general_info_entries = DEFAULT_GENERAL_INFO;
 			this.user_id = DEFAULT_USER_ID;
 			this.user_info_entries = DEFAULT_USER_INFO;
@@ -67,56 +65,35 @@ package come2play_as3.api
 			AS3_vs_AS2.addKeyboardListener(graphics, AS3_vs_AS2.delegate(this, this.reportKeyDown));	
 		}		
 		private function reportKeyDown(is_key_down:Boolean, charCode:int, keyCode:int, keyLocation:int, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean):void {		
-			api.API_got_keyboard_event(is_key_down, charCode, keyCode, keyLocation, altKey, ctrlKey, shiftKey);
+			sendCallback(new API_GotKeyboardEvent(is_key_down, charCode, keyCode, keyLocation, altKey, ctrlKey, shiftKey) );
 		}		
 		public function localconnection_callback(methodName:String, parameters:Array/*Object*/):void {
 			trace("SinglePlayerEmulator got methodName="+methodName+" parameters="+JSON.stringify(parameters));
 			try {
-				switch(methodName) {
-				case "do_agree_on_match_over":
+				var msg:API_Message = API_Message.createMessage(methodName, parameters);
+				if (msg is API_DoAllEndMatch) {
 					AS3_vs_AS2.myTimeout(AS3_vs_AS2.delegate(this, this.sendNewMatch), 2000);
-					break;
-				case "do_register_on_server":
-					do_register_on_server(parameters[0]);
-					break;
+				} else if (msg is API_DoRegisterOnServer) {
+					do_register_on_server();
 				}		
 			} catch(err:Error) {
 				BaseGameAPI.error("Error thrown in SinglePlayerEmulator:"+AS3_vs_AS2.error2String(err));
 			}					
   		}
-  		private function do_register_on_server(iChannel:int):void {
-  			api.API_got_my_user_id(user_id);
-			sendInfo("got_general_info", general_info_entries);
-			sendInfo("got_user_info", user_info_entries);	
+  		private function do_register_on_server():void {
+  			sendCallback(new API_GotMyUserId(user_id) );
+  			sendCallback(new API_GotGeneralInfo(general_info_entries) );
+  			sendCallback(new API_GotUserInfo(user_id, user_info_entries) );
 	 		sendNewMatch();
   		}
-  		private function sendNewMatch():void {	 	
-			sendInfo("got_match_started", match_state);	 	
+  		private function sendNewMatch():void {	 
+  			sendCallback(new API_GotMatchStarted([user_id], [], extra_match_info, match_started_time,match_state) );	 	
   		}
-  		public function sendCallback(methodName:String, parameters:Array):void {
+  		private function sendCallback(msg:API_Message):void {
+  			var methodName:String = msg.methodName;
+  			var parameters:Array = msg.parameters;
   			trace("sendCallback on channel="+sGotChanel+' for methodName='+methodName+' parameters='+JSON.stringify(parameters));
   			lcDoChannel.send(sGotChanel, "localconnection_callback", methodName, parameters);
   		}
-  		private function sendInfo(name:String, entries:Array/*Entry*/):void {
-  			var keys:Array = [];
-			var values:Array = [];
-			var user_ids:Array = name=="got_match_started" ? [] : null;
-			translate_entries(entries, keys, values, user_ids);
-			var parameters:Array = [keys, values];
-			if (name=="got_user_info")
-				api.API_got_user_info(user_id, keys, values);
-			else if (name=="got_general_info")
-				api.API_got_general_info(keys, values);
-			else if (name=="got_match_started")
-				api.API_got_match_started( [user_id], [], extra_match_info, match_started_time, user_ids, keys, values, null);
-  		}
-		private function translate_entries(entries:Array, keys:Array, values:Array, user_ids:Array):void {
-			for (var i:int = 0; i<entries.length; i++) {
-				var entry:Entry = entries[i];
-				keys[i] = entry.key;
-				values[i] = entry.value;
-				if (user_ids!=null) user_ids[i] = AS3_vs_AS2.asUserEntry(entry).user_id;
-			}
-		}
 	}
 }

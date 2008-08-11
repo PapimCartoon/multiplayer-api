@@ -7,15 +7,13 @@ import come2play_as2.tests.*;
 class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 	//public var dp:DataProvider = new DataProvider();
 	private var my_graphics:MovieClip;
-	private var show_localconnection_messages:Boolean;
 	private var test_Arr:Array;
 	private static var shouldTestPassNumbers:Boolean = false;
 	
 	public function TestClientGameAPI(my_graphics:MovieClip) {
 		trace("Constructor of TestClientGameAPI");
 		var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(my_graphics);
-		this.my_graphics = my_graphics;
-		show_localconnection_messages = parameters["show_localconnection_messages"]=="true";		
+		this.my_graphics = my_graphics;		
 		try {		
 			if (shouldTestPassNumbers) {	
 				test_Arr = getNumberArr();
@@ -37,11 +35,13 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 	}
 	
 	/*override*/ public function got_my_user_id(user_id:Number):Void {		
-		if (shouldTestPassNumbers) do_send_message([user_id], test_Arr);
+		if (shouldTestPassNumbers) do_store_match_state([ new StateEntry("test", test_Arr, false)]);
 	}
-	/*override*/ public function got_message(user_id:Number, value:Object):Void {
+	/*override*/ public function got_stored_match_state(user_id:Number, entries:Array/*StateEntry*/):Void { 
 		if (shouldTestPassNumbers) {
-			trace("got_message="+value);
+			trace("got_stored_match_state="+value);
+			var state:StateEntry = entries[0];
+			var value:Array = AS3_vs_AS2.asArray(state.value);  
 			for (var i:Number=0; i<test_Arr.length; i++) {
 				var val:Number = test_Arr[i];
 				var val2:Number = value[i];
@@ -102,7 +102,7 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 				do_client_protocol_error_with_description(getInputText("error_description"));
 				break;
 			case "do_store_match_state":
-				do_store_match_state( [new Entry(getInputText("state_key"), getObject("state_value"))] );
+				do_store_match_state( [new StateEntry(getInputText("state_key"), getObject("state_value"), false)] );
 				break;
 			case "do_send_message":
 				do_send_message(getIntArr("to_user_ids"), getObject("message_value"));
@@ -131,9 +131,6 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 		}
 		return res;
 	}
-	/*override*/ public function got_error(in_function_name:String, err:Error):Void {
-		storeTrace("got_error", "In function "+in_function_name+" error="+err);
-	}	
     /*override*/ private function sendDoOperation(methodName:String, parameters:Array/*Object*/):Void {
 		storeTrace(methodName, parameters.join(" , "));
 		super.sendDoOperation(methodName, parameters);
@@ -141,10 +138,6 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
     /*override*/ public function localconnection_callback(methodName:String, parameters:Array/*Object*/):Void {
 		storeTrace(methodName, parameters.join(" , "));
 		super.localconnection_callback(methodName, parameters); // to call do_finished_callback
-	}
-	/*override*/ private function sendOperation(connectionName:String, methodName:String, parameters:Array/*Object*/):Void {
-		if (show_localconnection_messages) storeTrace("LOCALCONNECTION", "connectionName="+connectionName+" methodName="+methodName+" parameters="+parameters);
-		super.sendOperation(connectionName, methodName, parameters);
 	}
 }
 

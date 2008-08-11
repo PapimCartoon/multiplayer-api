@@ -41,11 +41,6 @@ package emulator {
 			btnSend.y = 32 * parameters.length + 35;
 		*/
 		private static var all_commands:Array = SummaryGameAPI.SUMMARY_API;
-		{
-			all_commands.push(['do_store_trace', [['name','String'] , ['message','Object']] ] );
-			all_commands.push(['do_finished_callback', [['methodName','String']] ]);
-			all_commands.push(['do_register_on_server', [] ]);			
-		}
 
 		public static function findCommand(name:String):Array {
 			for each (var arr:Array in all_commands)

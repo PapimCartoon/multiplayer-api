@@ -66,7 +66,8 @@ public final class TicTacToe_Main extends ClientGameAPI {
 			for(var col:int=0; col<COLS; col++)
 				squares[row][col] = new TicTacToe_SquareGraphic(this, AS3_vs_AS2.getMovieChild(graphics,"Square_"+row+"_"+col), row, col);				
 		}		
-		doRegisterOnServer();	 
+		doRegisterOnServer();	
+		graphics.do_txt.text="doRegisterOnServer" 
 	}
 	
 	private function getColor(playerId:int):int {
@@ -86,8 +87,12 @@ public final class TicTacToe_Main extends ClientGameAPI {
 	}
 	override public function gotMyUserId(myUserId:int):void {
 		this.myUserId = myUserId;
+		graphics.got_txt.text+="gotMyUserId";
 	}
-	
+	override public function gotUserInfo(userId:int, entries:Array/*Entry*/):void
+	{
+		graphics.got_txt.text+="gotUserInfo";
+	}
 	override public function gotCustomInfo(entries:Array/*Entry*/):void {
 		for each (var entry:Entry in entries) {
 			if (entry.key==API_Message.CUSTOM_INFO_KEY_logo_swf_full_url) {
@@ -98,8 +103,10 @@ public final class TicTacToe_Main extends ClientGameAPI {
 						(squares[row][col] as TicTacToe_SquareGraphic).gotLogo(logo_swf_full_url);
 			}		
 		}
+		graphics.got_txt.text+="gotCustomInfo";
 	}
 	override public function gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, extraMatchInfo:Object/*Serializable*/, matchStartedTime:int, userStateEntries:Array/*UserStateEntry*/):void {
+		graphics.got_txt.text+="gotMatchStarted";
 		this.allPlayerIds = allPlayerIds;
 		assert(allPlayerIds.length<=4, ["The graphics of TicTacToe can handle at most 4 players. allPlayerIds=", allPlayerIds]);
 		turnOfColor = 0;
@@ -121,6 +128,7 @@ public final class TicTacToe_Main extends ClientGameAPI {
 		setOnPress(true);
 	}
 	override public function gotMatchEnded(finishedPlayerIds:Array/*int*/):void {
+		graphics.got_txt.text+="gotMatchEnded";
 		if (matchOverForPlayers(finishedPlayerIds))
 			setOnPress(true); // need to call it only if the current color was changed
 		// if there is one player left (due to other users that disconnected),
@@ -128,6 +136,7 @@ public final class TicTacToe_Main extends ClientGameAPI {
 		// to either: win, cancel, or save the game.
 	}	
 	override public function gotStoredState(userId:int, stateEntries:Array/*StateEntry*/):void {
+		graphics.got_txt.text+="gotStoredState";
 		// the moves are done in alternating turns: color 0, then color 1 (in a round robin)	
 		assert(stateEntries.length==1, ["there is one entry per move in TicTacToe"]);	
 		var entry:StateEntry = stateEntries[0];
@@ -295,6 +304,7 @@ public final class TicTacToe_Main extends ClientGameAPI {
 		if (!isSinglePlayer() && myColor!=turnOfColor) return; // not my turn
 		if (!logic.isSquareAvailable(row, col)) return; // already filled this square (e.g., if you press on the keyboard, you may choose a cell that is already full)
 		doStoreState( [new StateEntry(getStateKey(), [row, col], false)] );		
+		graphics.do_txt.text="doStoreState" 
 		makeMove(row, col, false);		
 	}
 	private function setOnPress(isInProgress:Boolean):void {

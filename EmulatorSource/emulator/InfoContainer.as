@@ -56,11 +56,11 @@ package emulator {
 			var altKey:Boolean = event.altKey;
 			var ctrlKey:Boolean = event.ctrlKey;
 			var shiftKey:Boolean = event.shiftKey;
-			sendGotOperation("got_keyboard_event",[is_key_down, charCode, keyCode, keyLocation, altKey, ctrlKey, shiftKey]);
-			do_store_trace("got_keyboard_event", "is_key_down="+is_key_down+", charCode="+charCode+", keyCode="+keyCode+", keyLocation="+keyLocation+", altKey="+altKey+", ctrlKey="+ctrlKey+", shiftKey="+shiftKey);
+			sendGotOperation( new API_GotKeyboardEvent(is_key_down, charCode, keyCode, keyLocation, altKey, ctrlKey, shiftKey));
+			doTrace(new API_DoTrace("gotKeyboardEvent", "is_key_down="+is_key_down+", charCode="+charCode+", keyCode="+keyCode+", keyLocation="+keyLocation+", altKey="+altKey+", ctrlKey="+ctrlKey+", shiftKey="+shiftKey));
 		}
-		public function do_store_trace(funcname:String, arg:String):void {
-			sendDoOperation("do_store_trace", [funcname, arg]);
+		public function doTrace(msg:API_Message):void {	
+			sendDoOperation(new API_DoTrace("doTrace", [msg.methodName, msg.parameters]));
 		}
 		public function InfoContainer() {
 			stage.addEventListener(KeyboardEvent.KEY_UP, reportKeyUp);
@@ -405,34 +405,42 @@ package emulator {
 				var prm:Param;
 				var arr:Array,i:int;
 
-				var command_name:String = cmbCommands.selectedItem.data;
-				var args:Array = Commands.findCommand(command_name);
+				var methodName:String = cmbCommands.selectedItem.data;
+				var args:Array = Commands.findCommand(methodName);
 				var parameters:Array = [];
 				for (i=0; i< args.length; i++) {
 					var param:String = aParams[i].Value;
 					var param_type:String = args[i][1];
 					parameters.push( Commands.convertToType(param, param_type) );
 				}
-				sendDoOperation(command_name, parameters);
+				sendDoOperation(new API_Message(methodName, parameters));
 
 				MsgBox.Show("The command was send", "Message");
 			}catch (err:Error) {
 				MsgBox.Show(err.message, "Error");
-				do_store_trace("btnSendClick", "Error: " + err.getStackTrace());
+				doTrace(new API_DoTrace("btnSendClick", "Error: " + err.getStackTrace()));
 			}
 		}
 		
 		public function localconnection_callback(methodName:String, parameters:Array/*Object*/):void {
 			try{
-				if (this.hasOwnProperty(methodName)) {
-					var func:Function = this[methodName];
-					func.apply(this, parameters);
-				}
-
+				var apiMsg:API_Message = API_Message.createMessage(methodName,parameters);
+				
+				if (apiMsg is API_GotMyUserId)
+					gotMyUserId(apiMsg as API_GotMyUserId );
+				else if (apiMsg is API_GotMatchStarted)
+					gotMatchStarted(apiMsg as API_GotMatchStarted);		
+				else if(apiMsg is API_GotUserInfo)
+					gotUserInfo(apiMsg as API_GotUserInfo);
+				else if(apiMsg is API_GotMatchEnded)
+					gotMatchEnded(apiMsg as API_GotMatchEnded);
+				else if(apiMsg is API_GotTurnOf)
+					gotTurnOf(apiMsg as API_GotTurnOf);
+					
 				if (methodName.substring(0,"got".length)=="got")
-					sendGotOperation(methodName, parameters);
+					sendGotOperation(apiMsg);
 				else if (methodName.substring(0,"do".length)=="do") {
-					sendDoOperation(methodName, parameters);
+					sendDoOperation(apiMsg);
 				} else throw Error("Illegal message prefix!");
 				
 				
@@ -441,25 +449,25 @@ package emulator {
 				MsgBox.Show(err.message, "Error: "+ err.getStackTrace());
 			}
         }
-		private function sendDoOperation(methodName:String, parameters:Array/*Object*/):void {
-			ddsDoOperations.doSomething(new MessageToSend(sOuterDoChanel,methodName,parameters));
+		private function sendDoOperation(msg:API_Message):void {
+			ddsDoOperations.doSomething(new MessageToSend(sOuterDoChanel,msg.methodName,msg.parameters));
         }
-		private function sendGotOperation(methodName:String, parameters:Array/*Object*/):void {
-        	ddsGotOperations.doSomething(new MessageToSend(sInnerGotChanel,methodName,parameters));
+		private function sendGotOperation(msg:API_Message):void {
+        	ddsGotOperations.doSomething(new MessageToSend(sInnerGotChanel,msg.methodName,msg.parameters));
         }
 		
 		//Got functions
-		public function got_user_info(user_id:int, keys:Array, values:Array):void {
+		public function gotUserInfo(msg:API_GotUserInfo):void {
 				var info:UserInfo = new UserInfo();
-				info.userID = user_id;
+				info.userID = msg.userId;
 				info.isPlayer = false;
 				info.gameOver = false;
-				for (var i:int = 0; i < keys.length; i++) {
-					if (keys[i] == "name") { // see BaseGameAPI.USER_INFO_KEY_name
-						info.userName = values[i];
+				for (var i:int = 0; i < msg.parameters.length; i++) {
+					if ( msg.parameters[i].key == "name") { // see BaseGameAPI.USER_INFO_KEY_name
+						info.userName = msg.parameters[i].value;
 					}
-					if (keys[i] == "avatar_url") { // see BaseGameAPI.USER_INFO_KEY_avatar_url
-						info.userPicture = values[i];
+					if (msg.parameters[i].key == "avatar_url") { // see BaseGameAPI.USER_INFO_KEY_avatar_url
+						info.userPicture = msg.parameters[i].value;
 					}
 				}
 				aUsers.push(info);
@@ -474,13 +482,11 @@ package emulator {
 				cmbCommands.y = txtUsers.height + txtUsers.y + 5;
 				pnlParams.y = cmbCommands.y + cmbCommands.height + 5;
 		}
-		public function got_my_user_id(my_user_id:int):void { 
+		public function gotMyUserId(msg:API_GotMyUserId):void { 
 				bStarted = true;
-				iMyID = my_user_id;
+				iMyID = msg.myUserId;
 		}
-		public function 
-				got_match_started(all_player_ids:Array/*int*/, finished_player_ids:Array/*int*/, extra_match_info:Object/*Serializable*/, match_started_time:int, 
-				user_ids:Array/*int*/, keys:Array/*String*/, values:Array/*Serializable*/, secret_levels:Array/*int*/):void { 
+		public function gotMatchStarted(msg:API_GotMatchStarted):void { 
 				txtTurn.text = "";
 				lblWait.visible = false;
 				txtUsers.htmlText = "<b>Users:</b><br>";
@@ -488,7 +494,7 @@ package emulator {
 				for (var i:int = 0; i < aUsers.length; i++) {
 					u = aUsers[i];
 					str = u.userName + "(user_id=" + u.userID+", ";
-					if (all_player_ids.indexOf(u.userID) != -1) {
+					if (msg.allPlayerIds.indexOf(u.userID) != -1) {
 						str += "player";
 						u.isPlayer = true;
 						u.gameOver = false;
@@ -503,7 +509,7 @@ package emulator {
 				cmbCommands.y=txtUsers.height + txtUsers.y + 5;
 				pnlParams.y = cmbCommands.y + cmbCommands.height + 5;
 				
-				matchOverForIds(finished_player_ids);
+				matchOverForIds(msg.finishedPlayerIds);
 		}
 		private function matchOverForIds(user_ids:Array):void { 
 			if(user_ids.indexOf(iMyID)!=-1){
@@ -524,19 +530,22 @@ package emulator {
 				txtTurn.text = "Game over";
 			}
 		}
-		public function got_match_over(user_ids:Array):void { 
-			matchOverForIds(user_ids);
+		public function gotMatchEnded(msg:API_GotMatchEnded):void { 
+			matchOverForIds(msg.finishedPlayerIds);
 		}
-		public function got_end_turn_of(user_id:int):void { 
-			txtTurn.text = "";
-		}
-		public function got_start_turn_of(user_id:int):void { 
+		public function gotTurnOf(msg:API_GotTurnOf):void
+		{
+			if(msg.userId==-1)
+				txtTurn.text = "";
+			else
+			{
 			var u:UserInfo = new UserInfo();
 			for (var i:int = 0; i < aUsers.length; i++) {
 				u = aUsers[i];
-				if (u.userID == user_id) {
+				if (u.userID == msg.userId) {
 					txtTurn.text = u.userName + "'s turn";
 				}
+			}	
 			}
 		}
 		

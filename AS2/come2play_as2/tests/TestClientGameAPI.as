@@ -6,41 +6,51 @@ import flash.text.*;
 import come2play_as2.tests.*;
 class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 	//public var dp:DataProvider = new DataProvider();
-	private var my_graphics:MovieClip;
+	private var my_graphics:MovieClip;	
+	private var outTracesText:Object;
+	private var exampleOperationsText:Object;
+	private var operationInput:Object;
+	
 	private var test_Arr:Array;
 	private static var shouldTestPassNumbers:Boolean = false;
 	
 	public function TestClientGameAPI(my_graphics:MovieClip) {
-		trace("Constructor of TestClientGameAPI");
-		var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(my_graphics);
-		this.my_graphics = my_graphics;		
 		try {		
+			trace("Constructor of TestClientGameAPI");
+			var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(my_graphics);
+			this.my_graphics = my_graphics;	
+			outTracesText = my_graphics.outTracesText;
+			exampleOperationsText = my_graphics.exampleOperationsText;
+			operationInput = my_graphics.operationInput;	
+			
+			var allOperationsWithParameters:Array = [];
+			for (var i28:Number=0; i28<API_MethodsSummary.SUMMARY_API.length; i28++) { var methodSummary:API_MethodsSummary = API_MethodsSummary.SUMMARY_API[i28]; 
+				if (methodSummary.methodName.substring(0,2)!="do") continue;
+				var args:Array = [];
+				for (var i:Number=0; i<methodSummary.parameterNames.length; i++) {
+					args.push(methodSummary.parameterNames[i]+":"+methodSummary.parameterTypes[i]);
+				}
+				allOperationsWithParameters.push(methodSummary.methodName+"("+args.join(", ")+")");
+			}
+			exampleOperationsText.text = allOperationsWithParameters.join("\n");
+			
 			if (shouldTestPassNumbers) {	
 				test_Arr = getNumberArr();
 				trace("test_Arr="+test_Arr);
 			}
-			
-			addBtnHandler("do_store_trace");
-			addBtnHandler("do_agree_on_match_over");
-			addBtnHandler("do_start_my_turn");
-			addBtnHandler("do_end_my_turn");
-			addBtnHandler("do_client_protocol_error_with_description");
-			addBtnHandler("do_store_match_state");
-			addBtnHandler("do_send_message");
+			AS3_vs_AS2.addOnPress(my_graphics.sendOperation, AS3_vs_AS2.delegate(this, this.dispatchOperation) );
 			super(my_graphics);
-			do_register_on_server();
 		} catch (err:Error) { 
 			handleError(err);
 		}
 	}
 	
-	/*override*/ public function got_my_user_id(user_id:Number):Void {		
-		if (shouldTestPassNumbers) do_store_match_state([ new StateEntry("test", test_Arr, false)]);
+	/*override*/ public function gotMyUserId(userId:Number):Void {		
+		if (shouldTestPassNumbers) doStoreState([ new StateEntry("test", test_Arr, false)]);
 	}
-	/*override*/ public function got_stored_match_state(user_id:Number, entries:Array/*StateEntry*/):Void { 
+	/*override*/ public function gotStoredState(userId:Number, stateEntries:Array/*StateEntry*/):Void { 
 		if (shouldTestPassNumbers) {
-			trace("got_stored_match_state="+value);
-			var state:StateEntry = entries[0];
+			var state:StateEntry = stateEntries[0];
 			var value:Array = AS3_vs_AS2.asArray(state.value);  
 			for (var i:Number=0; i<test_Arr.length; i++) {
 				var val:Number = test_Arr[i];
@@ -65,79 +75,35 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 	
 	private function storeTrace(func:String, args:String):Void {
 		trace("storeTrace: func="+func+" args="+args);
-		my_graphics.out_traces.text +=
+		outTracesText.text +=
 			AS3_vs_AS2.getTimeString() + "\t" + func + "\t" + args + "\n";
 		//dp.addItem({Time:(new Date().toLocaleTimeString()), Dir: is_to_container ? "->" : "<-", Function:func, Arguments:args});
 	}
 	private function handleError(err:Error):Void { 
 		storeTrace("ERROR", AS3_vs_AS2.error2String(err));
 	}
-	private function addBtnHandler(name:String):Void {
-		AS3_vs_AS2.addOnPress(my_graphics[name], AS3_vs_AS2.delegate(this, this.dispatchOperation, name) );   
-	}
-	private function dispatchOperation(name:String):Void {
-		trace("Pressed on "+name);
+	private function dispatchOperation():Void {
 		try {
-			switch (name) {
-			case "do_store_trace":
-				do_store_trace(getInputText("function"), getObject("arguments"));
-				break;
-			case "do_agree_on_match_over":
-				var finished_players:Array/*PlayerMatchOver*/ = [];
-				var finished_player_ids:Array/*int*/ = getIntArr("user_ids");
-				var scores:Array/*int*/ = getIntArr("scores");
-				var pot_percentages:Array/*int*/ = getIntArr("pot_percentages");
-				for (var i:Number = 0; i<finished_player_ids.length; i++) {
-					finished_players[i] = new PlayerMatchOver(finished_player_ids[i], scores[i], pot_percentages[i]);
-				}
-				do_agree_on_match_over(finished_players);
-				break;
-			case "do_start_my_turn":
-				do_start_my_turn();
-				break;
-			case "do_end_my_turn":
-				do_end_my_turn(getIntArr("next_turn_of_player_ids"));
-				break;
-			case "do_client_protocol_error_with_description":
-				do_client_protocol_error_with_description(getInputText("error_description"));
-				break;
-			case "do_store_match_state":
-				do_store_match_state( [new StateEntry(getInputText("state_key"), getObject("state_value"), false)] );
-				break;
-			case "do_send_message":
-				do_send_message(getIntArr("to_user_ids"), getObject("message_value"));
-				break;
-			}
+			var inputStr:String = operationInput.text;
+			if (inputStr=='') return;
+			var firstParen:Number = inputStr./*String*/indexOf("(");
+			if (firstParen==-1) return;
+			var lastParen:Number = inputStr./*String*/lastIndexOf(")");
+			if (lastParen==-1) return;			
+			var methodName:String = inputStr.substr(0,firstParen);
+			var params:String = inputStr.substring(firstParen+1, lastParen);
+			sendMessage( API_Message.createMessage(methodName, AS3_vs_AS2.asArray(JSON.parse("["+params+"]"))) );
 		} catch (err:Error) { 
 			handleError(err);			
 		}
 	}
-	private function getInputText(name_id:String):String {
-		return my_graphics["in_" + name_id].text; // can't use getChild, because it is not a movie clip
+    /*override*/ private function sendMessage(msg:API_Message):Void {
+		storeTrace(msg.methodName, msg.getParametersAsString());
+		super.sendMessage(msg);
 	}
-	private function getObject(name_id:String):Object {
-		return JSON.parse(getInputText(name_id));
-	}
-	private function getInt(name_id:String):Number {
-		return int(getInputText(name_id));
-	}
-	private function getIntArr(name_id:String):Array {
-		var txt:String = getInputText(name_id);
-		if (txt=="") return null;
-		var txt_arr:Array = txt.split(",");
-		var res:Array = [];
-		for (var i130:Number=0; i130<txt_arr.length; i130++) { var t:String = txt_arr[i130]; 
-			res.push(int(t));
-		}
-		return res;
-	}
-    /*override*/ private function sendDoOperation(methodName:String, parameters:Array/*Object*/):Void {
-		storeTrace(methodName, parameters.join(" , "));
-		super.sendDoOperation(methodName, parameters);
-	}
-    /*override*/ public function localconnection_callback(methodName:String, parameters:Array/*Object*/):Void {
-		storeTrace(methodName, parameters.join(" , "));
-		super.localconnection_callback(methodName, parameters); // to call do_finished_callback
+	/*override*/ private function gotMessage(msg:API_Message):Void {
+		storeTrace(msg.methodName, msg.getParametersAsString());
+		super.gotMessage(msg);		
 	}
 }
 

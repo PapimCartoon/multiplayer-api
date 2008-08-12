@@ -24,7 +24,7 @@ class come2play_as2.tictactoe.TicTacToe_SquareGraphic
 			AS3_vs_AS2.addOnPress(btn,	AS3_vs_AS2.delegate(this, this.pressedOn));		
 		showOrHideLogo(false);
 	}
-	public function got_logo(logo:String):Void {
+	public function gotLogo(logo:String):Void {
 		AS3_vs_AS2.loadMovie(AS3_vs_AS2.getMovieChild(logoContainer,"InsideContainer"), logo);		
 	}	
     private function showOrHideLogo(shouldAdd:Boolean):Void {

@@ -156,5 +156,8 @@ public final class AS3_vs_AS2
 	public static function IndexOf(arr:Array, val:Object):int {
 		return arr.indexOf(val);
 	}	
+	public static function LastIndexOf(arr:Array, val:Object):int {
+		return arr.lastIndexOf(val);
+	}	
 }
 }

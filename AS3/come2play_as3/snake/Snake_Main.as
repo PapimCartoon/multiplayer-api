@@ -52,9 +52,9 @@ public final class Snake_Main extends CombinedClientAndSecureGameAPI {
 		graphics.stop();
 	}
 	
-	public function got_keyboard_event(is_key_down:Boolean, charCode:int, keyCode:int, keyLocation:int, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean):void {
+	public function gotKeyboardEvent(isKeyDown:Boolean, charCode:int, keyCode:int, keyLocation:int, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean):void {
 		if (snakes==null) return;
-		if (!is_key_down) return;
+		if (!isKeyDown) return;
 		
 		var now:int = getTimer();
 		if (lastKeyStroke==keyCode && (now < lastKeyStrokeTime+500)) return;// ...and it's different from the last key pressed

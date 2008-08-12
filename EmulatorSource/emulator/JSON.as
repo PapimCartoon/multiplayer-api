@@ -18,7 +18,6 @@ package emulator
 			if (arg==null) return 'null';
 			
 	        var c:String, i:int, l:int, res:Array, v:String;
-		    var argToString:String = "";
 			
 	        if (AS3_vs_AS2.isNumber(arg) || AS3_vs_AS2.isBoolean(arg))
 	        	return ''+arg; 	 
@@ -67,11 +66,15 @@ package emulator
 	            }
 	            return '"' + res.join("") + '"';
 	        }
-        	res = [];
-        	for (var z:String in arg) {
-                res.push( stringify(z) + ':' + stringify(arg[z]) );
-            }
-            return '{' + res.join(",") + '}';                
+	        var argToString:String = arg.toString();
+	        if (argToString=="[object Object]") {
+	        	res = [];
+	        	for (var z:String in arg) {
+	                res.push( stringify(z) + ':' + stringify(arg[z]) );
+	            }
+	            return '{' + res.join(",") + '}';
+	        }
+	        return argToString;                  
 	    }
         private function white():void {
             while (ch) {

@@ -18,20 +18,19 @@ package emulator {
 		private var lcFramework:LocalConnection;
 		
 		private var aUsers:Array;
-		private var aKeys:Array;
-		private var aData:Array;
-		private var aDataUsers:Array;
-		private var aNextPlayers:Array;
-		private var aServerKeys:Array;
-		private var aServerDatas:Array;
+		
+		private var userStateEntrys:Array/*UserStateEntry*/;
+		
+		private var serverEntery:Array;/*Entery*/
 		private var aParams:Array;
 		private var aPlayers:Array; //array of all the players
-		private var aMatchOvers:Array;
-		
+		private var afinishedPlayers:Array;
+
 		//que related varibales
 		private var unverifiedQue:Array;
 		private var doAllQue:Array;
 		private var queTimer:Timer;
+		
 		private var extra_match_info:Object;
 		private var match_started_time:int;
 		private var sCurMessageType:String;
@@ -98,8 +97,10 @@ package emulator {
 		//Constructor
 		public function Server() {
 			this.stop();
-			unverifiedQue = new Array;
-			doAllQue = new Array;
+			afinishedPlayers=new Array();
+			userStateEntrys=new Array();
+			unverifiedQue = new Array();
+			doAllQue = new Array();
 			queTimer=new Timer(10,0);
 			queTimer.addEventListener(TimerEvent.TIMER,queTimeoutError);
 			tbsPanel = new TabDialog();
@@ -424,7 +425,7 @@ package emulator {
 			txtTooltipExtraMatchInfo = new TextField;
 			txtTooltipExtraMatchInfo.autoSize = TextFieldAutoSize.LEFT;
 			txtTooltipExtraMatchInfo.background = true;
-			txtTooltipExtraMatchInfo.text = "extra_match_info:Object";
+			txtTooltipExtraMatchInfo.text = "custom match info:Object";
 			txtTooltipExtraMatchInfo.x = txtExtraMatchInfo.x;
 			txtTooltipExtraMatchInfo.y = 22;
 			txtTooltipExtraMatchInfo.visible = false;
@@ -433,7 +434,7 @@ package emulator {
 			txtTooltipMatchStartedTime = new TextField;
 			txtTooltipMatchStartedTime.autoSize = TextFieldAutoSize.LEFT;
 			txtTooltipMatchStartedTime.background = true;
-			txtTooltipMatchStartedTime.text = "match_started_time:long";
+			txtTooltipMatchStartedTime.text = "match started time:long";
 			txtTooltipMatchStartedTime.x = txtMatchStartedTime.x;
 			txtTooltipMatchStartedTime.y = 22;
 			txtTooltipMatchStartedTime.visible = false;
@@ -466,12 +467,9 @@ package emulator {
 			aMessages = new Array();
 			
 			aUsers = new Array();
-			aData = new Array();
-			aKeys = new Array();
-			aDataUsers = new Array();
+
 			aPlayers = new Array();
-			aNextPlayers = new Array();
-			aMatchOvers = new Array();
+			//aMatchOvers = new Array();
 			iCurTurn = -1;
 			
 			this.addChild(MsgBox);
@@ -513,11 +511,9 @@ package emulator {
 				aUsers.push(u);
 			}
 			
-			aServerKeys = new Array();
-			aServerDatas = new Array();
+			serverEntery=new Array();
 			if (root.loaderInfo.parameters["logo"]!=null && root.loaderInfo.parameters["logo"] != "") {
-				aServerKeys.push("logo_swf_full_url");
-				aServerDatas.push(root.loaderInfo.parameters["logo"]);
+				serverEntery.push(new Entry("logo_swf_full_url",root.loaderInfo.parameters["logo"]));
 			}
 			
 			if (root.loaderInfo.parameters["game"] == null) {
@@ -545,135 +541,283 @@ package emulator {
 			shrParams.data.params = arr;
 			shrParams.flush();
 		}
+		/*
+		*************************************************
+					END OF CONSTRUCTOR
+		*************************************************
+		*/
 		private function queTimeoutError(ev:TimerEvent):void
 		{
-			//error	
+			
+			showMsg(unverifiedQue.methodName+"Timed out by player/s:"+unverifiedQue.unverifiedPlayers.toString,"Error");
+			gameOver();
 		}
-		public function got_user_localconnection_callback(user:User, methodName:String, parameters:Array/*Object*/):void {			
+		public function got_user_localconnection_callback(user:User, msg:API_Message):void {			
 			try{
-				trace("got_user_localconnection_callback: user="+user.Name+" methodName="+methodName);
-				addMessageLog(user.Name, methodName, methodAndParams2String(methodName, parameters) );
+				
+				trace("got_user_localconnection_callback: user="+user.Name+" methodName="+msg.methodName);
 								
-				if (methodName!="do_finished_callback" && 
-					methodName!="do_register_on_server" && 
-					methodName!="do_store_trace") {
+				if (msg.methodName!="doFinishedCallback" && 
+					msg.methodName!="doRegisterOnServer" && 
+					msg.methodName!="doStoreTrace") {
 					if (!bGameStarted) {
-						addMessageLog("Server", methodName, "Error: game not started");
+						addMessageLog("Server", msg.methodName, "Error: game not started");
 						return;
 					}
 					if (bGameEnded) {
-						addMessageLog("Server", methodName, "Error: game already end");
+						addMessageLog("Server", msg.methodName, "Error: game already end");
 						return;
 					}
 				}
-				var tempFuncVals:Object;
-				var func:Function;
-				tempFuncVals.user = user.ID;
-				tempFuncVals.parameters = parameters;
-				parameters.methodName = methodName;
 				
-				if("do_store_match_state" == methodName)
+				var tempFunc:WaitingFunction=new WaitingFunction;
+				tempFunc.userId = user.ID;
+				tempFunc.parameters = msg.parameters;
+				tempFunc.methodName = msg.methodName;
+				if("doRegisterOnServer" == msg.methodName)
+				{
+					doRegisterOnServer(user);
+				}
+				else if("doFinishedCallback" == msg.methodName)
+				{
+					//addMessageLog("Server", msg.methodName, "Error: game callback");
+					user.do_finished_callback(msg.parameters[0])
+				}
+				/*
+				if("doStoreState" == msg.methodName)
 				{
 					if(!queTimer.running)
 					{
 						queTimer.reset();
 						queTimer.start();
 					}
-					tempFuncVals.unverifiedPlayers = aPlayers;
-					func= this[methodName] as Function;
-					func.apply(this, [user].concat(parameters));
-					unverifiedQue.push(tempFuncVals)	
+					tempFunc.unverifiedPlayers = aPlayers;
+					doStoreState(user,msg as API_DoStoreState);
+					unverifiedQue.push(tempFunc)	
 				}
-				else if((methodName == "do_all_end_match") ||
-						(methodName == "do_all_set_turn") ||
-						(methodName == "do_all_reveal_state") ||
-						(methodName == "do_all_shuffle_state") ||
-						(methodName == "do_all_found_hacker") )
+				else if("doRegisterOnServer" == msg.methodName)
 				{
-					doAllQue.push(tempFuncVals);
+					doRegisterOnServer(user);
+				}
+				else if((msg.methodName == "doAllEndMatch") ||
+						(msg.methodName == "doAllSetTurn") ||
+						(msg.methodName == "doAllRevealState") ||
+						(msg.methodName == "doAllShuffleState") ||
+						(msg.methodName == "doAllFoundHacker") )
+				{
+					doAllQue.push(tempFunc);
 					if(unverifiedQue.length == 0)
 					{
 						checkDoAlls();
 					}
 				}
+				else if(msg.methodName!="doFinishedCallback")
+				{
+					user.do_finished_callback(msg.methodName)
+				}
 				else
 				{
-					func = this[methodName] as Function;
-					func.apply(this, [user].concat(parameters));	
+					addMessageLog("Server","Trace","Not all covered: "+msg.methodName);
+					//func = this[msg.methodName] as Function;
+					//func.apply(this, [user].concat(msg.parameters));	
 				}
-	
+	*/
 			} catch (err:Error) { 
 				showMsg(err.getStackTrace(), "Error");
 			}  
 		}
-		private function checkDoAlls():void
+		private function spliceNum(arr:Array,value:Number):void
 		{
-			
+			var tempLen:Number=arr.length;
+			for(var i:Number=0;i<tempLen;i++)
+			{
+				if(arr[i]==value)
+				{
+				arr.splice(i,1);
+				return;
+				}
+			}
 		}
-		
-		private function arrays2string(arrs:Array):String {
-			// keys, values, secret_levels
-			var res:Array = [];
-			for each (var name_arr:Array in arrs) {
-				var name:String = name_arr[0];
-				var arr:Array = name_arr[1];
-				if (arr!=null) {
-					for (var i:int = 0; i<arr.length; i++) {
-						res[i] = (res[i]==null ? "" : res[i]+", ") + name +"="+ JSON.stringify(arr[i]);
+		private function commitDoAlls(calledMethodArr:Array):void
+		{
+			switch(calledMethodArr[0].methodName)
+			{
+				case "doAllEndMatch":
+					commitDoAllEndMatch(calledMethodArr);
+				break;
+				case "doAllFoundHacker":
+					//commitDoAllEndMatch(calledMethodArr);
+				break;
+				case "doAllSetTurn":
+					//commitDoAllEndMatch(calledMethodArr);
+				break;
+				default:
+					
+				break;
+			}
+		}
+		private function commitDoAllEndMatch(calledMethodArr:Array):void
+		{
+			var tempLen:Number=calledMethodArr.length;
+			for(var i:Number=1;i<tempLen;i++)
+			{
+				for(var j:Number=0;j<calledMethodArr[i].length;j++)
+				{
+					if(!calledMethodArr[0].parameters[0][j]==calledMethodArr[i].parameters[0][j])
+						{
+							//error
+							return;
+						}
+				}
+			}
+			for each (var usr:User in aUsers)
+			{
+				if (usr.ID == iCurTurn) 
+				{
+					do_end_my_turn(usr, null);
+					break;
+				}
+			}	
+			calledMethodArr[0].unverifiedPlayers = aPlayers;
+			unverifiedQue.push(calledMethodArr[0]);
+			gameOver();
+		}
+		/*
+		public function doAllEndMatch(user:User, user_ids:Array, scores:Array, pot_percentages:Array):void {			
+			if (user_ids.length==0) {
+				addMessageLog("Server", "do_agree_on_match_over", "Error: Array user_ids can't be empty.");
+				return;
+			}
+			for each (var u_id:int in user_ids) {
+				if (aPlayers.indexOf(u_id) == -1) {
+					addMessageLog("Server", "do_agree_on_match_over", "Error: Player with ID "+u_id+" doesn't exist.");
+				return;
+				}
+			}
+			if (scores.length != user_ids.length) {
+				addMessageLog("Server", "do_agree_on_match_over", "Error: Length of user_ids doesn't equal to length of scores.");
+				return;
+			}
+			if (pot_percentages!=null && pot_percentages.length != user_ids.length) {
+				addMessageLog("Server", "do_agree_on_match_over", "Error: Length of user_ids doesn't equal to length of pot_percentages.");
+				return;
+			}
+			if (pot_percentages != null) {
+				for each (var percent:int in pot_percentages) {
+					if (percent < -1 || percent > 100) {
+						addMessageLog("Server", "do_agree_on_match_over", "Error: "+percent+" is out of range.");
+						return;
 					}
 				}
 			}
-			return res.length==0 ? "[]" : "[{"+res.join("}, {")+"}]";
-		}
-		public function methodAndParams2String(methodName:String, paramValues:Array/*Object*/):String {
-			var parameters:Array = Commands.findCommand(methodName);
-			var res:Array = [];
-			var arr2str:Array = [];
-			var combinedName:String = null;
-			switch (methodName) {
-			case "got_general_info": 
-			case "got_user_info": 
-			case "do_store_match_state": 
-			case "got_stored_match_state": 
-				combinedName = "entries";
-				break;
-			case "got_match_started": 
-				combinedName = "match_state";
-				break;
-			case "do_agree_on_match_over": 
-			case "do_juror_end_match": 
-				combinedName = "finished_players";
-				break;
+			var findMatchOver:MatchOver = null;
+			var over:MatchOver;
+			var usr:User;
+			for each (over in aMatchOvers) {
+				if (compareArrays(over.user_ids, user_ids)) {
+					if(compareArrays(over.scores, scores) && compareArrays(over.pot_percentages, pot_percentages)) {
+						findMatchOver = over; 
+						break;
+					}else {
+						addMessageLog(user.Name, "do_agree_on_match_over", "Error: function parameters are different from previous call.");
+						showMsg("do_agree_on_match_over: Function parameters are different from previous call.");
+						gameOver()
+						showMatchOver();
+						return;
+					}
+				}
 			}
-
-			for (var i:int=0; i<parameters.length; i++) {
-				var param_name:String = parameters[i][0];
-				var param_value:Object = paramValues[i];
+			over = findMatchOver;
+			if (over==null) {
+				over = new MatchOver();
+				over.user_ids = user_ids;
+				over.scores = scores;
+				over.pot_percentages = pot_percentages;
+				over.recieved_from = new Array();
+				aMatchOvers.push(over);
 				
-				switch (param_name) {
-				case "user_ids": 
-				case "keys": 
-				case "values": 
-				case "secret_levels":
-				case "finished_player_ids": 
-				case "scores": 
-				case "pot_percentages": 
-					if (combinedName!=null) {
-						var name_without_final_s:String = param_name.substring(0,param_name.length-1);
-						arr2str.push( [name_without_final_s , param_value ] );
+				if (iCurTurn==-1 && isTurnBasedGame) {
+					addMessageLog("Server", "do_agree_on_match_over", "Warning: in a turn-based game, the first call to do_agree_on_match_over should be during someone's turn");
+				}
+			}
+			if (over.recieved_from.indexOf(user.ID) == -1) {
+				over.recieved_from.push(user.ID);
+				var all_agreed:Boolean = true;
+				for each (usr in aUsers) {
+					if (!usr.Ended && aPlayers.indexOf(usr.ID)!=-1 && over.recieved_from.indexOf(usr.ID) == -1) {
+						all_agreed = false;
 						break;
 					}
-				default:
-					res.push(param_name+"="+JSON.stringify(param_value));
+				}
+				if (all_agreed) {
+					if (over.user_ids.indexOf(iCurTurn) != -1) {
+						for each (usr in aUsers) {
+							if (usr.ID == iCurTurn) {
+								do_end_my_turn(usr, null);
+								break;
+							}
+						}
+					}
+					var cur_players:int = 0;
+					for each (usr in aUsers) {
+						if (over.user_ids.indexOf(usr.ID) != -1) {
+							usr.Ended = true;
+						}
+						if (aPlayers.indexOf(usr.ID)!=-1 && !usr.Ended) {
+							cur_players++;
+						}
+					}
+					
+
+					
+					broadcast(new API_GotMatchEnded(over.user_ids));
+					if (cur_players == 0) {     
+						aNextPlayers=new Array();
+						txtMatchStartedTime.text = "";
+						bGameEnded = true;
+						txtExtraMatchInfo.visible = true;
+						txtMatchStartedTime.visible = true;
+						btnNewGame.visible = true;
+						btnCancelGame.visible = false;
+						btnLoadGame.visible = true;
+						btnSaveGame.visible = false;
+					}
 				}
 			}
-			if (combinedName!=null) res.push(combinedName+"="+arrays2string(arr2str));
-			return res.join(", ");
+			showMatchOver();
+		}
+		*/
+		private function checkDoAlls():void
+		{
+			var methodName:String=doAllQue[0].methodName;
+			var playersNotCalled:Array=aPlayers.concat();
+			for each(var methodObj:Object in doAllQue)
+			{
+				if(methodName==methodObj.methodName)
+				{
+					spliceNum(playersNotCalled,methodObj.user);
+				}
+			}
+			if(playersNotCalled.length==0)
+			{
+				var tempLen:Number=doAllQue.length;
+				var methodCalls:Array=new Array();
+				for(var i:Number;i<tempLen;i++)
+				{
+					if(doAllQue[i].methodName==methodName)
+						{
+						methodCalls.push(doAllQue.splice(i,1));
+						i--;
+						tempLen--;
+						}
+				}
+				commitDoAlls(methodCalls);
+			}
 		}
 		
 		private function getFinishedPlayerIds():Array/*int*/ {
-			var finished_player_ids:Array/*int*/ = [];
-			if (bGameEnded) {
+			//var finished_player_ids:Array/*int*/ = [];
+			/*if (bGameEnded) {
 				finished_player_ids = [aPlayers];
 			}else {				
 				for each (var over:MatchOver in aMatchOvers) {
@@ -681,8 +825,8 @@ package emulator {
 						finished_player_ids = finished_player_ids.concat( over.user_ids );
 					}
 				}
-			}
-			return finished_player_ids;
+			}*/
+			return afinishedPlayers;
 		}
 		private function getOngoingPlayerIds():Array/*int*/ {
 			var res:Array = [];
@@ -701,7 +845,7 @@ package emulator {
 		private function send_got_match_started(u:User):void {	
 			var finished_player_ids:Array = getFinishedPlayerIds();
 			u.Ended = finished_player_ids.indexOf(u.ID)!=-1;
-			u.sendOperation("got_match_started", [aPlayers, finished_player_ids, extra_match_info, match_started_time, aDataUsers, aKeys, aData, null]);			
+			u.sendOperation(new API_GotMatchStarted(aPlayers, finished_player_ids, extra_match_info, match_started_time,userStateEntrys));			
 		}
 		
 		public function addMessageLog(user:String, funcname:String, message:String):void {
@@ -1040,8 +1184,8 @@ package emulator {
 			if(iInfoMode==1){
 				tblInfo.removeAll();
 				
-				for(var i:int=0;i<aKeys.length;i++){
-					tblInfo.addItem({user_id:aDataUsers[i],key:aKeys[i],data:JSON.stringify(aData[i])});
+				for(var i:int=0;i<userStateEntrys.length;i++){
+					tblInfo.addItem({user_id:userStateEntrys[i].userId,key:userStateEntrys[i].key,data:userStateEntrys[i].getParametersAsString()});
 					tblInfo.verticalScrollPosition = tblInfo.maxVerticalScrollPosition+30;
 				}
 				txtInfo.text="";
@@ -1053,8 +1197,8 @@ package emulator {
 			if(iInfoMode==3){
 				tblInfo.removeAll();
 				
-				for(var i:int=0;i<aServerKeys.length;i++){
-					tblInfo.addItem({key:aServerKeys[i],data:aServerDatas[i]});
+				for(var i:int=0;i<serverEntery.length;i++){
+					tblInfo.addItem({key:serverEntery[i].key,data:serverEntery[i].value});
 					tblInfo.verticalScrollPosition = tblInfo.maxVerticalScrollPosition+30;
 				}
 				txtInfo.text="";
@@ -1067,8 +1211,8 @@ package emulator {
 				
 				var usr:User;
 				for each (usr in aUsers){
-					for(var j:int=0;j<usr.Keys.length;j++){
-						tblInfo.addItem({user_id:usr.ID,key:usr.Keys[j],data:usr.Params[j]});
+					for(var j:int=0;j<usr.Enterys.length;j++){
+						tblInfo.addItem({user_id:usr.ID,key:usr.Enterys[j].Key,data:usr.Enterys[j].value});
 						tblInfo.verticalScrollPosition = tblInfo.maxVerticalScrollPosition+30;
 					}
 				}
@@ -1077,6 +1221,7 @@ package emulator {
 		}
 		
 		private function showMatchOver():void{
+			/*
 			if(iInfoMode==5){
 				tblInfo.removeAll();
 				
@@ -1086,6 +1231,7 @@ package emulator {
 				}
 				txtInfo.text="";
 			}
+			*/
 		}
 		
 		private function showSavedGames():void{
@@ -1098,8 +1244,8 @@ package emulator {
 					try{
 						if (savedGame.playersNum == User.PlayersNum && savedGame.GameName==root.loaderInfo.parameters["game"]) {
 							arr1=new Array();
-							for(var j:int=0;j<savedGame.Keys.length;j++){
-								arr1.push("{user_id: "+savedGame.Users[j]+", key: "+savedGame.Keys[j]+", data: "+JSON.stringify(savedGame.Datas[j])+"}");
+							for(var j:int=0;j<savedGame.Enterys.length;j++){
+								arr1.push("{user_id: "+savedGame.Enterys[j].userId+", key: "+savedGame.Enterys[j].key+", data: "+savedGame.Enterys[j].toString()+"}");
 							}
 							tblInfo.addItem({name:savedGame.Name, number_of_players:savedGame.playersNum, 
 									user_ids_that_are_still_playing:savedGame.Players , 
@@ -1172,9 +1318,10 @@ package emulator {
 				return;
 			}
 			var savedGame:SavedGame = cmbLoadName.selectedItem.data;
-			aKeys = savedGame.Keys.slice();
-			aDataUsers = savedGame.Users.slice();
-			aData = savedGame.Datas.slice();
+			userStateEntrys=savedGame.Enterys;
+			//aKeys = savedGame.Keys.slice();
+			//aDataUsers = savedGame.Users.slice();
+			//aData = savedGame.Datas.slice();
 			extra_match_info=savedGame.extra_match_info;
 			match_started_time = savedGame.match_started_time;
 			if(extra_match_info!=null){
@@ -1184,31 +1331,32 @@ package emulator {
 			}
 			txtMatchStartedTime.text = match_started_time.toString();
 			showMatchState();
-			aNextPlayers = new Array();
 			iCurTurn = savedGame.curTurn;
-			aMatchOvers = new Array();
-
-
+			//aMatchOvers = new Array();
+			/*
+			when debug information will be viewed
+			
+			*/
 			// Yoav: I added a MatchOver for all the players that already finished playing
 			if (savedGame.Players.length < savedGame.playersNum) {
 				// some players have already finished playing
 				var ongoing_player_ids:Array = savedGame.Players;
 				var finished_player_ids:Array = [];
-				var over:MatchOver = new MatchOver();
-				over.user_ids = [];
-				over.scores = [];
-				over.pot_percentages = [];
-				over.recieved_from = [];
+			//	var over:MatchOver = new MatchOver();
+				//over.user_ids = [];
+				//over.scores = [];
+				//over.pot_percentages = [];
+				//over.recieved_from = [];
 				for (var user_id:int=1; user_id<=savedGame.playersNum; user_id++) {
-					over.recieved_from.push(user_id);
+					//over.recieved_from.push(user_id);
 					if (ongoing_player_ids.indexOf(user_id)==-1) {
 						//getUser(user_id).Ended = true; // see send_got_match_started
-						over.user_ids.push(user_id);
-						over.scores.push(-1);
-						over.pot_percentages.push(-1);
+						//over.user_ids.push(user_id);
+						//over.scores.push(-1);
+						//over.pot_percentages.push(-1);
 					}
 				}
-				aMatchOvers.push(over);
+			//	aMatchOvers.push(over);
 			}
 
 
@@ -1278,9 +1426,7 @@ package emulator {
 				return;
 			}
 			var game:SavedGame = new SavedGame();
-			game.Keys = aKeys.slice();
-			game.Datas = aData.slice();
-			game.Users = aDataUsers.slice();
+			game.Enterys=userStateEntrys;
 			game.playersNum = User.PlayersNum;
 			game.Players = getOngoingPlayerIds();
 			game.extra_match_info=extra_match_info;
@@ -1328,12 +1474,9 @@ package emulator {
 			btnSaveGame.visible = true;
 			btnLoadGame.visible = false;
 			iCurTurn=-1;
-			aData = new Array();
-			aKeys = new Array();
-			aDataUsers = new Array();
+			userStateEntrys=new Array();
 			showMatchState();
-			aNextPlayers = new Array();
-			aMatchOvers = new Array();
+			//aMatchOvers = new Array();
 			showMatchOver();
 			var usr:User;
 			for each (usr in aUsers) {
@@ -1385,7 +1528,7 @@ package emulator {
 
 				for each (usr in aUsers) {
 					if(usr.ID==target || target==-1){						
-						usr.sendOperation(command_name, parameters);
+						usr.sendOperation(new API_Message(command_name, parameters));
 					}
 				}
 				showMsg("Command was send", "Message");
@@ -1397,24 +1540,24 @@ package emulator {
 		
 		//Do functions
 		
-		private function broadcast(method:String, parameters:Array):void {
+		private function broadcast(msg:API_Message):void {
 			for each (var user:User in aUsers) {
-				user.sendOperation(method, parameters);
+				user.sendOperation(msg);
 			}
 		}	
-		public function do_register_on_server(u:User):void {
+		public function doRegisterOnServer(u:User):void {
 			if (u.wasRegistered) throw new Error("User "+u.Name+" called do_register_on_server twice!");
 			// send the info of "u" to all registered users (without user "u")
-			broadcast("got_user_info", [u.ID, u.Keys, u.Params]); //note, this must be before you call u.wasRegistered = true 
+			broadcast(new API_GotUserInfo(u.ID, u.Enterys)); //note, this must be before you call u.wasRegistered = true 
 			u.wasRegistered = true;		
-			u.sendOperation("got_my_user_id", [u.ID]);
-			u.sendOperation(new API_GotGeneralInfo("got_general_info", [aServerKeys, aServerDatas]);
+			u.sendOperation(new API_GotMyUserId(u.ID));
+			u.sendOperation(new API_GotCustomInfo(serverEntery));
 				
 			// important: note that this is not a broadcast!
 			// send to "u" the info of all the registered users
 			for each (var user:User in aUsers) {
 				if (user.wasRegistered)
-					u.sendOperation("got_user_info", [user.ID, user.Keys, user.Params]);
+					u.sendOperation(new API_GotUserInfo(user.ID, user.Enterys));
 			}		
 				
 			showUserInfo();
@@ -1446,6 +1589,7 @@ package emulator {
 			}
 			
 		}
+		/*
 		public function do_start_my_turn(user:User):void {
 			isTurnBasedGame = true;
 			//if (aNextPlayers.length > 0 && aNextPlayers.indexOf(user.ID) == -1) {
@@ -1463,10 +1607,10 @@ package emulator {
 			iCurTurn = user.ID;
 			broadcast("got_start_turn_of", [user.ID]);
 		}
+		*/
 		public function do_end_my_turn(user:User, next_turn_of_player_ids:Array):void {
 			isTurnBasedGame = true;
 			if (iCurTurn != user.ID) {
-			//	addMessageLog("Server", "do_end_my_turn", "Warning: Can't end turn, user " + user.Name + " didn't start turn");
 				return;
 			}
 			if (next_turn_of_player_ids != null) {
@@ -1480,23 +1624,24 @@ package emulator {
 				next_turn_of_player_ids = new Array();
 			}
 			iCurTurn = -1;
-			aNextPlayers = next_turn_of_player_ids;
 			var usr:User;
-			broadcast("got_end_turn_of", [user.ID]);
+			//broadcast("got_end_turn_of", [user.ID]);
 		}
-		public function do_store_match_state(user:User, keys:Array/*String*/, datas:Array/*Object*/, secret_levels:Array):void {
-			for (var i:int=0; i<keys.length; i++)
-				do_store_one_match_state(user, keys[i], datas[i]);
+		
+		public function doStoreState(user:User, msg:API_DoStoreState):void {
+			//userStateEntrys.concat(msg.stateEntries);
+			for (var i:int=0; i<msg.stateEntries.length; i++)
+				doStoreOneState(user, msg.stateEntries[i]);
 			
 			showMatchState();
-			broadcast("got_stored_match_state", [user.ID,keys,datas,secret_levels]);
+			broadcast(new API_GotStoredState(user.ID,msg.stateEntries));
 		}
-		private function do_store_one_match_state(user:User, key:String, data:Object):void {			
-			if (key == "") {
+		private function doStoreOneState(user:User, stateEntery:UserStateEntry):void {			
+			if (stateEntery.key == "") {
 				addMessageLog("Server", "do_store_match_state", "Error: Can't store match state, key is empty");
 				return;
 			}
-			if (aKeys.length>=1000) {
+			if (userStateEntrys.length>=1000) {
 				addMessageLog("Server", "do_store_match_state", "Error: you stored more than a 1000 keys!");
 				return;
 			}
@@ -1505,25 +1650,32 @@ package emulator {
 				addMessageLog("Server", "do_store_match_state", "Warning: in a turn-based game, you should call do_store_match_state only during your turn");
 			}
 
-			var index:int = aKeys.indexOf(key);
-			if (index!=-1) {
-				if (aPlayers.indexOf(user.ID)==-1 && aDataUsers[index]==user.ID) {
-					addMessageLog("Server", "do_store_match_state", "Error: a viewer cannot rewrite/delete other's data (not viewers nor players data)");
+			//var index:int = aKeys.indexOf(stateEntery.key);
+			var isBroken:Boolean=false;
+			for(var index:int=0;index<userStateEntrys.length;index++)
+			{
+				if(userStateEntrys[index].key == stateEntery.key)
+				{
+					isBroken=true;
+					break;
+				}
+			}
+			
+			if (isBroken) {
+				if (aPlayers.indexOf(user.ID)==-1 && userStateEntrys[index].userId==user.ID) {
+					addMessageLog("Server", "doStoreState", "Error: a viewer cannot rewrite/delete other's data (not viewers nor players data)");
 					return;
 				}
-				aKeys.splice(index,1);
-				aData.splice(index,1);
-				aDataUsers.splice(index,1);
+				userStateEntrys.splice(index,1);
 			}
-			if (data!=null && data!="") {
-				aKeys.push(key);
-				aData.push(data);
-				aDataUsers.push(user.ID);
+			if (stateEntery.value!=null && stateEntery.value!="") {
+				userStateEntrys.push(stateEntery);
 			}
 		}
 		
 		public function gameOver():void
 		{
+			queTimer.stop();
 			var usr:User;
 			var arr:Array = new Array();
 			for each (usr in aUsers) {
@@ -1532,7 +1684,6 @@ package emulator {
 					usr.Ended = true;
 				}
 			}
-			aNextPlayers=new Array();
 			bGameEnded = true;
 			txtMatchStartedTime.text = "";
 			txtExtraMatchInfo.visible = true;
@@ -1541,112 +1692,12 @@ package emulator {
 			btnCancelGame.visible = false;
 			btnLoadGame.visible = true;
 			btnSaveGame.visible = false;
-			broadcast("got_match_over", [arr]);
+			broadcast( new API_GotMatchEnded(arr) );
 		}
 		
-		public function do_all_end_match(user:User, user_ids:Array, scores:Array, pot_percentages:Array):void {			
-			if (user_ids.length==0) {
-				addMessageLog("Server", "do_agree_on_match_over", "Error: Array user_ids can't be empty.");
-				return;
-			}
-			for each (var u_id:int in user_ids) {
-				if (aPlayers.indexOf(u_id) == -1) {
-					addMessageLog("Server", "do_agree_on_match_over", "Error: Player with ID "+u_id+" doesn't exist.");
-				return;
-				}
-			}
-			if (scores.length != user_ids.length) {
-				addMessageLog("Server", "do_agree_on_match_over", "Error: Length of user_ids doesn't equal to length of scores.");
-				return;
-			}
-			if (pot_percentages!=null && pot_percentages.length != user_ids.length) {
-				addMessageLog("Server", "do_agree_on_match_over", "Error: Length of user_ids doesn't equal to length of pot_percentages.");
-				return;
-			}
-			if (pot_percentages != null) {
-				for each (var percent:int in pot_percentages) {
-					if (percent < -1 || percent > 100) {
-						addMessageLog("Server", "do_agree_on_match_over", "Error: "+percent+" is out of range.");
-						return;
-					}
-				}
-			}
-			var findMatchOver:MatchOver = null;
-			var over:MatchOver;
-			var usr:User;
-			for each (over in aMatchOvers) {
-				if (compareArrays(over.user_ids, user_ids)) {
-					if(compareArrays(over.scores, scores) && compareArrays(over.pot_percentages, pot_percentages)) {
-						findMatchOver = over; 
-						break;
-					}else {
-						addMessageLog(user.Name, "do_agree_on_match_over", "Error: function parameters are different from previous call.");
-						showMsg("do_agree_on_match_over: Function parameters are different from previous call.");
-						gameOver()
-						showMatchOver();
-						return;
-					}
-				}
-			}
-			over = findMatchOver;
-			if (over==null) {
-				over = new MatchOver();
-				over.user_ids = user_ids;
-				over.scores = scores;
-				over.pot_percentages = pot_percentages;
-				over.recieved_from = new Array();
-				aMatchOvers.push(over);
-				
-				if (iCurTurn==-1 && isTurnBasedGame) {
-					addMessageLog("Server", "do_agree_on_match_over", "Warning: in a turn-based game, the first call to do_agree_on_match_over should be during someone's turn");
-				}
-			}
-			if (over.recieved_from.indexOf(user.ID) == -1) {
-				over.recieved_from.push(user.ID);
-				var all_agreed:Boolean = true;
-				for each (usr in aUsers) {
-					if (!usr.Ended && aPlayers.indexOf(usr.ID)!=-1 && over.recieved_from.indexOf(usr.ID) == -1) {
-						all_agreed = false;
-						break;
-					}
-				}
-				if (all_agreed) {
-					if (over.user_ids.indexOf(iCurTurn) != -1) {
-						for each (usr in aUsers) {
-							if (usr.ID == iCurTurn) {
-								do_end_my_turn(usr, null);
-								break;
-							}
-						}
-					}
-					var cur_players:int = 0;
-					for each (usr in aUsers) {
-						if (over.user_ids.indexOf(usr.ID) != -1) {
-							usr.Ended = true;
-						}
-						if (aPlayers.indexOf(usr.ID)!=-1 && !usr.Ended) {
-							cur_players++;
-						}
-					}
-					
-					broadcast("got_match_over",[over.user_ids]);
-					if (cur_players == 0) {     
-						aNextPlayers=new Array();
-						txtMatchStartedTime.text = "";
-						bGameEnded = true;
-						txtExtraMatchInfo.visible = true;
-						txtMatchStartedTime.visible = true;
-						btnNewGame.visible = true;
-						btnCancelGame.visible = false;
-						btnLoadGame.visible = true;
-						btnSaveGame.visible = false;
-					}
-				}
-			}
-			showMatchOver();
-		}
-		public function do_store_trace(user:User, funcname:String,message:Object):void {
-			//addMessageLog(user.Name, funcname, JSON.stringify(message));
+		
+		public function doTrace(user:User, funcname:String,message:Object):void {
+			addMessageLog(user.Name, funcname, JSON.stringify(message));
 		}
 		public function do_found_hacker(user:User, user_id:int, error_description:Object):void {
 			showMsg("Someone claimed he found a hacker:"+ JSON.stringify(error_description));
@@ -1665,8 +1716,23 @@ package emulator {
 			}
 			return null;
 		}			
-		public function do_finished_callback(user:User, methodName:String):void {
-
+		public function do_finished_callback(user:User, methodName:String):void 
+		{
+			for(var i:Number;i<unverifiedQue.length;i++)
+			{
+				if(unverifiedQue.indexOf(user.ID)!=-1)
+				{
+					spliceNum(unverifiedQue[i].unverifiedPlayers,user.ID);
+					if(unverifiedQue[i].unverifiedPlayers.length==0)
+					{
+						queTimer.reset();
+						unverifiedQue.splice(i,1);
+						if(unverifiedQue.length==0)
+							checkDoAlls();
+					}
+					break;
+				}	
+			}
 			
 			user.do_finished_callback(methodName);
 		}
@@ -1689,8 +1755,11 @@ class User {
 	private var sDoChanel:String;
 	private var sGotChanel:String;
 	private var actionQue:Array;
+	public var Enterys:Array;/*enterys*/
+	/*
 	public var Params:Array;
 	public var Keys:Array;
+	*/
 	public var Ended:Boolean = false;
 	public var wasRegistered:Boolean = false;
 	public static var PlayersNum:int = 0;
@@ -1712,7 +1781,7 @@ class User {
 	//Constructor
 	public function User(prefix:int, _server:Server) {
 		try{
-			
+			Enterys=new Array();
 			if (iNextId > PlayersNum + ViewersNum) {
 				throw new Error("Too many users");
 			}
@@ -1729,15 +1798,15 @@ class User {
 				}
 			}
 			
-			Keys = new Array();
-			Params = new Array();
 			actionQue = new Array();
+			var tempEntery:Entry;
 			for (var i:int = 0; sServer.root.loaderInfo.parameters["col" + i] != null;i++ ) {
-				Keys.push(sServer.root.loaderInfo.parameters["col" + i]);
-				Params.push(sServer.root.loaderInfo.parameters["val" + (iID - 1) + i]);
+				tempEntery=new Entry(sServer.root.loaderInfo.parameters["col" + i],sServer.root.loaderInfo.parameters["val" + (iID - 1) + i])
+				//Keys.push(sServer.root.loaderInfo.parameters["col" + i]);
+				//Params.push(sServer.root.loaderInfo.parameters["val" + (iID - 1) + i]);
 			}
 			
-			Params[0] = sName;
+			//Params[0] = sName;
 			sDoChanel = Commands.getDoChanelString(""+prefix);
 			sGotChanel = Commands.getGotChanelString(""+prefix);
 			
@@ -1751,22 +1820,21 @@ class User {
 		}
 	}
 	
-	public function sendOperation(methodName:String, parameters:Array/*Object*/):void {
+	public function sendOperation(msg:API_Message):void {
 			if (!wasRegistered) return;
-			var tempObj:Object= {_methodName:methodName,_parameters:parameters};
-			actionQue.push(tempObj);
+			actionQue.push(msg);
 			if(actionQue.length==1)
 				doSendOperation();	
     }
 	public function do_finished_callback(methodName:String):void {
-		var tempObj:Object = actionQue.shift();
-		if(methodName == tempObj._methodName)
+		var tempMsg:API_Message = actionQue.shift();
+		if(methodName == tempMsg.methodName)
 		{
 			doSendOperation();
 		}
 		else
 		{
-				sServer.showMsg("Expected"+tempObj._methodName+"to end,instead "+methodName+" ended", "Error");
+				sServer.showMsg("Expected"+tempMsg.methodName+"to end,instead "+methodName+" ended", "Error");
 				sServer.gameOver();
 		}
 	}
@@ -1775,9 +1843,9 @@ class User {
     	try {
     		if(actionQue.length>0)
     		{
-    		var tempObj:Object = actionQue[0];
-			lcData.send(sGotChanel, "localconnection_callback", tempObj._methodName, tempObj._parameters);
-			sServer.addMessageLog(sName, tempObj._methodName, sServer.methodAndParams2String(tempObj._methodName, tempObj._parameters) );	
+    		var tempMsg:API_Message = actionQue[0];
+			lcData.send(sGotChanel, "localconnection_callback", tempMsg.methodName, tempMsg.parameters);
+			sServer.addMessageLog(sName, tempMsg.methodName, tempMsg.toString());;	
     		}
 		}catch(err:Error) { 
 			sServer.showMsg(err.getStackTrace(), "Error");
@@ -1785,7 +1853,7 @@ class User {
     }
 	
 	public function localconnection_callback(methodName:String, parameters:Array/*Object*/):void {
-		sServer.got_user_localconnection_callback(this, methodName, parameters);
+		sServer.got_user_localconnection_callback(this, new API_Message(methodName, parameters));
 	}
 	
 	private function onConnectionStatus(evt:StatusEvent):void {
@@ -1809,9 +1877,7 @@ class Message {
 }
 
 class SavedGame {
-	public var Keys:Array;
-	public var Datas:Array;
-	public var Users:Array;
+	public var Enterys:Array;/*StateEnterys*/
 	public var Players:Array;
 	public var extra_match_info:Object;
 	public var match_started_time:int;
@@ -1820,10 +1886,17 @@ class SavedGame {
 	public var Name:String;
 	public var GameName:String;
 }
+class WaitingFunction{
+	public var userId:int;
+	public var parameters:Array;
+	public var methodName:String;
+	public var unverifiedPlayers:Array;
+}
 
+/*
 class MatchOver {
 	public var user_ids:Array;
 	public var scores:Array;
 	public var pot_percentages:Array;
 	public var recieved_from:Array;
-}
+}*/

@@ -1,10 +1,10 @@
 #summary Called when a match starts
 
 {{{
-got_match_started(all_player_ids:Array/*int*/, finished_player_ids:Array/*int*/, extra_match_info:Object, match_started_time:int, match_state:Array/*UserEntry*/)
+gotMatchStarted(all_player_ids:Array/*int*/, finished_player_ids:Array/*int*/, extra_match_info:Object, match_started_time:int, match_state:Array/*UserEntry*/)
 }}}
 
-`got_match_started` is called when a new match has started.
+`gotMatchStarted` is called when a new match has started.
 
 `all_player_ids` is the user_id's of all the players,
 and `finished_player_ids` are those that already finished playing.
@@ -13,7 +13,7 @@ and `finished_player_ids` are those that already finished playing.
 For example, if a viewer connects after some players already have disconnected, 
 then the viewer will get in `finished_player_ids` the set of players that have already disconnected.
 Same thing happens if the players load a saved match which was saved after some players have disconnected.
-See example in [got_user_info].
+See example in [gotUserInfo].
 
 If the game needs to make the same random choices in all the players (e.g., the order of a deck of cards),
 then your game should use a random seed that is identical in all players.
@@ -29,4 +29,4 @@ The `extra_match_info` will be entered when you submit the game online,
 or in the emulator when you start a new match.
 
 `match_state` is either an empty array (of length 0) if the players started a new game,
-or it is a loaded game with the match state that the players stored by calling [do_store_match_state].
+or it is a loaded game with the match state that the players stored by calling [doStoreState].

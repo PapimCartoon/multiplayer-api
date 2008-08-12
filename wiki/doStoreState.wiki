@@ -1,11 +1,11 @@
 #summary Call it to store/update/delete you match state
 
 {{{
-do_store_match_state(entries:Array/*Entry*/)
-got_stored_match_state(user_id:int, entries:Array/*Entry*/)
+doStoreState(entries:Array/*Entry*/)
+gotStoreDState(user_id:int, entries:Array/*Entry*/)
 }}}
 
-Use `do_store_match_state` to store match state on the server.
+Use `doStoreState` to store match state on the server.
 Both players and viewers can store match state, and only when the match is in progress.
 However, a viewer cannot override someone elses `key`, whereas players can use the same key-space.
 When the match ends, the state is cleared.
@@ -15,7 +15,7 @@ either to insert _all_ the entries, or not to insert any.
 Atomicity is important in rare cases where the player disconnects in the middle of sending a network packet.
 With the atomicity guarantee, the match state should always be consistent.
 
-The match state is given to new viewers and new players in [got_match_started].
+The match state is given to new viewers and new players in [gotMatchStarted].
 
 To delete a key from the map, pass a value of null or ''.
 
@@ -35,10 +35,10 @@ SECRET
 }}}
 
 
-The match state is still handled with [do_store_match_state]:
+The match state is still handled with [doStoreState]:
 {{{
-do_store_match_state
-got_stored_match_state
+doStoreState
+gotStoreDState
 }}}
 However, note that each `Entry` also has the field `secret_level:EnumSecretLevel`,
 which must be one of the values in `EnumSecretLevel`:

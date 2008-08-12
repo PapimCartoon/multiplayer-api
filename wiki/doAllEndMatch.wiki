@@ -1,16 +1,16 @@
 #summary Call it to end the match. The match will be over when all players called it
 
 {{{
-do_agree_on_match_over(finished_players:Array/*PlayerMatchOver*/)
+doAllEndMatch(finished_players:Array/*PlayerMatchOver*/)
 }}}
 
-To end a match, all players must call `do_agree_on_match_over` with the same exact parameters.
+To end a match, all players must call `doAllEndMatch` with the same exact parameters.
 
-When any player calls `do_agree_on_match_over`, the current turn is over (relevant only to turn-based games).
+When any player calls `doAllEndMatch`, the current turn is over (relevant only to turn-based games).
 
 `finished_players` is the set of the players that will quit the match.
 In the common scenario, `finished_players` contains all the players in the match.
-However, it is possible that only a subset of the players end the match (but in any case, all players must call `do_agree_on_match_over`).
+However, it is possible that only a subset of the players end the match (but in any case, all players must call `doAllEndMatch`).
 
 Each element of the array `finished_players` is of type `PlayerMatchOver`:
 {{{
@@ -29,12 +29,12 @@ For example, suppose you have 3 players with `player_ids`=41, 42, 43.
 Suppose user_id=42 ended the match with score 90, and he should get 20% of the pot.
 Then all the players (users 41, 42, 43) should call:
 {{{
-  do_agree_on_match_over([ new PlayerMatchOver(42, 90, 20) ])
+  doAllEndMatch([ new PlayerMatchOver(42, 90, 20) ])
 }}}
 Now users 41 and 43 continue to play, 
 and the match is over with the score=100 to user_id=41, and score=10 to user_id=43,
 and you wish to give 90% of the pot to user 41.
 Then all players (users 41 and 43) should call:
 {{{
-  do_agree_on_match_over([ new PlayerMatchOver(41, 100, 10) , new PlayerMatchOver(43, 10, 10) ])
+  doAllEndMatch([ new PlayerMatchOver(41, 100, 10) , new PlayerMatchOver(43, 10, 10) ])
 }}}

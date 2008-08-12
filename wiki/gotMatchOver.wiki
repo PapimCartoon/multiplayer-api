@@ -1,7 +1,7 @@
 #summary Called when the match is over
 
 {{{
-got_match_over(finished_player_ids:Array/*int*/)
+gotMatchOver(finished_player_ids:Array/*int*/)
 }}}
 
 `finished_player_ids` contains the `user_id`'s of the players that finished playing.
@@ -9,4 +9,4 @@ Note that `finished_player_ids` may contain only a subset of the players (see th
 
 `got_match_over` may be called if:
   * the player disconnected, choose to lose, agree with the players that he can quit the game, etc. 
-  * All the players called [do_agree_on_match_over].
+  * All the players called [doAllEndMatch].

@@ -16,28 +16,28 @@ package come2play_as3.api {
 		public function gotMatchEnded(finishedPlayerIds:Array/*int*/):void {}
 		
 		
-		public function doFinishedCallback(callbackName:String):void { sendDoOperation('doFinishedCallback', arguments); }
-		public function doRegisterOnServer():void { sendDoOperation('doRegisterOnServer', arguments); }
-		public function doTrace(name:String, message:Object/*Serializable*/):void { sendDoOperation('doTrace', arguments); }
+		public function doFinishedCallback(callbackName:String):void { sendMessage( new API_DoFinishedCallback(callbackName) ); }
+		public function doRegisterOnServer():void { sendMessage( new API_DoRegisterOnServer() ); }
+		public function doTrace(name:String, message:Object/*Serializable*/):void { sendMessage( new API_DoTrace(name, message) ); }
 		
-		public function doStoreState(stateEntries:Array/*StateEntry*/):void { sendDoOperation('doStoreState', arguments); }
+		public function doStoreState(stateEntries:Array/*StateEntry*/):void { sendMessage( new API_DoStoreState(stateEntries) ); }
 		public function gotStoredState(userId:int, stateEntries:Array/*StateEntry*/):void {}
 		
-		public function doAllEndMatch(finishedPlayers:Array/*PlayerMatchOver*/):void { sendDoOperation('doAllEndMatch', arguments); }
+		public function doAllEndMatch(finishedPlayers:Array/*PlayerMatchOver*/):void { sendMessage( new API_DoAllEndMatch(finishedPlayers) ); }
 		
 		// if userId==-1, then nobody has the turn.
 		// if milliSecondsInTurn==-1 then the default time per turn is used,
 		// and if milliSecondsInTurn==0 then the user should do some actions immediately.
-		public function doAllSetTurn(userId:int, milliSecondsInTurn:int):void { sendDoOperation('doAllSetTurn', arguments); }
+		public function doAllSetTurn(userId:int, milliSecondsInTurn:int):void { sendMessage( new API_DoAllSetTurn(userId, milliSecondsInTurn) ); }
 		public function gotTurnOf(userId:int):void {}
 		
 		
 		// if userId of RevealEntry is -1, then the entry becomes PUBLIC
-		public function doAllRevealState(revealEntries:Array/*RevealEntry*/):void { sendDoOperation('doAllRevealState', arguments); }
-		public function doAllShuffleState(keys:Array/*String*/):void { sendDoOperation('doAllShuffleState', arguments); }
+		public function doAllRevealState(revealEntries:Array/*RevealEntry*/):void { sendMessage( new API_DoAllRevealState(revealEntries) ); }
+		public function doAllShuffleState(keys:Array/*String*/):void { sendMessage( new API_DoAllShuffleState(keys) ); }
 		
 		// if userId=-1, then it is a bug of the game developer
-		public function doAllFoundHacker(userId:int, errorDescription:String):void { sendDoOperation('doAllFoundHacker', arguments); }
+		public function doAllFoundHacker(userId:int, errorDescription:String):void { sendMessage( new API_DoAllFoundHacker(userId, errorDescription) ); }
 		
 		// doAllRequestStateCalculation is usually used to do a calculation
 		// of an initial state that should be secret to all players.
@@ -45,7 +45,7 @@ package come2play_as3.api {
 		// The server picks several random users,
 		// and sends them gotRequestStateCalculation.
 		// All the users must do the exact same calls to doStoreState
-		public function doAllRequestStateCalculation(value:Object/*Serializable*/):void { sendDoOperation('doAllRequestStateCalculation', arguments); }
+		public function doAllRequestStateCalculation(value:Object/*Serializable*/):void { sendMessage( new API_DoAllRequestStateCalculation(value) ); }
 		public function gotRequestStateCalculation(secretSeed:int, value:Object/*Serializable*/):void {}
 		
 	}

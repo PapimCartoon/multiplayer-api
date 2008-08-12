@@ -15,11 +15,12 @@ package come2play_as3.api {
 		public function gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, extraMatchInfo:Object/*Serializable*/, matchStartedTime:int, userStateEntries:Array/*UserStateEntry*/):void {}
 		public function gotMatchEnded(finishedPlayerIds:Array/*int*/):void {}
 		
-		public function doStoreState(stateEntries:Array/*StateEntry*/):void { sendDoOperation('doStoreState', arguments); }
+		public function doStoreState(stateEntries:Array/*StateEntry*/):void { sendMessage( new API_DoStoreState(stateEntries) ); }
 		public function gotStoredState(userId:int, stateEntries:Array/*StateEntry*/):void {}
 		
-		public function doConnectedSetScore(score:int):void { sendDoOperation('doConnectedSetScore', arguments); }
-		public function doConnectedMatchOver(didWin:Boolean):void { sendDoOperation('doConnectedMatchOver', arguments); }
+		public function doConnectedSetScore(score:int):void { sendMessage( new API_DoConnectedSetScore(score) ); }
+		public function doConnectedMatchOver(didWin:Boolean):void { sendMessage( new API_DoConnectedMatchOver(didWin) ); }
+		
 		
 		
 		

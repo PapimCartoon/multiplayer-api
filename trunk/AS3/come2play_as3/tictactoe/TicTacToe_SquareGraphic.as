@@ -26,7 +26,7 @@ public final class TicTacToe_SquareGraphic
 			AS3_vs_AS2.addOnPress(btn,	AS3_vs_AS2.delegate(this, this.pressedOn));		
 		showOrHideLogo(false);
 	}
-	public function got_logo(logo:String):void {
+	public function gotLogo(logo:String):void {
 		AS3_vs_AS2.loadMovie(AS3_vs_AS2.getMovieChild(logoContainer,"InsideContainer"), logo);		
 	}	
     private function showOrHideLogo(shouldAdd:Boolean):void {

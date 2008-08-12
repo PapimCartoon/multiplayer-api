@@ -1,4 +1,4 @@
-﻿import come2play_as2.api.*;
+import come2play_as2.api.*;
 
 class come2play_as2.api.AS3_vs_AS2 {
 	public static var isAS3:Boolean = false;
@@ -137,6 +137,11 @@ class come2play_as2.api.AS3_vs_AS2 {
 
 	public static function IndexOf(arr:Array, val:Object):Number {
 		for (var i:Number=0; i<arr.length; i++)
+			if (arr[i]==val) return i;
+		return -1;
+	}
+	public static function LastIndexOf(arr:Array, val:Object):Number {
+		for (var i:Number=arr.length-1; i>=0; i--)
 			if (arr[i]==val) return i;
 		return -1;
 	}

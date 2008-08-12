@@ -39,5 +39,11 @@ package come2play_as3.api {
 			}
 			return null;
 		}
+		public static const USER_INFO_KEY_name:String = "name";
+		public static const USER_INFO_KEY_avatar_url:String = "avatar_url";
+		public static const USER_INFO_KEY_supervisor:String = "supervisor";
+		public static const USER_INFO_KEY_credibility:String = "credibility";
+		public static const USER_INFO_KEY_game_rating:String = "game_rating";
+		public static const CUSTOM_INFO_KEY_logo_swf_full_url:String = "logo_swf_full_url";
 	}
 }

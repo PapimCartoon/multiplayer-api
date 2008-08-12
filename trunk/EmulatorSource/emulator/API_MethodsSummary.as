@@ -3,29 +3,37 @@ package emulator {
 
 	import flash.display.*;
 	public  class API_MethodsSummary  {
-		public static var SUMMARY_API:Array = [
-		['gotKeyboardEvent', [['isKeyDown','boolean'], ['charCode','int'], ['keyCode','int'], ['keyLocation','int'], ['altKey','boolean'], ['ctrlKey','boolean'], ['shiftKey','boolean']] ]
-		,['gotCustomInfo', [['entries','null']] ]
-		,['gotUserInfo', [['userId','int'], ['entries','null']] ]
-		,['gotUserDisconnected', [['userId','int']] ]
-		,['gotMyUserId', [['myUserId','int']] ]
-		,['gotMatchStarted', [['allPlayerIds','int[]'], ['finishedPlayerIds','int[]'], ['extraMatchInfo','Object'], ['matchStartedTime','int'], ['userStateEntries','null']] ]
-		,['gotMatchEnded', [['finishedPlayerIds','int[]']] ]
-		,['doFinishedCallback', [['callbackName','String']] ]
-		,['doRegisterOnServer', [] ]
-		,['doTrace', [['name','String'], ['message','Object']] ]
-		,['doStoreState', [['stateEntries','null']] ]
-		,['gotStoredState', [['userId','int'], ['stateEntries','null']] ]
-		,['doAllEndMatch', [['finishedPlayers','null']] ]
-		,['doAllSetTurn', [['userId','int'], ['milliSecondsInTurn','int']] ]
-		,['gotTurnOf', [['userId','int']] ]
-		,['doAllRevealState', [['revealEntries','null']] ]
-		,['doAllShuffleState', [['keys','String[]']] ]
-		,['doAllFoundHacker', [['userId','int'], ['errorDescription','String']] ]
-		,['doAllRequestStateCalculation', [['value','Object']] ]
-		,['gotRequestStateCalculation', [['secretSeed','int'], ['value','Object']] ]
-		,['doConnectedSetScore', [['score','int']] ]
-		,['doConnectedMatchOver', [['didWin','boolean']] ]
+		public var methodName:String;
+		public var parameterNames:Array/*String*/;
+		public var parameterTypes:Array/*String*/;
+		public function API_MethodsSummary(methodName:String, parameterNames:Array/*String*/, parameterTypes:Array/*String*/) {
+			this.methodName = methodName;
+			this.parameterNames = parameterNames;
+			this.parameterTypes = parameterTypes;
+		}
+		public static var SUMMARY_API:Array/*API_MethodsSummary*/ = [
+		 new API_MethodsSummary('gotKeyboardEvent', ['isKeyDown', 'charCode', 'keyCode', 'keyLocation', 'altKey', 'ctrlKey', 'shiftKey'], ['Boolean', 'int', 'int', 'int', 'Boolean', 'Boolean', 'Boolean'] )
+		, new API_MethodsSummary('gotCustomInfo', ['entries'], ['Array/*Entry*/'] )
+		, new API_MethodsSummary('gotUserInfo', ['userId', 'entries'], ['int', 'Array/*Entry*/'] )
+		, new API_MethodsSummary('gotUserDisconnected', ['userId'], ['int'] )
+		, new API_MethodsSummary('gotMyUserId', ['myUserId'], ['int'] )
+		, new API_MethodsSummary('gotMatchStarted', ['allPlayerIds', 'finishedPlayerIds', 'extraMatchInfo', 'matchStartedTime', 'userStateEntries'], ['Array/*int*/', 'Array/*int*/', 'Object/*Serializable*/', 'int', 'Array/*UserStateEntry*/'] )
+		, new API_MethodsSummary('gotMatchEnded', ['finishedPlayerIds'], ['Array/*int*/'] )
+		, new API_MethodsSummary('doFinishedCallback', ['callbackName'], ['String'] )
+		, new API_MethodsSummary('doRegisterOnServer', [], [] )
+		, new API_MethodsSummary('doTrace', ['name', 'message'], ['String', 'Object/*Serializable*/'] )
+		, new API_MethodsSummary('doStoreState', ['stateEntries'], ['Array/*StateEntry*/'] )
+		, new API_MethodsSummary('gotStoredState', ['userId', 'stateEntries'], ['int', 'Array/*StateEntry*/'] )
+		, new API_MethodsSummary('doAllEndMatch', ['finishedPlayers'], ['Array/*PlayerMatchOver*/'] )
+		, new API_MethodsSummary('doAllSetTurn', ['userId', 'milliSecondsInTurn'], ['int', 'int'] )
+		, new API_MethodsSummary('gotTurnOf', ['userId'], ['int'] )
+		, new API_MethodsSummary('doAllRevealState', ['revealEntries'], ['Array/*RevealEntry*/'] )
+		, new API_MethodsSummary('doAllShuffleState', ['keys'], ['Array/*String*/'] )
+		, new API_MethodsSummary('doAllFoundHacker', ['userId', 'errorDescription'], ['int', 'String'] )
+		, new API_MethodsSummary('doAllRequestStateCalculation', ['value'], ['Object/*Serializable*/'] )
+		, new API_MethodsSummary('gotRequestStateCalculation', ['secretSeed', 'value'], ['int', 'Object/*Serializable*/'] )
+		, new API_MethodsSummary('doConnectedSetScore', ['score'], ['int'] )
+		, new API_MethodsSummary('doConnectedMatchOver', ['didWin'], ['Boolean'] )
 		];
 	}
 }

@@ -3,9 +3,9 @@
 	import come2play_as2.util.*;
 import come2play_as2.api.*;
 	class come2play_as2.api.API_DoFinishedCallback extends API_Message {
-		public var method_name:String;
-		public function API_DoFinishedCallback(method_name:String) { super('do_finished_callback',arguments); 
-			this.method_name = method_name;
+		public var callbackName:String;
+		public function API_DoFinishedCallback(callbackName:String) { super('doFinishedCallback',arguments); 
+			this.callbackName = callbackName;
 		}
-		/*override*/ public function toString():String { return '{API_DoFinishedCallback' + ': method_name=' + JSON.stringify(method_name)+'}'; }
+		/*override*/ public function getParametersAsString():String { return 'callbackName=' + JSON.stringify(callbackName); }
 	}

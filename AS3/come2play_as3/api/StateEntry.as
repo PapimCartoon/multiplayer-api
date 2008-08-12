@@ -6,18 +6,19 @@ package come2play_as3.api {
 	public  class StateEntry  {
 		public var key:String;
 		public var value:Object/*Serializable*/;
-		public var is_secret:Boolean;
-		public function StateEntry(key:String, value:Object/*Serializable*/, is_secret:Boolean) {
+		public var isSecret:Boolean;
+		public function StateEntry(key:String, value:Object/*Serializable*/, isSecret:Boolean) {
 			this.key = key;
 			this.value = value;
-			this.is_secret = is_secret;
+			this.isSecret = isSecret;
 		}
 		public static function object2StateEntry(obj:Object):StateEntry {
 			if (obj.key==null) throw new Error('Missing field key in creating object of type StateEntry in object='+JSON.stringify(obj));
 			if (obj.value==null) throw new Error('Missing field value in creating object of type StateEntry in object='+JSON.stringify(obj));
-			if (obj.is_secret==null) throw new Error('Missing field is_secret in creating object of type StateEntry in object='+JSON.stringify(obj));
-			return new StateEntry(obj.key, obj.value, obj.is_secret)
+			if (obj.isSecret==null) throw new Error('Missing field isSecret in creating object of type StateEntry in object='+JSON.stringify(obj));
+			return new StateEntry(obj.key, obj.value, obj.isSecret)
 		}
-		public function toString():String { return '{StateEntry' + ': key=' + JSON.stringify(key) + ': value=' + JSON.stringify(value) + ': is_secret=' + JSON.stringify(is_secret) + '}'; }
+		public function getParametersAsString():String { return 'key=' + JSON.stringify(key)+', value=' + JSON.stringify(value)+', isSecret=' + JSON.stringify(isSecret); }
+		public function toString():String { return '{StateEntry: ' + getParametersAsString() + '}'; }
 	}
 }

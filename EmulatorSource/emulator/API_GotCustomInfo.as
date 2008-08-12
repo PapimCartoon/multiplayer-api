@@ -2,12 +2,12 @@ package emulator {
 //Do not change the code below because this class was generated automatically!
 
 	import flash.display.*;
-	public  class API_GotGeneralInfo extends API_Message {
+	public  class API_GotCustomInfo extends API_Message {
 		public var entries:Array/*Entry*/;
-		public function API_GotGeneralInfo(entries:Array/*Entry*/) { super('got_general_info',arguments); 
+		public function API_GotCustomInfo(entries:Array/*Entry*/) { super('gotCustomInfo',arguments); 
 			this.entries = entries;
 			for (var i:int=0; i<entries.length; i++) entries[i] = Entry.object2Entry(entries[i]);
 		}
-		override public function toString():String { return '{API_GotGeneralInfo' + ': entries=' + JSON.stringify(entries)+'}'; }
+		override public function getParametersAsString():String { return 'entries=' + JSON.stringify(entries); }
 	}
 }

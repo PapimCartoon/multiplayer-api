@@ -4,8 +4,8 @@ package come2play_as3.api {
 	import flash.display.*;
 	import come2play_as3.util.*;
 	public  class API_DoRegisterOnServer extends API_Message {
-		public function API_DoRegisterOnServer() { super('do_register_on_server',arguments); 
+		public function API_DoRegisterOnServer() { super('doRegisterOnServer',arguments); 
 		}
-		override public function toString():String { return '{API_DoRegisterOnServer'+'}'; }
+		override public function getParametersAsString():String { return ''; }
 	}
 }

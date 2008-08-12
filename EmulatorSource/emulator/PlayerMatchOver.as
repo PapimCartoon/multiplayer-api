@@ -3,20 +3,21 @@ package emulator {
 
 	import flash.display.*;
 	public  class PlayerMatchOver  {
-		public var player_id:int;
+		public var playerId:int;
 		public var score:int;
-		public var pot_percentage:int;
-		public function PlayerMatchOver(player_id:int, score:int, pot_percentage:int) {
-			this.player_id = player_id;
+		public var potPercentage:int;
+		public function PlayerMatchOver(playerId:int, score:int, potPercentage:int) {
+			this.playerId = playerId;
 			this.score = score;
-			this.pot_percentage = pot_percentage;
+			this.potPercentage = potPercentage;
 		}
 		public static function object2PlayerMatchOver(obj:Object):PlayerMatchOver {
-			if (obj.player_id==null) throw new Error('Missing field player_id in creating object of type PlayerMatchOver in object='+JSON.stringify(obj));
+			if (obj.playerId==null) throw new Error('Missing field playerId in creating object of type PlayerMatchOver in object='+JSON.stringify(obj));
 			if (obj.score==null) throw new Error('Missing field score in creating object of type PlayerMatchOver in object='+JSON.stringify(obj));
-			if (obj.pot_percentage==null) throw new Error('Missing field pot_percentage in creating object of type PlayerMatchOver in object='+JSON.stringify(obj));
-			return new PlayerMatchOver(obj.player_id, obj.score, obj.pot_percentage)
+			if (obj.potPercentage==null) throw new Error('Missing field potPercentage in creating object of type PlayerMatchOver in object='+JSON.stringify(obj));
+			return new PlayerMatchOver(obj.playerId, obj.score, obj.potPercentage)
 		}
-		public function toString():String { return '{PlayerMatchOver' + ': player_id=' + JSON.stringify(player_id) + ': score=' + JSON.stringify(score) + ': pot_percentage=' + JSON.stringify(pot_percentage) + '}'; }
+		public function getParametersAsString():String { return 'playerId=' + JSON.stringify(playerId)+', score=' + JSON.stringify(score)+', potPercentage=' + JSON.stringify(potPercentage); }
+		public function toString():String { return '{PlayerMatchOver: ' + getParametersAsString() + '}'; }
 	}
 }

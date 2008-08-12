@@ -11,25 +11,25 @@ package come2play_as3.api
 	 * following the standard handshake:
 	 * Player calls do_register_on_server,
 	 * and then the server will call:
-	 * got_general_info
-	 * got_user_info
-	 * got_match_started
+	 * gotCustomInfo
+	 * gotUserInfo
+	 * gotMatchStarted
 	 * 
 	 * The server will also listen to keyboard events and call:
-	 * got_keyboard_event
+	 * gotKeyboardEvent
 	 * 
 	 * When the server gets do_agree_on_match_over or do_juror_end_match,
 	 * it will wait 2 seconds before starting a new match.
 	 */
 	public final class SinglePlayerEmulator
 	{
-		public static var DEFAULT_GENERAL_INFO:Array =
+		public static var DEFAULT_GENERAL_INFO:Array/*Entry*/ =
 			[ new Entry(BaseGameAPI.GENERAL_INFO_KEY_logo_swf_full_url,"../Emulator/example_logo.jpg") ];
-		public static var DEFAULT_USER_INFO:Array =
+		public static var DEFAULT_USER_INFO:Array/*Entry*/ =
 				[ 	new Entry(BaseGameAPI.USER_INFO_KEY_name, "User name"),
 					new Entry(BaseGameAPI.USER_INFO_KEY_avatar_url, "../Emulator/Avatar_1.gif")
 				];
-		public static var DEFAULT_MATCH_STATE:Array = []; // you can change this and load a saved match
+		public static var DEFAULT_MATCH_STATE:Array/*UserStateEntry*/ = []; // you can change this and load a saved match
 		public static var DEFAULT_USER_ID:int = 42; 
 		public static var DEFAULT_EXTRA_MATCH_INFO:String = ""; 
 		public static var DEFAULT_MATCH_STARTED_TIME:int = 999;
@@ -43,7 +43,7 @@ package come2play_as3.api
 		private var user_info_entries:Array/*Entry*/;
 		private var extra_match_info:Object/*Serializable*/;
 		private var match_started_time:int; 
-		private var match_state:Array/*UserEntry*/;
+		private var match_state:Array/*UserStateEntry*/;
 		
 		public function SinglePlayerEmulator(graphics:MovieClip) {
 			this.general_info_entries = DEFAULT_GENERAL_INFO;
@@ -82,12 +82,12 @@ package come2play_as3.api
   		}
   		private function do_register_on_server():void {
   			sendCallback(new API_GotMyUserId(user_id) );
-  			sendCallback(new API_GotGeneralInfo(general_info_entries) );
+  			sendCallback(new API_GotCustomInfo(general_info_entries) );
   			sendCallback(new API_GotUserInfo(user_id, user_info_entries) );
 	 		sendNewMatch();
   		}
   		private function sendNewMatch():void {	 
-  			sendCallback(new API_GotMatchStarted([user_id], [], extra_match_info, match_started_time,match_state) );	 	
+  			sendCallback(new API_GotMatchStarted([user_id], [], extra_match_info, match_started_time, match_state) );	 	
   		}
   		private function sendCallback(msg:API_Message):void {
   			var methodName:String = msg.methodName;

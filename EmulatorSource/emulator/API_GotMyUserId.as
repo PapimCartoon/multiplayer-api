@@ -3,10 +3,10 @@ package emulator {
 
 	import flash.display.*;
 	public  class API_GotMyUserId extends API_Message {
-		public var my_user_id:int;
-		public function API_GotMyUserId(my_user_id:int) { super('got_my_user_id',arguments); 
-			this.my_user_id = my_user_id;
+		public var myUserId:int;
+		public function API_GotMyUserId(myUserId:int) { super('gotMyUserId',arguments); 
+			this.myUserId = myUserId;
 		}
-		override public function toString():String { return '{API_GotMyUserId' + ': my_user_id=' + JSON.stringify(my_user_id)+'}'; }
+		override public function getParametersAsString():String { return 'myUserId=' + JSON.stringify(myUserId); }
 	}
 }

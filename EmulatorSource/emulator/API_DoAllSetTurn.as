@@ -3,12 +3,12 @@ package emulator {
 
 	import flash.display.*;
 	public  class API_DoAllSetTurn extends API_Message {
-		public var user_id:int;
-		public var milliseconds_in_turn:int;
-		public function API_DoAllSetTurn(user_id:int, milliseconds_in_turn:int) { super('do_all_set_turn',arguments); 
-			this.user_id = user_id;
-			this.milliseconds_in_turn = milliseconds_in_turn;
+		public var userId:int;
+		public var milliSecondsInTurn:int;
+		public function API_DoAllSetTurn(userId:int, milliSecondsInTurn:int) { super('doAllSetTurn',arguments); 
+			this.userId = userId;
+			this.milliSecondsInTurn = milliSecondsInTurn;
 		}
-		override public function toString():String { return '{API_DoAllSetTurn' + ': user_id=' + JSON.stringify(user_id) + ': milliseconds_in_turn=' + JSON.stringify(milliseconds_in_turn)+'}'; }
+		override public function getParametersAsString():String { return 'userId=' + JSON.stringify(userId)+', milliSecondsInTurn=' + JSON.stringify(milliSecondsInTurn); }
 	}
 }

@@ -7,18 +7,20 @@ package come2play_as3.api {
 		public function ConnectedGameAPI(someMovieClip:MovieClip) {
 			super(someMovieClip);
 		}
-		public function got_keyboard_event(is_key_down:Boolean, charCode:int, keyCode:int, keyLocation:int, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean):void {}
-		public function got_general_info(entries:Array/*Entry*/):void {}
-		public function got_user_info(user_id:int, entries:Array/*Entry*/):void {}
-		public function got_my_user_id(my_user_id:int):void {}
-		public function got_match_started(all_player_ids:Array/*int*/, finished_player_ids:Array/*int*/, extra_match_info:Object/*Serializable*/, match_started_time:int, match_state:Array/*UserStateEntry*/):void {}
+		public function gotKeyboardEvent(isKeyDown:Boolean, charCode:int, keyCode:int, keyLocation:int, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean):void {}
+		public function gotCustomInfo(entries:Array/*Entry*/):void {}
+		public function gotUserInfo(userId:int, entries:Array/*Entry*/):void {}
+		public function gotUserDisconnected(userId:int):void {}
+		public function gotMyUserId(myUserId:int):void {}
+		public function gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, extraMatchInfo:Object/*Serializable*/, matchStartedTime:int, userStateEntries:Array/*UserStateEntry*/):void {}
+		public function gotMatchEnded(finishedPlayerIds:Array/*int*/):void {}
 		
-		public function do_store_match_state(entries:Array/*StateEntry*/):void { sendDoOperation('do_store_match_state', arguments); }
-		public function got_stored_match_state(user_id:int, entries:Array/*StateEntry*/):void {}
+		public function doStoreState(stateEntries:Array/*StateEntry*/):void { sendDoOperation('doStoreState', arguments); }
+		public function gotStoredState(userId:int, stateEntries:Array/*StateEntry*/):void {}
 		
-		public function do_connected_set_score(score:int):void { sendDoOperation('do_connected_set_score', arguments); }
-		public function do_connected_match_over(did_win:Boolean):void { sendDoOperation('do_connected_match_over', arguments); }
-		public function got_match_over(finished_player_ids:Array/*int*/):void {}
+		public function doConnectedSetScore(score:int):void { sendDoOperation('doConnectedSetScore', arguments); }
+		public function doConnectedMatchOver(didWin:Boolean):void { sendDoOperation('doConnectedMatchOver', arguments); }
+		
 		
 		
 		

@@ -5,9 +5,9 @@ package come2play_as3.api {
 	import come2play_as3.util.*;
 	public  class API_DoAllShuffleState extends API_Message {
 		public var keys:Array/*String*/;
-		public function API_DoAllShuffleState(keys:Array/*String*/) { super('do_all_shuffle_state',arguments); 
+		public function API_DoAllShuffleState(keys:Array/*String*/) { super('doAllShuffleState',arguments); 
 			this.keys = keys;
 		}
-		override public function toString():String { return '{API_DoAllShuffleState' + ': keys=' + JSON.stringify(keys)+'}'; }
+		override public function getParametersAsString():String { return 'keys=' + JSON.stringify(keys); }
 	}
 }

@@ -4,10 +4,10 @@ package come2play_as3.api {
 	import flash.display.*;
 	import come2play_as3.util.*;
 	public  class API_GotUserDisconnected extends API_Message {
-		public var user_id:int;
-		public function API_GotUserDisconnected(user_id:int) { super('got_user_disconnected',arguments); 
-			this.user_id = user_id;
+		public var userId:int;
+		public function API_GotUserDisconnected(userId:int) { super('gotUserDisconnected',arguments); 
+			this.userId = userId;
 		}
-		override public function toString():String { return '{API_GotUserDisconnected' + ': user_id=' + JSON.stringify(user_id)+'}'; }
+		override public function getParametersAsString():String { return 'userId=' + JSON.stringify(userId); }
 	}
 }

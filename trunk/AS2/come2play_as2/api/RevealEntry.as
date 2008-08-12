@@ -4,15 +4,16 @@
 import come2play_as2.api.*;
 	class come2play_as2.api.RevealEntry  {
 		public var key:String;
-		public var user_id:Number;
-		public function RevealEntry(key:String, user_id:Number) {
+		public var userId:Number;
+		public function RevealEntry(key:String, userId:Number) {
 			this.key = key;
-			this.user_id = user_id;
+			this.userId = userId;
 		}
 		public static function object2RevealEntry(obj:Object):RevealEntry {
 			if (obj.key==null) throw new Error('Missing field key in creating object of type RevealEntry in object='+JSON.stringify(obj));
-			if (obj.user_id==null) throw new Error('Missing field user_id in creating object of type RevealEntry in object='+JSON.stringify(obj));
-			return new RevealEntry(obj.key, obj.user_id)
+			if (obj.userId==null) throw new Error('Missing field userId in creating object of type RevealEntry in object='+JSON.stringify(obj));
+			return new RevealEntry(obj.key, obj.userId)
 		}
-		public function toString():String { return '{RevealEntry' + ': key=' + JSON.stringify(key) + ': user_id=' + JSON.stringify(user_id) + '}'; }
+		public function getParametersAsString():String { return 'key=' + JSON.stringify(key)+', userId=' + JSON.stringify(userId); }
+		public function toString():String { return '{RevealEntry: ' + getParametersAsString() + '}'; }
 	}

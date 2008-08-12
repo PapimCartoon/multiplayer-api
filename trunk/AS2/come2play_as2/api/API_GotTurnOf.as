@@ -3,9 +3,9 @@
 	import come2play_as2.util.*;
 import come2play_as2.api.*;
 	class come2play_as2.api.API_GotTurnOf extends API_Message {
-		public var user_id:Number;
-		public function API_GotTurnOf(user_id:Number) { super('got_turn_of',arguments); 
-			this.user_id = user_id;
+		public var userId:Number;
+		public function API_GotTurnOf(userId:Number) { super('gotTurnOf',arguments); 
+			this.userId = userId;
 		}
-		/*override*/ public function toString():String { return '{API_GotTurnOf' + ': user_id=' + JSON.stringify(user_id)+'}'; }
+		/*override*/ public function getParametersAsString():String { return 'userId=' + JSON.stringify(userId); }
 	}

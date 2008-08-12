@@ -4,11 +4,11 @@ package come2play_as3.api {
 	import flash.display.*;
 	import come2play_as3.util.*;
 	public  class API_DoAllEndMatch extends API_Message {
-		public var finished_players:Array/*PlayerMatchOver*/;
-		public function API_DoAllEndMatch(finished_players:Array/*PlayerMatchOver*/) { super('do_all_end_match',arguments); 
-			this.finished_players = finished_players;
-			for (var i:int=0; i<finished_players.length; i++) finished_players[i] = PlayerMatchOver.object2PlayerMatchOver(finished_players[i]);
+		public var finishedPlayers:Array/*PlayerMatchOver*/;
+		public function API_DoAllEndMatch(finishedPlayers:Array/*PlayerMatchOver*/) { super('doAllEndMatch',arguments); 
+			this.finishedPlayers = finishedPlayers;
+			for (var i:int=0; i<finishedPlayers.length; i++) finishedPlayers[i] = PlayerMatchOver.object2PlayerMatchOver(finishedPlayers[i]);
 		}
-		override public function toString():String { return '{API_DoAllEndMatch' + ': finished_players=' + JSON.stringify(finished_players)+'}'; }
+		override public function getParametersAsString():String { return 'finishedPlayers=' + JSON.stringify(finishedPlayers); }
 	}
 }

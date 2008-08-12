@@ -1408,7 +1408,7 @@ package emulator {
 			broadcast("got_user_info", [u.ID, u.Keys, u.Params]); //note, this must be before you call u.wasRegistered = true 
 			u.wasRegistered = true;		
 			u.sendOperation("got_my_user_id", [u.ID]);
-			u.sendOperation("got_general_info", [aServerKeys, aServerDatas]);
+			u.sendOperation(new API_GotGeneralInfo("got_general_info", [aServerKeys, aServerDatas]);
 				
 			// important: note that this is not a broadcast!
 			// send to "u" the info of all the registered users

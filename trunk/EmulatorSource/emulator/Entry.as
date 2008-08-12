@@ -14,6 +14,7 @@ package emulator {
 			if (obj.value==null) throw new Error('Missing field value in creating object of type Entry in object='+JSON.stringify(obj));
 			return new Entry(obj.key, obj.value)
 		}
-		public function toString():String { return '{Entry' + ': key=' + JSON.stringify(key) + ': value=' + JSON.stringify(value) + '}'; }
+		public function getParametersAsString():String { return 'key=' + JSON.stringify(key)+', value=' + JSON.stringify(value); }
+		public function toString():String { return '{Entry: ' + getParametersAsString() + '}'; }
 	}
 }

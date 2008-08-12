@@ -6,43 +6,45 @@ import come2play_as2.api.*;
 		public function ClientGameAPI(someMovieClip:MovieClip) {
 			super(someMovieClip);
 		}
-		public function got_keyboard_event(is_key_down:Boolean, charCode:Number, keyCode:Number, keyLocation:Number, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean):Void {}
-		public function got_general_info(entries:Array/*Entry*/):Void {}
-		public function got_user_info(user_id:Number, entries:Array/*Entry*/):Void {}
-		public function got_user_disconnected(user_id:Number):Void {}
-		public function got_my_user_id(my_user_id:Number):Void {}
-		public function got_match_started(all_player_ids:Array/*int*/, finished_player_ids:Array/*int*/, extra_match_info:Object/*Serializable*/, match_started_time:Number, match_state:Array/*UserStateEntry*/):Void {}
+		public function gotKeyboardEvent(isKeyDown:Boolean, charCode:Number, keyCode:Number, keyLocation:Number, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean):Void {}
+		public function gotCustomInfo(entries:Array/*Entry*/):Void {}
+		public function gotUserInfo(userId:Number, entries:Array/*Entry*/):Void {}
+		public function gotUserDisconnected(userId:Number):Void {}
+		public function gotMyUserId(myUserId:Number):Void {}
+		public function gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, extraMatchInfo:Object/*Serializable*/, matchStartedTime:Number, userStateEntries:Array/*UserStateEntry*/):Void {}
+		public function gotMatchEnded(finishedPlayerIds:Array/*int*/):Void {}
 		
 		
-		public function do_finished_callback(method_name:String):Void { sendDoOperation('do_finished_callback', arguments); }
-		public function do_register_on_server():Void { sendDoOperation('do_register_on_server', arguments); }
-		public function do_store_trace(name:String, message:Object/*Serializable*/):Void { sendDoOperation('do_store_trace', arguments); }
+		public function doFinishedCallback(callbackName:String):Void { sendDoOperation('doFinishedCallback', arguments); }
+		public function doRegisterOnServer():Void { sendDoOperation('doRegisterOnServer', arguments); }
+		public function doTrace(name:String, message:Object/*Serializable*/):Void { sendDoOperation('doTrace', arguments); }
 		
-		public function do_store_match_state(entries:Array/*StateEntry*/):Void { sendDoOperation('do_store_match_state', arguments); }
-		public function got_stored_match_state(user_id:Number, entries:Array/*StateEntry*/):Void {}
+		public function doStoreState(stateEntries:Array/*StateEntry*/):Void { sendDoOperation('doStoreState', arguments); }
+		public function gotStoredState(userId:Number, stateEntries:Array/*StateEntry*/):Void {}
 		
-		public function do_all_end_match(finished_players:Array/*PlayerMatchOver*/):Void { sendDoOperation('do_all_end_match', arguments); }
-		public function got_match_over(finished_player_ids:Array/*int*/):Void {}
+		public function doAllEndMatch(finishedPlayers:Array/*PlayerMatchOver*/):Void { sendDoOperation('doAllEndMatch', arguments); }
 		
-		// if user_id==-1, then nobody has the turn.
-		// if milliseconds_in_turn==-1 then the default time per turn is used,
-		// and if milliseconds_in_turn==0 then the user should do some actions immediately.
-		public function do_all_set_turn(user_id:Number, milliseconds_in_turn:Number):Void { sendDoOperation('do_all_set_turn', arguments); }
-		public function got_turn_of(user_id:Number):Void {}
+		// if userId==-1, then nobody has the turn.
+		// if milliSecondsInTurn==-1 then the default time per turn is used,
+		// and if milliSecondsInTurn==0 then the user should do some actions immediately.
+		public function doAllSetTurn(userId:Number, milliSecondsInTurn:Number):Void { sendDoOperation('doAllSetTurn', arguments); }
+		public function gotTurnOf(userId:Number):Void {}
 		
 		
-		// if to_user_id==-1, then the entry becomes PUBLIC
-		public function do_all_reveal_state(entries:Array/*RevealEntry*/):Void { sendDoOperation('do_all_reveal_state', arguments); }
-		public function do_all_shuffle_state(keys:Array/*String*/):Void { sendDoOperation('do_all_shuffle_state', arguments); }
+		// if userId of RevealEntry is -1, then the entry becomes PUBLIC
+		public function doAllRevealState(revealEntries:Array/*RevealEntry*/):Void { sendDoOperation('doAllRevealState', arguments); }
+		public function doAllShuffleState(keys:Array/*String*/):Void { sendDoOperation('doAllShuffleState', arguments); }
 		
-		// if user_id=-1, then it is a bug of the game developer
-		public function do_all_found_hacker(user_id:Number, error_description:String):Void { sendDoOperation('do_all_found_hacker', arguments); }
+		// if userId=-1, then it is a bug of the game developer
+		public function doAllFoundHacker(userId:Number, errorDescription:String):Void { sendDoOperation('doAllFoundHacker', arguments); }
 		
-		// do_all_request_impartial_state is used to do a secret calculation
-		// (e.g., the initial board in multiplayer Sudoku or MineSweeper).
-		// The server picks several random users, and sends them got_request_impartial_state.
-		// All the users must do the exact same calls to do_store_match_state
-		public function do_all_request_impartial_state(value:Object/*Serializable*/):Void { sendDoOperation('do_all_request_impartial_state', arguments); }
-		public function got_request_impartial_state(secret_seed:Number, value:Object/*Serializable*/):Void {}
+		// doAllRequestStateCalculation is usually used to do a calculation
+		// of an initial state that should be secret to all players.
+		// (E.g., the initial board in multiplayer Sudoku or MineSweeper).
+		// The server picks several random users,
+		// and sends them gotRequestStateCalculation.
+		// All the users must do the exact same calls to doStoreState
+		public function doAllRequestStateCalculation(value:Object/*Serializable*/):Void { sendDoOperation('doAllRequestStateCalculation', arguments); }
+		public function gotRequestStateCalculation(secretSeed:Number, value:Object/*Serializable*/):Void {}
 		
 	}

@@ -114,11 +114,11 @@ package come2play_as3.api {
 
         public function localconnection_callback(methodName:String, parameters:Array/*Object*/):void {
         	try{
-        		trace("got localconnection_callback methodName="+methodName+" parameters="+parameters);
         		var api_msg:API_Message = API_Message.createMessage(methodName, parameters);
-        		if (api_msg is API_GotStoredMatchState) {
-        			var store_state_msg:API_GotStoredMatchState = api_msg as API_GotStoredMatchState;
-        			hacker_user_id = store_state_msg.user_id;
+        		trace("got localconnection_callback api_msg="+api_msg);
+        		if (api_msg is API_GotStoredState) {
+        			var store_state_msg:API_GotStoredState = api_msg as API_GotStoredState;
+        			hacker_user_id = store_state_msg.userId;
         		}
         		var params:Array = api_msg.parameters;	
 				safeApplyFunction(methodName, params);

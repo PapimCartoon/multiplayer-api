@@ -74,6 +74,10 @@ i.e., there is a player that haven't finished playing.
 || [got_error] || Called when one of the callbacks threw an error ||
 || [do_client_protocol_error_with_description] || Call it when you have to cancel the game due to an unrecoverable error ||
 
+|| `do_juror_unfold_match_state` || The values of certain keys are unfolded to a certain user ||
+|| `do_juror_shuffle_match_state` || The values of certain keys in the match state are shuffled ||
+|| [do_juror_set_turn] || The juror decides who has the turn (in turn-based games)  ||
+
 
 === Initialization: order of the first callbacks === 
 The first callback is `got_my_user_id`,

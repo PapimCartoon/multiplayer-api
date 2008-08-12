@@ -3,22 +3,22 @@
 We use LocalConnection to pass commands, therefore, there is a 40K limit on arguments to these methods.
 
 
+`do_finished_callback` is called by the game after every time the container calls some callback `got_*`.
+
 
 In [TableOfContent Multiplayer API] section we explained that the API is a bridge between the _game_ (written by game developers) and the _container_ (written by the website hosting the game).
 The game SWF is loaded by a _container_ that communicates with the _game_ 
 using a LocalConnection. 
 There are two issues:
   * how to determine the channel name that the container and game should use, and
-  * how to translate objects of `Entry`, `UserEntry`, and `PlayerMatchOver`, to basic data types that are supported by LocalConnection.
+  * what happens to objects of type `Entry`, `UserEntry`, 'RevealEntry', and `PlayerMatchOver` when they are passed over a LocalConnection?
 
 The later question:
-`BaseGameAPI` class translates these objects to basic data types, e.g., 
-an array of `UserEntry` is translated to 3 arrays: 
-`user_ids` of type `int[]`, `keys` of type `String[]`, and `values` of type `Object[]`.
-You can see the signatures of the original (non-translated) functions in `API_TranslateInterface.as` and 
-what the translation should return is in `API_TranslateReturns.as`.
-
-`do_finished_callback` is called by the game after every time the container calls some callback `got_*`.
+Note that each of the classes has a method called `object2XXXX`,
+e.g., `object2Entry`.
+When an object of type `Entry` is passed on a LocalConnection, it is automatically
+converted to an object of type `Object`, and the receiving end should transform this `Object` into an `Entry`
+using the function `object2XXXX`.
 
 The former question:
 To make sure the container and game use the same LocalConnection channel, we use a flashvar parameter called `prefix`

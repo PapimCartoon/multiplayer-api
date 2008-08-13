@@ -413,7 +413,7 @@ package emulator {
 					var param_type:String = args[i][1];
 					parameters.push( Commands.convertToType(param, param_type) );
 				}
-				sendDoOperation(new API_Message(methodName, parameters));
+				sendDoOperation(API_Message.createMessage(methodName, parameters));
 
 				MsgBox.Show("The command was send", "Message");
 			}catch (err:Error) {
@@ -436,13 +436,14 @@ package emulator {
 					gotMatchEnded(apiMsg as API_GotMatchEnded);
 				else if(apiMsg is API_GotTurnOf)
 					gotTurnOf(apiMsg as API_GotTurnOf);
-					
-				if (methodName.substring(0,"got".length)=="got")
-					sendGotOperation(apiMsg);
-				else if (methodName.substring(0,"do".length)=="do") {
-					sendDoOperation(apiMsg);
-				} else throw Error("Illegal message prefix!");
 				
+
+					if (methodName.substring(0,"got".length)=="got")
+						sendGotOperation(apiMsg);
+					else if (methodName.substring(0,"do".length)=="do") {
+						sendDoOperation(apiMsg);
+					} else throw Error("Illegal message prefix!");
+
 				
 
 			} catch (err:Error) { 
@@ -462,12 +463,12 @@ package emulator {
 				info.userID = msg.userId;
 				info.isPlayer = false;
 				info.gameOver = false;
-				for (var i:int = 0; i < msg.parameters.length; i++) {
-					if ( msg.parameters[i].key == "name") { // see BaseGameAPI.USER_INFO_KEY_name
-						info.userName = msg.parameters[i].value;
+				for (var i:int = 0; i < msg.entries.length; i++) {
+					if ( msg.entries[i].key == "name") { // see BaseGameAPI.USER_INFO_KEY_name
+						info.userName = msg.entries[i].value;
 					}
-					if (msg.parameters[i].key == "avatar_url") { // see BaseGameAPI.USER_INFO_KEY_avatar_url
-						info.userPicture = msg.parameters[i].value;
+					if (msg.entries[i].key == "avatar_url") { // see BaseGameAPI.USER_INFO_KEY_avatar_url
+						info.userPicture = msg.entries[i].value;
 					}
 				}
 				aUsers.push(info);

@@ -2,14 +2,16 @@ package emulator {
 //Do not change the code below because this class was generated automatically!
 
 	import flash.display.*;
+	import flash.utils.getQualifiedClassName;
 	public  class API_Message  {
 		public var methodName:String;
 		public var parameters:Array/*Object*/;
-		public function API_Message(methodName:String, parameters:Array/*Object*/) { 
+		public function API_Message(methodName:String, parameters:Array/*Object*/) {
+			if (getQualifiedClassName(this)=="emulator::API_Message") throw new Error("Do not use new API_Message(), use API_Message.createMessage");
 			this.methodName = methodName;
 			this.parameters = parameters; // the translated parameters to pass to the LocalConnection 
 		}
-		public function getParametersAsString():String { return 'parameters='+JSON.stringify(parameters); }
+		public function getParametersAsString():String { throw new Error("Forgot to override in class="+getQualifiedClassName(this)); }
 		public function toString():String { var res:String = getParametersAsString(); return '{' + methodName + (res!='' ? ': '+res : '') +'}'; }
 		public static function createMessage(name:String, parameters:Array/*Object*/):API_Message {
 			switch (name) {

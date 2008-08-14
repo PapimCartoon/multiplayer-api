@@ -1,4 +1,4 @@
-package emulator {
+﻿package emulator {
 	import fl.controls.*;
 	import fl.events.*;
 	
@@ -14,15 +14,21 @@ package emulator {
 		private static const COL_player_ids:String = "player_ids";
 		private static const COL_scores:String = "scores";
 		private static const COL_pot_percentages:String = "pot_percentages";
-		private static var COL_key:String="key";
-		private static var COL_data:String="data";
-		private static var COL_name:String="Name";
-		private static var COL_numberOfPlayers:String="Number_Of_Players";
-		private static var COL_userIdThatAreStillPlaying:String="User_ids_that_are_still_playing";
-		private static var COL_nextTurnOfUserIds:String="Next_turn_of_user_ids";
-		private static var COL_matchState:String="Match_state";
-		private static var COL_matchStartedTime:String="Match_started_time";
-		private static var COL_extraMatchInfo:String= "Extra_match_info";
+		private static const COL_total_pot_percentages:String = "total_pot_percentages";
+		private static const COL_Parameters:String="Parameters";
+		private static const COL_MethodName:String="Method_Name";
+		private static const COL_UnverifiedPlayers:String="Unverified_Players";
+		private static const COL_User:String="User Id";
+		private static const COL_Message:String="Message";
+		private static const COL_key:String="key";
+		private static const COL_data:String="data";
+		private static const COL_name:String="Name";
+		private static const COL_numberOfPlayers:String="Number_Of_Players";
+		private static const COL_userIdThatAreStillPlaying:String="User_ids_that_are_still_playing";
+		private static const COL_nextTurnOfUserIds:String="Next_turn_of_user_ids";
+		private static const COL_matchState:String="Match_state";
+		private static const COL_matchStartedTime:String="Match_started_time";
+		private static const COL_extraMatchInfo:String= "Extra_match_info";
 		
 		//Private variables
 		private var isTurnBasedGame:Boolean = false;
@@ -33,9 +39,9 @@ package emulator {
 		
 		private var aUsers:Array;
 		
-		private var userStateEntrys:Array/*UserStateEntry*/;
+		private var userStateEntrys:Array;/*UserStateEntry*/ //state info
 		
-		private var serverEntery:Array;/*Entery*/
+		private var serverEntery:Array;/*Entery*/ //extea server info
 		private var aParams:Array;
 		private var aPlayers:Array; //array of all the players
 		private var afinishedPlayers:Array;/*PlayerMatchOver*/
@@ -69,6 +75,10 @@ package emulator {
 		private var btnMatchState:SimpleButton;
 		private var btnMatchOver:SimpleButton;
 		private var btnSavedGames:SimpleButton;
+		
+		private var btnStoreQue:SimpleButton;
+		private var btnDoAllQue:SimpleButton;
+		
 		private var btnNewGame:Button;
 		private var btnLoadGame:Button;
 		private var btnSaveGame:Button;
@@ -282,7 +292,13 @@ package emulator {
 
 			btnUserInfo = tbsPanel["_btnUserInfo"];
 			btnUserInfo.addEventListener(MouseEvent.CLICK, btnUserInfoClick);
-
+			
+			btnStoreQue= tbsPanel["_btnStore"];
+			btnStoreQue.addEventListener(MouseEvent.CLICK, btnStore);
+			
+			btnDoAllQue= tbsPanel["_btnDoAll"];
+			btnDoAllQue.addEventListener(MouseEvent.CLICK, btnDoAll);
+			
 			btnMatchOver = tbsPanel["_btnMatchOver"];
 			btnMatchOver.addEventListener(MouseEvent.CLICK, btnMatchOverClick);
 
@@ -567,9 +583,11 @@ package emulator {
 			showMsg(unverifiedQue[0].methodName+" Timed out by player/s:"+String(unverifiedQue[0].unverifiedPlayers),"Error");
 			gameOver();
 		}
+		private var isProcessingCallback:Boolean = false;
 		public function got_user_localconnection_callback(user:User, msg:API_Message):void {			
 			try{
-				addMessageLog("Server", msg.methodName, msg.toString());
+				if (isProcessingCallback) throw new Error("Concurrency problems in the server in the Emulator");
+				isProcessingCallback = true;
 				trace("got_user_localconnection_callback: user="+user.Name+" methodName="+msg.methodName);			
 				if (!(msg is API_DoFinishedCallback ||
 					msg is API_DoRegisterOnServer || 
@@ -582,8 +600,10 @@ package emulator {
 						addMessageLog("Server", msg.methodName, "Error: game already end");
 						return;
 					}
+					if(!isPlayer(user.ID))
+						return
 				}
-				
+				addMessageLog(user.Name, msg.methodName, msg.toString());
 				
 				if(msg is API_DoRegisterOnServer)
 				{
@@ -606,17 +626,15 @@ package emulator {
 					tempFunc.userId = user.ID;
 					tempFunc.parameters = msg.parameters;
 					tempFunc.methodName = msg.methodName;
-					tempFunc.unverifiedPlayers=aPlayers.concat();;
+					tempFunc.unverifiedPlayers=aPlayers.concat();
 					unverifiedQue.push(tempFunc);
 					doStoreState(user,storeStateMsg);
-					addMessageLog("Server","players",String(aPlayers));
 					if(!queTimer.running)
 						queTimer.start();
 				}
 				else if(msg is API_DoFinishedCallback)
 				{
 					var finishedCallbackMsg:API_DoFinishedCallback = msg as API_DoFinishedCallback;
-					addMessageLog("Server", finishedCallbackMsg.parameters[0], "doFinishedCallback");
 					verefyAction(user);
 					user.do_finished_callback(finishedCallbackMsg.parameters[0])
 				}
@@ -639,7 +657,18 @@ package emulator {
 				*/
 			} catch (err:Error) { 
 				showMsg(err.getStackTrace(), "Error");
-			}  
+			} finally {
+				isProcessingCallback = false;
+			} 
+		}
+		private function isPlayer(userId:int):Boolean
+		{
+			for(var i:int=0;i<aPlayers.length;i++)
+			{
+				if(aPlayers[i]==userId)
+					return true;
+			}
+			return false;
 		}
 		private function verefyAction(user:User):void
 		{
@@ -661,7 +690,29 @@ package emulator {
 		{
 			if(unverifiedQue[0].unverifiedPlayers.length==0)
 			{
-				unverifiedQue.shift();
+				var tempWaitingFunction:WaitingFunction=unverifiedQue.shift();
+				if(tempWaitingFunction.methodName == "doStoreState")
+				{
+					
+							/var tempStateEntery:UserStateEntry;
+			//for (var i:int=0; i<msg.stateEntries.length; i++)
+			//{
+			//	tempStateEntery=new UserStateEntry(user.ID,msg.stateEntries[i].key,msg.stateEntries[i].value,msg.stateEntries[i].isSecret);;
+			//	doStoreOneState(tempStateEntery);
+			//}
+					
+					
+					var msg:API_GotStoredState=new API_GotStoredState(tempWaitingFunction.userId,tempWaitingFunction.parameters);
+					var tempStateEntery:ServerStateEntry;
+					for (var i:int=0; i<msg.stateEntries.length; i++)
+					{
+						if(msg.stateEntries[i].isSecret)
+							tempStateEntery=new ServerStateEntry(tempWaitingFunction.userId, msg.stateEntries[i].key, msg.stateEntries[i].value, [tempWaitingFunction.userId]);
+						else
+							tempStateEntery=new ServerStateEntry(tempWaitingFunction.userId, msg.stateEntries[i].key, msg.stateEntries[i].value, null);
+						doStoreOneState(tempStateEntery);
+					}
+				}	
 				queTimer.reset();
 				if(unverifiedQue.length==0)
 					checkDoAlls();	
@@ -683,6 +734,7 @@ package emulator {
 		{
 			if (doAllQue.length == 0) return;
 			if (unverifiedQue.length>0) throw new Error("internal error");
+			var tempPos:int;
 			var methodName:String=doAllQue[0].msg.methodName;
 			var playersNotCalled:Array=aPlayers.concat();
 			for each(var methodObj:Object in doAllQue)
@@ -696,23 +748,95 @@ package emulator {
 			{
 				var tempLen:Number=doAllQue.length;
 				var methodCalls:Array=new Array();
+				var allPlayers:Array=aPlayers.concat();
 				for(var i:Number=0;i<tempLen;i++)
 				{
 					if(doAllQue[i].msg.methodName == methodName)
 					{
+						tempPos=allPlayers.indexOf(doAllQue[i].user.ID);
+						if(tempPos!=-1)
+						{
+						allPlayers.splice(tempPos,1);
 						methodCalls.push(doAllQue[i]);
 						doAllQue.splice(i,1)
 						i--;
 						tempLen--;
+						}
 					}
 				}
 				if(methodCalls[0].msg is API_DoAllSetTurn)
 					doAllSetTurn(methodCalls);
 				else if(methodCalls[0].msg is API_DoAllEndMatch)
 					doAllEndMatch(methodCalls);
+				else if(methodCalls[0].msg is API_DoAllShuffleState)
+					doAllShuffleState(methodCalls);
 			}
 		}
+		private function isKeyExist(testKey:int):int
+		{
+			for(var i:int=0;i<userStateEntrys.length;i++)
+			{
+				if(userStateEntrys[i].key==testKey)
+					return i;	
+			}
+			return -1;	
+		}
+		private function doShuffleOn(index:int,newKey:String):void
+		{
+			userStateEntrys[index].key=newKey;
+			userStateEntrys[index].authorizedUsersIds=new Array();
+		}
 		//do all function's
+		private function doAllShuffleState(methodCalls:Array):void
+		{
+			var doShuffleCalls:Array=new Array();
+			for each (var waitingDoAllCall:WaitingDoAll in methodCalls)
+			{
+				doShuffleCalls.push(waitingDoAllCall.msg as API_DoAllShuffleState);
+			}
+			var shuffleKeys:Array=doShuffleCalls[0].keys;
+			for each(var doShuffleCall:API_DoAllShuffleState in doShuffleCalls)
+			{
+				if(doShuffleCall.keys.length!=shuffleKeys.length)
+				{
+					addMessageLog("Server","Error","Not all users agree on which keys to shuffle");
+					gameOver();
+					return;
+				}
+				for(var i:int=0;i<doShuffleCall.keys.length;i++)
+					if(doShuffleCall.keys[i]!=shuffleKeys[i])
+					{
+						addMessageLog("Server","Error","Not all users agree on which keys to shuffle");
+						gameOver();
+						return;	
+					}
+			}
+			var shuffleIndex:int;
+			var shuffleIndexArr:Array=new Array();
+			var shuffleMapKeys:Array=new Array();
+			for(i=0;i<shuffleKeys.length;i++)
+			{
+				shuffleIndex=isKeyExist(shuffleKeys[i])
+				if(shuffleIndex!=-1)	
+				{
+					shuffleIndexArr.push(shuffleIndex);
+					 shuffleMapKeys.push(userStateEntrys[shuffleIndex].key);
+				}
+				else
+				{
+					addMessageLog("Server","Error","Can't shuffle a key that does not exist");
+					gameOver();
+					return;		
+
+				}
+			}
+			var shuffleLen:int=shuffleIndexArr.length;
+			for (i=0;i<shuffleLen;i++)
+			{
+				shuffleIndex=Math.floor(Math.random()*(shuffleIndexArr.length+1))
+				doShuffleOn(shuffleIndexArr.splice(shuffleIndex,1),shuffleMapKeys.splice(shuffleIndex,1));
+			}
+		}
 		private function doAllEndMatch(methodCalls:Array):void
 		{
 			var endMatchCalls:Array=new Array();
@@ -735,22 +859,27 @@ package emulator {
 					}
 				}
 			}
-
+			
+			var finishedPart:FinishHistory=new FinishHistory();
+			var percentageOfPot:Number=0;
 			for(i=0;i<finishedPlayers.length;i++)
 			{
-				afinishedPlayers.push(finishedPlayers[i])	
+				FinishHistory.totalFinishingPlayers++;
+				percentageOfPot+=finishedPlayers[i].potPercentage;
+				finishedPart.finishedPlayers.push(finishedPlayers[i])	
 			}
-			if(afinishedPlayers.length==aPlayers.length)
+			finishedPart.pot=FinishHistory.wholePot;
+			FinishHistory.wholePot-=(FinishHistory.wholePot*percentageOfPot)/100;
+			afinishedPlayers.push(finishedPart);
+			if(FinishHistory.totalFinishingPlayers == aPlayers.length)
 			{
 				gameOver();
 			}
 			var tempFinishedPlayersIds:Array=new Array();
-			addMessageLog("server","all users finishing",finishedPlayers.toString());
 			for (i=0;i<finishedPlayers.length;i++)
 			{
 				tempFinishedPlayersIds.push(finishedPlayers[i].playerId);
 			}
-			addMessageLog("WTF?","all users finishing",tempFinishedPlayersIds.toString());
 			var tempAction:WaitingFunction=new WaitingFunction();
 			var gotEndMatch:API_GotMatchEnded=new API_GotMatchEnded(tempFinishedPlayersIds);
 			tempAction.methodName=gotEndMatch.methodName;
@@ -774,6 +903,7 @@ package emulator {
 			{
 				if(waitingTurnCall.userId !=nextUserId)
 				{
+					addMessageLog("Server",waitingTurnCall.userId+" "+nextUserId,"Not all users agree on next User turn");
 					addMessageLog("Server","Error","Not all users agree on next User turn");
 					gameOver();
 					return;
@@ -925,17 +1055,18 @@ package emulator {
 
 		
 		private function getFinishedPlayerIds():Array/*int*/ {
-			//var finished_player_ids:Array/*int*/ = [];
-			/*if (bGameEnded) {
-				finished_player_ids = [aPlayers];
+			var finishedPlayerIds:Array/*int*/ = [];
+			if (bGameEnded) {
+				finishedPlayerIds = [aPlayers];
 			}else {				
-				for each (var over:MatchOver in aMatchOvers) {
-					if (over.recieved_from.length == User.PlayersNum) {
-						finished_player_ids = finished_player_ids.concat( over.user_ids );
+				for each (var finishedGame:FinishHistory in afinishedPlayers) {
+					for(var i:int=0;i<finishedGame.finishedPlayers.length;i++)
+					{
+						finishedPlayerIds.push(finishedGame.finishedPlayers[i].playerId);
 					}
 				}
-			}*/
-			return afinishedPlayers;
+			}
+			return finishedPlayerIds;
 		}
 		private function getOngoingPlayerIds():Array/*int*/ {
 			var res:Array = [];
@@ -950,11 +1081,28 @@ package emulator {
 			}
 			if (finished_player_ids.length!=0) throw new Error("Internal error! Illegal player_ids="+finished_player_ids);
 			return res;
-		}			
+		}	
+		private function isInArray(id:int,idArr:Array):Boolean
+		{
+			for(var i:int=0;i<idArr.length;i++)
+				if(id==idArr[i])
+					return true;
+			return false;
+		}		
 		private function send_got_match_started(u:User):void {	
 			var finished_player_ids:Array = getFinishedPlayerIds();
 			u.Ended = finished_player_ids.indexOf(u.ID)!=-1;
-			u.sendOperation(new API_GotMatchStarted(aPlayers, finished_player_ids, extra_match_info, match_started_time,userStateEntrys));			
+			var stateEntries:Array=new Array();
+			for each(var tempServerState:ServerStateEntry in userStateEntrys)
+			{
+				if(tempServerState.authorizedUsersIds==null)
+					stateEntries.push(new StateEntry(tempServerState.key,tempServerState.value,false));
+				else if(isInArray(u.ID,tempServerState.authorizedUsersIds))
+					stateEntries.push(new StateEntry(tempServerState.key,tempServerState.value,true));
+				else
+					stateEntries.push(new StateEntry(tempServerState.key,null,true));
+			}
+			u.sendOperation(new API_GotMatchStarted(aPlayers, finished_player_ids, extra_match_info, match_started_time,stateEntries));			
 		}
 		
 		public function addMessageLog(user:String, funcname:String, message:String):void {
@@ -1114,7 +1262,6 @@ package emulator {
 					break;
 				case 6:
 					txtInfo.text = "name: " + evt.target.selectedItem[COL_name] + "\n" + 
-						"number_of_players: " + evt.target.selectedItemp[COL_numberOfPlayers] + "\n" + 
 						"user_ids_that_are_still_playing: " + evt.target.selectedItem[COL_userIdThatAreStillPlaying] + "\n" + 
 						"next_turn_of_user_ids: " + evt.target.selectedItem[COL_nextTurnOfUserIds] + "\n" + 
 						"match_state: " + evt.target.selectedItem[COL_matchState] + "\n" + 
@@ -1247,6 +1394,36 @@ package emulator {
 				showGeneralInfo();
 			}
 		}
+
+		private function btnStore(ev:MouseEvent):void
+		{
+			
+			tbsPanel.gotoAndStop("Store");
+			pnlCommands.visible = false;
+			pnlLog.visible = false;
+			pnlInfo.visible=true;
+			if(iInfoMode!=7){
+				iInfoMode=7;
+				
+				tblInfo.columns=[COL_User,COL_MethodName,COL_Parameters,COL_UnverifiedPlayers];
+				
+				showStoreQue();
+			}
+		}
+		private function btnDoAll(ev:MouseEvent):void
+		{
+			tbsPanel.gotoAndStop("DoAllQue");
+			pnlCommands.visible = false;
+			pnlLog.visible = false;
+			pnlInfo.visible=true;
+			if(iInfoMode!=2){
+				iInfoMode=2;
+				
+				tblInfo.columns=[COL_User,COL_Message];
+				
+				showDoAllQue();
+			}
+		}
 		
 		private function btnUserInfoClick(evt:MouseEvent):void {
 			tbsPanel.gotoAndStop("UserInfo");
@@ -1271,7 +1448,7 @@ package emulator {
 			if(iInfoMode!=5){
 				iInfoMode=5;
 				
-				tblInfo.columns=[COL_player_ids, COL_scores , COL_pot_percentages];
+				tblInfo.columns=[COL_player_ids, COL_scores , COL_pot_percentages,COL_total_pot_percentages];
 				
 				showMatchOver();
 			}
@@ -1288,7 +1465,40 @@ package emulator {
 				showSavedGames();
 			}
 		}
-		
+		private function showStoreQue():void
+		{
+			if(iInfoMode==7){
+				tblInfo.removeAll();
+				var itemObj:Object;
+				
+				for(var i:int=0;i<unverifiedQue.length;i++){
+					itemObj=new Object();
+					itemObj[COL_User]=unverifiedQue[i].userId;
+					itemObj[COL_MethodName]=unverifiedQue[i].methodName
+					itemObj[COL_Parameters]=unverifiedQue[i].parameters.toString();
+					itemObj[COL_UnverifiedPlayers]=unverifiedQue[i].unverifiedPlayers.toString();
+					tblInfo.addItem(itemObj);
+					tblInfo.verticalScrollPosition = tblInfo.maxVerticalScrollPosition+30;
+				}
+				
+				txtInfo.text="";
+			}
+		}
+		private function showDoAllQue():void
+		{
+			if(iInfoMode==2){
+				tblInfo.removeAll();
+				var itemObj:Object;
+				for(var i:int=0;i<doAllQue.length;i++){
+					itemObj=new Object();
+					itemObj[COL_User]=doAllQue[i].user.ID;
+					itemObj[COL_Message]=doAllQue[i].msg.toString();
+					tblInfo.addItem(itemObj);
+					tblInfo.verticalScrollPosition = tblInfo.maxVerticalScrollPosition+30;
+				}
+				txtInfo.text="";
+			}
+		}
 		private function showMatchState():void{
 			if(iInfoMode==1){
 				tblInfo.removeAll();
@@ -1348,15 +1558,36 @@ package emulator {
 				
 				//afinishedPlayers
 				var itemObj:Object;
-				for each (var player:PlayerMatchOver in afinishedPlayers){
-
+				var tempLen:int;
+				for each (var matchOver:FinishHistory in afinishedPlayers){
 					itemObj=new Object();
-					itemObj[COL_player_ids] = player.playerId;
-					itemObj[COL_scores] = player.score;
-					itemObj[COL_pot_percentages] = player.potPercentage;	
-					//fix
+					itemObj[COL_player_ids] = "[";
+					itemObj[COL_scores] = "[";
+					itemObj[COL_pot_percentages] = "[";
+					itemObj[COL_total_pot_percentages] = "[";
+					tempLen=matchOver.finishedPlayers.length;
+					for(var i:int=0;i<tempLen;i++)
+					{
+						itemObj[COL_player_ids] += matchOver.finishedPlayers[i].playerId;
+						itemObj[COL_scores] += matchOver.finishedPlayers[i].score;
+						itemObj[COL_pot_percentages] += matchOver.finishedPlayers[i].potPercentage;	
+						itemObj[COL_total_pot_percentages] +=String(((matchOver.pot*matchOver.finishedPlayers[i].potPercentage)/100))
+						if((tempLen) != (i+1))
+						{
+							itemObj[COL_player_ids] += ",";
+							itemObj[COL_scores] += ",";
+							itemObj[COL_pot_percentages] += ",";
+							itemObj[COL_total_pot_percentages] += ","
+						}
+					}
+					itemObj[COL_player_ids] += "]";
+					itemObj[COL_scores] += "]";
+					itemObj[COL_pot_percentages] += "]";
+					itemObj[COL_total_pot_percentages] += "]"
+					
 					tblInfo.addItem(itemObj);
 					tblInfo.verticalScrollPosition = tblInfo.maxVerticalScrollPosition+30;
+					
 				}
 				txtInfo.text="";
 			}
@@ -1455,6 +1686,7 @@ package emulator {
 			}
 			var savedGame:SavedGame = cmbLoadName.selectedItem.data;
 			userStateEntrys=savedGame.entries.concat();
+			afinishedPlayers=savedGame.finishedGames.concat();
 			extra_match_info=savedGame.extra_match_info;
 			match_started_time = savedGame.match_started_time;
 			if(extra_match_info!=null){
@@ -1565,6 +1797,7 @@ package emulator {
 			game.extra_match_info=extra_match_info;
 			game.match_started_time=match_started_time;
 			game.name = txtSaveName.text;
+			game.finishedGames=afinishedPlayers.concat();
 			game.curTurn = iCurTurn;
 			game.gameName = root.loaderInfo.parameters["game"];
 			allSavedGames.push(game);
@@ -1682,9 +1915,8 @@ package emulator {
 		public function doRegisterOnServer(u:User):void {
 			if (u.wasRegistered) throw new Error("User "+u.Name+" called do_register_on_server twice!");
 			// send the info of "u" to all registered users (without user "u")
-			addMessageLog("Server","registerOnServer","reg: "+u.ID);
 			
-			broadcast(new API_GotUserInfo(u.ID, u.Enterys)); //note, this must be before you call u.wasRegistered = true 
+			broadcast(new API_GotUserInfo(u.ID, u.entries)); //note, this must be before you call u.wasRegistered = true 
 			u.wasRegistered = true;		
 			u.sendOperation(new API_GotMyUserId(u.ID));
 			u.sendOperation(new API_GotCustomInfo(serverEntery));
@@ -1693,7 +1925,7 @@ package emulator {
 			// send to "u" the info of all the registered users
 			for each (var user:User in aUsers) {
 				if (user.wasRegistered)
-					u.sendOperation(new API_GotUserInfo(user.ID, user.Enterys));
+					u.sendOperation(new API_GotUserInfo(user.ID, user.entries));
 			}		
 				
 			showUserInfo();
@@ -1726,19 +1958,32 @@ package emulator {
 			
 		}
 		public function doStoreState(user:User, msg:API_DoStoreState):void {
-			//userStateEntrys.concat(msg.stateEntries);
-			var tempStateEntery:UserStateEntry;
-			addMessageLog("Server",msg.methodName, msg.toString());
-			for (var i:int=0; i<msg.stateEntries.length; i++)
+
+			//var tempStateEntery:UserStateEntry;
+			//for (var i:int=0; i<msg.stateEntries.length; i++)
+			//{
+			//	tempStateEntery=new UserStateEntry(user.ID,msg.stateEntries[i].key,msg.stateEntries[i].value,msg.stateEntries[i].isSecret);;
+			//	doStoreOneState(tempStateEntery);
+			//}
+			
+			//showMatchState();
+			for each (var tempUserStateEntery:StateEntry in msg.stateEntries)
 			{
-				tempStateEntery=new UserStateEntry(user.ID,msg.stateEntries[i].key,msg.stateEntries[i].value,msg.stateEntries[i].isSecret);;
-				doStoreOneState(tempStateEntery);
+				for each(var userTemp:User in aUsers)
+				{
+					if(tempUserStateEntery.isSecret)
+					{
+						if(user.ID==userTemp.ID)
+							userTemp.sendOperation(new API_GotStoredState(user.ID,msg.stateEntries));
+					}
+					else
+						userTemp.sendOperation(new API_GotStoredState(user.ID,msg.stateEntries));
+				}
 			}
 			
-			showMatchState();
-			broadcast(new API_GotStoredState(user.ID,msg.stateEntries));
+			//broadcast(new API_GotStoredState(user.ID,msg.stateEntries));
 		}
-		private function doStoreOneState(stateEntery:UserStateEntry):void {			
+		private function doStoreOneState(stateEntery:ServerStateEntry):void {			
 			if (stateEntery.key == "") {
 				addMessageLog("Server", "do_store_match_state", "Error: Can't store match state, key is empty");
 				return;
@@ -1791,6 +2036,8 @@ package emulator {
 					usr.Ended = true;
 				}
 			}
+			FinishHistory.totalFinishingPlayers=0;
+			FinishHistory.wholePot=100;
 			iCurTurn=-1;
 			serverEntery=new Array;
 			unverifiedQue=new Array;
@@ -1858,7 +2105,7 @@ class User {
 	private var sDoChanel:String;
 	private var sGotChanel:String;
 	private var actionQue:Array;
-	public var Enterys:Array;/*enterys*/
+	public var entries:Array;/*enterys*/
 	public var Ended:Boolean = false;
 	public var wasRegistered:Boolean = false;
 	public static var PlayersNum:int = 0;
@@ -1880,7 +2127,7 @@ class User {
 	//Constructor
 	public function User(prefix:int, _server:Server) {
 		try{
-			Enterys=new Array();
+			entries=new Array();
 			if (iNextId > PlayersNum + ViewersNum) {
 				throw new Error("Too many users");
 			}
@@ -1902,7 +2149,7 @@ class User {
 			for (var i:int = 0; sServer.root.loaderInfo.parameters["col" + i] != null;i++ ) {
 				tempEntery=new Entry(sServer.root.loaderInfo.parameters["col" + i],sServer.root.loaderInfo.parameters["val" + (iID - 1) + i])
 			}
-			
+			entries[0]=new Entry("name",sName);
 			//Params[0] = sName;
 			sDoChanel = Commands.getDoChanelString(""+prefix);
 			sGotChanel = Commands.getGotChanelString(""+prefix);
@@ -1976,10 +2223,11 @@ class Message {
 }
 
 class SavedGame { 
-	public static const CLASS_VERSION_NUMBER:int = 2; 
+	public static const CLASS_VERSION_NUMBER:int = 3; 
 	public var classVersionNumberForSharedObject:int = CLASS_VERSION_NUMBER;
 	public var entries:Array;/*StateEntries*/
 	public var players:Array;
+	public var finishedGames:Array;/*FinishHistory*/
 	public var extra_match_info:Object;
 	public var match_started_time:int;
 	public var playersNum:int;
@@ -1996,4 +2244,10 @@ class WaitingFunction{
 class WaitingDoAll{
 	public var user:User;
 	public var msg:API_Message;
+}
+class FinishHistory{
+	public static var wholePot:Number=100;
+	public static var totalFinishingPlayers:int=0;
+	public var pot:int;
+	public var finishedPlayers:Array=new Array/*PlayerMatchOver*/;
 }

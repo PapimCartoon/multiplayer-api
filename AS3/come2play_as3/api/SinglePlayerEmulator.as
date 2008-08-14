@@ -23,13 +23,13 @@ package come2play_as3.api
 	 */
 	public final class SinglePlayerEmulator
 	{
-		public static var DEFAULT_GENERAL_INFO:Array/*Entry*/ =
-			[ new Entry(API_Message.CUSTOM_INFO_KEY_logo_swf_full_url,"../Emulator/example_logo.jpg") ];
-		public static var DEFAULT_USER_INFO:Array/*Entry*/ =
-				[ 	new Entry(API_Message.USER_INFO_KEY_name, "User name"),
-					new Entry(API_Message.USER_INFO_KEY_avatar_url, "../Emulator/Avatar_1.gif")
+		public static var DEFAULT_GENERAL_INFO:Array/*InfoEntry*/ =
+			[ new InfoEntry(API_Message.CUSTOM_INFO_KEY_logo_swf_full_url,"../Emulator/example_logo.jpg") ];
+		public static var DEFAULT_USER_INFO:Array/*InfoEntry*/ =
+				[ 	new InfoEntry(API_Message.USER_INFO_KEY_name, "User name"),
+					new InfoEntry(API_Message.USER_INFO_KEY_avatar_url, "../Emulator/Avatar_1.gif")
 				];
-		public static var DEFAULT_MATCH_STATE:Array/*UserStateEntry*/ = []; // you can change this and load a saved match
+		public static var DEFAULT_MATCH_STATE:Array/*ServerEntry*/ = []; // you can change this and load a saved match
 		public static var DEFAULT_USER_ID:int = 42; 
 		public static var DEFAULT_EXTRA_MATCH_INFO:String = ""; 
 		public static var DEFAULT_MATCH_STARTED_TIME:int = 999;
@@ -38,12 +38,12 @@ package come2play_as3.api
 		private var sDoChanel:String;
 		private var sGotChanel:String;
 		
-		private var customInfoEntries:Array/*Entry*/;
+		private var customInfoEntries:Array/*InfoEntry*/;
 		private var userId:int; 
-		private var userInfoEntries:Array/*Entry*/;
+		private var userInfoEntries:Array/*InfoEntry*/;
 		private var extraMatchInfo:Object/*Serializable*/;
 		private var matchStartedTime:int; 
-		private var userStateEntries:Array/*UserStateEntry*/;
+		private var userStateEntries:Array/*ServerEntry*/;
 		
 		public function SinglePlayerEmulator(graphics:MovieClip) {
 			this.customInfoEntries = DEFAULT_GENERAL_INFO;

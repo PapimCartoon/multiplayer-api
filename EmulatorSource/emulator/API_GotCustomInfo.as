@@ -3,11 +3,11 @@ package emulator {
 
 	import flash.display.*;	import flash.utils.*;
 	public  class API_GotCustomInfo extends API_Message {
-		public var entries:Array/*Entry*/;
-		public function API_GotCustomInfo(entries:Array/*Entry*/) { super('gotCustomInfo',arguments); 
-			this.entries = entries;
-			for (var i:int=0; i<entries.length; i++) entries[i] = Entry.object2Entry(entries[i]);
+		public var infoEntries:Array/*InfoEntry*/;
+		public function API_GotCustomInfo(infoEntries:Array/*InfoEntry*/) { super('gotCustomInfo',arguments); 
+			this.infoEntries = infoEntries;
+			for (var i:int=0; i<infoEntries.length; i++) infoEntries[i] = InfoEntry.object2InfoEntry(infoEntries[i]);
 		}
-		override public function getParametersAsString():String { return 'entries=' + JSON.stringify(entries); }
+		override public function getParametersAsString():String { return 'infoEntries=' + JSON.stringify(infoEntries); }
 	}
 }

@@ -3,9 +3,9 @@ package come2play_as3.api {
 
 	import flash.display.*;	import flash.utils.*;
 	import come2play_as3.util.*;
-	public  class API_GotRequestStateCalculation extends API_Message {
+	public  class API_GotStateChanged extends API_Message {
 		public var serverEntries:Array/*ServerEntry*/;
-		public function API_GotRequestStateCalculation(serverEntries:Array/*ServerEntry*/) { super('gotRequestStateCalculation',arguments); 
+		public function API_GotStateChanged(serverEntries:Array/*ServerEntry*/) { super('gotStateChanged',arguments); 
 			this.serverEntries = serverEntries;
 			for (var i:int=0; i<serverEntries.length; i++) serverEntries[i] = ServerEntry.object2ServerEntry(serverEntries[i]);
 		}

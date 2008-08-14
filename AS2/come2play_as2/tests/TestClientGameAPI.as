@@ -46,11 +46,11 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 	}
 	
 	/*override*/ public function gotMyUserId(userId:Number):Void {		
-		if (shouldTestPassNumbers) doStoreState([ new StateEntry("test", test_Arr, false)]);
+		if (shouldTestPassNumbers) doStoreState([ new UserEntry("test", test_Arr, false)]);
 	}
-	/*override*/ public function gotStoredState(userId:Number, stateEntries:Array/*StateEntry*/):Void { 
+	/*override*/ public function gotStateChanged(serverEntries:Array/*ServerEntry*/):Void { 
 		if (shouldTestPassNumbers) {
-			var state:StateEntry = stateEntries[0];
+			var state:ServerEntry = serverEntries[0];
 			var value:Array = AS3_vs_AS2.asArray(state.value);  
 			for (var i:Number=0; i<test_Arr.length; i++) {
 				var val:Number = test_Arr[i];

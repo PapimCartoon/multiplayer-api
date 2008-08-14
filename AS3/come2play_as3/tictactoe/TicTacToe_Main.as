@@ -87,11 +87,11 @@ public final class TicTacToe_Main extends ClientGameAPI {
 	override public function gotMyUserId(myUserId:int):void {
 		this.myUserId = myUserId;
 	}
-	override public function gotUserInfo(userId:int, entries:Array/*Entry*/):void
+	override public function gotUserInfo(userId:int, entries:Array/*InfoEntry*/):void
 	{
 	}
-	override public function gotCustomInfo(entries:Array/*Entry*/):void {
-		for each (var entry:Entry in entries) {
+	override public function gotCustomInfo(entries:Array/*InfoEntry*/):void {
+		for each (var entry:InfoEntry in entries) {
 			if (entry.key==API_Message.CUSTOM_INFO_KEY_logo_swf_full_url) {
 				var logo_swf_full_url:String = entry.value.toString();	
 				trace("Got logo_swf_full_url="+logo_swf_full_url)
@@ -101,7 +101,7 @@ public final class TicTacToe_Main extends ClientGameAPI {
 			}		
 		}
 	}
-	override public function gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, extraMatchInfo:Object/*Serializable*/, matchStartedTime:int, userStateEntries:Array/*UserStateEntry*/):void {
+	override public function gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, extraMatchInfo:Object/*Serializable*/, matchStartedTime:int, userStateEntries:Array/*ServerEntry*/):void {
 		this.allPlayerIds = allPlayerIds;
 		assert(allPlayerIds.length<=4, ["The graphics of TicTacToe can handle at most 4 players. allPlayerIds=", allPlayerIds]);
 		turnOfColor = 0;
@@ -113,9 +113,9 @@ public final class TicTacToe_Main extends ClientGameAPI {
 		for (var color:int=0; color<playersNum; color++)
 			ongoingColors.push(color);
 		logic = new TicTacToe_logic(ROWS,COLS,WIN_LENGTH, playersNum);
-		for each (var userStateEntry:UserStateEntry in userStateEntries) {
-			if (!isSinglePlayer()) turnOfColor = getColor(userStateEntry.userId);	// some users may have disconnected in the middle of the game	
-			doEntry(userStateEntry.value, true);	//we should not call doAllEndMatch when loading the match	
+		for each (var serverEntry:ServerEntry in userStateEntries) {
+			if (!isSinglePlayer()) turnOfColor = getColor(serverEntry.storedByUserId);	// some users may have disconnected in the middle of the game	
+			doEntry(serverEntry.value, true);	//we should not call doAllEndMatch when loading the match	
 		}
 		if (finishedPlayerIds.length>0)
 			matchOverForPlayers(finishedPlayerIds);
@@ -129,11 +129,12 @@ public final class TicTacToe_Main extends ClientGameAPI {
 		// then I don't end the game because the container will give the user an option
 		// to either: win, cancel, or save the game.
 	}	
-	override public function gotStoredState(userId:int, stateEntries:Array/*StateEntry*/):void {
+	override public function gotStateChanged(serverEntries:Array/*ServerEntry*/):void {
 		// the moves are done in alternating turns: color 0, then color 1 (in a round robin)	
-		assert(stateEntries.length==1, ["there is one entry per move in TicTacToe"]);	
-		var entry:StateEntry = stateEntries[0];
-		assert(!entry.isSecret, ["All communication in TicTacToe is PUBLIC"]);
+		assert(serverEntries.length==1, ["there is one entry per move in TicTacToe"]);	
+		var entry:ServerEntry = serverEntries[0];
+		assert(entry.authorizedUserIds==null, ["All communication in TicTacToe is PUBLIC"]);
+		var userId:int = entry.storedByUserId;
 		if (userId==myUserId) return; // The player ignores his own stores, because he already updated the logic before he sent it to the server
 		var colorOfUser:int = getColor(userId);
 		if (colorOfUser==-1) return;  // viewers can store match state, so we just ignore whatever a viewer placed in the match state
@@ -296,7 +297,7 @@ public final class TicTacToe_Main extends ClientGameAPI {
 		if (myColor==VIEWER) return; // viewer cannot make a move
 		if (!isSinglePlayer() && myColor!=turnOfColor) return; // not my turn
 		if (!logic.isSquareAvailable(row, col)) return; // already filled this square (e.g., if you press on the keyboard, you may choose a cell that is already full)
-		doStoreState( [new StateEntry(getStateKey(), [row, col], false)] );		
+		doStoreState( [new UserEntry(getStateKey(), [row, col], false)] );		
 		makeMove(row, col, false);		
 	}
 	private function setOnPress(isInProgress:Boolean):void {

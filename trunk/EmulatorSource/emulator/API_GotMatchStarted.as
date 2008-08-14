@@ -1,7 +1,7 @@
 package emulator {
 //Do not change the code below because this class was generated automatically!
 
-	import flash.display.*;
+	import flash.display.*;	import flash.utils.*;
 	public  class API_GotMatchStarted extends API_Message {
 		public var allPlayerIds:Array/*int*/;
 		public var finishedPlayerIds:Array/*int*/;

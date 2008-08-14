@@ -1,7 +1,7 @@
 package come2play_as3.api {
 //Do not change the code below because this class was generated automatically!
 
-	import flash.display.*;
+	import flash.display.*;	import flash.utils.*;
 	import come2play_as3.util.*;
 	public  class ConnectedGameAPI extends BaseGameAPI {
 		public function ConnectedGameAPI(someMovieClip:MovieClip) {
@@ -19,7 +19,7 @@ package come2play_as3.api {
 		public function gotStoredState(userId:int, stateEntries:Array/*StateEntry*/):void {}
 		
 		public function doConnectedSetScore(score:int):void { sendMessage( new API_DoConnectedSetScore(score) ); }
-		public function doConnectedMatchOver(didWin:Boolean):void { sendMessage( new API_DoConnectedMatchOver(didWin) ); }
+		public function doConnectedEndMatch(didWin:Boolean):void { sendMessage( new API_DoConnectedEndMatch(didWin) ); }
 		
 		
 		

@@ -1,7 +1,7 @@
 package emulator {
 //Do not change the code below because this class was generated automatically!
 
-	import flash.display.*;
+	import flash.display.*;	import flash.utils.*;
 	public  class API_DoTrace extends API_Message {
 		public var name:String;
 		public var message:Object/*Serializable*/;

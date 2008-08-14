@@ -1,7 +1,7 @@
 package come2play_as3.api {
 //Do not change the code below because this class was generated automatically!
 
-	import flash.display.*;
+	import flash.display.*;	import flash.utils.*;
 	import come2play_as3.util.*;
 	public  class ClientGameAPI extends BaseGameAPI {
 		public function ClientGameAPI(someMovieClip:MovieClip) {
@@ -44,9 +44,11 @@ package come2play_as3.api {
 		// (E.g., the initial board in multiplayer Sudoku or MineSweeper).
 		// The server picks several random users,
 		// and sends them gotRequestStateCalculation.
-		// All the users must do the exact same calls to doStoreState
+		// All these users must do the exact same call to doAllStoreStateCalculation,
+		// i.e., the state calculation must be deterministic (you can use secretSeed to create the hidden board).
 		public function doAllRequestStateCalculation(value:Object/*Serializable*/):void { sendMessage( new API_DoAllRequestStateCalculation(value) ); }
 		public function gotRequestStateCalculation(secretSeed:int, value:Object/*Serializable*/):void {}
+		public function doAllStoreStateCalculation(stateEntries:Array/*StateEntry*/):void { sendMessage( new API_DoAllStoreStateCalculation(stateEntries) ); }
 		
 	}
 }

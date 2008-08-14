@@ -43,8 +43,10 @@ import come2play_as2.api.*;
 		// (E.g., the initial board in multiplayer Sudoku or MineSweeper).
 		// The server picks several random users,
 		// and sends them gotRequestStateCalculation.
-		// All the users must do the exact same calls to doStoreState
+		// All these users must do the exact same call to doAllStoreStateCalculation,
+		// i.e., the state calculation must be deterministic (you can use secretSeed to create the hidden board).
 		public function doAllRequestStateCalculation(value:Object/*Serializable*/):Void { sendMessage( new API_DoAllRequestStateCalculation(value) ); }
 		public function gotRequestStateCalculation(secretSeed:Number, value:Object/*Serializable*/):Void {}
+		public function doAllStoreStateCalculation(stateEntries:Array/*StateEntry*/):Void { sendMessage( new API_DoAllStoreStateCalculation(stateEntries) ); }
 		
 	}

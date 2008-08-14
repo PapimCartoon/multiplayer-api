@@ -1,7 +1,7 @@
 package emulator {
 //Do not change the code below because this class was generated automatically!
 
-	import flash.display.*;
+	import flash.display.*;	import flash.utils.*;
 	public  class API_GotCustomInfo extends API_Message {
 		public var entries:Array/*Entry*/;
 		public function API_GotCustomInfo(entries:Array/*Entry*/) { super('gotCustomInfo',arguments); 

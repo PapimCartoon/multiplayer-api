@@ -3,12 +3,11 @@ package emulator {
 
 	import flash.display.*;	import flash.utils.*;
 	public  class API_GotRequestStateCalculation extends API_Message {
-		public var secretSeed:int;
-		public var value:Object/*Serializable*/;
-		public function API_GotRequestStateCalculation(secretSeed:int, value:Object/*Serializable*/) { super('gotRequestStateCalculation',arguments); 
-			this.secretSeed = secretSeed;
-			this.value = value;
+		public var serverEntries:Array/*ServerEntry*/;
+		public function API_GotRequestStateCalculation(serverEntries:Array/*ServerEntry*/) { super('gotRequestStateCalculation',arguments); 
+			this.serverEntries = serverEntries;
+			for (var i:int=0; i<serverEntries.length; i++) serverEntries[i] = ServerEntry.object2ServerEntry(serverEntries[i]);
 		}
-		override public function getParametersAsString():String { return 'secretSeed=' + JSON.stringify(secretSeed)+', value=' + JSON.stringify(value); }
+		override public function getParametersAsString():String { return 'serverEntries=' + JSON.stringify(serverEntries); }
 	}
 }

@@ -8,20 +8,20 @@ package come2play_as3.api {
 			super(someMovieClip);
 		}
 		public function gotKeyboardEvent(isKeyDown:Boolean, charCode:int, keyCode:int, keyLocation:int, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean):void {}
-		public function gotCustomInfo(entries:Array/*Entry*/):void {}
-		public function gotUserInfo(userId:int, entries:Array/*Entry*/):void {}
+		public function gotCustomInfo(infoEntries:Array/*InfoEntry*/):void {}
+		public function gotUserInfo(userId:int, infoEntries:Array/*InfoEntry*/):void {}
 		public function gotUserDisconnected(userId:int):void {}
 		public function gotMyUserId(myUserId:int):void {}
-		public function gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, extraMatchInfo:Object/*Serializable*/, matchStartedTime:int, userStateEntries:Array/*UserStateEntry*/):void {}
+		public function gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, extraMatchInfo:Object/*Serializable*/, matchStartedTime:int, serverEntries:Array/*ServerEntry*/):void {}
 		public function gotMatchEnded(finishedPlayerIds:Array/*int*/):void {}
-		
 		
 		public function doFinishedCallback(callbackName:String):void { sendMessage( new API_DoFinishedCallback(callbackName) ); }
 		public function doRegisterOnServer():void { sendMessage( new API_DoRegisterOnServer() ); }
 		public function doTrace(name:String, message:Object/*Serializable*/):void { sendMessage( new API_DoTrace(name, message) ); }
 		
-		public function doStoreState(stateEntries:Array/*StateEntry*/):void { sendMessage( new API_DoStoreState(stateEntries) ); }
-		public function gotStoredState(userId:int, stateEntries:Array/*StateEntry*/):void {}
+		public function gotStateChanged(serverEntries:Array/*ServerEntry*/):void {}
+		
+		public function doStoreState(userEntries:Array/*UserEntry*/):void { sendMessage( new API_DoStoreState(userEntries) ); }
 		
 		public function doAllEndMatch(finishedPlayers:Array/*PlayerMatchOver*/):void { sendMessage( new API_DoAllEndMatch(finishedPlayers) ); }
 		
@@ -29,11 +29,10 @@ package come2play_as3.api {
 		// if milliSecondsInTurn==-1 then the default time per turn is used,
 		// and if milliSecondsInTurn==0 then the user should do some actions immediately.
 		public function doAllSetTurn(userId:int, milliSecondsInTurn:int):void { sendMessage( new API_DoAllSetTurn(userId, milliSecondsInTurn) ); }
-		public function gotTurnOf(userId:int):void {}
-		
 		
 		// if userId of RevealEntry is -1, then the entry becomes PUBLIC
 		public function doAllRevealState(revealEntries:Array/*RevealEntry*/):void { sendMessage( new API_DoAllRevealState(revealEntries) ); }
+		
 		public function doAllShuffleState(keys:Array/*String*/):void { sendMessage( new API_DoAllShuffleState(keys) ); }
 		
 		// if userId=-1, then it is a bug of the game developer
@@ -46,9 +45,9 @@ package come2play_as3.api {
 		// and sends them gotRequestStateCalculation.
 		// All these users must do the exact same call to doAllStoreStateCalculation,
 		// i.e., the state calculation must be deterministic (you can use secretSeed to create the hidden board).
-		public function doAllRequestStateCalculation(value:Object/*Serializable*/):void { sendMessage( new API_DoAllRequestStateCalculation(value) ); }
-		public function gotRequestStateCalculation(secretSeed:int, value:Object/*Serializable*/):void {}
-		public function doAllStoreStateCalculation(stateEntries:Array/*StateEntry*/):void { sendMessage( new API_DoAllStoreStateCalculation(stateEntries) ); }
+		public function doAllRequestStateCalculation(keys:Array/*String*/):void { sendMessage( new API_DoAllRequestStateCalculation(keys) ); }
+		public function gotRequestStateCalculation(serverEntries:Array/*ServerEntry*/):void {}
+		public function doAllStoreStateCalculation(userEntries:Array/*UserEntry*/):void { sendMessage( new API_DoAllStoreStateCalculation(userEntries) ); }
 		
 	}
 }

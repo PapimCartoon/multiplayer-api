@@ -88,9 +88,10 @@ import come2play_as2.api.*;
         }
         private function gotMessage(msg:API_Message):Void {
         	trace("gotMessage: "+msg);
-    		if (msg instanceof API_GotStoredState) {
-    			var store_state_msg:API_GotStoredState = API_GotStoredState(msg);
-    			hackerUserId = store_state_msg.userId;
+    		if (msg instanceof API_GotStateChanged) {
+    			var stateChanged:API_GotStateChanged = API_GotStateChanged(msg);
+    			var serverEntry:ServerEntry = stateChanged.serverEntries[0];
+    			hackerUserId = serverEntry.storedByUserId;
     		}
     		if (!AS3_vs_AS2.hasOwnProperty(this,msg.methodName)) return
     		var func:Function = this[msg.methodName] /*as Function*/;

@@ -3,9 +3,9 @@
 	import come2play_as2.util.*;
 import come2play_as2.api.*;
 	class come2play_as2.api.API_DoAllRequestStateCalculation extends API_Message {
-		public var value:Object/*Serializable*/;
-		public function API_DoAllRequestStateCalculation(value:Object/*Serializable*/) { super('doAllRequestStateCalculation',arguments); 
-			this.value = value;
+		public var keys:Array/*String*/;
+		public function API_DoAllRequestStateCalculation(keys:Array/*String*/) { super('doAllRequestStateCalculation',arguments); 
+			this.keys = keys;
 		}
-		/*override*/ public function getParametersAsString():String { return 'value=' + JSON.stringify(value); }
+		/*override*/ public function getParametersAsString():String { return 'keys=' + JSON.stringify(keys); }
 	}

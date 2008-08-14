@@ -93,9 +93,10 @@ package come2play_as3.api {
         }
         protected function gotMessage(msg:API_Message):void {
         	trace("gotMessage: "+msg);
-    		if (msg is API_GotStoredState) {
-    			var store_state_msg:API_GotStoredState = msg as API_GotStoredState;
-    			hackerUserId = store_state_msg.userId;
+    		if (msg is API_GotStateChanged) {
+    			var stateChanged:API_GotStateChanged = msg as API_GotStateChanged;
+    			var serverEntry:ServerEntry = stateChanged.serverEntries[0];
+    			hackerUserId = serverEntry.storedByUserId;
     		}
     		if (!AS3_vs_AS2.hasOwnProperty(this,msg.methodName)) return
     		var func:Function = this[msg.methodName] as Function;

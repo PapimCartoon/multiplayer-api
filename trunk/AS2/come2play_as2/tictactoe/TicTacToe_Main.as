@@ -63,7 +63,6 @@ class come2play_as2.tictactoe.TicTacToe_Main extends ClientGameAPI {
 				squares[row][col] = new TicTacToe_SquareGraphic(this, AS3_vs_AS2.getMovieChild(graphics,"Square_"+row+"_"+col), row, col);				
 		}		
 		doRegisterOnServer();	
-		graphics.do_txt.text="doRegisterOnServer" 
 	}
 	
 	private function getColor(playerId:Number):Number {
@@ -83,14 +82,12 @@ class come2play_as2.tictactoe.TicTacToe_Main extends ClientGameAPI {
 	}
 	/*override*/ public function gotMyUserId(myUserId:Number):Void {
 		this.myUserId = myUserId;
-		graphics.got_txt.text+="gotMyUserId";
 	}
-	/*override*/ public function gotUserInfo(userId:Number, entries:Array/*Entry*/):Void
+	/*override*/ public function gotUserInfo(userId:Number, entries:Array/*InfoEntry*/):Void
 	{
-		graphics.got_txt.text+="gotUserInfo";
 	}
-	/*override*/ public function gotCustomInfo(entries:Array/*Entry*/):Void {
-		for (var i95:Number=0; i95<entries.length; i95++) { var entry:Entry = entries[i95]; 
+	/*override*/ public function gotCustomInfo(entries:Array/*InfoEntry*/):Void {
+		for (var i92:Number=0; i92<entries.length; i92++) { var entry:InfoEntry = entries[i92]; 
 			if (entry.key==API_Message.CUSTOM_INFO_KEY_logo_swf_full_url) {
 				var logo_swf_full_url:String = entry.value.toString();	
 				trace("Got logo_swf_full_url="+logo_swf_full_url)
@@ -99,10 +96,8 @@ class come2play_as2.tictactoe.TicTacToe_Main extends ClientGameAPI {
 						(squares[row][col] /*as TicTacToe_SquareGraphic*/).gotLogo(logo_swf_full_url);
 			}		
 		}
-		graphics.got_txt.text+="gotCustomInfo";
 	}
-	/*override*/ public function gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, extraMatchInfo:Object/*Serializable*/, matchStartedTime:Number, userStateEntries:Array/*UserStateEntry*/):Void {
-		graphics.got_txt.text+="gotMatchStarted";
+	/*override*/ public function gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, extraMatchInfo:Object/*Serializable*/, matchStartedTime:Number, userStateEntries:Array/*ServerEntry*/):Void {
 		this.allPlayerIds = allPlayerIds;
 		assert(allPlayerIds.length<=4, ["The graphics of TicTacToe can handle at most 4 players. allPlayerIds=", allPlayerIds]);
 		turnOfColor = 0;
@@ -114,9 +109,9 @@ class come2play_as2.tictactoe.TicTacToe_Main extends ClientGameAPI {
 		for (var color:Number=0; color<playersNum; color++)
 			ongoingColors.push(color);
 		logic = new TicTacToe_logic(ROWS,COLS,WIN_LENGTH, playersNum);
-		for (var i119:Number=0; i119<userStateEntries.length; i119++) { var userStateEntry:UserStateEntry = userStateEntries[i119]; 
-			if (!isSinglePlayer()) turnOfColor = getColor(userStateEntry.userId);	// some users may have disconnected in the middle of the game	
-			doEntry(userStateEntry.value, true);	//we should not call doAllEndMatch when loading the match	
+		for (var i114:Number=0; i114<userStateEntries.length; i114++) { var serverEntry:ServerEntry = userStateEntries[i114]; 
+			if (!isSinglePlayer()) turnOfColor = getColor(serverEntry.storedByUserId);	// some users may have disconnected in the middle of the game	
+			doEntry(serverEntry.value, true);	//we should not call doAllEndMatch when loading the match	
 		}
 		if (finishedPlayerIds.length>0)
 			matchOverForPlayers(finishedPlayerIds);
@@ -124,19 +119,18 @@ class come2play_as2.tictactoe.TicTacToe_Main extends ClientGameAPI {
 		setOnPress(true);
 	}
 	/*override*/ public function gotMatchEnded(finishedPlayerIds:Array/*int*/):Void {
-		graphics.got_txt.text+="gotMatchEnded";
 		if (matchOverForPlayers(finishedPlayerIds))
 			setOnPress(true); // need to call it only if the current color was changed
 		// if there is one player left (due to other users that disconnected),
 		// then I don't end the game because the container will give the user an option
 		// to either: win, cancel, or save the game.
 	}	
-	/*override*/ public function gotStoredState(userId:Number, stateEntries:Array/*StateEntry*/):Void {
-		graphics.got_txt.text+="gotStoredState";
+	/*override*/ public function gotStateChanged(serverEntries:Array/*ServerEntry*/):Void {
 		// the moves are done in alternating turns: color 0, then color 1 (in a round robin)	
-		assert(stateEntries.length==1, ["there is one entry per move in TicTacToe"]);	
-		var entry:StateEntry = stateEntries[0];
-		assert(!entry.isSecret, ["All communication in TicTacToe is PUBLIC"]);
+		assert(serverEntries.length==1, ["there is one entry per move in TicTacToe"]);	
+		var entry:ServerEntry = serverEntries[0];
+		assert(entry.authorizedUserIds==null, ["All communication in TicTacToe is PUBLIC"]);
+		var userId:Number = entry.storedByUserId;
 		if (userId==myUserId) return; // The player ignores his own stores, because he already updated the logic before he sent it to the server
 		var colorOfUser:Number = getColor(userId);
 		if (colorOfUser==-1) return;  // viewers can store match state, so we just ignore whatever a viewer placed in the match state
@@ -152,7 +146,7 @@ class come2play_as2.tictactoe.TicTacToe_Main extends ClientGameAPI {
 	private function matchOverForPlayers(finishedPlayerIds:Array/*int*/):Boolean {
 		if (logic==null) return false; // match already ended
 		var colors:Array/*int*/ = [];
-		for (var i157:Number=0; i157<finishedPlayerIds.length; i157++) { var playerId:Number = finishedPlayerIds[i157]; 
+		for (var i151:Number=0; i151<finishedPlayerIds.length; i151++) { var playerId:Number = finishedPlayerIds[i151]; 
 			var colorOfPlayerId:Number = getColor(playerId);
 			assert(colorOfPlayerId!=-1, ["Didn't find playerId=",playerId]); 
 			colors.push(colorOfPlayerId);
@@ -161,7 +155,7 @@ class come2play_as2.tictactoe.TicTacToe_Main extends ClientGameAPI {
 	}
 	private function matchOverForColors(colors:Array/*int*/):Boolean {	
 		var shouldChangeTurnOfColor:Boolean = false;
-		for (var i166:Number=0; i166<colors.length; i166++) { var color:Number = colors[i166]; 
+		for (var i160:Number=0; i160<colors.length; i160++) { var color:Number = colors[i160]; 
 			var ongoingIndex:Number = AS3_vs_AS2.IndexOf(ongoingColors, color);
 			if (ongoingIndex==-1) continue; // already finished (when the game ends normally, I immediately call matchOverForColors. see makeMove) 
 			ongoingColors.splice(ongoingIndex, 1);
@@ -201,7 +195,7 @@ class come2play_as2.tictactoe.TicTacToe_Main extends ClientGameAPI {
 	}
 	private static function arrayCopy(arr:Array):Array {
 		var res:Array = [];
-		for (var i206:Number=0; i206<arr.length; i206++) { var x:Object = arr[i206]; 
+		for (var i200:Number=0; i200<arr.length; i200++) { var x:Object = arr[i200]; 
 			res.push(x);
 		}
 		return res;			
@@ -250,10 +244,10 @@ class come2play_as2.tictactoe.TicTacToe_Main extends ClientGameAPI {
 				}		
 				if (isBoardFull) { // Important: it can happen that someone won and the board has just filled up!				
 					var finishedPlayersIds:Array/*int*/ = [];
-					for (var i255:Number=0; i255<finishedPlayers.length; i255++) { var playerMatchOver:PlayerMatchOver = finishedPlayers[i255]; 
+					for (var i249:Number=0; i249<finishedPlayers.length; i249++) { var playerMatchOver:PlayerMatchOver = finishedPlayers[i249]; 
 						finishedPlayersIds.push(playerMatchOver.playerId);
 					}					
-					for (var i258:Number=0; i258<ongoingColors.length; i258++) { var ongoingColor:Number = ongoingColors[i258]; 
+					for (var i252:Number=0; i252<ongoingColors.length; i252++) { var ongoingColor:Number = ongoingColors[i252]; 
 						var ongoingPlayerId:Number = allPlayerIds[ongoingColor];
 						if (AS3_vs_AS2.IndexOf(finishedPlayersIds, ongoingPlayerId)==-1) {
 							if (didWin) {
@@ -299,8 +293,7 @@ class come2play_as2.tictactoe.TicTacToe_Main extends ClientGameAPI {
 		if (myColor==VIEWER) return; // viewer cannot make a move
 		if (!isSinglePlayer() && myColor!=turnOfColor) return; // not my turn
 		if (!logic.isSquareAvailable(row, col)) return; // already filled this square (e.g., if you press on the keyboard, you may choose a cell that is already full)
-		doStoreState( [new StateEntry(getStateKey(), [row, col], false)] );		
-		graphics.do_txt.text="doStoreState" 
+		doStoreState( [new UserEntry(getStateKey(), [row, col], false)] );		
 		makeMove(row, col, false);		
 	}
 	private function setOnPress(isInProgress:Boolean):Void {

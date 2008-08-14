@@ -7,15 +7,15 @@ import come2play_as2.api.*;
 			super(someMovieClip);
 		}
 		public function gotKeyboardEvent(isKeyDown:Boolean, charCode:Number, keyCode:Number, keyLocation:Number, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean):Void {}
-		public function gotCustomInfo(entries:Array/*Entry*/):Void {}
-		public function gotUserInfo(userId:Number, entries:Array/*Entry*/):Void {}
+		public function gotCustomInfo(infoEntries:Array/*InfoEntry*/):Void {}
+		public function gotUserInfo(userId:Number, infoEntries:Array/*InfoEntry*/):Void {}
 		public function gotUserDisconnected(userId:Number):Void {}
 		public function gotMyUserId(myUserId:Number):Void {}
-		public function gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, extraMatchInfo:Object/*Serializable*/, matchStartedTime:Number, userStateEntries:Array/*UserStateEntry*/):Void {}
+		public function gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, extraMatchInfo:Object/*Serializable*/, matchStartedTime:Number, serverEntries:Array/*ServerEntry*/):Void {}
 		public function gotMatchEnded(finishedPlayerIds:Array/*int*/):Void {}
 		
-		public function doStoreState(stateEntries:Array/*StateEntry*/):Void { sendMessage( new API_DoStoreState(stateEntries) ); }
-		public function gotStoredState(userId:Number, stateEntries:Array/*StateEntry*/):Void {}
+		public function doStoreState(userEntries:Array/*UserEntry*/):Void { sendMessage( new API_DoStoreState(userEntries) ); }
+		public function gotStateChanged(serverEntries:Array/*ServerEntry*/):Void {}
 		
 		public function doConnectedSetScore(score:Number):Void { sendMessage( new API_DoConnectedSetScore(score) ); }
 		public function doConnectedEndMatch(didWin:Boolean):Void { sendMessage( new API_DoConnectedEndMatch(didWin) ); }

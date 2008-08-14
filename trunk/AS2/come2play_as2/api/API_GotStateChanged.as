@@ -2,9 +2,9 @@
 
 	import come2play_as2.util.*;
 import come2play_as2.api.*;
-	class come2play_as2.api.API_GotRequestStateCalculation extends API_Message {
+	class come2play_as2.api.API_GotStateChanged extends API_Message {
 		public var serverEntries:Array/*ServerEntry*/;
-		public function API_GotRequestStateCalculation(serverEntries:Array/*ServerEntry*/) { super('gotRequestStateCalculation',arguments); 
+		public function API_GotStateChanged(serverEntries:Array/*ServerEntry*/) { super('gotStateChanged',arguments); 
 			this.serverEntries = serverEntries;
 			for (var i:Number=0; i<serverEntries.length; i++) serverEntries[i] = ServerEntry.object2ServerEntry(serverEntries[i]);
 		}

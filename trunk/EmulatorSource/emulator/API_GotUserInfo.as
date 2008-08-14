@@ -4,12 +4,12 @@ package emulator {
 	import flash.display.*;	import flash.utils.*;
 	public  class API_GotUserInfo extends API_Message {
 		public var userId:int;
-		public var entries:Array/*Entry*/;
-		public function API_GotUserInfo(userId:int, entries:Array/*Entry*/) { super('gotUserInfo',arguments); 
+		public var infoEntries:Array/*InfoEntry*/;
+		public function API_GotUserInfo(userId:int, infoEntries:Array/*InfoEntry*/) { super('gotUserInfo',arguments); 
 			this.userId = userId;
-			this.entries = entries;
-			for (var i:int=0; i<entries.length; i++) entries[i] = Entry.object2Entry(entries[i]);
+			this.infoEntries = infoEntries;
+			for (var i:int=0; i<infoEntries.length; i++) infoEntries[i] = InfoEntry.object2InfoEntry(infoEntries[i]);
 		}
-		override public function getParametersAsString():String { return 'userId=' + JSON.stringify(userId)+', entries=' + JSON.stringify(entries); }
+		override public function getParametersAsString():String { return 'userId=' + JSON.stringify(userId)+', infoEntries=' + JSON.stringify(infoEntries); }
 	}
 }

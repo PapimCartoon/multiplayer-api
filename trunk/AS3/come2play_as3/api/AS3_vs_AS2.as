@@ -43,9 +43,6 @@ public final class AS3_vs_AS2
 	public static function asArray(o:Object):Array {
 		return o as Array;
 	}
-	public static function asUserStateEntry(o:Object):UserStateEntry {
-		return o as UserStateEntry;
-	}
 	
 	public static function delegate(thisObj:Object, handler:Function, ... args):Function {
 		return function (...otherArgs):Object { 

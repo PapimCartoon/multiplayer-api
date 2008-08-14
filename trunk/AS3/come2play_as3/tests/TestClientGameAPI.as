@@ -48,11 +48,11 @@ public class TestClientGameAPI extends ClientGameAPI {
 	}
 	
 	override public function gotMyUserId(userId:int):void {		
-		if (shouldTestPassNumbers) doStoreState([ new StateEntry("test", test_Arr, false)]);
+		if (shouldTestPassNumbers) doStoreState([ new UserEntry("test", test_Arr, false)]);
 	}
-	override public function gotStoredState(userId:int, stateEntries:Array/*StateEntry*/):void { 
+	override public function gotStateChanged(serverEntries:Array/*ServerEntry*/):void { 
 		if (shouldTestPassNumbers) {
-			var state:StateEntry = stateEntries[0];
+			var state:ServerEntry = serverEntries[0];
 			var value:Array = AS3_vs_AS2.asArray(state.value);  
 			for (var i:int=0; i<test_Arr.length; i++) {
 				var val:int = test_Arr[i];

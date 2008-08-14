@@ -1,7 +1,7 @@
 package emulator {
 //Do not change the code below because this class was generated automatically!
 
-	import flash.display.*;
+	import flash.display.*;	import flash.utils.*;
 	public  class API_MethodsSummary  {
 		public var methodName:String;
 		public var parameterNames:Array/*String*/;
@@ -32,8 +32,9 @@ package emulator {
 		, new API_MethodsSummary('doAllFoundHacker', ['userId', 'errorDescription'], ['int', 'String'] )
 		, new API_MethodsSummary('doAllRequestStateCalculation', ['value'], ['Object/*Serializable*/'] )
 		, new API_MethodsSummary('gotRequestStateCalculation', ['secretSeed', 'value'], ['int', 'Object/*Serializable*/'] )
+		, new API_MethodsSummary('doAllStoreStateCalculation', ['stateEntries'], ['Array/*StateEntry*/'] )
 		, new API_MethodsSummary('doConnectedSetScore', ['score'], ['int'] )
-		, new API_MethodsSummary('doConnectedMatchOver', ['didWin'], ['Boolean'] )
+		, new API_MethodsSummary('doConnectedEndMatch', ['didWin'], ['Boolean'] )
 		];
 	}
 }

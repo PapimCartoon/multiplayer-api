@@ -18,7 +18,7 @@ import come2play_as2.api.*;
 		public function gotStoredState(userId:Number, stateEntries:Array/*StateEntry*/):Void {}
 		
 		public function doConnectedSetScore(score:Number):Void { sendMessage( new API_DoConnectedSetScore(score) ); }
-		public function doConnectedMatchOver(didWin:Boolean):Void { sendMessage( new API_DoConnectedMatchOver(didWin) ); }
+		public function doConnectedEndMatch(didWin:Boolean):Void { sendMessage( new API_DoConnectedEndMatch(didWin) ); }
 		
 		
 		

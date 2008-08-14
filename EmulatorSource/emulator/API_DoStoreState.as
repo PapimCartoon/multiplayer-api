@@ -1,7 +1,7 @@
 package emulator {
 //Do not change the code below because this class was generated automatically!
 
-	import flash.display.*;
+	import flash.display.*;	import flash.utils.*;
 	public  class API_DoStoreState extends API_Message {
 		public var stateEntries:Array/*StateEntry*/;
 		public function API_DoStoreState(stateEntries:Array/*StateEntry*/) { super('doStoreState',arguments); 

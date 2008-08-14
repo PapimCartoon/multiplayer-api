@@ -1,7 +1,7 @@
 package come2play_as3.api {
 //Do not change the code below because this class was generated automatically!
 
-	import flash.display.*;
+	import flash.display.*;	import flash.utils.*;
 	import come2play_as3.util.*;
 	public  class API_MethodsSummary  {
 		public var methodName:String;
@@ -33,8 +33,9 @@ package come2play_as3.api {
 		, new API_MethodsSummary('doAllFoundHacker', ['userId', 'errorDescription'], ['int', 'String'] )
 		, new API_MethodsSummary('doAllRequestStateCalculation', ['value'], ['Object/*Serializable*/'] )
 		, new API_MethodsSummary('gotRequestStateCalculation', ['secretSeed', 'value'], ['int', 'Object/*Serializable*/'] )
+		, new API_MethodsSummary('doAllStoreStateCalculation', ['stateEntries'], ['Array/*StateEntry*/'] )
 		, new API_MethodsSummary('doConnectedSetScore', ['score'], ['int'] )
-		, new API_MethodsSummary('doConnectedMatchOver', ['didWin'], ['Boolean'] )
+		, new API_MethodsSummary('doConnectedEndMatch', ['didWin'], ['Boolean'] )
 		];
 	}
 }

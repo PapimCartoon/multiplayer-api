@@ -1,12 +1,13 @@
 package come2play_as3.api {
 //Do not change the code below because this class was generated automatically!
 
-	import flash.display.*;
+	import flash.display.*;	import flash.utils.*;
 	import come2play_as3.util.*;
 	public  class API_Message  {
 		public var methodName:String;
 		public var parameters:Array/*Object*/;
 		public function API_Message(methodName:String, parameters:Array/*Object*/) { 
+			/*Only in AS3*/if (getQualifiedClassName(this)=='emulator::API_Message') throw new Error('Do not use new API_Message(...), use API_Message.createMessage(...)');
 			this.methodName = methodName;
 			this.parameters = parameters; // the translated parameters to pass to the LocalConnection 
 		}
@@ -34,8 +35,9 @@ package come2play_as3.api {
 			case 'doAllFoundHacker': if (parameters.length!=2) throw new Error('When creating a message from doAllFoundHacker, the number of parameters must be 2!'); return new API_DoAllFoundHacker(parameters[0], parameters[1]);
 			case 'doAllRequestStateCalculation': if (parameters.length!=1) throw new Error('When creating a message from doAllRequestStateCalculation, the number of parameters must be 1!'); return new API_DoAllRequestStateCalculation(parameters[0]);
 			case 'gotRequestStateCalculation': if (parameters.length!=2) throw new Error('When creating a message from gotRequestStateCalculation, the number of parameters must be 2!'); return new API_GotRequestStateCalculation(parameters[0], parameters[1]);
+			case 'doAllStoreStateCalculation': if (parameters.length!=1) throw new Error('When creating a message from doAllStoreStateCalculation, the number of parameters must be 1!'); return new API_DoAllStoreStateCalculation(parameters[0]);
 			case 'doConnectedSetScore': if (parameters.length!=1) throw new Error('When creating a message from doConnectedSetScore, the number of parameters must be 1!'); return new API_DoConnectedSetScore(parameters[0]);
-			case 'doConnectedMatchOver': if (parameters.length!=1) throw new Error('When creating a message from doConnectedMatchOver, the number of parameters must be 1!'); return new API_DoConnectedMatchOver(parameters[0]);
+			case 'doConnectedEndMatch': if (parameters.length!=1) throw new Error('When creating a message from doConnectedEndMatch, the number of parameters must be 1!'); return new API_DoConnectedEndMatch(parameters[0]);
 			}
 			return null;
 		}

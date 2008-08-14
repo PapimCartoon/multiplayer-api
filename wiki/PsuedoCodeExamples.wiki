@@ -1,0 +1,118 @@
+#summary Examples of games using ClientGameAPI
+
+We give here examples of the pseudo code of the following games.
+Turn-based games:
+ * Public state: TicTacToe, 
+ * Public state + Randomness: Backgammon, Roulette
+ * Deterministic+secrets: Battleships, Startego, Diplomocy
+ * Shuffles + secrets: Dominoes, Poker, Bridge, Clue (has several shuffles)
+ * Randomness+secrets: Tanks (the wind is random, the secrets are the angle&speed of each shot)
+ * "Server" side: BlackJack, MineSweeper, Sudoku  
+Realtime games:
+ * Trivia: series of questions, who answers correctly first wins the question. Limit the time for all players (if no one answered, go to the next question. if you answered incorrectly, the remaining player wins the question)
+ * Snake
+ 
+The pdseudo code is a simplified version:
+* It doesn't handle loading a saved game.
+* It doesn't handle the case where a player disconnects in the middle of a game.
+* `doAllEndMatch()` ends the match for all players
+ 
+
+We use the following conventions:
+* `assert(condition:Boolean)` raises an error if `condition` is `false`.
+* `myUserId` and `allPlayerIds` are the parameters passed in `gotMyUserId` and `gotMatchStarted`, respectively.
+* instead of using `Array/*int*/`, we write `int[]`. 
+* the functions that start with `user` are called by the graphics  
+
+So this is the simplified version of `ClientGameAPI`:
+{{{
+class ClientGameAPI {
+  var myUserId:int;
+  var allPlayerIds:int[];
+  function gotMatchStarted() {}
+  function gotStateChanged(userStateEntries:ServerEntry[]) {}  
+  function gotRequestStateCalculation(entries:ServerEntry[]) {}
+  
+  // Subclasses of ClientGameAPI can call these operations:
+  function doAllEndMatch()
+  function doAllSetTurn(userId:int, milliSecondsInTurn:int)
+  function doAllRevealState(revealEntries:RevealEntry[])
+  function doAllShuffleState(keys:String[])
+  function doAllFoundHacker(userId:int)
+  function doAllRequestStateCalculation(keys:String[])
+  function doAllStoreStateCalculation(stateEntries:UserEntry[])
+}
+class RevealEntry {
+  var key:String, userIds:int[];
+  function RevealEntry(key:String, userIds:int[]) {...}
+}
+class UserEntry {
+  var key:String, value:Object, isSecret:boolean;
+  function UserEntry(key:String, value:Object, isSecret:boolean) {...}
+}
+class ServerEntry {
+  var key:String, value:Object, storedByUserId:int, authorizedUserIds:int[];
+  function isPublic():Boolean { return authorizedUserIds==null; }
+}
+}}}
+
+
+= TicTacToe =
+
+{{{
+class TicTacToe extends ClientGameAPI {
+  var turnNumber:int;
+  
+  function getTurnOfId():int {
+  	return allPlayerIds[turnNumber % allPlayerIds.length];
+  }
+  function getEntryKey():String {
+  	return ""+turnNumber;
+  }
+  function isMyTurn():Boolean {
+  	return getTurnOfId()==myUserId;
+  }
+  
+  function startMove() {
+  	doAllSetTurn(getTurnOfId(), -1);
+  	if (isMyTurn()) 
+  	  showTheUserHisPossibleMoves(); // allow the user to select the row&column
+  }  
+  function performMove(row:int, column:int) {
+    // update the logic and the graphics
+    turnNumber ++; // advance the turn
+    if (isGameOver())
+      doAllEndMatch();
+    else
+      startMove();
+  }
+  function userMadeHisMove(row:int, column:int) {
+    doStoreState([ new UserEntry(getEntryKey(), [row, column], false) ]);
+    performMove(row, col);
+  }
+  
+  function gotMatchStarted() {
+  	turnNumber = 0;
+  	startMove();
+  }
+  function gotStateChanged(userStateEntries:ServerEntry[]) {
+    assert(userStateEntries.length==1);
+    var entry:ServerEntry = userStateEntries[0];
+    if (entry.storedByUserId==myUserId) return; // already updated my move
+    assert(entry.storedByUserId==getTurnOfId());
+    assert(entry.key==getEntryKey());
+    assert(entry.isPublic());
+    var move:Array = entry.value; 
+    performMove(move[0], move[1]);
+  } 
+}
+}}}
+
+
+= Backgammon =
+= Battleships =
+= Dominoes =
+= MineSweeper =
+= BlackJack =
+= Trivia =
+= Snake =

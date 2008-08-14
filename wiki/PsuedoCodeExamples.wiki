@@ -13,16 +13,16 @@ Realtime games:
  * Snake
  
 The pdseudo code is a simplified version:
-* It doesn't handle loading a saved game.
-* It doesn't handle the case where a player disconnects in the middle of a game.
-* `doAllEndMatch()` ends the match for all players
+ * It doesn't handle loading a saved game.
+ * It doesn't handle the case where a player disconnects in the middle of a game.
+ * `doAllEndMatch()` ends the match for all players
  
 
 We use the following conventions:
-* `assert(condition:Boolean)` raises an error if `condition` is `false`.
-* `myUserId` and `allPlayerIds` are the parameters passed in `gotMyUserId` and `gotMatchStarted`, respectively.
-* instead of using `Array/*int*/`, we write `int[]`. 
-* the functions that start with `user` are called by the graphics  
+ * `assert(condition:Boolean)` raises an error if `condition` is `false`.
+ * `myUserId` and `allPlayerIds` are the parameters passed in `gotMyUserId` and `gotMatchStarted`, respectively.
+ * instead of using `Array/*int*/`, we write `int[]`. 
+ * the functions that start with `user` are called by the graphics  
 
 So this is the simplified version of `ClientGameAPI`:
 {{{

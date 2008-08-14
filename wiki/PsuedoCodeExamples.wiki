@@ -20,7 +20,7 @@ The pdseudo code is a simplified version:
 
 We use the following conventions:
  * `assert(condition:Boolean)` raises an error if `condition` is `false`.
- * `myUserId` and `allPlayerIds` are the parameters passed in `gotMyUserId` and `gotMatchStarted`, respectively.
+ * `myUserId` and `allPlayerIds` are the parameters passed in the original callbacks `gotMyUserId` and `gotMatchStarted`, respectively.
  * instead of using `Array/*int*/`, we write `int[]`. 
  * the functions that start with `user` are called by the graphics  
 

@@ -30,8 +30,8 @@ class ClientGameAPI {
   var myUserId:int;
   var allPlayerIds:int[];
   function gotMatchStarted() {}
-  function gotStateChanged(userStateEntries:ServerEntry[]) {}  
-  function gotRequestStateCalculation(entries:ServerEntry[]) {}
+  function gotStateChanged(serverEntries:ServerEntry[]) {}  
+  function gotRequestStateCalculation(serverEntries:ServerEntry[]) {}
   
   // Subclasses of ClientGameAPI can call these operations:
   function doAllEndMatch()
@@ -40,7 +40,7 @@ class ClientGameAPI {
   function doAllShuffleState(keys:String[])
   function doAllFoundHacker(userId:int)
   function doAllRequestStateCalculation(keys:String[])
-  function doAllStoreStateCalculation(stateEntries:UserEntry[])
+  function doAllStoreStateCalculation(userEntries:UserEntry[])
 }
 class RevealEntry {
   var key:String, userIds:int[];
@@ -95,9 +95,9 @@ class TicTacToe extends ClientGameAPI {
     turnNumber = 0;
     startMove();
   }
-  function gotStateChanged(userStateEntries:ServerEntry[]) {
-    assert(userStateEntries.length==1);
-    var entry:ServerEntry = userStateEntries[0];
+  function gotStateChanged(serverEntries:ServerEntry[]) {
+    assert(serverEntries.length==1);
+    var entry:ServerEntry = serverEntries[0];
     if (entry.storedByUserId==myUserId) return; // already updated my move
     assert(entry.storedByUserId==getTurnOfId());
     assert(entry.key==getEntryKey());

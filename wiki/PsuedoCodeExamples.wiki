@@ -7,7 +7,7 @@ Turn-based games:
  * Deterministic+secrets: Battleships, Startego, Diplomocy
  * Shuffles + secrets: Dominoes, Poker, Bridge, Clue (has several shuffles)
  * Randomness+secrets: Tanks (the wind is random, the secrets are the angle&speed of each shot)
- * "Server" side: BlackJack, MineSweeper, Sudoku  
+ * "Server" side: Black Jack, Mine Sweeper, Sudoku  
 Realtime games:
  * Trivia: series of questions, who answers correctly first wins the question. Limit the time for all players (if no one answered, go to the next question. if you answered incorrectly, the remaining player wins the question)
  * Snake
@@ -64,19 +64,19 @@ class TicTacToe extends ClientGameAPI {
   var turnNumber:int;
   
   function getTurnOfId():int {
-  	return allPlayerIds[turnNumber % allPlayerIds.length];
+    return allPlayerIds[turnNumber % allPlayerIds.length];
   }
   function getEntryKey():String {
-  	return ""+turnNumber;
+    return ""+turnNumber;
   }
   function isMyTurn():Boolean {
-  	return getTurnOfId()==myUserId;
+    return getTurnOfId()==myUserId;
   }
   
   function startMove() {
   	doAllSetTurn(getTurnOfId(), -1);
-  	if (isMyTurn()) 
-  	  showTheUserHisPossibleMoves(); // allow the user to select the row&column
+    if (isMyTurn()) 
+      showTheUserHisPossibleMoves(); // allow the user to select the row&column
   }  
   function performMove(row:int, column:int) {
     // update the logic and the graphics
@@ -92,8 +92,8 @@ class TicTacToe extends ClientGameAPI {
   }
   
   function gotMatchStarted() {
-  	turnNumber = 0;
-  	startMove();
+    turnNumber = 0;
+    startMove();
   }
   function gotStateChanged(userStateEntries:ServerEntry[]) {
     assert(userStateEntries.length==1);
@@ -112,7 +112,7 @@ class TicTacToe extends ClientGameAPI {
 = Backgammon =
 = Battleships =
 = Dominoes =
-= MineSweeper =
-= BlackJack =
+= Mine Sweeper =
+= Black Jack =
 = Trivia =
 = Snake =

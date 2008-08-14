@@ -4,6 +4,7 @@ import flash.display.DisplayObject;
 import flash.display.Loader;
 import flash.display.LoaderInfo;
 import flash.display.MovieClip;
+import flash.display.Sprite;
 import flash.events.*;
 import flash.net.LocalConnection;
 import flash.net.URLRequest;
@@ -143,6 +144,10 @@ public final class AS3_vs_AS2
 	}
 	public static function showError(graphics:MovieClip, msg:String):void {
 		trace("Showing error: "+msg);
+		var blackBox:Sprite=new Sprite();
+		blackBox.graphics.beginFill(0x000000);
+		blackBox.graphics.drawRect(0,0,300,300);
+		blackBox.graphics.endFill();
 		if (graphics==null) return;
 		var child:TextField = new TextField();
 		child.text = msg;
@@ -150,6 +155,7 @@ public final class AS3_vs_AS2
 		child.height = 300;
 		//child.backgroundColor = 0xFF0000; // red
 		child.textColor = 0xFF0000; // red
+		graphics.addChild(blackBox);
 		graphics.addChild(child);
 	}
 	

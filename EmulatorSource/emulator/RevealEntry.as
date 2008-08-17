@@ -10,8 +10,8 @@ package emulator {
 			this.userIds = userIds;
 		}
 		public static function object2RevealEntry(obj:Object):RevealEntry {
-			if (obj.key==null) throw new Error('Missing field key in creating object of type RevealEntry in object='+JSON.stringify(obj));
-			if (obj.userIds==null) throw new Error('Missing field userIds in creating object of type RevealEntry in object='+JSON.stringify(obj));
+			if (obj.key==null) throw new Error('Missing field "key" when creating RevealEntry from the object='+JSON.stringify(obj));
+			if (obj.userIds==null) throw new Error('Missing field "userIds" when creating RevealEntry from the object='+JSON.stringify(obj));
 			return new RevealEntry(obj.key, obj.userIds)
 		}
 		public function getParametersAsString():String { return 'key=' + JSON.stringify(key)+', userIds=' + JSON.stringify(userIds); }

@@ -11,8 +11,8 @@ package come2play_as3.api {
 			this.value = value;
 		}
 		public static function object2InfoEntry(obj:Object):InfoEntry {
-			if (obj.key==null) throw new Error('Missing field key in creating object of type InfoEntry in object='+JSON.stringify(obj));
-			if (obj.value==null) throw new Error('Missing field value in creating object of type InfoEntry in object='+JSON.stringify(obj));
+			if (obj.key==null) throw new Error('Missing field "key" when creating InfoEntry from the object='+JSON.stringify(obj));
+			if (obj.value==null) throw new Error('Missing field "value" when creating InfoEntry from the object='+JSON.stringify(obj));
 			return new InfoEntry(obj.key, obj.value)
 		}
 		public function getParametersAsString():String { return 'key=' + JSON.stringify(key)+', value=' + JSON.stringify(value); }

@@ -6,7 +6,7 @@ Turn-based games:
  * Public state + Randomness: Backgammon, Roulette
  * Deterministic+secrets: Battleships, Startego, Diplomocy
  * Shuffles + secrets: Dominoes, Poker, Bridge, Clue (has several shuffles)
- * Randomness+secrets: Tanks (the wind is random, the secrets are the angle&speed of each shot)
+ * Randomness+secrets: Risk, Tanks (the wind is random, the secrets are the angle&speed of each shot)
  * "Server" side: Black Jack, Mine Sweeper, Sudoku  
 Realtime games:
  * Trivia: series of questions, who answers correctly first wins the question. Limit the time for all players (if no one answered, go to the next question. if you answered incorrectly, the remaining player wins the question)
@@ -21,6 +21,7 @@ We use the following conventions:
 So this is the simplified version of `ClientGameAPI`:
 {{{
 // This pdseudo code is a simplified version:
+// - It doesn't handle the logic or graphics of the game, only usages of the API.
 // - It doesn't handle loading a saved game.
 // - It doesn't handle the case where a player disconnects in the middle of a game.
 // - The game ends for all players, i.e., when there is a winner the game ends for all players.
@@ -156,8 +157,8 @@ class GameMove {
 }}}
 
 
-= Backgammon =
-= Battleships =
+= Backgammon = v
+= Battleships = v
 = Dominoes =
 = Mine Sweeper =
 = Black Jack =

@@ -9,17 +9,15 @@ class come2play_as2.tictactoe.TicTacToe_SquareGraphic
 	private var graphic:TicTacToe_Main;
 	private var square:MovieClip;
 	private var btn:MovieClip;
-	private var row:Number;
-	private var col:Number;
+	private var move:TicTacToeMove;
 	private var logoContainer:MovieClip;
 		
-	public function TicTacToe_SquareGraphic(graphic:TicTacToe_Main, square:MovieClip, row:Number, col:Number) {
+	public function TicTacToe_SquareGraphic(graphic:TicTacToe_Main, square:MovieClip, move:TicTacToeMove) {
 		this.graphic = graphic;
 		this.square = square;
 		this.btn = AS3_vs_AS2.getMovieChild(square,"Btn_X_O");
 		this.logoContainer = AS3_vs_AS2.getMovieChild(square,"LogoContainer");
-		this.row = row;
-		this.col = col; 
+		this.move = move;
 		if (AS3_vs_AS2.isAS3)
 			AS3_vs_AS2.addOnPress(btn,	AS3_vs_AS2.delegate(this, this.pressedOn));		
 		showOrHideLogo(false);
@@ -36,7 +34,7 @@ class come2play_as2.tictactoe.TicTacToe_SquareGraphic
 		btn.gotoAndStop("Btn_None");		
 		showOrHideLogo(false);
 	}
-	public function setOnPress(currentTurn:Number):Void {
+	public function startMove(currentTurn:Number):Void {
 		//trace("Changing square "+row+"x"+col+" to "+currentTurn);
 		square.gotoAndStop("None");
 		btn.gotoAndStop(currentTurn==BTN_NONE ? "Btn_None" : 
@@ -51,6 +49,6 @@ class come2play_as2.tictactoe.TicTacToe_SquareGraphic
 		}
 	}
 	private function pressedOn():Void  {
-		graphic.dispatchMoveIfLegal(row, col);		
+		graphic.userMadeHisMove(move);		
 	}
 }

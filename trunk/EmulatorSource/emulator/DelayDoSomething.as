@@ -25,34 +25,17 @@ package emulator
 		}
 		public function doSomething(obj:Object):void {
 			queue.push(obj);
-			if (queue.length==1) {
-				setRandomDelay();				
-			}
+			var delay_milliseconds:int = random(delay_from_milliseconds, delay_to_milliseconds);
+			setTimeout(doOneEvent, delay_milliseconds);
 		} 
 		public static function random(fromInclusive:int, toExclusive:int):int {
 			var delta:int = toExclusive - fromInclusive;
 			return Math.floor( delta * Math.random() ) + fromInclusive;
 		}
-		private function setRandomDelay():void {
-			var delay_milliseconds:int = random(delay_from_milliseconds, delay_to_milliseconds);
-			setTimeout(passEvent, delay_milliseconds);		
-		}
 		private function doOneEvent():void {			
 			if (queue.length==0) throw new Error("Internal DelayDoSomething error!");
 			var topObj:Object = queue.shift();
 			passTo(topObj);
-		}
-		private function passEvent():void {
-			doOneEvent();
-			if (true) {
-				// events are batched together. very similar to the real server (however we do not consider network delay)
-				while (queue.length>0) {
-					doOneEvent();
-				}
-			} else {
-				// events are queued. 
-				if (queue.length>0) setRandomDelay();
-			}
 		}
 		
 		public static function doTest():void {

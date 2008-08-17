@@ -59,14 +59,22 @@ class come2play_as2.tictactoe.TicTacToe_Main extends ClientGameAPI {
 		squares = new Array(ROWS);
 		for(var row:Number=0; row<ROWS; row++) {
 			squares[row] = new Array(COLS);
-			for(var col:Number=0; col<COLS; col++)
-				squares[row][col] = new TicTacToe_SquareGraphic(this, AS3_vs_AS2.getMovieChild(graphics,"Square_"+row+"_"+col), row, col);				
+			for(var col:Number=0; col<COLS; col++) {
+				var cell:TicTacToeMove = new TicTacToeMove(row, col);
+				setSquareGraphic(cell, new TicTacToe_SquareGraphic(this, AS3_vs_AS2.getMovieChild(graphics,"Square_"+row+"_"+col), cell) ); 
+			}				
 		}		
 		doRegisterOnServer();	
 	}
 	
 	private function getColor(playerId:Number):Number {
 		return AS3_vs_AS2.IndexOf(allPlayerIds, playerId);
+	}
+	private function getSquareGraphic(move:TicTacToeMove):TicTacToe_SquareGraphic {
+		return squares[move.row][move.col];
+	}
+	private function setSquareGraphic(move:TicTacToeMove, sqaure:TicTacToe_SquareGraphic):Void {
+		squares[move.row][move.col] = sqaure;
 	}
 	
 	// overriding functions	
@@ -77,23 +85,22 @@ class come2play_as2.tictactoe.TicTacToe_Main extends ClientGameAPI {
 		if (delta>=0 && delta<9) {
 			var col:Number =  2-int(delta/3);
 			var row:Number =  (delta%3);
-			dispatchMoveIfLegal(row, col);
+			userMadeHisMove( new TicTacToeMove(row, col) );
 		}
 	}
 	/*override*/ public function gotMyUserId(myUserId:Number):Void {
 		this.myUserId = myUserId;
 	}
-	/*override*/ public function gotUserInfo(userId:Number, entries:Array/*InfoEntry*/):Void
-	{
+	/*override*/ public function gotUserInfo(userId:Number, entries:Array/*InfoEntry*/):Void {
 	}
 	/*override*/ public function gotCustomInfo(entries:Array/*InfoEntry*/):Void {
-		for (var i92:Number=0; i92<entries.length; i92++) { var entry:InfoEntry = entries[i92]; 
+		for (var i99:Number=0; i99<entries.length; i99++) { var entry:InfoEntry = entries[i99]; 
 			if (entry.key==API_Message.CUSTOM_INFO_KEY_logo_swf_full_url) {
 				var logo_swf_full_url:String = entry.value.toString();	
 				trace("Got logo_swf_full_url="+logo_swf_full_url)
 				for(var row:Number=0; row<ROWS; row++) 
 					for(var col:Number=0; col<COLS; col++)
-						(squares[row][col] /*as TicTacToe_SquareGraphic*/).gotLogo(logo_swf_full_url);
+						getSquareGraphic( new TicTacToeMove(row, col) ).gotLogo(logo_swf_full_url);
 			}		
 		}
 	}
@@ -109,18 +116,18 @@ class come2play_as2.tictactoe.TicTacToe_Main extends ClientGameAPI {
 		for (var color:Number=0; color<playersNum; color++)
 			ongoingColors.push(color);
 		logic = new TicTacToe_logic(ROWS,COLS,WIN_LENGTH, playersNum);
-		for (var i114:Number=0; i114<userStateEntries.length; i114++) { var serverEntry:ServerEntry = userStateEntries[i114]; 
+		for (var i121:Number=0; i121<userStateEntries.length; i121++) { var serverEntry:ServerEntry = userStateEntries[i121]; 
 			if (!isSinglePlayer()) turnOfColor = getColor(serverEntry.storedByUserId);	// some users may have disconnected in the middle of the game	
-			doEntry(serverEntry.value, true);	//we should not call doAllEndMatch when loading the match	
+			performMove(serverEntry.value, true);	//we should not call doAllEndMatch when loading the match	
 		}
 		if (finishedPlayerIds.length>0)
 			matchOverForPlayers(finishedPlayerIds);
 		
-		setOnPress(true);
+		startMove(true);
 	}
 	/*override*/ public function gotMatchEnded(finishedPlayerIds:Array/*int*/):Void {
 		if (matchOverForPlayers(finishedPlayerIds))
-			setOnPress(true); // need to call it only if the current color was changed
+			startMove(true); // need to call it only if the current color was changed
 		// if there is one player left (due to other users that disconnected),
 		// then I don't end the game because the container will give the user an option
 		// to either: win, cancel, or save the game.
@@ -135,18 +142,18 @@ class come2play_as2.tictactoe.TicTacToe_Main extends ClientGameAPI {
 		var colorOfUser:Number = getColor(userId);
 		if (colorOfUser==-1) return;  // viewers can store match state, so we just ignore whatever a viewer placed in the match state
 		if (AS3_vs_AS2.IndexOf(ongoingColors, colorOfUser)==-1) return; // player already disconnected
-		// In SinglePlayer: the player already called return before, but a viewer (there can be viewers even for singleplayer games!) still needs to call doEntry 
+		// In SinglePlayer: the player already called return before, but a viewer (there can be viewers even for singleplayer games!) still needs to call performMove 
 		if (!isSinglePlayer()) 
 			assert(turnOfColor==colorOfUser, ["Got an entry from player=",userId," of color=",colorOfUser," but expecting one from color=", turnOfColor]);
-		var expectedKey:String = getStateKey();
+		var expectedKey:String = getEntryKey();
 		assert(entry.key==expectedKey, ["The state key is illegal! Expecting key=",expectedKey," but got key=",entry.key]);
-		doEntry(entry.value, false);
+		performMove(entry.value, false);
 	}
 	
 	private function matchOverForPlayers(finishedPlayerIds:Array/*int*/):Boolean {
 		if (logic==null) return false; // match already ended
 		var colors:Array/*int*/ = [];
-		for (var i151:Number=0; i151<finishedPlayerIds.length; i151++) { var playerId:Number = finishedPlayerIds[i151]; 
+		for (var i158:Number=0; i158<finishedPlayerIds.length; i158++) { var playerId:Number = finishedPlayerIds[i158]; 
 			var colorOfPlayerId:Number = getColor(playerId);
 			assert(colorOfPlayerId!=-1, ["Didn't find playerId=",playerId]); 
 			colors.push(colorOfPlayerId);
@@ -155,7 +162,7 @@ class come2play_as2.tictactoe.TicTacToe_Main extends ClientGameAPI {
 	}
 	private function matchOverForColors(colors:Array/*int*/):Boolean {	
 		var shouldChangeTurnOfColor:Boolean = false;
-		for (var i160:Number=0; i160<colors.length; i160++) { var color:Number = colors[i160]; 
+		for (var i167:Number=0; i167<colors.length; i167++) { var color:Number = colors[i167]; 
 			var ongoingIndex:Number = AS3_vs_AS2.IndexOf(ongoingColors, color);
 			if (ongoingIndex==-1) continue; // already finished (when the game ends normally, I immediately call matchOverForColors. see makeMove) 
 			ongoingColors.splice(ongoingIndex, 1);
@@ -166,16 +173,16 @@ class come2play_as2.tictactoe.TicTacToe_Main extends ClientGameAPI {
 			doTrace("matchOverForColor",[color, " shouldChangeTurnOfColor=",shouldChangeTurnOfColor]);	
 		}
 		if (ongoingColors.length==0) {
-			setOnPress(false); // turns off the squares
+			startMove(false); // turns off the squares
 			logic = null;
 		} else if (shouldChangeTurnOfColor) {
 			turnOfColor = getNextTurnOfColor();
 		}		
 		return shouldChangeTurnOfColor;
 	}
-	private function doEntry(value:Object, isSavedGame:Boolean):Void {
-		var data:Array = AS3_vs_AS2.asArray(value);
-		makeMove(data[0], data[1], isSavedGame);		
+	private function performMove(value:Object, isSavedGame:Boolean):Void {
+		var move:TicTacToeMove = TicTacToeMove.object2GameMove(value);
+		makeMove(move, isSavedGame);		
 	}
 	// makeMove updates the logic and the graphics
 	private function playersNumber():Number {
@@ -195,18 +202,18 @@ class come2play_as2.tictactoe.TicTacToe_Main extends ClientGameAPI {
 	}
 	private static function arrayCopy(arr:Array):Array {
 		var res:Array = [];
-		for (var i200:Number=0; i200<arr.length; i200++) { var x:Object = arr[i200]; 
+		for (var i207:Number=0; i207<arr.length; i207++) { var x:Object = arr[i207]; 
 			res.push(x);
 		}
 		return res;			
 	}
-	private function makeMove(row:Number, col:Number, isSavedGame:Boolean):Void {
-		logic.makeMove(turnOfColor, row, col);
+	private function makeMove(move:TicTacToeMove, isSavedGame:Boolean):Void {
+		logic.makeMove(turnOfColor, move);
 		// update the graphics
-		var square:TicTacToe_SquareGraphic = squares[row][col];
+		var square:TicTacToe_SquareGraphic = getSquareGraphic(move);
 		square.setColor(turnOfColor);	
 		
-		var didWin:Boolean = logic.isWinner(row, col);
+		var didWin:Boolean = logic.isWinner(move);
 		var isBoardFull:Boolean = logic.isBoardFull();
 		if (didWin || isBoardFull) {
 			//game is over for one player (but the other players, if there are more than 2 remaining players, will continue playing)
@@ -244,10 +251,10 @@ class come2play_as2.tictactoe.TicTacToe_Main extends ClientGameAPI {
 				}		
 				if (isBoardFull) { // Important: it can happen that someone won and the board has just filled up!				
 					var finishedPlayersIds:Array/*int*/ = [];
-					for (var i249:Number=0; i249<finishedPlayers.length; i249++) { var playerMatchOver:PlayerMatchOver = finishedPlayers[i249]; 
+					for (var i256:Number=0; i256<finishedPlayers.length; i256++) { var playerMatchOver:PlayerMatchOver = finishedPlayers[i256]; 
 						finishedPlayersIds.push(playerMatchOver.playerId);
 					}					
-					for (var i252:Number=0; i252<ongoingColors.length; i252++) { var ongoingColor:Number = ongoingColors[i252]; 
+					for (var i259:Number=0; i259<ongoingColors.length; i259++) { var ongoingColor:Number = ongoingColors[i259]; 
 						var ongoingPlayerId:Number = allPlayerIds[ongoingColor];
 						if (AS3_vs_AS2.IndexOf(finishedPlayersIds, ongoingPlayerId)==-1) {
 							if (didWin) {
@@ -282,22 +289,22 @@ class come2play_as2.tictactoe.TicTacToe_Main extends ClientGameAPI {
 			turnOfColor = getNextTurnOfColor();
 		}		
 		
-		if (!isSavedGame) setOnPress(true);
+		if (!isSavedGame) startMove(true);
 	}
-	private function getStateKey():String {
+	private function getEntryKey():String {
 		return ""+logic.getMoveNumber();
 	}
-	public function dispatchMoveIfLegal(row:Number, col:Number):Void {		
-		doTrace("dispatchMoveIfLegal", ["row=",row," col=",col]);
+	public function userMadeHisMove(move:TicTacToeMove):Void {		
+		doTrace("dispatchMoveIfLegal", [move]);
 		if (logic==null) return; // game not in progress
 		if (myColor==VIEWER) return; // viewer cannot make a move
 		if (!isSinglePlayer() && myColor!=turnOfColor) return; // not my turn
-		if (!logic.isSquareAvailable(row, col)) return; // already filled this square (e.g., if you press on the keyboard, you may choose a cell that is already full)
-		doStoreState( [new UserEntry(getStateKey(), [row, col], false)] );		
-		makeMove(row, col, false);		
+		if (!logic.isSquareAvailable(move)) return; // already filled this square (e.g., if you press on the keyboard, you may choose a cell that is already full)
+		doStoreState( [new UserEntry(getEntryKey(), move, false)] );		
+		makeMove(move, false);		
 	}
-	private function setOnPress(isInProgress:Boolean):Void {
-		//trace("setOnPress with isInProgress="+isInProgress);
+	private function startMove(isInProgress:Boolean):Void {
+		//trace("startMove with isInProgress="+isInProgress);
 		if (logic==null) return; 
 						
 		if (isInProgress && !isSinglePlayer()) {
@@ -305,9 +312,10 @@ class come2play_as2.tictactoe.TicTacToe_Main extends ClientGameAPI {
 		}		
 		for(var row:Number=0; row<ROWS; row++)
 			for(var col:Number=0; col<COLS; col++) {
-				if (logic.isSquareAvailable(row, col)) {
-					var square:TicTacToe_SquareGraphic = squares[row][col];
-					square.setOnPress(
+				var move:TicTacToeMove = new TicTacToeMove(row,col);
+				if (logic.isSquareAvailable(move)) {
+					var square:TicTacToe_SquareGraphic = getSquareGraphic(move);
+					square.startMove(
 						!isInProgress ? TicTacToe_SquareGraphic.BTN_NONE : // the match was over
 						myColor==VIEWER ? TicTacToe_SquareGraphic.BTN_NONE : // a viewer never has the turn
 						isSinglePlayer() ? turnOfColor : // single player always has the turn

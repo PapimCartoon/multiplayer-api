@@ -44,49 +44,58 @@ public final class TicTacToe_logic {
 		}
 	}
 	
+	public function getOwner(move:TicTacToeMove):int {
+		return gameState[move.row][move.col];
+	}
+	public function setOwner(move:TicTacToeMove, owner:int):void {
+		gameState[move.row][move.col] = owner;
+	}
 	public function getMoveNumber():int {
 		return filledNum;
 	}
 	public function isBoardFull():Boolean {
 		return filledNum==ROWS*COLS;
 	}
-	public function isSquareAvailable(row:int, col:int):Boolean {
-		return isInBoard(row, col) && gameState[row][col]==SQUARE_AVAILABLE;
+	public function isSquareAvailable(move:TicTacToeMove):Boolean {
+		return isInBoard(move) && getOwner(move)==SQUARE_AVAILABLE;
 	}
-	public function isInBoard(row:int, col:int):Boolean {
-		return row>=0 && col>=0 && row<ROWS && col<COLS;
+	public function isInBoard(move:TicTacToeMove):Boolean {
+		return move.row>=0 && move.col>=0 && move.row<ROWS && move.col<COLS;
 	}
 	
 	// Makes a move in TicTacToe by placing either X or O in square <row,col>
-	public function makeMove(color:int, row:int, col:int):void {
-		if (!isSquareAvailable(row,col)) BaseGameAPI.throwError("Square "+row+"x"+col+" is not available");
+	public function makeMove(color:int, move:TicTacToeMove):void {
+		if (!isSquareAvailable(move)) BaseGameAPI.throwError("Square "+move+" is not available");
 		if (color<0 || color>=PLAYERS_NUM) BaseGameAPI.throwError("Illegal color="+color);
-		gameState[row][col] = color;
+		setOwner(move, color);
 		filledNum++;
 	}
 		
 	// checks if there is a winning row, column, or diagonal that passes through square <row,col>
-	public function isWinner(row:int, col:int):Boolean {
-		if (gameState[row][col]==SQUARE_AVAILABLE) return false;
-        return isConnectedDelta(row,col, 0, -1,   0,  1) || // LEFT & RIGHT
-               isConnectedDelta(row,col, 1,  0,  -1,  0) || // UP & DOWN
-               isConnectedDelta(row,col, 1,  1,  -1, -1) || // UP_LEFT & DOWN_RIGHT
-               isConnectedDelta(row,col, 1, -1,  -1,  1);   // UP_RIGHT & DOWN_LEFT
+	public function isWinner(move:TicTacToeMove):Boolean {
+		if (getOwner(move)==SQUARE_AVAILABLE) return false;
+        return isConnectedDelta(move, 0, -1,   0,  1) || // LEFT & RIGHT
+               isConnectedDelta(move, 1,  0,  -1,  0) || // UP & DOWN
+               isConnectedDelta(move, 1,  1,  -1, -1) || // UP_LEFT & DOWN_RIGHT
+               isConnectedDelta(move, 1, -1,  -1,  1);   // UP_RIGHT & DOWN_LEFT
 	}	
-    private function isConnectedDelta(row:int, col:int, delta_row:int, delta_col:int, delta_row2:int, delta_col2:int):Boolean {
-        return  numConnectedDelta(row,col, delta_row, delta_col) +
-                numConnectedDelta(row,col, delta_row2, delta_col2) >= 
+    private function isConnectedDelta(move:TicTacToeMove, delta_row:int, delta_col:int, delta_row2:int, delta_col2:int):Boolean {
+        return  numConnectedDelta(move, delta_row, delta_col) +
+                numConnectedDelta(move, delta_row2, delta_col2) >= 
                 	WIN_LENGTH-1;// I didn't count the square in <row,col> 
     }
     // Counts the number of consecutive squares that have the same owner as square <row,col>
-    private function numConnectedDelta(row:int, col:int, delta_row:int, delta_col:int):int {
-		var ownedBy:int = gameState[row][col];
+    private function numConnectedDelta(move:TicTacToeMove, delta_row:int, delta_col:int):int {
+		var ownedBy:int = getOwner(move);
         var res:int = 0;
+        var row:int = move.row;
+        var col:int = move.col;
         for(var i:int=1; i<WIN_LENGTH; i++) {
         	row += delta_row;
         	col += delta_col;
-            if (!isInBoard(row, col)) break;
-            if (gameState[row][col]!=ownedBy) break;
+        	var nextCell:TicTacToeMove = new TicTacToeMove(row, col);
+            if (!isInBoard( nextCell )) break;
+            if (getOwner(nextCell)!=ownedBy) break;
             res++;
         }
         return res;

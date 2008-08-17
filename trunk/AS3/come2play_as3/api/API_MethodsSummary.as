@@ -29,6 +29,7 @@ package come2play_as3.api {
 		, new API_MethodsSummary('doAllSetTurn', ['userId', 'milliSecondsInTurn'], ['int', 'int'] )
 		, new API_MethodsSummary('doAllRevealState', ['revealEntries'], ['Array/*RevealEntry*/'] )
 		, new API_MethodsSummary('doAllShuffleState', ['keys'], ['Array/*String*/'] )
+		, new API_MethodsSummary('doAllRequestRandomState', ['key', 'isSecret'], ['String', 'Boolean'] )
 		, new API_MethodsSummary('doAllFoundHacker', ['userId', 'errorDescription'], ['int', 'String'] )
 		, new API_MethodsSummary('doAllRequestStateCalculation', ['keys'], ['Array/*String*/'] )
 		, new API_MethodsSummary('gotRequestStateCalculation', ['serverEntries'], ['Array/*ServerEntry*/'] )

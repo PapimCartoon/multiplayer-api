@@ -34,16 +34,19 @@ import come2play_as2.api.*;
 		
 		public function doAllShuffleState(keys:Array/*String*/):Void { sendMessage( new API_DoAllShuffleState(keys) ); }
 		
+		public function doAllRequestRandomState(key:String, isSecret:Boolean):Void { sendMessage( new API_DoAllRequestRandomState(key, isSecret) ); }
+		
 		// if userId=-1, then it is a bug of the game developer
 		public function doAllFoundHacker(userId:Number, errorDescription:String):Void { sendMessage( new API_DoAllFoundHacker(userId, errorDescription) ); }
 		
 		// doAllRequestStateCalculation is usually used to do a calculation
 		// of an initial state that should be secret to all players.
 		// (E.g., the initial board in multiplayer Sudoku or MineSweeper).
-		// The server picks several random users,
+		// The server picks several random users (that we will call "calculators"),
 		// and sends them gotRequestStateCalculation.
-		// All these users must do the exact same call to doAllStoreStateCalculation,
-		// i.e., the state calculation must be deterministic (you can use secretSeed to create the hidden board).
+		// All these calculators must do the exact same call to doAllStoreStateCalculation,
+		// i.e., the state calculation must be deterministic (you can use doAllRequestRandomState to create a hidden seed for the calculators).
+		// serverEntries are all public (because the calculators should see state that is secret to the users)
 		public function doAllRequestStateCalculation(keys:Array/*String*/):Void { sendMessage( new API_DoAllRequestStateCalculation(keys) ); }
 		public function gotRequestStateCalculation(serverEntries:Array/*ServerEntry*/):Void {}
 		public function doAllStoreStateCalculation(userEntries:Array/*UserEntry*/):Void { sendMessage( new API_DoAllStoreStateCalculation(userEntries) ); }

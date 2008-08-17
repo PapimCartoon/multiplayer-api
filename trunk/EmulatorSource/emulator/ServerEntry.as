@@ -16,11 +16,11 @@ package emulator {
 			this.changedTimeInMilliSeconds = changedTimeInMilliSeconds;
 		}
 		public static function object2ServerEntry(obj:Object):ServerEntry {
-			if (obj.key==null) throw new Error('Missing field key in creating object of type ServerEntry in object='+JSON.stringify(obj));
-			if (obj.value==null) throw new Error('Missing field value in creating object of type ServerEntry in object='+JSON.stringify(obj));
-			if (obj.storedByUserId==null) throw new Error('Missing field storedByUserId in creating object of type ServerEntry in object='+JSON.stringify(obj));
-			if (obj.authorizedUserIds==null) throw new Error('Missing field authorizedUserIds in creating object of type ServerEntry in object='+JSON.stringify(obj));
-			if (obj.changedTimeInMilliSeconds==null) throw new Error('Missing field changedTimeInMilliSeconds in creating object of type ServerEntry in object='+JSON.stringify(obj));
+			if (obj.key==null) throw new Error('Missing field "key" when creating ServerEntry from the object='+JSON.stringify(obj));
+			if (obj.value==null) throw new Error('Missing field "value" when creating ServerEntry from the object='+JSON.stringify(obj));
+			if (obj.storedByUserId==null) throw new Error('Missing field "storedByUserId" when creating ServerEntry from the object='+JSON.stringify(obj));
+			if (obj.authorizedUserIds==null) throw new Error('Missing field "authorizedUserIds" when creating ServerEntry from the object='+JSON.stringify(obj));
+			if (obj.changedTimeInMilliSeconds==null) throw new Error('Missing field "changedTimeInMilliSeconds" when creating ServerEntry from the object='+JSON.stringify(obj));
 			return new ServerEntry(obj.key, obj.value, obj.storedByUserId, obj.authorizedUserIds, obj.changedTimeInMilliSeconds)
 		}
 		public function getParametersAsString():String { return 'key=' + JSON.stringify(key)+', value=' + JSON.stringify(value)+', storedByUserId=' + JSON.stringify(storedByUserId)+', authorizedUserIds=' + JSON.stringify(authorizedUserIds)+', changedTimeInMilliSeconds=' + JSON.stringify(changedTimeInMilliSeconds); }

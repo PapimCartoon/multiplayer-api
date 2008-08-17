@@ -12,9 +12,9 @@ package emulator {
 			this.isSecret = isSecret;
 		}
 		public static function object2UserEntry(obj:Object):UserEntry {
-			if (obj.key==null) throw new Error('Missing field key in creating object of type UserEntry in object='+JSON.stringify(obj));
-			if (obj.value==null) throw new Error('Missing field value in creating object of type UserEntry in object='+JSON.stringify(obj));
-			if (obj.isSecret==null) throw new Error('Missing field isSecret in creating object of type UserEntry in object='+JSON.stringify(obj));
+			if (obj.key==null) throw new Error('Missing field "key" when creating UserEntry from the object='+JSON.stringify(obj));
+			if (obj.value==null) throw new Error('Missing field "value" when creating UserEntry from the object='+JSON.stringify(obj));
+			if (obj.isSecret==null) throw new Error('Missing field "isSecret" when creating UserEntry from the object='+JSON.stringify(obj));
 			return new UserEntry(obj.key, obj.value, obj.isSecret)
 		}
 		public function getParametersAsString():String { return 'key=' + JSON.stringify(key)+', value=' + JSON.stringify(value)+', isSecret=' + JSON.stringify(isSecret); }

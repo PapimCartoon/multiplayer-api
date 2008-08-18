@@ -83,11 +83,12 @@ public class PseduBattleships extends SimplifiedClientGameAPI {
     	{
     	  require(entry.key == ("ships_"+entry.storedByUserId));
     	  var rivalShips:Array = entry.value as Array;
-    	  var isGameLegeal:Boolean;
-    	  //check if the ships the rival stored correspond to his answers on your shots
-    	  if(!isGameLegeal)
+  	      var hackerId:int;
+  	      //check if all the moves the players have made correspond to the cubes array
+  	      //if so hackerId= -1 else hackerId = hacker id
+    	  if(hackerId != -1)
     	  {
-    	  	doAllFoundHacker(myUserId,"rival answers dont correspond with secret state");
+    	  	doAllFoundHacker(hackerId,"rival answers dont correspond with secret state");
     	  }
     	  else
     	  {

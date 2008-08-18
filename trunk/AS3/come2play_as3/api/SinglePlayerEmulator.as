@@ -1,6 +1,7 @@
-package come2play_as3.api
+﻿package come2play_as3.api
 {
 	import come2play_as3.util.JSON;
+	import come2play_as3.api.auto_generated.*;
 	
 	import flash.display.MovieClip;
 	import flash.net.LocalConnection;

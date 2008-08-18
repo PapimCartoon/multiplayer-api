@@ -10,6 +10,7 @@
 	import flash.utils.*;
 
 	public class Server extends MovieClip {
+		// todo: never use "]."
 		
 		private static const COL_player_ids:String = "player_ids";
 		private static const COL_scores:String = "scores";
@@ -691,7 +692,7 @@
 			if(unverifiedQue[0].unverifiedPlayers.length==0)
 			{
 				var tempWaitingFunction:WaitingFunction=unverifiedQue.shift();
-				if(tempWaitingFunction.methodName == "doStoreState")
+				if(tempWaitingFunction.methodName == "doStoreState") // todo: use "is"
 				{
 					
 							/var tempStateEntery:UserStateEntry;
@@ -706,10 +707,10 @@
 					var tempStateEntery:ServerStateEntry;
 					for (var i:int=0; i<msg.stateEntries.length; i++)
 					{
-						if(msg.stateEntries[i].isSecret)
-							tempStateEntery=new ServerStateEntry(tempWaitingFunction.userId, msg.stateEntries[i].key, msg.stateEntries[i].value, [tempWaitingFunction.userId]);
-						else
-							tempStateEntery=new ServerStateEntry(tempWaitingFunction.userId, msg.stateEntries[i].key, msg.stateEntries[i].value, null);
+						
+						tempStateEntery= new ServerStateEntry(tempWaitingFunction.userId, msg.stateEntries[i].key, msg.stateEntries[i].value, 
+							msg.stateEntries[i].isSecret // todo: put it in UserEntry (do not use ].) 
+								? [tempWaitingFunction.userId] : null);
 						doStoreOneState(tempStateEntery);
 					}
 				}	
@@ -2237,6 +2238,7 @@ class SavedGame {
 }
 class WaitingFunction{
 	public var userId:int;
+	// todo: API_Message
 	public var parameters:Array;
 	public var methodName:String;
 	public var unverifiedPlayers:Array;

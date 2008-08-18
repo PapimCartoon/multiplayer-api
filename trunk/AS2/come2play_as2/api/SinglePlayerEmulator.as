@@ -1,4 +1,5 @@
 	import come2play_as2.util.JSON;
+	import come2play_as2.api.auto_generated.*;
 	
 	
 	/**

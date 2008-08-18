@@ -112,10 +112,14 @@ public final class AS3_vs_AS2
 		target.x = x+x_delta;
 		target.y = y+y_delta;		
 	} 	
+	public static function createInstanceOf(className:String):Object {
+		var _Class:Class = getDefinitionByName(className) as Class;
+		if (_Class==null) BaseGameAPI.error("ClassName '"+className+"' was not found!");
+		return new _Class();		
+	}
 	public static function duplicateMovie(graphics:MovieClip, name:String):MovieClip {
 		var className:String = getQualifiedClassName(graphics);
-		var _Class:Class = getDefinitionByName(className) as Class;
-		var dup:MovieClip = new _Class();
+		var dup:MovieClip = createInstanceOf(className) as MovieClip;
 		dup.name = name;
 		graphics.parent.addChild(dup);
 		return dup;

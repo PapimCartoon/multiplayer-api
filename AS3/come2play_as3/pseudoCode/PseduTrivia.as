@@ -11,7 +11,7 @@ package come2play_as3.pseudoCode
 	 * PlayerAnswer_<USER_ID>
 	 */
 public class PseduTrivia extends SimplifiedClientGameAPI
-	{
+	{//todo: Psedu  -> Pseudo
 		public static var questionAmount:int=10;
 		public var currentQuestionNum:Number;
 		

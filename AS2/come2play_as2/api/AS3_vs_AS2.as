@@ -53,7 +53,7 @@ class come2play_as2.api.AS3_vs_AS2 {
 	}
 	
 	public static function hasOwnProperty(thisObj:Object, property:String):Boolean {
-		return thisObj[property]!=null;
+		return !(thisObj[property]===undefined);
 	}
 	public static function myTimeout(func:Function, in_milliseconds:Number):Void {
 		var res_interval_id:Number;
@@ -66,7 +66,7 @@ class come2play_as2.api.AS3_vs_AS2 {
 		return e.toString();//+" stacktraces="+e.getStackTrace();
 	}
 	public static function getClassName(o:Object):String {
-		return typeof o;
+		return typeof o; //todo: not good enough! for SerializableClass I want to know the class name
 	}
 	public static function getTimeString():String {
 		return ''+getTimer();
@@ -99,6 +99,11 @@ class come2play_as2.api.AS3_vs_AS2 {
 		target._x = x+x_delta;
 		target._y = y+y_delta;		
 	} 			
+	
+	public static function createInstanceOf(className:String):Object {
+		var classConstructor:Function = eval(className);
+		return new classConstructor();
+	}
 	public static function duplicateMovie(graphics:MovieClip, name:String):MovieClip {
 		var dup:MovieClip = graphics.duplicateMovieClip(name, graphics._parent.getNextHighestDepth() );
 		//trace("duplicateMovieClip: graphics="+graphics+" name="+name+" dup="+dup+" _root.Square_0_0="+_root["Square_0_0"] );

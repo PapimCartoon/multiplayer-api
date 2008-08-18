@@ -1,4 +1,5 @@
 import come2play_as2.api.*;
+import come2play_as2.api.auto_generated.*;
 import come2play_as2.util.*;
 
 /**
@@ -94,7 +95,7 @@ class come2play_as2.tictactoe.TicTacToe_Main extends ClientGameAPI {
 	/*override*/ public function gotUserInfo(userId:Number, entries:Array/*InfoEntry*/):Void {
 	}
 	/*override*/ public function gotCustomInfo(entries:Array/*InfoEntry*/):Void {
-		for (var i99:Number=0; i99<entries.length; i99++) { var entry:InfoEntry = entries[i99]; 
+		for (var i100:Number=0; i100<entries.length; i100++) { var entry:InfoEntry = entries[i100]; 
 			if (entry.key==API_Message.CUSTOM_INFO_KEY_logo_swf_full_url) {
 				var logo_swf_full_url:String = entry.value.toString();	
 				trace("Got logo_swf_full_url="+logo_swf_full_url)
@@ -116,7 +117,7 @@ class come2play_as2.tictactoe.TicTacToe_Main extends ClientGameAPI {
 		for (var color:Number=0; color<playersNum; color++)
 			ongoingColors.push(color);
 		logic = new TicTacToe_logic(ROWS,COLS,WIN_LENGTH, playersNum);
-		for (var i121:Number=0; i121<userStateEntries.length; i121++) { var serverEntry:ServerEntry = userStateEntries[i121]; 
+		for (var i122:Number=0; i122<userStateEntries.length; i122++) { var serverEntry:ServerEntry = userStateEntries[i122]; 
 			if (!isSinglePlayer()) turnOfColor = getColor(serverEntry.storedByUserId);	// some users may have disconnected in the middle of the game	
 			performMove(serverEntry.value, true);	//we should not call doAllEndMatch when loading the match	
 		}
@@ -153,7 +154,7 @@ class come2play_as2.tictactoe.TicTacToe_Main extends ClientGameAPI {
 	private function matchOverForPlayers(finishedPlayerIds:Array/*int*/):Boolean {
 		if (logic==null) return false; // match already ended
 		var colors:Array/*int*/ = [];
-		for (var i158:Number=0; i158<finishedPlayerIds.length; i158++) { var playerId:Number = finishedPlayerIds[i158]; 
+		for (var i159:Number=0; i159<finishedPlayerIds.length; i159++) { var playerId:Number = finishedPlayerIds[i159]; 
 			var colorOfPlayerId:Number = getColor(playerId);
 			assert(colorOfPlayerId!=-1, ["Didn't find playerId=",playerId]); 
 			colors.push(colorOfPlayerId);
@@ -162,7 +163,7 @@ class come2play_as2.tictactoe.TicTacToe_Main extends ClientGameAPI {
 	}
 	private function matchOverForColors(colors:Array/*int*/):Boolean {	
 		var shouldChangeTurnOfColor:Boolean = false;
-		for (var i167:Number=0; i167<colors.length; i167++) { var color:Number = colors[i167]; 
+		for (var i168:Number=0; i168<colors.length; i168++) { var color:Number = colors[i168]; 
 			var ongoingIndex:Number = AS3_vs_AS2.IndexOf(ongoingColors, color);
 			if (ongoingIndex==-1) continue; // already finished (when the game ends normally, I immediately call matchOverForColors. see makeMove) 
 			ongoingColors.splice(ongoingIndex, 1);
@@ -202,7 +203,7 @@ class come2play_as2.tictactoe.TicTacToe_Main extends ClientGameAPI {
 	}
 	private static function arrayCopy(arr:Array):Array {
 		var res:Array = [];
-		for (var i207:Number=0; i207<arr.length; i207++) { var x:Object = arr[i207]; 
+		for (var i208:Number=0; i208<arr.length; i208++) { var x:Object = arr[i208]; 
 			res.push(x);
 		}
 		return res;			
@@ -251,10 +252,10 @@ class come2play_as2.tictactoe.TicTacToe_Main extends ClientGameAPI {
 				}		
 				if (isBoardFull) { // Important: it can happen that someone won and the board has just filled up!				
 					var finishedPlayersIds:Array/*int*/ = [];
-					for (var i256:Number=0; i256<finishedPlayers.length; i256++) { var playerMatchOver:PlayerMatchOver = finishedPlayers[i256]; 
+					for (var i257:Number=0; i257<finishedPlayers.length; i257++) { var playerMatchOver:PlayerMatchOver = finishedPlayers[i257]; 
 						finishedPlayersIds.push(playerMatchOver.playerId);
 					}					
-					for (var i259:Number=0; i259<ongoingColors.length; i259++) { var ongoingColor:Number = ongoingColors[i259]; 
+					for (var i260:Number=0; i260<ongoingColors.length; i260++) { var ongoingColor:Number = ongoingColors[i260]; 
 						var ongoingPlayerId:Number = allPlayerIds[ongoingColor];
 						if (AS3_vs_AS2.IndexOf(finishedPlayersIds, ongoingPlayerId)==-1) {
 							if (didWin) {

@@ -5,9 +5,9 @@ Turn-based games:
  * Public state: TicTacToe, 
  * Public state + Randomness: Backgammon, Roulette
  * Deterministic+secrets: Battleships, Startego, Diplomocy
- * Shuffles + secrets: Dominoes, Poker, Bridge, Clue (has several shuffles)
+ * Shuffles + secrets: Dominoes,Black Jack, Poker, Bridge, Clue (has several shuffles)
  * Randomness+secrets: Risk, Tanks (the wind is random, the secrets are the angle&speed of each shot)
- * "Server" side: Black Jack, Mine Sweeper, Sudoku  
+ * With calculators:  Mine Sweeper(behaves also as real Time), Sudoku  
 Realtime games:
  * Trivia: series of questions, who answers correctly first wins the question. Limit the time for all players (if no one answered, go to the next question. if you answered incorrectly, the remaining player wins the question)
  * Snake
@@ -22,7 +22,7 @@ So this is the simplified version of `ClientGameAPI`:
 {{{
 // This pdseudo code is a simplified version:
 // - It doesn't handle the logic or graphics of the game, only usages of the API.
-// - It doesn't handle loading a saved game.
+// - It doesn't handle loading a saved game or handling a viewer.
 // - It doesn't handle the case where a player disconnects in the middle of a game.
 // - The game ends for all players, i.e., when there is a winner the game ends for all players.
 class SimplifiedClientGameAPI extends ClientGameAPI {
@@ -157,10 +157,9 @@ class GameMove {
 }}}
 
 
-= Backgammon = v
-= Battleships = v
-= Dominoes =
-= Mine Sweeper =
-= Black Jack =
-= Trivia =
-= Snake =
+= Backgammon = v rebuild better
+= Battleships = v rebuild better
+= Dominoes = v rebuild better
+= Mine Sweeper = v rebuild better
+= Trivia = v
+= Snake = talk to yoav

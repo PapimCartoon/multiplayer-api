@@ -1,7 +1,10 @@
 package emulator.auto_generated {
 //Do not change the code below because this class was generated automatically!
 
-	import flash.display.*;	import flash.utils.*;
+	import emulator.JSON;
+	
+	import flash.display.*;
+	import flash.utils.*;
 	public  class API_GotRequestStateCalculation extends API_Message {
 		public var serverEntries:Array/*ServerEntry*/;
 		public function API_GotRequestStateCalculation(serverEntries:Array/*ServerEntry*/) { super('gotRequestStateCalculation',arguments); 

@@ -1,5 +1,7 @@
 ﻿package come2play_as3.tests {
 import come2play_as3.api.*;
+import come2play_as3.api.auto_generated.*;
+
 import come2play_as3.util.*;
 
 import flash.display.*;

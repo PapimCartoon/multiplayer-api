@@ -1,7 +1,6 @@
 package come2play_as3.pseudoCode
 {
-	import come2play_as3.api.ClientGameAPI;
-	import come2play_as3.api.ServerEntry;
+	import come2play_as3.api.auto_generated.*;
 	
 	import flash.display.*;
 	public class SimplifiedClientGameAPI extends ClientGameAPI {
@@ -46,13 +45,14 @@ package come2play_as3.pseudoCode
 	  public function gotStateChanged2(serverEntries:Array/*ServerEntry*/):void {}
 	  
 		public static function checkEverythingCompiles():void {
-			new PseduBackgammon();
-			new PseduTicTacToe();
-			new PseduBattleships();
-			new PseduTrivia();
-			new PseduDominoes();
-			new PseduBlackJack();
-			new PseduMineSweeper();
+			new PseudoBackgammon();
+			new PseudoTicTacToe();
+			new PseudoBattleships();
+			new PseudoBattleships2();
+			new PseudoTrivia();
+			new PseudoDominoes();
+			new PseudoBlackJack();
+			new PseudoMineSweeper();
 		} 
 	} 
 }

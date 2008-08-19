@@ -1,7 +1,10 @@
 package emulator.auto_generated {
 //Do not change the code below because this class was generated automatically!
 
-	import flash.display.*;	import flash.utils.*;
+	import emulator.JSON;
+	
+	import flash.display.*;
+	import flash.utils.*;
 	public  class API_Do_graphic_command_without_enum extends API_Message {
 		public var movie_id:int;
 		public var func_name:String;

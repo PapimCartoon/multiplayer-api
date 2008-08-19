@@ -1,7 +1,10 @@
 package emulator.auto_generated {
 //Do not change the code below because this class was generated automatically!
 
-	import flash.display.*;	import flash.utils.*;
+	import emulator.JSON;
+	
+	import flash.display.*;
+	import flash.utils.*;
 	public  class API_Got_graphic_command extends API_Message {
 		public var new_movie_parents:Array/*int*/;
 		public var new_movie_name_ids:Array/*int*/;

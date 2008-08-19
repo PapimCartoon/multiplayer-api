@@ -1,4 +1,9 @@
 ﻿package emulator {
+	//import emulator.auto_generated.*;
+	
+	import emulator.auto_generated.ServerEntry;
+	import emulator.auto_generated.UserEntry;
+	
 	import fl.controls.*;
 	import fl.events.*;
 	
@@ -10,7 +15,7 @@
 	import flash.utils.*;
 
 	public class Server extends MovieClip {
-		// todo: never use "]."
+		// to do: never use "]."
 		
 		private static const COL_player_ids:String = "player_ids";
 		private static const COL_scores:String = "scores";
@@ -40,17 +45,17 @@
 		
 		private var aUsers:Array;
 		
-		private var userStateEntrys:Array;/*UserStateEntry*/ //state info
+		private var userStateEntrys:Array;/*UserStateEntry*/ //state information
 		
-		private var serverEntery:Array;/*Entery*/ //extea server info
+		private var serverEntery:Array;/*Entery*/ //extra server information
 		private var aParams:Array;
 		private var aPlayers:Array; //array of all the players
 		private var afinishedPlayers:Array;/*PlayerMatchOver*/
 
-		//que related varibales
-		private var unverifiedQue:Array;
-		private var doAllQue:Array;
-		private var queTimer:Timer;
+		// queue related variables
+		private var unverifiedQueue:Array;
+		private var waitingQueue:Array;
+		private var queueTimer:Timer;
 		
 		private var extra_match_info:Object;
 		private var match_started_time:int;
@@ -124,10 +129,10 @@
 			this.stop();
 			afinishedPlayers=new Array();
 			userStateEntrys=new Array();
-			unverifiedQue = new Array();
-			doAllQue = new Array();
-			queTimer=new Timer(10000,0);
-			queTimer.addEventListener(TimerEvent.TIMER,queTimeoutError);
+			unverifiedQueue=new Array();
+			waitingQueue=new Array();
+			queueTimer=new Timer(10000,0);
+			queueTimer.addEventListener(TimerEvent.TIMER,queTimeoutError);
 			tbsPanel = new TabDialog();
 			tbsPanel.x = 3;
 			tbsPanel.y = 52;
@@ -580,8 +585,8 @@
 		*/
 		private function queTimeoutError(ev:TimerEvent):void
 		{
-			
-			showMsg(unverifiedQue[0].methodName+" Timed out by player/s:"+String(unverifiedQue[0].unverifiedPlayers),"Error");
+			var unverefiedFunction:UnverifiedFunction = unverifiedQueue[0];
+			showMsg(unverefiedFunction.msg.methodName+" Timed out by player/s:"+String(unverefiedFunction.unverifiedUsers),"Error");
 			gameOver();
 		}
 		private var isProcessingCallback:Boolean = false;
@@ -590,9 +595,29 @@
 				if (isProcessingCallback) throw new Error("Concurrency problems in the server in the Emulator");
 				isProcessingCallback = true;
 				trace("got_user_localconnection_callback: user="+user.Name+" methodName="+msg.methodName);			
-				if (!(msg is API_DoFinishedCallback ||
-					msg is API_DoRegisterOnServer || 
-					msg is API_DoTrace)) {
+				
+				if(msg is API_DoTrace)
+				{
+					var traceMsg:API_DoTrace=msg as API_DoTrace;
+					addMessageLog(String(user.ID),"doTrace",traceMsg.getParametersAsString());
+				}
+				else if(msg is API_DoRegisterOnServer)
+				{
+					doRegisterOnServer(user);
+				}
+				else if(msg is API_DoFinishedCallback)
+				{
+					var finishedCallbackMsg:API_DoFinishedCallback = msg as API_DoFinishedCallback;
+					verefyAction(user);
+					user.do_finished_callback(finishedCallbackMsg.parameters[0])
+				}
+				else if(msg is API_DoAllFoundHacker)
+				{
+					var foundHackerMsg:API_DoAllFoundHacker=msg as API_DoAllFoundHacker;
+					doFoundHacker(user,foundHackerMsg);
+				}
+				else
+				{
 					if (!bGameStarted) {
 						addMessageLog("Server", msg.methodName, "Error: game not started");
 						return;
@@ -603,59 +628,14 @@
 					}
 					if(!isPlayer(user.ID))
 						return
-				}
-				addMessageLog(user.Name, msg.methodName, msg.toString());
-				
-				if(msg is API_DoRegisterOnServer)
-				{
-					doRegisterOnServer(user);
-				}
-				else if(msg is API_DoAllFoundHacker)
-				{
-					var foundHackerMsg:API_DoAllFoundHacker=msg as API_DoAllFoundHacker;
-					doFoundHacker(user,foundHackerMsg);
-				}
-				else if(msg is API_DoTrace)
-				{
-					var traceMsg:API_DoTrace=msg as API_DoTrace;
-					addMessageLog(String(user.ID),"doTrace",traceMsg.getParametersAsString());
-				}
-				else if (msg is API_DoStoreState)
-				{
-					var storeStateMsg:API_DoStoreState = msg as API_DoStoreState;
-					var tempFunc:WaitingFunction=new WaitingFunction;
-					tempFunc.userId = user.ID;
-					tempFunc.parameters = msg.parameters;
-					tempFunc.methodName = msg.methodName;
-					tempFunc.unverifiedPlayers=aPlayers.concat();
-					unverifiedQue.push(tempFunc);
-					doStoreState(user,storeStateMsg);
-					if(!queTimer.running)
-						queTimer.start();
-				}
-				else if(msg is API_DoFinishedCallback)
-				{
-					var finishedCallbackMsg:API_DoFinishedCallback = msg as API_DoFinishedCallback;
-					verefyAction(user);
-					user.do_finished_callback(finishedCallbackMsg.parameters[0])
-				}
-				else
-				{
-					var tempMsgContainer:WaitingDoAll = new WaitingDoAll();
-					tempMsgContainer.msg=msg;
-					tempMsgContainer.user=user;
-					doAllQue.push(tempMsgContainer);
-					if(unverifiedQue.length==0)
-						checkDoAlls();	
-				}
-				/*
-				if("doStoreState" == msg.methodName)
-				{
-					if(!queTimer.running)
+					addMessageLog(user.Name, msg.methodName, msg.toString());
+					var waitingFunction:WaitingFunction=new WaitingFunction(user,msg);
+					waitingQueue.push(waitingFunction);
+					if( (unverifiedQueue.length == 0) && (waitingQueue.length == 1) )
 					{
-						queTimer.reset();
-						queTimer.start();
-				*/
+						doNextInQueue();
+					}
+				}
 			} catch (err:Error) { 
 				showMsg(err.getStackTrace(), "Error");
 			} finally {
@@ -671,54 +651,72 @@
 			}
 			return false;
 		}
+		private function doNextInQueue():void
+		{
+			var waitingFunction:WaitingFunction=waitingQueue.shift();
+			if(waitingFunction.msg is API_DoStoreState)
+			{
+				doStoreState(waitingFunction.user,waitingFunction.msg as API_DoStoreState);
+				unverifiedQueue.push(new UnverifiedFunction(waitingFunction,aPlayers.concat()));
+			}
+			else if(waitingFunction.msg is API_DoAllSetTurn)
+			{
+				var msg:API_DoAllSetTurn=checkDoAlls() as API_DoAllSetTurn;
+				if(msg==null)
+					return;
+				unverifiedQueue.push(new UnverifiedFunction(waitingFunction,aPlayers.concat()));
+				doAllSetTurn(msg);
+			}
+			
+			
+			/*
+			
+			
+			*/
+			queueTimer.reset();
+			queueTimer.start();
+			
+		}
 		private function verefyAction(user:User):void
 		{
-			for(var i:int=0;i<unverifiedQue.length;i++)
+			for each(var unverifiedFunction:UnverifiedFunction in unverifiedQueue)
 			{
-				for each(var userId:int in unverifiedQue[i].unverifiedPlayers)
-				{;
-					if(userId==user.ID)
-						{
-							spliceNum(unverifiedQue[i].unverifiedPlayers,user.ID);
-							isActionverefied();
-							return;
-						}
+				if(unverifiedFunction.removeUnverifiedUser(user.ID))
+				{
+					if(unverifiedFunction.length()==0)
+						actionVerefied();
+					return;
 				}
 			}
-			//showMsg("can't verify nonexistent function", "Error");
+			addMessageLog(user.Name,"Error",user.ID+" can't verify nonexistent function");
+			showMsg(user.ID+" can't verify nonexistent function", "Error");
 		}
-		private function isActionverefied():void
+		private function actionVerefied():void
 		{
-			if(unverifiedQue[0].unverifiedPlayers.length==0)
+			var waitingFunction:UnverifiedFunction=unverifiedQueue.shift();
+			if(waitingFunction is API_DoStoreState)
 			{
-				var tempWaitingFunction:WaitingFunction=unverifiedQue.shift();
-				if(tempWaitingFunction.methodName == "doStoreState") // todo: use "is"
+				var msg:API_DoStoreState = waitingFunction.msg as API_DoStoreState;
+				var serverEntry:ServerEntry;
+				for each (var userEntry:UserEntry in msg.stateEntries)
 				{
-					
-							/var tempStateEntery:UserStateEntry;
-			//for (var i:int=0; i<msg.stateEntries.length; i++)
-			//{
-			//	tempStateEntery=new UserStateEntry(user.ID,msg.stateEntries[i].key,msg.stateEntries[i].value,msg.stateEntries[i].isSecret);;
-			//	doStoreOneState(tempStateEntery);
-			//}
-					
-					
-					var msg:API_GotStoredState=new API_GotStoredState(tempWaitingFunction.userId,tempWaitingFunction.parameters);
-					var tempStateEntery:ServerStateEntry;
-					for (var i:int=0; i<msg.stateEntries.length; i++)
+					if(userEntry.isSecret)
 					{
-						
-						tempStateEntery= new ServerStateEntry(tempWaitingFunction.userId, msg.stateEntries[i].key, msg.stateEntries[i].value, 
-							msg.stateEntries[i].isSecret // todo: put it in UserEntry (do not use ].) 
-								? [tempWaitingFunction.userId] : null);
-						doStoreOneState(tempStateEntery);
+						//todo: fix changeTime
+						serverEntry=new ServerEntry(userEntry.key,userEntry.value,waitingFunction.user.ID,[waitingFunction.user.ID],0);
 					}
+					else
+					{
+						serverEntry=new ServerEntry(userEntry.key,userEntry.value,waitingFunction.user.ID,null,0);
+					}
+					doStoreOneState(serverEntry);
 				}	
-				queTimer.reset();
-				if(unverifiedQue.length==0)
-					checkDoAlls();	
 			}
+			queueTimer.reset();
+			if(unverifiedQueue.length==0)
+				doNextInQueue();	
 		}
+		
 		private function spliceNum(arr:Array,value:Number):void
 		{
 			var tempLen:Number=arr.length;
@@ -731,47 +729,53 @@
 				}
 			}
 		}
-		private function checkDoAlls():void
-		{
-			if (doAllQue.length == 0) return;
-			if (unverifiedQue.length>0) throw new Error("internal error");
-			var tempPos:int;
-			var methodName:String=doAllQue[0].msg.methodName;
-			var playersNotCalled:Array=aPlayers.concat();
-			for each(var methodObj:Object in doAllQue)
-			{
-				if(methodName==methodObj.msg.methodName)
+		private function isEquel(obj1:Object,obj2:Object)
+		{ 
+			for(var prop:String in obj1)
+				if(typeof(obj1[prop])=="object")
 				{
-					spliceNum(playersNotCalled,methodObj.user.ID);
+					if(!isEquel(obj1[prop],obj2[prop]))
+						return false;
 				}
+				else
+				{
+					if(obj1[prop]!=obj2[prop])
+						return false;
+				}
+			return true;
+		}
+		private function checkDoAlls():API_Message
+		{
+			var waitingFunction:WaitingFunction=waitingQueue[0]
+			var originalMsg:API_Message = waitingFunction.msg;
+			var playersNotCalled:Array=aPlayers.concat();
+			for each(waitingFunction in waitingQueue)
+			{
+				if(originalMsg.methodName == waitingFunction.msg.methodName)
+					spliceNum(playersNotCalled,waitingFunction.user.ID);
 			}
 			if(playersNotCalled.length == 0)
+				return null;
+			for(var i:int=0;i<waitingQueue.length;i++)
 			{
-				var tempLen:Number=doAllQue.length;
-				var methodCalls:Array=new Array();
-				var allPlayers:Array=aPlayers.concat();
-				for(var i:Number=0;i<tempLen;i++)
+				waitingFunction=waitingQueue[i];
+				if(waitingFunction.msg.methodName == originalMsg.methodName)
 				{
-					if(doAllQue[i].msg.methodName == methodName)
+					if(!isEquel(waitingFunction.msg.parameters,originalMsg.parameters))
 					{
-						tempPos=allPlayers.indexOf(doAllQue[i].user.ID);
-						if(tempPos!=-1)
-						{
-						allPlayers.splice(tempPos,1);
-						methodCalls.push(doAllQue[i]);
-						doAllQue.splice(i,1)
+						addMessageLog("Server","Error","Not all parameters for "+originalMsg.methodName+" are the same");
+						showMsg("Not all parameters for "+originalMsg.methodName+" are the same","Error");
+						gameOver();
+						return null;
+					}
+					else
+					{
+						waitingQueue.splice(i,1);
 						i--;
-						tempLen--;
-						}
 					}
 				}
-				if(methodCalls[0].msg is API_DoAllSetTurn)
-					doAllSetTurn(methodCalls);
-				else if(methodCalls[0].msg is API_DoAllEndMatch)
-					doAllEndMatch(methodCalls);
-				else if(methodCalls[0].msg is API_DoAllShuffleState)
-					doAllShuffleState(methodCalls);
 			}
+			return originalMsg;
 		}
 		private function isKeyExist(testKey:int):int
 		{
@@ -892,32 +896,10 @@
 			
 		}
 		
-		private function doAllSetTurn(methodCalls:Array):void
+		private function doAllSetTurn(msg:API_DoAllSetTurn):void
 		{
-			var endTurnCalls:Array=new Array();
-			for each (var waitingDoAllCall:WaitingDoAll in methodCalls)
-			{
-				endTurnCalls.push(waitingDoAllCall.msg as API_DoAllSetTurn);
-			}
-			var nextUserId:int=endTurnCalls[0].userId;
-			for each (var waitingTurnCall:API_DoAllSetTurn in endTurnCalls)
-			{
-				if(waitingTurnCall.userId !=nextUserId)
-				{
-					addMessageLog("Server",waitingTurnCall.userId+" "+nextUserId,"Not all users agree on next User turn");
-					addMessageLog("Server","Error","Not all users agree on next User turn");
-					gameOver();
-					return;
-				}
-			}
-			iCurTurn=nextUserId;
-			var tempAction:WaitingFunction=new WaitingFunction();
-			var gotTurnOf:API_GotTurnOf=new API_GotTurnOf(nextUserId);
-			tempAction.methodName=gotTurnOf.methodName;
-			tempAction.parameters=gotTurnOf.parameters;
-			tempAction.unverifiedPlayers=aPlayers.concat();
-			unverifiedQue.push(tempAction);
-			queTimer.start();
+			iCurTurn=msg.userId;
+			var gotTurnOf:API_GotTurnOf=new API_GotTurnOf(iCurTurn);
 			broadcast(gotTurnOf);
 		}
 		/*
@@ -1959,45 +1941,38 @@
 			
 		}
 		public function doStoreState(user:User, msg:API_DoStoreState):void {
-
-			//var tempStateEntery:UserStateEntry;
-			//for (var i:int=0; i<msg.stateEntries.length; i++)
-			//{
-			//	tempStateEntery=new UserStateEntry(user.ID,msg.stateEntries[i].key,msg.stateEntries[i].value,msg.stateEntries[i].isSecret);;
-			//	doStoreOneState(tempStateEntery);
-			//}
-			
-			//showMatchState();
-			for each (var tempUserStateEntery:StateEntry in msg.stateEntries)
+			var serverEntries:Array;
+			//todo: ask yoav about change time and about server.swc
+			for each(var tempUser:User in aUsers)
 			{
-				for each(var userTemp:User in aUsers)
+				serverEntries=new Array();
+				for each (var userEntry:UserEntry in msg.stateEntries)
 				{
-					if(tempUserStateEntery.isSecret)
+					if(userEntry.isSecret)
 					{
-						if(user.ID==userTemp.ID)
-							userTemp.sendOperation(new API_GotStoredState(user.ID,msg.stateEntries));
+						if(user.ID == tempUser.ID)
+							serverEntries.push(new ServerEntry(userEntry.key,userEntry.value,user.ID,[user.ID],0));
+						else
+							serverEntries.push(new ServerEntry(userEntry.key,null,user.ID,[user.ID],0));
 					}
 					else
-						userTemp.sendOperation(new API_GotStoredState(user.ID,msg.stateEntries));
+						serverEntries.push(new ServerEntry(userEntry.key,userEntry.value,user.ID,null,0));
 				}
+				tempUser.sendOperation(new API_GotStoredState(user.ID,serverEntries));
 			}
-			
-			//broadcast(new API_GotStoredState(user.ID,msg.stateEntries));
+			showMatchState();
 		}
-		private function doStoreOneState(stateEntery:ServerStateEntry):void {			
+		private function doStoreOneState(stateEntery:ServerEntry):void {			
 			if (stateEntery.key == "") {
 				addMessageLog("Server", "do_store_match_state", "Error: Can't store match state, key is empty");
+				showMsg("Error: Can't store match state, key is empty","Error");
 				return;
 			}
 			if (userStateEntrys.length>=1000) {
 				addMessageLog("Server", "do_store_match_state", "Error: you stored more than a 1000 keys!");
+				showMsg("Error: you stored more than a 1000 keys!","Error");
 				return;
 			}
-			//todo: in the future, the developer should choose if he wants to be able to review the match (and if so, the number of calls to do_store_match_state can't exceed 1000)
-			if (iCurTurn!=stateEntery.userId && isTurnBasedGame) {
-				addMessageLog("Server", "do_store_match_state", "Warning: in a turn-based game, you should call do_store_match_state only during your turn");
-			}
-
 			var isRewrite:Boolean=false;
 			for(var index:int=0;index<userStateEntrys.length;index++)
 			{
@@ -2007,12 +1982,7 @@
 					break;
 				}
 			}
-			
 			if (isRewrite) {
-				if (aPlayers.indexOf(stateEntery.userId)==-1 && userStateEntrys[index].userId==stateEntery.userId) {
-					addMessageLog("Server", "doStoreState", "Error: a viewer cannot rewrite/delete other's data (not viewers nor players data)");
-					return;
-				}
 				userStateEntrys.splice(index,1);
 			}
 			if (stateEntery.value!=null && stateEntery.value!="") {
@@ -2236,16 +2206,39 @@ class SavedGame {
 	public var name:String;
 	public var gameName:String;
 }
-class WaitingFunction{
-	public var userId:int;
-	// todo: API_Message
-	public var parameters:Array;
-	public var methodName:String;
-	public var unverifiedPlayers:Array;
-}
-class WaitingDoAll{
+class UnverifiedFunction{
+	public var unverifiedUsers:Array;
 	public var user:User;
 	public var msg:API_Message;
+	public function UnverifiedFunction(waitingFunction:WaitingFunction,unverifiedUsers:Array)
+	{
+		this.unverifiedUsers=unverifiedUsers;
+		this.user = waitingFunction.user;
+		this.msg = waitingFunction.msg;	
+	}
+	public function removeUnverifiedUser(userId:int):Boolean
+	{
+		for(var i:int=0;i<unverifiedUsers.length;i++)
+			if(unverifiedUsers[i] == userId)
+			{
+				unverifiedUsers.splice(i,1);
+				true;
+			}
+		return false;
+	}
+	public function length():int
+	{
+		unverifiedUsers.length;
+	}
+}
+class WaitingFunction{
+	public var user:User;
+	public var msg:API_Message;
+	public function WaitingFunction(user:User,msg:API_Message)
+	{
+		this.user = user;
+		this.msg = msg;
+	}
 }
 class FinishHistory{
 	public static var wholePot:Number=100;

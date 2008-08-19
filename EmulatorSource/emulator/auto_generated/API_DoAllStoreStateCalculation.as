@@ -1,7 +1,10 @@
 package emulator.auto_generated {
 //Do not change the code below because this class was generated automatically!
 
-	import flash.display.*;	import flash.utils.*;
+	import emulator.JSON;
+	
+	import flash.display.*;
+	import flash.utils.*;
 	public  class API_DoAllStoreStateCalculation extends API_Message {
 		public var userEntries:Array/*UserEntry*/;
 		public function API_DoAllStoreStateCalculation(userEntries:Array/*UserEntry*/) { super('doAllStoreStateCalculation',arguments); 

@@ -158,8 +158,8 @@ class GameMove {
 
 
 = Backgammon = v rebuild better
-= Battleships = v rebuild better
-= Dominoes = v rebuild better
-= Mine Sweeper = v rebuild better
+= Battleships = v
+= Dominoes = v 
+= Mine Sweeper = v 
 = Trivia = v
 = Snake = talk to yoav

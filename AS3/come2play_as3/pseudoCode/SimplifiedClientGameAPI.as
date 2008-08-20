@@ -53,6 +53,7 @@ package come2play_as3.pseudoCode
 			new PseudoDominoes();
 			new PseudoBlackJack();
 			new PseudoMineSweeper();
+			new PseudoSnake();
 		} 
 	} 
 }

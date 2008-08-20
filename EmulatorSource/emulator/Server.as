@@ -1,4 +1,5 @@
 ﻿package emulator {
+	//import emulator.auto_generated.*;
 	import fl.controls.*;
 	import fl.events.*;
 	
@@ -8,9 +9,7 @@
 	import flash.net.*;
 	import flash.text.*;
 	import flash.utils.*;
-
 	public class Server extends MovieClip {
-		// to do: never use "]."
 		
 		private static const COL_player_ids:String = "player_ids";
 		private static const COL_scores:String = "scores";
@@ -47,6 +46,7 @@
 		private var aPlayers:Array; //array of all the players
 		private var afinishedPlayers:Array;/*PlayerMatchOver*/
 
+		private var matchStartTime:int;
 		// queue related variables
 		private var unverifiedQueue:Array;
 		private var waitingQueue:Array;
@@ -618,7 +618,7 @@
 				else if(msg is API_DoFinishedCallback)
 				{
 					var finishedCallbackMsg:API_DoFinishedCallback = msg as API_DoFinishedCallback;
-					verefyAction(user,finishedCallbackMsg);
+					//verefyAction(user,finishedCallbackMsg);
 					user.do_finished_callback(finishedCallbackMsg.parameters[0])
 				}
 				else if(msg is API_DoAllFoundHacker)
@@ -638,13 +638,18 @@
 					}
 					if(!isPlayer(user.ID))
 						return
+						
 					addMessageLog(user.Name, msg.methodName, msg.toString());
 					var waitingFunction:WaitingFunction=new WaitingFunction(user,msg);
 					waitingQueue.push(waitingFunction);
-					if( (unverifiedQueue.length == 0) && (waitingQueue.length == 1) )
-					{
+					doNextInQueue();
+					/*
+					if(msg is API_DoStoreState)
 						doNextInQueue();
-					}
+					else
+						if( (unverifiedQueue.length == 0) && (waitingQueue.length == 1) )
+							doNextInQueue();
+							*/
 				}
 			} catch (err:Error) { 
 				showMsg(err.getStackTrace(), "Error");
@@ -661,20 +666,35 @@
 			}
 			return false;
 		}
+		private function doAllInLine():Boolean
+		{
+			for each(var waitingFunction:WaitingFunction in waitingQueue)
+			{
+				if(!(waitingFunction.msg is API_DoStoreState))
+					return true
+			}
+			return false;
+		}
 		private function doNextInQueue():void
 		{
-			var waitingFunction:WaitingFunction=waitingQueue.shift();
+			var waitingFunction:WaitingFunction=waitingQueue[0];
 			if(waitingFunction.msg is API_DoStoreState)
 			{
-				doStoreState(waitingFunction.user,waitingFunction.msg as API_DoStoreState);
-				unverifiedQueue.push(new UnverifiedFunction(waitingFunction,aPlayers.concat()));
+				if(!doAllInLine())
+				{
+					doStoreState(waitingFunction.user,waitingFunction.msg as API_DoStoreState);
+					unverifiedQueue.push(new UnverifiedFunction(waitingFunction,aPlayers.concat()));
+				}
+				else
+					return
+				waitingQueue.shift();
 			}
 			else if(waitingFunction.msg is API_DoAllSetTurn)
 			{
 				var setTurnMessage:API_DoAllSetTurn=checkDoAlls() as API_DoAllSetTurn;
 				if(setTurnMessage==null)
 					return;
-				unverifiedQueue.push(new UnverifiedFunction(waitingFunction,aPlayers.concat()));
+				//unverifiedQueue.push(new UnverifiedFunction(waitingFunction,aPlayers.concat()));
 				doAllSetTurn(setTurnMessage);
 			}
 			else if(waitingFunction.msg is API_DoAllShuffleState)
@@ -709,16 +729,16 @@
 				unverifiedQueue.push(new UnverifiedFunction(waitingFunction,aPlayers.concat()));	
 				doAllRevealState(revealStateMessage);
 			}
-
 			queueTimer.reset();
 			queueTimer.start();
 			
 		}
-		private function verefyAction(user:User,msg:API_DoFinishedCallback):void
+		private function verefyAction(user:User,methodName:String):void
 		{
+			addMessageLog("Server","Debug",user.ID+": "+ methodName);
 			for each(var unverifiedFunction:UnverifiedFunction in unverifiedQueue)
 			{
-				if(msg.methodName == unverifiedFunction.msg.methodName)
+				if(methodName == unverifiedFunction.msg.methodName)
 				{
 					if(unverifiedFunction.removeUnverifiedUser(user.ID))
 					{
@@ -743,12 +763,11 @@
 				{
 					if(userEntry.isSecret)
 					{
-						//todo: fix changeTime
-						serverEntry=new ServerEntry(userEntry.key,userEntry.value,waitingFunction.user.ID,[waitingFunction.user.ID],0);
+						serverEntry=new ServerEntry(userEntry.key,userEntry.value,waitingFunction.user.ID,[waitingFunction.user.ID],getTimer()-matchStartTime);
 					}
 					else
 					{
-						serverEntry=new ServerEntry(userEntry.key,userEntry.value,waitingFunction.user.ID,null,0);
+						serverEntry=new ServerEntry(userEntry.key,userEntry.value,waitingFunction.user.ID,null,getTimer()-matchStartTime);
 					}
 					doStoreOneState(serverEntry);
 				}	
@@ -758,7 +777,7 @@
 				doNextInQueue();	
 		}
 		
-		private function spliceNum(arr:Array,value:Number):void
+		private function spliceNum(arr:Array,value:Number):int
 		{
 			var tempLen:Number=arr.length;
 			for(var i:Number=0;i<tempLen;i++)
@@ -766,9 +785,10 @@
 				if(arr[i]==value)
 				{
 				arr.splice(i,1);
-				return;
+				return i;
 				}
 			}
+			return -1;
 		}
 		private function isEquel(obj1:Object,obj2:Object):Boolean
 		{ 
@@ -794,8 +814,19 @@
 			{
 				if(originalMsg.methodName == waitingFunction.msg.methodName)
 					spliceNum(playersNotCalled,waitingFunction.user.ID);
+				else
+				{
+					if(spliceNum(playersNotCalled,waitingFunction.user.ID)!=-1)
+					{
+						addMessageLog("Server","Error","concurrency problem "+waitingFunction.user.ID+" called function "+waitingFunction.msg.methodName+" instead of "+originalMsg.methodName);
+						showMsg("concurrency problem "+waitingFunction.user.ID+" called function "+waitingFunction.msg.methodName+" instead of "+originalMsg.methodName,"Error");
+						gameOver();
+						return null;
+					}
+				}
 			}
-			if(playersNotCalled.length == 0)
+			
+			if(playersNotCalled.length != 0)
 				return null;
 			for(var i:int=0;i<waitingQueue.length;i++)
 			{
@@ -838,6 +869,7 @@
 		//do all function's
 		private function doAllShuffleState(msg:API_DoAllShuffleState):void
 		{
+			
 			var shuffleIndex:int;
 			var shuffleIndexArr:Array=new Array();
 			var shuffleMapKeys:Array=new Array();
@@ -902,9 +934,9 @@
 			var serverEntry:ServerEntry;
 			var randomSeed:int=1000*Math.random();	
 			if(msg.isSecret)
-				serverEntry=new ServerEntry(msg.key,randomSeed,-1,[],0);
+				serverEntry=new ServerEntry(msg.key,randomSeed,-1,[],getTimer()-matchStartTime);
 			else
-				serverEntry=new ServerEntry(msg.key,randomSeed,-1,null,0);
+				serverEntry=new ServerEntry(msg.key,randomSeed,-1,null,getTimer()-matchStartTime);
 			doStoreOneState(serverEntry);
 			broadcast(new API_GotStateChanged([serverEntry]));
 		}
@@ -1115,14 +1147,15 @@
 			var finished_player_ids:Array = getFinishedPlayerIds();
 			u.Ended = finished_player_ids.indexOf(u.ID)!=-1;
 			var stateEntries:Array=new Array();
+			matchStartTime=getTimer();
 			for each(var tempServerState:ServerEntry in userStateEntrys)
 			{
 				if(tempServerState.authorizedUserIds==null)
-					stateEntries.push(new ServerEntry(tempServerState.key,tempServerState.value,tempServerState.storedByUserId,null,0));
+					stateEntries.push(new ServerEntry(tempServerState.key,tempServerState.value,tempServerState.storedByUserId,null,getTimer()-matchStartTime));
 				else if(isInArray(u.ID,tempServerState.authorizedUserIds))
-					stateEntries.push(new ServerEntry(tempServerState.key,tempServerState.value,tempServerState.storedByUserId,tempServerState.authorizedUserIds,0));
+					stateEntries.push(new ServerEntry(tempServerState.key,tempServerState.value,tempServerState.storedByUserId,tempServerState.authorizedUserIds,getTimer()-matchStartTime));
 				else
-					stateEntries.push(new ServerEntry(tempServerState.key,null,tempServerState.storedByUserId,tempServerState.authorizedUserIds,0));
+					stateEntries.push(new ServerEntry(tempServerState.key,null,tempServerState.storedByUserId,tempServerState.authorizedUserIds,getTimer()-matchStartTime));
 			}
 			u.sendOperation(new API_GotMatchStarted(aPlayers, finished_player_ids, extra_match_info, match_started_time,stateEntries));			
 		}
@@ -1980,7 +2013,6 @@
 		}
 		public function doStoreState(user:User, msg:API_DoStoreState):void {
 			var serverEntries:Array;
-			//todo: ask yoav about change time and about server.swc
 			
 			for each(var tempUser:User in aUsers)
 			{
@@ -1990,12 +2022,12 @@
 					if(userEntry.isSecret)
 					{
 						if(user.ID == tempUser.ID)
-							serverEntries.push(new ServerEntry(userEntry.key,userEntry.value,user.ID,[user.ID],0));
+							serverEntries.push(new ServerEntry(userEntry.key,userEntry.value,user.ID,[user.ID],getTimer()-matchStartTime));
 						else
-							serverEntries.push(new ServerEntry(userEntry.key,null,user.ID,[user.ID],0));
+							serverEntries.push(new ServerEntry(userEntry.key,null,user.ID,[user.ID],getTimer()-matchStartTime));
 					}
 					else
-						serverEntries.push(new ServerEntry(userEntry.key,userEntry.value,user.ID,null,0));
+						serverEntries.push(new ServerEntry(userEntry.key,userEntry.value,user.ID,null,getTimer()-matchStartTime));
 				}
 				tempUser.sendOperation(new API_GotStateChanged(serverEntries));
 			}
@@ -2097,6 +2129,7 @@
 				}	
 			}
 			*/
+			verefyAction(user,methodName)
 			user.do_finished_callback(methodName);
 		}
 	}
@@ -2180,7 +2213,9 @@ class User {
 			if (!wasRegistered) return;
 			actionQueue.push(new WaitingFunction(this,msg));
 			if(actionQueue.length==1)
+			{
 				doSendOperation();	
+			}
     }
 	public function do_finished_callback(methodName:String):void {
 		if(methodName=="gotKeyboardEvent") return;

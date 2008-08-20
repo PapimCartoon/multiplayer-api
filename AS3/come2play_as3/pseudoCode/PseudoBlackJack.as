@@ -108,7 +108,7 @@ package come2play_as3.pseudoCode
     gamePhase = 0;
  	startGame();
   }
-  override public function gotStateChanged(serverEntries:Array/*ServerEntry*/):void {
+  override public function gotStateChanged2(serverEntries:Array/*ServerEntry*/):void {
   	
   	var entry:ServerEntry = serverEntries[0];
     if (entry.storedByUserId==myUserId) return; // already updated my move

@@ -4,13 +4,24 @@ package come2play_as3.api.auto_generated {
 	import flash.display.*;	import flash.utils.*;
 	import come2play_as3.util.*;
 	import come2play_as3.api.*
+	import come2play_as3.api.auto_copied.*
 	public  class API_DoAllSetTurn extends API_Message {
 		public var userId:int;
 		public var milliSecondsInTurn:int;
-		public function API_DoAllSetTurn(userId:int, milliSecondsInTurn:int) { super('doAllSetTurn',arguments); 
-			this.userId = userId;
-			this.milliSecondsInTurn = milliSecondsInTurn;
+		public static function create(userId:int, milliSecondsInTurn:int):API_DoAllSetTurn { 
+			var res:API_DoAllSetTurn = new API_DoAllSetTurn();
+			res.userId = userId;
+			res.milliSecondsInTurn = milliSecondsInTurn;
+			return res;
+		}
+		override public function setMethodParameters(parameters:Array):void { 
+			var pos:int = 0;
+			this.userId = parameters[pos++];
+			this.milliSecondsInTurn = parameters[pos++];
 		}
 		override public function getParametersAsString():String { return 'userId=' + JSON.stringify(userId)+', milliSecondsInTurn=' + JSON.stringify(milliSecondsInTurn); }
+		override public function toString():String { return '{API_DoAllSetTurn:' +getParametersAsString() +'}'; }
+		override public function getMethodName():String { return 'doAllSetTurn'; }
+		override public function getMethodParameters():Array { return [userId, milliSecondsInTurn]; }
 	}
 }

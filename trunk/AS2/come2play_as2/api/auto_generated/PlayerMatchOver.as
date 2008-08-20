@@ -2,21 +2,18 @@
 
 	import come2play_as2.util.*;
 	import come2play_as2.api.*
+	import come2play_as2.api.auto_copied.*
 import come2play_as2.api.auto_generated.*;
-	class come2play_as2.api.auto_generated.PlayerMatchOver  {
+	class come2play_as2.api.auto_generated.PlayerMatchOver extends SerializableClass {
 		public var playerId:Number;
 		public var score:Number;
 		public var potPercentage:Number;
-		public function PlayerMatchOver(playerId:Number, score:Number, potPercentage:Number) {
-			this.playerId = playerId;
-			this.score = score;
-			this.potPercentage = potPercentage;
-		}
-		public static function object2PlayerMatchOver(obj:Object):PlayerMatchOver {
-			if (obj['playerId']===undefined) throw new Error('Missing field "playerId" when creating PlayerMatchOver from the object='+JSON.stringify(obj));
-			if (obj['score']===undefined) throw new Error('Missing field "score" when creating PlayerMatchOver from the object='+JSON.stringify(obj));
-			if (obj['potPercentage']===undefined) throw new Error('Missing field "potPercentage" when creating PlayerMatchOver from the object='+JSON.stringify(obj));
-			return new PlayerMatchOver(obj.playerId, obj.score, obj.potPercentage)
+		public static function create(playerId:Number, score:Number, potPercentage:Number):PlayerMatchOver {
+			var res:PlayerMatchOver = new PlayerMatchOver();
+			res.playerId = playerId;
+			res.score = score;
+			res.potPercentage = potPercentage;
+			return res;
 		}
 		public function getParametersAsString():String { return 'playerId=' + JSON.stringify(playerId)+', score=' + JSON.stringify(score)+', potPercentage=' + JSON.stringify(potPercentage); }
 		public function toString():String { return '{PlayerMatchOver: ' + getParametersAsString() + '}'; }

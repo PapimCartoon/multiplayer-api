@@ -1,4 +1,5 @@
 import come2play_as2.api.*;
+import come2play_as2.api.auto_copied.*;
 
 /**
  * The classic game of TicTacToe.
@@ -61,8 +62,8 @@ class come2play_as2.tictactoe.TicTacToe_logic {
 	
 	// Makes a move in TicTacToe by placing either X or O in square <row,col>
 	public function makeMove(color:Number, move:TicTacToeMove):Void {
-		if (!isSquareAvailable(move)) BaseGameAPI.throwError("Square "+move+" is not available");
-		if (color<0 || color>=PLAYERS_NUM) BaseGameAPI.throwError("Illegal color="+color);
+		if (!isSquareAvailable(move)) LocalConnectionUser.throwError("Square "+move+" is not available");
+		if (color<0 || color>=PLAYERS_NUM) LocalConnectionUser.throwError("Illegal color="+color);
 		setOwner(move, color);
 		filledNum++;
 	}
@@ -89,7 +90,7 @@ class come2play_as2.tictactoe.TicTacToe_logic {
         for(var i:Number=1; i<WIN_LENGTH; i++) {
         	row += delta_row;
         	col += delta_col;
-        	var nextCell:TicTacToeMove = new TicTacToeMove(row, col);
+        	var nextCell:TicTacToeMove = TicTacToeMove.create(row, col);
             if (!isInBoard( nextCell )) break;
             if (getOwner(nextCell)!=ownedBy) break;
             res++;

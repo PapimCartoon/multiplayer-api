@@ -1,5 +1,8 @@
 import come2play_as2.api.*;
-import come2play_as2.util.*;
+import come2play_as2.api.auto_generated.*;
+import come2play_as2.api.auto_copied.*;	
+import come2play_as2.util.*;	
+
 
 import flash.text.*;
 
@@ -24,7 +27,7 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 			operationInput = my_graphics.operationInput;	
 			
 			var allOperationsWithParameters:Array = [];
-			for (var i28:Number=0; i28<API_MethodsSummary.SUMMARY_API.length; i28++) { var methodSummary:API_MethodsSummary = API_MethodsSummary.SUMMARY_API[i28]; 
+			for (var i31:Number=0; i31<API_MethodsSummary.SUMMARY_API.length; i31++) { var methodSummary:API_MethodsSummary = API_MethodsSummary.SUMMARY_API[i31]; 
 				if (methodSummary.methodName.substring(0,2)!="do") continue;
 				var args:Array = [];
 				for (var i:Number=0; i<methodSummary.parameterNames.length; i++) {
@@ -46,7 +49,7 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 	}
 	
 	/*override*/ public function gotMyUserId(userId:Number):Void {		
-		if (shouldTestPassNumbers) doStoreState([ new UserEntry("test", test_Arr, false)]);
+		if (shouldTestPassNumbers) doStoreState([ UserEntry.create("test", test_Arr, false)]);
 	}
 	/*override*/ public function gotStateChanged(serverEntries:Array/*ServerEntry*/):Void { 
 		if (shouldTestPassNumbers) {
@@ -56,7 +59,7 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 				var val:Number = test_Arr[i];
 				var val2:Number = value[i];
 				if (val!=val2) {
-					BaseGameAPI.throwError("Found different values, val="+val+" val2="+val2);
+					LocalConnectionUser.throwError("Found different values, val="+val+" val2="+val2);
 				}
 			}			
 		}
@@ -92,17 +95,24 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 			if (lastParen==-1) return;			
 			var methodName:String = inputStr.substr(0,firstParen);
 			var params:String = inputStr.substring(firstParen+1, lastParen);
-			sendMessage( API_Message.createMessage(methodName, AS3_vs_AS2.asArray(JSON.parse("["+params+"]"))) );
+			// I must call the constructor directly
+			var className:String =
+				"come2play_as3.api.auto_generated::API_"+ 
+				methodName.substr(0,1).toUpperCase()+methodName.substr(1);
+			var instanceObj:Object = AS3_vs_AS2.createInstanceOf(className);
+			var instance:API_Message = API_Message(instanceObj);
+			instance.setMethodParameters(AS3_vs_AS2.asArray(JSON.parse("["+params+"]")));
+			sendMessage(instance);
 		} catch (err:Error) { 
 			handleError(err);			
 		}
 	}
     /*override*/ private function sendMessage(msg:API_Message):Void {
-		storeTrace(msg.methodName, msg.getParametersAsString());
+		storeTrace(msg.getMethodName(), msg.getParametersAsString());
 		super.sendMessage(msg);
 	}
 	/*override*/ private function gotMessage(msg:API_Message):Void {
-		storeTrace(msg.methodName, msg.getParametersAsString());
+		storeTrace(msg.getMethodName(), msg.getParametersAsString());
 		super.gotMessage(msg);		
 	}
 }

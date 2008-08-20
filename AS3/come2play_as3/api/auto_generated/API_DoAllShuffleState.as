@@ -4,11 +4,21 @@ package come2play_as3.api.auto_generated {
 	import flash.display.*;	import flash.utils.*;
 	import come2play_as3.util.*;
 	import come2play_as3.api.*
+	import come2play_as3.api.auto_copied.*
 	public  class API_DoAllShuffleState extends API_Message {
 		public var keys:Array/*String*/;
-		public function API_DoAllShuffleState(keys:Array/*String*/) { super('doAllShuffleState',arguments); 
-			this.keys = keys;
+		public static function create(keys:Array/*String*/):API_DoAllShuffleState { 
+			var res:API_DoAllShuffleState = new API_DoAllShuffleState();
+			res.keys = keys;
+			return res;
+		}
+		override public function setMethodParameters(parameters:Array):void { 
+			var pos:int = 0;
+			this.keys = parameters[pos++];
 		}
 		override public function getParametersAsString():String { return 'keys=' + JSON.stringify(keys); }
+		override public function toString():String { return '{API_DoAllShuffleState:' +getParametersAsString() +'}'; }
+		override public function getMethodName():String { return 'doAllShuffleState'; }
+		override public function getMethodParameters():Array { return [keys]; }
 	}
 }

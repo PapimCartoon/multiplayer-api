@@ -1,4 +1,4 @@
-	import come2play_as2.util.JSON;
+	import come2play_as2.api.auto_copied.*;
 	import come2play_as2.api.auto_generated.*;
 	
 	
@@ -19,23 +19,19 @@
 	 * it will wait 2 seconds before starting a new match.
 	 */
 import come2play_as2.api.*;
-	class come2play_as2.api.SinglePlayerEmulator
+	class come2play_as2.api.SinglePlayerEmulator extends LocalConnectionUser
 	{
 		public static var DEFAULT_GENERAL_INFO:Array/*InfoEntry*/ =
-			[ new InfoEntry(API_Message.CUSTOM_INFO_KEY_logo_swf_full_url,"../Emulator/example_logo.jpg") ];
+			[ InfoEntry.create(API_Message.CUSTOM_INFO_KEY_logo_swf_full_url,"../Emulator/example_logo.jpg") ];
 		public static var DEFAULT_USER_INFO:Array/*InfoEntry*/ =
-				[ 	new InfoEntry(API_Message.USER_INFO_KEY_name, "User name"),
-					new InfoEntry(API_Message.USER_INFO_KEY_avatar_url, "../Emulator/Avatar_1.gif")
+				[ 	InfoEntry.create(API_Message.USER_INFO_KEY_name, "User name"),
+					InfoEntry.create(API_Message.USER_INFO_KEY_avatar_url, "../Emulator/Avatar_1.gif")
 				];
 		public static var DEFAULT_MATCH_STATE:Array/*ServerEntry*/ = []; // you can change this and load a saved match
 		public static var DEFAULT_USER_ID:Number = 42; 
 		public static var DEFAULT_EXTRA_MATCH_INFO:String = ""; 
 		public static var DEFAULT_MATCH_STARTED_TIME:Number = 999;
-				
-		private var lcDoChannel:LocalConnection;  
-		private var sDoChanel:String;
-		private var sGotChanel:String;
-		
+						
 		private var customInfoEntries:Array/*InfoEntry*/;
 		private var userId:Number; 
 		private var userInfoEntries:Array/*InfoEntry*/;
@@ -44,51 +40,39 @@ import come2play_as2.api.*;
 		private var userStateEntries:Array/*ServerEntry*/;
 		
 		public function SinglePlayerEmulator(graphics:MovieClip) {
+			super(graphics,true);
 			this.customInfoEntries = DEFAULT_GENERAL_INFO;
 			this.userId = DEFAULT_USER_ID;
 			this.userInfoEntries = DEFAULT_USER_INFO;
 			this.extraMatchInfo = DEFAULT_EXTRA_MATCH_INFO;
 			this.matchStartedTime = DEFAULT_MATCH_STARTED_TIME;
 			this.userStateEntries = DEFAULT_MATCH_STATE;			
-			
-			var sPrefix:String = BaseGameAPI.DEFAULT_LOCALCONNECTION_PREFIX;									
-			sDoChanel = BaseGameAPI.getDoChanelString(sPrefix);
-			sGotChanel = BaseGameAPI.getGotChanelString(sPrefix);
-			
-  			lcDoChannel = new LocalConnection();
-			AS3_vs_AS2.addStatusListener(lcDoChannel, this, ["localconnection_callback"]);
-			trace("SinglePlayerEmulator connected on channel="+sDoChanel);
-			lcDoChannel.connect(sDoChanel);
-						
+									
 			AS3_vs_AS2.addKeyboardListener(graphics, AS3_vs_AS2.delegate(this, this.reportKeyDown));	
 		}		
 		private function reportKeyDown(is_key_down:Boolean, charCode:Number, keyCode:Number, keyLocation:Number, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean):Void {		
-			sendCallback(new API_GotKeyboardEvent(is_key_down, charCode, keyCode, keyLocation, altKey, ctrlKey, shiftKey) );
+			sendMessage(API_GotKeyboardEvent.create(is_key_down, charCode, keyCode, keyLocation, altKey, ctrlKey, shiftKey) );
 		}		
-		public function localconnection_callback(methodName:String, parameters:Array/*Object*/):Void {
-			try {
-				var msg:API_Message = API_Message.createMessage(methodName, parameters);
+		
+        /*override*/ private function gotMessage(msg:API_Message):Void {
+			try {        		
+        		trace("SinglePlayerEmulator: msg="+msg);
 				if (msg instanceof API_DoAllEndMatch) {
 					AS3_vs_AS2.myTimeout(AS3_vs_AS2.delegate(this, this.sendNewMatch), 2000);
 				} else if (msg instanceof API_DoRegisterOnServer) {
 					doRegisterOnServer();
 				}		
 			} catch(err:Error) {
-				BaseGameAPI.error("Error thrown in SinglePlayerEmulator:"+AS3_vs_AS2.error2String(err));
+				LocalConnectionUser.error("Error thrown in SinglePlayerEmulator:"+AS3_vs_AS2.error2String(err));
 			}					
   		}
   		private function doRegisterOnServer():Void {
-  			sendCallback(new API_GotMyUserId(userId) );
-  			sendCallback(new API_GotCustomInfo(customInfoEntries) );
-  			sendCallback(new API_GotUserInfo(userId, userInfoEntries) );
+  			sendMessage(API_GotMyUserId.create(userId) );
+  			sendMessage(API_GotCustomInfo.create(customInfoEntries) );
+  			sendMessage(API_GotUserInfo.create(userId, userInfoEntries) );
 	 		sendNewMatch();
   		}
   		private function sendNewMatch():Void {	 
-  			sendCallback(new API_GotMatchStarted([userId], [], extraMatchInfo, matchStartedTime, userStateEntries) );	 	
-  		}
-  		private function sendCallback(msg:API_Message):Void {
-  			var methodName:String = msg.methodName;
-  			var parameters:Array = msg.parameters;
-  			lcDoChannel.send(sGotChanel, "localconnection_callback", methodName, parameters);
+  			sendMessage(API_GotMatchStarted.create([userId], [], extraMatchInfo, matchStartedTime, userStateEntries) );	 	
   		}
 	}

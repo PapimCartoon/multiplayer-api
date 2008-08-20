@@ -4,12 +4,21 @@ package come2play_as3.api.auto_generated {
 	import flash.display.*;	import flash.utils.*;
 	import come2play_as3.util.*;
 	import come2play_as3.api.*
+	import come2play_as3.api.auto_copied.*
 	public  class API_DoAllRevealState extends API_Message {
 		public var revealEntries:Array/*RevealEntry*/;
-		public function API_DoAllRevealState(revealEntries:Array/*RevealEntry*/) { super('doAllRevealState',arguments); 
-			this.revealEntries = revealEntries;
-			for (var i:int=0; i<revealEntries.length; i++) revealEntries[i] = RevealEntry.object2RevealEntry(revealEntries[i]);
+		public static function create(revealEntries:Array/*RevealEntry*/):API_DoAllRevealState { 
+			var res:API_DoAllRevealState = new API_DoAllRevealState();
+			res.revealEntries = revealEntries;
+			return res;
+		}
+		override public function setMethodParameters(parameters:Array):void { 
+			var pos:int = 0;
+			this.revealEntries = parameters[pos++];
 		}
 		override public function getParametersAsString():String { return 'revealEntries=' + JSON.stringify(revealEntries); }
+		override public function toString():String { return '{API_DoAllRevealState:' +getParametersAsString() +'}'; }
+		override public function getMethodName():String { return 'doAllRevealState'; }
+		override public function getMethodParameters():Array { return [revealEntries]; }
 	}
 }

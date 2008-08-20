@@ -2,14 +2,24 @@
 
 	import come2play_as2.util.*;
 	import come2play_as2.api.*
+	import come2play_as2.api.auto_copied.*
 import come2play_as2.api.auto_generated.*;
 	class come2play_as2.api.auto_generated.API_GotUserInfo extends API_Message {
 		public var userId:Number;
 		public var infoEntries:Array/*InfoEntry*/;
-		public function API_GotUserInfo(userId:Number, infoEntries:Array/*InfoEntry*/) { super('gotUserInfo',arguments); 
-			this.userId = userId;
-			this.infoEntries = infoEntries;
-			for (var i:Number=0; i<infoEntries.length; i++) infoEntries[i] = InfoEntry.object2InfoEntry(infoEntries[i]);
+		public static function create(userId:Number, infoEntries:Array/*InfoEntry*/):API_GotUserInfo { 
+			var res:API_GotUserInfo = new API_GotUserInfo();
+			res.userId = userId;
+			res.infoEntries = infoEntries;
+			return res;
+		}
+		/*override*/ public function setMethodParameters(parameters:Array):Void { 
+			var pos:Number = 0;
+			this.userId = parameters[pos++];
+			this.infoEntries = parameters[pos++];
 		}
 		/*override*/ public function getParametersAsString():String { return 'userId=' + JSON.stringify(userId)+', infoEntries=' + JSON.stringify(infoEntries); }
+		/*override*/ public function toString():String { return '{API_GotUserInfo:' +getParametersAsString() +'}'; }
+		/*override*/ public function getMethodName():String { return 'gotUserInfo'; }
+		/*override*/ public function getMethodParameters():Array { return [userId, infoEntries]; }
 	}

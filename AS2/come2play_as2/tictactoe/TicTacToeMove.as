@@ -1,18 +1,15 @@
 	import come2play_as2.util.*;
+	import come2play_as2.api.auto_copied.*;
 	
 import come2play_as2.tictactoe.*;
-	class come2play_as2.tictactoe.TicTacToeMove
+	class come2play_as2.tictactoe.TicTacToeMove extends SerializableClass
 	{
 		public var row:Number, col:Number;
-		public function TicTacToeMove(row:Number, col:Number)
-		{			
-		    this.row = row;
-		    this.col = col;
-		}
-		public static function object2GameMove(obj:Object):TicTacToeMove {
-			if (obj["row"]==null) throw new Error('Missing field "row" in creating object of type GameMove in object='+JSON.stringify(obj));
-			if (obj["col"]==null) throw new Error('Missing field "col" in creating object of type GameMove in object='+JSON.stringify(obj));			
-		    return new TicTacToeMove(obj["row"], obj["col"]);
+		public static function create(row:Number, col:Number):TicTacToeMove {			
+			var res:TicTacToeMove = new TicTacToeMove();
+		    res.row = row;
+		    res.col = col;
+		    return res;
 		}
 		public function getParametersAsString():String { return 'row=' + row+', col=' + col; }
 		public function toString():String { return '{TicTacToeMove: ' + getParametersAsString() + '}'; }

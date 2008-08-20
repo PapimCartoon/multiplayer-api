@@ -2,18 +2,16 @@
 
 	import come2play_as2.util.*;
 	import come2play_as2.api.*
+	import come2play_as2.api.auto_copied.*
 import come2play_as2.api.auto_generated.*;
-	class come2play_as2.api.auto_generated.InfoEntry  {
+	class come2play_as2.api.auto_generated.InfoEntry extends SerializableClass {
 		public var key:String;
 		public var value:Object/*Serializable*/;
-		public function InfoEntry(key:String, value:Object/*Serializable*/) {
-			this.key = key;
-			this.value = value;
-		}
-		public static function object2InfoEntry(obj:Object):InfoEntry {
-			if (obj['key']===undefined) throw new Error('Missing field "key" when creating InfoEntry from the object='+JSON.stringify(obj));
-			if (obj['value']===undefined) throw new Error('Missing field "value" when creating InfoEntry from the object='+JSON.stringify(obj));
-			return new InfoEntry(obj.key, obj.value)
+		public static function create(key:String, value:Object/*Serializable*/):InfoEntry {
+			var res:InfoEntry = new InfoEntry();
+			res.key = key;
+			res.value = value;
+			return res;
 		}
 		public function getParametersAsString():String { return 'key=' + JSON.stringify(key)+', value=' + JSON.stringify(value); }
 		public function toString():String { return '{InfoEntry: ' + getParametersAsString() + '}'; }

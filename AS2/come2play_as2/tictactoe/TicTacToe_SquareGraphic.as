@@ -1,4 +1,5 @@
 import come2play_as2.api.*;
+import come2play_as2.api.auto_copied.*;	
 
 
 import come2play_as2.tictactoe.*;

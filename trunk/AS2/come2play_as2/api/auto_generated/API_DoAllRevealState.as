@@ -2,12 +2,21 @@
 
 	import come2play_as2.util.*;
 	import come2play_as2.api.*
+	import come2play_as2.api.auto_copied.*
 import come2play_as2.api.auto_generated.*;
 	class come2play_as2.api.auto_generated.API_DoAllRevealState extends API_Message {
 		public var revealEntries:Array/*RevealEntry*/;
-		public function API_DoAllRevealState(revealEntries:Array/*RevealEntry*/) { super('doAllRevealState',arguments); 
-			this.revealEntries = revealEntries;
-			for (var i:Number=0; i<revealEntries.length; i++) revealEntries[i] = RevealEntry.object2RevealEntry(revealEntries[i]);
+		public static function create(revealEntries:Array/*RevealEntry*/):API_DoAllRevealState { 
+			var res:API_DoAllRevealState = new API_DoAllRevealState();
+			res.revealEntries = revealEntries;
+			return res;
+		}
+		/*override*/ public function setMethodParameters(parameters:Array):Void { 
+			var pos:Number = 0;
+			this.revealEntries = parameters[pos++];
 		}
 		/*override*/ public function getParametersAsString():String { return 'revealEntries=' + JSON.stringify(revealEntries); }
+		/*override*/ public function toString():String { return '{API_DoAllRevealState:' +getParametersAsString() +'}'; }
+		/*override*/ public function getMethodName():String { return 'doAllRevealState'; }
+		/*override*/ public function getMethodParameters():Array { return [revealEntries]; }
 	}

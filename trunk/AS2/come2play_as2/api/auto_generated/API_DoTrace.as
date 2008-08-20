@@ -2,13 +2,24 @@
 
 	import come2play_as2.util.*;
 	import come2play_as2.api.*
+	import come2play_as2.api.auto_copied.*
 import come2play_as2.api.auto_generated.*;
 	class come2play_as2.api.auto_generated.API_DoTrace extends API_Message {
 		public var name:String;
 		public var message:Object/*Serializable*/;
-		public function API_DoTrace(name:String, message:Object/*Serializable*/) { super('doTrace',arguments); 
-			this.name = name;
-			this.message = message;
+		public static function create(name:String, message:Object/*Serializable*/):API_DoTrace { 
+			var res:API_DoTrace = new API_DoTrace();
+			res.name = name;
+			res.message = message;
+			return res;
+		}
+		/*override*/ public function setMethodParameters(parameters:Array):Void { 
+			var pos:Number = 0;
+			this.name = parameters[pos++];
+			this.message = parameters[pos++];
 		}
 		/*override*/ public function getParametersAsString():String { return 'name=' + JSON.stringify(name)+', message=' + JSON.stringify(message); }
+		/*override*/ public function toString():String { return '{API_DoTrace:' +getParametersAsString() +'}'; }
+		/*override*/ public function getMethodName():String { return 'doTrace'; }
+		/*override*/ public function getMethodParameters():Array { return [name, message]; }
 	}

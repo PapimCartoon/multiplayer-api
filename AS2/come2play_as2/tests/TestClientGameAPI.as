@@ -1,7 +1,6 @@
 import come2play_as2.api.*;
 import come2play_as2.api.auto_generated.*;
 import come2play_as2.api.auto_copied.*;	
-import come2play_as2.util.*;	
 
 
 import flash.text.*;
@@ -27,7 +26,7 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 			operationInput = my_graphics.operationInput;	
 			
 			var allOperationsWithParameters:Array = [];
-			for (var i31:Number=0; i31<API_MethodsSummary.SUMMARY_API.length; i31++) { var methodSummary:API_MethodsSummary = API_MethodsSummary.SUMMARY_API[i31]; 
+			for (var i30:Number=0; i30<API_MethodsSummary.SUMMARY_API.length; i30++) { var methodSummary:API_MethodsSummary = API_MethodsSummary.SUMMARY_API[i30]; 
 				if (methodSummary.methodName.substring(0,2)!="do") continue;
 				var args:Array = [];
 				for (var i:Number=0; i<methodSummary.parameterNames.length; i++) {

@@ -1,6 +1,5 @@
 	import come2play_as2.api.auto_copied.*;
 	import come2play_as2.api.auto_generated.*;
-	import come2play_as2.util.*;
 	
 	import flash.external.*;
 	
@@ -28,8 +27,10 @@ import come2play_as2.api.*;
 	    			hackerUserId = serverEntry.storedByUserId;
 	    		}
 	    		var methodName:String = msg.getMethodName();
-	    		if (!this.hasOwnProperty(methodName)) return
+	        	trace("methodName: "+methodName);
+	    		if (AS3_vs_AS2.isAS3 && !this.hasOwnProperty(methodName)) return
 	    		var func:Function = this[methodName] /*as Function*/;
+	        	trace("func: "+func);
 				if (func==null) return;
 				func.apply(this, msg.getMethodParameters());
     		} finally {

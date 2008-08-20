@@ -1,16 +1,23 @@
 package emulator.auto_generated {
 //Do not change the code below because this class was generated automatically!
 
-	import emulator.JSON;
-	
-	import flash.display.*;
-	import flash.utils.*;
+	import flash.display.*;	import flash.utils.*;
+	import emulator.*;
+	import emulator.auto_copied.*
 	public  class API_GotCustomInfo extends API_Message {
 		public var infoEntries:Array/*InfoEntry*/;
-		public function API_GotCustomInfo(infoEntries:Array/*InfoEntry*/) { super('gotCustomInfo',arguments); 
-			this.infoEntries = infoEntries;
-			for (var i:int=0; i<infoEntries.length; i++) infoEntries[i] = InfoEntry.object2InfoEntry(infoEntries[i]);
+		public static function create(infoEntries:Array/*InfoEntry*/):API_GotCustomInfo { 
+			var res:API_GotCustomInfo = new API_GotCustomInfo();
+			res.infoEntries = infoEntries;
+			return res;
+		}
+		override public function setMethodParameters(parameters:Array):void { 
+			var pos:int = 0;
+			this.infoEntries = parameters[pos++];
 		}
 		override public function getParametersAsString():String { return 'infoEntries=' + JSON.stringify(infoEntries); }
+		override public function toString():String { return '{API_GotCustomInfo:' +getParametersAsString() +'}'; }
+		override public function getMethodName():String { return 'gotCustomInfo'; }
+		override public function getMethodParameters():Array { return [infoEntries]; }
 	}
 }

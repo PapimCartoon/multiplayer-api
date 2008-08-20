@@ -1,7 +1,6 @@
 ﻿package come2play_as3.api {
 	import come2play_as3.api.auto_copied.*;
 	import come2play_as3.api.auto_generated.*;
-	import come2play_as3.util.*;
 	
 	import flash.display.*;
 	import flash.events.*;
@@ -25,14 +24,13 @@
 		}
         override protected function gotMessage(msg:API_Message):void {
         	try {
-	        	trace("gotMessage: "+msg);
 	    		if (msg is API_GotStateChanged) {
 	    			var stateChanged:API_GotStateChanged = msg as API_GotStateChanged;
 	    			var serverEntry:ServerEntry = stateChanged.serverEntries[0];
 	    			hackerUserId = serverEntry.storedByUserId;
 	    		}
 	    		var methodName:String = msg.getMethodName();
-	    		if (!this.hasOwnProperty(methodName)) return
+	    		if (AS3_vs_AS2.isAS3 && !this.hasOwnProperty(methodName)) return
 	    		var func:Function = this[methodName] as Function;
 				if (func==null) return;
 				func.apply(this, msg.getMethodParameters());

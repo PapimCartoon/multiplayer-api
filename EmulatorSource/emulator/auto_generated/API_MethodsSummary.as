@@ -2,6 +2,8 @@ package emulator.auto_generated {
 //Do not change the code below because this class was generated automatically!
 
 	import flash.display.*;	import flash.utils.*;
+	import emulator.*;
+	import emulator.auto_copied.*
 	public  class API_MethodsSummary  {
 		public var methodName:String;
 		public var parameterNames:Array/*String*/;
@@ -24,6 +26,7 @@ package emulator.auto_generated {
 		, new API_MethodsSummary('gotMatchEnded', ['finishedPlayerIds'], ['Array/*int*/'] )
 		, new API_MethodsSummary('gotStateChanged', ['serverEntries'], ['Array/*ServerEntry*/'] )
 		, new API_MethodsSummary('doStoreState', ['userEntries'], ['Array/*UserEntry*/'] )
+		, new API_MethodsSummary('doAllStoreState', ['userEntries'], ['Array/*UserEntry*/'] )
 		, new API_MethodsSummary('doAllEndMatch', ['finishedPlayers'], ['Array/*PlayerMatchOver*/'] )
 		, new API_MethodsSummary('doAllSetTurn', ['userId', 'milliSecondsInTurn'], ['int', 'int'] )
 		, new API_MethodsSummary('doAllRevealState', ['revealEntries'], ['Array/*RevealEntry*/'] )

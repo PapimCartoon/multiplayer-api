@@ -3,7 +3,6 @@
 import come2play_as3.api.*;
 import come2play_as3.api.auto_generated.*;
 import come2play_as3.api.auto_copied.*;	
-import come2play_as3.util.*;
 
 import flash.display.*;
 import flash.events.*;
@@ -313,7 +312,7 @@ public final class TicTacToe_Main extends ClientGameAPI {
 		}		
 		for(var row:int=0; row<ROWS; row++)
 			for(var col:int=0; col<COLS; col++) {
-				var move:TicTacToeMove = TicTacToeMove.create(row,col);
+				var move:TicTacToeMove = TicTacToeMove.create(row,col);				
 				if (logic.isSquareAvailable(move)) {
 					var square:TicTacToe_SquareGraphic = getSquareGraphic(move);
 					square.startMove(

@@ -1,7 +1,6 @@
 package come2play_as3.snake
 {
 import come2play_as3.api.*;
-import come2play_as3.util.*;
 
 import flash.display.*;
 import flash.events.*;

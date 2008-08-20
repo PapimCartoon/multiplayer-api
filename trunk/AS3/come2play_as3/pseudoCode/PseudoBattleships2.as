@@ -2,6 +2,7 @@ package come2play_as3.pseudoCode
 {
 	import come2play_as3.api.*;
 	import come2play_as3.api.auto_generated.*;
+	import come2play_as3.api.auto_copied.*;
 	/*****************************************
 	 * The keys in the Match state:
 	 * The calculators store in secret memory:
@@ -97,7 +98,7 @@ public class PseudoBattleships2 extends SimplifiedClientGameAPI {
     gameData.playerAttacking = gameMove.playerAttacking;
     gameData.playerIdAttacked = gameMove.playerIdAttacked;
     
-    doStoreState([new UserEntry(gameMove.objectKey(),gameData,false)]);
+    doStoreState([UserEntry.create(gameMove.objectKey(),gameData,false)]);
     updateHits(gameData);
   }
   private function updateHits(gameData:GameData):void
@@ -110,7 +111,7 @@ public class PseudoBattleships2 extends SimplifiedClientGameAPI {
 		if (isGameOver) {
 			var shipStatesToReveal:Array=[];
 			for each(var playerId:int in allPlayerIds)
-			  shipStatesToReveal.push(new RevealEntry("ships_"+playerId,allPlayerIds));
+			  shipStatesToReveal.push(RevealEntry.create("ships_"+playerId,allPlayerIds));
 			doAllRevealState(shipStatesToReveal);
 		}
   	}
@@ -125,12 +126,12 @@ public class PseudoBattleships2 extends SimplifiedClientGameAPI {
     }
   }
   public function userMadeHisMove(gameMove:GameMove):void {
-    doStoreState([ new UserEntry(gameMove.objectKey(), gameMove, false) ]);
+    doStoreState([ UserEntry.create(gameMove.objectKey(), gameMove, false) ]);
     //performMove(gameMove);
   }
   public function userSetHisBoard(allShips:Array):void
   {
-  	doStoreState([new UserEntry("ships_"+myUserId,allShips,true)]);
+  	doStoreState([UserEntry.create("ships_"+myUserId,allShips,true)]);
   	shipStatesCommited++;
   	if(shipStatesCommited == allPlayerIds.length)
   		startGame();
@@ -175,7 +176,7 @@ public class PseudoBattleships2 extends SimplifiedClientGameAPI {
 			var gameMove:GameMove =value as GameMove;
 			require(entry.storedByUserId == getTurnOfId());
 			require(entry.storedByUserId == gameMove.playerAttacking);
-			doAllRevealState([new RevealEntry("board_"+gameMove.objectKey(),null)])
+			doAllRevealState([RevealEntry.create("board_"+gameMove.objectKey(),null)])
 			
 		}
 		else if(value is GameBrick)
@@ -195,7 +196,7 @@ public class PseudoBattleships2 extends SimplifiedClientGameAPI {
 }
 
 }
-	import come2play_as3.api.SerializableClass;
+import come2play_as3.api.auto_copied.*;
 	
 class GameData extends SerializableClass{
   public var row:int, column:int,playerIdAttacked:int,isHit:Boolean,playerAttacking:int;

@@ -34,13 +34,13 @@ public class PseudoTicTacToe extends SimplifiedClientGameAPI {
       for each (var playerId:int in allPlayerIds) {
         var score:int, potPercentage:int;
         // set the score and potPercentage for playerId
-        finishedPlayers.push( new PlayerMatchOver(playerId, score, potPercentage) );
+        finishedPlayers.push( PlayerMatchOver.create(playerId, score, potPercentage) );
       }
       doAllEndMatch(finishedPlayers);
     }
   }
   public function userMadeHisMove(gameMove:GameMove):void {
-    doStoreState([ new UserEntry(getEntryKey(), gameMove, false) ]);
+    doStoreState([ UserEntry.create(getEntryKey(), gameMove, false) ]);
     performMove(gameMove);
   }
   

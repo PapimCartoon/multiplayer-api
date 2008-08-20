@@ -2,6 +2,7 @@ package come2play_as3.pseudoCode
 {
 	import come2play_as3.api.*;
 	import come2play_as3.api.auto_generated.*;
+	import come2play_as3.api.auto_copied.*;
 	/**
 	 * The keys in the Match state:
 	 * The calculators store in secret memory:
@@ -39,7 +40,7 @@ public class PseudoTrivia extends SimplifiedClientGameAPI
 	}
 	private function startGame():void
 	{
-		doAllRevealState( [new RevealEntry("question_"+currentQuestionNum,null)] );
+		doAllRevealState( [RevealEntry.create("question_"+currentQuestionNum,null)] );
 	}
   private function performMove(answer:Answer):void {
     var isQuestionAnswered:Boolean;
@@ -51,7 +52,7 @@ public class PseudoTrivia extends SimplifiedClientGameAPI
     if(!isQuestionAnswered)
     {
     	//mark the question as answered and block the option to answer question
-    	doAllRevealState([new RevealEntry("answer_"+currentQuestionNum,null)])	
+    	doAllRevealState([RevealEntry.create("answer_"+currentQuestionNum,null)])	
     }
   }
   private function verifyAnswer(newAnswer:Answer):Boolean
@@ -95,15 +96,15 @@ public class PseudoTrivia extends SimplifiedClientGameAPI
    currentQuestionNum++;
    	if(myUserId == oldAnswer.playerId)
    	{
-   		doStoreState([new UserEntry("answer_"+currentQuestionNum,oldAnswer,false),
-   					  new UserEntry("currentQuestionNum",currentQuestionNum,false)])
+   		doStoreState([UserEntry.create("answer_"+currentQuestionNum,oldAnswer,false),
+   					  UserEntry.create("currentQuestionNum",currentQuestionNum,false)])
    	}
    if(currentQuestionNum>questionAmount) {
 		var finishedPlayers:Array/*PlayerMatchOver*/ = []; 
     	for each (var playerId:int in allPlayerIds) {
     		var score:int, potPercentage:int;
         	//set the score and potPercentage for playerId
-    		finishedPlayers.push( new PlayerMatchOver(playerId, score, potPercentage) );
+    		finishedPlayers.push( PlayerMatchOver.create(playerId, score, potPercentage) );
      	}
      	doAllEndMatch(finishedPlayers);
    	}
@@ -111,7 +112,7 @@ public class PseudoTrivia extends SimplifiedClientGameAPI
    		startGame();
    }
   public function userMadeMove(gameMove:Answer):void {
-    doStoreState([ new UserEntry("PlayerAnswer"+myUserId, gameMove, false) ]);
+    doStoreState([ UserEntry.create("PlayerAnswer"+myUserId, gameMove, false) ]);
   }
   
 
@@ -157,7 +158,7 @@ public class PseudoTrivia extends SimplifiedClientGameAPI
     
  }
 }
-	import come2play_as3.api.SerializableClass;
+import come2play_as3.api.auto_copied.*;
 	
 
 class Question extends SerializableClass {

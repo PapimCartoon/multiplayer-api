@@ -1,6 +1,7 @@
 package come2play_as3.tictactoe
 {
 import come2play_as3.api.*;
+import come2play_as3.api.auto_copied.*;	
 
 import flash.display.*;
 

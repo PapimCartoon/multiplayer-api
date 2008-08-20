@@ -2,6 +2,7 @@ package come2play_as3.pseudoCode
 {
 	import come2play_as3.api.*;
 	import come2play_as3.api.auto_generated.*;
+	import come2play_as3.api.auto_copied.*;
 	/*****************************************
 	 * The keys in the Match state:
 	 * 
@@ -43,7 +44,7 @@ package come2play_as3.pseudoCode
 	  				var gameMove:GameMove=new GameMove()
 	  				gameMove.pieceCurrentLocation = -1;
 	  				gameMove.pieceNewLocation = -1;
-	  				doStoreState([new UserEntry("gameMove_0",gameMove,false)]);	
+	  				doStoreState([UserEntry.create("gameMove_0",gameMove,false)]);	
 	  			}
 	    	}
 	  	}  
@@ -64,7 +65,7 @@ package come2play_as3.pseudoCode
 	      		for each (var playerId:int in allPlayerIds) {
 	        		var score:int, potPercentage:int;
 	        	// set the score and potPercentage for playerId
-	        	finishedPlayers.push(new PlayerMatchOver(playerId, score, potPercentage) );
+	        	finishedPlayers.push(PlayerMatchOver.create(playerId, score, potPercentage) );
 	      		}
 	      		doAllEndMatch(finishedPlayers);
 	    	}
@@ -74,7 +75,7 @@ package come2play_as3.pseudoCode
 	    	for(var i:int=0;i<gameMoves.length;i++)
 	    	{
 	     		var gameMove:GameMove = gameMoves[i];
-	      		userEntries.concat(new UserEntry("gameMove_"+i,gameMove,false) );
+	      		userEntries.concat(UserEntry.create("gameMove_"+i,gameMove,false) );
 	      		userEntries.concat(gameMove2UserEntry(gameMove));  
 	    	}
 	    	doStoreState(userEntries);
@@ -124,7 +125,7 @@ package come2play_as3.pseudoCode
 	  	
 	}
 }
-	import come2play_as3.api.SerializableClass;
+import come2play_as3.api.auto_copied.*;
 class GamePlace extends SerializableClass
 {
 	public var position:int,ownerPlayerId:int,gamePieces:int;

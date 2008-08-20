@@ -1,6 +1,7 @@
 package come2play_as3.tictactoe 
 {
 import come2play_as3.api.*;
+import come2play_as3.api.auto_copied.*;
 
 import flash.display.*;
 import flash.events.*;
@@ -65,8 +66,8 @@ public final class TicTacToe_logic {
 	
 	// Makes a move in TicTacToe by placing either X or O in square <row,col>
 	public function makeMove(color:int, move:TicTacToeMove):void {
-		if (!isSquareAvailable(move)) BaseGameAPI.throwError("Square "+move+" is not available");
-		if (color<0 || color>=PLAYERS_NUM) BaseGameAPI.throwError("Illegal color="+color);
+		if (!isSquareAvailable(move)) LocalConnectionUser.throwError("Square "+move+" is not available");
+		if (color<0 || color>=PLAYERS_NUM) LocalConnectionUser.throwError("Illegal color="+color);
 		setOwner(move, color);
 		filledNum++;
 	}
@@ -93,7 +94,7 @@ public final class TicTacToe_logic {
         for(var i:int=1; i<WIN_LENGTH; i++) {
         	row += delta_row;
         	col += delta_col;
-        	var nextCell:TicTacToeMove = new TicTacToeMove(row, col);
+        	var nextCell:TicTacToeMove = TicTacToeMove.create(row, col);
             if (!isInBoard( nextCell )) break;
             if (getOwner(nextCell)!=ownedBy) break;
             res++;

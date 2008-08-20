@@ -1,15 +1,23 @@
 package emulator.auto_generated {
 //Do not change the code below because this class was generated automatically!
 
-	import emulator.JSON;
-	
-	import flash.display.*;
-	import flash.utils.*;
+	import flash.display.*;	import flash.utils.*;
+	import emulator.*;
+	import emulator.auto_copied.*
 	public  class API_DoAllRequestStateCalculation extends API_Message {
 		public var keys:Array/*String*/;
-		public function API_DoAllRequestStateCalculation(keys:Array/*String*/) { super('doAllRequestStateCalculation',arguments); 
-			this.keys = keys;
+		public static function create(keys:Array/*String*/):API_DoAllRequestStateCalculation { 
+			var res:API_DoAllRequestStateCalculation = new API_DoAllRequestStateCalculation();
+			res.keys = keys;
+			return res;
+		}
+		override public function setMethodParameters(parameters:Array):void { 
+			var pos:int = 0;
+			this.keys = parameters[pos++];
 		}
 		override public function getParametersAsString():String { return 'keys=' + JSON.stringify(keys); }
+		override public function toString():String { return '{API_DoAllRequestStateCalculation:' +getParametersAsString() +'}'; }
+		override public function getMethodName():String { return 'doAllRequestStateCalculation'; }
+		override public function getMethodParameters():Array { return [keys]; }
 	}
 }

@@ -2,6 +2,7 @@ package come2play_as3.pseudoCode
 {
 	import come2play_as3.api.*;
 	import come2play_as3.api.auto_generated.*;
+	import come2play_as3.api.auto_copied.*;
 	/*****************************************
 	 * The keys in the Match state:
 	 * The calculators store in secret memory:
@@ -51,7 +52,7 @@ package come2play_as3.pseudoCode
     if(isBrickFree)
     {
     	//mark the brick as occupied
-    	doAllRevealState([new RevealEntry(gameMove.row+"_"+gameMove.column,null)])	
+    	doAllRevealState([RevealEntry.create(gameMove.row+"_"+gameMove.column,null)])	
     }
   }
   public function verifyBrick(revealedBrick:RevealedBrick):Boolean
@@ -100,8 +101,8 @@ package come2play_as3.pseudoCode
    	//update graphics for mine
    	if(myUserId == gameMove.playerId)
    	{
-   		doStoreState([new UserEntry(gameMove.getKey(),null,false),
-   					  new UserEntry(gameMove.row+"_"+gameMove.column,revealedBrick,false)])
+   		doStoreState([UserEntry.create(gameMove.getKey(),null,false),
+   					  UserEntry.create(gameMove.row+"_"+gameMove.column,revealedBrick,false)])
    	}
    	 var isGameOver:Boolean;
     //checks if the game is over,meaning all the board was cleared
@@ -110,13 +111,13 @@ package come2play_as3.pseudoCode
     	for each (var playerId:int in allPlayerIds) {
     		var score:int, potPercentage:int;
         	//set the score and potPercentage for playerId
-    		finishedPlayers.push( new PlayerMatchOver(playerId, score, potPercentage) );
+    		finishedPlayers.push( PlayerMatchOver.create(playerId, score, potPercentage) );
      	}
      	doAllEndMatch(finishedPlayers);
    	}
    }
   public function userMadeMove(gameMove:GameMove):void {
-    doStoreState([ new UserEntry(gameMove.getKey(), gameMove, false) ]);
+    doStoreState([ UserEntry.create(gameMove.getKey(), gameMove, false) ]);
   }
   
 
@@ -160,7 +161,7 @@ package come2play_as3.pseudoCode
     
  }
 }
-	import come2play_as3.api.SerializableClass;
+import come2play_as3.api.auto_copied.*;
 	
 class GameMove extends SerializableClass {
   public var row:int, column:int,playerId:int,className:String;

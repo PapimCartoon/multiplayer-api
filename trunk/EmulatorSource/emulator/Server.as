@@ -1,9 +1,4 @@
 ﻿package emulator {
-	//import emulator.auto_generated.*;
-	
-	import emulator.auto_generated.ServerEntry;
-	import emulator.auto_generated.UserEntry;
-	
 	import fl.controls.*;
 	import fl.events.*;
 	
@@ -147,9 +142,9 @@
 			cmbCommand = new ComboBox();
 			cmbCommand.setSize(150, 22);
 			cmbCommand.prompt = "Select command";
-			for each (var command_name:String in Commands.getCommandNames(true)) {
-				cmbCommand.addItem( { label:command_name, data:command_name } );
-			}
+			//for each (var command_name:String in Commands.getCommandNames(true)) {
+			//	cmbCommand.addItem( { label:command_name, data:command_name } );
+			//}
 			cmbCommand.addEventListener(Event.CHANGE, changeCommand);
 			pnlCommands.addChild(cmbCommand);
 			
@@ -549,7 +544,7 @@
 			
 			serverEntery=new Array();
 			if (root.loaderInfo.parameters["logo"]!=null && root.loaderInfo.parameters["logo"] != "") {
-				serverEntery.push(new Entry("logo_swf_full_url",root.loaderInfo.parameters["logo"]));
+				serverEntery.push(new InfoEntry("logo_swf_full_url",root.loaderInfo.parameters["logo"]));
 			}
 			
 			if (root.loaderInfo.parameters["game"] == null) {
@@ -589,6 +584,21 @@
 			showMsg(unverefiedFunction.msg.methodName+" Timed out by player/s:"+String(unverefiedFunction.unverifiedUsers),"Error");
 			gameOver();
 		}
+		private function revealEntryToPlayers(serverEntry:ServerEntry,revealEntry:RevealEntry):void
+		{
+			var playerExist:Boolean;
+			for each(var revealPlayer:int in revealEntry)
+			{
+				playerExist=false;
+				for each(var serverPlayer:int in serverEntry)
+				{
+					if(serverPlayer == revealPlayer)
+						playerExist=true;
+				}
+				if(!playerExist)
+					serverEntry.authorizedUserIds.push(revealPlayer);
+			}
+		}
 		private var isProcessingCallback:Boolean = false;
 		public function got_user_localconnection_callback(user:User, msg:API_Message):void {			
 			try{
@@ -608,7 +618,7 @@
 				else if(msg is API_DoFinishedCallback)
 				{
 					var finishedCallbackMsg:API_DoFinishedCallback = msg as API_DoFinishedCallback;
-					verefyAction(user);
+					verefyAction(user,finishedCallbackMsg);
 					user.do_finished_callback(finishedCallbackMsg.parameters[0])
 				}
 				else if(msg is API_DoAllFoundHacker)
@@ -661,35 +671,66 @@
 			}
 			else if(waitingFunction.msg is API_DoAllSetTurn)
 			{
-				var msg:API_DoAllSetTurn=checkDoAlls() as API_DoAllSetTurn;
-				if(msg==null)
+				var setTurnMessage:API_DoAllSetTurn=checkDoAlls() as API_DoAllSetTurn;
+				if(setTurnMessage==null)
 					return;
 				unverifiedQueue.push(new UnverifiedFunction(waitingFunction,aPlayers.concat()));
-				doAllSetTurn(msg);
+				doAllSetTurn(setTurnMessage);
 			}
-			
-			
-			/*
-			
-			
-			*/
+			else if(waitingFunction.msg is API_DoAllShuffleState)
+			{
+				var shuffleStateMessage:API_DoAllShuffleState=checkDoAlls() as API_DoAllShuffleState;
+				if(shuffleStateMessage==null)
+					return;
+				unverifiedQueue.push(new UnverifiedFunction(waitingFunction,aPlayers.concat()));
+				doAllShuffleState(shuffleStateMessage);	
+			}
+			else if(waitingFunction.msg is API_DoAllEndMatch)
+			{
+				var endMatchMessage:API_DoAllEndMatch=checkDoAlls() as API_DoAllEndMatch;
+				if(endMatchMessage==null)
+					return;
+				unverifiedQueue.push(new UnverifiedFunction(waitingFunction,aPlayers.concat()));	
+				doAllEndMatch(endMatchMessage);
+			}
+			else if(waitingFunction.msg is API_DoAllRequestRandomState)
+			{
+				var randomStateMessage:API_DoAllRequestRandomState=checkDoAlls() as API_DoAllRequestRandomState;
+				if(randomStateMessage==null)
+					return;
+				unverifiedQueue.push(new UnverifiedFunction(waitingFunction,aPlayers.concat()));	
+				doAllRequestRandomState(randomStateMessage);
+			}
+			else if(waitingFunction.msg is API_DoAllRevealState)
+			{
+				var revealStateMessage:API_DoAllRevealState=checkDoAlls() as API_DoAllRevealState;
+				if(revealStateMessage==null)
+					return;
+				unverifiedQueue.push(new UnverifiedFunction(waitingFunction,aPlayers.concat()));	
+				doAllRevealState(revealStateMessage);
+			}
+
 			queueTimer.reset();
 			queueTimer.start();
 			
 		}
-		private function verefyAction(user:User):void
+		private function verefyAction(user:User,msg:API_DoFinishedCallback):void
 		{
 			for each(var unverifiedFunction:UnverifiedFunction in unverifiedQueue)
 			{
-				if(unverifiedFunction.removeUnverifiedUser(user.ID))
+				if(msg.methodName == unverifiedFunction.msg.methodName)
 				{
-					if(unverifiedFunction.length()==0)
-						actionVerefied();
-					return;
+					if(unverifiedFunction.removeUnverifiedUser(user.ID))
+					{
+						if(unverifiedFunction.length()==0)
+							actionVerefied();
+						return;
+					}
 				}
 			}
-			addMessageLog(user.Name,"Error",user.ID+" can't verify nonexistent function");
-			showMsg(user.ID+" can't verify nonexistent function", "Error");
+
+			//addMessageLog(user.Name,"Error",user.ID+" can't verify nonexistent function");
+			//showMsg(user.ID+" can't verify nonexistent function", "Error");
 		}
 		private function actionVerefied():void
 		{
@@ -698,7 +739,7 @@
 			{
 				var msg:API_DoStoreState = waitingFunction.msg as API_DoStoreState;
 				var serverEntry:ServerEntry;
-				for each (var userEntry:UserEntry in msg.stateEntries)
+				for each (var userEntry:UserEntry in msg.userEntries)
 				{
 					if(userEntry.isSecret)
 					{
@@ -729,7 +770,7 @@
 				}
 			}
 		}
-		private function isEquel(obj1:Object,obj2:Object)
+		private function isEquel(obj1:Object,obj2:Object):Boolean
 		{ 
 			for(var prop:String in obj1)
 				if(typeof(obj1[prop])=="object")
@@ -777,7 +818,7 @@
 			}
 			return originalMsg;
 		}
-		private function isKeyExist(testKey:int):int
+		private function isKeyExist(testKey:String):int
 		{
 			for(var i:int=0;i<userStateEntrys.length;i++)
 			{
@@ -786,121 +827,119 @@
 			}
 			return -1;	
 		}
-		private function doShuffleOn(index:int,newKey:String):void
+		private function doShuffleOn(index:int,newKey:String):ServerEntry
 		{
-			userStateEntrys[index].key=newKey;
-			userStateEntrys[index].authorizedUsersIds=new Array();
+			var userStateEntry:ServerEntry = userStateEntrys[index];
+			userStateEntry.key=newKey;
+			userStateEntry.storedByUserId = -1;
+			userStateEntry.authorizedUserIds=new Array();
+			return userStateEntry;
 		}
 		//do all function's
-		private function doAllShuffleState(methodCalls:Array):void
+		private function doAllShuffleState(msg:API_DoAllShuffleState):void
 		{
-			var doShuffleCalls:Array=new Array();
-			for each (var waitingDoAllCall:WaitingDoAll in methodCalls)
-			{
-				doShuffleCalls.push(waitingDoAllCall.msg as API_DoAllShuffleState);
-			}
-			var shuffleKeys:Array=doShuffleCalls[0].keys;
-			for each(var doShuffleCall:API_DoAllShuffleState in doShuffleCalls)
-			{
-				if(doShuffleCall.keys.length!=shuffleKeys.length)
-				{
-					addMessageLog("Server","Error","Not all users agree on which keys to shuffle");
-					gameOver();
-					return;
-				}
-				for(var i:int=0;i<doShuffleCall.keys.length;i++)
-					if(doShuffleCall.keys[i]!=shuffleKeys[i])
-					{
-						addMessageLog("Server","Error","Not all users agree on which keys to shuffle");
-						gameOver();
-						return;	
-					}
-			}
 			var shuffleIndex:int;
 			var shuffleIndexArr:Array=new Array();
 			var shuffleMapKeys:Array=new Array();
-			for(i=0;i<shuffleKeys.length;i++)
+			
+			for(var i:int=0;i<msg.keys.length;i++)
 			{
-				shuffleIndex=isKeyExist(shuffleKeys[i])
+				shuffleIndex=isKeyExist(msg.keys[i])
 				if(shuffleIndex!=-1)	
 				{
 					shuffleIndexArr.push(shuffleIndex);
-					 shuffleMapKeys.push(userStateEntrys[shuffleIndex].key);
+					shuffleMapKeys.push(userStateEntrys[shuffleIndex].key);
 				}
 				else
 				{
 					addMessageLog("Server","Error","Can't shuffle a key that does not exist");
+					showMsg("Can't shuffle a key that does not exist","Error");
 					gameOver();
 					return;		
 
 				}
+				
 			}
+			
 			var shuffleLen:int=shuffleIndexArr.length;
+			var serverEntry:ServerEntry;
+			var serverEntries:Array/*ServerEntry*/
 			for (i=0;i<shuffleLen;i++)
 			{
 				shuffleIndex=Math.floor(Math.random()*(shuffleIndexArr.length+1))
-				doShuffleOn(shuffleIndexArr.splice(shuffleIndex,1),shuffleMapKeys.splice(shuffleIndex,1));
+				serverEntry=doShuffleOn(shuffleIndexArr.splice(shuffleIndex,1),shuffleMapKeys.shift());
+				serverEntries.push(new ServerEntry(serverEntry.key,null,-1,[],serverEntry.changedTimeInMilliSeconds));
 			}
+			broadcast(new API_GotStateChanged(serverEntries));
 		}
-		private function doAllEndMatch(methodCalls:Array):void
+		private function doAllRevealState(msg:API_DoAllRevealState):void
 		{
-			var endMatchCalls:Array=new Array();
-			for each (var waitingDoAllCall:WaitingDoAll in methodCalls)
+			var revealIndex:int;
+			var serverEnries:Array=new Array();
+			for each(var revealEntry:RevealEntry in msg.revealEntries)
 			{
-				endMatchCalls.push(waitingDoAllCall.msg as API_DoAllEndMatch);
-			}
-			var finishedPlayers:Array=endMatchCalls[0].finishedPlayers;
-			for each (var waitingEndMatchCall:API_DoAllEndMatch in endMatchCalls)
-			{
-				for(var i:int=0;i<waitingEndMatchCall.finishedPlayers.length;i++)
+				revealIndex=isKeyExist(revealEntry.key)
+				if(revealIndex!=-1)	
 				{
-					if((waitingEndMatchCall.finishedPlayers[i].playerId!=finishedPlayers[i].playerId)||
-					(waitingEndMatchCall.finishedPlayers[i].score!=finishedPlayers[i].score)||
-					(waitingEndMatchCall.finishedPlayers[i].potPercentage!=finishedPlayers[i].potPercentage))
-					{
-						addMessageLog("Server","Error","Not all users agree on who finished game");
-						gameOver();
-						return;	
-					}
+					var serverEntry:ServerEntry=userStateEntrys[revealIndex];
+					revealEntryToPlayers(serverEntry,revealEntry);
+					serverEnries.push(serverEntry);
 				}
+				else
+				{
+					addMessageLog("Server","Error","Can't reveal a key that does not exist");
+					showMsg("Can't reveal a key that does not exist","Error");
+					gameOver();
+					return;		
+
+				}
+				
 			}
-			
+			broadcast(new API_GotStateChanged(serverEnries));
+		}
+		private function doAllRequestRandomState(msg:API_DoAllRequestRandomState):void
+		{
+			var serverEntry:ServerEntry;
+			var randomSeed:int=1000*Math.random();	
+			if(msg.isSecret)
+				serverEntry=new ServerEntry(msg.key,randomSeed,-1,[],0);
+			else
+				serverEntry=new ServerEntry(msg.key,randomSeed,-1,null,0);
+			doStoreOneState(serverEntry);
+			broadcast(new API_GotStateChanged([serverEntry]));
+		}
+		private function doAllEndMatch(msg:API_DoAllEndMatch):void
+		{
+			var tempFinishedPlayersIds:Array=new Array();
+			var finishedPlayers:Array = msg.finishedPlayers;
 			var finishedPart:FinishHistory=new FinishHistory();
 			var percentageOfPot:Number=0;
-			for(i=0;i<finishedPlayers.length;i++)
+			
+			for each(var palyerMatchOver:PlayerMatchOver in finishedPlayers)
 			{
 				FinishHistory.totalFinishingPlayers++;
-				percentageOfPot+=finishedPlayers[i].potPercentage;
-				finishedPart.finishedPlayers.push(finishedPlayers[i])	
+				tempFinishedPlayersIds.push(palyerMatchOver.playerId);
+				percentageOfPot+=palyerMatchOver.potPercentage;
+				finishedPart.finishedPlayers.push(palyerMatchOver)	
 			}
+			
 			finishedPart.pot=FinishHistory.wholePot;
 			FinishHistory.wholePot-=(FinishHistory.wholePot*percentageOfPot)/100;
 			afinishedPlayers.push(finishedPart);
+			
 			if(FinishHistory.totalFinishingPlayers == aPlayers.length)
 			{
 				gameOver();
 			}
-			var tempFinishedPlayersIds:Array=new Array();
-			for (i=0;i<finishedPlayers.length;i++)
-			{
-				tempFinishedPlayersIds.push(finishedPlayers[i].playerId);
-			}
-			var tempAction:WaitingFunction=new WaitingFunction();
-			var gotEndMatch:API_GotMatchEnded=new API_GotMatchEnded(tempFinishedPlayersIds);
-			tempAction.methodName=gotEndMatch.methodName;
-			tempAction.parameters=gotEndMatch.parameters;
-			tempAction.unverifiedPlayers=aPlayers.concat();
-			unverifiedQue.push(tempAction);
-			queTimer.start();
-			broadcast(gotEndMatch);
+			
+			queueTimer.start();
+			broadcast(new API_GotMatchEnded(tempFinishedPlayersIds));
 			
 		}
 		
 		private function doAllSetTurn(msg:API_DoAllSetTurn):void
 		{
 			iCurTurn=msg.userId;
-			var gotTurnOf:API_GotTurnOf=new API_GotTurnOf(iCurTurn);
-			broadcast(gotTurnOf);
 		}
 		/*
 		private function commitDoAllEndMatch(calledMethodArr:Array):void
@@ -1076,14 +1115,14 @@
 			var finished_player_ids:Array = getFinishedPlayerIds();
 			u.Ended = finished_player_ids.indexOf(u.ID)!=-1;
 			var stateEntries:Array=new Array();
-			for each(var tempServerState:ServerStateEntry in userStateEntrys)
+			for each(var tempServerState:ServerEntry in userStateEntrys)
 			{
-				if(tempServerState.authorizedUsersIds==null)
-					stateEntries.push(new StateEntry(tempServerState.key,tempServerState.value,false));
-				else if(isInArray(u.ID,tempServerState.authorizedUsersIds))
-					stateEntries.push(new StateEntry(tempServerState.key,tempServerState.value,true));
+				if(tempServerState.authorizedUserIds==null)
+					stateEntries.push(new ServerEntry(tempServerState.key,tempServerState.value,tempServerState.storedByUserId,null,0));
+				else if(isInArray(u.ID,tempServerState.authorizedUserIds))
+					stateEntries.push(new ServerEntry(tempServerState.key,tempServerState.value,tempServerState.storedByUserId,tempServerState.authorizedUserIds,0));
 				else
-					stateEntries.push(new StateEntry(tempServerState.key,null,true));
+					stateEntries.push(new ServerEntry(tempServerState.key,null,tempServerState.storedByUserId,tempServerState.authorizedUserIds,0));
 			}
 			u.sendOperation(new API_GotMatchStarted(aPlayers, finished_player_ids, extra_match_info, match_started_time,stateEntries));			
 		}
@@ -1297,7 +1336,7 @@
 			txtTooltip.text = "";
 
 			var command_name:String = cmbCommand.selectedItem.data;
-			var parameters:Array = Commands.findCommand(command_name);
+			var parameters:Array = [] /*Commands.findCommand(command_name)*/;
 			for (i=0; i<parameters.length; i++) {
 				var param_name:String = parameters[i][0];
 				var param_type:String = parameters[i][1];
@@ -1403,7 +1442,6 @@
 				iInfoMode=2;
 				
 				tblInfo.columns=[COL_User,COL_Message];
-				
 				showDoAllQue();
 			}
 		}
@@ -1453,17 +1491,16 @@
 			if(iInfoMode==7){
 				tblInfo.removeAll();
 				var itemObj:Object;
-				
-				for(var i:int=0;i<unverifiedQue.length;i++){
+				for each(var unverifiedFunction:UnverifiedFunction in unverifiedQueue)
+				{
 					itemObj=new Object();
-					itemObj[COL_User]=unverifiedQue[i].userId;
-					itemObj[COL_MethodName]=unverifiedQue[i].methodName
-					itemObj[COL_Parameters]=unverifiedQue[i].parameters.toString();
-					itemObj[COL_UnverifiedPlayers]=unverifiedQue[i].unverifiedPlayers.toString();
+					itemObj[COL_User]=unverifiedFunction.user.ID;
+					itemObj[COL_MethodName]=unverifiedFunction.msg.methodName;
+					itemObj[COL_Parameters]=unverifiedFunction.msg.getParametersAsString();
+					itemObj[COL_UnverifiedPlayers]=unverifiedFunction.unverifiedUsers.toString();
 					tblInfo.addItem(itemObj);
 					tblInfo.verticalScrollPosition = tblInfo.maxVerticalScrollPosition+30;
 				}
-				
 				txtInfo.text="";
 			}
 		}
@@ -1472,10 +1509,11 @@
 			if(iInfoMode==2){
 				tblInfo.removeAll();
 				var itemObj:Object;
-				for(var i:int=0;i<doAllQue.length;i++){
+				for each(var waitingFunction:WaitingFunction in  waitingQueue)
+				{
 					itemObj=new Object();
-					itemObj[COL_User]=doAllQue[i].user.ID;
-					itemObj[COL_Message]=doAllQue[i].msg.toString();
+					itemObj[COL_User]=waitingFunction.user.ID;
+					itemObj[COL_Message]=waitingFunction.msg.toString();
 					tblInfo.addItem(itemObj);
 					tblInfo.verticalScrollPosition = tblInfo.maxVerticalScrollPosition+30;
 				}
@@ -1868,13 +1906,13 @@
 				var command_name:String = cmbCommand.selectedItem.data;
 				var usr:User;
 				var i:int;
-				var args:Array = Commands.findCommand(command_name);
+				//var args:Array = Commands.findCommand(command_name);
 				var parameters:Array = [];
-				for (i=0; i< args.length; i++) {
-					var param:String = aParams[i].Value;
-					var param_type:String = args[i][1];
-					parameters.push( Commands.convertToType(param, param_type) );
-				}
+				//for (i=0; i< args.length; i++) {
+					//var param:String = aParams[i].Value;
+					//var param_type:String = args[i][1];
+					//parameters.push( Commands.convertToType(param, param_type) );
+				//}
 
 				for each (usr in aUsers) {
 					if(usr.ID==target || target==-1){						
@@ -1943,10 +1981,11 @@
 		public function doStoreState(user:User, msg:API_DoStoreState):void {
 			var serverEntries:Array;
 			//todo: ask yoav about change time and about server.swc
+			
 			for each(var tempUser:User in aUsers)
 			{
 				serverEntries=new Array();
-				for each (var userEntry:UserEntry in msg.stateEntries)
+				for each (var userEntry:UserEntry in msg.userEntries)
 				{
 					if(userEntry.isSecret)
 					{
@@ -1958,9 +1997,11 @@
 					else
 						serverEntries.push(new ServerEntry(userEntry.key,userEntry.value,user.ID,null,0));
 				}
-				tempUser.sendOperation(new API_GotStoredState(user.ID,serverEntries));
+				tempUser.sendOperation(new API_GotStateChanged(serverEntries));
 			}
+			
 			showMatchState();
+			
 		}
 		private function doStoreOneState(stateEntery:ServerEntry):void {			
 			if (stateEntery.key == "") {
@@ -1990,15 +2031,15 @@
 			}
 		}
 		public function doFoundHacker(user:User, msg:API_DoAllFoundHacker):void {
-			addMessageLog("Server","Error","Someone claimed he found a hacker:"+ msg.toString());
-			showMsg("Someone claimed he found a hacker:"+ msg.toString());
+			addMessageLog("Server","Error",user.Name+" claimed he found a hacker:"+ msg.toString());
+			showMsg(user.Name+" claimed he found a hacker:"+ msg.toString());
 			gameOver()
 		}
 
 		
 		public function gameOver():void
 		{
-			queTimer.stop();
+			queueTimer.stop();
 			var usr:User;
 			var arr:Array = new Array();
 			for each (usr in aUsers) {
@@ -2011,8 +2052,8 @@
 			FinishHistory.wholePot=100;
 			iCurTurn=-1;
 			serverEntery=new Array;
-			unverifiedQue=new Array;
-			doAllQue=new Array;
+			unverifiedQueue=new Array;
+			waitingQueue=new Array;
 			//afinishedPlayers=new Array();
 			bGameEnded = true;
 			txtMatchStartedTime.text = "";
@@ -2039,6 +2080,7 @@
 		}			
 		public function do_finished_callback(user:User, methodName:String):void 
 		{
+			/*
 			for(var i:Number;i<unverifiedQue.length;i++)
 			{
 				if(unverifiedQue.indexOf(user.ID)!=-1)
@@ -2054,7 +2096,7 @@
 					break;
 				}	
 			}
-			
+			*/
 			user.do_finished_callback(methodName);
 		}
 	}
@@ -2075,7 +2117,7 @@ class User {
 	private var sName:String;
 	private var sDoChanel:String;
 	private var sGotChanel:String;
-	private var actionQue:Array;
+	private var actionQueue:Array/*WaitingFunction*/;
 	public var entries:Array;/*enterys*/
 	public var Ended:Boolean = false;
 	public var wasRegistered:Boolean = false;
@@ -2115,13 +2157,12 @@ class User {
 				}
 			}
 			
-			actionQue = new Array();
-			var tempEntery:Entry;
+			actionQueue = new Array();
+			var tempEntery:InfoEntry;
 			for (var i:int = 0; sServer.root.loaderInfo.parameters["col" + i] != null;i++ ) {
-				tempEntery=new Entry(sServer.root.loaderInfo.parameters["col" + i],sServer.root.loaderInfo.parameters["val" + (iID - 1) + i])
+				tempEntery=new InfoEntry(sServer.root.loaderInfo.parameters["col" + i],sServer.root.loaderInfo.parameters["val" + (iID - 1) + i])
 			}
-			entries[0]=new Entry("name",sName);
-			//Params[0] = sName;
+			entries[0]=new InfoEntry("name",sName);
 			sDoChanel = Commands.getDoChanelString(""+prefix);
 			sGotChanel = Commands.getGotChanelString(""+prefix);
 			
@@ -2137,14 +2178,15 @@ class User {
 	
 	public function sendOperation(msg:API_Message):void {
 			if (!wasRegistered) return;
-			actionQue.push(msg);
-			if(actionQue.length==1)
+			actionQueue.push(new WaitingFunction(this,msg));
+			if(actionQueue.length==1)
 				doSendOperation();	
     }
 	public function do_finished_callback(methodName:String):void {
 		if(methodName=="gotKeyboardEvent") return;
-		if(actionQue.length==0) throw new Error("A Callback has been summoned with no corresponding do");
-		var tempMsg:API_Message = actionQue.shift();
+		if(actionQueue.length==0) throw new Error("A Callback has been summoned with no corresponding doALLFunction");
+		var waitingFunction:WaitingFunction = actionQueue.shift();
+		var tempMsg:API_Message = waitingFunction.msg;
 		if(methodName == tempMsg.methodName)
 		{
 			doSendOperation();
@@ -2158,9 +2200,10 @@ class User {
     private function doSendOperation(/*tempObj:Object*/):void
     {
     	try {
-    		if(actionQue.length>0)
+    		if(actionQueue.length>0)
     		{
-    			var tempMsg:API_Message = actionQue[0];
+    			var waitingFunction:WaitingFunction = actionQueue[0];
+    			var tempMsg:API_Message = waitingFunction.msg;
 				lcData.send(sGotChanel, "localconnection_callback", tempMsg.methodName, tempMsg.parameters);
 				sServer.addMessageLog(sName, tempMsg.methodName, tempMsg.toString());	
     		}
@@ -2228,7 +2271,7 @@ class UnverifiedFunction{
 	}
 	public function length():int
 	{
-		unverifiedUsers.length;
+		return unverifiedUsers.length;
 	}
 }
 class WaitingFunction{

@@ -127,9 +127,9 @@ package emulator {
 			cmbCommands.setSize(150, 20);
 			cmbCommands.x = 5;
 			cmbCommands.prompt = "Send command";
-			for each (var command_name:String in Commands.getCommandNames(false)) {
-				cmbCommands.addItem( { label:command_name, data:command_name } );
-			}
+			//for each (var command_name:String in Commands.getCommandNames(false)) {
+			//	cmbCommands.addItem( { label:command_name, data:command_name } );
+			//}
 			cmbCommands.addEventListener(Event.CHANGE, onCommandSelect);
 			pnlInfo.addChild(cmbCommands);
 			
@@ -335,7 +335,7 @@ package emulator {
 			}
 
 			var command_name:String = cmbCommands.selectedItem.data;
-			var parameters:Array = Commands.findCommand(command_name);
+			var parameters:Array = []//Commands.findCommand(command_name);
 			for (i=0; i<parameters.length; i++) {
 				var param_name:String = parameters[i][0];
 				var param_type:String = parameters[i][1];
@@ -406,13 +406,13 @@ package emulator {
 				var arr:Array,i:int;
 
 				var methodName:String = cmbCommands.selectedItem.data;
-				var args:Array = Commands.findCommand(methodName);
+				//var args:Array = Commands.findCommand(methodName);
 				var parameters:Array = [];
-				for (i=0; i< args.length; i++) {
-					var param:String = aParams[i].Value;
-					var param_type:String = args[i][1];
-					parameters.push( Commands.convertToType(param, param_type) );
-				}
+			//	for (i=0; i< args.length; i++) {
+					//var param:String = aParams[i].Value;
+				//	var param_type:String = args[i][1];
+					//parameters.push( Commands.convertToType(param, param_type) );
+				//}
 				sendDoOperation(API_Message.createMessage(methodName, parameters));
 
 				MsgBox.Show("The command was send", "Message");
@@ -463,12 +463,12 @@ package emulator {
 				info.userID = msg.userId;
 				info.isPlayer = false;
 				info.gameOver = false;
-				for (var i:int = 0; i < msg.entries.length; i++) {
-					if ( msg.entries[i].key == "name") { // see BaseGameAPI.USER_INFO_KEY_name
-						info.userName = msg.entries[i].value;
+				for (var i:int = 0; i < msg.infoEntries.length; i++) {
+					if ( msg.infoEntries[i].key == "name") { // see BaseGameAPI.USER_INFO_KEY_name
+						info.userName = msg.infoEntries[i].value;
 					}
-					if (msg.entries[i].key == "avatar_url") { // see BaseGameAPI.USER_INFO_KEY_avatar_url
-						info.userPicture = msg.entries[i].value;
+					if (msg.infoEntries[i].key == "avatar_url") { // see BaseGameAPI.USER_INFO_KEY_avatar_url
+						info.userPicture = msg.infoEntries[i].value;
 					}
 				}
 				aUsers.push(info);

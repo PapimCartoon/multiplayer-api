@@ -1,4 +1,4 @@
-package emulator {
+﻿package emulator {
 	public class Commands {
 		// see BaseGameAPI
 		public static function getDoChanelString(sPrefix:String):String {
@@ -40,13 +40,14 @@ package emulator {
 			}
 			btnSend.y = 32 * parameters.length + 35;
 		*/
-		private static var all_commands:Array = SummaryGameAPI.SUMMARY_API;
-
+		//private static var all_commands:Array = SummaryGameAPI.SUMMARY_API;
+/*
 		public static function findCommand(name:String):Array {
 			for each (var arr:Array in all_commands)
 				if (arr[0]==name) return arr[1];
 			throw new Error("Didn't find operation/callback called "+name);
 		}
+		
 		public static function getCommandNames(is_got:Boolean):Array {
 			var res:Array = [];	
 			for each (var arr:Array in all_commands) {
@@ -77,5 +78,6 @@ package emulator {
 			if (isOfType(res, type)) return res; 
 			throw new Error("String '"+str+"' is not of type "+type);
 		}
+		*/
 	}
 }

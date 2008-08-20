@@ -51,8 +51,8 @@ package come2play_as3.pseudoCode
       var revealCards:Array=new Array();
       for(i=0;i<allPlayersAndDelear.length;i++)
       {
-      	revealCards.push(new RevealEntry(String(i*2),allPlayersAndDelear));
-      	revealCards.push(new RevealEntry(String(i*2+1),[allPlayersAndDelear[i]]));
+      	revealCards.push(RevealEntry.create(String(i*2),allPlayersAndDelear));
+      	revealCards.push(RevealEntry.create(String(i*2+1),[allPlayersAndDelear[i]]));
       }
       doAllRevealState(revealCards);
       gamePhase = 1;
@@ -88,13 +88,13 @@ package come2play_as3.pseudoCode
       for each (var playerId:int in allPlayerIds) {
         var score:int, potPercentage:int;
         // set the score and potPercentage for playerId
-        finishedPlayers.push( new PlayerMatchOver(playerId, score, potPercentage) );
+        finishedPlayers.push( PlayerMatchOver.create(playerId, score, potPercentage) );
       }
       doAllEndMatch(finishedPlayers);
     }
   }
   public function userMadeHisMove(gameMove:String):void {
-    doStoreState([ new UserEntry(getEntryKey(), gameMove, false) ]);
+    doStoreState([ UserEntry.create(getEntryKey(), gameMove, false) ]);
     //performMove(gameMove);
   }
   
@@ -123,8 +123,8 @@ package come2play_as3.pseudoCode
         var revealCards:Array=new Array();
         for(i=0;i<allPlayersAndDelear.length;i++)
         {
-      	  revealCards.push(new RevealEntry(String(i*2),allPlayersAndDelear));
-      	  revealCards.push(new RevealEntry(String(i*2+1),[allPlayersAndDelear[i]]));
+      	  revealCards.push(RevealEntry.create(String(i*2),allPlayersAndDelear));
+      	  revealCards.push(RevealEntry.create(String(i*2+1),[allPlayersAndDelear[i]]));
         }
         doAllRevealState(revealCards);
         gamePhase = 1;

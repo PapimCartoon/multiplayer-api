@@ -4,11 +4,21 @@ package come2play_as3.api.auto_generated {
 	import flash.display.*;	import flash.utils.*;
 	import come2play_as3.util.*;
 	import come2play_as3.api.*
+	import come2play_as3.api.auto_copied.*
 	public  class API_GotUserDisconnected extends API_Message {
 		public var userId:int;
-		public function API_GotUserDisconnected(userId:int) { super('gotUserDisconnected',arguments); 
-			this.userId = userId;
+		public static function create(userId:int):API_GotUserDisconnected { 
+			var res:API_GotUserDisconnected = new API_GotUserDisconnected();
+			res.userId = userId;
+			return res;
+		}
+		override public function setMethodParameters(parameters:Array):void { 
+			var pos:int = 0;
+			this.userId = parameters[pos++];
 		}
 		override public function getParametersAsString():String { return 'userId=' + JSON.stringify(userId); }
+		override public function toString():String { return '{API_GotUserDisconnected:' +getParametersAsString() +'}'; }
+		override public function getMethodName():String { return 'gotUserDisconnected'; }
+		override public function getMethodParameters():Array { return [userId]; }
 	}
 }

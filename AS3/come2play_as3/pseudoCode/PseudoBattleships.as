@@ -2,6 +2,7 @@ package come2play_as3.pseudoCode
 {
 	import come2play_as3.api.*;
 	import come2play_as3.api.auto_generated.*;
+	import come2play_as3.api.auto_copied.*;
 	/*****************************************
 	 * The keys in the Match state:
 	 * "ships_"+<playerId> : all the player secret ship positions
@@ -70,7 +71,7 @@ public class PseudoBattleships extends SimplifiedClientGameAPI {
     gameData.playerAttacking = gameMove.playerAttacking;
     gameData.playerIdAttacked = gameMove.playerIdAttacked;
     
-    doStoreState([new UserEntry(gameMove.objectKey(),gameData,false)]);
+    doStoreState([UserEntry.create(gameMove.objectKey(),gameData,false)]);
     updateHits(gameData);
   }
   private function updateHits(gameData:GameData):void
@@ -83,7 +84,7 @@ public class PseudoBattleships extends SimplifiedClientGameAPI {
 		if (isGameOver) {
 			var shipStatesToReveal:Array=[];
 			for each(var playerId:int in allPlayerIds)
-			  shipStatesToReveal.push(new RevealEntry("ships_"+playerId,allPlayerIds));
+			  shipStatesToReveal.push(RevealEntry.create("ships_"+playerId,allPlayerIds));
 			doAllRevealState(shipStatesToReveal);
 		}
   	}
@@ -98,12 +99,12 @@ public class PseudoBattleships extends SimplifiedClientGameAPI {
     }
   }
   public function userMadeHisMove(gameMove:GameMove):void {
-    doStoreState([ new UserEntry(gameMove.objectKey(), gameMove, false) ]);
+    doStoreState([ UserEntry.create(gameMove.objectKey(), gameMove, false) ]);
     //performMove(gameMove);
   }
   public function userSetHisBoard(allShips:Array):void
   {
-  	doStoreState([new UserEntry("ships_"+myUserId,allShips,true)]);
+  	doStoreState([UserEntry.create("ships_"+myUserId,allShips,true)]);
   	shipStatesCommited++;
   	if(shipStatesCommited == allPlayerIds.length)
   		startMove();
@@ -148,7 +149,7 @@ public class PseudoBattleships extends SimplifiedClientGameAPI {
 			 	{
 					var score:int, potPercentage:int;
 					// set the score and potPercentage for playerId
-					finishedPlayers.push( new PlayerMatchOver(playerId, score, potPercentage) );
+					finishedPlayers.push( PlayerMatchOver.create(playerId, score, potPercentage) );
 				}
 			 doAllEndMatch(finishedPlayers);
     	     }
@@ -171,7 +172,7 @@ public class PseudoBattleships extends SimplifiedClientGameAPI {
 }
 
 }
-	import come2play_as3.api.SerializableClass;
+import come2play_as3.api.auto_copied.*;
 	
 class GameData extends SerializableClass{
   public var row:int, column:int,playerIdAttacked:int,isHit:Boolean,playerAttacking:int;

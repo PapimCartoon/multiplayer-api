@@ -1,17 +1,26 @@
 package emulator.auto_generated {
 //Do not change the code below because this class was generated automatically!
 
-	import emulator.JSON;
-	
-	import flash.display.*;
-	import flash.utils.*;
+	import flash.display.*;	import flash.utils.*;
+	import emulator.*;
+	import emulator.auto_copied.*
 	public  class API_DoAllFoundHacker extends API_Message {
 		public var userId:int;
 		public var errorDescription:String;
-		public function API_DoAllFoundHacker(userId:int, errorDescription:String) { super('doAllFoundHacker',arguments); 
-			this.userId = userId;
-			this.errorDescription = errorDescription;
+		public static function create(userId:int, errorDescription:String):API_DoAllFoundHacker { 
+			var res:API_DoAllFoundHacker = new API_DoAllFoundHacker();
+			res.userId = userId;
+			res.errorDescription = errorDescription;
+			return res;
+		}
+		override public function setMethodParameters(parameters:Array):void { 
+			var pos:int = 0;
+			this.userId = parameters[pos++];
+			this.errorDescription = parameters[pos++];
 		}
 		override public function getParametersAsString():String { return 'userId=' + JSON.stringify(userId)+', errorDescription=' + JSON.stringify(errorDescription); }
+		override public function toString():String { return '{API_DoAllFoundHacker:' +getParametersAsString() +'}'; }
+		override public function getMethodName():String { return 'doAllFoundHacker'; }
+		override public function getMethodParameters():Array { return [userId, errorDescription]; }
 	}
 }

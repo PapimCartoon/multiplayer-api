@@ -4,12 +4,21 @@ package come2play_as3.api.auto_generated {
 	import flash.display.*;	import flash.utils.*;
 	import come2play_as3.util.*;
 	import come2play_as3.api.*
+	import come2play_as3.api.auto_copied.*
 	public  class API_GotStateChanged extends API_Message {
 		public var serverEntries:Array/*ServerEntry*/;
-		public function API_GotStateChanged(serverEntries:Array/*ServerEntry*/) { super('gotStateChanged',arguments); 
-			this.serverEntries = serverEntries;
-			for (var i:int=0; i<serverEntries.length; i++) serverEntries[i] = ServerEntry.object2ServerEntry(serverEntries[i]);
+		public static function create(serverEntries:Array/*ServerEntry*/):API_GotStateChanged { 
+			var res:API_GotStateChanged = new API_GotStateChanged();
+			res.serverEntries = serverEntries;
+			return res;
+		}
+		override public function setMethodParameters(parameters:Array):void { 
+			var pos:int = 0;
+			this.serverEntries = parameters[pos++];
 		}
 		override public function getParametersAsString():String { return 'serverEntries=' + JSON.stringify(serverEntries); }
+		override public function toString():String { return '{API_GotStateChanged:' +getParametersAsString() +'}'; }
+		override public function getMethodName():String { return 'gotStateChanged'; }
+		override public function getMethodParameters():Array { return [serverEntries]; }
 	}
 }

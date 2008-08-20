@@ -2,6 +2,7 @@ package come2play_as3.pseudoCode
 {
 	import come2play_as3.api.*;
 	import come2play_as3.api.auto_generated.*;
+	import come2play_as3.api.auto_copied.*;
 	/*********************************
 	 * The keys in the Match state:	
 	 *							
@@ -36,7 +37,7 @@ package come2play_as3.pseudoCode
 	  	 	if(gameMove.isTakingCube)
 	  	 	{
 	  	 		if(cubesDrawn < cubeMax)
-	  	 			doAllRevealState([new RevealEntry("domino_"+cubesDrawn,[getTurnOfId()])]);
+	  	 			doAllRevealState([RevealEntry.create("domino_"+cubesDrawn,[getTurnOfId()])]);
 	  	 		else
 	  	 		{
 	  	 	  		turnNumber ++; // advance the turn
@@ -70,7 +71,7 @@ package come2play_as3.pseudoCode
 	    	} else {
 				var revealCubes:Array=new Array();
 				for(var i:int=0;i<cubeMax;i++)
-					revealCubes.push(new RevealEntry("domino_"+i,allPlayerIds));	
+					revealCubes.push(RevealEntry.create("domino_"+i,allPlayerIds));	
 				doAllRevealState(revealCubes);
 	    	}
 	  	}
@@ -89,7 +90,7 @@ package come2play_as3.pseudoCode
 	      		for each (var playerId:int in allPlayerIds) {
 	        	var score:int, potPercentage:int;
 	        	// set the score and potPercentage for playerId
-	        	finishedPlayers.push( new PlayerMatchOver(playerId, score, potPercentage) );
+	        	finishedPlayers.push( PlayerMatchOver.create(playerId, score, potPercentage) );
 	      		}
 	      	doAllEndMatch(finishedPlayers);
 	   		}
@@ -113,7 +114,7 @@ package come2play_as3.pseudoCode
 	  	return true;
 	  	}
 	  	public function userMadeHisMove(gameMove:GameMove):void {
-	     	doStoreState([new UserEntry(getEntryKey(), gameMove, false)]);
+	     	doStoreState([UserEntry.create(getEntryKey(), gameMove, false)]);
 	     	performMove(gameMove);
 	  	}
 	  	private function placeDominos():Array/*UserEnry*/
@@ -174,7 +175,7 @@ package come2play_as3.pseudoCode
 	      			var revealKeys:Array=new Array();
 	    			for(var i:int=0;i<allPlayerIds.length;i++)
 	    	  			for(var j:int=0;j<7;j++)
-	    	    			revealKeys.push(new RevealEntry("domino_"+(i*7+j),[allPlayerIds[i]]))
+	    	    			revealKeys.push(RevealEntry.create("domino_"+(i*7+j),[allPlayerIds[i]]))
 	    			doAllRevealState(revealKeys);
 	    		}
 	    	}
@@ -214,7 +215,7 @@ package come2play_as3.pseudoCode
 	  	} 
 	}
 }
-	import come2play_as3.api.SerializableClass;
+import come2play_as3.api.auto_copied.*;
 	
 
 class GameMove extends SerializableClass

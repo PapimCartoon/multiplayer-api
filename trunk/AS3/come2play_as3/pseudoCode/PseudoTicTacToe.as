@@ -49,7 +49,7 @@ public class PseudoTicTacToe extends SimplifiedClientGameAPI {
     turnNumber = 0;
     startMove();
   }
-  override public function gotStateChanged(serverEntries:Array/*ServerEntry*/):void {
+  override public function gotStateChanged2(serverEntries:Array/*ServerEntry*/):void {
     require(serverEntries.length==1);
     var entry:ServerEntry = serverEntries[0];
     if (entry.storedByUserId==myUserId) return; // already updated my move

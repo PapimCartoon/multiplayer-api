@@ -2141,15 +2141,13 @@ import flash.text.TextField;
 import flash.text.TextFieldType;
 import flash.events.*;
 import emulator.*;
+import emulator.auto_copied.*;
 
-class User {
+class User extends LocalConnectionUser {
 	//Private variables
-	private var lcData:LocalConnection;
 	private var sServer:Server;
 	private var iID:int;
 	private var sName:String;
-	private var sDoChanel:String;
-	private var sGotChanel:String;
 	private var actionQueue:Array/*WaitingFunction*/;
 	public var entries:Array;/*enterys*/
 	public var Ended:Boolean = false;
@@ -2166,13 +2164,13 @@ class User {
 	public function get Name():String {
 		return sName;
 	}
-	public function get GotChanel():String {
-		return sGotChanel;
-	}
 	
 	//Constructor
 	public function User(prefix:int, _server:Server) {
 		try{
+			var someMovieClip:MovieClip = ; // todo: we need some movie clip to display all the errors that are caught
+			super(someMovieClip, true, prefix);
+			
 			entries=new Array();
 			if (iNextId > PlayersNum + ViewersNum) {
 				throw new Error("Too many users");
@@ -2196,13 +2194,6 @@ class User {
 				tempEntery=new InfoEntry(sServer.root.loaderInfo.parameters["col" + i],sServer.root.loaderInfo.parameters["val" + (iID - 1) + i])
 			}
 			entries[0]=new InfoEntry("name",sName);
-			sDoChanel = Commands.getDoChanelString(""+prefix);
-			sGotChanel = Commands.getGotChanelString(""+prefix);
-			
-			lcData = new LocalConnection();
-			lcData.client = this;			
-			lcData.addEventListener(StatusEvent.STATUS, onConnectionStatus);
-			lcData.connect(sDoChanel);
 			
 		}catch (err:Error) {
 			sServer.addMessageLog("Server", "User", "Error: " + err.getStackTrace());
@@ -2239,15 +2230,17 @@ class User {
     		{
     			var waitingFunction:WaitingFunction = actionQueue[0];
     			var tempMsg:API_Message = waitingFunction.msg;
-				lcData.send(sGotChanel, "localconnection_callback", tempMsg.methodName, tempMsg.parameters);
-				sServer.addMessageLog(sName, tempMsg.methodName, tempMsg.toString());	
+    			sendMessage(tempMsg);
+				sServer.addMessageLog(sName, tempMsg.getMethodName(), tempMsg.getParametersAsString());	
     		}
 		}catch(err:Error) { 
 			sServer.showMsg(err.getStackTrace(), "Error");
 		}  	
     }
 	
-	public function localconnection_callback(methodName:String, parameters:Array/*Object*/):void {
+	
+    override protected function gotMessage(msg:API_Message):void {
+		// todo
 		sServer.got_user_localconnection_callback(this, API_Message.createMessage(methodName, parameters));
 	}
 	

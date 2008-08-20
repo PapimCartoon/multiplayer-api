@@ -1,6 +1,5 @@
 package come2play_as3.tictactoe
 {
-	import come2play_as3.util.*;
 	import come2play_as3.api.auto_copied.*;
 	
 	public final class TicTacToeMove extends SerializableClass

@@ -2,7 +2,6 @@
 import come2play_as3.api.*;
 import come2play_as3.api.auto_generated.*;
 import come2play_as3.api.auto_copied.*;	
-import come2play_as3.util.*;	
 
 
 import flash.display.*;

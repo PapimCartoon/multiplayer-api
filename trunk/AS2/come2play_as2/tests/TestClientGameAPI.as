@@ -1,7 +1,6 @@
 import come2play_as2.api.*;
+import come2play_as2.api.auto_copied.*;
 import come2play_as2.api.auto_generated.*;
-import come2play_as2.api.auto_copied.*;	
-
 
 import flash.text.*;
 
@@ -17,34 +16,33 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 	private static var shouldTestPassNumbers:Boolean = false;
 	
 	public function TestClientGameAPI(my_graphics:MovieClip) {
-		try {		
-			trace("Constructor of TestClientGameAPI");
-			var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(my_graphics);
-			this.my_graphics = my_graphics;	
-			outTracesText = my_graphics.outTracesText;
-			exampleOperationsText = my_graphics.exampleOperationsText;
-			operationInput = my_graphics.operationInput;	
-			
-			var allOperationsWithParameters:Array = [];
-			for (var i30:Number=0; i30<API_MethodsSummary.SUMMARY_API.length; i30++) { var methodSummary:API_MethodsSummary = API_MethodsSummary.SUMMARY_API[i30]; 
-				if (methodSummary.methodName.substring(0,2)!="do") continue;
-				var args:Array = [];
-				for (var i:Number=0; i<methodSummary.parameterNames.length; i++) {
-					args.push(methodSummary.parameterNames[i]+":"+methodSummary.parameterTypes[i]);
-				}
-				allOperationsWithParameters.push(methodSummary.methodName+"("+args.join(", ")+")");
+		super(my_graphics);
+		trace("Constructor of TestClientGameAPI");
+		var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(my_graphics);
+		this.my_graphics = my_graphics;	
+		outTracesText = my_graphics.outTracesText;
+		exampleOperationsText = my_graphics.exampleOperationsText;
+		operationInput = my_graphics.operationInput;	
+		
+		var allOperationsWithParameters:Array = [];
+		for (var i29:Number=0; i29<API_MethodsSummary.SUMMARY_API.length; i29++) { var methodSummary:API_MethodsSummary = API_MethodsSummary.SUMMARY_API[i29]; 
+			var methodName:String = methodSummary.methodName; 
+			if (methodName.substring(0,2)!="do") continue;
+			if (methodName=="doRegisterOnServer") continue;
+			var args:Array = [];
+			for (var i:Number=0; i<methodSummary.parameterNames.length; i++) {
+				args.push(methodSummary.parameterNames[i]+":"+methodSummary.parameterTypes[i]);
 			}
-			exampleOperationsText.text = allOperationsWithParameters.join("\n");
-			
-			if (shouldTestPassNumbers) {	
-				test_Arr = getNumberArr();
-				trace("test_Arr="+test_Arr);
-			}
-			AS3_vs_AS2.addOnPress(my_graphics.sendOperation, AS3_vs_AS2.delegate(this, this.dispatchOperation) );
-			super(my_graphics);
-		} catch (err:Error) { 
-			handleError(err);
+			allOperationsWithParameters.push(methodName+"("+args.join(", ")+")");
 		}
+		exampleOperationsText.text = allOperationsWithParameters.join("\n");
+		
+		if (shouldTestPassNumbers) {	
+			test_Arr = getNumberArr();
+			trace("test_Arr="+test_Arr);
+		}
+		AS3_vs_AS2.addOnPress(my_graphics.sendOperation, AS3_vs_AS2.delegate(this, this.dispatchOperation) );
+		doRegisterOnServer();			
 	}
 	
 	/*override*/ public function gotMyUserId(userId:Number):Void {		

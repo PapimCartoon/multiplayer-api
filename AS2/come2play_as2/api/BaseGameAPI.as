@@ -21,6 +21,7 @@ import come2play_as2.api.*;
 		}
         /*override*/ public function gotMessage(msg:API_Message):Void {
         	try {
+        		hackerUserId = -1;
 	    		if (msg instanceof API_GotStateChanged) {
 	    			var stateChanged:API_GotStateChanged = API_GotStateChanged(msg);
 	    			var serverEntry:ServerEntry = stateChanged.serverEntries[0];

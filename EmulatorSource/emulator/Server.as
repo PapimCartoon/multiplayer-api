@@ -612,7 +612,6 @@
 				if (isProcessingCallback) throw new Error("Concurrency problems in the server in the Emulator");
 				isProcessingCallback = true;
 				trace("got_user_localconnection_callback: user="+user.Name+" methodName="+msg.getMethodName());			
-				addMessageLog(user.Name, msg.getMethodName(), msg.toString());
 				if(msg is API_DoTrace)
 				{
 					var traceMsg:API_DoTrace=msg as API_DoTrace;
@@ -625,7 +624,8 @@
 				else if(msg is API_DoFinishedCallback)
 				{
 					var finishedCallbackMsg:API_DoFinishedCallback = msg as API_DoFinishedCallback;
-					//verefyAction(user,finishedCallbackMsg);
+					addMessageLog(user.Name, msg.getMethodName(), msg.toString());
+					verefyAction(user,finishedCallbackMsg.callbackName);
 					//todo: check if works
 					user.do_finished_callback(finishedCallbackMsg.callbackName)
 				}
@@ -685,16 +685,11 @@
 		}
 		private function doNextInQueue():void
 		{
+			if(waitingQueue.length == 0) return;
 			var waitingFunction:WaitingFunction=waitingQueue[0];
 			if(waitingFunction.msg is API_DoStoreState)
 			{
-				if(!doAllInLine())
-				{
-					doStoreState(waitingFunction.user,waitingFunction.msg as API_DoStoreState);
-					unverifiedQueue.push(new UnverifiedFunction(waitingFunction,aPlayers.concat()));
-				}
-				else
-					return
+				doStoreState(waitingFunction.user,waitingFunction.msg as API_DoStoreState);
 				waitingQueue.shift();
 			}
 			else if(waitingFunction.msg is API_DoAllSetTurn)
@@ -702,8 +697,10 @@
 				var setTurnMessage:API_DoAllSetTurn=checkDoAlls() as API_DoAllSetTurn;
 				if(setTurnMessage==null)
 					return;
-				//unverifiedQueue.push(new UnverifiedFunction(waitingFunction,aPlayers.concat()));
 				doAllSetTurn(setTurnMessage);
+				//because we have no callback in set turn 
+				//we have to call doNextInQueue()
+				doNextInQueue();
 			}
 			else if(waitingFunction.msg is API_DoAllShuffleState)
 			{
@@ -743,22 +740,22 @@
 		}
 		private function verefyAction(user:User,methodName:String):void
 		{
-			addMessageLog("Server","Debug",user.ID+": "+ methodName);
+			
 			for each(var unverifiedFunction:UnverifiedFunction in unverifiedQueue)
 			{
 				if(methodName == unverifiedFunction.msg.getMethodName())
 				{
 					if(unverifiedFunction.removeUnverifiedUser(user.ID))
 					{
-						if(unverifiedFunction.length()==0)
-							actionVerefied();
+						if(unverifiedFunction.length() == 0)
+						{
+							actionVerefied();	
+						}
 						return;
 					}
 				}
 			}
 
-			//addMessageLog(user.Name,"Error",user.ID+" can't verify nonexistent function");
-			//showMsg(user.ID+" can't verify nonexistent function", "Error");
 		}
 		private function actionVerefied():void
 		{
@@ -782,7 +779,7 @@
 				}	
 			}
 			queueTimer.reset();
-			if(unverifiedQueue.length==0)
+			if(unverifiedQueue.length == 0)
 				doNextInQueue();	
 		}
 		
@@ -834,25 +831,28 @@
 					}
 				}
 			}
-			
 			if(playersNotCalled.length != 0)
 				return null;
+			var playerDoAllsRemoved:Array = aPlayers.concat();
 			for(var i:int=0;i<waitingQueue.length;i++)
 			{
 				waitingFunction=waitingQueue[i];
 				if(waitingFunction.msg.getMethodName() == originalMsg.getMethodName())
 				{
-					if(!isEquel(waitingFunction.msg.getMethodParameters(),originalMsg.getMethodParameters()))
+					if(spliceNum(playerDoAllsRemoved,waitingFunction.user.ID) != -1)
 					{
-						addMessageLog("Server","Error","Not all parameters for "+originalMsg.getMethodName()+" are the same");
-						showMsg("Not all parameters for "+originalMsg.getMethodName()+" are the same","Error");
-						gameOver();
-						return null;
-					}
-					else
-					{
-						waitingQueue.splice(i,1);
-						i--;
+						if(!isEquel(waitingFunction.msg.getMethodParameters(),originalMsg.getMethodParameters()))
+						{
+							addMessageLog("Server","Error","Not all parameters for "+originalMsg.getMethodName()+" are the same");
+							showMsg("Not all parameters for "+originalMsg.getMethodName()+" are the same","Error");
+							gameOver();
+							return null;
+						}
+						else
+						{
+							waitingQueue.splice(i,1);
+							i--;
+						}
 					}
 				}
 			}
@@ -2091,7 +2091,8 @@
 
 				tempUser.sendOperation(API_GotStateChanged.create(serverEntries));
 			}
-			
+			var waitingFunction:WaitingFunction = new WaitingFunction(user,API_GotStateChanged.create(serverEntries));
+			unverifiedQueue.push(new UnverifiedFunction(waitingFunction,aPlayers.concat()));
 			showMatchState();
 			
 		}
@@ -2189,6 +2190,7 @@
 				}	
 			}
 			*/
+			
 			verefyAction(user,methodName)
 			user.do_finished_callback(methodName);
 		}
@@ -2357,7 +2359,7 @@ class UnverifiedFunction{
 			if(unverifiedUsers[i] == userId)
 			{
 				unverifiedUsers.splice(i,1);
-				true;
+				return true;
 			}
 		return false;
 	}

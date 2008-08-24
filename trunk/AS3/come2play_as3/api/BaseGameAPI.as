@@ -1,4 +1,4 @@
-﻿package come2play_as3.api {
+package come2play_as3.api {
 	import come2play_as3.api.auto_copied.*;
 	import come2play_as3.api.auto_generated.*;
 	
@@ -13,17 +13,20 @@
 	 */ 
 	public class BaseGameAPI extends LocalConnectionUser 
 	{        
+		private var sPrefix:String;
 		public function BaseGameAPI(_someMovieClip:MovieClip) {
-			super(_someMovieClip, false);	
-			if (!didGetPrefix()) 
+			super(_someMovieClip, false, sPrefix = getPrefixFromFlashVars(_someMovieClip));
+			API_LoadMessages.useAll();	
+			if (sPrefix==null) 
 				new SinglePlayerEmulator(_someMovieClip);		
 		}
 		private var hackerUserId:int = -1;
-		override protected function gotError(withObj:Object, err:Error):void {
+		override public function gotError(withObj:Object, err:Error):void {
 			sendMessage( API_DoAllFoundHacker.create(hackerUserId, "Got error withObj="+JSON.stringify(withObj)+" err="+AS3_vs_AS2.error2String(err)) );
 		}
-        override protected function gotMessage(msg:API_Message):void {
+        override public function gotMessage(msg:API_Message):void {
         	try {
+        		hackerUserId = -1;
 	    		if (msg is API_GotStateChanged) {
 	    			var stateChanged:API_GotStateChanged = msg as API_GotStateChanged;
 	    			var serverEntry:ServerEntry = stateChanged.serverEntries[0];

@@ -18,7 +18,7 @@ package come2play_as3.api.auto_copied
 			var msg:String = "An ERRRRRRRRRRROR occurred:\n"+msg;
 			System.setClipboard(msg);
 			AS3_vs_AS2.showError(someMovieClip, msg);
-			trace("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"+msg+"\n\n\n\n\n\n\n\n\n");
+			trace("\n\n\n"+msg+"\n\n\n");
 		}
 		public static function throwError(msg:String):void {
 			error("Throwing an error with message="+msg+"." + (!AS3_vs_AS2.isAS3 ? "" :  "The error was thrown in this location="+AS3_vs_AS2.error2String(new Error())));
@@ -33,31 +33,34 @@ package come2play_as3.api.auto_copied
 		public static function getGotChanelString(sPrefix:String):String {
 			return "GOT_CHANEL_"+sPrefix;
 		}
+		public static function getPrefixFromFlashVars(_someMovieClip:MovieClip):String {
+			var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(_someMovieClip);
+			var sPrefix:String = parameters["prefix"];
+			if (sPrefix==null) sPrefix = parameters["?prefix"];
+			return getPrefixFromString(sPrefix);
+		}		
+		public static function getPrefixFromString(sPrefix:String):String {
+			if (sPrefix!=null && !(sPrefix.charAt(0)>='0' && sPrefix.charAt(0)<='9')) { //it is not necessarily a number 
+				trace("calling a javascript function that should return the random fixed id");
+				var jsResult:Object = ExternalInterface.call(sPrefix);
+				sPrefix = ''+jsResult;
+			}
+			return sPrefix;
+		}
 				
 		
 		// we use a LocalConnection to communicate with the container
 		private var lcUser:LocalConnection; 
 		private var sSendChanel:String;
-		private var pDidGetPrefix:Boolean;
 		
 		//Constructor
-		public function LocalConnectionUser(_someMovieClip:MovieClip, isServer:Boolean) {
+		public function LocalConnectionUser(_someMovieClip:MovieClip, isServer:Boolean, sPrefix:String) {
 			try{
 				someMovieClip = _someMovieClip;
-				var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(someMovieClip);
-				var sPrefix:String = parameters["prefix"];
-				if (sPrefix==null) sPrefix = parameters["?prefix"];
-				pDidGetPrefix = sPrefix!=null;
-				if (!pDidGetPrefix) {
+				if (sPrefix==null) {
 					trace("WARNING: didn't find 'prefix' in the loader info parameters. Probably because you are doing testing locally.\n\n\n\n\n\n");
 					sPrefix = DEFAULT_LOCALCONNECTION_PREFIX;
-				}
-				if (!(sPrefix.charAt(0)>='0' && sPrefix.charAt(0)<='9')) { //it is not necessarily a number 
-					trace("calling a javascript function that should return the random fixed id");
-					var jsResult:Object = ExternalInterface.call(sPrefix);
-					sPrefix = ''+jsResult;
-				}
-				
+				}				
 				lcUser = new LocalConnection();
 				AS3_vs_AS2.addStatusListener(lcUser, this, ["localconnection_callback"]);
 				
@@ -76,24 +79,21 @@ package come2play_as3.api.auto_copied
 		private function myTrace(msg:String):void {
 			trace(AS3_vs_AS2.getClassName(this)+": "+msg);
 		}
-		public function didGetPrefix():Boolean {
-			return pDidGetPrefix;
-		}
 		
         private function passError(withObj:Object, err:Error):void {
         	try{
-				error("Error occurred when passing "+withObj+", the error is="+AS3_vs_AS2.error2String(err));
+				error("Error occurred when passing "+JSON.stringify(withObj)+", the error is="+AS3_vs_AS2.error2String(err));
 				gotError(withObj, err);
 			} catch (err2:Error) { 
 				// to avoid an infinite loop, I can't call passError again.
 				error("Another error occurred when calling gotError. The new error is="+AS3_vs_AS2.error2String(err2));
 			}
         }
-		protected function gotError(withObj:Object, err:Error):void {}
+		public function gotError(withObj:Object, err:Error):void {}
         
-        protected function gotMessage(msg:API_Message):void {}
+        public function gotMessage(msg:API_Message):void {}
         
-        protected function sendMessage(msg:API_Message):void {
+        public function sendMessage(msg:API_Message):void {
         	myTrace('sendMessage: '+msg);        						  
 			try{
 				lcUser.send(sSendChanel, "localconnection_callback", msg);  

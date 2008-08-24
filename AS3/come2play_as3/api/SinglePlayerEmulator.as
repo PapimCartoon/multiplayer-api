@@ -43,7 +43,7 @@
 		private var userStateEntries:Array/*ServerEntry*/;
 		
 		public function SinglePlayerEmulator(graphics:MovieClip) {
-			super(graphics,true);
+			super(graphics,true, DEFAULT_LOCALCONNECTION_PREFIX);
 			this.customInfoEntries = DEFAULT_GENERAL_INFO;
 			this.userId = DEFAULT_USER_ID;
 			this.userInfoEntries = DEFAULT_USER_INFO;
@@ -57,7 +57,7 @@
 			sendMessage(API_GotKeyboardEvent.create(is_key_down, charCode, keyCode, keyLocation, altKey, ctrlKey, shiftKey) );
 		}		
 		
-        override protected function gotMessage(msg:API_Message):void {
+        override public function gotMessage(msg:API_Message):void {
 			try {        		
         		trace("SinglePlayerEmulator: msg="+msg);
 				if (msg is API_DoAllEndMatch) {

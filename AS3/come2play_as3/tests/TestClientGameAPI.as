@@ -108,11 +108,11 @@ public class TestClientGameAPI extends ClientGameAPI {
 			handleError(err);			
 		}
 	}
-    override protected function sendMessage(msg:API_Message):void {
+    override public function sendMessage(msg:API_Message):void {
 		storeTrace(msg.getMethodName(), msg.getParametersAsString());
 		super.sendMessage(msg);
 	}
-	override protected function gotMessage(msg:API_Message):void {
+	override public function gotMessage(msg:API_Message):void {
 		storeTrace(msg.getMethodName(), msg.getParametersAsString());
 		super.gotMessage(msg);		
 	}

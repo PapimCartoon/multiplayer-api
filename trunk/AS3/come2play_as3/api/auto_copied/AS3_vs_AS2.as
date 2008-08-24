@@ -114,9 +114,14 @@ public final class AS3_vs_AS2
 		target.y = y+y_delta;		
 	} 	
 	public static function createInstanceOf(className:String):Object {
-		var _Class:Class = getDefinitionByName(className) as Class;
-		if (_Class==null) LocalConnectionUser.error("ClassName '"+className+"' was not found!");
-		return new _Class();		
+		try {
+			var _Class:Class = getDefinitionByName(className) as Class;
+			if (_Class==null) LocalConnectionUser.error("ClassName '"+className+"' was not found!");
+			return new _Class();
+		} catch (err:Error) {
+			throw new Error("Did not find class definition="+className);
+		}		
+		return null;
 	}
 	public static function duplicateMovie(graphics:MovieClip, name:String):MovieClip {
 		var className:String = getQualifiedClassName(graphics);

@@ -30,6 +30,11 @@ package come2play_as3.api.auto_generated {
 			new API_DoAllStoreStateCalculation();
 			new API_DoConnectedSetScore();
 			new API_DoConnectedEndMatch();
+			new PlayerMatchOver();
+			new InfoEntry();
+			new RevealEntry();
+			new UserEntry();
+			new ServerEntry();
 		}
 	}
 }

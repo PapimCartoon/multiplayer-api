@@ -106,11 +106,11 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 			handleError(err);			
 		}
 	}
-    /*override*/ private function sendMessage(msg:API_Message):Void {
+    /*override*/ public function sendMessage(msg:API_Message):Void {
 		storeTrace(msg.getMethodName(), msg.getParametersAsString());
 		super.sendMessage(msg);
 	}
-	/*override*/ private function gotMessage(msg:API_Message):Void {
+	/*override*/ public function gotMessage(msg:API_Message):Void {
 		storeTrace(msg.getMethodName(), msg.getParametersAsString());
 		super.gotMessage(msg);		
 	}

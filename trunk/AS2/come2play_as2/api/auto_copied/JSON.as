@@ -1,10 +1,4 @@
-	/*
-	I don't print XML nicely because it doesn't exists in AS2.
-	*/
-	/*
-	Copyright (c) 2005 JSON.org
-	*/
-	
+	// The initial source code was taken from JSON.org
 import come2play_as2.api.auto_copied.*;
 	class come2play_as2.api.auto_copied.JSON {
 		public static var isDoingTesting:Boolean = false;
@@ -65,7 +59,15 @@ import come2play_as2.api.auto_copied.*;
 	            }
 	            return '"' + res.join("") + '"';
 	        }
-	        var argToString:String = arg.toString();
+	        var argToString:String = "";
+	        try {
+	        	argToString = arg.toString();
+	        } catch(e:Error) {
+	        	if (isDoingTesting) 
+					throw e;
+				argToString = "ERROR in toString() method of "+AS3_vs_AS2.getClassName(arg)+" err="+AS3_vs_AS2.error2String(e);
+	        }
+	        
 	        if (argToString=="[object Object]") {
 	        	res = [];
 	        	for (var z:String in arg) {
@@ -329,6 +331,7 @@ import come2play_as2.api.auto_copied.*;
                 default:
                     return ch >= '0' && ch <= '9' ? this.num() : this.word();
             }
+            return {};
         }
 	    public function p_parse(_text:String):Object {
 	        text = _text;

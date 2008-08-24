@@ -28,6 +28,9 @@ class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 	}
 	public static function asArray(o):Array {
 		return o;
+	}	
+	public static function toString(o:Object):String {	
+		return o.toString();
 	}
 	public static function delegate(target:Object, handler:Function):Function {
 		var extraArgs:Array = arguments.slice(2);
@@ -94,16 +97,17 @@ class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 		target._y = y+y_delta;		
 	} 			
 	
-	//todo: use __CLASS_NAME__ in SerializableClass as well (because when we add __CLASS_NAME__ to the prototype, it is serialized in LocalConnection, so no point in having two properties with the same content) 
+	//todo: we use CLASS_NAME_FIELD (because when we add CLASS_NAME_FIELD to the prototype, it is serialized in LocalConnection, so no point in having two properties with the same content) 
 	public static function getClassName(o:Object):String {
 		//typeof is not good enough! for SerializableClass I want to know the class name
 		// when you create a class, it is stored in _global.PACKAGES...CLASS_NAME
-		// so I traverse _global, and lookup the __proto__, and when I find it, as an optimization I store it as __CLASS_NAME__
+		// so I traverse _global, and lookup the __proto__, and when I find it, as an optimization I store it as CLASS_NAME_FIELD
 		var prot:Object = o.__proto__;
-		if (prot.hasOwnProperty(SerializableClass.CLASS_NAME_FIELD)) return prot[SerializableClass.CLASS_NAME_FIELD]; // shortcut optimization (so we won't lookup the class name for every object)
+		var as2_class_name:String = "blablabla"; //SerializableClass.CLASS_NAME_FIELD;
+		if (prot.hasOwnProperty(as2_class_name)) return prot[as2_class_name]; // shortcut optimization (so we won't lookup the class name for every object)
 		var res:String = p_getClassName(_global, prot);
 		if (res==null) return typeof o; 
-		prot.__CLASS_NAME__ = res;
+		prot[as2_class_name] = res;
 		return res;
 	}
 	private static function p_getClassName(glob:Object, prot:Object):String {
@@ -170,4 +174,11 @@ class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 			if (arr[i]==val) return i;
 		return -1;
 	}
+	
+	public static function stringIndexOf(str:String, val:String):Number {
+		return str.indexOf(val);
+	}	
+	public static function stringLastIndexOf(str:String, val:String):Number {
+		return str.lastIndexOf(val);
+	}	
 }

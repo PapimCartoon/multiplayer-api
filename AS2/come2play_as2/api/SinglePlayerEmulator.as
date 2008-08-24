@@ -40,7 +40,7 @@ import come2play_as2.api.*;
 		private var userStateEntries:Array/*ServerEntry*/;
 		
 		public function SinglePlayerEmulator(graphics:MovieClip) {
-			super(graphics,true);
+			super(graphics,true, DEFAULT_LOCALCONNECTION_PREFIX);
 			this.customInfoEntries = DEFAULT_GENERAL_INFO;
 			this.userId = DEFAULT_USER_ID;
 			this.userInfoEntries = DEFAULT_USER_INFO;
@@ -54,7 +54,7 @@ import come2play_as2.api.*;
 			sendMessage(API_GotKeyboardEvent.create(is_key_down, charCode, keyCode, keyLocation, altKey, ctrlKey, shiftKey) );
 		}		
 		
-        /*override*/ private function gotMessage(msg:API_Message):Void {
+        /*override*/ public function gotMessage(msg:API_Message):Void {
 			try {        		
         		trace("SinglePlayerEmulator: msg="+msg);
 				if (msg instanceof API_DoAllEndMatch) {

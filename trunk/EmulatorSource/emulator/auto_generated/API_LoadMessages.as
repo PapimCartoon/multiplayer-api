@@ -1,10 +1,11 @@
+package emulator.auto_generated {
 //Do not change the code below because this class was generated automatically!
 
-	import come2play_as2.api.*
-	import come2play_as2.api.auto_copied.*
-import come2play_as2.api.auto_generated.*;
-	class come2play_as2.api.auto_generated.API_LoadMessages  {
-		public static function useAll():Void {
+	import flash.display.*;	import flash.utils.*;
+	import emulator.*;
+	import emulator.auto_copied.*
+	public  class API_LoadMessages  {
+		public static function useAll():void {
 			new API_DoFinishedCallback();
 			new API_DoRegisterOnServer();
 			new API_DoTrace();
@@ -31,3 +32,4 @@ import come2play_as2.api.auto_generated.*;
 			new API_DoConnectedEndMatch();
 		}
 	}
+}

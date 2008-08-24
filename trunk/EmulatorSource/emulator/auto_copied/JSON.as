@@ -1,12 +1,13 @@
+// IMPORTANT: THIS FILE IS A COPY OF THE FILE:
+//    'google_api_svn/as3/come2play_as3/api/auto_copied/JSON.as'
+// so DO ***NOT*** CHANGE THIS FILE!!!
+// You should change the file in google_api_svn, 
+// and then run the java program that automatically copies and changes the as file.
+// We do not share the code because the flash goes crazy if it loads to SWFs files with classes of identical names and packages.
+// So we changed the package name when we copied the directory 'auto_copied'
 package emulator.auto_copied
 {		
-	/*
-	I don't print XML nicely because it doesn't exists in AS2.
-	*/
-	/*
-	Copyright (c) 2005 JSON.org
-	*/
-	
+	// The initial source code was taken from JSON.org
 	public final class JSON {
 		public static var isDoingTesting:Boolean = false;
 
@@ -66,7 +67,15 @@ package emulator.auto_copied
 	            }
 	            return '"' + res.join("") + '"';
 	        }
-	        var argToString:String = arg.toString();
+	        var argToString:String = "";
+	        try {
+	        	argToString = arg.toString();
+	        } catch(e:Error) {
+	        	if (isDoingTesting) 
+					throw e;
+				argToString = "ERROR in toString() method of "+AS3_vs_AS2.getClassName(arg)+" err="+AS3_vs_AS2.error2String(e);
+	        }
+	        
 	        if (argToString=="[object Object]") {
 	        	res = [];
 	        	for (var z:String in arg) {
@@ -330,6 +339,7 @@ package emulator.auto_copied
                 default:
                     return ch >= '0' && ch <= '9' ? this.num() : this.word();
             }
+            return {};
         }
 	    public function p_parse(_text:String):Object {
 	        text = _text;

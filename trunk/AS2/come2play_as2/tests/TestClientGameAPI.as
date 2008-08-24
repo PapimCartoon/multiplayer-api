@@ -96,7 +96,7 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 			var params:String = inputStr.substring(firstParen+1, lastParen);
 			// I must call the constructor directly
 			var className:String =
-				"come2play_as3.api.auto_generated::API_"+ 
+				"come2play_as2.api.auto_generated::API_"+ 
 				methodName.substr(0,1).toUpperCase()+methodName.substr(1);
 			var instanceObj:Object = AS3_vs_AS2.createInstanceOf(className);
 			var instance:API_Message = API_Message(instanceObj);

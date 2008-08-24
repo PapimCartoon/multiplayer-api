@@ -1,4 +1,6 @@
 package emulator {
+	import emulator.auto_generated.*;
+	
 	import fl.controls.*;
 	
 	import flash.display.*;
@@ -18,8 +20,8 @@ package emulator {
 		private var sInnerGotChanel:String;
 		private var sOuterDoChanel:String;
 		private var sOuterGotChanel:String;
-		private var lcInner:LocalConnection;
-		private var lcOuter:LocalConnection;
+		private var connectionToGame:LocalConnectionImplementation;
+		private var connectionToServer:LocalConnectionImplementation;
 		private var aUsers:Array;
 		private var txtUsers:TextField;
 		private var txtTurn:TextField;
@@ -50,17 +52,21 @@ package emulator {
 		}		
 		private function reportKey(is_key_down:Boolean,event:KeyboardEvent):void {
 			if (pnlInfo.visible) return;
-			var charCode:int = event.charCode;
-			var keyCode:int = event.keyCode;
-			var keyLocation:int = event.keyLocation;
-			var altKey:Boolean = event.altKey;
-			var ctrlKey:Boolean = event.ctrlKey;
-			var shiftKey:Boolean = event.shiftKey;
-			sendGotOperation( new API_GotKeyboardEvent(is_key_down, charCode, keyCode, keyLocation, altKey, ctrlKey, shiftKey));
-			doTrace(new API_DoTrace("gotKeyboardEvent", "is_key_down="+is_key_down+", charCode="+charCode+", keyCode="+keyCode+", keyLocation="+keyLocation+", altKey="+altKey+", ctrlKey="+ctrlKey+", shiftKey="+shiftKey));
+			var gotKeyboardEvent:API_GotKeyboardEvent = new API_GotKeyboardEvent();
+			gotKeyboardEvent.altKey = event.altKey;
+			gotKeyboardEvent.charCode = event.charCode;
+			gotKeyboardEvent.ctrlKey = event.ctrlKey;
+			gotKeyboardEvent.isKeyDown = is_key_down;
+			gotKeyboardEvent.keyCode = event.keyCode;
+			gotKeyboardEvent.keyLocation = event.keyLocation;
+			gotKeyboardEvent.shiftKey = event.shiftKey;
+			sendGotOperation(gotKeyboardEvent);
+			
+			//doTrace(new API_DoTrace("gotKeyboardEvent", "is_key_down="+is_key_down+", charCode="+charCode+", keyCode="+keyCode+", keyLocation="+keyLocation+", altKey="+altKey+", ctrlKey="+ctrlKey+", shiftKey="+shiftKey));
 		}
 		public function doTrace(msg:API_Message):void {	
-			sendDoOperation(new API_DoTrace("doTrace", [msg.methodName, msg.parameters]));
+			var doTrace:API_DoTrace = msg as API_DoTrace;
+			sendDoOperation(doTrace);
 		}
 		public function InfoContainer() {
 			stage.addEventListener(KeyboardEvent.KEY_UP, reportKeyUp);
@@ -152,13 +158,14 @@ package emulator {
 				pnlParams.addChild(prm);
 				aParams[i] = prm;
 			}
-			
+			/*
 			btnSend = new Button();
 			btnSend.label = "Send";
 			btnSend.visible = false;
 			btnSend.addEventListener(MouseEvent.CLICK, btnSendClick);
 			pnlParams.addChild(btnSend);
-			
+			*/
+
 			lblClient = new Label();
 			lblClient.x = 8;
 			lblClient.y = 1;
@@ -238,14 +245,19 @@ package emulator {
 			
 			sOuterPrefix = root.loaderInfo.parameters["prefix"];
 			sInnerPrefix = sOuterPrefix +Math.floor(Math.random() * 10000);
-			
+			connectionToGame = new LocalConnectionImplementation(this,true,sInnerPrefix);
+			connectionToServer = new LocalConnectionImplementation(this,false,sOuterPrefix);
 						
+			/*			
 			lcInner = new LocalConnection();
 			lcInner.client = this;
 			lcInner.addEventListener(StatusEvent.STATUS, onConnectionStatus);
 			lcOuter = new LocalConnection();
 			lcOuter.client = this;
 			lcOuter.addEventListener(StatusEvent.STATUS, onConnectionStatus);
+		
+			
+			
 			
 			sOuterDoChanel=Commands.getDoChanelString(sOuterPrefix);
 			sOuterGotChanel=Commands.getGotChanelString(sOuterPrefix);
@@ -253,19 +265,22 @@ package emulator {
 			sInnerDoChanel=Commands.getDoChanelString(sInnerPrefix);
 			sInnerGotChanel =Commands.getGotChanelString(sInnerPrefix);
 			lcInner.connect(sInnerDoChanel);
-			
+				*/
 			var fromDelay:int = parseInt(root.loaderInfo.parameters["delay_from"]);
 			var toDelay:int = parseInt(root.loaderInfo.parameters["delay_to"]);
 			
-			ddsDoOperations = new DelayDoSomething(doSomething, fromDelay, toDelay);
-			ddsGotOperations = new DelayDoSomething(doSomething, fromDelay, toDelay);
+			
+			ddsDoOperations = new DelayDoSomething(function (msg:API_Message):void { doSomething(msg, true) }, fromDelay, toDelay);
+			ddsGotOperations = new DelayDoSomething(function (msg:API_Message):void { doSomething(msg, false) }, fromDelay, toDelay);
 			
 			resizeStage(null);
 		}
 		
-		public function doSomething(obj:Object):void {
-			var msg:MessageToSend = obj as MessageToSend;
-			if (msg.channel!=null) lcInner.send(msg.channel, "localconnection_callback", msg.method, msg.args);
+		public function doSomething(msg:API_Message, isServer:Boolean):void {
+			if(isServer)
+				connectionToServer.sendMessage(msg);
+			else
+				connectionToGame.sendMessage(msg);
 		}
 		public function onConnectionStatus(evt:StatusEvent):void {
 			switch(evt.level) {
@@ -295,6 +310,7 @@ package emulator {
 			btnStart.visible = false;
 			lblWait.visible = true;
 			if(root.loaderInfo.parameters["oldgame"]=="0"){
+				// useful code
 				var rqst:URLRequest = new URLRequest(root.loaderInfo.parameters["game"] + "?prefix=" + sInnerPrefix);
 			}else {
 				if(root.loaderInfo.parameters["old_container"] == null){
@@ -399,7 +415,8 @@ package emulator {
 			txtSize.x = stage.stageWidth - txtSize.width - 13;
 		}
 		
-		
+		//todo: fix this
+		/*
 		private function btnSendClick(evt:MouseEvent):void {
 			try{
 				var prm:Param;
@@ -421,40 +438,39 @@ package emulator {
 				doTrace(new API_DoTrace("btnSendClick", "Error: " + err.getStackTrace()));
 			}
 		}
+		*/
 		
-		public function localconnection_callback(methodName:String, parameters:Array/*Object*/):void {
-			try{
-				var apiMsg:API_Message = API_Message.createMessage(methodName,parameters);
-				
-				if (apiMsg is API_GotMyUserId)
-					gotMyUserId(apiMsg as API_GotMyUserId );
-				else if (apiMsg is API_GotMatchStarted)
-					gotMatchStarted(apiMsg as API_GotMatchStarted);		
-				else if(apiMsg is API_GotUserInfo)
-					gotUserInfo(apiMsg as API_GotUserInfo);
-				else if(apiMsg is API_GotMatchEnded)
-					gotMatchEnded(apiMsg as API_GotMatchEnded);
-				else if(apiMsg is API_GotTurnOf)
-					gotTurnOf(apiMsg as API_GotTurnOf);
+        public function gotMessage(msg:API_Message,isServer:Boolean):void
+        {
+        try{		
+				if (msg is API_GotMyUserId)
+					gotMyUserId(msg as API_GotMyUserId );
+				else if (msg is API_GotMatchStarted)
+					gotMatchStarted(msg as API_GotMatchStarted);		
+				else if(msg is API_GotUserInfo)
+					gotUserInfo(msg as API_GotUserInfo);
+				else if(msg is API_GotMatchEnded)
+					gotMatchEnded(msg as API_GotMatchEnded);
 				
 
-					if (methodName.substring(0,"got".length)=="got")
-						sendGotOperation(apiMsg);
-					else if (methodName.substring(0,"do".length)=="do") {
-						sendDoOperation(apiMsg);
-					} else throw Error("Illegal message prefix!");
+				if (isServer)
+					sendDoOperation(msg);
+				else  
+					sendGotOperation(msg);
+
 
 				
 
 			} catch (err:Error) { 
 				MsgBox.Show(err.message, "Error: "+ err.getStackTrace());
-			}
+			}	
         }
+        
 		private function sendDoOperation(msg:API_Message):void {
-			ddsDoOperations.doSomething(new MessageToSend(sOuterDoChanel,msg.methodName,msg.parameters));
+			ddsDoOperations.doSomething(msg);
         }
 		private function sendGotOperation(msg:API_Message):void {
-        	ddsGotOperations.doSomething(new MessageToSend(sInnerGotChanel,msg.methodName,msg.parameters));
+        	ddsGotOperations.doSomething(msg);
         }
 		
 		//Got functions
@@ -534,7 +550,7 @@ package emulator {
 		public function gotMatchEnded(msg:API_GotMatchEnded):void { 
 			matchOverForIds(msg.finishedPlayerIds);
 		}
-		public function gotTurnOf(msg:API_GotTurnOf):void
+		/*public function gotTurnOf(msg:API_GotTurnOf):void
 		{
 			if(msg.userId==-1)
 				txtTurn.text = "";
@@ -548,27 +564,35 @@ package emulator {
 				}
 			}	
 			}
-		}
+		}*/
 		
 		//Do functions
 		public function do_client_protocol_error_with_description(error_description:Object):void {
 				MsgBox.Show(error_description.toString(), "Error");
 		}
+		
 	}
 }
 
 import flash.net.*;
 import emulator.*;
 import flash.events.StatusEvent;
+import emulator.auto_copied.LocalConnectionUser;
+import emulator.auto_generated.API_Message;
 
-class MessageToSend extends Object{
-	public var channel:String;
-	public var method:String;
-	public var args:Array;
-	
-	public function MessageToSend(_channel:String,_method:String,_args:Array) {
-		channel = _channel;
-		method = _method;
-		args = _args;
+class LocalConnectionImplementation extends LocalConnectionUser
+{
+	private var prefix:String;
+	private var isServer:Boolean;
+	private var infoContainer:InfoContainer;
+	public function LocalConnectionImplementation(infoContainer:InfoContainer, isServer:Boolean, prefix:String) {
+		this.isServer = isServer;
+		this.prefix = prefix;
+		this.infoContainer = infoContainer;
+		super(infoContainer,isServer,prefix);		
 	}
+	override public function gotMessage(msg:API_Message):void{
+		infoContainer.gotMessage(msg, isServer);
+	}
+        
 }

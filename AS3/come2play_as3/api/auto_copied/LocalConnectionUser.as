@@ -56,6 +56,7 @@ package come2play_as3.api.auto_copied
 		//Constructor
 		public function LocalConnectionUser(_someMovieClip:MovieClip, isServer:Boolean, sPrefix:String) {
 			try{
+				API_LoadMessages.useAll();	
 				someMovieClip = _someMovieClip;
 				if (sPrefix==null) {
 					trace("WARNING: didn't find 'prefix' in the loader info parameters. Probably because you are doing testing locally.\n\n\n\n\n\n");

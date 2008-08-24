@@ -902,7 +902,7 @@
 				serverEntry=doShuffleOn(shuffleIndexArr.splice(shuffleIndex,1),shuffleMapKeys.shift());
 				serverEntries.push(new ServerEntry(serverEntry.key,null,-1,[],serverEntry.changedTimeInMilliSeconds));
 			}
-			broadcast(new API_GotStateChanged(serverEntries));
+			broadcast(API_GotStateChanged.create(serverEntries));
 		}
 		private function doAllRevealState(msg:API_DoAllRevealState):void
 		{
@@ -927,7 +927,7 @@
 				}
 				
 			}
-			broadcast(new API_GotStateChanged(serverEnries));
+			broadcast(API_GotStateChanged.create(serverEnries));
 		}
 		private function doAllRequestRandomState(msg:API_DoAllRequestRandomState):void
 		{
@@ -938,7 +938,7 @@
 			else
 				serverEntry=new ServerEntry(msg.key,randomSeed,-1,null,getTimer()-matchStartTime);
 			doStoreOneState(serverEntry);
-			broadcast(new API_GotStateChanged([serverEntry]));
+			broadcast(API_GotStateChanged.create([serverEntry]));
 		}
 		private function doAllEndMatch(msg:API_DoAllEndMatch):void
 		{
@@ -965,7 +965,7 @@
 			}
 			
 			queueTimer.start();
-			broadcast(new API_GotMatchEnded(tempFinishedPlayersIds));
+			broadcast(API_GotMatchEnded.create(tempFinishedPlayersIds));
 			
 		}
 		
@@ -1089,7 +1089,7 @@
 					
 
 					
-					broadcast(new API_GotMatchEnded(over.user_ids));
+					broadcast(API_GotMatchEnded.create(over.user_ids));
 					if (cur_players == 0) {     
 						aNextPlayers=new Array();
 						txtMatchStartedTime.text = "";
@@ -1157,7 +1157,7 @@
 				else
 					stateEntries.push(new ServerEntry(tempServerState.key,null,tempServerState.storedByUserId,tempServerState.authorizedUserIds,getTimer()-matchStartTime));
 			}
-			u.sendOperation(new API_GotMatchStarted(aPlayers, finished_player_ids, extra_match_info, match_started_time,stateEntries));			
+			u.sendOperation(API_GotMatchStarted.create(aPlayers, finished_player_ids, extra_match_info, match_started_time,stateEntries));			
 		}
 		
 		public function addMessageLog(user:String, funcname:String, message:String):void {
@@ -1970,16 +1970,16 @@
 			if (u.wasRegistered) throw new Error("User "+u.Name+" called do_register_on_server twice!");
 			// send the info of "u" to all registered users (without user "u")
 			
-			broadcast(new API_GotUserInfo(u.ID, u.entries)); //note, this must be before you call u.wasRegistered = true 
+			broadcast(API_GotUserInfo.create(u.ID, u.entries)); //note, this must be before you call u.wasRegistered = true 
 			u.wasRegistered = true;		
-			u.sendOperation(new API_GotMyUserId(u.ID));
-			u.sendOperation(new API_GotCustomInfo(serverEntery));
+			u.sendOperation(API_GotMyUserId.create(u.ID));
+			u.sendOperation(API_GotCustomInfo.create(serverEntery));
 				
 			// important: note that this is not a broadcast!
 			// send to "u" the info of all the registered users
 			for each (var user:User in aUsers) {
 				if (user.wasRegistered)
-					u.sendOperation(new API_GotUserInfo(user.ID, user.entries));
+					u.sendOperation(API_GotUserInfo.create(user.ID, user.entries));
 			}		
 				
 			showUserInfo();
@@ -2029,7 +2029,7 @@
 					else
 						serverEntries.push(new ServerEntry(userEntry.key,userEntry.value,user.ID,null,getTimer()-matchStartTime));
 				}
-				tempUser.sendOperation(new API_GotStateChanged(serverEntries));
+				tempUser.sendOperation(API_GotStateChanged.create(serverEntries));
 			}
 			
 			showMatchState();
@@ -2095,7 +2095,7 @@
 			btnCancelGame.visible = false;
 			btnLoadGame.visible = true;
 			btnSaveGame.visible = false;
-			broadcast( new API_GotMatchEnded(arr) );
+			broadcast( API_GotMatchEnded.create(arr) );
 		}
 		
 		private function getAllUserIds():Array {

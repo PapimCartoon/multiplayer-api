@@ -1,3 +1,10 @@
+// IMPORTANT: THIS FILE IS A COPY OF THE FILE:
+//    'google_api_svn/as3/come2play_as3/api/auto_copied/AS3_vs_AS2.as'
+// so DO ***NOT*** CHANGE THIS FILE!!!
+// You should change the file in google_api_svn, 
+// and then run the java program that automatically copies and changes the as file.
+// We do not share the code because the flash goes crazy if it loads to SWFs files with classes of identical names and packages.
+// So we changed the package name when we copied the directory 'auto_copied'
 package emulator.auto_copied
 {
 import flash.display.DisplayObject;
@@ -42,6 +49,10 @@ public final class AS3_vs_AS2
 	}
 	public static function asArray(o:Object):Array {
 		return o as Array;
+	}
+	public static function toString(o:Object):String {		
+		if (o is XML) return (o as XML).toXMLString();
+		return o.toString();
 	}
 	
 	public static function delegate(thisObj:Object, handler:Function, ... args):Function {
@@ -142,6 +153,7 @@ public final class AS3_vs_AS2
 	}
 	public static function showError(graphics:MovieClip, msg:String):void {
 		trace("Showing error: "+msg);
+		if (graphics==null) return;
 		var blackBox:Sprite=new Sprite();
 		blackBox.graphics.beginFill(0x000000);
 		blackBox.graphics.drawRect(0,0,300,300);
@@ -162,6 +174,12 @@ public final class AS3_vs_AS2
 	}	
 	public static function LastIndexOf(arr:Array, val:Object):int {
 		return arr.lastIndexOf(val);
+	}	
+	public static function stringIndexOf(str:String, val:String):int {
+		return str.indexOf(val);
+	}	
+	public static function stringLastIndexOf(str:String, val:String):int {
+		return str.lastIndexOf(val);
 	}	
 }
 }

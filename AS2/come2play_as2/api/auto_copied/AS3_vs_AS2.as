@@ -103,7 +103,7 @@ class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 		// when you create a class, it is stored in _global.PACKAGES...CLASS_NAME
 		// so I traverse _global, and lookup the __proto__, and when I find it, as an optimization I store it as CLASS_NAME_FIELD
 		var prot:Object = o.__proto__;
-		var as2_class_name:String = "blablabla"; //SerializableClass.CLASS_NAME_FIELD;
+		var as2_class_name:String = SerializableClass.CLASS_NAME_FIELD; // also, the AS3 can't create an additional property name (we don't use dynamic classes)
 		if (prot.hasOwnProperty(as2_class_name)) return prot[as2_class_name]; // shortcut optimization (so we won't lookup the class name for every object)
 		var res:String = p_getClassName(_global, prot);
 		if (res==null) return typeof o; 

@@ -11,7 +11,8 @@ import come2play_as2.api.*;
 	{        
 		private var sPrefix:String;
 		public function BaseGameAPI(_someMovieClip:MovieClip) {
-			super(_someMovieClip, false, sPrefix = getPrefixFromFlashVars(_someMovieClip));	
+			super(_someMovieClip, false, sPrefix = getPrefixFromFlashVars(_someMovieClip));
+			API_LoadMessages.useAll();	
 			if (sPrefix==null) 
 				new SinglePlayerEmulator(_someMovieClip);		
 		}

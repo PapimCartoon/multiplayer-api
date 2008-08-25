@@ -43,7 +43,8 @@ else {
   }
   remove from waitingQueue all processed doAll messages 
 }
-add <allPlayers, msg> to unverifiedQueue 
+if(msg is not API_DoAllSetTurn)
+  add <allPlayers, msg> to unverifiedQueue 
 processMessage(user,msg)
 processWaitingQueue()
 }}}

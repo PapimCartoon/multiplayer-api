@@ -43,7 +43,7 @@
 		
 		private var userStateEntrys:Array;/*UserStateEntry*/ //state information
 	
-		private var serverEntery:Array;/*Entery*/ //extra server information
+		private var serverEntery:Array;/*InfoEntry*/ //extra server information
 		private var aParams:Array;
 		private var aPlayers:Array; //array of all the players
 		private var afinishedPlayers:Array;/*PlayerMatchOver*/
@@ -103,7 +103,6 @@
 		private var cmbLoadName:ComboBox;
 		private var btnLoadOK:Button;
 		private var btnLoadDelete:Button;
-		private var shrSavedGames:SharedObject;
 		private var shrParams:SharedObject;
 		private var iCurTurn:int;
 		private var MsgBox:MessageBox;
@@ -161,15 +160,7 @@
 			txtTooltip.y = 35;
 			txtTooltip.autoSize = TextFieldAutoSize.LEFT;
 			pnlCommands.addChild(txtTooltip);
-			
-			
-			//todo: delete this tab
-			//btnSend = new Button();
-			//btnSend.label = "Send";
-			//btnSend.visible = false;
-			//btnSend.addEventListener(MouseEvent.CLICK, btnSendClick);
-			//pnlCommands.addChild(btnSend);
-			
+				
 			pnlLog = new MovieClip;
 			pnlLog.y = 5;
 			pnlLog.x = 5;
@@ -196,16 +187,21 @@
 				aConditions[i] = "";
 				pnlLog.addChild(txt);
 			}
-			aFilters[0].width = 35;
-			aFilters[0].x = 0;
-			aFilters[1].width = 50;
-			aFilters[1].x = 35;
-			aFilters[2].width = 120;
-			aFilters[2].x = 85;
-			aFilters[3].width = 255;
-			aFilters[3].x = 205;
-			aFilters[4].width = 60;
-			aFilters[4].x = 460;
+			var textField1:TextField = aFilters[0]; 
+			textField1.width = 35;
+			textField1.x = 0;
+			var textField2:TextField = aFilters[1];
+			textField2.width = 50;
+			textField2.x = 35;
+			var textField3:TextField = aFilters[2];
+			textField3.width = 120;
+			textField3.x = 85;
+			var textField4:TextField = aFilters[3];
+			textField4.width = 255;
+			textField4.x = 205;
+			var textField5:TextField = aFilters[4];
+			textField5.width = 60;
+			textField5.x = 460;
 			
 			btnSearch = new Button();
 			btnSearch.label = "Search";
@@ -554,18 +550,7 @@
 				showMsg("Parameter 'game' must be passed in the url.","Error");
 				return;
 			}
-			
-			shrSavedGames = SharedObject.getLocal("SavedGames");
-			if (shrSavedGames.data.savedGames!=null) {
-				var gamesArr:Array = shrSavedGames.data.savedGames;
-				for each (var gameObject:Object in gamesArr) {
-					if (gameObject["classVersionNumberForSharedObject"]!=SavedGame.CLASS_VERSION_NUMBER) continue;
-					var game:SavedGame = new SavedGame();
-					for (var fieldName:String in gameObject)					
-						game[fieldName] = gameObject[fieldName];				
-					allSavedGames.push(game);
-				}
-			}
+			loadSavedGames();
 
 			enableSavedGames();
 			var arr:Array = [];
@@ -594,7 +579,7 @@
 		private function revealEntryToPlayers(serverEntry:ServerEntry,revealEntry:RevealEntry):void
 		{
 			var playerExist:Boolean;
-			for each(var revealPlayer:int in revealEntry)
+			for each(var revealPlayer:int in revealEntry.userIds)
 			{
 				playerExist=false;
 				for each(var serverPlayer:int in serverEntry)
@@ -626,7 +611,6 @@
 					var finishedCallbackMsg:API_DoFinishedCallback = msg as API_DoFinishedCallback;
 					addMessageLog(user.Name, msg.getMethodName(), msg.toString());
 					verefyAction(user,finishedCallbackMsg.callbackName);
-					//todo: check if works
 					user.do_finished_callback(finishedCallbackMsg.callbackName)
 				}
 				else if(msg is API_DoAllFoundHacker)
@@ -651,13 +635,6 @@
 					var waitingFunction:WaitingFunction=new WaitingFunction(user,msg);
 					waitingQueue.push(waitingFunction);
 					doNextInQueue();
-					/*
-					if(msg is API_DoStoreState)
-						doNextInQueue();
-					else
-						if( (unverifiedQueue.length == 0) && (waitingQueue.length == 1) )
-							doNextInQueue();
-							*/
 				}
 			} catch (err:Error) { 
 				showMsg(err.getStackTrace(), "Error");
@@ -674,14 +651,48 @@
 			}
 			return false;
 		}
-		private function doAllInLine():Boolean
+		private function processMessage(msg:API_Message):void
 		{
-			for each(var waitingFunction:WaitingFunction in waitingQueue)
+			if(msg is API_DoAllSetTurn)
 			{
-				if(!(waitingFunction.msg is API_DoStoreState))
-					return true
+				var setTurnMessage:API_DoAllSetTurn=msg as API_DoAllSetTurn;
+				doAllSetTurn(setTurnMessage);
 			}
-			return false;
+			else if(msg is API_DoAllShuffleState)
+			{
+				var shuffleStateMessage:API_DoAllShuffleState=msg as API_DoAllShuffleState;
+				doAllShuffleState(shuffleStateMessage);	
+			}
+			else if(msg is API_DoAllEndMatch)
+			{
+				var endMatchMessage:API_DoAllEndMatch=msg as API_DoAllEndMatch;	
+				doAllEndMatch(endMatchMessage);
+			}
+			else if(msg is API_DoAllRequestRandomState)
+			{
+				var randomStateMessage:API_DoAllRequestRandomState=msg as API_DoAllRequestRandomState;	
+				doAllRequestRandomState(randomStateMessage);
+			}
+			else if(msg is API_DoAllRevealState)
+			{
+				var revealStateMessage:API_DoAllRevealState=msg as API_DoAllRevealState;	
+				doAllRevealState(revealStateMessage);
+			}
+			else if(msg is API_DoAllRequestStateCalculation)
+			{
+				var requestStateCalculation:API_DoAllRequestStateCalculation=msg as API_DoAllRequestStateCalculation;	
+				doAllRequestStateCalculation(requestStateCalculation);
+			}
+			else if(msg is API_DoAllStoreStateCalculation)
+			{
+				var storeStateCalculation:API_DoAllStoreStateCalculation=msg as API_DoAllStoreStateCalculation;	
+				doAllStoreStateCalculation(storeStateCalculation);
+			}
+			else if(msg is API_DoAllStoreState)
+			{
+				var storeState:API_DoAllStoreState = msg as API_DoAllStoreState;
+				doAllStoreState(storeState);
+			}
 		}
 		private function doNextInQueue():void
 		{
@@ -692,59 +703,26 @@
 				doStoreState(waitingFunction.user,waitingFunction.msg as API_DoStoreState);
 				waitingQueue.shift();
 			}
-			else if(waitingFunction.msg is API_DoAllSetTurn)
+			else
 			{
-				var setTurnMessage:API_DoAllSetTurn=checkDoAlls() as API_DoAllSetTurn;
-				if(setTurnMessage==null)
+				if(unverifiedQueue.length != 0) return;
+				var tempMessage:API_Message = checkDoAlls();
+				if(tempMessage == null)
 					return;
-				doAllSetTurn(setTurnMessage);
-				//because we have no callback in set turn 
-				//we have to call doNextInQueue()
-				doNextInQueue();
+				processMessage(tempMessage);
 			}
-			else if(waitingFunction.msg is API_DoAllShuffleState)
-			{
-				var shuffleStateMessage:API_DoAllShuffleState=checkDoAlls() as API_DoAllShuffleState;
-				if(shuffleStateMessage==null)
-					return;
+			
+			if (!(tempMessage is API_DoAllSetTurn))
 				unverifiedQueue.push(new UnverifiedFunction(waitingFunction,aPlayers.concat()));
-				doAllShuffleState(shuffleStateMessage);	
-			}
-			else if(waitingFunction.msg is API_DoAllEndMatch)
-			{
-				var endMatchMessage:API_DoAllEndMatch=checkDoAlls() as API_DoAllEndMatch;
-				if(endMatchMessage==null)
-					return;
-				unverifiedQueue.push(new UnverifiedFunction(waitingFunction,aPlayers.concat()));	
-				doAllEndMatch(endMatchMessage);
-			}
-			else if(waitingFunction.msg is API_DoAllRequestRandomState)
-			{
-				var randomStateMessage:API_DoAllRequestRandomState=checkDoAlls() as API_DoAllRequestRandomState;
-				if(randomStateMessage==null)
-					return;
-				unverifiedQueue.push(new UnverifiedFunction(waitingFunction,aPlayers.concat()));	
-				doAllRequestRandomState(randomStateMessage);
-			}
-			else if(waitingFunction.msg is API_DoAllRevealState)
-			{
-				var revealStateMessage:API_DoAllRevealState=checkDoAlls() as API_DoAllRevealState;
-				if(revealStateMessage==null)
-					return;
-				unverifiedQueue.push(new UnverifiedFunction(waitingFunction,aPlayers.concat()));	
-				doAllRevealState(revealStateMessage);
-			}
 			queueTimer.reset();
 			queueTimer.start();
-			
+			doNextInQueue();
 		}
 		private function verefyAction(user:User,methodName:String):void
 		{
-			
+			//not testing function
 			for each(var unverifiedFunction:UnverifiedFunction in unverifiedQueue)
 			{
-				if(methodName == unverifiedFunction.msg.getMethodName())
-				{
 					if(unverifiedFunction.removeUnverifiedUser(user.ID))
 					{
 						if(unverifiedFunction.length() == 0)
@@ -753,28 +731,18 @@
 						}
 						return;
 					}
-				}
 			}
-
+			
 		}
 		private function actionVerefied():void
 		{
+			
 			var waitingFunction:UnverifiedFunction=unverifiedQueue.shift();
-			if(waitingFunction is API_DoStoreState)
+			if(waitingFunction.msg is API_GotStateChanged)
 			{
-				var msg:API_DoStoreState = waitingFunction.msg as API_DoStoreState;
-				var serverEntry:ServerEntry;
-				for each (var userEntry:UserEntry in msg.userEntries)
+				var msg:API_GotStateChanged = waitingFunction.msg as API_GotStateChanged;
+				for each (var serverEntry:ServerEntry in msg.serverEntries)
 				{
-					serverEntry=new ServerEntry();
-					serverEntry.key = userEntry.key;
-					serverEntry.value = userEntry.value;
-					serverEntry.storedByUserId = waitingFunction.user.ID;
-					serverEntry.changedTimeInMilliSeconds = getTimer()-matchStartTime;
-					if(userEntry.isSecret)
-						serverEntry.authorizedUserIds=[waitingFunction.user.ID];
-					else
-						serverEntry.authorizedUserIds=null;
 					doStoreOneState(serverEntry);
 				}	
 			}
@@ -862,7 +830,8 @@
 		{
 			for(var i:int=0;i<userStateEntrys.length;i++)
 			{
-				if(userStateEntrys[i].key==testKey)
+				var testedServerEntry:ServerEntry = userStateEntrys[i];
+				if(testedServerEntry.key==testKey)
 					return i;	
 			}
 			return -1;	
@@ -876,20 +845,75 @@
 			return userStateEntry;
 		}
 		//do all function's
+		private function doAllStoreState(msg:API_DoAllStoreState):void
+		{
+			var serverEntries:Array =/*ServerEntry*/ new Array();
+			for each(var userEntry:UserEntry in msg.userEntries)
+			{
+				if(userEntry.isSecret)
+				{
+					serverEntries.push(ServerEntry.create(userEntry.key,null,-1,[],getTimer()-matchStartTime));
+					doStoreOneState(ServerEntry.create(userEntry.key,userEntry.value,-1,[],getTimer()-matchStartTime));
+				}
+				else
+				{
+					serverEntries.push(ServerEntry.create(userEntry.key,userEntry.value,-1,null,getTimer()-matchStartTime));
+					doStoreOneState(ServerEntry.create(userEntry.key,userEntry.value,-1,null,getTimer()-matchStartTime));	
+				}
+			}	
+			broadcast(API_GotStateChanged.create(serverEntries));
+		}
+		private function doAllStoreStateCalculation(msg:API_DoAllStoreStateCalculation):void
+		{
+			var serverEntries:Array =/*ServerEntry*/ new Array();
+			for each(var userEntry:UserEntry in msg.userEntries)
+			{
+				if(userEntry.isSecret)
+				{
+					serverEntries.push(ServerEntry.create(userEntry.key,null,-1,[],getTimer()-matchStartTime));
+					doStoreOneState(ServerEntry.create(userEntry.key,userEntry.value,-1,[],getTimer()-matchStartTime));
+				}
+				else
+				{
+					serverEntries.push(ServerEntry.create(userEntry.key,userEntry.value,-1,null,getTimer()-matchStartTime));
+					doStoreOneState(ServerEntry.create(userEntry.key,userEntry.value,-1,null,getTimer()-matchStartTime));	
+				}
+			}	
+			broadcast(API_GotStateChanged.create(serverEntries));	
+		}
+		private function doAllRequestStateCalculation(msg:API_DoAllRequestStateCalculation):void
+		{
+			var serverEntries:Array =/*ServerEntry*/ new Array();
+			for each(var key:String in msg.keys)
+			{
+				var keyPos:int=isKeyExist(key);
+				if(keyPos != -1)
+					serverEntries.push(userStateEntrys[keyPos]);
+				else
+				{
+					showMsg("Key " + key + " does not exist","Error");
+					addMessageLog("Server","Error","Key " + key + " does not exist")
+					gameOver();
+					return;
+				}
+			}
+			broadcast(API_GotRequestStateCalculation.create(serverEntries));
+		}
 		private function doAllShuffleState(msg:API_DoAllShuffleState):void
 		{
 			
 			var shuffleIndex:int;
 			var shuffleIndexArr:Array=new Array();
 			var shuffleMapKeys:Array=new Array();
-			
+			var tempServerEntry:ServerEntry;
 			for(var i:int=0;i<msg.keys.length;i++)
 			{
 				shuffleIndex=isKeyExist(msg.keys[i])
 				if(shuffleIndex!=-1)	
 				{
+					tempServerEntry = userStateEntrys[shuffleIndex];
 					shuffleIndexArr.push(shuffleIndex);
-					shuffleMapKeys.push(userStateEntrys[shuffleIndex].key);
+					shuffleMapKeys.push(tempServerEntry.key);
 				}
 				else
 				{
@@ -905,7 +929,6 @@
 			var shuffleLen:int=shuffleIndexArr.length;
 			var serverEntry:ServerEntry;
 			var serverEntries:Array/*ServerEntry*/
-			var tempServerEntry:ServerEntry;
 			for (i=0;i<shuffleLen;i++)
 			{
 				shuffleIndex=Math.floor(Math.random()*(shuffleIndexArr.length+1))
@@ -930,7 +953,10 @@
 				if(revealIndex!=-1)	
 				{
 					var serverEntry:ServerEntry=userStateEntrys[revealIndex];
-					revealEntryToPlayers(serverEntry,revealEntry);
+					if(revealEntry.userIds == null)
+						serverEntry.authorizedUserIds = null;			
+					else
+						revealEntryToPlayers(serverEntry,revealEntry);
 					serverEnries.push(serverEntry);
 				}
 				else
@@ -999,140 +1025,6 @@
 		{
 			iCurTurn=msg.userId;
 		}
-		/*
-		private function commitDoAllEndMatch(calledMethodArr:Array):void
-		{
-			var tempLen:Number=calledMethodArr.length;
-			for(var i:Number=1;i<tempLen;i++)
-			{
-				for(var j:Number=0;j<calledMethodArr[i].length;j++)
-				{
-					if(!calledMethodArr[0].parameters[0][j]==calledMethodArr[i].parameters[0][j])
-						{
-							//error
-							return;
-						}
-				}
-			}
-			for each (var usr:User in aUsers)
-			{
-				if (usr.ID == iCurTurn) 
-				{
-					do_end_my_turn(usr, null);
-					break;
-				}
-			}	
-			calledMethodArr[0].unverifiedPlayers = aPlayers;
-			unverifiedQue.push(calledMethodArr[0]);
-			gameOver();
-		}
-		*/
-		/*
-		public function doAllEndMatch(user:User, user_ids:Array, scores:Array, pot_percentages:Array):void {			
-			if (user_ids.length==0) {
-				addMessageLog("Server", "do_agree_on_match_over", "Error: Array user_ids can't be empty.");
-				return;
-			}
-			for each (var u_id:int in user_ids) {
-				if (aPlayers.indexOf(u_id) == -1) {
-					addMessageLog("Server", "do_agree_on_match_over", "Error: Player with ID "+u_id+" doesn't exist.");
-				return;
-				}
-			}
-			if (scores.length != user_ids.length) {
-				addMessageLog("Server", "do_agree_on_match_over", "Error: Length of user_ids doesn't equal to length of scores.");
-				return;
-			}
-			if (pot_percentages!=null && pot_percentages.length != user_ids.length) {
-				addMessageLog("Server", "do_agree_on_match_over", "Error: Length of user_ids doesn't equal to length of pot_percentages.");
-				return;
-			}
-			if (pot_percentages != null) {
-				for each (var percent:int in pot_percentages) {
-					if (percent < -1 || percent > 100) {
-						addMessageLog("Server", "do_agree_on_match_over", "Error: "+percent+" is out of range.");
-						return;
-					}
-				}
-			}
-			var findMatchOver:MatchOver = null;
-			var over:MatchOver;
-			var usr:User;
-			for each (over in aMatchOvers) {
-				if (compareArrays(over.user_ids, user_ids)) {
-					if(compareArrays(over.scores, scores) && compareArrays(over.pot_percentages, pot_percentages)) {
-						findMatchOver = over; 
-						break;
-					}else {
-						addMessageLog(user.Name, "do_agree_on_match_over", "Error: function parameters are different from previous call.");
-						showMsg("do_agree_on_match_over: Function parameters are different from previous call.");
-						gameOver()
-						showMatchOver();
-						return;
-					}
-				}
-			}
-			over = findMatchOver;
-			if (over==null) {
-				over = new MatchOver();
-				over.user_ids = user_ids;
-				over.scores = scores;
-				over.pot_percentages = pot_percentages;
-				over.recieved_from = new Array();
-				aMatchOvers.push(over);
-				
-				if (iCurTurn==-1 && isTurnBasedGame) {
-					addMessageLog("Server", "do_agree_on_match_over", "Warning: in a turn-based game, the first call to do_agree_on_match_over should be during someone's turn");
-				}
-			}
-			if (over.recieved_from.indexOf(user.ID) == -1) {
-				over.recieved_from.push(user.ID);
-				var all_agreed:Boolean = true;
-				for each (usr in aUsers) {
-					if (!usr.Ended && aPlayers.indexOf(usr.ID)!=-1 && over.recieved_from.indexOf(usr.ID) == -1) {
-						all_agreed = false;
-						break;
-					}
-				}
-				if (all_agreed) {
-					if (over.user_ids.indexOf(iCurTurn) != -1) {
-						for each (usr in aUsers) {
-							if (usr.ID == iCurTurn) {
-								do_end_my_turn(usr, null);
-								break;
-							}
-						}
-					}
-					var cur_players:int = 0;
-					for each (usr in aUsers) {
-						if (over.user_ids.indexOf(usr.ID) != -1) {
-							usr.Ended = true;
-						}
-						if (aPlayers.indexOf(usr.ID)!=-1 && !usr.Ended) {
-							cur_players++;
-						}
-					}
-					
-
-					
-					broadcast(API_GotMatchEnded.create(over.user_ids));
-					if (cur_players == 0) {     
-						aNextPlayers=new Array();
-						txtMatchStartedTime.text = "";
-						bGameEnded = true;
-						txtExtraMatchInfo.visible = true;
-						txtMatchStartedTime.visible = true;
-						btnNewGame.visible = true;
-						btnCancelGame.visible = false;
-						btnLoadGame.visible = true;
-						btnSaveGame.visible = false;
-					}
-				}
-			}
-			showMatchOver();
-		}
-		*/
-
 		
 		private function getFinishedPlayerIds():Array/*int*/ {
 			var finishedPlayerIds:Array/*int*/ = [];
@@ -1140,12 +1032,13 @@
 				finishedPlayerIds = [aPlayers];
 			}else {				
 				for each (var finishedGame:FinishHistory in afinishedPlayers) {
-					for(var i:int=0;i<finishedGame.finishedPlayers.length;i++)
+					for each (var playerMatchOver:PlayerMatchOver in finishedGame.finishedPlayers)
 					{
-						finishedPlayerIds.push(finishedGame.finishedPlayers[i].playerId);
+						finishedPlayerIds.push(playerMatchOver.playerId);
 					}
 				}
 			}
+			
 			return finishedPlayerIds;
 		}
 		private function getOngoingPlayerIds():Array/*int*/ {
@@ -1173,30 +1066,17 @@
 			var finished_player_ids:Array = getFinishedPlayerIds();
 			u.Ended = finished_player_ids.indexOf(u.ID)!=-1;
 			var stateEntries:Array=new Array();
-			//todo : put matchStartTime in correct place
-			matchStartTime=getTimer();
 			var serverEntry:ServerEntry;
 			for each(var tempServerState:ServerEntry in userStateEntrys)
 			{
 				serverEntry=new ServerEntry();
-				serverEntry.key = tempServerState.key;
-				serverEntry.changedTimeInMilliSeconds = getTimer()-matchStartTime;
-				serverEntry.storedByUserId = tempServerState.storedByUserId;
 				if(tempServerState.authorizedUserIds==null)
-				{
-					serverEntry.authorizedUserIds = null;
-					serverEntry.value = tempServerState.value;	
-				}
+					serverEntry = ServerEntry.create(tempServerState.key,tempServerState.value,tempServerState.storedByUserId,null,tempServerState.changedTimeInMilliSeconds);
 				else if(isInArray(u.ID,tempServerState.authorizedUserIds))
-				{
-					serverEntry.authorizedUserIds = tempServerState.authorizedUserIds;
-					serverEntry.value = tempServerState.value;					
-				}
+					serverEntry = ServerEntry.create(tempServerState.key,tempServerState.value,tempServerState.storedByUserId,tempServerState.authorizedUserIds,tempServerState.changedTimeInMilliSeconds);				
 				else
-				{
-					serverEntry.authorizedUserIds = tempServerState.authorizedUserIds;
-					serverEntry.value = null;	
-				}
+					serverEntry = ServerEntry.create(tempServerState.key,null,tempServerState.storedByUserId,tempServerState.authorizedUserIds,tempServerState.changedTimeInMilliSeconds);
+				stateEntries.push(serverEntry);
 			}
 			u.sendOperation(API_GotMatchStarted.create(aPlayers,finished_player_ids,extra_match_info,match_started_time,stateEntries));			
 		}
@@ -1312,26 +1192,33 @@
 		}
 		
 		private function resizeTable():void {
-			tblLog.columns[0].width = aFilters[0].width = tblLog.width*(35/520);
-			aFilters[0].x = 0;
-			tblLog.columns[1].width = aFilters[1].width = tblLog.width*(50/520);
-			aFilters[1].x = aFilters[0].x+aFilters[0].width;
-			tblLog.columns[2].width = aFilters[2].width = tblLog.width*(120/520);
-			aFilters[2].x = aFilters[1].x+aFilters[1].width;
-			tblLog.columns[3].width = aFilters[3].width = tblLog.width*(255/520);
-			aFilters[3].x = aFilters[2].x+aFilters[2].width;
-			tblLog.columns[4].width = aFilters[4].width = tblLog.width*(60/520);
-			aFilters[4].x = aFilters[3].x+aFilters[3].width;
+			var textField1:TextField = aFilters[0] 
+			var textField2:TextField = aFilters[1]
+			var textField3:TextField = aFilters[2]
+			var textField4:TextField = aFilters[3]
+			var textField5:TextField = aFilters[4]
+			tblLog.columns[0].width = textField1.width = tblLog.width*(35/520);
+			textField1.x = 0;
+			tblLog.columns[1].width = textField2.width = tblLog.width*(50/520);
+			textField2.x = textField1.x+textField1.width;
+			tblLog.columns[2].width = textField3.width = tblLog.width*(120/520);
+			textField3.x = textField2.x+textField2.width;
+			tblLog.columns[3].width = textField4.width = tblLog.width*(255/520);
+			textField4.x = textField3.x+textField3.width;
+			tblLog.columns[4].width = textField5.width = tblLog.width*(60/520);
+			textField5.x = textField4.x+textField4.width;
 			
 			setTimeout(resizeColumn,100,null);
 		}
 		
 		private function resizeColumn(evt:DataGridEvent):void {
 			var sum:int = 0;
+			var tempTextField:TextField;
 			for (var i:int = 0; i < 5; i++) {
-				aFilters[i].width = tblLog.columns[i].width;
-				aFilters[i].x = sum;
-				sum += aFilters[i].width;
+				tempTextField = aFilters[i];
+				tempTextField.width = tblLog.columns[i].width;
+				tempTextField.x = sum;
+				sum += tempTextField.width;
 			}
 		}
 		
@@ -1380,9 +1267,11 @@
 			tblLog.removeAll();
 			var msg:Message;
 			var str:Array;
+			var tempTextField:TextField;
 			for (var i:int = 0; i < 5; i++) {
-				aFilters[i].text = aFilters[i].text.replace(/^\s+|\s+$/g, "");
-				aConditions[i] = aFilters[i].text;
+				tempTextField = aFilters[i];
+				tempTextField.text = tempTextField.text.replace(/^\s+|\s+$/g, "");
+				aConditions[i] = tempTextField.text;
 			}
 			for each (msg in aMessages) {
 				if ((aConditions[0]=="" || msg.num==aConditions[0]) && (aConditions[1]=="" || msg.sender.indexOf(aConditions[1])>-1) && (aConditions[2]=="" || msg.funcname.indexOf(aConditions[2])>-1) && (aConditions[3]=="" || msg.message.indexOf(aConditions[3])>-1) && (aConditions[4]=="" || msg.time.indexOf(aConditions[4])>-1)) {
@@ -1600,9 +1489,10 @@
 				var itemObj:Object;
 				for(var i:int=0;i<userStateEntrys.length;i++){
 					itemObj=new Object();
-					itemObj[COL_player_ids]=userStateEntrys[i].userId
-					itemObj[COL_key]=userStateEntrys[i].key
-					itemObj[COL_data]=userStateEntrys[i].getParametersAsString()
+					var tempServerEntry:ServerEntry = userStateEntrys[i];
+					itemObj[COL_player_ids]=tempServerEntry.storedByUserId;
+					itemObj[COL_key]=tempServerEntry.key
+					itemObj[COL_data]=tempServerEntry.getParametersAsString()
 					tblInfo.addItem(itemObj);
 					tblInfo.verticalScrollPosition = tblInfo.maxVerticalScrollPosition+30;
 				}
@@ -1617,8 +1507,9 @@
 				var itemObj:Object;
 				for(var i:int=0;i<serverEntery.length;i++){
 					itemObj=new Object();
-					itemObj[COL_key]=serverEntery[i].key;
-					itemObj[COL_data]=serverEntery[i].value;
+					var tempServerInfo:InfoEntry = serverEntery[i];
+					itemObj[COL_key]=tempServerInfo.key;
+					itemObj[COL_data]=tempServerInfo.value;
 					tblInfo.addItem(itemObj);
 					tblInfo.verticalScrollPosition = tblInfo.maxVerticalScrollPosition+30;
 				}
@@ -1663,10 +1554,11 @@
 					tempLen=matchOver.finishedPlayers.length;
 					for(var i:int=0;i<tempLen;i++)
 					{
-						itemObj[COL_player_ids] += matchOver.finishedPlayers[i].playerId;
-						itemObj[COL_scores] += matchOver.finishedPlayers[i].score;
-						itemObj[COL_pot_percentages] += matchOver.finishedPlayers[i].potPercentage;	
-						itemObj[COL_total_pot_percentages] +=String(((matchOver.pot*matchOver.finishedPlayers[i].potPercentage)/100))
+						var playerMatchOver:PlayerMatchOver = matchOver.finishedPlayers[i];
+						itemObj[COL_player_ids] += playerMatchOver.playerId;
+						itemObj[COL_scores] += playerMatchOver.score;
+						itemObj[COL_pot_percentages] += playerMatchOver.potPercentage;	
+						itemObj[COL_total_pot_percentages] +=String(((matchOver.pot*playerMatchOver.potPercentage)/100))
 						if((tempLen) != (i+1))
 						{
 							itemObj[COL_player_ids] += ",";
@@ -1694,14 +1586,14 @@
 				tblInfo.removeAll();
 				
 				var arr1:Array;
-				var savedGame:SavedGame;
-				for each (savedGame in allSavedGames) {
+				for each (var savedGame:SavedGame in allSavedGames) {
 					try{
 						if (savedGame.playersNum == User.PlayersNum && savedGame.gameName==root.loaderInfo.parameters["game"]) {
 							var itemObj:Object;
 							arr1=new Array();
 							for(var j:int=0;j<savedGame.entries.length;j++){
-								arr1.push("{user_id: "+savedGame.entries[j].userId+", key: "+savedGame.entries[j].key+", data: "+savedGame.entries[j].toString()+"}");
+								var tempServerEntry:ServerEntry = savedGame.entries[j];
+								arr1.push("{user_id: "+tempServerEntry.storedByUserId+", key: "+tempServerEntry.key+", data: "+tempServerEntry.toString()+"}");
 							}
 							itemObj=new Object();
 							itemObj[COL_name]=savedGame.name;
@@ -1779,9 +1671,19 @@
 			if (cmbLoadName.selectedIndex == -1) {
 				return;
 			}
-			var savedGame:SavedGame = cmbLoadName.selectedItem.data;
-			userStateEntrys=savedGame.entries.concat();
+			var savedGame:SavedGame =cmbLoadName.selectedItem.data;
+			userStateEntrys = savedGame.entries.concat();
 			afinishedPlayers=savedGame.finishedGames.concat();
+			for each(var savedFinishedPlayer:FinishHistory in afinishedPlayers)
+			{
+				var tempPotPercentage:Number = 0;
+				for each(var playerMatchOver:PlayerMatchOver in savedFinishedPlayer.finishedPlayers)
+				{
+					tempPotPercentage += playerMatchOver.potPercentage
+					FinishHistory.totalFinishingPlayers ++;
+				}
+				FinishHistory.wholePot -= FinishHistory.wholePot*tempPotPercentage / 100;
+			}			
 			extra_match_info=savedGame.extra_match_info;
 			match_started_time = savedGame.match_started_time;
 			if(extra_match_info!=null){
@@ -1842,7 +1744,7 @@
 		}
 		
 		private function enableSavedGames():void {
-			var j:int = 0;
+			var j:int = 0;			
 			for each (var savedGame:SavedGame in allSavedGames) {
 				if (savedGame.playersNum == User.PlayersNum && savedGame.gameName == root.loaderInfo.parameters["game"]) {
 					j++;
@@ -1876,6 +1778,15 @@
 		}
 		
 		private var allSavedGames:Array/*SavedGame*/ = [];
+		private var shrSavedGames:SharedObject;
+		private function loadSavedGames():void {			
+			shrSavedGames = SharedObject.getLocal("SavedGames");
+			//addMessageLog("Server","Debug",JSON.stringify(shrSavedGames.data.savedGames))
+			//shrSavedGames.data.savedGames = [];//this deletes all saved games
+			if (shrSavedGames.data.savedGames!=null) {
+				allSavedGames = SerializableClass.deserialize(shrSavedGames.data.savedGames) as Array;								
+			}
+		} 
 		private function saveToSharedObject():void {
 			shrSavedGames.data.savedGames = allSavedGames;
 			shrSavedGames.flush();
@@ -1938,8 +1849,8 @@
 			afinishedPlayers=new Array();
 			userStateEntrys=new Array();
 			showMatchState();
-			//aMatchOvers = new Array();
 			showMatchOver();
+			matchStartTime=getTimer();
 			var usr:User;
 			for each (usr in aUsers) {
 				send_got_match_started(usr);
@@ -1967,39 +1878,6 @@
 			return true;
 		}
 		
-		
-		//todo: get rid of command tab
-		/*private function btnSendClick(evt:MouseEvent):void {
-			try{
-				if (cmbTarget.selectedItem == null) {
-					throw new Error("Please, select target");
-				}
-				if (cmbCommand.selectedItem == null) {
-					throw new Error("Please, select command");
-				}
-				var target:int = cmbTarget.selectedItem.data;
-				var command_name:String = cmbCommand.selectedItem.data;
-				var usr:User;
-				var i:int;
-				//var args:Array = Commands.findCommand(command_name);
-				var parameters:Array = [];
-				//for (i=0; i< args.length; i++) {
-					//var param:String = aParams[i].Value;
-					//var param_type:String = args[i][1];
-					//parameters.push( Commands.convertToType(param, param_type) );
-				//}
-
-				for each (usr in aUsers) {
-					if(usr.ID==target || target==-1){						
-						usr.sendOperation(API_Message.createMessage(command_name, parameters));
-					}
-				}
-				showMsg("Command was send", "Message");
-			}catch (err:Error) {
-				showMsg(err.getStackTrace(), "Error");
-				addMessageLog("Server", "btnSendClick", "Error: " + err.getStackTrace());
-			}
-		}*/
 		
 		//Do functions
 		
@@ -2091,12 +1969,10 @@
 
 				tempUser.sendOperation(API_GotStateChanged.create(serverEntries));
 			}
-			var waitingFunction:WaitingFunction = new WaitingFunction(user,API_GotStateChanged.create(serverEntries));
-			unverifiedQueue.push(new UnverifiedFunction(waitingFunction,aPlayers.concat()));
 			showMatchState();
 			
 		}
-		private function doStoreOneState(stateEntery:ServerEntry):void {			
+		private function doStoreOneState(stateEntery:ServerEntry):void {		
 			if (stateEntery.key == "") {
 				addMessageLog("Server", "do_store_match_state", "Error: Can't store match state, key is empty");
 				showMsg("Error: Can't store match state, key is empty","Error");
@@ -2110,7 +1986,8 @@
 			var isRewrite:Boolean=false;
 			for(var index:int=0;index<userStateEntrys.length;index++)
 			{
-				if(userStateEntrys[index].key == stateEntery.key)
+				var tempServerState:ServerEntry = userStateEntrys[index];
+				if(tempServerState.key == stateEntery.key)
 				{
 					isRewrite=true;
 					break;
@@ -2172,25 +2049,7 @@
 			return null;
 		}			
 		public function do_finished_callback(user:User, methodName:String):void 
-		{
-			/*
-			for(var i:Number;i<unverifiedQue.length;i++)
-			{
-				if(unverifiedQue.indexOf(user.ID)!=-1)
-				{
-					spliceNum(unverifiedQue[i].unverifiedPlayers,user.ID);
-					if(unverifiedQue[i].unverifiedPlayers.length==0)
-					{
-						queTimer.reset();
-						unverifiedQue.splice(i,1);
-						if(unverifiedQue.length==0)
-							checkDoAlls();
-					}
-					break;
-				}	
-			}
-			*/
-			
+		{			
 			verefyAction(user,methodName)
 			user.do_finished_callback(methodName);
 		}
@@ -2253,17 +2112,18 @@ class User extends LocalConnectionUser {
 			
 			actionQueue = new Array();
 			var tempEntery:InfoEntry;
-			//todo: find out whats going on here
-			for (var i:int = 0; sServer.root.loaderInfo.parameters["col" + i] != null;i++ ) {
-				tempEntery=new InfoEntry();
-				tempEntery.key = sServer.root.loaderInfo.parameters["col" + i];
-				tempEntery.value = sServer.root.loaderInfo.parameters["val" + (iID - 1) + i];	
-			}
-			
 			tempEntery=new InfoEntry();
 			tempEntery.key = "name";
 			tempEntery.value = sName;
 			entries[0]=tempEntery;
+			for (var i:int = 1; sServer.root.loaderInfo.parameters["col" + i] != null;i++ ) {
+				tempEntery=new InfoEntry();
+				tempEntery.key = sServer.root.loaderInfo.parameters["col" + i];
+				tempEntery.value = sServer.root.loaderInfo.parameters["val" + (iID - 1) + i];	
+				entries.push(tempEntery);
+			}
+			
+
 			
 		}catch (err:Error) {
 			sServer.addMessageLog("Server", "User", "Error: " + err.getStackTrace());
@@ -2309,7 +2169,6 @@ class User extends LocalConnectionUser {
     }
 	
     override public function gotMessage(msg:API_Message):void {
-		// todo
 		sServer.got_user_localconnection_callback(this, msg);
 	}
 	
@@ -2330,19 +2189,6 @@ class Message {
 	public var num:int;
 }
 
-class SavedGame { 
-	public static const CLASS_VERSION_NUMBER:int = 3; 
-	public var classVersionNumberForSharedObject:int = CLASS_VERSION_NUMBER;
-	public var entries:Array;/*StateEntries*/
-	public var players:Array;
-	public var finishedGames:Array;/*FinishHistory*/
-	public var extra_match_info:Object;
-	public var match_started_time:int;
-	public var playersNum:int;
-	public var curTurn:int;
-	public var name:String;
-	public var gameName:String;
-}
 class UnverifiedFunction{
 	public var unverifiedUsers:Array;
 	public var user:User;
@@ -2376,10 +2222,4 @@ class WaitingFunction{
 		this.user = user;
 		this.msg = msg;
 	}
-}
-class FinishHistory{
-	public static var wholePot:Number=100;
-	public static var totalFinishingPlayers:int=0;
-	public var pot:int;
-	public var finishedPlayers:Array=new Array/*PlayerMatchOver*/;
 }

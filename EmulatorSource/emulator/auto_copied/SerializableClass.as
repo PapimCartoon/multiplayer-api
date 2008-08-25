@@ -20,8 +20,8 @@ public class SerializableClass
 	public static const CLASS_NAME_FIELD:String = "__CLASS_NAME__";
 	
 	// because the shared classes have different package names, I need to replace it before and after serialization
-	public static const REPLACE_IN_NAME:String = "emulator.";
-	public static const REPLACE_TO:String = "COME2PLAY_PACKAGE.";
+	public static const REPLACE_IN_NAME:String = "emulator";
+	public static const REPLACE_TO:String = "COME2PLAY_PACKAGE";
 	
 	// Only in the API we should deserialize user-defined classes
 	// (in the emulator and framework, we should deserialize only COME2PLAY_PACKAGE   
@@ -52,8 +52,11 @@ public class SerializableClass
 				if (newObject!=null) res = newObject;
 			}
 		}
-		for (var key:String in object)
-			res[key] = deserialize(object[key]);
+		for (var key:String in object) {
+			res[key] = deserialize(object[key]);			
+			trace("key="+key+" object[key]="+JSON.stringify(object[key]));	
+		}
+		trace("object="+JSON.stringify(object)+" res="+JSON.stringify(res));
 		return res; 
 	}	
 }

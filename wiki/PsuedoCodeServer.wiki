@@ -7,14 +7,10 @@ if msg is (API_DoTrace or API_DoRegisterOnServer or API_DoAllFoundHacker) then
   processMessage(user, msg);
 else if API_DoFinishedCallback {
   <unverifiedUsers, oldMsg> = the first object in unverifiedQueue, from head to tail, that the user has not verified yet
-  if oldMsg name is the same as the msg name then {
-    remove user from unverifiedUsers
-    if unverifiedUsers is empty {
-      remove head of unverifiedQueue 
-      processWaitingQueue()
-    }
-  } else {
-      report error,user verified a message he was not supposed to verify	
+  remove user from unverifiedUsers
+  if unverifiedUsers is empty {
+    remove head of unverifiedQueue 
+    processWaitingQueue()
   }
 } else {
   add <user,msg> to waitingQueue

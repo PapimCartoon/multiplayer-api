@@ -3,43 +3,43 @@
 #this function gets all the calls made by the user game application
 
 gotUserMessage(user:User,msg:API_Message)
-1)if msg is (API_DoTrace or API_DoRegisterOnServer or API_DoAllFoundHacker) then
-  1.1)process function
-2)else if API_DoFinishedCallback
-  2.1)search in the unverifiedQueue for a function that the user hasn't verified yet
-  2.2)if the function name is the same as the msg function name then
-    2.2.1)remove user from the function unverified list
-    2.1.2)if all users have verified the function
-      2.1.2.1)remove function from unverifiedQueue 
-      2.1.2.2)if unverifiedQueue is empty
-        2.1.2.2.1)processWaitingFunction()
-  2.3)else
-      2.3.1)report error,user verified a function he was not supposed to verify	
-3)else
-  3.1)add msg to waitingQueue
-  3.2)processWaitingFunction
+*if msg is (API_DoTrace or API_DoRegisterOnServer or API_DoAllFoundHacker) then
+  *process function
+*else if API_DoFinishedCallback
+  *search in the unverifiedQueue for a function that the user hasn't verified yet
+  *if the function name is the same as the msg function name then
+    *remove user from the function unverified list
+    *if all users have verified the function
+      *remove function from unverifiedQueue 
+      *if unverifiedQueue is empty
+        *processWaitingFunction()
+  *else
+      *report error,user verified a function he was not supposed to verify	
+*else
+  *add msg to waitingQueue
+  *processWaitingFunction
  }}}   
 
 {{{
 # this function processes the waiting functions
 
 processWaitingFunction()
-1)if waitingQueue is empty return
-2)waitingFunction= waitingQueue.shift();
-3)if waitingFunction is API_DoStoreState
-  3.1)process function
-  3.2)add function to the unverifiedQueue 
-  3.3)processWaitingFunction
-4)if waitingFunction is a doAll function
-  4.1)if unverifiedQueue is empty 
-    4.1.1)check if all users called this function
-      4.1.1.1)check if all users called the function before calling anything else
-        4.1.1.1.1)check if all users called function with the same values
-          4.1.1.1.1.1)process function
-          4.1.1.1.1.2)add function to the unverifiedQueue 
-          4.1.1.1.1.3)processWaitingFunction
-        4.1.1.1.2)else
-          4.1.1.1.2.1)report error, not all users used same values for do all function
-      4.1.1.2)else
-        4.1.1.2.1)report error, concurrency problem
+*if waitingQueue is empty return
+*waitingFunction= waitingQueue.shift();
+*if waitingFunction is API_DoStoreState
+  *process function
+  *add function to the unverifiedQueue 
+  *processWaitingFunction
+*if waitingFunction is a doAll function
+  *if unverifiedQueue is empty 
+    *check if all users called this function
+      *check if all users called the function before calling anything else
+        *check if all users called function with the same values
+          *process function
+          *add function to the unverifiedQueue 
+          *processWaitingFunction
+        *else
+          *report error, not all users used same values for do all function
+      *else
+        *report error, concurrency problem
 }}}

@@ -4,42 +4,46 @@
 
 gotUserMessage(user:User,msg:API_Message)
 if msg is (API_DoTrace or API_DoRegisterOnServer or API_DoAllFoundHacker) then
-  process function
-else if API_DoFinishedCallback
-  search in the unverifiedQueue for a function that the user has not verified yet
-  if the function name is the same as the msg function name then
-    remove user from the function unverified list
-    if all users have verified the function
-      remove function from unverifiedQueue 
-      if unverifiedQueue is empty
-        processWaitingFunction()
-  else
-      report error,user verified a function he was not supposed to verify	
-else
-  add msg to waitingQueue
-  processWaitingFunction
+  processMessage(user, msg);
+else if API_DoFinishedCallback {
+  <unverifiedUsers, oldMsg> = the first object in unverifiedQueue, from head to tail, that the user has not verified yet
+  if oldMsg name is the same as the msg name then {
+    remove user from unverifiedUsers
+    if unverifiedUsers is empty {
+      remove head of unverifiedQueue 
+      processWaitingQueue()
+    }
+  } else {
+      report error,user verified a message he was not supposed to verify	
+  }
+} else {
+  add <user,msg> to waitingQueue
+  processWaitingQueue()
+}
  }}}   
 
 {{{
 # this function processes the waiting functions
 
-processWaitingFunction()
-if waitingQueue is empty return
-waitingFunction= waitingQueue.shift();
-if waitingFunction is API_DoStoreState
-  process function
-  add function to the unverifiedQueue 
-  processWaitingFunction
-if waitingFunction is a doAll function
-  if unverifiedQueue is empty 
-    check if all users called this function
-      check if all users called the function before calling anything else
-        check if all users called function with the same values
-          process function
-          add function to the unverifiedQueue 
-          processWaitingFunction
-        else
-          report error, not all users used same values for do all function
-      else
-        report error, concurrency problem
+processWaitingQueue()
+if (waitingQueue is empty) return
+<user,msg> = head of waitingQueue;
+if (msg is API_DoStoreState) {
+  remove head of waitingQueue 
+else {
+  if (unverifiedQueue is not empty) return
+  if (not all users sent this message) return
+  if (not all users sent this message before sending anything else){
+    report error, concurrency problem
+    return
+  }
+  if(not all users sent this message with the same parameters){
+    report error, not all users used same values for do all function
+    return
+  }
+  remove from waitingQueue all processed doAll messages 
+}
+add <allPlayers, msg> to unverifiedQueue 
+processMessage(user,msg)
+processWaitingQueue()
 }}}

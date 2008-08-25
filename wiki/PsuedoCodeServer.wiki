@@ -1,46 +1,60 @@
 #summary pseudo code representation of the server
-{{{
-#this function gets all the calls made by the user game application
 
-gotUserMessage(user:User,msg:API_Message)
-if msg is (API_DoTrace or API_DoRegisterOnServer or API_DoAllFoundHacker) then
-  processMessage(user, msg);
-else if API_DoFinishedCallback {
-  <unverifiedUsers, oldMsg> = the first object in unverifiedQueue, from head to tail, that the user has not verified yet
-  remove user from unverifiedUsers
-  if unverifiedUsers is empty {
-    remove head of unverifiedQueue 
-    processWaitingQueue()
-  }
-} else {
-  add <user,msg> to waitingQueue
-  processWaitingQueue()
+{{{
+//this function gets all the calls made by the user game application
+function gotUserMessage(user:User,msg:Message) {
+	if (msg is doTrace or doRegisterOnServer or doAllFoundHacker) {
+	  processMessage(user, msg)
+	} else if (msg is doFinishedCallback) {
+	  <unverifiedUsers, oldMsg> = the first object in unverifiedQueue, from head to tail, where user is in unverifiedUsers
+	  remove user from unverifiedUsers
+	  if (unverifiedUsers is empty) {
+	    remove head of unverifiedQueue 
+	    update the match state according to msg
+	    processWaitingQueue()
+	  }
+	} else {
+	  // message is doStoreState or doAll*
+	  add <user,msg> to waitingQueue
+	  processWaitingQueue()
+	}
 }
  }}}   
 
 {{{
-# this function processes the waiting functions
-
-processWaitingQueue()
-if (waitingQueue is empty) return
-<user,msg> = head of waitingQueue;
-if (msg is API_DoStoreState) {
-  remove head of waitingQueue 
-else {
-  if (unverifiedQueue is not empty) return
-  if (not all users sent this message) return
-  if (not all users sent this message before sending anything else){
-    report error, concurrency problem
-    return
-  }
-  if(not all users sent this message with the same parameters){
-    report error, not all users used same values for do all function
-    return
-  }
-  remove from waitingQueue all processed doAll messages 
+// this function processes the waiting messages
+function processWaitingQueue() {
+	if (waitingQueue is empty) return
+	<user,msg> = head of waitingQueue
+	if (msg is doStoreState) {
+	  remove head of waitingQueue 
+	} else {
+	  // msg is a doAll* message
+	  if (unverifiedQueue is not empty) return
+	  if (not all users sent this message) return
+	  if (not all users sent this message before sending anything else) {
+	    report error, concurrency problem
+	    return
+	  }
+	  if (not all users sent this message with the same parameters) {
+	    report error, not all users used same values for doAll message
+	    return
+	  }
+	  remove from waitingQueue all processed doAll messages 
+	}
+	if (msg is not doAllSetTurn) {
+	  add <allPlayers, msg> to unverifiedQueue 
+	}
+	processMessage(user,msg)
+	processWaitingQueue()
 }
-if(msg is not API_DoAllSetTurn)
-  add <allPlayers, msg> to unverifiedQueue 
-processMessage(user,msg)
-processWaitingQueue()
 }}}
+
+In the java server:
+A new viewer will get the match state, followed by all the messages that are in unverifiedQueue.
+The reason that we update the match state only after all players verified the message, 
+is to find hackers (if we update immediately according to a message from a hacker, then I can't discover if he is indeed a hacker).
+
+In the emulator:
+`processMessage` already changes the match state, 
+so a new viewer will get a match state that already includes all the messages in unverifiedQueue.

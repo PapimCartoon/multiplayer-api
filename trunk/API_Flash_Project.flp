@@ -8,4 +8,5 @@
     <project_file path="./EmulatorSource/InfoContainer.fla" filetype="fla" profile="" />
     <project_file path="./EmulatorSource/Server.fla" filetype="fla" profile="" />
     <project_file path="./EmulatorSource/GetParams.fla" filetype="fla" profile="" />
+    <project_file path="./AS3/mineSweeper.fla" filetype="fla" profile="" />
 </flash_project>

@@ -480,11 +480,12 @@ package emulator {
 				info.isPlayer = false;
 				info.gameOver = false;
 				for (var i:int = 0; i < msg.infoEntries.length; i++) {
-					if ( msg.infoEntries[i].key == "name") { // see BaseGameAPI.USER_INFO_KEY_name
-						info.userName = msg.infoEntries[i].value;
+					var tempInfoEntry:InfoEntry = msg.infoEntries[i];
+					if ( tempInfoEntry.key == "name") { // see BaseGameAPI.USER_INFO_KEY_name
+						info.userName = String(tempInfoEntry.value);
 					}
-					if (msg.infoEntries[i].key == "avatar_url") { // see BaseGameAPI.USER_INFO_KEY_avatar_url
-						info.userPicture = msg.infoEntries[i].value;
+					if (tempInfoEntry.key == "avatar_url") { // see BaseGameAPI.USER_INFO_KEY_avatar_url
+						info.userPicture = String(tempInfoEntry.value);
 					}
 				}
 				aUsers.push(info);

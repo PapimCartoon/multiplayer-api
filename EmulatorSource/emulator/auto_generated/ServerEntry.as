@@ -10,6 +10,9 @@ package emulator.auto_generated {
 		public var storedByUserId:int;
 		public var authorizedUserIds:Array/*int*/;
 		public var changedTimeInMilliSeconds:int;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		public static function create(key:String, value:*, storedByUserId:int, authorizedUserIds:Array/*int*/, changedTimeInMilliSeconds:int):ServerEntry {
 			var res:ServerEntry = new ServerEntry();
 			res.key = key;
@@ -20,6 +23,9 @@ package emulator.auto_generated {
 			return res;
 		}
 		public function getParametersAsString():String { return 'key=' + JSON.stringify(key)+', value=' + JSON.stringify(value)+', storedByUserId=' + JSON.stringify(storedByUserId)+', authorizedUserIds=' + JSON.stringify(authorizedUserIds)+', changedTimeInMilliSeconds=' + JSON.stringify(changedTimeInMilliSeconds); }
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		public function toString():String { return '{ServerEntry: ' + getParametersAsString() + '}'; }
 	}
 }

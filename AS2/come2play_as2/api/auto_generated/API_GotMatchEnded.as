@@ -7,15 +7,27 @@ import come2play_as2.api.auto_generated.*;
 		public var finishedPlayerIds:Array/*int*/;
 		public static function create(finishedPlayerIds:Array/*int*/):API_GotMatchEnded { 
 			var res:API_GotMatchEnded = new API_GotMatchEnded();
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			res.finishedPlayerIds = finishedPlayerIds;
 			return res;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		}
 		/*override*/ public function setMethodParameters(parameters:Array):Void { 
 			var pos:Number = 0;
 			this.finishedPlayerIds = parameters[pos++];
 		}
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		/*override*/ public function getParametersAsString():String { return 'finishedPlayerIds=' + JSON.stringify(finishedPlayerIds); }
 		/*override*/ public function toString():String { return '{API_GotMatchEnded:' +getParametersAsString() +'}'; }
 		/*override*/ public function getMethodName():String { return 'gotMatchEnded'; }
 		/*override*/ public function getMethodParameters():Array { return [finishedPlayerIds]; }
 	}
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+

@@ -10,6 +10,9 @@ package come2play_as3.api.auto_generated {
 		public static function create(key:String, value:Object/*Serializable*/):InfoEntry {
 			var res:InfoEntry = new InfoEntry();
 			res.key = key;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			res.value = value;
 			return res;
 		}

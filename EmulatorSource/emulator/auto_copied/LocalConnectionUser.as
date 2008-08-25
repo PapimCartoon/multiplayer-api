@@ -7,28 +7,38 @@
 // So we changed the package name when we copied the directory 'auto_copied'
 package emulator.auto_copied
 {
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 	import emulator.auto_generated.*;
 	
 	import flash.display.*;
 	import flash.external.*;
 	import flash.net.*;
 	import flash.system.System;
-	
-	// IMPORTANT: this class is automatically copied to the emulator and to the container, so make changes only in the API 
+	 
 	public class LocalConnectionUser
 	{
 		
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		public static var DEFAULT_LOCALCONNECTION_PREFIX:String = "42";
+		public static var SHOULD_SHOW_ERRORS:Boolean = true;
+		public static var SHOULD_CALL_TRACE:Boolean = true;
 		
 		private static var someMovieClip:MovieClip;
-		public static function error(msg:String):void {
+		public static function showError(msg:String):void {
 			var msg:String = "An ERRRRRRRRRRROR occurred:\n"+msg;
 			System.setClipboard(msg);
-			AS3_vs_AS2.showError(someMovieClip, msg);
+			if (SHOULD_SHOW_ERRORS) AS3_vs_AS2.showError(someMovieClip, msg);
 			trace("\n\n\n"+msg+"\n\n\n");
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		}
 		public static function throwError(msg:String):void {
-			error("Throwing an error with message="+msg+"." + (!AS3_vs_AS2.isAS3 ? "" :  "The error was thrown in this location="+AS3_vs_AS2.error2String(new Error())));
+			showError("Throwing an error with message="+msg+"." + (!AS3_vs_AS2.isAS3 ? "" :  "The error was thrown in this location="+AS3_vs_AS2.error2String(new Error())));
 			throw new Error(msg);
 		}		
 		public static function assert(val:Boolean, args:Array):void {
@@ -36,6 +46,9 @@ package emulator.auto_copied
 		}
 		public static function getDoChanelString(sPrefix:String):String {
 			return "DO_CHANEL_"+sPrefix;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		}
 		public static function getGotChanelString(sPrefix:String):String {
 			return "GOT_CHANEL_"+sPrefix;
@@ -46,6 +59,9 @@ package emulator.auto_copied
 			if (sPrefix==null) sPrefix = parameters["?prefix"];
 			return getPrefixFromString(sPrefix);
 		}		
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		public static function getPrefixFromString(sPrefix:String):String {
 			if (sPrefix!=null && !(sPrefix.charAt(0)>='0' && sPrefix.charAt(0)<='9')) { //it is not necessarily a number 
 				trace("calling a javascript function that should return the random fixed id");
@@ -56,6 +72,9 @@ package emulator.auto_copied
 		}
 				
 		
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		// we use a LocalConnection to communicate with the container
 		private var lcUser:LocalConnection; 
 		private var sSendChanel:String;
@@ -66,7 +85,10 @@ package emulator.auto_copied
 				API_LoadMessages.useAll();	
 				someMovieClip = _someMovieClip;
 				if (sPrefix==null) {
-					trace("WARNING: didn't find 'prefix' in the loader info parameters. Probably because you are doing testing locally.\n\n\n\n\n\n");
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+					myTrace(["WARNING: didn't find 'prefix' in the loader info parameters. Probably because you are doing testing locally."]);
 					sPrefix = DEFAULT_LOCALCONNECTION_PREFIX;
 				}				
 				lcUser = new LocalConnection();
@@ -76,46 +98,62 @@ package emulator.auto_copied
 				var sGotChanel:String = getGotChanelString(sPrefix);
 				var sListenChannel:String = 
 					isServer ? sDoChanel : sGotChanel;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 				sSendChanel = 
 					!isServer ? sDoChanel : sGotChanel;				
-				myTrace(": LocalConnection listens on channel="+sListenChannel+" and sends on "+sSendChanel);
+				myTrace(["LocalConnection listens on channel=",sListenChannel," and sends on ",sSendChanel]);
 				lcUser.connect(sListenChannel);
 			}catch (err:Error) { 
 				passError("Constructor",err);
 			}
 		}
-		private function myTrace(msg:String):void {
-			trace(AS3_vs_AS2.getClassName(this)+": "+msg);
+		public function myTrace(msg:Array):void {
+			if (SHOULD_CALL_TRACE) trace(AS3_vs_AS2.getClassName(this)+": "+JSON.stringify(msg));
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		}
 		
         private function passError(withObj:Object, err:Error):void {
         	try{
-				error("Error occurred when passing "+JSON.stringify(withObj)+", the error is="+AS3_vs_AS2.error2String(err));
+				showError("Error occurred when passing "+JSON.stringify(withObj)+", the error is="+AS3_vs_AS2.error2String(err));
 				gotError(withObj, err);
 			} catch (err2:Error) { 
 				// to avoid an infinite loop, I can't call passError again.
-				error("Another error occurred when calling gotError. The new error is="+AS3_vs_AS2.error2String(err2));
+				showError("Another error occurred when calling gotError. The new error is="+AS3_vs_AS2.error2String(err2));
 			}
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
         }
 		public function gotError(withObj:Object, err:Error):void {}
         
         public function gotMessage(msg:API_Message):void {}
         
         public function sendMessage(msg:API_Message):void {
-        	myTrace('sendMessage: '+msg);        						  
+        	myTrace(['sendMessage: ',msg]);        						  
 			try{
 				lcUser.send(sSendChanel, "localconnection_callback", msg);  
 			}catch(err:Error) { 
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 				passError(msg, err);
 			}        	
         }
         
         public function localconnection_callback(msgObj:Object):void {
         	try{
-        		myTrace("localconnection_callback: "+JSON.stringify(msgObj));
         		var deserializedMsg:Object = SerializableClass.deserialize(msgObj);
         		var msg:API_Message = deserializedMsg as API_Message;
-        		if (msg==null) throw new Error("msgObj is not an API_Message");
+        		if (msg==null) throwError("msgObj="+JSON.stringify(msgObj)+" is not an API_Message");
+        		
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+        		myTrace(['gotMessage: ',msg]);
         		gotMessage(msg);
 			} catch(err:Error) { 
 				passError(msgObj, err);

@@ -58,16 +58,11 @@
 		}		
 		
         override public function gotMessage(msg:API_Message):void {
-			try {        		
-        		trace("SinglePlayerEmulator: msg="+msg);
-				if (msg is API_DoAllEndMatch) {
-					AS3_vs_AS2.myTimeout(AS3_vs_AS2.delegate(this, this.sendNewMatch), 2000);
-				} else if (msg is API_DoRegisterOnServer) {
-					doRegisterOnServer();
-				}		
-			} catch(err:Error) {
-				LocalConnectionUser.error("Error thrown in SinglePlayerEmulator:"+AS3_vs_AS2.error2String(err));
-			}					
+			if (msg is API_DoAllEndMatch) {
+				AS3_vs_AS2.myTimeout(AS3_vs_AS2.delegate(this, this.sendNewMatch), 2000);
+			} else if (msg is API_DoRegisterOnServer) {
+				doRegisterOnServer();
+			}				
   		}
   		private function doRegisterOnServer():void {
   			sendMessage(API_GotMyUserId.create(userId) );

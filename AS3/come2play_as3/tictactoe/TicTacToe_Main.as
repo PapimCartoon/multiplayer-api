@@ -1,17 +1,13 @@
 ﻿package come2play_as3.tictactoe 
 {
 import come2play_as3.api.*;
+import come2play_as3.api.auto_copied.*;
 import come2play_as3.api.auto_generated.*;
-import come2play_as3.api.auto_copied.*;	
 
 import flash.display.*;
 import flash.events.*;
 import flash.utils.*;
 /**
- * We handle both the insecure ClientAPI
- * as well as the SecureClientAPI, therefore it inherits from 
- * 	CombinedClientAndSecureGameAPI.
- *  
  * See the game rules in TicTacToe_logic.
  * 
  * When a player wins, he gets some of the stakes, and the rest continue playing, 

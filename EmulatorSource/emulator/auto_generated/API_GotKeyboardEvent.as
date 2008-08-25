@@ -10,6 +10,9 @@ package emulator.auto_generated {
 		public var keyCode:int;
 		public var keyLocation:int;
 		public var altKey:Boolean;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		public var ctrlKey:Boolean;
 		public var shiftKey:Boolean;
 		public static function create(isKeyDown:Boolean, charCode:int, keyCode:int, keyLocation:int, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean):API_GotKeyboardEvent { 
@@ -20,6 +23,9 @@ package emulator.auto_generated {
 			res.keyLocation = keyLocation;
 			res.altKey = altKey;
 			res.ctrlKey = ctrlKey;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			res.shiftKey = shiftKey;
 			return res;
 		}
@@ -30,6 +36,9 @@ package emulator.auto_generated {
 			this.keyCode = parameters[pos++];
 			this.keyLocation = parameters[pos++];
 			this.altKey = parameters[pos++];
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			this.ctrlKey = parameters[pos++];
 			this.shiftKey = parameters[pos++];
 		}

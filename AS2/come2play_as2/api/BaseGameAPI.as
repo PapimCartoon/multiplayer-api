@@ -7,15 +7,22 @@
 	 * See http://code.google.com/p/multiplayer-api
 	 */ 
 import come2play_as2.api.*;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 	class come2play_as2.api.BaseGameAPI extends LocalConnectionUser 
 	{        
 		private var sPrefix:String;
 		public function BaseGameAPI(_someMovieClip:MovieClip) {
 			super(_someMovieClip, false, sPrefix = getPrefixFromFlashVars(_someMovieClip));
 			if (sPrefix==null) 
-				new SinglePlayerEmulator(_someMovieClip);		
+				new SinglePlayerEmulator(_someMovieClip);
+			StaticFunctions.performReflectionFromFlashVars(_someMovieClip);	
 		}
 		private var hackerUserId:Number = -1;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		/*override*/ public function gotError(withObj:Object, err:Error):Void {
 			sendMessage( API_DoAllFoundHacker.create(hackerUserId, "Got error withObj="+JSON.stringify(withObj)+" err="+AS3_vs_AS2.error2String(err)) );
 		}
@@ -26,6 +33,9 @@ import come2play_as2.api.*;
 	    			var stateChanged:API_GotStateChanged = API_GotStateChanged(msg);
 	    			var serverEntry:ServerEntry = stateChanged.serverEntries[0];
 	    			hackerUserId = serverEntry.storedByUserId;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 	    		}
 	    		var methodName:String = msg.getMethodName();
 	    		if (AS3_vs_AS2.isAS3 && !this.hasOwnProperty(methodName)) return
@@ -36,4 +46,7 @@ import come2play_as2.api.*;
     			sendMessage( API_DoFinishedCallback.create(msg.getMethodName()) );        			
     		}        		   	
         }
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 	}

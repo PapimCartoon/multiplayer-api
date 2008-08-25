@@ -10,6 +10,9 @@ package emulator.auto_generated {
 		public function getMethodName():String { throw new Error("You must subclass API_Message!"); return null; }
 		public function setMethodParameters(parameters:Array):void { throw new Error("You must subclass API_Message!"); }
 		public function getMethodParameters():Array { throw new Error("You must subclass API_Message!"); return null; }
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		public static const USER_INFO_KEY_name:String = "name";
 		public static const USER_INFO_KEY_avatar_url:String = "avatar_url";
 		public static const USER_INFO_KEY_supervisor:String = "supervisor";

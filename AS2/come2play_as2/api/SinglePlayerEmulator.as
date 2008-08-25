@@ -7,6 +7,9 @@
 	 * It opens a localconnection and waits for the player to connect,
 	 * following the standard handshake:
 	 * Player calls doRegisterOnServer,
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 	 * and then the server will call:
 	 * gotCustomInfo
 	 * gotUserInfo
@@ -17,6 +20,9 @@
 	 * 
 	 * When the server gets doAllEndMatch,
 	 * it will wait 2 seconds before starting a new match.
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 	 */
 import come2play_as2.api.*;
 	class come2play_as2.api.SinglePlayerEmulator extends LocalConnectionUser
@@ -27,6 +33,9 @@ import come2play_as2.api.*;
 				[ 	InfoEntry.create(API_Message.USER_INFO_KEY_name, "User name"),
 					InfoEntry.create(API_Message.USER_INFO_KEY_avatar_url, "../Emulator/Avatar_1.gif")
 				];
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		public static var DEFAULT_MATCH_STATE:Array/*ServerEntry*/ = []; // you can change this and load a saved match
 		public static var DEFAULT_USER_ID:Number = 42; 
 		public static var DEFAULT_EXTRA_MATCH_INFO:String = ""; 
@@ -37,6 +46,9 @@ import come2play_as2.api.*;
 		private var userInfoEntries:Array/*InfoEntry*/;
 		private var extraMatchInfo:Object/*Serializable*/;
 		private var matchStartedTime:Number; 
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		private var userStateEntries:Array/*ServerEntry*/;
 		
 		public function SinglePlayerEmulator(graphics:MovieClip) {
@@ -47,6 +59,9 @@ import come2play_as2.api.*;
 			this.extraMatchInfo = DEFAULT_EXTRA_MATCH_INFO;
 			this.matchStartedTime = DEFAULT_MATCH_STARTED_TIME;
 			this.userStateEntries = DEFAULT_MATCH_STATE;			
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 									
 			AS3_vs_AS2.addKeyboardListener(graphics, AS3_vs_AS2.delegate(this, this.reportKeyDown));	
 		}		
@@ -55,16 +70,14 @@ import come2play_as2.api.*;
 		}		
 		
         /*override*/ public function gotMessage(msg:API_Message):Void {
-			try {        		
-        		trace("SinglePlayerEmulator: msg="+msg);
-				if (msg instanceof API_DoAllEndMatch) {
-					AS3_vs_AS2.myTimeout(AS3_vs_AS2.delegate(this, this.sendNewMatch), 2000);
-				} else if (msg instanceof API_DoRegisterOnServer) {
-					doRegisterOnServer();
-				}		
-			} catch(err:Error) {
-				LocalConnectionUser.error("Error thrown in SinglePlayerEmulator:"+AS3_vs_AS2.error2String(err));
-			}					
+			if (msg instanceof API_DoAllEndMatch) {
+				AS3_vs_AS2.myTimeout(AS3_vs_AS2.delegate(this, this.sendNewMatch), 2000);
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+			} else if (msg instanceof API_DoRegisterOnServer) {
+				doRegisterOnServer();
+			}				
   		}
   		private function doRegisterOnServer():Void {
   			sendMessage(API_GotMyUserId.create(userId) );
@@ -72,6 +85,9 @@ import come2play_as2.api.*;
   			sendMessage(API_GotUserInfo.create(userId, userInfoEntries) );
 	 		sendNewMatch();
   		}
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
   		private function sendNewMatch():Void {	 
   			sendMessage(API_GotMatchStarted.create([userId], [], extraMatchInfo, matchStartedTime, userStateEntries) );	 	
   		}

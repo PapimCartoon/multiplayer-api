@@ -10,6 +10,9 @@ package come2play_as3.api.auto_generated {
 			return res;
 		}
 		override public function setMethodParameters(parameters:Array):void { 
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			var pos:int = 0;
 		}
 		override public function getParametersAsString():String { return ''; }

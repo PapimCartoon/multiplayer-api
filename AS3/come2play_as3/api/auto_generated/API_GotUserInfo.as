@@ -10,6 +10,9 @@ package come2play_as3.api.auto_generated {
 		public static function create(userId:int, infoEntries:Array/*InfoEntry*/):API_GotUserInfo { 
 			var res:API_GotUserInfo = new API_GotUserInfo();
 			res.userId = userId;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			res.infoEntries = infoEntries;
 			return res;
 		}
@@ -20,6 +23,9 @@ package come2play_as3.api.auto_generated {
 		}
 		override public function getParametersAsString():String { return 'userId=' + JSON.stringify(userId)+', infoEntries=' + JSON.stringify(infoEntries); }
 		override public function toString():String { return '{API_GotUserInfo:' +getParametersAsString() +'}'; }
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		override public function getMethodName():String { return 'gotUserInfo'; }
 		override public function getMethodParameters():Array { return [userId, infoEntries]; }
 	}

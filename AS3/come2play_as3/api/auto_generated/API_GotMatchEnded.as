@@ -10,6 +10,9 @@ package come2play_as3.api.auto_generated {
 			var res:API_GotMatchEnded = new API_GotMatchEnded();
 			res.finishedPlayerIds = finishedPlayerIds;
 			return res;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		}
 		override public function setMethodParameters(parameters:Array):void { 
 			var pos:int = 0;
@@ -20,4 +23,7 @@ package come2play_as3.api.auto_generated {
 		override public function getMethodName():String { return 'gotMatchEnded'; }
 		override public function getMethodParameters():Array { return [finishedPlayerIds]; }
 	}
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 }

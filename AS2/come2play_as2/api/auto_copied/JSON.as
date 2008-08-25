@@ -7,6 +7,9 @@ import come2play_as2.api.auto_copied.*;
         private var at:Number = 0;
         private var text:String;
 
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 	    public static function stringify(arg:Object):String{
 			if (arg==null) return 'null';
 			
@@ -17,6 +20,9 @@ import come2play_as2.api.auto_copied.*;
 	        if (AS3_vs_AS2.isArray(arg)) {
 	        	res = [];
 	       		for (i = 0; i < arg.length; ++i) {
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                     v = stringify(arg[i]);
                     res.push(v);
                 }
@@ -27,6 +33,9 @@ import come2play_as2.api.auto_copied.*;
 	        	res = [];      
 	            l = arg.length;
 	            for (i = 0; i < l; i += 1) {
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 	                c = arg.charAt(i);
 	                if (c >= ' ') {
 	                    if (c == '\\' || c == '"') {
@@ -37,6 +46,9 @@ import come2play_as2.api.auto_copied.*;
 	                    switch (c) {
 	                        case '\b':
 	                            res.push('\\b');
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 	                            break;
 	                        case '\f':
 	                            res.push('\\f');
@@ -47,6 +59,9 @@ import come2play_as2.api.auto_copied.*;
 	                        case '\r':
 	                            res.push('\\r');
 	                            break;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 	                        case '\t':
 	                            res.push('\\t');
 	                            break;
@@ -57,6 +72,9 @@ import come2play_as2.api.auto_copied.*;
 	                    }
 	                }
 	            }
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 	            return '"' + res.join("") + '"';
 	        }
 	        var argToString:String = "";
@@ -67,6 +85,9 @@ import come2play_as2.api.auto_copied.*;
 					throw e;
 				argToString = "ERROR in toString() method of "+AS3_vs_AS2.getClassName(arg)+" err="+AS3_vs_AS2.error2String(e);
 	        }
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 	        
 	        if (argToString=="[object Object]") {
 	        	res = [];
@@ -77,6 +98,9 @@ import come2play_as2.api.auto_copied.*;
 	        }
 	        return argToString;                
 	    }
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
         private function white():Void {
             while (ch) {
                 if (ch <= ' ') {
@@ -87,6 +111,9 @@ import come2play_as2.api.auto_copied.*;
                             while (this.next() && ch != '\n' && ch != '\r') {}
                             break;
                         case '*':
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                             this.next();
                             for (;;) {
                                 if (ch) {
@@ -97,6 +124,9 @@ import come2play_as2.api.auto_copied.*;
                                         }
                                     } else {
                                         this.next();
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                                     }
                                 } else {
                                     throwError("Unterminated comment");
@@ -107,6 +137,9 @@ import come2play_as2.api.auto_copied.*;
                             throwError("Syntax error");
                     }
                 } else {
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                     break;
                 }
             }
@@ -117,6 +150,9 @@ import come2play_as2.api.auto_copied.*;
         }
         private function next():String {
             ch = text.charAt(at);
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
             at += 1;
             return ch;
         }
@@ -127,6 +163,9 @@ import come2play_as2.api.auto_copied.*;
             if (ch == '"' || ch == "'") {
 				var firstApos:String = ch;
                 while (this.next()) {
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                     if (ch == firstApos) {
                         this.next();
                         return s;
@@ -137,6 +176,9 @@ import come2play_as2.api.auto_copied.*;
                             break;
                         case 'f':
                             s += '\f';
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                             break;
                         case 'n':
                             s += '\n';
@@ -147,6 +189,9 @@ import come2play_as2.api.auto_copied.*;
                         case 't':
                             s += '\t';
                             break;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                         case 'u':
                             u = 0;
                             for (i = 0; i < 4; i += 1) {
@@ -157,6 +202,9 @@ import come2play_as2.api.auto_copied.*;
                                 }
                                 u = u * 16 + t;
                             }
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                             if(outer) {
                                 outer = false;
                                 break;
@@ -167,6 +215,9 @@ import come2play_as2.api.auto_copied.*;
                             s += ch;
                         }
                     } else {
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                         s += ch;
                     }
                 }
@@ -177,6 +228,9 @@ import come2play_as2.api.auto_copied.*;
 						break;
 					} else
 						s += ch;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 				} while (this.next());
 				if (s=='') throwError("Bad string: a string without \"...\" must be only alpha-numeric");
 				return s; 
@@ -188,6 +242,9 @@ import come2play_as2.api.auto_copied.*;
         private function arr():Array {
             var a:Array = [];
 
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+
             if (ch == '[') {
                 this.next();
                 this.white();
@@ -197,6 +254,9 @@ import come2play_as2.api.auto_copied.*;
                 }
                 while (ch) {
                     a.push(this.value());
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                     this.white();
                     if (ch == ']') {
                         this.next();
@@ -207,6 +267,9 @@ import come2play_as2.api.auto_copied.*;
                     this.next();
                     this.white();
                 }
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
             }
             throwError("Bad array");
             return [];
@@ -217,6 +280,9 @@ import come2play_as2.api.auto_copied.*;
 
             if (ch == '{') {
                 this.next();
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                 this.white();
                 if (ch == '}') {
                     this.next();
@@ -227,6 +293,9 @@ import come2play_as2.api.auto_copied.*;
                     this.white();
                     if (ch != ':') {
                         break;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                     }
                     this.next();
                     o[k] = this.value();
@@ -237,6 +306,9 @@ import come2play_as2.api.auto_copied.*;
                     } else if (ch != ',') {
                         break;
                     }
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                     this.next();
                     this.white();
                 }
@@ -247,6 +319,9 @@ import come2play_as2.api.auto_copied.*;
 
         private function num():Number {
             var n:String = '';
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
             var v:Number;
 
             if (ch == '-') {
@@ -257,6 +332,9 @@ import come2play_as2.api.auto_copied.*;
                 n += ch;
                 this.next();
             }
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
             if (ch == '.') {
                 n += '.';
                 this.next();
@@ -267,6 +345,9 @@ import come2play_as2.api.auto_copied.*;
             }
             if (ch == 'e' || ch == 'E') {
                 n += ch;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                 this.next();
                 if (ch == '-' || ch == '+') {
                     n += ch;
@@ -277,6 +358,9 @@ import come2play_as2.api.auto_copied.*;
                     this.next();
                 }
             }
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
             v = Number(n);
 			//trace("v="+v+" n="+n);
             if (!isFinite(v)) {
@@ -287,6 +371,9 @@ import come2play_as2.api.auto_copied.*;
 
         private function word():Object {
 			var oldAt:Number = at;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
             switch (ch) {
                 case 't':
                     if (this.next() == 'r' && this.next() == 'u' &&
@@ -297,6 +384,9 @@ import come2play_as2.api.auto_copied.*;
                     break;
                 case 'f':
                     if (this.next() == 'a' && this.next() == 'l' &&
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                             this.next() == 's' && this.next() == 'e') {
                         this.next();
                         return false;
@@ -307,6 +397,9 @@ import come2play_as2.api.auto_copied.*;
                             this.next() == 'l') {
                         this.next();
                         return null;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                     }
                     break;
             }
@@ -317,6 +410,9 @@ import come2play_as2.api.auto_copied.*;
         }
 
         private function value():Object {
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
             this.white();
             switch (ch) {
                 case '{':
@@ -327,6 +423,9 @@ import come2play_as2.api.auto_copied.*;
                 case "'":
                     return this.str();
                 case '-':
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                     return this.num();
                 default:
                     return ch >= '0' && ch <= '9' ? this.num() : this.word();
@@ -337,6 +436,9 @@ import come2play_as2.api.auto_copied.*;
 	        text = _text;
             at = 0;
 	        ch = ' ';
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 	        var res:Object = value();
 	        this.white();
 	        if (at!=_text.length+1) throwError("Could not parse the entire string, string length="+_text.length+" and the parsing reached position="+(at-1));
@@ -346,5 +448,8 @@ import come2play_as2.api.auto_copied.*;
 	    	var json:JSON = new JSON();
 	    	return json.p_parse(_text);
 	    }
+
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
 
 	}

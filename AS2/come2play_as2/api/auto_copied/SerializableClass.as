@@ -1,30 +1,119 @@
 /**
- * Subclasses of SerializableClass MUST have an empty constructor,
- * i.e., their constructor must not take any arguments.
+ * Subclasses of SerializableClass MUST be PUBLIC and 
+ * have a constructor without arguments.
+ *
+ * Good Example:
+ * package somePackage {
+import come2play_as2.api.auto_copied.*;
+ *   class come2play_as2.api.auto_copied.PublicClass1 extends SerializableClass {
+ *     public static var staticVar:Number; // static vars will NOT be serialized
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
  * 
- * deserialize recurses inside the object (into arrays and objects)
- * and turns every object inside that has the attribute  __className__ 
- * It modifies the object!
+ *     public var serializedField1:Number;  
+ *     private var serializedField2:Number; // private vars will be serialized
+ *     private var serializedField3:Array; // serialization is recursive, and goes into Arrays
+ *     private var serializedField4:PublicClass2; // again, serialization is recursive
+ *
+ *     // you must have a constructor without any arguments!
+ *     public function PublicClass1() { 
+ *     }
+ *     ...
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+ *   }
+ * }
+ * package somePackage {
+import come2play_as2.api.auto_copied.*;
+ *   class come2play_as2.api.auto_copied.PublicClass2 extends SerializableClass {
+ *     ...
+ *   }
+ * }
+ * 
+ * BAD Example:
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+ * package somePackage {
+import come2play_as2.api.auto_copied.*;
+ *   class come2play_as2.api.auto_copied.PublicClass extends SerializableClass {
+ *     // The constructor must not have any arguments!
+ *     public function PublicClass(argument:Number) {
+ *       ...
+ *     }
+ *     ...
+ *   }
+ * }
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+ * class PrivateClass extends SerializableClass { 
+ *   ...
+ * }
+ * 
+ * Explanation on why private classes cannot be serialized:
+ * Only public should inherit from SerializableClass.
+ * If the class is not public,
+ * then flash chooses some random name for its package.
+ * For example, in the BAD code above,
+ * the qualified name of PrivateClass will be:
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+ *  PublicClass.as$54::PrivateClass
+ * And this number may change, if you recompile a slightly modified code.
+ *
+ * Explanation on the implementation of serialization:
+ * - When an object is sent over a LocalConnection,
+ * flash removes all type-information and turns that object into
+ * a primitive object (that has only primitive types, Array and Object fields).
+ * - When class A inherits from SerializableClass,
+ * it gets the field __CLASS_NAME__, which is set in the constructor.
+ * - When you deserialize an object, a new instance of the correct class
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+ * is created (that is why you must have an empty constructor),
+ * and then we traverse and the object and set all the fields.
+ * Note that  deserialize(object)  modifies the object.
  */
 import come2play_as2.api.auto_copied.*;
 class come2play_as2.api.auto_copied.SerializableClass
 {
 	public static var CLASS_NAME_FIELD:String = "__CLASS_NAME__";
 	
-	// because the shared classes have different package names, I need to replace it before and after serialization
-	public static var REPLACE_IN_NAME:String = "come2play_as2.api.";
-	public static var REPLACE_TO:String = "COME2PLAY_PACKAGE.";
+	// Because the shared classes have different package names, 
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+	// I need to replace it before and after serialization
+	public static var REPLACE_IN_NAME:String = "come2play_as2.api";
+	public static var REPLACE_TO:String = "COME2PLAY_PACKAGE";
 	
 	// Only in the API we should deserialize user-defined classes
 	// (in the emulator and framework, we should deserialize only COME2PLAY_PACKAGE   
-	public static var isInAPI:Boolean =  REPLACE_IN_NAME=="come2play_as2."+"api.";// I replace 'come2play_as2 . api .', so don't remove the  ."+"
+	public static var isInAPI:Boolean =  REPLACE_IN_NAME=="come2play_as2."+"api";// I replace 'come2play_as2 . api .', so don't remove the  ."+"
 	
 	public var __CLASS_NAME__:String;
 	public function SerializableClass() {
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		__CLASS_NAME__ = AS3_vs_AS2.getClassName(this);
-		if (__CLASS_NAME__.substr(0,REPLACE_IN_NAME.length)==REPLACE_IN_NAME) {
+		if (__CLASS_NAME__==null || AS3_vs_AS2.stringIndexOf(__CLASS_NAME__,"$")!=-1) 
+			LocalConnectionUser.throwError("Illegal class name '"+__CLASS_NAME__+"' for a class that extends SerializableClass. You should only use PUBLIC classes with SerializableClass");
+		if (AS3_vs_AS2.isAS3)
+			AS3_vs_AS2.checkConstructorHasNoArgs(this);
+		
+		
+		if (StaticFunctions.startsWith(__CLASS_NAME__,REPLACE_IN_NAME)) {
 			__CLASS_NAME__ = REPLACE_TO + __CLASS_NAME__.substr(REPLACE_IN_NAME.length);			
 		}
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 	}
 	public static function deserialize(object:Object):Object {
 		if (object==null) 
@@ -35,7 +124,11 @@ class come2play_as2.api.auto_copied.SerializableClass
 		var res:Object = object; // we modify the object itself (so we can recurse into arrays and objects)
 
 		if (className!=null) {
-			var isAPI_Package:Boolean = className.substr(0,REPLACE_TO.length)==REPLACE_TO;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+			var isAPI_Package:Boolean =
+				StaticFunctions.startsWith(className, REPLACE_TO);
 			if (isAPI_Package) {
 				className = REPLACE_IN_NAME + className.substr(REPLACE_TO.length);
 			}			 
@@ -44,6 +137,9 @@ class come2play_as2.api.auto_copied.SerializableClass
 				if (newObject!=null) res = newObject;
 			}
 		}
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		for (var key:String in object)
 			res[key] = deserialize(object[key]);
 		return res; 

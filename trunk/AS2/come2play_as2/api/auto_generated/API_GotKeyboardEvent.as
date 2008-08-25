@@ -7,20 +7,35 @@ import come2play_as2.api.auto_generated.*;
 		public var isKeyDown:Boolean;
 		public var charCode:Number;
 		public var keyCode:Number;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		public var keyLocation:Number;
 		public var altKey:Boolean;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		public var ctrlKey:Boolean;
 		public var shiftKey:Boolean;
 		public static function create(isKeyDown:Boolean, charCode:Number, keyCode:Number, keyLocation:Number, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean):API_GotKeyboardEvent { 
 			var res:API_GotKeyboardEvent = new API_GotKeyboardEvent();
 			res.isKeyDown = isKeyDown;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			res.charCode = charCode;
 			res.keyCode = keyCode;
 			res.keyLocation = keyLocation;
 			res.altKey = altKey;
 			res.ctrlKey = ctrlKey;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			res.shiftKey = shiftKey;
 			return res;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		}
 		/*override*/ public function setMethodParameters(parameters:Array):Void { 
 			var pos:Number = 0;
@@ -29,6 +44,12 @@ import come2play_as2.api.auto_generated.*;
 			this.keyCode = parameters[pos++];
 			this.keyLocation = parameters[pos++];
 			this.altKey = parameters[pos++];
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+
 			this.ctrlKey = parameters[pos++];
 			this.shiftKey = parameters[pos++];
 		}

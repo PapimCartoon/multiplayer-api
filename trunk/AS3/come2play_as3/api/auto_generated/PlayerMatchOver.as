@@ -10,6 +10,9 @@ package come2play_as3.api.auto_generated {
 		public var potPercentage:int;
 		public static function create(playerId:int, score:int, potPercentage:int):PlayerMatchOver {
 			var res:PlayerMatchOver = new PlayerMatchOver();
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			res.playerId = playerId;
 			res.score = score;
 			res.potPercentage = potPercentage;

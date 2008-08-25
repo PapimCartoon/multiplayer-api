@@ -7,15 +7,27 @@ import come2play_as2.api.auto_generated.*;
 		public var userEntries:Array/*UserEntry*/;
 		public static function create(userEntries:Array/*UserEntry*/):API_DoStoreState { 
 			var res:API_DoStoreState = new API_DoStoreState();
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			res.userEntries = userEntries;
 			return res;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		}
 		/*override*/ public function setMethodParameters(parameters:Array):Void { 
 			var pos:Number = 0;
 			this.userEntries = parameters[pos++];
 		}
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		/*override*/ public function getParametersAsString():String { return 'userEntries=' + JSON.stringify(userEntries); }
 		/*override*/ public function toString():String { return '{API_DoStoreState:' +getParametersAsString() +'}'; }
 		/*override*/ public function getMethodName():String { return 'doStoreState'; }
 		/*override*/ public function getMethodParameters():Array { return [userEntries]; }
 	}
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+

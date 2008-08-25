@@ -7,18 +7,33 @@ import come2play_as2.api.auto_generated.*;
 		public var key:String;
 		public var isSecret:Boolean;
 		public static function create(key:String, isSecret:Boolean):API_DoAllRequestRandomState { 
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			var res:API_DoAllRequestRandomState = new API_DoAllRequestRandomState();
 			res.key = key;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			res.isSecret = isSecret;
 			return res;
 		}
 		/*override*/ public function setMethodParameters(parameters:Array):Void { 
 			var pos:Number = 0;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			this.key = parameters[pos++];
 			this.isSecret = parameters[pos++];
 		}
 		/*override*/ public function getParametersAsString():String { return 'key=' + JSON.stringify(key)+', isSecret=' + JSON.stringify(isSecret); }
 		/*override*/ public function toString():String { return '{API_DoAllRequestRandomState:' +getParametersAsString() +'}'; }
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		/*override*/ public function getMethodName():String { return 'doAllRequestRandomState'; }
 		/*override*/ public function getMethodParameters():Array { return [key, isSecret]; }
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 	}

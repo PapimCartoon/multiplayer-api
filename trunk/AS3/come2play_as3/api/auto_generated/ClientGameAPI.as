@@ -10,6 +10,9 @@ package come2play_as3.api.auto_generated {
 		}
 		public function doRegisterOnServer():void { sendMessage( API_DoRegisterOnServer.create() ); }
 		public function doTrace(name:String, message:Object/*Serializable*/):void { sendMessage( API_DoTrace.create(name, message) ); }
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		
 		public function gotKeyboardEvent(isKeyDown:Boolean, charCode:int, keyCode:int, keyLocation:int, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean):void {}
 		public function gotCustomInfo(infoEntries:Array/*InfoEntry*/):void {}
@@ -20,6 +23,9 @@ package come2play_as3.api.auto_generated {
 		public function gotMatchEnded(finishedPlayerIds:Array/*int*/):void {}
 		
 		public function gotStateChanged(serverEntries:Array/*ServerEntry*/):void {}
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		
 		public function doStoreState(userEntries:Array/*UserEntry*/):void { sendMessage( API_DoStoreState.create(userEntries) ); }
 		public function doAllStoreState(userEntries:Array/*UserEntry*/):void { sendMessage( API_DoAllStoreState.create(userEntries) ); }
@@ -30,6 +36,9 @@ package come2play_as3.api.auto_generated {
 		// if milliSecondsInTurn==-1 then the default time per turn is used,
 		// and if milliSecondsInTurn==0 then the user should do some actions immediately.
 		public function doAllSetTurn(userId:int, milliSecondsInTurn:int):void { sendMessage( API_DoAllSetTurn.create(userId, milliSecondsInTurn) ); }
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		
 		// if userId of RevealEntry is -1, then the entry becomes PUBLIC
 		public function doAllRevealState(revealEntries:Array/*RevealEntry*/):void { sendMessage( API_DoAllRevealState.create(revealEntries) ); }
@@ -40,6 +49,9 @@ package come2play_as3.api.auto_generated {
 		
 		// if userId=-1, then it is a bug of the game developer
 		public function doAllFoundHacker(userId:int, errorDescription:String):void { sendMessage( API_DoAllFoundHacker.create(userId, errorDescription) ); }
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		
 		// doAllRequestStateCalculation is usually used to do a calculation
 		// of an initial state that should be secret to all players.
@@ -50,6 +62,9 @@ package come2play_as3.api.auto_generated {
 		// i.e., the state calculation must be deterministic (you can use doAllRequestRandomState to create a hidden seed for the calculators).
 		// serverEntries are all public (because the calculators should see state that is secret to the users)
 		public function doAllRequestStateCalculation(keys:Array/*String*/):void { sendMessage( API_DoAllRequestStateCalculation.create(keys) ); }
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		public function gotRequestStateCalculation(serverEntries:Array/*ServerEntry*/):void {}
 		public function doAllStoreStateCalculation(userEntries:Array/*UserEntry*/):void { sendMessage( API_DoAllStoreStateCalculation.create(userEntries) ); }
 		

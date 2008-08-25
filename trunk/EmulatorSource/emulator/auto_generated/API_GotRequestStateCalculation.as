@@ -10,6 +10,9 @@ package emulator.auto_generated {
 			var res:API_GotRequestStateCalculation = new API_GotRequestStateCalculation();
 			res.serverEntries = serverEntries;
 			return res;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		}
 		override public function setMethodParameters(parameters:Array):void { 
 			var pos:int = 0;
@@ -20,4 +23,7 @@ package emulator.auto_generated {
 		override public function getMethodName():String { return 'gotRequestStateCalculation'; }
 		override public function getMethodParameters():Array { return [serverEntries]; }
 	}
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 }

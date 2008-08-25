@@ -7,15 +7,27 @@ import come2play_as2.api.auto_generated.*;
 		public var didWin:Boolean;
 		public static function create(didWin:Boolean):API_DoConnectedEndMatch { 
 			var res:API_DoConnectedEndMatch = new API_DoConnectedEndMatch();
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			res.didWin = didWin;
 			return res;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		}
 		/*override*/ public function setMethodParameters(parameters:Array):Void { 
 			var pos:Number = 0;
 			this.didWin = parameters[pos++];
 		}
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		/*override*/ public function getParametersAsString():String { return 'didWin=' + JSON.stringify(didWin); }
 		/*override*/ public function toString():String { return '{API_DoConnectedEndMatch:' +getParametersAsString() +'}'; }
 		/*override*/ public function getMethodName():String { return 'doConnectedEndMatch'; }
 		/*override*/ public function getMethodParameters():Array { return [didWin]; }
 	}
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+

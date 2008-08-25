@@ -7,6 +7,9 @@
 // So we changed the package name when we copied the directory 'auto_copied'
 package emulator.auto_copied
 {		
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 	// The initial source code was taken from JSON.org
 	public final class JSON {
 		public static var isDoingTesting:Boolean = false;
@@ -17,6 +20,9 @@ package emulator.auto_copied
 
 	    public static function stringify(arg:Object):String{
 			if (arg==null) return 'null';
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			
 	        var c:String, i:int, l:int, res:Array, v:String;
 		    
@@ -27,6 +33,9 @@ package emulator.auto_copied
 	       		for (i = 0; i < arg.length; ++i) {
                     v = stringify(arg[i]);
                     res.push(v);
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                 }
                 return '[' + res.join(",") + ']';
          	}
@@ -37,6 +46,9 @@ package emulator.auto_copied
 	            for (i = 0; i < l; i += 1) {
 	                c = arg.charAt(i);
 	                if (c >= ' ') {
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 	                    if (c == '\\' || c == '"') {
 	                        res.push('\\');
 	                    }
@@ -47,6 +59,9 @@ package emulator.auto_copied
 	                            res.push('\\b');
 	                            break;
 	                        case '\f':
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 	                            res.push('\\f');
 	                            break;
 	                        case '\n':
@@ -57,6 +72,9 @@ package emulator.auto_copied
 	                            break;
 	                        case '\t':
 	                            res.push('\\t');
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 	                            break;
 	                        default:
 	                            var charCode:int = c.charCodeAt();
@@ -67,6 +85,9 @@ package emulator.auto_copied
 	            }
 	            return '"' + res.join("") + '"';
 	        }
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 	        var argToString:String = "";
 	        try {
 	        	argToString = arg.toString();
@@ -77,6 +98,9 @@ package emulator.auto_copied
 	        }
 	        
 	        if (argToString=="[object Object]") {
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 	        	res = [];
 	        	for (var z:String in arg) {
 	                res.push( stringify(z) + ':' + stringify(arg[z]) );
@@ -87,6 +111,9 @@ package emulator.auto_copied
 	    }
         private function white():void {
             while (ch) {
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                 if (ch <= ' ') {
                     this.next();
                 } else if (ch == '/') {
@@ -97,6 +124,9 @@ package emulator.auto_copied
                         case '*':
                             this.next();
                             for (;;) {
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                                 if (ch) {
                                     if (ch == '*') {
                                         if (this.next() == '/') {
@@ -107,6 +137,9 @@ package emulator.auto_copied
                                         this.next();
                                     }
                                 } else {
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                                     throwError("Unterminated comment");
                                 }
                             }
@@ -117,6 +150,9 @@ package emulator.auto_copied
                 } else {
                     break;
                 }
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
             }
         }
 
@@ -127,6 +163,9 @@ package emulator.auto_copied
             ch = text.charAt(at);
             at += 1;
             return ch;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
         }
         private function str():String {
             var i:int, s:String = '', t:int, u:int;
@@ -137,6 +176,9 @@ package emulator.auto_copied
                 while (this.next()) {
                     if (ch == firstApos) {
                         this.next();
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                         return s;
                     } else if (ch == '\\') {
                         switch (this.next()) {
@@ -147,6 +189,9 @@ package emulator.auto_copied
                             s += '\f';
                             break;
                         case 'n':
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                             s += '\n';
                             break;
                         case 'r':
@@ -157,6 +202,9 @@ package emulator.auto_copied
                             break;
                         case 'u':
                             u = 0;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                             for (i = 0; i < 4; i += 1) {
                                 t = parseInt(this.next(), 16);
                                 if (!isFinite(t)) {
@@ -167,6 +215,9 @@ package emulator.auto_copied
                             }
                             if(outer) {
                                 outer = false;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                                 break;
                             }
                             s += String.fromCharCode(u);
@@ -177,6 +228,9 @@ package emulator.auto_copied
                     } else {
                         s += ch;
                     }
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                 }
             } else {
 				// if the user didn't use apostrophies ("...") , then the string goes until we find a special symbol: ' " , : [ ] {}   
@@ -187,6 +241,9 @@ package emulator.auto_copied
 						s += ch;
 				} while (this.next());
 				if (s=='') throwError("Bad string: a string without \"...\" must be only alpha-numeric");
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 				return s; 
 			}
             throwError("Bad string"); // cannot happen
@@ -197,6 +254,9 @@ package emulator.auto_copied
             var a:Array = [];
 
             if (ch == '[') {
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                 this.next();
                 this.white();
                 if (ch == ']') {
@@ -207,6 +267,9 @@ package emulator.auto_copied
                     a.push(this.value());
                     this.white();
                     if (ch == ']') {
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                         this.next();
                         return a;
                     } else if (ch != ',') {
@@ -217,6 +280,9 @@ package emulator.auto_copied
                 }
             }
             throwError("Bad array");
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
             return [];
         }
 
@@ -227,6 +293,9 @@ package emulator.auto_copied
                 this.next();
                 this.white();
                 if (ch == '}') {
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                     this.next();
                     return o;
                 }
@@ -237,6 +306,9 @@ package emulator.auto_copied
                         break;
                     }
                     this.next();
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                     o[k] = this.value();
                     this.white();
                     if (ch == '}') {
@@ -247,6 +319,9 @@ package emulator.auto_copied
                     }
                     this.next();
                     this.white();
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                 }
             }
             throwError("Bad object");
@@ -256,6 +331,9 @@ package emulator.auto_copied
         private function num():Number {
             var n:String = '';
             var v:Number;
+
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
 
             if (ch == '-') {
                 n = '-';
@@ -267,6 +345,9 @@ package emulator.auto_copied
             }
             if (ch == '.') {
                 n += '.';
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                 this.next();
                 while (ch >= '0' && ch <= '9') {
                     n += ch;
@@ -277,6 +358,9 @@ package emulator.auto_copied
                 n += ch;
                 this.next();
                 if (ch == '-' || ch == '+') {
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                     n += ch;
                     this.next();
                 }
@@ -287,6 +371,9 @@ package emulator.auto_copied
             }
             v = Number(n);
 			//trace("v="+v+" n="+n);
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
             if (!isFinite(v)) {
                 throwError("Bad number");
             }
@@ -297,6 +384,9 @@ package emulator.auto_copied
 			var oldAt:int = at;
             switch (ch) {
                 case 't':
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                     if (this.next() == 'r' && this.next() == 'u' &&
                             this.next() == 'e') {
                         this.next();
@@ -307,6 +397,9 @@ package emulator.auto_copied
                     if (this.next() == 'a' && this.next() == 'l' &&
                             this.next() == 's' && this.next() == 'e') {
                         this.next();
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                         return false;
                     }
                     break;
@@ -317,6 +410,9 @@ package emulator.auto_copied
                         return null;
                     }
                     break;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
             }
 			// backtrack and parse as string
 			at = oldAt;
@@ -327,6 +423,9 @@ package emulator.auto_copied
         private function value():Object {
             this.white();
             switch (ch) {
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                 case '{':
                     return this.obj();
                 case '[':
@@ -337,6 +436,9 @@ package emulator.auto_copied
                 case '-':
                     return this.num();
                 default:
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                     return ch >= '0' && ch <= '9' ? this.num() : this.word();
             }
             return {};
@@ -347,6 +449,9 @@ package emulator.auto_copied
 	        ch = ' ';
 	        var res:Object = value();
 	        this.white();
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 	        if (at!=_text.length+1) throwError("Could not parse the entire string, string length="+_text.length+" and the parsing reached position="+(at-1));
 	        return res;
 	    }

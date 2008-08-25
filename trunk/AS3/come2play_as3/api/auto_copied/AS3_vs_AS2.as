@@ -1,17 +1,10 @@
 package come2play_as3.api.auto_copied
 {
-import flash.display.DisplayObject;
-import flash.display.Loader;
-import flash.display.LoaderInfo;
-import flash.display.MovieClip;
-import flash.display.Sprite;
+import flash.display.*;
 import flash.events.*;
-import flash.net.LocalConnection;
-import flash.net.URLRequest;
+import flash.net.*;
 import flash.text.TextField;
-import flash.utils.getDefinitionByName;
-import flash.utils.getQualifiedClassName;
-import flash.utils.setTimeout;
+import flash.utils.*;
 	
 public final class AS3_vs_AS2
 {
@@ -61,7 +54,7 @@ public final class AS3_vs_AS2
 		conn.addEventListener(StatusEvent.STATUS, 
 			function (event:StatusEvent):void {
         		if (event.level=='error')
-        			LocalConnectionUser.error("LocalConnection.onStatus error="+event+" (Are you sure you are running this game inside the emulator?)"); 
+        			LocalConnectionUser.showError("LocalConnection.onStatus error="+event+" (Are you sure you are running this game inside the emulator?)"); 
   			});		
 	}
 	public static function myTimeout(func:Function, in_milliseconds:int):void {
@@ -113,15 +106,17 @@ public final class AS3_vs_AS2
 		target.x = x+x_delta;
 		target.y = y+y_delta;		
 	} 	
-	public static function createInstanceOf(className:String):Object {
+	public static function getClassByName(className:String):Object {
 		try {
-			var _Class:Class = getDefinitionByName(className) as Class;
-			if (_Class==null) LocalConnectionUser.error("ClassName '"+className+"' was not found!");
-			return new _Class();
+			return getDefinitionByName(className);
 		} catch (err:Error) {
-			throw new Error("Did not find class definition="+className);
-		}		
+			throw new Error("The class named '"+className+"' was not found!");
+		}	
 		return null;
+	}
+	public static function createInstanceOf(className:String):Object {
+		var _Class:Class = getClassByName(className) as Class;
+		return new _Class();
 	}
 	public static function duplicateMovie(graphics:MovieClip, name:String):MovieClip {
 		var className:String = getQualifiedClassName(graphics);
@@ -166,6 +161,21 @@ public final class AS3_vs_AS2
 		graphics.addChild(blackBox);
 		graphics.addChild(child);
 	}
+	
+	
+	private static var checkedClasses:Object = {};
+	public static function checkConstructorHasNoArgs(obj:SerializableClass):void {
+		var className:String = obj.__CLASS_NAME__;
+		if (checkedClasses[className]!=null) return;
+		checkedClasses[className] = true;
+		//trace("Checking ctor of "+className);
+		var constructorList:XMLList = describeType(obj).constructor;
+		if (constructorList.length()>0) {
+			var constructor:XML = constructorList[0];
+			if (constructor.children().length()!=0)
+				LocalConnectionUser.throwError("The constructor of class "+className+" that extends SerializableClass has arguments! These are the parameters of the constructor="+constructor.toXMLString()); 
+		}
+	}	
 	
 	public static function IndexOf(arr:Array, val:Object):int {
 		return arr.indexOf(val);

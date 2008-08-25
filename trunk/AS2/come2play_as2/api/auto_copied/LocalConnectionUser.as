@@ -1,23 +1,30 @@
 	import come2play_as2.api.auto_generated.*;
 	
 	import flash.external.*;
-	
-	// IMPORTANT: this class is automatically copied to the emulator and to the container, so make changes only in the API 
+	 
 import come2play_as2.api.auto_copied.*;
 	class come2play_as2.api.auto_copied.LocalConnectionUser
 	{
 		
 		public static var DEFAULT_LOCALCONNECTION_PREFIX:String = "42";
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+		public static var SHOULD_SHOW_ERRORS:Boolean = true;
+		public static var SHOULD_CALL_TRACE:Boolean = true;
 		
 		private static var someMovieClip:MovieClip;
-		public static function error(msg:String):Void {
+		public static function showError(msg:String):Void {
 			var msg:String = "An ERRRRRRRRRRROR occurred:\n"+msg;
 			System.setClipboard(msg);
-			AS3_vs_AS2.showError(someMovieClip, msg);
+			if (SHOULD_SHOW_ERRORS) AS3_vs_AS2.showError(someMovieClip, msg);
 			trace("\n\n\n"+msg+"\n\n\n");
 		}
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		public static function throwError(msg:String):Void {
-			error("Throwing an error with message="+msg+"." + (!AS3_vs_AS2.isAS3 ? "" :  "The error was thrown in this location="+AS3_vs_AS2.error2String(new Error())));
+			showError("Throwing an error with message="+msg+"." + (!AS3_vs_AS2.isAS3 ? "" :  "The error was thrown in this location="+AS3_vs_AS2.error2String(new Error())));
 			throw new Error(msg);
 		}		
 		public static function assert(val:Boolean, args:Array):Void {
@@ -26,6 +33,9 @@ import come2play_as2.api.auto_copied.*;
 		public static function getDoChanelString(sPrefix:String):String {
 			return "DO_CHANEL_"+sPrefix;
 		}
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		public static function getGotChanelString(sPrefix:String):String {
 			return "GOT_CHANEL_"+sPrefix;
 		}
@@ -36,6 +46,9 @@ import come2play_as2.api.auto_copied.*;
 			return getPrefixFromString(sPrefix);
 		}		
 		public static function getPrefixFromString(sPrefix:String):String {
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			if (sPrefix!=null && !(sPrefix.charAt(0)>='0' && sPrefix.charAt(0)<='9')) { //it is not necessarily a number 
 				trace("calling a javascript function that should return the random fixed id");
 				var jsResult:Object = ExternalInterface.call(sPrefix);
@@ -46,6 +59,9 @@ import come2play_as2.api.auto_copied.*;
 				
 		
 		// we use a LocalConnection to communicate with the container
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		private var lcUser:LocalConnection; 
 		private var sSendChanel:String;
 		
@@ -55,7 +71,10 @@ import come2play_as2.api.auto_copied.*;
 				API_LoadMessages.useAll();	
 				someMovieClip = _someMovieClip;
 				if (sPrefix==null) {
-					trace("WARNING: didn't find 'prefix' in the loader info parameters. Probably because you are doing testing locally.\n\n\n\n\n\n");
+					myTrace(["WARNING: didn't find 'prefix' in the loader info parameters. Probably because you are doing testing locally."]);
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 					sPrefix = DEFAULT_LOCALCONNECTION_PREFIX;
 				}				
 				lcUser = new LocalConnection();
@@ -66,45 +85,61 @@ import come2play_as2.api.auto_copied.*;
 				var sListenChannel:String = 
 					isServer ? sDoChanel : sGotChanel;
 				sSendChanel = 
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 					!isServer ? sDoChanel : sGotChanel;				
-				myTrace(": LocalConnection listens on channel="+sListenChannel+" and sends on "+sSendChanel);
+				myTrace(["LocalConnection listens on channel=",sListenChannel," and sends on ",sSendChanel]);
 				lcUser.connect(sListenChannel);
 			}catch (err:Error) { 
 				passError("Constructor",err);
 			}
 		}
-		private function myTrace(msg:String):Void {
-			trace(AS3_vs_AS2.getClassName(this)+": "+msg);
+		public function myTrace(msg:Array):Void {
+			if (SHOULD_CALL_TRACE) trace(AS3_vs_AS2.getClassName(this)+": "+JSON.stringify(msg));
 		}
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		
         private function passError(withObj:Object, err:Error):Void {
         	try{
-				error("Error occurred when passing "+JSON.stringify(withObj)+", the error is="+AS3_vs_AS2.error2String(err));
+				showError("Error occurred when passing "+JSON.stringify(withObj)+", the error is="+AS3_vs_AS2.error2String(err));
 				gotError(withObj, err);
 			} catch (err2:Error) { 
 				// to avoid an infinite loop, I can't call passError again.
-				error("Another error occurred when calling gotError. The new error is="+AS3_vs_AS2.error2String(err2));
+				showError("Another error occurred when calling gotError. The new error is="+AS3_vs_AS2.error2String(err2));
 			}
         }
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		public function gotError(withObj:Object, err:Error):Void {}
         
         public function gotMessage(msg:API_Message):Void {}
         
         public function sendMessage(msg:API_Message):Void {
-        	myTrace('sendMessage: '+msg);        						  
+        	myTrace(['sendMessage: ',msg]);        						  
 			try{
 				lcUser.send(sSendChanel, "localconnection_callback", msg);  
 			}catch(err:Error) { 
 				passError(msg, err);
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			}        	
         }
         
         public function localconnection_callback(msgObj:Object):Void {
         	try{
-        		myTrace("localconnection_callback: "+JSON.stringify(msgObj));
         		var deserializedMsg:Object = SerializableClass.deserialize(msgObj);
         		var msg:API_Message = API_Message(deserializedMsg);
-        		if (msg==null) throw new Error("msgObj is not an API_Message");
+        		if (msg==null) throwError("msgObj="+JSON.stringify(msgObj)+" is not an API_Message");
+        		
+        		myTrace(['gotMessage: ',msg]);
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
         		gotMessage(msg);
 			} catch(err:Error) { 
 				passError(msgObj, err);

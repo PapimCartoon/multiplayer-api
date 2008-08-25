@@ -7,15 +7,27 @@ import come2play_as2.api.auto_generated.*;
 		public var myUserId:Number;
 		public static function create(myUserId:Number):API_GotMyUserId { 
 			var res:API_GotMyUserId = new API_GotMyUserId();
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			res.myUserId = myUserId;
 			return res;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		}
 		/*override*/ public function setMethodParameters(parameters:Array):Void { 
 			var pos:Number = 0;
 			this.myUserId = parameters[pos++];
 		}
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		/*override*/ public function getParametersAsString():String { return 'myUserId=' + JSON.stringify(myUserId); }
 		/*override*/ public function toString():String { return '{API_GotMyUserId:' +getParametersAsString() +'}'; }
 		/*override*/ public function getMethodName():String { return 'gotMyUserId'; }
 		/*override*/ public function getMethodParameters():Array { return [myUserId]; }
 	}
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+

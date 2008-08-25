@@ -7,12 +7,21 @@ import come2play_as2.api.auto_generated.*;
 		public static function create():API_DoRegisterOnServer { 
 			var res:API_DoRegisterOnServer = new API_DoRegisterOnServer();
 			return res;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		}
 		/*override*/ public function setMethodParameters(parameters:Array):Void { 
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			var pos:Number = 0;
 		}
 		/*override*/ public function getParametersAsString():String { return ''; }
 		/*override*/ public function toString():String { return '{API_DoRegisterOnServer}'; }
 		/*override*/ public function getMethodName():String { return 'doRegisterOnServer'; }
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		/*override*/ public function getMethodParameters():Array { return []; }
 	}

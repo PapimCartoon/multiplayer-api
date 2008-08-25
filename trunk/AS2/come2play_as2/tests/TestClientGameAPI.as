@@ -7,6 +7,9 @@ import flash.text.*;
 import come2play_as2.tests.*;
 class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 	//public var dp:DataProvider = new DataProvider();
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 	private var my_graphics:MovieClip;	
 	private var outTracesText:Object;
 	private var exampleOperationsText:Object;
@@ -17,6 +20,9 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 	
 	public function TestClientGameAPI(my_graphics:MovieClip) {
 		super(my_graphics);
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		trace("Constructor of TestClientGameAPI");
 		var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(my_graphics);
 		this.my_graphics = my_graphics;	
@@ -27,6 +33,9 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 		var allOperationsWithParameters:Array = [];
 		for (var i29:Number=0; i29<API_MethodsSummary.SUMMARY_API.length; i29++) { var methodSummary:API_MethodsSummary = API_MethodsSummary.SUMMARY_API[i29]; 
 			var methodName:String = methodSummary.methodName; 
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			if (methodName.substring(0,2)!="do") continue;
 			if (methodName=="doRegisterOnServer") continue;
 			var args:Array = [];
@@ -37,6 +46,9 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 		}
 		exampleOperationsText.text = allOperationsWithParameters.join("\n");
 		
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		if (shouldTestPassNumbers) {	
 			test_Arr = getNumberArr();
 			trace("test_Arr="+test_Arr);
@@ -47,6 +59,9 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 	
 	/*override*/ public function gotMyUserId(userId:Number):Void {		
 		if (shouldTestPassNumbers) doStoreState([ UserEntry.create("test", test_Arr, false)]);
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 	}
 	/*override*/ public function gotStateChanged(serverEntries:Array/*ServerEntry*/):Void { 
 		if (shouldTestPassNumbers) {
@@ -57,6 +72,9 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 				var val2:Number = value[i];
 				if (val!=val2) {
 					LocalConnectionUser.throwError("Found different values, val="+val+" val2="+val2);
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 				}
 			}			
 		}
@@ -67,6 +85,9 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 			var num:Number = Math.random()-0.5;
 			while (num!=0 && num!=Number.NEGATIVE_INFINITY && num!=Number.POSITIVE_INFINITY && num!=Number.MAX_VALUE && num!=Number.MIN_VALUE) {					
 				res.push(num);
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 				num = i<2 ? num/3.0 : num*3.0;
 			}
 		}
@@ -77,6 +98,9 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 		trace("storeTrace: func="+func+" args="+args);
 		outTracesText.text +=
 			AS3_vs_AS2.getTimeString() + "\t" + func + "\t" + args + "\n";
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		//dp.addItem({Time:(new Date().toLocaleTimeString()), Dir: is_to_container ? "->" : "<-", Function:func, Arguments:args});
 	}
 	private function handleError(err:Error):Void { 
@@ -87,6 +111,9 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 			var inputStr:String = operationInput.text;
 			if (inputStr=='') return;
 			var firstParen:Number = inputStr./*String*/indexOf("(");
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			if (firstParen==-1) return;
 			var lastParen:Number = inputStr./*String*/lastIndexOf(")");
 			if (lastParen==-1) return;			
@@ -97,6 +124,9 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 				"come2play_as2.api.auto_generated::API_"+ 
 				methodName.substr(0,1).toUpperCase()+methodName.substr(1);
 			var instanceObj:Object = AS3_vs_AS2.createInstanceOf(className);
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			var instance:API_Message = API_Message(instanceObj);
 			instance.setMethodParameters(AS3_vs_AS2.asArray(JSON.parse("["+params+"]")));
 			sendMessage(instance);
@@ -107,6 +137,9 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
     /*override*/ public function sendMessage(msg:API_Message):Void {
 		storeTrace(msg.getMethodName(), msg.getParametersAsString());
 		super.sendMessage(msg);
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 	}
 	/*override*/ public function gotMessage(msg:API_Message):Void {
 		storeTrace(msg.getMethodName(), msg.getParametersAsString());

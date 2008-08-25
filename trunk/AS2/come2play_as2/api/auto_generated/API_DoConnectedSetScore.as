@@ -7,15 +7,27 @@ import come2play_as2.api.auto_generated.*;
 		public var score:Number;
 		public static function create(score:Number):API_DoConnectedSetScore { 
 			var res:API_DoConnectedSetScore = new API_DoConnectedSetScore();
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			res.score = score;
 			return res;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		}
 		/*override*/ public function setMethodParameters(parameters:Array):Void { 
 			var pos:Number = 0;
 			this.score = parameters[pos++];
 		}
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		/*override*/ public function getParametersAsString():String { return 'score=' + JSON.stringify(score); }
 		/*override*/ public function toString():String { return '{API_DoConnectedSetScore:' +getParametersAsString() +'}'; }
 		/*override*/ public function getMethodName():String { return 'doConnectedSetScore'; }
 		/*override*/ public function getMethodParameters():Array { return [score]; }
 	}
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+

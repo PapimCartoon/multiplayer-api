@@ -7,15 +7,27 @@ import come2play_as2.api.auto_generated.*;
 		public var keys:Array/*String*/;
 		public static function create(keys:Array/*String*/):API_DoAllShuffleState { 
 			var res:API_DoAllShuffleState = new API_DoAllShuffleState();
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			res.keys = keys;
 			return res;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		}
 		/*override*/ public function setMethodParameters(parameters:Array):Void { 
 			var pos:Number = 0;
 			this.keys = parameters[pos++];
 		}
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		/*override*/ public function getParametersAsString():String { return 'keys=' + JSON.stringify(keys); }
 		/*override*/ public function toString():String { return '{API_DoAllShuffleState:' +getParametersAsString() +'}'; }
 		/*override*/ public function getMethodName():String { return 'doAllShuffleState'; }
 		/*override*/ public function getMethodParameters():Array { return [keys]; }
 	}
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+

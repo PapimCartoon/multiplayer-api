@@ -17,7 +17,8 @@ package come2play_as3.api {
 		public function BaseGameAPI(_someMovieClip:MovieClip) {
 			super(_someMovieClip, false, sPrefix = getPrefixFromFlashVars(_someMovieClip));
 			if (sPrefix==null) 
-				new SinglePlayerEmulator(_someMovieClip);		
+				new SinglePlayerEmulator(_someMovieClip);
+			StaticFunctions.performReflectionFromFlashVars(_someMovieClip);	
 		}
 		private var hackerUserId:int = -1;
 		override public function gotError(withObj:Object, err:Error):void {

@@ -51,7 +51,7 @@ class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 		}
 		conn.onStatus = function(infoObject:Object) { 
 			if (infoObject.level=='error')
-				LocalConnectionUser.error("LocalConnection.onStatus error! (Are you sure you are running this game inside the emulator?)");
+				LocalConnectionUser.showError("LocalConnection.onStatus error! (Are you sure you are running this game inside the emulator?)");
 		};
 	}
 	
@@ -97,7 +97,7 @@ class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 		target._y = y+y_delta;		
 	} 			
 	
-	//todo: we use CLASS_NAME_FIELD (because when we add CLASS_NAME_FIELD to the prototype, it is serialized in LocalConnection, so no point in having two properties with the same content) 
+	// we use CLASS_NAME_FIELD (because when we add CLASS_NAME_FIELD to the prototype, it is serialized in LocalConnection, so no point in having two properties with the same content) 
 	public static function getClassName(o:Object):String {
 		//typeof is not good enough! for SerializableClass I want to know the class name
 		// when you create a class, it is stored in _global.PACKAGES...CLASS_NAME
@@ -118,8 +118,12 @@ class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 		}
 		return null;
 	}
+	
+	public static function getClassByName(className:String):Object {
+		return eval(className);
+	}
 	public static function createInstanceOf(className:String):Object {
-		var classConstructor:Function = eval(className);
+		var classConstructor = getClassByName(className);
 		return new classConstructor();
 	}
 
@@ -162,6 +166,10 @@ class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 		var label:TextField = container.createTextField("label", 1, 0, 0, 300, 300);
 		label.text = msg;
 		label.textColor = 0xFF0000;
+	}
+	
+	public static function checkConstructorHasNoArgs(obj:Object):Void {
+		// can only be done in AS3
 	}
 
 	public static function IndexOf(arr:Array, val:Object):Number {

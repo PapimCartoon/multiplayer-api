@@ -10,6 +10,9 @@ package come2play_as3.api.auto_generated {
 		public var parameterTypes:Array/*String*/;
 		public function API_MethodsSummary(methodName:String, parameterNames:Array/*String*/, parameterTypes:Array/*String*/) {
 			this.methodName = methodName;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			this.parameterNames = parameterNames;
 			this.parameterTypes = parameterTypes;
 		}
@@ -20,6 +23,9 @@ package come2play_as3.api.auto_generated {
 		, new API_MethodsSummary('gotKeyboardEvent', ['isKeyDown', 'charCode', 'keyCode', 'keyLocation', 'altKey', 'ctrlKey', 'shiftKey'], ['Boolean', 'int', 'int', 'int', 'Boolean', 'Boolean', 'Boolean'] )
 		, new API_MethodsSummary('gotCustomInfo', ['infoEntries'], ['Array/*InfoEntry*/'] )
 		, new API_MethodsSummary('gotUserInfo', ['userId', 'infoEntries'], ['int', 'Array/*InfoEntry*/'] )
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		, new API_MethodsSummary('gotUserDisconnected', ['userId'], ['int'] )
 		, new API_MethodsSummary('gotMyUserId', ['myUserId'], ['int'] )
 		, new API_MethodsSummary('gotMatchStarted', ['allPlayerIds', 'finishedPlayerIds', 'extraMatchInfo', 'matchStartedTime', 'serverEntries'], ['Array/*int*/', 'Array/*int*/', 'Object/*Serializable*/', 'int', 'Array/*ServerEntry*/'] )
@@ -30,6 +36,9 @@ package come2play_as3.api.auto_generated {
 		, new API_MethodsSummary('doAllEndMatch', ['finishedPlayers'], ['Array/*PlayerMatchOver*/'] )
 		, new API_MethodsSummary('doAllSetTurn', ['userId', 'milliSecondsInTurn'], ['int', 'int'] )
 		, new API_MethodsSummary('doAllRevealState', ['revealEntries'], ['Array/*RevealEntry*/'] )
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		, new API_MethodsSummary('doAllShuffleState', ['keys'], ['Array/*String*/'] )
 		, new API_MethodsSummary('doAllRequestRandomState', ['key', 'isSecret'], ['String', 'Boolean'] )
 		, new API_MethodsSummary('doAllFoundHacker', ['userId', 'errorDescription'], ['int', 'String'] )
@@ -40,4 +49,7 @@ package come2play_as3.api.auto_generated {
 		, new API_MethodsSummary('doConnectedEndMatch', ['didWin'], ['Boolean'] )
 		];
 	}
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 }

@@ -10,6 +10,9 @@ package emulator.auto_generated {
 		public var isSecret:Boolean;
 		public static function create(key:String, value:*, isSecret:Boolean):UserEntry {
 			var res:UserEntry = new UserEntry();
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			res.key = key;
 			res.value = value;
 			res.isSecret = isSecret;

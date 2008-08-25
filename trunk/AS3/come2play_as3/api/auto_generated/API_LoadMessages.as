@@ -10,6 +10,9 @@ package come2play_as3.api.auto_generated {
 			new API_DoRegisterOnServer();
 			new API_DoTrace();
 			new API_GotKeyboardEvent();
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			new API_GotCustomInfo();
 			new API_GotUserInfo();
 			new API_GotUserDisconnected();
@@ -20,6 +23,9 @@ package come2play_as3.api.auto_generated {
 			new API_DoStoreState();
 			new API_DoAllStoreState();
 			new API_DoAllEndMatch();
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			new API_DoAllSetTurn();
 			new API_DoAllRevealState();
 			new API_DoAllShuffleState();
@@ -30,6 +36,9 @@ package come2play_as3.api.auto_generated {
 			new API_DoAllStoreStateCalculation();
 			new API_DoConnectedSetScore();
 			new API_DoConnectedEndMatch();
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			new PlayerMatchOver();
 			new InfoEntry();
 			new RevealEntry();

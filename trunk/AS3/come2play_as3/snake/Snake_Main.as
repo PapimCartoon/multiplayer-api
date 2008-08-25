@@ -33,7 +33,7 @@ import flash.utils.*;
  * e.g., [ [7,4] , [7,5], [7,6], [8,6], ... ]
  * [7,4] is the tail of the snake.
  */
-public final class Snake_Main extends CombinedClientAndSecureGameAPI {
+public final class Snake_Main extends ClientGameAPI {
 {
 	// you can change these values by setting in the flashvars:
 	// SET_VAR_* , e.g., SET_VAR_MILLISECONDS_BETWEEN_KEY_PRESSES

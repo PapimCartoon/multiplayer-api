@@ -10,6 +10,9 @@ package emulator.auto_generated {
 			var res:API_DoConnectedSetScore = new API_DoConnectedSetScore();
 			res.score = score;
 			return res;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		}
 		override public function setMethodParameters(parameters:Array):void { 
 			var pos:int = 0;
@@ -20,4 +23,7 @@ package emulator.auto_generated {
 		override public function getMethodName():String { return 'doConnectedSetScore'; }
 		override public function getMethodParameters():Array { return [score]; }
 	}
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 }

@@ -10,6 +10,9 @@ package come2play_as3.api.auto_generated {
 		}
 		public function doRegisterOnServer():void { sendMessage( API_DoRegisterOnServer.create() ); }
 		public function doTrace(name:String, message:Object/*Serializable*/):void { sendMessage( API_DoTrace.create(name, message) ); }
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		
 		public function gotKeyboardEvent(isKeyDown:Boolean, charCode:int, keyCode:int, keyLocation:int, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean):void {}
 		public function gotCustomInfo(infoEntries:Array/*InfoEntry*/):void {}
@@ -20,6 +23,9 @@ package come2play_as3.api.auto_generated {
 		public function gotMatchEnded(finishedPlayerIds:Array/*int*/):void {}
 		
 		public function doStoreState(userEntries:Array/*UserEntry*/):void { sendMessage( API_DoStoreState.create(userEntries) ); }
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		public function gotStateChanged(serverEntries:Array/*ServerEntry*/):void {}
 		
 		public function doConnectedSetScore(score:int):void { sendMessage( API_DoConnectedSetScore.create(score) ); }
@@ -30,4 +36,7 @@ package come2play_as3.api.auto_generated {
 		
 		
 	}
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 }

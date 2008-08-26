@@ -6,7 +6,7 @@ package come2play_as3.api.auto_generated {
 	import come2play_as3.api.auto_copied.*
 	public  class API_DoConnectedEndMatch extends API_Message {
 		public var didWin:Boolean;
-		public static function create(didWin:Boolean):API_DoConnectedEndMatch { 
+		public static function create(didWin:Boolean):API_DoConnectedEndMatch {
 			var res:API_DoConnectedEndMatch = new API_DoConnectedEndMatch();
 			res.didWin = didWin;
 			return res;

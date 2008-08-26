@@ -6,7 +6,7 @@ package come2play_as3.api.auto_generated {
 	import come2play_as3.api.auto_copied.*
 	public  class API_DoStoreState extends API_Message {
 		public var userEntries:Array/*UserEntry*/;
-		public static function create(userEntries:Array/*UserEntry*/):API_DoStoreState { 
+		public static function create(userEntries:Array/*UserEntry*/):API_DoStoreState {
 			var res:API_DoStoreState = new API_DoStoreState();
 			res.userEntries = userEntries;
 			return res;

@@ -6,7 +6,7 @@ package emulator.auto_generated {
 	import emulator.auto_copied.*
 	public  class API_DoStoreState extends API_Message {
 		public var userEntries:Array/*UserEntry*/;
-		public static function create(userEntries:Array/*UserEntry*/):API_DoStoreState { 
+		public static function create(userEntries:Array/*UserEntry*/):API_DoStoreState {
 			var res:API_DoStoreState = new API_DoStoreState();
 			res.userEntries = userEntries;
 			return res;

@@ -5,11 +5,8 @@
 import come2play_as2.api.auto_generated.*;
 	class come2play_as2.api.auto_generated.API_DoAllStoreStateCalculation extends API_Message {
 		public var userEntries:Array/*UserEntry*/;
-		public static function create(userEntries:Array/*UserEntry*/):API_DoAllStoreStateCalculation { 
+		public static function create(userEntries:Array/*UserEntry*/):API_DoAllStoreStateCalculation {
 			var res:API_DoAllStoreStateCalculation = new API_DoAllStoreStateCalculation();
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 			res.userEntries = userEntries;
 			return res;
 
@@ -20,9 +17,6 @@ import come2play_as2.api.auto_generated.*;
 			var pos:Number = 0;
 			this.userEntries = parameters[pos++];
 		}
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 		/*override*/ public function getParametersAsString():String { return 'userEntries=' + JSON.stringify(userEntries); }
 		/*override*/ public function toString():String { return '{API_DoAllStoreStateCalculation:' +getParametersAsString() +'}'; }
 		/*override*/ public function getMethodName():String { return 'doAllStoreStateCalculation'; }

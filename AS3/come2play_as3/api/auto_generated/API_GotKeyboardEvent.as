@@ -15,7 +15,7 @@ package come2play_as3.api.auto_generated {
 
 		public var ctrlKey:Boolean;
 		public var shiftKey:Boolean;
-		public static function create(isKeyDown:Boolean, charCode:int, keyCode:int, keyLocation:int, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean):API_GotKeyboardEvent { 
+		public static function create(isKeyDown:Boolean, charCode:int, keyCode:int, keyLocation:int, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean):API_GotKeyboardEvent {
 			var res:API_GotKeyboardEvent = new API_GotKeyboardEvent();
 			res.isKeyDown = isKeyDown;
 			res.charCode = charCode;

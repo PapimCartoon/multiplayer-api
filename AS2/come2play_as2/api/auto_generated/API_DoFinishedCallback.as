@@ -5,11 +5,8 @@
 import come2play_as2.api.auto_generated.*;
 	class come2play_as2.api.auto_generated.API_DoFinishedCallback extends API_Message {
 		public var callbackName:String;
-		public static function create(callbackName:String):API_DoFinishedCallback { 
+		public static function create(callbackName:String):API_DoFinishedCallback {
 			var res:API_DoFinishedCallback = new API_DoFinishedCallback();
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 			res.callbackName = callbackName;
 			return res;
 
@@ -20,9 +17,6 @@ import come2play_as2.api.auto_generated.*;
 			var pos:Number = 0;
 			this.callbackName = parameters[pos++];
 		}
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 		/*override*/ public function getParametersAsString():String { return 'callbackName=' + JSON.stringify(callbackName); }
 		/*override*/ public function toString():String { return '{API_DoFinishedCallback:' +getParametersAsString() +'}'; }
 		/*override*/ public function getMethodName():String { return 'doFinishedCallback'; }

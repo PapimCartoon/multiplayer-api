@@ -6,7 +6,7 @@ package emulator.auto_generated {
 	import emulator.auto_copied.*
 	public  class API_GotMatchEnded extends API_Message {
 		public var finishedPlayerIds:Array/*int*/;
-		public static function create(finishedPlayerIds:Array/*int*/):API_GotMatchEnded { 
+		public static function create(finishedPlayerIds:Array/*int*/):API_GotMatchEnded {
 			var res:API_GotMatchEnded = new API_GotMatchEnded();
 			res.finishedPlayerIds = finishedPlayerIds;
 			return res;

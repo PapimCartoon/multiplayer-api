@@ -6,7 +6,7 @@ package come2play_as3.api.auto_generated {
 	import come2play_as3.api.auto_copied.*
 	public  class API_GotMyUserId extends API_Message {
 		public var myUserId:int;
-		public static function create(myUserId:int):API_GotMyUserId { 
+		public static function create(myUserId:int):API_GotMyUserId {
 			var res:API_GotMyUserId = new API_GotMyUserId();
 			res.myUserId = myUserId;
 			return res;

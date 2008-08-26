@@ -6,7 +6,7 @@ package come2play_as3.api.auto_generated {
 	import come2play_as3.api.auto_copied.*
 	public  class API_GotStateChanged extends API_Message {
 		public var serverEntries:Array/*ServerEntry*/;
-		public static function create(serverEntries:Array/*ServerEntry*/):API_GotStateChanged { 
+		public static function create(serverEntries:Array/*ServerEntry*/):API_GotStateChanged {
 			var res:API_GotStateChanged = new API_GotStateChanged();
 			res.serverEntries = serverEntries;
 			return res;

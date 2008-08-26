@@ -13,7 +13,7 @@ package come2play_as3.api.auto_generated {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		public static function create(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, extraMatchInfo:Object/*Serializable*/, matchStartedTime:int, serverEntries:Array/*ServerEntry*/):API_GotMatchStarted { 
+		public static function create(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, extraMatchInfo:Object/*Serializable*/, matchStartedTime:int, serverEntries:Array/*ServerEntry*/):API_GotMatchStarted {
 			var res:API_GotMatchStarted = new API_GotMatchStarted();
 			res.allPlayerIds = allPlayerIds;
 			res.finishedPlayerIds = finishedPlayerIds;

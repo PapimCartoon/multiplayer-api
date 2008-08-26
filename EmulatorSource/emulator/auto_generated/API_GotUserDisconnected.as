@@ -6,7 +6,7 @@ package emulator.auto_generated {
 	import emulator.auto_copied.*
 	public  class API_GotUserDisconnected extends API_Message {
 		public var userId:int;
-		public static function create(userId:int):API_GotUserDisconnected { 
+		public static function create(userId:int):API_GotUserDisconnected {
 			var res:API_GotUserDisconnected = new API_GotUserDisconnected();
 			res.userId = userId;
 			return res;

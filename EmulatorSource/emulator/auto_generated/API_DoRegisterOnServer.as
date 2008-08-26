@@ -5,7 +5,7 @@ package emulator.auto_generated {
 	import emulator.*;
 	import emulator.auto_copied.*
 	public  class API_DoRegisterOnServer extends API_Message {
-		public static function create():API_DoRegisterOnServer { 
+		public static function create():API_DoRegisterOnServer {
 			var res:API_DoRegisterOnServer = new API_DoRegisterOnServer();
 			return res;
 		}

@@ -3,13 +3,10 @@
 	import come2play_as2.api.*
 	import come2play_as2.api.auto_copied.*
 import come2play_as2.api.auto_generated.*;
-	class come2play_as2.api.auto_generated.InfoEntry extends SerializableClass {
+	class come2play_as2.api.auto_generated.InfoEntry extends API_Message {
 		public var key:String;
 		public var value:Object/*Serializable*/;
 		public static function create(key:String, value:Object/*Serializable*/):InfoEntry {
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 			var res:InfoEntry = new InfoEntry();
 			res.key = key;
 
@@ -18,9 +15,16 @@ import come2play_as2.api.auto_generated.*;
 			res.value = value;
 			return res;
 		}
-		public function getParametersAsString():String { return 'key=' + JSON.stringify(key)+', value=' + JSON.stringify(value); }
-		public function toString():String { return '{InfoEntry: ' + getParametersAsString() + '}'; }
+		/*override*/ public function setMethodParameters(parameters:Array):Void { 
+			var pos:Number = 0;
+			this.key = parameters[pos++];
+			this.value = parameters[pos++];
+		}
+		/*override*/ public function getParametersAsString():String { return 'key=' + JSON.stringify(key)+', value=' + JSON.stringify(value); }
+		/*override*/ public function toString():String { return '{InfoEntry:' +getParametersAsString() +'}'; }
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		/*override*/ public function getMethodName():String { return 'InfoEntry'; }
+		/*override*/ public function getMethodParameters():Array { return [key, value]; }
 	}

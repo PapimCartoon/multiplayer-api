@@ -5,11 +5,8 @@
 import come2play_as2.api.auto_generated.*;
 	class come2play_as2.api.auto_generated.API_DoAllRevealState extends API_Message {
 		public var revealEntries:Array/*RevealEntry*/;
-		public static function create(revealEntries:Array/*RevealEntry*/):API_DoAllRevealState { 
+		public static function create(revealEntries:Array/*RevealEntry*/):API_DoAllRevealState {
 			var res:API_DoAllRevealState = new API_DoAllRevealState();
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 			res.revealEntries = revealEntries;
 			return res;
 
@@ -20,9 +17,6 @@ import come2play_as2.api.auto_generated.*;
 			var pos:Number = 0;
 			this.revealEntries = parameters[pos++];
 		}
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 		/*override*/ public function getParametersAsString():String { return 'revealEntries=' + JSON.stringify(revealEntries); }
 		/*override*/ public function toString():String { return '{API_DoAllRevealState:' +getParametersAsString() +'}'; }
 		/*override*/ public function getMethodName():String { return 'doAllRevealState'; }

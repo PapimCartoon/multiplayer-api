@@ -6,7 +6,7 @@ package emulator.auto_generated {
 	import emulator.auto_copied.*
 	public  class API_GotCustomInfo extends API_Message {
 		public var infoEntries:Array/*InfoEntry*/;
-		public static function create(infoEntries:Array/*InfoEntry*/):API_GotCustomInfo { 
+		public static function create(infoEntries:Array/*InfoEntry*/):API_GotCustomInfo {
 			var res:API_GotCustomInfo = new API_GotCustomInfo();
 			res.infoEntries = infoEntries;
 			return res;

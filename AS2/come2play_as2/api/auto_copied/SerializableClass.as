@@ -7,9 +7,6 @@
 import come2play_as2.api.auto_copied.*;
  *   class come2play_as2.api.auto_copied.PublicClass1 extends SerializableClass {
  *     public static var staticVar:Number; // static vars will NOT be serialized
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
  * 
  *     public var serializedField1:Number;  
  *     private var serializedField2:Number; // private vars will be serialized
@@ -20,9 +17,6 @@ import come2play_as2.api.auto_copied.*;
  *     public function PublicClass1() { 
  *     }
  *     ...
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
  *   }
  * }
  * package somePackage {
@@ -33,9 +27,6 @@ import come2play_as2.api.auto_copied.*;
  * }
  * 
  * BAD Example:
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
  * package somePackage {
 import come2play_as2.api.auto_copied.*;
  *   class come2play_as2.api.auto_copied.PublicClass extends SerializableClass {
@@ -46,9 +37,6 @@ import come2play_as2.api.auto_copied.*;
  *     ...
  *   }
  * }
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
  * class PrivateClass extends SerializableClass { 
  *   ...
  * }
@@ -59,9 +47,6 @@ import come2play_as2.api.auto_copied.*;
  * then flash chooses some random name for its package.
  * For example, in the BAD code above,
  * the qualified name of PrivateClass will be:
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
  *  PublicClass.as$54::PrivateClass
  * And this number may change, if you recompile a slightly modified code.
  *
@@ -72,9 +57,6 @@ import come2play_as2.api.auto_copied.*;
  * - When class A inherits from SerializableClass,
  * it gets the field __CLASS_NAME__, which is set in the constructor.
  * - When you deserialize an object, a new instance of the correct class
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
  * is created (that is why you must have an empty constructor),
  * and then we traverse and the object and set all the fields.
  * Note that  deserialize(object)  modifies the object.
@@ -85,9 +67,6 @@ class come2play_as2.api.auto_copied.SerializableClass
 	public static var CLASS_NAME_FIELD:String = "__CLASS_NAME__";
 	
 	// Because the shared classes have different package names, 
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 	// I need to replace it before and after serialization
 	public static var REPLACE_IN_NAME:String = "come2play_as2.api";
 	public static var REPLACE_TO:String = "COME2PLAY_PACKAGE";
@@ -98,9 +77,6 @@ class come2play_as2.api.auto_copied.SerializableClass
 	
 	public var __CLASS_NAME__:String;
 	public function SerializableClass() {
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 		__CLASS_NAME__ = AS3_vs_AS2.getClassName(this);
 		if (__CLASS_NAME__==null || AS3_vs_AS2.stringIndexOf(__CLASS_NAME__,"$")!=-1) 
 			LocalConnectionUser.throwError("Illegal class name '"+__CLASS_NAME__+"' for a class that extends SerializableClass. You should only use PUBLIC classes with SerializableClass");
@@ -111,9 +87,6 @@ class come2play_as2.api.auto_copied.SerializableClass
 		if (StaticFunctions.startsWith(__CLASS_NAME__,REPLACE_IN_NAME)) {
 			__CLASS_NAME__ = REPLACE_TO + __CLASS_NAME__.substr(REPLACE_IN_NAME.length);			
 		}
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 	}
 	public static function deserialize(object:Object):Object {
 		if (object==null) 
@@ -124,9 +97,6 @@ class come2play_as2.api.auto_copied.SerializableClass
 		var res:Object = object; // we modify the object itself (so we can recurse into arrays and objects)
 
 		if (className!=null) {
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 			var isAPI_Package:Boolean =
 				StaticFunctions.startsWith(className, REPLACE_TO);
 			if (isAPI_Package) {
@@ -137,9 +107,6 @@ class come2play_as2.api.auto_copied.SerializableClass
 				if (newObject!=null) res = newObject;
 			}
 		}
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 		for (var key:String in object)
 			res[key] = deserialize(object[key]);
 		return res; 

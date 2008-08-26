@@ -7,7 +7,7 @@ package come2play_as3.api.auto_generated {
 	public  class API_GotUserInfo extends API_Message {
 		public var userId:int;
 		public var infoEntries:Array/*InfoEntry*/;
-		public static function create(userId:int, infoEntries:Array/*InfoEntry*/):API_GotUserInfo { 
+		public static function create(userId:int, infoEntries:Array/*InfoEntry*/):API_GotUserInfo {
 			var res:API_GotUserInfo = new API_GotUserInfo();
 			res.userId = userId;
 

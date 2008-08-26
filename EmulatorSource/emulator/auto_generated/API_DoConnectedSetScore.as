@@ -6,7 +6,7 @@ package emulator.auto_generated {
 	import emulator.auto_copied.*
 	public  class API_DoConnectedSetScore extends API_Message {
 		public var score:int;
-		public static function create(score:int):API_DoConnectedSetScore { 
+		public static function create(score:int):API_DoConnectedSetScore {
 			var res:API_DoConnectedSetScore = new API_DoConnectedSetScore();
 			res.score = score;
 			return res;

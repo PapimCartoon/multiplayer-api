@@ -7,9 +7,6 @@
 // So we changed the package name when we copied the directory 'auto_copied'
 package emulator.auto_copied
 {
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 /**
  * Subclasses of SerializableClass MUST be PUBLIC and 
  * have a constructor without arguments.
@@ -20,9 +17,6 @@ package emulator.auto_copied
  *     public static var staticVar:int; // static vars will NOT be serialized
  * 
  *     public var serializedField1:int;  
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
  *     private var serializedField2:int; // private vars will be serialized
  *     private var serializedField3:Array; // serialization is recursive, and goes into Arrays
  *     private var serializedField4:PublicClass2; // again, serialization is recursive
@@ -33,9 +27,6 @@ package emulator.auto_copied
  *     ...
  *   }
  * }
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
  * package somePackage {
  *   public class PublicClass2 extends SerializableClass {
  *     ...
@@ -46,9 +37,6 @@ package emulator.auto_copied
  * package somePackage {
  *   public class PublicClass extends SerializableClass {
  *     // The constructor must not have any arguments!
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
  *     public function PublicClass(argument:int) {
  *       ...
  *     }
@@ -59,9 +47,6 @@ package emulator.auto_copied
  *   ...
  * }
  * 
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
  * Explanation on why private classes cannot be serialized:
  * Only public should inherit from SerializableClass.
  * If the class is not public,
@@ -72,9 +57,6 @@ package emulator.auto_copied
  * And this number may change, if you recompile a slightly modified code.
  *
  * Explanation on the implementation of serialization:
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
  * - When an object is sent over a LocalConnection,
  * flash removes all type-information and turns that object into
  * a primitive object (that has only primitive types, Array and Object fields).
@@ -85,9 +67,6 @@ package emulator.auto_copied
  * and then we traverse and the object and set all the fields.
  * Note that  deserialize(object)  modifies the object.
  */
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 public class SerializableClass
 {
 	public static const CLASS_NAME_FIELD:String = "__CLASS_NAME__";
@@ -98,9 +77,6 @@ public class SerializableClass
 	public static const REPLACE_TO:String = "COME2PLAY_PACKAGE";
 	
 	// Only in the API we should deserialize user-defined classes
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 	// (in the emulator and framework, we should deserialize only COME2PLAY_PACKAGE   
 	public static const isInAPI:Boolean =  REPLACE_IN_NAME=="come2play_as3."+"api";// I replace 'come2play_as3 . api .', so don't remove the  ."+"
 	
@@ -111,9 +87,6 @@ public class SerializableClass
 			LocalConnectionUser.throwError("Illegal class name '"+__CLASS_NAME__+"' for a class that extends SerializableClass. You should only use PUBLIC classes with SerializableClass");
 		if (AS3_vs_AS2.isAS3)
 			AS3_vs_AS2.checkConstructorHasNoArgs(this);
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 		
 		
 		if (StaticFunctions.startsWith(__CLASS_NAME__,REPLACE_IN_NAME)) {
@@ -124,9 +97,6 @@ public class SerializableClass
 		if (object==null) 
 			return object;
 		var className:String = 
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 			object.hasOwnProperty(CLASS_NAME_FIELD) ? object[CLASS_NAME_FIELD] : null;
 
 		var res:Object = object; // we modify the object itself (so we can recurse into arrays and objects)
@@ -137,9 +107,6 @@ public class SerializableClass
 			if (isAPI_Package) {
 				className = REPLACE_IN_NAME + className.substr(REPLACE_TO.length);
 			}			 
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 			if (isInAPI || isAPI_Package) {
 				var newObject:Object = AS3_vs_AS2.createInstanceOf(className);
 				if (newObject!=null) res = newObject;
@@ -150,7 +117,4 @@ public class SerializableClass
 		return res; 
 	}	
 }
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 }

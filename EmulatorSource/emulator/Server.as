@@ -712,7 +712,7 @@
 				processMessage(tempMessage);
 			}
 			
-			if (!(tempMessage is API_DoAllSetTurn))
+			if (!((tempMessage is API_DoAllSetTurn) || (tempMessage is API_DoAllRequestStateCalculation) ))
 				unverifiedQueue.push(new UnverifiedFunction(waitingFunction,aPlayers.concat()));
 			queueTimer.reset();
 			queueTimer.start();
@@ -720,7 +720,6 @@
 		}
 		private function verefyAction(user:User,methodName:String):void
 		{
-			//not testing function
 			for each(var unverifiedFunction:UnverifiedFunction in unverifiedQueue)
 			{
 					if(unverifiedFunction.removeUnverifiedUser(user.ID))
@@ -788,7 +787,7 @@
 			{
 				if(originalMsg.getMethodName() == waitingFunction.msg.getMethodName())
 					spliceNum(playersNotCalled,waitingFunction.user.ID);
-				else
+				else if(!(waitingFunction.msg is API_DoStoreState))//todo: talk to yoav
 				{
 					if(spliceNum(playersNotCalled,waitingFunction.user.ID)!=-1)
 					{
@@ -875,8 +874,9 @@
 				}
 				else
 				{
-					serverEntries.push(ServerEntry.create(userEntry.key,userEntry.value,-1,null,getTimer()-matchStartTime));
-					doStoreOneState(ServerEntry.create(userEntry.key,userEntry.value,-1,null,getTimer()-matchStartTime));	
+					var serverEntry:ServerEntry = ServerEntry.create(userEntry.key,userEntry.value,-1,null,getTimer()-matchStartTime)
+					serverEntries.push(serverEntry);
+					doStoreOneState(serverEntry);	
 				}
 			}	
 			broadcast(API_GotStateChanged.create(serverEntries));	
@@ -947,25 +947,38 @@
 		{
 			var revealIndex:int;
 			var serverEnries:Array=new Array();
-			for each(var revealEntry:RevealEntry in msg.revealEntries)
-			{
-				revealIndex=isKeyExist(revealEntry.key)
-				if(revealIndex!=-1)	
-				{
-					var serverEntry:ServerEntry=userStateEntrys[revealIndex];
-					if(revealEntry.userIds == null)
-						serverEntry.authorizedUserIds = null;			
-					else
-						revealEntryToPlayers(serverEntry,revealEntry);
-					serverEnries.push(serverEntry);
-				}
-				else
-				{
-					addMessageLog("Server","Error","Can't reveal a key that does not exist");
-					showMsg("Can't reveal a key that does not exist","Error");
-					gameOver();
-					return;		
+			var key:String;
 
+			for each(var revealEntry:RevealEntry in msg.revealEntries)
+			{	
+				key=revealEntry.key
+				for(var i:int=1;i<=revealEntry.depth;i++)	
+				{			
+					revealIndex=isKeyExist(key)
+					if(revealIndex!=-1)	
+					{
+						var serverEntry:ServerEntry=userStateEntrys[revealIndex];
+						if(revealEntry.depth != i)
+						{
+							if(typeof(serverEntry.value)=="string")
+								key = String(serverEntry.value);
+						}
+						else
+						{
+							if(revealEntry.userIds == null)
+								serverEntry.authorizedUserIds = null;			
+							else
+								revealEntryToPlayers(serverEntry,revealEntry);
+							serverEnries.push(serverEntry);
+						}
+					}
+					else
+					{
+						addMessageLog("Server","Error","Can't reveal a key that does not exist");
+						showMsg("Can't reveal a key that does not exist","Error");
+						gameOver();
+						return;		
+					}
 				}
 				
 			}
@@ -976,20 +989,17 @@
 		{
 			var serverEntry:ServerEntry = new ServerEntry();
 			var randomSeed:int=1000*Math.random();	
-			serverEntry.key = msg.key ;
-			serverEntry.storedByUserId = -1;
-			serverEntry.changedTimeInMilliSeconds = getTimer()-matchStartTime;
 			if(msg.isSecret)
 			{
-				serverEntry.authorizedUserIds = [];
-				serverEntry.value = null;
+				serverEntry = ServerEntry.create(msg.key,null,-1,[],getTimer()-matchStartTime)
+				doStoreOneState(ServerEntry.create(msg.key,randomSeed,-1,[],getTimer()-matchStartTime));
 			}
 			else
 			{
-				serverEntry.authorizedUserIds = null;
-				serverEntry.value = randomSeed;
+				serverEntry = ServerEntry.create(msg.key,randomSeed,-1,null,getTimer()-matchStartTime);
+				doStoreOneState(serverEntry);
 			}
-			doStoreOneState(serverEntry);
+			
 			broadcast(API_GotStateChanged.create([serverEntry]));
 		}
 		private function doAllEndMatch(msg:API_DoAllEndMatch):void

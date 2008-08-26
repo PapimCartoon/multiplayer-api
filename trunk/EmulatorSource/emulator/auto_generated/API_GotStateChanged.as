@@ -6,7 +6,7 @@ package emulator.auto_generated {
 	import emulator.auto_copied.*
 	public  class API_GotStateChanged extends API_Message {
 		public var serverEntries:Array/*ServerEntry*/;
-		public static function create(serverEntries:Array/*ServerEntry*/):API_GotStateChanged { 
+		public static function create(serverEntries:Array/*ServerEntry*/):API_GotStateChanged {
 			var res:API_GotStateChanged = new API_GotStateChanged();
 			res.serverEntries = serverEntries;
 			return res;

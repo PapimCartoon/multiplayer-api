@@ -5,11 +5,8 @@
 import come2play_as2.api.auto_generated.*;
 	class come2play_as2.api.auto_generated.API_GotStateChanged extends API_Message {
 		public var serverEntries:Array/*ServerEntry*/;
-		public static function create(serverEntries:Array/*ServerEntry*/):API_GotStateChanged { 
+		public static function create(serverEntries:Array/*ServerEntry*/):API_GotStateChanged {
 			var res:API_GotStateChanged = new API_GotStateChanged();
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 			res.serverEntries = serverEntries;
 			return res;
 
@@ -20,9 +17,6 @@ import come2play_as2.api.auto_generated.*;
 			var pos:Number = 0;
 			this.serverEntries = parameters[pos++];
 		}
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 		/*override*/ public function getParametersAsString():String { return 'serverEntries=' + JSON.stringify(serverEntries); }
 		/*override*/ public function toString():String { return '{API_GotStateChanged:' +getParametersAsString() +'}'; }
 		/*override*/ public function getMethodName():String { return 'gotStateChanged'; }

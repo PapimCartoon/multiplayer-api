@@ -4,7 +4,7 @@ package emulator.auto_generated {
 	import flash.display.*;	import flash.utils.*;
 	import emulator.*;
 	import emulator.auto_copied.*
-	public  class ServerEntry extends SerializableClass {
+	public  class ServerEntry extends API_Message {
 		public var key:String;
 		public var value:*;
 		public var storedByUserId:int;
@@ -22,10 +22,23 @@ package emulator.auto_generated {
 			res.changedTimeInMilliSeconds = changedTimeInMilliSeconds;
 			return res;
 		}
-		public function getParametersAsString():String { return 'key=' + JSON.stringify(key)+', value=' + JSON.stringify(value)+', storedByUserId=' + JSON.stringify(storedByUserId)+', authorizedUserIds=' + JSON.stringify(authorizedUserIds)+', changedTimeInMilliSeconds=' + JSON.stringify(changedTimeInMilliSeconds); }
+		override public function setMethodParameters(parameters:Array):void { 
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		public function toString():String { return '{ServerEntry: ' + getParametersAsString() + '}'; }
+			var pos:int = 0;
+			this.key = parameters[pos++];
+			this.value = parameters[pos++];
+			this.storedByUserId = parameters[pos++];
+			this.authorizedUserIds = parameters[pos++];
+			this.changedTimeInMilliSeconds = parameters[pos++];
+		}
+		override public function getParametersAsString():String { return 'key=' + JSON.stringify(key)+', value=' + JSON.stringify(value)+', storedByUserId=' + JSON.stringify(storedByUserId)+', authorizedUserIds=' + JSON.stringify(authorizedUserIds)+', changedTimeInMilliSeconds=' + JSON.stringify(changedTimeInMilliSeconds); }
+		override public function toString():String { return '{ServerEntry:' +getParametersAsString() +'}'; }
+		override public function getMethodName():String { return 'ServerEntry'; }
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+		override public function getMethodParameters():Array { return [key, value, storedByUserId, authorizedUserIds, changedTimeInMilliSeconds]; }
 	}
 }

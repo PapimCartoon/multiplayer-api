@@ -7,9 +7,6 @@ import come2play_as2.api.auto_copied.*;
  * Each player chooses a square and fills it with his color. 
  * (In the traditional game the "colors" are either X or O.)
  * A player that fills a whole row, column or diagonal, wins and finishes playing.
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
  * The other players may continue playing.
  *
  * Written by: Yoav Zibin (yoav@zibin.net)
@@ -20,9 +17,6 @@ class come2play_as2.tictactoe.TicTacToe_logic {
 	
 	// for example, you can have a board of size 5x5, with WIN_LENGTH=4
 	public var ROWS:Number;
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 	public var COLS:Number;
 	public var WIN_LENGTH:Number;
 	public var PLAYERS_NUM:Number;
@@ -33,9 +27,6 @@ class come2play_as2.tictactoe.TicTacToe_logic {
 	// The number of squares which are not SQUARE_AVAILABLE
 	private var filledNum:Number; 
 	
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 	public function TicTacToe_logic(ROWS:Number, COLS:Number, WIN_LENGTH:Number, PLAYERS_NUM:Number) {
 		this.ROWS = ROWS;
 		this.COLS = COLS;
@@ -46,9 +37,6 @@ class come2play_as2.tictactoe.TicTacToe_logic {
 		for(var row:Number=0; row<ROWS; row++) {
 			gameState[row] = new Array(COLS);
 			for(var col:Number=0; col<COLS; col++)
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 				gameState[row][col] = SQUARE_AVAILABLE;				
 		}
 	}
@@ -59,9 +47,6 @@ class come2play_as2.tictactoe.TicTacToe_logic {
 	public function setOwner(move:TicTacToeMove, owner:Number):Void {
 		gameState[move.row][move.col] = owner;
 	}
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 	public function getMoveNumber():Number {
 		return filledNum;
 	}
@@ -72,9 +57,6 @@ class come2play_as2.tictactoe.TicTacToe_logic {
 		return isInBoard(move) && getOwner(move)==SQUARE_AVAILABLE;
 	}
 	public function isInBoard(move:TicTacToeMove):Boolean {
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 		return move.row>=0 && move.col>=0 && move.row<ROWS && move.col<COLS;
 	}
 	
@@ -85,9 +67,6 @@ class come2play_as2.tictactoe.TicTacToe_logic {
 		setOwner(move, color);
 		filledNum++;
 	}
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 		
 	// checks if there is a winning row, column, or diagonal that passes through square <row,col>
 	public function isWinner(move:TicTacToeMove):Boolean {
@@ -98,9 +77,6 @@ class come2play_as2.tictactoe.TicTacToe_logic {
                isConnectedDelta(move, 1, -1,  -1,  1);   // UP_RIGHT & DOWN_LEFT
 	}	
     private function isConnectedDelta(move:TicTacToeMove, delta_row:Number, delta_col:Number, delta_row2:Number, delta_col2:Number):Boolean {
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
         return  numConnectedDelta(move, delta_row, delta_col) +
                 numConnectedDelta(move, delta_row2, delta_col2) >= 
                 	WIN_LENGTH-1;// I didn't count the square in <row,col> 
@@ -111,9 +87,6 @@ class come2play_as2.tictactoe.TicTacToe_logic {
         var res:Number = 0;
         var row:Number = move.row;
         var col:Number = move.col;
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
         for(var i:Number=1; i<WIN_LENGTH; i++) {
         	row += delta_row;
         	col += delta_col;
@@ -124,7 +97,4 @@ class come2play_as2.tictactoe.TicTacToe_logic {
         }
         return res;
     }
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 }

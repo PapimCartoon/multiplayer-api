@@ -7,9 +7,6 @@ import come2play_as2.api.auto_copied.*;
 	{
 		
 		public static var DEFAULT_LOCALCONNECTION_PREFIX:String = "42";
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 		public static var SHOULD_SHOW_ERRORS:Boolean = true;
 		public static var SHOULD_CALL_TRACE:Boolean = true;
 		
@@ -20,9 +17,6 @@ import come2play_as2.api.auto_copied.*;
 			if (SHOULD_SHOW_ERRORS) AS3_vs_AS2.showError(someMovieClip, msg);
 			trace("\n\n\n"+msg+"\n\n\n");
 		}
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 		public static function throwError(msg:String):Void {
 			showError("Throwing an error with message="+msg+"." + (!AS3_vs_AS2.isAS3 ? "" :  "The error was thrown in this location="+AS3_vs_AS2.error2String(new Error())));
 			throw new Error(msg);
@@ -33,9 +27,6 @@ import come2play_as2.api.auto_copied.*;
 		public static function getDoChanelString(sPrefix:String):String {
 			return "DO_CHANEL_"+sPrefix;
 		}
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 		public static function getGotChanelString(sPrefix:String):String {
 			return "GOT_CHANEL_"+sPrefix;
 		}
@@ -46,9 +37,6 @@ import come2play_as2.api.auto_copied.*;
 			return getPrefixFromString(sPrefix);
 		}		
 		public static function getPrefixFromString(sPrefix:String):String {
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 			if (sPrefix!=null && !(sPrefix.charAt(0)>='0' && sPrefix.charAt(0)<='9')) { //it is not necessarily a number 
 				trace("calling a javascript function that should return the random fixed id");
 				var jsResult:Object = ExternalInterface.call(sPrefix);
@@ -59,9 +47,6 @@ import come2play_as2.api.auto_copied.*;
 				
 		
 		// we use a LocalConnection to communicate with the container
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 		private var lcUser:LocalConnection; 
 		private var sSendChanel:String;
 		
@@ -72,9 +57,6 @@ import come2play_as2.api.auto_copied.*;
 				someMovieClip = _someMovieClip;
 				if (sPrefix==null) {
 					myTrace(["WARNING: didn't find 'prefix' in the loader info parameters. Probably because you are doing testing locally."]);
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 					sPrefix = DEFAULT_LOCALCONNECTION_PREFIX;
 				}				
 				lcUser = new LocalConnection();
@@ -85,9 +67,6 @@ import come2play_as2.api.auto_copied.*;
 				var sListenChannel:String = 
 					isServer ? sDoChanel : sGotChanel;
 				sSendChanel = 
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 					!isServer ? sDoChanel : sGotChanel;				
 				myTrace(["LocalConnection listens on channel=",sListenChannel," and sends on ",sSendChanel]);
 				lcUser.connect(sListenChannel);
@@ -98,9 +77,6 @@ import come2play_as2.api.auto_copied.*;
 		public function myTrace(msg:Array):Void {
 			if (SHOULD_CALL_TRACE) trace(AS3_vs_AS2.getClassName(this)+": "+JSON.stringify(msg));
 		}
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 		
         private function passError(withObj:Object, err:Error):Void {
         	try{
@@ -111,9 +87,6 @@ import come2play_as2.api.auto_copied.*;
 				showError("Another error occurred when calling gotError. The new error is="+AS3_vs_AS2.error2String(err2));
 			}
         }
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 		public function gotError(withObj:Object, err:Error):Void {}
         
         public function gotMessage(msg:API_Message):Void {}
@@ -124,9 +97,6 @@ import come2play_as2.api.auto_copied.*;
 				lcUser.send(sSendChanel, "localconnection_callback", msg);  
 			}catch(err:Error) { 
 				passError(msg, err);
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 			}        	
         }
         
@@ -137,9 +107,6 @@ import come2play_as2.api.auto_copied.*;
         		if (msg==null) throwError("msgObj="+JSON.stringify(msgObj)+" is not an API_Message");
         		
         		myTrace(['gotMessage: ',msg]);
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
         		gotMessage(msg);
 			} catch(err:Error) { 
 				passError(msgObj, err);

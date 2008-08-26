@@ -4,7 +4,7 @@ package come2play_as3.api.auto_generated {
 	import flash.display.*;	import flash.utils.*;
 	import come2play_as3.api.*
 	import come2play_as3.api.auto_copied.*
-	public  class PlayerMatchOver extends SerializableClass {
+	public  class PlayerMatchOver extends API_Message {
 		public var playerId:int;
 		public var score:int;
 		public var potPercentage:int;
@@ -18,7 +18,18 @@ package come2play_as3.api.auto_generated {
 			res.potPercentage = potPercentage;
 			return res;
 		}
-		public function getParametersAsString():String { return 'playerId=' + JSON.stringify(playerId)+', score=' + JSON.stringify(score)+', potPercentage=' + JSON.stringify(potPercentage); }
-		public function toString():String { return '{PlayerMatchOver: ' + getParametersAsString() + '}'; }
+		override public function setMethodParameters(parameters:Array):void { 
+			var pos:int = 0;
+			this.playerId = parameters[pos++];
+			this.score = parameters[pos++];
+			this.potPercentage = parameters[pos++];
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+		}
+		override public function getParametersAsString():String { return 'playerId=' + JSON.stringify(playerId)+', score=' + JSON.stringify(score)+', potPercentage=' + JSON.stringify(potPercentage); }
+		override public function toString():String { return '{PlayerMatchOver:' +getParametersAsString() +'}'; }
+		override public function getMethodName():String { return 'PlayerMatchOver'; }
+		override public function getMethodParameters():Array { return [playerId, score, potPercentage]; }
 	}
 }

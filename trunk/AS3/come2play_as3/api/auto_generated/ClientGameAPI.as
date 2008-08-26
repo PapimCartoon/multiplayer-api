@@ -35,7 +35,7 @@ package come2play_as3.api.auto_generated {
 		// if userId==-1, then nobody has the turn.
 		// if milliSecondsInTurn==-1 then the default time per turn is used,
 		// and if milliSecondsInTurn==0 then the user should do some actions immediately.
-		public function doAllSetTurn(userId:int, milliSecondsInTurn:int):void { sendMessage( API_DoAllSetTurn.create(userId, milliSecondsInTurn) ); }
+		public function doAllSetTurn(userId:int, milliSecondsInTurn:int/*<InAS3>*/ = -1 /*</InAS3>*/):void { sendMessage( API_DoAllSetTurn.create(userId, milliSecondsInTurn) ); }
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
@@ -45,7 +45,7 @@ package come2play_as3.api.auto_generated {
 		
 		public function doAllShuffleState(keys:Array/*String*/):void { sendMessage( API_DoAllShuffleState.create(keys) ); }
 		
-		public function doAllRequestRandomState(key:String, isSecret:Boolean):void { sendMessage( API_DoAllRequestRandomState.create(key, isSecret) ); }
+		public function doAllRequestRandomState(key:String, isSecret:Boolean/*<InAS3>*/ = false /*</InAS3>*/):void { sendMessage( API_DoAllRequestRandomState.create(key, isSecret) ); }
 		
 		// if userId=-1, then it is a bug of the game developer
 		public function doAllFoundHacker(userId:int, errorDescription:String):void { sendMessage( API_DoAllFoundHacker.create(userId, errorDescription) ); }

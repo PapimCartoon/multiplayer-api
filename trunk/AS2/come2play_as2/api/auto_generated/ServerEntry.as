@@ -3,13 +3,10 @@
 	import come2play_as2.api.*
 	import come2play_as2.api.auto_copied.*
 import come2play_as2.api.auto_generated.*;
-	class come2play_as2.api.auto_generated.ServerEntry extends SerializableClass {
+	class come2play_as2.api.auto_generated.ServerEntry extends API_Message {
 		public var key:String;
 		public var value/*any type*/;
 		public var storedByUserId:Number;
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 		public var authorizedUserIds:Array/*int*/;
 		public var changedTimeInMilliSeconds:Number;
 
@@ -20,16 +17,26 @@ import come2play_as2.api.auto_generated.*;
 			res.key = key;
 			res.value = value;
 			res.storedByUserId = storedByUserId;
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 			res.authorizedUserIds = authorizedUserIds;
 			res.changedTimeInMilliSeconds = changedTimeInMilliSeconds;
 			return res;
 		}
-		public function getParametersAsString():String { return 'key=' + JSON.stringify(key)+', value=' + JSON.stringify(value)+', storedByUserId=' + JSON.stringify(storedByUserId)+', authorizedUserIds=' + JSON.stringify(authorizedUserIds)+', changedTimeInMilliSeconds=' + JSON.stringify(changedTimeInMilliSeconds); }
+		/*override*/ public function setMethodParameters(parameters:Array):Void { 
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		public function toString():String { return '{ServerEntry: ' + getParametersAsString() + '}'; }
+			var pos:Number = 0;
+			this.key = parameters[pos++];
+			this.value = parameters[pos++];
+			this.storedByUserId = parameters[pos++];
+			this.authorizedUserIds = parameters[pos++];
+			this.changedTimeInMilliSeconds = parameters[pos++];
+		}
+		/*override*/ public function getParametersAsString():String { return 'key=' + JSON.stringify(key)+', value=' + JSON.stringify(value)+', storedByUserId=' + JSON.stringify(storedByUserId)+', authorizedUserIds=' + JSON.stringify(authorizedUserIds)+', changedTimeInMilliSeconds=' + JSON.stringify(changedTimeInMilliSeconds); }
+		/*override*/ public function toString():String { return '{ServerEntry:' +getParametersAsString() +'}'; }
+		/*override*/ public function getMethodName():String { return 'ServerEntry'; }
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+		/*override*/ public function getMethodParameters():Array { return [key, value, storedByUserId, authorizedUserIds, changedTimeInMilliSeconds]; }
 	}

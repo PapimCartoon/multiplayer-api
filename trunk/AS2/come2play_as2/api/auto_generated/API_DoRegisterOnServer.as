@@ -4,12 +4,9 @@
 	import come2play_as2.api.auto_copied.*
 import come2play_as2.api.auto_generated.*;
 	class come2play_as2.api.auto_generated.API_DoRegisterOnServer extends API_Message {
-		public static function create():API_DoRegisterOnServer { 
+		public static function create():API_DoRegisterOnServer {
 			var res:API_DoRegisterOnServer = new API_DoRegisterOnServer();
 			return res;
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 		}
 		/*override*/ public function setMethodParameters(parameters:Array):Void { 
 
@@ -20,8 +17,5 @@ import come2play_as2.api.auto_generated.*;
 		/*override*/ public function getParametersAsString():String { return ''; }
 		/*override*/ public function toString():String { return '{API_DoRegisterOnServer}'; }
 		/*override*/ public function getMethodName():String { return 'doRegisterOnServer'; }
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 		/*override*/ public function getMethodParameters():Array { return []; }
 	}

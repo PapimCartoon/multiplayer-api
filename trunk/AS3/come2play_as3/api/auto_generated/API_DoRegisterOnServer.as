@@ -5,7 +5,7 @@ package come2play_as3.api.auto_generated {
 	import come2play_as3.api.*
 	import come2play_as3.api.auto_copied.*
 	public  class API_DoRegisterOnServer extends API_Message {
-		public static function create():API_DoRegisterOnServer { 
+		public static function create():API_DoRegisterOnServer {
 			var res:API_DoRegisterOnServer = new API_DoRegisterOnServer();
 			return res;
 		}

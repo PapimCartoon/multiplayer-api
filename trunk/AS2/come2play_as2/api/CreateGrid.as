@@ -7,9 +7,6 @@ class come2play_as2.api.CreateGrid
 	 * graphics should have a movieclip called 
 	 * "Square_Example"
 	 * This movieclip will be duplicated into a grid of movieclips:
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 	 * Square_<ROW>_<COL>
 	 * For example,
 	 * Square_0_0 , Square_0_1 , Square_0_2 , ...
@@ -20,9 +17,6 @@ class come2play_as2.api.CreateGrid
 	 * The movieclips are scaled by:
 	 * SQUARE_scaleX and SQUARE_scaleY
 	 * (for example, if they are 50, the the size is reduced by half.)
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 	 * The distance between the squares are:
 	 * SQUARE_deltaX and SQUARE_deltaY
 	 */
@@ -33,9 +27,6 @@ class come2play_as2.api.CreateGrid
 	public var SQUARE_deltaX:Number;
 	public var SQUARE_deltaY:Number;
 	public var Square_Example:MovieClip;
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 	public function CreateGrid(graphics:MovieClip, 
 		defaultRows:Number, defaultCols:Number, defaultSize:Number) {
 		
@@ -46,9 +37,6 @@ class come2play_as2.api.CreateGrid
 		SQUARE_scaleX = AS3_vs_AS2.convertToInt(parameters["SQUARE_scaleX"]);
 		SQUARE_scaleY = AS3_vs_AS2.convertToInt(parameters["SQUARE_scaleY"]);
 		SQUARE_deltaX = AS3_vs_AS2.convertToInt(parameters["SQUARE_deltaX"]);
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 		SQUARE_deltaY = AS3_vs_AS2.convertToInt(parameters["SQUARE_deltaY"]);
 		
 		// default values
@@ -59,9 +47,6 @@ class come2play_as2.api.CreateGrid
 		if (SQUARE_scaleY==0) SQUARE_scaleY = defaultSize; 
 		if (SQUARE_deltaX==0) SQUARE_deltaX = defaultSize; 
 		if (SQUARE_deltaY==0) SQUARE_deltaY = defaultSize; 
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 		 
 		// Duplicating Square_Example, and creating a grid of squares of size ROWS x COLS
 		Square_Example = AS3_vs_AS2.getMovieChild(graphics,"Square_Example");
@@ -72,9 +57,6 @@ class come2play_as2.api.CreateGrid
 				var dup:MovieClip = AS3_vs_AS2.duplicateMovie(Square_Example,"Square_"+row+"_"+col);
 				placeInGrid(dup, row, col);		
 			}			
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 	}
 	public function placeInGrid(dup:MovieClip, row:Number, col:Number):Void {
 		AS3_vs_AS2.setMovieXY(Square_Example, dup, SQUARE_deltaX*row, SQUARE_deltaY*col);

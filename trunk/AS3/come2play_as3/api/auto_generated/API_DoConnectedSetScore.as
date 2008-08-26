@@ -6,7 +6,7 @@ package come2play_as3.api.auto_generated {
 	import come2play_as3.api.auto_copied.*
 	public  class API_DoConnectedSetScore extends API_Message {
 		public var score:int;
-		public static function create(score:int):API_DoConnectedSetScore { 
+		public static function create(score:int):API_DoConnectedSetScore {
 			var res:API_DoConnectedSetScore = new API_DoConnectedSetScore();
 			res.score = score;
 			return res;

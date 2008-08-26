@@ -7,7 +7,7 @@ package emulator.auto_generated {
 	public  class API_DoAllFoundHacker extends API_Message {
 		public var userId:int;
 		public var errorDescription:String;
-		public static function create(userId:int, errorDescription:String):API_DoAllFoundHacker { 
+		public static function create(userId:int, errorDescription:String):API_DoAllFoundHacker {
 			var res:API_DoAllFoundHacker = new API_DoAllFoundHacker();
 			res.userId = userId;
 

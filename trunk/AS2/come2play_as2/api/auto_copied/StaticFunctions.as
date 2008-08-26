@@ -7,9 +7,6 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	   var j:Number, strlen:Number, k:Number;
 	   strlen = str.length
 	   j = 0;
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 	   while (str.charAt(j) == " ") {
 		  j++
 	   } 
@@ -20,9 +17,6 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	   k = str.length - 1;
 	   while(str.charAt(k) == " ") {
 		  k--;
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 	   }
 	   return str.substring(0,k+1);
 	}
@@ -33,9 +27,6 @@ class come2play_as2.api.auto_copied.StaticFunctions
 		return Math.floor( delta * Math.random() ) + fromInclusive;
 	}
 	public static function startsWith(str:String, start:String):Boolean {
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 		return str.substr(0, start.length)==start;
 	}
 	public static function endsWith(str:String, suffix:String):Boolean {
@@ -46,9 +37,6 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	public static function performReflectionFromFlashVars(_someMovieClip:MovieClip):Void {		
 		var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(_someMovieClip);
 		for (var key:String in parameters) {
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 			if (startsWith(key,REFLECTION_PREFIX))
 				performReflection(parameters[key]);				
 		}
@@ -59,9 +47,6 @@ class come2play_as2.api.auto_copied.StaticFunctions
 		var before:String = reflStr.substr(0, eqIndex);
 		var after:String = reflStr.substr(eqIndex+1);
 		var val_obj:Object = JSON.parse(after);
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 		var dotIndex:Number = AS3_vs_AS2.stringLastIndexOf(before,".");
 		var clzName:String = trim(before.substr(0, dotIndex));
 		var fieldName:String = trim(before.substr(dotIndex+1));

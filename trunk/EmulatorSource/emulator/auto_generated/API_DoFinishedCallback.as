@@ -6,7 +6,7 @@ package emulator.auto_generated {
 	import emulator.auto_copied.*
 	public  class API_DoFinishedCallback extends API_Message {
 		public var callbackName:String;
-		public static function create(callbackName:String):API_DoFinishedCallback { 
+		public static function create(callbackName:String):API_DoFinishedCallback {
 			var res:API_DoFinishedCallback = new API_DoFinishedCallback();
 			res.callbackName = callbackName;
 			return res;

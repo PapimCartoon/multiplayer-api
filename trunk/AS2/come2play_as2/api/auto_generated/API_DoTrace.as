@@ -6,10 +6,7 @@ import come2play_as2.api.auto_generated.*;
 	class come2play_as2.api.auto_generated.API_DoTrace extends API_Message {
 		public var name:String;
 		public var message:Object/*Serializable*/;
-		public static function create(name:String, message:Object/*Serializable*/):API_DoTrace { 
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
+		public static function create(name:String, message:Object/*Serializable*/):API_DoTrace {
 			var res:API_DoTrace = new API_DoTrace();
 			res.name = name;
 
@@ -20,9 +17,6 @@ import come2play_as2.api.auto_generated.*;
 		}
 		/*override*/ public function setMethodParameters(parameters:Array):Void { 
 			var pos:Number = 0;
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 			this.name = parameters[pos++];
 			this.message = parameters[pos++];
 		}
@@ -33,7 +27,4 @@ import come2play_as2.api.auto_generated.*;
 
 		/*override*/ public function getMethodName():String { return 'doTrace'; }
 		/*override*/ public function getMethodParameters():Array { return [name, message]; }
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 	}

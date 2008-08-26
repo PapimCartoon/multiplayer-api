@@ -7,9 +7,6 @@ import come2play_as2.api.auto_generated.*;
 		public var methodName:String;
 		public var parameterNames:Array/*String*/;
 		public var parameterTypes:Array/*String*/;
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 		public function API_MethodsSummary(methodName:String, parameterNames:Array/*String*/, parameterTypes:Array/*String*/) {
 			this.methodName = methodName;
 
@@ -20,9 +17,6 @@ import come2play_as2.api.auto_generated.*;
 		}
 		public static var SUMMARY_API:Array/*API_MethodsSummary*/ = [
 		 new API_MethodsSummary('doFinishedCallback', ['callbackName'], ['String'] )
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 		, new API_MethodsSummary('doRegisterOnServer', [], [] )
 		, new API_MethodsSummary('doTrace', ['name', 'message'], ['String', 'Object/*Serializable*/'] )
 		, new API_MethodsSummary('gotKeyboardEvent', ['isKeyDown', 'charCode', 'keyCode', 'keyLocation', 'altKey', 'ctrlKey', 'shiftKey'], ['Boolean', 'int', 'int', 'int', 'Boolean', 'Boolean', 'Boolean'] )
@@ -33,9 +27,6 @@ import come2play_as2.api.auto_generated.*;
 
 		, new API_MethodsSummary('gotUserDisconnected', ['userId'], ['int'] )
 		, new API_MethodsSummary('gotMyUserId', ['myUserId'], ['int'] )
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 		, new API_MethodsSummary('gotMatchStarted', ['allPlayerIds', 'finishedPlayerIds', 'extraMatchInfo', 'matchStartedTime', 'serverEntries'], ['Array/*int*/', 'Array/*int*/', 'Object/*Serializable*/', 'int', 'Array/*ServerEntry*/'] )
 		, new API_MethodsSummary('gotMatchEnded', ['finishedPlayerIds'], ['Array/*int*/'] )
 		, new API_MethodsSummary('gotStateChanged', ['serverEntries'], ['Array/*ServerEntry*/'] )
@@ -47,9 +38,6 @@ import come2play_as2.api.auto_generated.*;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
-
 		, new API_MethodsSummary('doAllShuffleState', ['keys'], ['Array/*String*/'] )
 		, new API_MethodsSummary('doAllRequestRandomState', ['key', 'isSecret'], ['String', 'Boolean'] )
 		, new API_MethodsSummary('doAllFoundHacker', ['userId', 'errorDescription'], ['int', 'String'] )
@@ -59,9 +47,6 @@ import come2play_as2.api.auto_generated.*;
 		, new API_MethodsSummary('doConnectedSetScore', ['score'], ['int'] )
 		, new API_MethodsSummary('doConnectedEndMatch', ['didWin'], ['Boolean'] )
 		];
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 	}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!

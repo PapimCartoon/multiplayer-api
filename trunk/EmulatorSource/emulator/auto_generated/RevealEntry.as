@@ -4,19 +4,33 @@ package emulator.auto_generated {
 	import flash.display.*;	import flash.utils.*;
 	import emulator.*;
 	import emulator.auto_copied.*
-	public  class RevealEntry extends SerializableClass {
+	public  class RevealEntry extends API_Message {
 		public var key:String;
 		public var userIds:Array/*int*/;
-		public static function create(key:String, userIds:Array/*int*/):RevealEntry {
+		public var depth:int;
+		public static function create(key:String, userIds:Array/*int*//*<InAS3>*/ = null /*</InAS3>*/, depth:int/*<InAS3>*/ = 1 /*</InAS3>*/):RevealEntry {
 			var res:RevealEntry = new RevealEntry();
-			res.key = key;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			res.key = key;
 			res.userIds = userIds;
+			/*<InAS2> if (depth==null) depth = 1;</InAS2>*/
+			res.depth = depth;
 			return res;
 		}
-		public function getParametersAsString():String { return 'key=' + JSON.stringify(key)+', userIds=' + JSON.stringify(userIds); }
-		public function toString():String { return '{RevealEntry: ' + getParametersAsString() + '}'; }
+		override public function setMethodParameters(parameters:Array):void { 
+			var pos:int = 0;
+			this.key = parameters[pos++];
+			this.userIds = parameters[pos++];
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+			this.depth = parameters[pos++];
+		}
+		override public function getParametersAsString():String { return 'key=' + JSON.stringify(key)+', userIds=' + JSON.stringify(userIds)+', depth=' + JSON.stringify(depth); }
+		override public function toString():String { return '{RevealEntry:' +getParametersAsString() +'}'; }
+		override public function getMethodName():String { return 'RevealEntry'; }
+		override public function getMethodParameters():Array { return [key, userIds, depth]; }
 	}
 }

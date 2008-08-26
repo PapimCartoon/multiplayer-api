@@ -6,7 +6,7 @@ package come2play_as3.api.auto_generated {
 	import come2play_as3.api.auto_copied.*
 	public  class API_DoAllEndMatch extends API_Message {
 		public var finishedPlayers:Array/*PlayerMatchOver*/;
-		public static function create(finishedPlayers:Array/*PlayerMatchOver*/):API_DoAllEndMatch { 
+		public static function create(finishedPlayers:Array/*PlayerMatchOver*/):API_DoAllEndMatch {
 			var res:API_DoAllEndMatch = new API_DoAllEndMatch();
 			res.finishedPlayers = finishedPlayers;
 			return res;

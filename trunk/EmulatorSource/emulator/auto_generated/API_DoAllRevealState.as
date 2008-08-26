@@ -6,7 +6,7 @@ package emulator.auto_generated {
 	import emulator.auto_copied.*
 	public  class API_DoAllRevealState extends API_Message {
 		public var revealEntries:Array/*RevealEntry*/;
-		public static function create(revealEntries:Array/*RevealEntry*/):API_DoAllRevealState { 
+		public static function create(revealEntries:Array/*RevealEntry*/):API_DoAllRevealState {
 			var res:API_DoAllRevealState = new API_DoAllRevealState();
 			res.revealEntries = revealEntries;
 			return res;

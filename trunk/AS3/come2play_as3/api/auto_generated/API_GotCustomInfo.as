@@ -6,7 +6,7 @@ package come2play_as3.api.auto_generated {
 	import come2play_as3.api.auto_copied.*
 	public  class API_GotCustomInfo extends API_Message {
 		public var infoEntries:Array/*InfoEntry*/;
-		public static function create(infoEntries:Array/*InfoEntry*/):API_GotCustomInfo { 
+		public static function create(infoEntries:Array/*InfoEntry*/):API_GotCustomInfo {
 			var res:API_GotCustomInfo = new API_GotCustomInfo();
 			res.infoEntries = infoEntries;
 			return res;

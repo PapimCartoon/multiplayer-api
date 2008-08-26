@@ -6,7 +6,7 @@ package come2play_as3.api.auto_generated {
 	import come2play_as3.api.auto_copied.*
 	public  class API_DoFinishedCallback extends API_Message {
 		public var callbackName:String;
-		public static function create(callbackName:String):API_DoFinishedCallback { 
+		public static function create(callbackName:String):API_DoFinishedCallback {
 			var res:API_DoFinishedCallback = new API_DoFinishedCallback();
 			res.callbackName = callbackName;
 			return res;

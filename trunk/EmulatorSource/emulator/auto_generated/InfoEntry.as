@@ -4,7 +4,7 @@ package emulator.auto_generated {
 	import flash.display.*;	import flash.utils.*;
 	import emulator.*;
 	import emulator.auto_copied.*
-	public  class InfoEntry extends SerializableClass {
+	public  class InfoEntry extends API_Message {
 		public var key:String;
 		public var value:Object/*Serializable*/;
 		public static function create(key:String, value:Object/*Serializable*/):InfoEntry {
@@ -16,7 +16,17 @@ package emulator.auto_generated {
 			res.value = value;
 			return res;
 		}
-		public function getParametersAsString():String { return 'key=' + JSON.stringify(key)+', value=' + JSON.stringify(value); }
-		public function toString():String { return '{InfoEntry: ' + getParametersAsString() + '}'; }
+		override public function setMethodParameters(parameters:Array):void { 
+			var pos:int = 0;
+			this.key = parameters[pos++];
+			this.value = parameters[pos++];
+		}
+		override public function getParametersAsString():String { return 'key=' + JSON.stringify(key)+', value=' + JSON.stringify(value); }
+		override public function toString():String { return '{InfoEntry:' +getParametersAsString() +'}'; }
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+		override public function getMethodName():String { return 'InfoEntry'; }
+		override public function getMethodParameters():Array { return [key, value]; }
 	}
 }

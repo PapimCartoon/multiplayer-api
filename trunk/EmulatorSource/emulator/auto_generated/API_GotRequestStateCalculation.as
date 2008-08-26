@@ -6,7 +6,7 @@ package emulator.auto_generated {
 	import emulator.auto_copied.*
 	public  class API_GotRequestStateCalculation extends API_Message {
 		public var serverEntries:Array/*ServerEntry*/;
-		public static function create(serverEntries:Array/*ServerEntry*/):API_GotRequestStateCalculation { 
+		public static function create(serverEntries:Array/*ServerEntry*/):API_GotRequestStateCalculation {
 			var res:API_GotRequestStateCalculation = new API_GotRequestStateCalculation();
 			res.serverEntries = serverEntries;
 			return res;

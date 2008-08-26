@@ -6,7 +6,7 @@ package emulator.auto_generated {
 	import emulator.auto_copied.*
 	public  class API_DoConnectedEndMatch extends API_Message {
 		public var didWin:Boolean;
-		public static function create(didWin:Boolean):API_DoConnectedEndMatch { 
+		public static function create(didWin:Boolean):API_DoConnectedEndMatch {
 			var res:API_DoConnectedEndMatch = new API_DoConnectedEndMatch();
 			res.didWin = didWin;
 			return res;

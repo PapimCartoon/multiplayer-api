@@ -60,7 +60,7 @@ function processWaitingQueue() {
 	  if (message is not doAllSetTurn) { // doAllSetTurn is the only doAll* that doesn't change the match state
 	    unverifiedQueue.push( new QueueEntry(null, allPlayers, message) )
 	  }
-	  processMessage(user,message) // will broadcast gotStateChanged to all users
+	  processMessage(entry.fromUser, message) // will broadcast gotStateChanged to all users
 	}
 }
 

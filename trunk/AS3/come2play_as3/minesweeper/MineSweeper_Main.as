@@ -9,17 +9,19 @@ import flash.events.*;
 import flash.utils.*;
 	public class MineSweeper_Main extends ClientGameAPI
 	{
-		private static var boardHeight:int=5;
-		private static var boardWidth:int=5;
-		private static var mineAmount:int=2;
+		private static var boardHeight:int=13;
+		private static var boardWidth:int=13;
+		private static var mineAmount:int=20;
 		//calculator variables
 		private var emptyBoxes:Array;
 		private var newCalculatorBoard:Array
 		
+		private var loadServerEntries:Array;
 		private var startGraphic:Starter;
 		private var mineSweeper_Logic:MineSweeper_Logic;
-		private var myUserId:int;
-		private var users:Array;
+		private var myUserId:int; //my user id
+		private var users:Array; // information about all users
+		private var players:Array; //playing user ids
 	/** 
 	 * Written by: Ofir Vainshtein (ofirvins@yahoo.com)
  	**/
@@ -36,9 +38,12 @@ import flash.utils.*;
 			startGraphic.addEventListener("starterEnd",startGame);
 			setTimeout(doRegisterOnServer,100);
 		}
-		private function startGame(ev:Event)
+		private function startGame(ev:Event):void
 		{
-			mineSweeper_Logic.buildBoard(users);
+			if(loadServerEntries == null)
+				mineSweeper_Logic.buildBoard(users,players);
+			else
+				mineSweeper_Logic.loadBoard(users,players,loadServerEntries)
 		}
 		public function doesExist(pos:Object,arr:Array):Boolean
 		{
@@ -49,38 +54,9 @@ import flash.utils.*;
 			}
 			return false;
 		}
-		private function getEmptyBoxes(pos:Object):void
+		public function gameOver():void
 		{
-			if(newCalculatorBoard[pos.xPos][pos.yPos] == 0)
-				if(!doesExist(pos,emptyBoxes))
-				{
-					emptyBoxes.push(pos);
-					if ((pos.xPos+1) < boardWidth)
-					{
-						getEmptyBoxes({xPos:pos.xPos+1 ,yPos:pos.yPos+1})
-						getEmptyBoxes({xPos:pos.xPos+1 ,yPos:pos.yPos})
-						getEmptyBoxes({xPos:pos.xPos+1 ,yPos:pos.yPos-1})
-					}
-					getEmptyBoxes({xPos:pos.xPos ,yPos:pos.yPos+1})
-					getEmptyBoxes({xPos:pos.xPos ,yPos:pos.yPos-1})
-					if(pos.xPos > 0)
-					{
-						getEmptyBoxes({xPos:pos.xPos-1 ,yPos:pos.yPos+1})
-						getEmptyBoxes({xPos:pos.xPos-1 ,yPos:pos.yPos})
-						getEmptyBoxes({xPos:pos.xPos-1 ,yPos:pos.yPos-1})
-					}
-				}
-			
-		}
-		private function isGrouped(pos:Object,arr:Array):int
-		{
-			var len:int=arr.length;
-			for(var i:int=0 ;i<len;i++)
-			{
-				if(doesExist(pos,arr[i]))
-					return i;
-			}
-			return -1;
+			doAllEndMatch(mineSweeper_Logic.endMatch());
 		}
 		public function pressMine(xPos:int,yPos:int,isMine:Boolean):void
 		{
@@ -102,17 +78,15 @@ import flash.utils.*;
 		{
 		
 			var serverEntry:ServerEntry = serverEntries[0];
-			var randomSeed:int = serverEntry.value + Math.random()*100;
+			var randomSeed:FakeRandomGenerator = new FakeRandomGenerator(serverEntry.value);
 			var mines:Array = new Array();
-			var place:int = 1;
 			//create mine positions
 			while(mines.length < mineAmount)
 			{
-				var mineUncalculated:int = (randomSeed * place) %(boardHeight * boardWidth);
+				var mineUncalculated:int = randomSeed.gen() %(boardHeight * boardWidth);
 				var newPos:Object = {xPos: int(mineUncalculated/boardWidth),yPos:(mineUncalculated%boardWidth)};
 				if (!doesExist(newPos,mines))
 					mines.push(newPos);
-				place++;
 			}
 			//initialize a blank board
 			newCalculatorBoard= new Array();
@@ -146,8 +120,11 @@ import flash.utils.*;
 					}
 				}
 				
+				
+			var sort:UnionSort = new UnionSort(newCalculatorBoard,boardWidth,boardHeight);
+				
 			//find connected squares to each white square and create ServerEntries
-			var deadSpace:Array = new Array();
+			
 			var userEntries:Array= new Array();
 			for(i=0;i<boardWidth;i++)
 				for(j=0;j<boardHeight;j++)	
@@ -168,23 +145,12 @@ import flash.utils.*;
 					}
 					
 					if(newCalculatorBoard[i][j] == 0)
-					{
-						var isGroup:int = isGrouped({xPos:i , yPos:j},deadSpace)
-						if(isGroup == -1)
-						{
-							emptyBoxes = new Array();
-							getEmptyBoxes({xPos:i , yPos:j});
-							deadSpace.push(emptyBoxes);
-							isGroup =deadSpace.length;
-						}
-						//serverBox.borderingMines = 0;
-						//userEntries.push(UserEntry.create(i+"_"+j,serverBox,true));
-						userEntries.push(UserEntry.create(i+"_"+j,"deadSpace_"+isGroup,true)); 
-					}
+						userEntries.push(UserEntry.create(i+"_"+j,"deadSpace_"+sort.getBrick(i,j),true)); 
 					
 				}
+				var deadSpace:Array = sort.groupArrays;
 				for(i=0;i<deadSpace.length;i++)
-					userEntries.push(UserEntry.create("deadSpace_"+i,deadSpace[i],true));
+					userEntries.push(UserEntry.create("deadSpace_"+sort.getId(i),deadSpace[i],true));
 				doAllStoreStateCalculation(userEntries);
 				
 			
@@ -200,8 +166,7 @@ import flash.utils.*;
 		}
 		override public function gotMatchStarted(allPlayerIds:Array, finishedPlayerIds:Array, extraMatchInfo:Object, matchStartedTime:int, serverEntries:Array):void
 		{
-			
-			
+			players = allPlayerIds;
 			if(serverEntries.length == 0)
 			{
 				doAllRequestRandomState("randomSeed",true);
@@ -209,19 +174,18 @@ import flash.utils.*;
 			}
 			else
 			{
+				loadServerEntries = serverEntries;
 				//load game or viewer
 				startGraphic.play();
 			}
 		}
 		override public function gotMatchEnded(finishedPlayerIds:Array/*int*/):void 
 		{
-			
+			mineSweeper_Logic.endGame();
 		}
 		override public function gotStateChanged(serverEntries:Array):void
 		{
 			var serverEntry:ServerEntry = serverEntries[0]
-			
-			trace(JSON.stringify(serverEntries));
 				
 			if(serverEntries.length > boardHeight * boardWidth)
 			{
@@ -255,7 +219,7 @@ import flash.utils.*;
 		}
 		override public function gotKeyboardEvent(isKeyDown:Boolean, charCode:int, keyCode:int, keyLocation:int, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean):void
 		{
-			
+			mineSweeper_Logic.mine = shiftKey;
 		}
 	}
 }

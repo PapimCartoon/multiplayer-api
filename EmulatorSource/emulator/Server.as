@@ -12,7 +12,7 @@
 	import flash.text.*;
 	import flash.utils.*;
 	public class Server extends MovieClip {
-			
+			 
 		private static const COL_player_ids:String = "player_ids";
 		private static const COL_scores:String = "scores";
 		private static const COL_pot_percentages:String = "pot_percentages";
@@ -40,9 +40,8 @@
 		private var lcFramework:LocalConnection;
 		 
 		private var aUsers:Array;
-		
 		private var userStateEntrys:Array;/*UserStateEntry*/ //state information
-	
+
 		private var serverEntery:Array;/*InfoEntry*/ //extra server information
 		private var aParams:Array;
 		private var aPlayers:Array; //array of all the players
@@ -569,7 +568,7 @@
 		*/
 		private function queTimeoutError(ev:TimerEvent):void
 		{
-			var unverefiedFunction:UnverifiedFunction = unverifiedQueue[0];
+			var unverefiedFunction:QueueEntry = unverifiedQueue[0];
 			if(unverefiedFunction != null)
 			{
 				showMsg(unverefiedFunction.msg.getMethodName()+" Timed out by player/s:"+String(unverefiedFunction.unverifiedUsers),"Error");
@@ -630,11 +629,44 @@
 					}
 					if(!isPlayer(user.ID))
 						return
-						
+					var entry:QueueEntry;
+          			var isNewEntry:Boolean = true
+          			
+					if(msg is API_DoStoreState)	
+					{
+						entry = new QueueEntry(user,msg,[]);	
+						//waitingQueue.push(entry);	
+					}
+					else
+					{
+						entry = waitingQueue[0];
+						if(entry == null)
+						{
+							addMessageLog("Server","Debug "+user.ID,msg.getMethodName()+"got when queue had "+waitingQueue.length)
+							entry = new QueueEntry(user,msg,aPlayers.concat())	
+							entry.removeUnverifiedUser(user.ID)
+						}
+						else
+						{
+							
+							addMessageLog("Server","Debug "+user.ID,msg.getMethodName()+"got when queue had "+waitingQueue.length)
+						    if(checkDoAlls(msg,user))
+						    	isNewEntry = false
+						    else
+						    {
+						    	entry = new QueueEntry(user,msg,aPlayers.concat())	
+						    	entry.removeUnverifiedUser(user.ID)
+						    }
+						    
+						}
+							
+					}			
+          			if (isNewEntry) {
+            		waitingQueue.push(entry)
+         			 }
 					addMessageLog(user.Name, msg.getMethodName(), msg.toString());
-					var waitingFunction:WaitingFunction=new WaitingFunction(user,msg);
-					waitingQueue.push(waitingFunction);
 					doNextInQueue();
+					
 				}
 			} catch (err:Error) { 
 				showMsg(err.getStackTrace(), "Error");
@@ -697,30 +729,29 @@
 		private function doNextInQueue():void
 		{
 			if(waitingQueue.length == 0) return;
-			var waitingFunction:WaitingFunction=waitingQueue[0];
+			var waitingFunction:QueueEntry=waitingQueue[0];
+			
 			if(waitingFunction.msg is API_DoStoreState)
-			{
-				doStoreState(waitingFunction.user,waitingFunction.msg as API_DoStoreState);
-				waitingQueue.shift();
-			}
+				doStoreState(waitingFunction);
 			else
 			{
 				if(unverifiedQueue.length != 0) return;
-				var tempMessage:API_Message = checkDoAlls();
-				if(tempMessage == null)
-					return;
-				processMessage(tempMessage);
+				if(waitingFunction.length() != 0) return ;
+				processMessage(waitingFunction.msg);
 			}
-			
-			if (!((tempMessage is API_DoAllSetTurn) || (tempMessage is API_DoAllRequestStateCalculation) ))
-				unverifiedQueue.push(new UnverifiedFunction(waitingFunction,aPlayers.concat()));
+			waitingQueue.shift();
+			if (!((waitingFunction.msg is API_DoAllSetTurn) || (waitingFunction.msg is API_DoAllRequestStateCalculation) ))
+			{
+				waitingFunction.unverifiedUsers = aPlayers.concat()
+				unverifiedQueue.push(waitingFunction);
+			}
 			queueTimer.reset();
 			queueTimer.start();
 			doNextInQueue();
 		}
 		private function verefyAction(user:User,methodName:String):void
 		{
-			for each(var unverifiedFunction:UnverifiedFunction in unverifiedQueue)
+			for each(var unverifiedFunction:QueueEntry in unverifiedQueue)
 			{
 					if(unverifiedFunction.removeUnverifiedUser(user.ID))
 					{
@@ -736,15 +767,7 @@
 		private function actionVerefied():void
 		{
 			
-			var waitingFunction:UnverifiedFunction=unverifiedQueue.shift();
-			if(waitingFunction.msg is API_GotStateChanged)
-			{
-				var msg:API_GotStateChanged = waitingFunction.msg as API_GotStateChanged;
-				for each (var serverEntry:ServerEntry in msg.serverEntries)
-				{
-					doStoreOneState(serverEntry);
-				}	
-			}
+			var waitingFunction:QueueEntry=unverifiedQueue.shift();
 			queueTimer.reset();
 			if(unverifiedQueue.length == 0)
 				doNextInQueue();	
@@ -778,52 +801,36 @@
 				}
 			return true;
 		}
-		private function checkDoAlls():API_Message
+		private function checkDoAlls(newMsg:API_Message,user:User):Boolean
 		{
-			var waitingFunction:WaitingFunction=waitingQueue[0]
-			var originalMsg:API_Message = waitingFunction.msg;
-			var playersNotCalled:Array=aPlayers.concat();
-			for each(waitingFunction in waitingQueue)
+			for each(var entry:QueueEntry in waitingQueue)
 			{
-				if(originalMsg.getMethodName() == waitingFunction.msg.getMethodName())
-					spliceNum(playersNotCalled,waitingFunction.user.ID);
-				else if(!(waitingFunction.msg is API_DoStoreState))//todo: talk to yoav
+				if(!(entry.msg is API_DoStoreState))
 				{
-					if(spliceNum(playersNotCalled,waitingFunction.user.ID)!=-1)
+					addMessageLog("Server","Debug "+user.ID,newMsg.getMethodName() +"=="+ entry.msg.getMethodName())
+					if(newMsg.getMethodName() == entry.msg.getMethodName())
 					{
-						addMessageLog("Server","Error","concurrency problem "+waitingFunction.user.ID+" called function "+waitingFunction.msg.getMethodName()+" instead of "+originalMsg.getMethodName());
-						showMsg("concurrency problem "+waitingFunction.user.ID+" called function "+waitingFunction.msg.getMethodName()+" instead of "+originalMsg.getMethodName(),"Error");
-						gameOver();
-						return null;
-					}
-				}
-			}
-			if(playersNotCalled.length != 0)
-				return null;
-			var playerDoAllsRemoved:Array = aPlayers.concat();
-			for(var i:int=0;i<waitingQueue.length;i++)
-			{
-				waitingFunction=waitingQueue[i];
-				if(waitingFunction.msg.getMethodName() == originalMsg.getMethodName())
-				{
-					if(spliceNum(playerDoAllsRemoved,waitingFunction.user.ID) != -1)
-					{
-						if(!isEquel(waitingFunction.msg.getMethodParameters(),originalMsg.getMethodParameters()))
+						if(!isEquel(newMsg.getMethodParameters(),entry.msg.getMethodParameters()))
 						{
-							addMessageLog("Server","Error","Not all parameters for "+originalMsg.getMethodName()+" are the same");
-							showMsg("Not all parameters for "+originalMsg.getMethodName()+" are the same","Error");
 							gameOver();
-							return null;
-						}
+							addMessageLog("Server","Error","Not all parameters for "+newMsg.getMethodName()+" are the same");
+							showMsg("Not all parameters for "+newMsg.getMethodName()+" are the same","Error");
+							return false;
+						}	
 						else
 						{
-							waitingQueue.splice(i,1);
-							i--;
+							entry.removeUnverifiedUser(user.ID);
+							return true;
 						}
 					}
 				}
 			}
-			return originalMsg;
+			return false;
+			
+			
+				//if(oldMsg.getMethodName() != newMsg.getMethodName()) return false;
+
+				//return true;
 		}
 		private function isKeyExist(testKey:String):int
 		{
@@ -1464,7 +1471,7 @@
 			if(iInfoMode==7){
 				tblInfo.removeAll();
 				var itemObj:Object;
-				for each(var unverifiedFunction:UnverifiedFunction in unverifiedQueue)
+				for each(var unverifiedFunction:QueueEntry in unverifiedQueue)
 				{
 					itemObj=new Object();
 					itemObj[COL_User]=unverifiedFunction.user.ID;
@@ -1482,10 +1489,10 @@
 			if(iInfoMode==2){
 				tblInfo.removeAll();
 				var itemObj:Object;
-				for each(var waitingFunction:WaitingFunction in  waitingQueue)
+				for each(var waitingFunction:QueueEntry in  waitingQueue)
 				{
 					itemObj=new Object();
-					itemObj[COL_User]=waitingFunction.user.ID;
+					itemObj[COL_User]=waitingFunction.unverifiedUsers;
 					itemObj[COL_Message]=waitingFunction.msg.toString();
 					tblInfo.addItem(itemObj);
 					tblInfo.verticalScrollPosition = tblInfo.maxVerticalScrollPosition+30;
@@ -1942,38 +1949,23 @@
 			}
 			
 		}
-		public function doStoreState(user:User, msg:API_DoStoreState):void {
+		public function doStoreState(waitingFunction:QueueEntry):void {
+			var msg:API_DoStoreState = waitingFunction.msg as API_DoStoreState;
 			var serverEntries:Array;
-			var serverEntry:ServerEntry;
 			for each(var tempUser:User in aUsers)
 			{
 				serverEntries=new Array();
 				for each (var userEntry:UserEntry in msg.userEntries)
 				{
-					serverEntry = new ServerEntry();
-					serverEntry.key = userEntry.key;
-					serverEntry.changedTimeInMilliSeconds = getTimer()-matchStartTime;
-					serverEntry.storedByUserId = user.ID;
-					if(userEntry.isSecret)
-					{
-						if(user.ID == tempUser.ID)
-						{
-							serverEntry.authorizedUserIds = [user.ID];
-							serverEntry.value = userEntry.value;	
-							serverEntries.push(serverEntry);
-						}
-						else
-						{
-							serverEntry.authorizedUserIds = [user.ID];
-							serverEntry.value = null;	
-							serverEntries.push(serverEntry);
-						}
-					}
+					if(!userEntry.isSecret)
+						serverEntries.push(ServerEntry.create(userEntry.key,userEntry.value,waitingFunction.user.ID,null,getTimer()-matchStartTime));	
 					else
 					{
-						serverEntry.authorizedUserIds = null;
-						serverEntry.value = userEntry.value;	
-						serverEntries.push(serverEntry);	
+						if(waitingFunction.user.ID == tempUser.ID)
+							serverEntries.push(ServerEntry.create(userEntry.key,userEntry.value,waitingFunction.user.ID,[waitingFunction.user.ID],getTimer()-matchStartTime));
+						else
+							serverEntries.push(ServerEntry.create(userEntry.key,null,waitingFunction.user.ID,[waitingFunction.user.ID],getTimer()-matchStartTime));
+						doStoreOneState(ServerEntry.create(userEntry.key,userEntry.value,waitingFunction.user.ID,[waitingFunction.user.ID],getTimer()-matchStartTime));
 					}
 				}
 
@@ -2199,15 +2191,15 @@ class Message {
 	public var num:int;
 }
 
-class UnverifiedFunction{
+class QueueEntry{
 	public var unverifiedUsers:Array;
 	public var user:User;
 	public var msg:API_Message;
-	public function UnverifiedFunction(waitingFunction:WaitingFunction,unverifiedUsers:Array)
+	public function QueueEntry(user:User,msg:API_Message,unverifiedUsers:Array)
 	{
 		this.unverifiedUsers=unverifiedUsers;
-		this.user = waitingFunction.user;
-		this.msg = waitingFunction.msg;	
+		this.user = user;
+		this.msg = msg;	
 	}
 	public function removeUnverifiedUser(userId:int):Boolean
 	{
@@ -2224,6 +2216,7 @@ class UnverifiedFunction{
 		return unverifiedUsers.length;
 	}
 }
+
 class WaitingFunction{
 	public var user:User;
 	public var msg:API_Message;

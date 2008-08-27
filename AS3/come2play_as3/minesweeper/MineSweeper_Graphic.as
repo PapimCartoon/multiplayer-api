@@ -8,30 +8,23 @@ package come2play_as3.minesweeper
 	public class MineSweeper_Graphic extends MovieClip
 	{
 		private var boardBricks:Array;
-		private var playerLives:Array;
-		private var playerText:Array;
-		private var board:MovieClip;
+		
+		private var playerGraphicDataArr:Array;
 		public function MineSweeper_Graphic()
 		{
-			board=new MovieClip();
+			playerGraphicDataArr = new Array();
 		}
 		
-		public function foundMine(xPos:int,yPos:int,isPlayer:Boolean):void
+		public function foundMine(xPos:int,yPos:int,playerNum:int):void
 		{
 			var box:Box = boardBricks[xPos][yPos];
-			if(isPlayer)
-				box.gotoAndStop(44);
-			else
-				box.gotoAndStop(55);
+				box.gotoAndStop(44+playerNum*11);
 		}
-		public function setOfMine(xPos:int,yPos:int,isPlayer:Boolean):void
+		public function setOfMine(xPos:int,yPos:int,playerNum:int):void
 		{
 			var box:Box = boardBricks[xPos][yPos];
 			addChild(box);
-			if(isPlayer)
-				box.gotoAndStop(20);
-			else
-				box.gotoAndStop(31);
+				box.gotoAndStop(20+playerNum*10);
 		}
 		public function revealBox(borderingMines:int,xPos:int,yPos:int):void
 		{
@@ -40,25 +33,25 @@ package come2play_as3.minesweeper
 		}
 		public function updateLives(playerNum:int,livesCount:int):void
 		{
+			var player:PlayerGraphicData = playerGraphicDataArr[playerNum];
 			for(var i:int=0;i<3;i++)
 			{
-				board.addChild(playerLives[playerNum][i]);
-				if(livesCount< (i+1))
-					board.removeChild(playerLives[playerNum][i])
-
+				addChild(player.playerLives[i]);
+				if(livesCount < (i+1))
+					removeChild(player.playerLives[i])
 			}	
+		}
+		public function updateScore(playerNum:int,Score:int):void
+		{
+			var player:PlayerGraphicData = playerGraphicDataArr[playerNum];
+			player.playerText.text = player.playerName + " : " + Score;
+	
 		}
 		
 		
-		
-		public function buildBoard(width:int,height:int,users:Array):void
+		public function buildBoard(width:int,height:int,players:Array):void
 		{
-			if (contains(board))
-				removeChild(board);
-			board=new MovieClip();
-			addChild(board);
 			boardBricks=new Array()
-			
 			for(var i:int=0;i<width;i++)
 			{
 				boardBricks[i] = new Array();
@@ -69,41 +62,109 @@ package come2play_as3.minesweeper
 					tempBox.x = i*16 + 9.5;
 					tempBox.y = j*16 + 7;
 					boardBricks[i][j]=tempBox;
-					board.addChild(boardBricks[i][j]);
+					addChild(boardBricks[i][j]);
 				}
 			}
 			
 			
-			playerText = new Array();
-			playerLives = new Array();
-			for(i=0;i<users.length;i++)
+			for(i=0;i<players.length;i++)
 			{
-				playerLives[i]=new Array();
-				for(j=0;j<3;j++)
-				{
-					var playerLife:PlayerLife = new PlayerLife();
-					playerLife.gotoAndStop(i+1);
-					playerLife.x = 250 + j * 35;
-					playerLife.y = 5 + i * 50;
-					playerLives[i][j] = playerLife;
-				}	
-				var tempTextField:TextField = new TextField()
-				var userObj:Object = users[i];
-				for each(var infoEntry:InfoEntry in userObj.entries)
+				var playerObj:Object = players[i];
+				for each(var infoEntry:InfoEntry in playerObj.entries)
 					if(infoEntry.key == "name")
 					{
-						tempTextField.text = String(infoEntry.value);
+						var tempName:String = String(infoEntry.value);
 						break;
 					}
-				tempTextField.selectable= false;
-				tempTextField.x = 250
-				tempTextField.y = 35 + i * 50
-				playerText[i] = tempTextField;
-				board.addChild(playerText[i]);
+				playerGraphicDataArr[i]=new PlayerGraphicData(i,tempName);
+				addChild(playerGraphicDataArr[i]);	
 				updateLives(i,3);
 			}
 			
 		}
+		public function loadBoard(width:int,height:int,players:Array,loadBoard:Array):void
+		{
+			boardBricks=new Array()
+			for(var i:int=0;i<width;i++)
+			{
+				boardBricks[i] = new Array();
+				for(var j:int = 0;j<height;j++)
+				{
+					var tempBox:Box =new Box()
+					tempBox.x = i*16 + 9.5;
+					tempBox.y = j*16 + 7;
+					if(loadBoard[i][j] is PlayerBox)
+					{
+						var playerBox:PlayerBox =loadBoard[i][j];
+						if(!playerBox.isMine)
+							tempBox.gotoAndStop(playerBox.borderingMines + 10);
+						else
+							if(playerBox.isMineFound)
+							{
+								tempBox.gotoAndStop(20+playerBox.takingPlayer * 10);
+							}
+							else
+							{
+								tempBox.gotoAndStop(44+playerBox.takingPlayer * 11);
+							}
 
+					}
+					else
+					{
+						tempBox.stop();	
+					}
+					
+					boardBricks[i][j]=tempBox;
+					addChild(boardBricks[i][j]);
+				}
+			}
+			
+			
+			for(i=0;i<players.length;i++)
+			{
+				var playerObj:Object = players[i];
+				for each(var infoEntry:InfoEntry in playerObj.entries)
+					if(infoEntry.key == "name")
+					{
+						var tempName:String = String(infoEntry.value);
+						break;
+					}
+				playerGraphicDataArr[i]=new PlayerGraphicData(i,tempName);
+				addChild(playerGraphicDataArr[i]);	
+				updateLives(i,3);
+			}
+			
+		}		
+		
+
+	}
+}
+	import flash.display.MovieClip;
+	import flash.text.TextField;
+	
+class PlayerGraphicData extends MovieClip
+{
+	public var playerLives:Array;
+	public var playerText:TextField;
+	public var playerName:String;	
+	public function PlayerGraphicData(num:int,name:String):void
+	{
+		playerName= name;
+		playerLives = new Array();
+		playerText = new TextField();
+		playerText.text = name+" : 0";
+		playerText.selectable = false;
+		addChild(playerText);
+		playerText.x = 250
+		playerText.y = 35 + num * 50
+		for(var i:int=0;i<3;i++)
+		{
+			var playerLife:PlayerLife = new PlayerLife();
+			playerLife.gotoAndStop(num+1);
+			playerLife.x = 250 + i * 35;
+			playerLife.y = 5 + num * 50;
+			playerLives[i] = playerLife;
+		}	
+			
 	}
 }

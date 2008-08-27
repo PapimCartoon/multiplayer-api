@@ -7,6 +7,7 @@ package come2play_as3.minesweeper
 		public var xPos:int;
 		public var yPos:int;
 		public var isMine:Boolean;
+		public var isMineFound:Boolean;
 		public var borderingMines:int;
 		public var takingPlayer:int;
 		public static function create(boxServer:ServerBox,userId:int):PlayerBox
@@ -15,6 +16,7 @@ package come2play_as3.minesweeper
 			res.xPos = boxServer.xPos;
 			res.yPos = boxServer.yPos;
 			res.isMine = boxServer.isMine;
+			res.isMineFound = boxServer.isMine;
 			res.borderingMines = boxServer.borderingMines;
 			res.takingPlayer = userId; 
 			return res;

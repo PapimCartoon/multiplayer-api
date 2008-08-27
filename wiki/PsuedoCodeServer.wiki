@@ -26,23 +26,25 @@ function gotUserMessage(user:User,message:Message) {
 	} else {
 	  // message is doStoreState or doAll*
 	  var entry:QueueEntry;
+	  var isNewEntry:Boolean = true
 	  if (message is doStoreState) {
-	    entry = new QueueEntry(user, [], message)
+	    entry = new QueueEntry(user, [], message) // in doStoreState we do not wait for any other player
 	  } else {
 	    // a doAll* message
 	    // check if other players already sent the same message
 	    entry = the first entry in waitingQueue, such that user is in entry.waitingForUsers
 	    if (entry is null) {
-	      entry = new QueueEntry(user, allPlayers, message)
+	      entry = new QueueEntry(user, allPlayers, message) // in doAll* we wait for all other players
 	    } else {
+	      isNewEntry = false
+	      // entry.message must be a doAll* message, because waitingForUsers is not empty (and in doStoreState it is always empty) 
 	      if (entry.message is not equal to message) { // we check both message name and parameters
 	        report error (in the server, we use the jury system to find if there is a hacker)
 	      }
 	    }
 	    remove user from entry.waitingForUsers
 	  }
-	  if (entry.fromUser==user) {
-	    // we created a new entry
+	  if (isNewEntry) {
 	    waitingQueue.push( entry )
 	  }
 	  processWaitingQueue()
@@ -60,13 +62,12 @@ function processWaitingQueue() {
 	  if (message is not doAllSetTurn) { // doAllSetTurn is the only doAll* that doesn't change the match state
 	    unverifiedQueue.push( new QueueEntry(null, allPlayers, message) )
 	  }
-	  processMessage(entry.fromUser, message) // will broadcast gotStateChanged to all users
+	  processMessage(entry.fromUser, message) // update match state and broadcast gotStateChanged to all users
 	}
 }
 
-// There are two timers for guaranteeing progress:
-// 1) for checking that every entry in unverifiedQueue is verified after a certain time lapses.
-// 2) for checking that the first entry in waitingQueue is removed after a certain time lapses.
+// There is also a timer that checks that entries are removed from waitingQueue and unverifiedQueue (for guaranteeing progress).
+// If a certain entry stays in a queue too long, we report an error and use the jury system to find a hacker.
 }}}
 
 In the java server:

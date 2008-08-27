@@ -1,60 +1,76 @@
 #summary pseudo code representation of the server
 
 {{{
-//this function gets all the calls made by the user game application
-function gotUserMessage(user:User,msg:Message) {
-	if (msg is doTrace or doRegisterOnServer or doAllFoundHacker) {
-	  processMessage(user, msg)
-	} else if (msg is doFinishedCallback) {
-	  <unverifiedUsers, oldMsg> = the first object in unverifiedQueue, from head to tail, where user is in unverifiedUsers
-	  remove user from unverifiedUsers
-	  if (unverifiedUsers is empty) {
+// allPlayers is an array of all players.
+var allPlayers:Array/*User*/ 
+// a QueueEntry contains a message, which user sent it first, and an array of users for whom we wait.
+class QueueEntry(fromUser:User, waitingForUsers:Array/*User*/, message:Message)
+// waitingQueue contains messages that arrived and have not been processed yet.
+var waitingQueue:Array/*QueueEntry*/ 
+// unverifiedQueue contains messages that have been processed and have not been acknowledged/verified by all players.
+var unverifiedQueue:Array/*QueueEntry*/ 
+
+// gotUserMessage is called when a user sends a message to the server
+function gotUserMessage(user:User,message:Message) {
+	if (message is doTrace or doRegisterOnServer or doAllFoundHacker) {
+	  processMessage(user, message)
+	} else if (message is doFinishedCallback) {
+	  var entry:QueueEntry = the first entry in unverifiedQueue, such that user is in entry.waitingForUsers
+	  remove user from entry.waitingForUsers
+	  if (entry.waitingForUsers is empty) {
+	    // entry must be the head of unverifiedQueue
 	    remove head of unverifiedQueue 
-	    update the match state according to msg
+	    (in the server, we update the verified match state according to entry.message)
 	    processWaitingQueue()
 	  }
 	} else {
 	  // message is doStoreState or doAll*
-	  add <user,msg> to waitingQueue
+	  var entry:QueueEntry;
+	  if (message is doStoreState) {
+	    entry = new QueueEntry(user, [], message)
+	  } else {
+	    // a doAll* message
+	    // check if other players already sent the same message
+	    entry = the first entry in waitingQueue, such that user is in entry.waitingForUsers
+	    if (entry is null) {
+	      entry = new QueueEntry(user, allPlayers, message)
+	    } else {
+	      if (entry.message is not equal to message) { // we check both message name and parameters
+	        report error (in the server, we use the jury system to find if there is a hacker)
+	      }
+	    }
+	    remove user from entry.waitingForUsers
+	  }
+	  if (entry.fromUser==user) {
+	    // we created a new entry
+	    waitingQueue.push( entry )
+	  }
 	  processWaitingQueue()
 	}
 }
- }}}   
 
-{{{
-// this function processes the waiting messages
+// this function processes the messages in waitingQueue
 function processWaitingQueue() {
-	if (waitingQueue is empty) return
-	<user,msg> = head of waitingQueue
-	if (msg is doStoreState) {
+	while (true) {
+	  if (waitingQueue is empty) return
+	  var entry:QueueEntry = head of waitingQueue
+	  var message:Message = entry.message;
+	  if (entry.waitingForUsers is not empty) return
 	  remove head of waitingQueue 
-	} else {
-	  // msg is a doAll* message
-	  if (unverifiedQueue is not empty) return
-	  if (not all users sent this message) return
-	  if (not all users sent this message before sending anything else) {
-	    report error, concurrency problem
-	    return
+	  if (message is not doAllSetTurn) { // doAllSetTurn is the only doAll* that doesn't change the match state
+	    unverifiedQueue.push( new QueueEntry(null, allPlayers, message) )
 	  }
-	  if (not all users sent this message with the same parameters) {
-	    report error, not all users used same values for doAll message
-	    return
-	  }
-	  remove from waitingQueue all processed doAll messages 
+	  processMessage(user,message) // will broadcast gotStateChanged to all users
 	}
-	if (msg is not doAllSetTurn) {
-	  add <allPlayers, msg> to unverifiedQueue 
-	}
-	processMessage(user,msg)
-	processWaitingQueue()
 }
+
+// There are two timers for guaranteeing progress:
+// 1) for checking that every entry in unverifiedQueue is verified after a certain time lapses.
+// 2) for checking that the first entry in waitingQueue is removed after a certain time lapses.
 }}}
 
 In the java server:
-A new viewer will get the match state, followed by all the messages that are in unverifiedQueue.
-The reason that we update the match state only after all players verified the message, 
-is to find hackers (if we update immediately according to a message from a hacker, then I can't discover if he is indeed a hacker).
-
-In the emulator:
-`processMessage` already changes the match state, 
-so a new viewer will get a match state that already includes all the messages in unverifiedQueue.
+A new viewer will get the _match state_.
+A jury member will get the _*verified* match state_, followed by all the unverified messages.
+If all jury members agree on the hacker (or non-existence of one), then we have a hacker.
+Otherwise it is a bug of the game developer.

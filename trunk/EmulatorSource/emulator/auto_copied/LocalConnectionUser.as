@@ -7,6 +7,9 @@
 // So we changed the package name when we copied the directory 'auto_copied'
 package emulator.auto_copied
 {
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 	import emulator.auto_generated.*;
 	
 	import flash.display.*;
@@ -17,6 +20,9 @@ package emulator.auto_copied
 	public class LocalConnectionUser
 	{
 		
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		public static var DEFAULT_LOCALCONNECTION_PREFIX:String = "42";
 		public static var SHOULD_SHOW_ERRORS:Boolean = true;
 		public static var SHOULD_CALL_TRACE:Boolean = true;
@@ -27,6 +33,9 @@ package emulator.auto_copied
 			System.setClipboard(msg);
 			if (SHOULD_SHOW_ERRORS) AS3_vs_AS2.showError(someMovieClip, msg);
 			trace("\n\n\n"+msg+"\n\n\n");
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		}
 		public static function throwError(msg:String):void {
 			showError("Throwing an error with message="+msg+"." + (!AS3_vs_AS2.isAS3 ? "" :  "The error was thrown in this location="+AS3_vs_AS2.error2String(new Error())));
@@ -37,6 +46,9 @@ package emulator.auto_copied
 		}
 		public static function getDoChanelString(sPrefix:String):String {
 			return "DO_CHANEL_"+sPrefix;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		}
 		public static function getGotChanelString(sPrefix:String):String {
 			return "GOT_CHANEL_"+sPrefix;
@@ -47,6 +59,9 @@ package emulator.auto_copied
 			if (sPrefix==null) sPrefix = parameters["?prefix"];
 			return getPrefixFromString(sPrefix);
 		}		
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		public static function getPrefixFromString(sPrefix:String):String {
 			if (sPrefix!=null && !(sPrefix.charAt(0)>='0' && sPrefix.charAt(0)<='9')) { //it is not necessarily a number 
 				trace("calling a javascript function that should return the random fixed id");
@@ -57,6 +72,9 @@ package emulator.auto_copied
 		}
 				
 		
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		// we use a LocalConnection to communicate with the container
 		private var lcUser:LocalConnection; 
 		private var sSendChanel:String;
@@ -67,6 +85,9 @@ package emulator.auto_copied
 				API_LoadMessages.useAll();	
 				someMovieClip = _someMovieClip;
 				if (sPrefix==null) {
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 					myTrace(["WARNING: didn't find 'prefix' in the loader info parameters. Probably because you are doing testing locally."]);
 					sPrefix = DEFAULT_LOCALCONNECTION_PREFIX;
 				}				
@@ -77,6 +98,9 @@ package emulator.auto_copied
 				var sGotChanel:String = getGotChanelString(sPrefix);
 				var sListenChannel:String = 
 					isServer ? sDoChanel : sGotChanel;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 				sSendChanel = 
 					!isServer ? sDoChanel : sGotChanel;				
 				myTrace(["LocalConnection listens on channel=",sListenChannel," and sends on ",sSendChanel]);
@@ -87,6 +111,9 @@ package emulator.auto_copied
 		}
 		public function myTrace(msg:Array):void {
 			if (SHOULD_CALL_TRACE) trace(AS3_vs_AS2.getClassName(this)+": "+JSON.stringify(msg));
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		}
 		
         private function passError(withObj:Object, err:Error):void {
@@ -97,6 +124,9 @@ package emulator.auto_copied
 				// to avoid an infinite loop, I can't call passError again.
 				showError("Another error occurred when calling gotError. The new error is="+AS3_vs_AS2.error2String(err2));
 			}
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
         }
 		public function gotError(withObj:Object, err:Error):void {}
         
@@ -107,6 +137,9 @@ package emulator.auto_copied
 			try{
 				lcUser.send(sSendChanel, "localconnection_callback", msg);  
 			}catch(err:Error) { 
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 				passError(msg, err);
 			}        	
         }
@@ -117,6 +150,9 @@ package emulator.auto_copied
         		var msg:API_Message = deserializedMsg as API_Message;
         		if (msg==null) throwError("msgObj="+JSON.stringify(msgObj)+" is not an API_Message");
         		
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
         		myTrace(['gotMessage: ',msg]);
         		gotMessage(msg);
 			} catch(err:Error) { 

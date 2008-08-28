@@ -78,12 +78,12 @@ import flash.utils.*;
 		{
 		
 			var serverEntry:ServerEntry = serverEntries[0];
-			var randomSeed:FakeRandomGenerator = new FakeRandomGenerator(serverEntry.value);
+			var randomSeed:RandomGenerator = new RandomGenerator(serverEntry.value);
 			var mines:Array = new Array();
 			//create mine positions
 			while(mines.length < mineAmount)
 			{
-				var mineUncalculated:int = randomSeed.gen() %(boardHeight * boardWidth);
+				var mineUncalculated:int = randomSeed.nextInRange(0, boardHeight * boardWidth);
 				var newPos:Object = {xPos: int(mineUncalculated/boardWidth),yPos:(mineUncalculated%boardWidth)};
 				if (!doesExist(newPos,mines))
 					mines.push(newPos);

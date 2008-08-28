@@ -15,11 +15,11 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 	private var test_Arr:Array;
 	private static var shouldTestPassNumbers:Boolean = false;
 	
-	public function TestClientGameAPI(my_graphics:MovieClip) {
-		super(my_graphics);
+	public function TestClientGameAPI(rootGraphics:MovieClip) {
+		super(rootGraphics);
 		trace("Constructor of TestClientGameAPI");
-		var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(my_graphics);
-		this.my_graphics = my_graphics;	
+		var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(rootGraphics);		
+		my_graphics = AS3_vs_AS2.duplicateMovie(rootGraphics, "TestClientGameGraphics","client");
 		outTracesText = my_graphics.outTracesText;
 		exampleOperationsText = my_graphics.exampleOperationsText;
 		operationInput = my_graphics.operationInput;	

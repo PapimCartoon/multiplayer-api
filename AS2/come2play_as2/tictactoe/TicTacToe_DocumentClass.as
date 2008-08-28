@@ -4,6 +4,7 @@ import come2play_as2.tictactoe.*;
 	{
 		public function TicTacToe_DocumentClass()
 		{
+			trace("TicTacToe_DocumentClass");
 			new TicTacToe_Main(this);
 		}
 		

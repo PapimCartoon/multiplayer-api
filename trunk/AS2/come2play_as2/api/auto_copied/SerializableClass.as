@@ -79,7 +79,7 @@ class come2play_as2.api.auto_copied.SerializableClass
 	public function SerializableClass() {
 		__CLASS_NAME__ = AS3_vs_AS2.getClassName(this);
 		if (__CLASS_NAME__==null || AS3_vs_AS2.stringIndexOf(__CLASS_NAME__,"$")!=-1) 
-			LocalConnectionUser.throwError("Illegal class name '"+__CLASS_NAME__+"' for a class that extends SerializableClass. You should only use PUBLIC classes with SerializableClass");
+			StaticFunctions.throwError("Illegal class name '"+__CLASS_NAME__+"' for a class that extends SerializableClass. You should only use PUBLIC classes with SerializableClass");
 		if (AS3_vs_AS2.isAS3)
 			AS3_vs_AS2.checkConstructorHasNoArgs(this);
 		

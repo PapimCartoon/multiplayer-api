@@ -54,7 +54,7 @@ public final class AS3_vs_AS2
 		conn.addEventListener(StatusEvent.STATUS, 
 			function (event:StatusEvent):void {
         		if (event.level=='error')
-        			LocalConnectionUser.showError("LocalConnection.onStatus error="+event+" (Are you sure you are running this game inside the emulator?)"); 
+        			StaticFunctions.showError("LocalConnection.onStatus error="+event+" (Are you sure you are running this game inside the emulator?)"); 
   			});		
 	}
 	public static function myTimeout(func:Function, in_milliseconds:int):void {
@@ -77,7 +77,7 @@ public final class AS3_vs_AS2
 	}
 	public static function getChild(graphics:MovieClip, childName:String):DisplayObject {
 		var res:DisplayObject = graphics.getChildByName(childName);
-		if (res==null) LocalConnectionUser.throwError("Missing child="+childName+" in movieclip="+graphics.name);
+		if (res==null) StaticFunctions.throwError("Missing child="+childName+" in movieclip="+graphics.name);
 		return res;
 	}	
 	private static var prevent_garbage_collection:Array = [];
@@ -126,8 +126,24 @@ public final class AS3_vs_AS2
 		graphics.parent.removeChild( graphics.parent.getChildByName(name) );
 	}
 	public static function addKeyboardListener(graphics:MovieClip, func:Function):void {
+		var isStageReady:Boolean = graphics.stage!=null;
+		if (isStageReady)	
+			addKeyboardListenerStageReady(graphics, func);
+		else {
+			trace("Called addKeyboardListener, but stage is still null, so we set an interval until stage is ready");
+			var intervalId:int = setInterval( 
+				function ():void {
+					if (graphics.stage!=null) {
+						trace("stage is ready, so we now call addKeyboardListener");
+						clearInterval(intervalId);					
+						addKeyboardListenerStageReady(graphics, func);
+					}
+				}, 200);
+		}		
+	}
+	private static function addKeyboardListenerStageReady(graphics:MovieClip, func:Function):void {
 		addKeyboardListener2(true, graphics, func);
-		addKeyboardListener2(false, graphics, func);		
+		addKeyboardListener2(false, graphics, func);
 	}
 	private static function addKeyboardListener2(is_key_down:Boolean, graphics:MovieClip, func:Function):void {
 		graphics.stage.addEventListener(is_key_down ? KeyboardEvent.KEY_DOWN : KeyboardEvent.KEY_UP, 
@@ -170,7 +186,7 @@ public final class AS3_vs_AS2
 		if (constructorList.length()>0) {
 			var constructor:XML = constructorList[0];
 			if (constructor.children().length()!=0)
-				LocalConnectionUser.throwError("The constructor of class "+className+" that extends SerializableClass has arguments! These are the parameters of the constructor="+constructor.toXMLString()); 
+				StaticFunctions.throwError("The constructor of class "+className+" that extends SerializableClass has arguments! These are the parameters of the constructor="+constructor.toXMLString()); 
 		}
 	}	
 	

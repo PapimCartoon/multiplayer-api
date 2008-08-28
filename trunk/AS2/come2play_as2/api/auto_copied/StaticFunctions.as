@@ -1,7 +1,24 @@
 	
+// Only StaticFunctions and JSON are copied to flex_utils 
 import come2play_as2.api.auto_copied.*;
 class come2play_as2.api.auto_copied.StaticFunctions
-{		
+{			
+	public static var SHOULD_SHOW_ERRORS:Boolean = true;
+	public static var someMovieClip:MovieClip; // so we can display error messages on the stage
+	public static function showError(msg:String):Void {
+		var msg:String = "An ERRRRRRRRRRROR occurred:\n"+msg;
+		System.setClipboard(msg);
+		if (SHOULD_SHOW_ERRORS) AS3_vs_AS2.showError(someMovieClip, msg);
+		trace("\n\n\n"+msg+"\n\n\n");
+	}
+	public static function throwError(msg:String):Void {
+		var err:Error = new Error(msg);
+		showError("Throwing the following error="+AS3_vs_AS2.error2String(err));
+		throw err;
+	}		
+	public static function assert(val:Boolean, args:Array):Void {
+		if (!val) throwError("An assertion failed with the following arguments="+JSON.stringify(args));
+	}
 	
 	public static function trim(str:String):String {
 	   var j:Number, strlen:Number, k:Number;
@@ -43,7 +60,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	}
 	public static function performReflection(reflStr:String):Void {
 		var eqIndex:Number = AS3_vs_AS2.stringIndexOf(reflStr,"=");
-		LocalConnectionUser.assert(eqIndex>0, ["Missing '=' in the reflection string=",reflStr]);
+		assert(eqIndex>0, ["Missing '=' in the reflection string=",reflStr]);
 		var before:String = reflStr.substr(0, eqIndex);
 		var after:String = reflStr.substr(eqIndex+1);
 		var val_obj:Object = JSON.parse(after);

@@ -4,25 +4,18 @@
 	 
 import come2play_as2.api.auto_copied.*;
 	class come2play_as2.api.auto_copied.LocalConnectionUser
-	{
-		
-		public static var DEFAULT_LOCALCONNECTION_PREFIX:String = "42";
-		public static var SHOULD_SHOW_ERRORS:Boolean = true;
+	{		
+		public static var DEFAULT_LOCALCONNECTION_PREFIX:String = ""+StaticFunctions.random(1,10000);
 		public static var SHOULD_CALL_TRACE:Boolean = true;
 		
-		private static var someMovieClip:MovieClip;
 		public static function showError(msg:String):Void {
-			var msg:String = "An ERRRRRRRRRRROR occurred:\n"+msg;
-			System.setClipboard(msg);
-			if (SHOULD_SHOW_ERRORS) AS3_vs_AS2.showError(someMovieClip, msg);
-			trace("\n\n\n"+msg+"\n\n\n");
+			StaticFunctions.showError(msg);
 		}
 		public static function throwError(msg:String):Void {
-			showError("Throwing an error with message="+msg+"." + (!AS3_vs_AS2.isAS3 ? "" :  "The error was thrown in this location="+AS3_vs_AS2.error2String(new Error())));
-			throw new Error(msg);
+			StaticFunctions.throwError(msg);
 		}		
 		public static function assert(val:Boolean, args:Array):Void {
-			if (!val) throwError("Assertion failed with arguments: "+args.join(" , "));
+			if (!val) StaticFunctions.assert(false, args);
 		}
 		public static function getDoChanelString(sPrefix:String):String {
 			return "DO_CHANEL_"+sPrefix;
@@ -54,7 +47,7 @@ import come2play_as2.api.auto_copied.*;
 		public function LocalConnectionUser(_someMovieClip:MovieClip, isServer:Boolean, sPrefix:String) {
 			try{
 				API_LoadMessages.useAll();	
-				someMovieClip = _someMovieClip;
+				StaticFunctions.someMovieClip = _someMovieClip;
 				if (sPrefix==null) {
 					myTrace(["WARNING: didn't find 'prefix' in the loader info parameters. Probably because you are doing testing locally."]);
 					sPrefix = DEFAULT_LOCALCONNECTION_PREFIX;

@@ -7,6 +7,9 @@
 // So we changed the package name when we copied the directory 'auto_copied'
 package emulator.auto_copied
 {
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 	import flash.display.MovieClip;
 	
 public final class StaticFunctions
@@ -17,6 +20,9 @@ public final class StaticFunctions
 	   strlen = str.length
 	   j = 0;
 	   while (str.charAt(j) == " ") {
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		  j++
 	   } 
 	   if(j>0) {
@@ -27,6 +33,9 @@ public final class StaticFunctions
 	   while(str.charAt(k) == " ") {
 		  k--;
 	   }
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 	   return str.substring(0,k+1);
 	}
 	
@@ -37,6 +46,9 @@ public final class StaticFunctions
 	}
 	public static function startsWith(str:String, start:String):Boolean {
 		return str.substr(0, start.length)==start;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 	}
 	public static function endsWith(str:String, suffix:String):Boolean {
 		return str.substr(str.length-suffix.length, suffix.length)==suffix;
@@ -47,6 +59,9 @@ public final class StaticFunctions
 		var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(_someMovieClip);
 		for (var key:String in parameters) {
 			if (startsWith(key,REFLECTION_PREFIX))
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 				performReflection(parameters[key]);				
 		}
 	}
@@ -57,6 +72,9 @@ public final class StaticFunctions
 		var after:String = reflStr.substr(eqIndex+1);
 		var val_obj:Object = JSON.parse(after);
 		var dotIndex:int = AS3_vs_AS2.stringLastIndexOf(before,".");
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		var clzName:String = trim(before.substr(0, dotIndex));
 		var fieldName:String = trim(before.substr(dotIndex+1));
 		var ClassReference:Object = AS3_vs_AS2.getClassByName(clzName);

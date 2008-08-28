@@ -10,7 +10,7 @@ package come2play_as3.api.auto_copied
 	public class LocalConnectionUser
 	{
 		
-		public static var DEFAULT_LOCALCONNECTION_PREFIX:String = "42";
+		public static var DEFAULT_LOCALCONNECTION_PREFIX:String = "424";
 		public static var SHOULD_SHOW_ERRORS:Boolean = true;
 		public static var SHOULD_CALL_TRACE:Boolean = true;
 		

@@ -25,10 +25,10 @@
 	public final class SinglePlayerEmulator extends LocalConnectionUser
 	{
 		public static var DEFAULT_GENERAL_INFO:Array/*InfoEntry*/ =
-			[ InfoEntry.create(API_Message.CUSTOM_INFO_KEY_logo_swf_full_url,"../Emulator/example_logo.jpg") ];
+			[ InfoEntry.create(API_Message.CUSTOM_INFO_KEY_logo_swf_full_url,"../../Emulator/example_logo.jpg") ];
 		public static var DEFAULT_USER_INFO:Array/*InfoEntry*/ =
 				[ 	InfoEntry.create(API_Message.USER_INFO_KEY_name, "User name"),
-					InfoEntry.create(API_Message.USER_INFO_KEY_avatar_url, "../Emulator/Avatar_1.gif")
+					InfoEntry.create(API_Message.USER_INFO_KEY_avatar_url, "../../Emulator/Avatar_1.gif")
 				];
 		public static var DEFAULT_MATCH_STATE:Array/*ServerEntry*/ = []; // you can change this and load a saved match
 		public static var DEFAULT_USER_ID:int = 42; 

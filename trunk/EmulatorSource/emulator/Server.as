@@ -642,15 +642,13 @@
 						entry = waitingQueue[0];
 						if(entry == null)
 						{
-							addMessageLog("Server","Debug "+user.ID,msg.getMethodName()+"got when queue had "+waitingQueue.length)
 							entry = new QueueEntry(user,msg,aPlayers.concat())	
 							entry.removeUnverifiedUser(user.ID)
 						}
 						else
 						{
 							
-							addMessageLog("Server","Debug "+user.ID,msg.getMethodName()+"got when queue had "+waitingQueue.length)
-						    if(checkDoAlls(msg,user))
+						 	if(checkDoAlls(msg,user))
 						    	isNewEntry = false
 						    else
 						    {
@@ -807,7 +805,6 @@
 			{
 				if(!(entry.msg is API_DoStoreState))
 				{
-					addMessageLog("Server","Debug "+user.ID,newMsg.getMethodName() +"=="+ entry.msg.getMethodName())
 					if(newMsg.getMethodName() == entry.msg.getMethodName())
 					{
 						if(!isEquel(newMsg.getMethodParameters(),entry.msg.getMethodParameters()))

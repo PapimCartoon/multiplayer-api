@@ -8,7 +8,6 @@ package come2play_as3.minesweeper
 	public class MineSweeper_Graphic extends MovieClip
 	{
 		private var boardBricks:Array;
-		
 		private var playerGraphicDataArr:Array;
 		public function MineSweeper_Graphic()
 		{
@@ -82,43 +81,43 @@ package come2play_as3.minesweeper
 			}
 			
 		}
-		public function loadBoard(width:int,height:int,players:Array,loadBoard:Array):void
+		public function loadBoard(width:int,height:int,players:Array,loadBoard:Array,playerMoves:Array):void
 		{
-			boardBricks=new Array()
+			boardBricks=new Array();
+			var tempBox:Box;
 			for(var i:int=0;i<width;i++)
 			{
 				boardBricks[i] = new Array();
 				for(var j:int = 0;j<height;j++)
 				{
-					var tempBox:Box =new Box()
+					tempBox=new Box()
 					tempBox.x = i*16 + 9.5;
 					tempBox.y = j*16 + 7;
-					if(loadBoard[i][j] is PlayerBox)
-					{
-						var playerBox:PlayerBox =loadBoard[i][j];
-						if(!playerBox.isMine)
-							tempBox.gotoAndStop(playerBox.borderingMines + 10);
-						else
-							if(playerBox.isMineFound)
-							{
-								tempBox.gotoAndStop(20+playerBox.takingPlayer * 10);
-							}
-							else
-							{
-								tempBox.gotoAndStop(44+playerBox.takingPlayer * 11);
-							}
-
-					}
-					else
-					{
-						tempBox.stop();	
-					}
-					
+					tempBox.stop();
 					boardBricks[i][j]=tempBox;
 					addChild(boardBricks[i][j]);
 				}
 			}
-			
+			for each(var playerMove:PlayerMove in playerMoves)
+			{
+				var serverBox:ServerBox = loadBoard[playerMove.xPos][playerMove.yPos];
+				tempBox = boardBricks[playerMove.xPos][playerMove.yPos]
+				if(serverBox != null)
+				{
+					if(serverBox.isMine)
+					{
+						if(playerMove.isMine)
+							tempBox.gotoAndStop(44+playerMove.takingPlayer * 11);
+						else
+						{
+							addChild(tempBox);
+							tempBox.gotoAndStop(20+playerMove.takingPlayer * 10);			
+						}
+					}
+					else
+						tempBox.gotoAndStop(serverBox.borderingMines + 10);
+				}
+			}
 			
 			for(i=0;i<players.length;i++)
 			{

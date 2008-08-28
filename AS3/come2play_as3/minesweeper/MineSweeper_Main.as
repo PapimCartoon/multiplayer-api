@@ -9,9 +9,9 @@ import flash.events.*;
 import flash.utils.*;
 	public class MineSweeper_Main extends ClientGameAPI
 	{
-		private static var boardHeight:int=13;
-		private static var boardWidth:int=13;
-		private static var mineAmount:int=20;
+		private static var boardHeight:int=12;
+		private static var boardWidth:int=12;
+		private static var mineAmount:int=40;
 		//calculator variables
 		private var emptyBoxes:Array;
 		private var newCalculatorBoard:Array
@@ -150,9 +150,11 @@ import flash.utils.*;
 						userEntries.push(UserEntry.create(i+"_"+j,"deadSpace_"+sort.getBrick(i,j),true)); 
 					
 				}
-				var deadSpace:Array = sort.groupArrays;
-				for(i=0;i<deadSpace.length;i++)
-					userEntries.push(UserEntry.create("deadSpace_"+sort.getId(i),deadSpace[i],true));
+				var deadSpaceGrpoups:Array = sort.blankBoxArrays;
+				for(i=0;i<deadSpaceGrpoups.length;i++)
+				{
+					userEntries.push(UserEntry.create("deadSpace_"+sort.getId(i),deadSpaceGrpoups[i],true));
+				}
 				doAllStoreStateCalculation(userEntries);
 				
 			
@@ -169,6 +171,8 @@ import flash.utils.*;
 		override public function gotMatchStarted(allPlayerIds:Array, finishedPlayerIds:Array, extraMatchInfo:Object, matchStartedTime:int, serverEntries:Array):void
 		{
 			players = allPlayerIds;
+			mineSweeper_Logic.renewBoard();
+			loadServerEntries = null;
 			if(serverEntries.length == 0)
 			{
 				doAllRequestRandomState("randomSeed",true);
@@ -183,7 +187,7 @@ import flash.utils.*;
 		}
 		override public function gotMatchEnded(finishedPlayerIds:Array/*int*/):void 
 		{
-			mineSweeper_Logic.endGame();
+			
 		}
 		override public function gotStateChanged(serverEntries:Array):void
 		{
@@ -201,22 +205,23 @@ import flash.utils.*;
 				if(playerMove.takingPlayer != serverEntry.storedByUserId) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" stored the data for another user")
 				if(!mineSweeper_Logic.isMoveTaken(playerMove))					
 					doAllRevealState([RevealEntry.create(playerMove.xPos+"_"+playerMove.yPos,null,2)]);	
-				if(myUserId == playerMove.takingPlayer)
-					doStoreState([UserEntry.create(playerMove.takingPlayer+"_"+playerMove.xPos+"_"+playerMove.yPos,null,false)]);
+				else
+					if(myUserId == playerMove.takingPlayer)
+						doStoreState([UserEntry.create(playerMove.takingPlayer+"_"+playerMove.xPos+"_"+playerMove.yPos,null,false)]);
 			}
 			else if(serverEntry.value is ServerBox)
 			{
 				var serverBox:ServerBox = serverEntry.value as ServerBox;
 				if(serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" stored the data and not the calculator");
-				var tempPlayerBox:PlayerBox = mineSweeper_Logic.addBoxesServer(serverBox);
-				doAllStoreState([UserEntry.create(tempPlayerBox.xPos+"_"+tempPlayerBox.yPos,tempPlayerBox,false)]);
+				 mineSweeper_Logic.addBoxesServer(serverBox);
+				//doAllStoreState([UserEntry.create(tempPlayerBox.xPos+"_"+tempPlayerBox.yPos,tempPlayerBox,false)]);
 			}
 			else if(serverEntry.value is Array)
 			{
 				var blankSquares:Array = serverEntry.value as Array;
 				if(serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" stored the data and not the calculator");	
-				var userEntries:Array= mineSweeper_Logic.addBlankBoxesServer(blankSquares);
-				doAllStoreState(userEntries);
+				mineSweeper_Logic.addBlankBoxesServer(blankSquares);
+				//doAllStoreState(userEntries);
 			}
 		}
 		override public function gotKeyboardEvent(isKeyDown:Boolean, charCode:int, keyCode:int, keyLocation:int, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean):void

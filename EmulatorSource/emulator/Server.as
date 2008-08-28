@@ -608,9 +608,12 @@
 				else if(msg is API_DoFinishedCallback)
 				{
 					var finishedCallbackMsg:API_DoFinishedCallback = msg as API_DoFinishedCallback;
-					addMessageLog(user.Name, msg.getMethodName(), msg.toString());
-					verefyAction(user,finishedCallbackMsg.callbackName);
-					user.do_finished_callback(finishedCallbackMsg.callbackName)
+					if(finishedCallbackMsg.callbackName != "gotKeyboardEvent")
+					{
+						addMessageLog(user.Name, msg.getMethodName(), msg.toString());
+						verefyAction(user);
+						user.do_finished_callback(finishedCallbackMsg.callbackName)
+					}
 				}
 				else if(msg is API_DoAllFoundHacker)
 				{
@@ -633,10 +636,7 @@
           			var isNewEntry:Boolean = true
           			
 					if(msg is API_DoStoreState)	
-					{
 						entry = new QueueEntry(user,msg,[]);	
-						//waitingQueue.push(entry);	
-					}
 					else
 					{
 						entry = waitingQueue[0];
@@ -648,7 +648,7 @@
 						else
 						{
 							
-						 	if(checkDoAlls(msg,user))
+						 	if(checkDoAlls(msg,user))//search if message exists
 						    	isNewEntry = false
 						    else
 						    {
@@ -660,7 +660,7 @@
 							
 					}			
           			if (isNewEntry) {
-            		waitingQueue.push(entry)
+            			waitingQueue.push(entry)
          			 }
 					addMessageLog(user.Name, msg.getMethodName(), msg.toString());
 					doNextInQueue();
@@ -747,7 +747,7 @@
 			queueTimer.start();
 			doNextInQueue();
 		}
-		private function verefyAction(user:User,methodName:String):void
+		private function verefyAction(user:User):void
 		{
 			for each(var unverifiedFunction:QueueEntry in unverifiedQueue)
 			{
@@ -767,8 +767,7 @@
 			
 			var waitingFunction:QueueEntry=unverifiedQueue.shift();
 			queueTimer.reset();
-			if(unverifiedQueue.length == 0)
-				doNextInQueue();	
+			doNextInQueue();	
 		}
 		
 		private function spliceNum(arr:Array,value:Number):int
@@ -823,11 +822,6 @@
 				}
 			}
 			return false;
-			
-			
-				//if(oldMsg.getMethodName() != newMsg.getMethodName()) return false;
-
-				//return true;
 		}
 		private function isKeyExist(testKey:String):int
 		{
@@ -1096,6 +1090,7 @@
 		}
 		
 		public function addMessageLog(user:String, funcname:String, message:String):void {
+			
 			var msg:Message = new Message();
 			msg.message = message.replace(/(\s)+/gm, " ");
 			msg.sender = user;
@@ -1108,6 +1103,7 @@
 				tblLog.verticalScrollPosition = tblLog.maxVerticalScrollPosition+30;
 				setTimeout(resizeColumn,100,null);
 			}
+			
 		}
 		
 		private function getStartParams():Boolean {
@@ -1955,7 +1951,10 @@
 				for each (var userEntry:UserEntry in msg.userEntries)
 				{
 					if(!userEntry.isSecret)
+					{
 						serverEntries.push(ServerEntry.create(userEntry.key,userEntry.value,waitingFunction.user.ID,null,getTimer()-matchStartTime));	
+						doStoreOneState(ServerEntry.create(userEntry.key,userEntry.value,waitingFunction.user.ID,null,getTimer()-matchStartTime));
+					}
 					else
 					{
 						if(waitingFunction.user.ID == tempUser.ID)
@@ -2048,9 +2047,12 @@
 			return null;
 		}			
 		public function do_finished_callback(user:User, methodName:String):void 
-		{			
-			verefyAction(user,methodName)
-			user.do_finished_callback(methodName);
+		{		
+			if(methodName !="gotKeyboardEvent")
+			{
+				verefyAction(user)
+				user.do_finished_callback(methodName);
+			}
 		}
 	}
 }

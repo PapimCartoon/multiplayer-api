@@ -2,7 +2,6 @@ package come2play_as3.minesweeper
 {
 	import come2play_as3.api.auto_generated.PlayerMatchOver;
 	import come2play_as3.api.auto_generated.ServerEntry;
-	import come2play_as3.api.auto_generated.UserEntry;
 	
 	import flash.display.MovieClip;
 	import flash.events.MouseEvent;
@@ -76,12 +75,14 @@ package come2play_as3.minesweeper
 				shift.gotoAndStop(1);
 				
 		}
-		public function endGame():void
+		public function renewBoard():void
 		{
-			graphics.removeChild(mineSweeper_Graphic);
+			if(mineSweeper_Graphic!=null)
+				this.graphics.removeChild(mineSweeper_Graphic);
 		}
 		public function buildBoard(users:Array,players:Array):void
 		{
+
 			mineSweeper_Graphic = new MineSweeper_Graphic();
 			this.graphics.addChild(mineSweeper_Graphic);
 			madeMoves=0;
@@ -204,7 +205,7 @@ package come2play_as3.minesweeper
 		}
 		private function gameOver():void
 		{
-			graphics.removeEventListener(MouseEvent.CLICK,selectMine);
+			//graphics.removeEventListener(MouseEvent.CLICK,selectMine);
 			mineSweeper_MainPointer.gameOver();
 		}
 		public function endMatch():Array/*PlayerMatchOver*/
@@ -241,19 +242,20 @@ package come2play_as3.minesweeper
 				for(var j:int=0;j<blankSquares.length;j++)
 				{
 					var playerMove:PlayerMove = movesInProcess[i];
-					var boxPos:Object = blankSquares[j];
-					if((boxPos.xPos == playerMove.xPos) && (boxPos.yPos == playerMove.yPos))
+					var blankBox:BlankBox = blankSquares[j] as BlankBox;
+					if((blankBox.xPos == playerMove.xPos) && (blankBox.yPos == playerMove.yPos))
 						return playerMove.takingPlayer;
 				}
 				return -1;
 		}
-		private function applyOldMove(playerBox:PlayerBox):void
+		private function applyOldMove(serverBox:ServerBox,playerMove:PlayerMove):void
 		{
-			var playerNum:int = findPlayer(playerBox.takingPlayer)
+			var playerNum:int = findPlayer(playerMove.takingPlayer)
+			playerMove.takingPlayer = playerNum;
 			var playerData:PlayerData = playerGameData[playerNum];
-			if(playerBox.isMine)
+			if(playerMove.isMine)
 			{
-				if(playerBox.isMineFound)
+				if(serverBox.isMine)
 				{
 					playerData.addLife();
 					playerData.playerScore +=10;
@@ -266,7 +268,7 @@ package come2play_as3.minesweeper
 			}
 			else
 			{
-				if(playerBox.isMineFound)
+				if(serverBox.isMine)
 				{
 					playerData.playerLives --;
 					playerData.playerScore -=5;
@@ -304,6 +306,7 @@ package come2play_as3.minesweeper
 			
 			
 			var loadBoard:Array = new Array();
+			var playerMoves:Array =new Array();
 			boardLogic=new Array()
 			for(i=0;i<boardWidth;i++)
 			{
@@ -316,15 +319,20 @@ package come2play_as3.minesweeper
 			}
 			for each(var serverEntry:ServerEntry in serverEntries)
 			{
-				if(serverEntry.value is PlayerBox)
+				if(serverEntry.value is ServerBox)
 				{
-					var playerBox:PlayerBox=serverEntry.value as PlayerBox
-					loadBoard[playerBox.xPos][playerBox.yPos] = playerBox;
-					applyOldMove(playerBox);
-					boardLogic[playerBox.xPos][playerBox.yPos] = -1;
+					var serverBox:ServerBox=serverEntry.value as ServerBox
+					loadBoard[serverBox.xPos][serverBox.yPos] = serverBox;
+					boardLogic[serverBox.xPos][serverBox.yPos] = -1;
+				}
+				else if(serverEntry.value is PlayerMove)
+				{
+					var playerMove:PlayerMove = serverEntry.value as PlayerMove;
+					playerMoves.push(playerMove);
+					applyOldMove(serverBox,playerMove);
 				}
 			}
-			mineSweeper_Graphic.loadBoard(boardWidth,boardHeight,playingUsers,loadBoard);
+			mineSweeper_Graphic.loadBoard(boardWidth,boardHeight,playingUsers,loadBoard,playerMoves);
 			for(i=0;i<playerGameData.length;i++)
 			{
 				var playerData:PlayerData = playerGameData[i];
@@ -334,32 +342,23 @@ package come2play_as3.minesweeper
 			
 			
 		}
-		public function addBlankBoxesServer(blankSquares:Array):Array/*UserEntries*/
+		public function addBlankBoxesServer(blankSquares:Array):void
 		{
 
-			var userEntries:Array = new Array();
 			var userId:int = blankBoxCaller(blankSquares);	
 			var playerNum:int = findPlayer(userId);
 			var currentData:PlayerData = playerGameData[playerNum];
 			for each(var boxPos:Object in blankSquares)
 			{
-				var playerBox:PlayerBox = new PlayerBox();
-				playerBox.borderingMines = boxPos.bordering;
-				playerBox.isMine =false;
-				playerBox.isMineFound = false;
-				playerBox.takingPlayer = userId;
-				playerBox.xPos = boxPos.xPos;
-				playerBox.yPos = boxPos.yPos;
-				mineSweeper_Graphic.revealBox(boxPos.bordering,boxPos.xPos,boxPos.yPos);
-				boardLogic[boxPos.xPos][boxPos.yPos] = 0
+				var blankBox:BlankBox = boxPos as BlankBox
+				mineSweeper_Graphic.revealBox(blankBox.bordering,blankBox.xPos,blankBox.yPos);
+				boardLogic[blankBox.xPos][blankBox.yPos] = 0
 				currentData.playerScore += 1;
 				madeMoves++;
-				userEntries.push(UserEntry.create(boxPos.xPos+"_"+boxPos.yPos,playerBox,false))
 			}
 			mineSweeper_Graphic.updateScore(playerNum,currentData.playerScore);
 			if(madeMoves >= boardHeight * boardWidth)
 				gameOver();
-			return userEntries;
 		}
 		
 		

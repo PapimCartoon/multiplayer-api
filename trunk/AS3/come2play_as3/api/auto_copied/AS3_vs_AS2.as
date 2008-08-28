@@ -100,11 +100,9 @@ public final class AS3_vs_AS2
 	public static function setVisible(graphics:MovieClip, is_visible:Boolean):void {
 		graphics.visible = is_visible;
 	} 	
-	public static function setMovieXY(source:MovieClip, target:MovieClip, x_delta:int, y_delta:int):void {
-		var x:int = source.x;
-		var y:int = source.y;
-		target.x = x+x_delta;
-		target.y = y+y_delta;		
+	public static function setMovieXY(target:MovieClip, x:int, y:int):void {
+		target.x = x;
+		target.y = y;		
 	} 	
 	public static function getClassByName(className:String):Object {
 		try {
@@ -118,11 +116,10 @@ public final class AS3_vs_AS2
 		var _Class:Class = getClassByName(className) as Class;
 		return new _Class();
 	}
-	public static function duplicateMovie(graphics:MovieClip, name:String):MovieClip {
-		var className:String = getQualifiedClassName(graphics);
-		var dup:MovieClip = createInstanceOf(className) as MovieClip;
+	public static function duplicateMovie(graphics:MovieClip, linkageName:String, name:String):MovieClip {
+		var dup:MovieClip = createInstanceOf(linkageName) as MovieClip;
 		dup.name = name;
-		graphics.parent.addChild(dup);
+		graphics.addChild(dup);
 		return dup;
 	}
 	public static function removeMovie(graphics:MovieClip, name:String):void {

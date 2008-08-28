@@ -1,4 +1,4 @@
-package come2play_as3.tictactoe
+﻿package come2play_as3.tictactoe
 {
 	import flash.display.MovieClip;
 
@@ -6,6 +6,7 @@ package come2play_as3.tictactoe
 	{
 		public function TicTacToe_DocumentClass()
 		{
+			trace("TicTacToe_DocumentClass");
 			new TicTacToe_Main(this);
 		}
 		

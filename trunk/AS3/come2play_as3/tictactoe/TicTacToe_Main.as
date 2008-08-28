@@ -40,7 +40,7 @@ public final class TicTacToe_Main extends ClientGameAPI {
 	
 	public function TicTacToe_Main(graphics:MovieClip) {
 		super(graphics);
-		var grid:CreateGrid = new CreateGrid(graphics,3,3,100);		
+		var grid:CreateGrid = new CreateGrid(graphics, "TicTacToeSquare", 3,3,100, 50);		
 		graphics.stop();
 		this.graphics = graphics;
 		this.ROWS = grid.ROWS;

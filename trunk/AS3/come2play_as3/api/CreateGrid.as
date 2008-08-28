@@ -1,6 +1,6 @@
 package come2play_as3.api
 {
-import come2play_as3.api.auto_copied.*;	
+import come2play_as3.api.auto_copied.*;
 
 import flash.display.*;
 public final class CreateGrid
@@ -26,11 +26,13 @@ public final class CreateGrid
 	public var COLS:int;
 	public var SQUARE_scaleX:int;
 	public var SQUARE_scaleY:int;
+	public var SQUARE_startX:int;
+	public var SQUARE_startY:int;
 	public var SQUARE_deltaX:int;
 	public var SQUARE_deltaY:int;
 	public var Square_Example:MovieClip;
-	public function CreateGrid(graphics:MovieClip, 
-		defaultRows:int, defaultCols:int, defaultSize:int) {
+	public function CreateGrid(graphics:MovieClip, squareLinkageName:String, 
+		defaultRows:int, defaultCols:int, defaultSize:int, defaultStartPos:int) {
 		
 		var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(graphics);
 		trace("CreateGrid: url parameters are="+JSON.stringify(parameters));
@@ -38,6 +40,8 @@ public final class CreateGrid
 		COLS = AS3_vs_AS2.convertToInt(parameters["COLS"]);
 		SQUARE_scaleX = AS3_vs_AS2.convertToInt(parameters["SQUARE_scaleX"]);
 		SQUARE_scaleY = AS3_vs_AS2.convertToInt(parameters["SQUARE_scaleY"]);
+		SQUARE_startX = AS3_vs_AS2.convertToInt(parameters["SQUARE_startX"]);
+		SQUARE_startY = AS3_vs_AS2.convertToInt(parameters["SQUARE_startY"]);
 		SQUARE_deltaX = AS3_vs_AS2.convertToInt(parameters["SQUARE_deltaX"]);
 		SQUARE_deltaY = AS3_vs_AS2.convertToInt(parameters["SQUARE_deltaY"]);
 		
@@ -49,19 +53,17 @@ public final class CreateGrid
 		if (SQUARE_scaleY==0) SQUARE_scaleY = defaultSize; 
 		if (SQUARE_deltaX==0) SQUARE_deltaX = defaultSize; 
 		if (SQUARE_deltaY==0) SQUARE_deltaY = defaultSize; 
-		 
-		// Duplicating Square_Example, and creating a grid of squares of size ROWS x COLS
-		Square_Example = AS3_vs_AS2.getMovieChild(graphics,"Square_Example");
-		AS3_vs_AS2.setVisible(Square_Example,false);		
+		if (SQUARE_startX==0) SQUARE_startX = defaultStartPos; 
+		if (SQUARE_startY==0) SQUARE_startY = defaultStartPos; 
 		
 		for (var row:int=0; row<ROWS; row++)
 			for (var col:int=0; col<COLS; col++) {
-				var dup:MovieClip = AS3_vs_AS2.duplicateMovie(Square_Example,"Square_"+row+"_"+col);
-				placeInGrid(dup, row, col);		
+				var dup:MovieClip = AS3_vs_AS2.duplicateMovie(graphics, squareLinkageName, "Square_"+row+"_"+col);
+				placeInGrid(dup, row, col);	
 			}			
 	}
 	public function placeInGrid(dup:MovieClip, row:int, col:int):void {
-		AS3_vs_AS2.setMovieXY(Square_Example, dup, SQUARE_deltaX*row, SQUARE_deltaY*col);
+		AS3_vs_AS2.setMovieXY(dup, SQUARE_startX + SQUARE_deltaX*row, SQUARE_startY + SQUARE_deltaY*col);
 		AS3_vs_AS2.scaleMovie(dup, SQUARE_scaleX, SQUARE_scaleY);		
 	}
 

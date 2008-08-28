@@ -26,8 +26,10 @@ import flash.utils.*;
 	 * Written by: Ofir Vainshtein (ofirvins@yahoo.com)
  	**/
 		public function MineSweeper_Main(graphics:MovieClip)
-		{
-			super(graphics);
+		{ 
+			super(graphics); 
+			graphics.addChild(new Background);
+			//graphics.addChild(new Bitmap(new Background(330,360)));
 			users = new Array(); 
 			mineSweeper_Logic  = new MineSweeper_Logic(this,graphics,boardWidth,boardHeight);
 			startGraphic= new Starter()
@@ -78,7 +80,7 @@ import flash.utils.*;
 		{
 		
 			var serverEntry:ServerEntry = serverEntries[0];
-			var randomSeed:RandomGenerator = new RandomGenerator(serverEntry.value);
+			var randomSeed:RandomGenerator= new RandomGenerator(serverEntry.value);
 			var mines:Array = new Array();
 			//create mine positions
 			while(mines.length < mineAmount)

@@ -21,7 +21,7 @@ public class TestClientGameAPI extends ClientGameAPI {
 		super(rootGraphics);
 		trace("Constructor of TestClientGameAPI");
 		var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(rootGraphics);		
-		my_graphics = AS3_vs_AS2.duplicateMovie(rootGraphics, "TestClientGameGraphics","client");
+		my_graphics = AS3_vs_AS2.createMovieInstance(rootGraphics, "TestClientGameGraphics","client");
 		outTracesText = my_graphics.outTracesText;
 		exampleOperationsText = my_graphics.exampleOperationsText;
 		operationInput = my_graphics.operationInput;	

@@ -6,8 +6,8 @@ package come2play_as3.api.auto_generated {
 	import come2play_as3.api.auto_copied.*
 	public  class API_DoTrace extends API_Message {
 		public var name:String;
-		public var message:Object/*Serializable*/;
-		public static function create(name:String, message:Object/*Serializable*/):API_DoTrace {
+		public var message:Object;
+		public static function create(name:String, message:Object):API_DoTrace {
 			var res:API_DoTrace = new API_DoTrace();
 			res.name = name;
 

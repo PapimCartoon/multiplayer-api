@@ -56,7 +56,7 @@ class come2play_as2.api.CreateGrid
 		
 		for (var row:Number=0; row<ROWS; row++)
 			for (var col:Number=0; col<COLS; col++) {
-				var dup:MovieClip = AS3_vs_AS2.duplicateMovie(graphics, squareLinkageName, "Square_"+row+"_"+col);
+				var dup:MovieClip = AS3_vs_AS2.createMovieInstance(graphics, squareLinkageName, "Square_"+row+"_"+col);
 				placeInGrid(dup, row, col);	
 			}			
 	}

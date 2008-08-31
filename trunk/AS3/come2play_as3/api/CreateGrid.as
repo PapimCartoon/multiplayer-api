@@ -58,7 +58,7 @@ public final class CreateGrid
 		
 		for (var row:int=0; row<ROWS; row++)
 			for (var col:int=0; col<COLS; col++) {
-				var dup:MovieClip = AS3_vs_AS2.duplicateMovie(graphics, squareLinkageName, "Square_"+row+"_"+col);
+				var dup:MovieClip = AS3_vs_AS2.createMovieInstance(graphics, squareLinkageName, "Square_"+row+"_"+col);
 				placeInGrid(dup, row, col);	
 			}			
 	}

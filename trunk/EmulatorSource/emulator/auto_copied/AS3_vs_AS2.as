@@ -159,7 +159,7 @@ public final class AS3_vs_AS2
 		var _Class:Class = getClassByName(className) as Class;
 		return new _Class();
 	}
-	public static function duplicateMovie(graphics:MovieClip, linkageName:String, name:String):MovieClip {
+	public static function createMovieInstance(graphics:MovieClip, linkageName:String, name:String):MovieClip {
 		var dup:MovieClip = createInstanceOf(linkageName) as MovieClip;
 		dup.name = name;
 		graphics.addChild(dup);
@@ -222,16 +222,15 @@ public final class AS3_vs_AS2
 		blackBox.graphics.beginFill(0x000000);
 		blackBox.graphics.drawRect(0,0,300,300);
 		blackBox.graphics.endFill();
-		if (graphics==null) return;
 		var child:TextField = new TextField();
 		child.text = msg;
 		child.width = 300;
 		child.height = 300;
 		//child.backgroundColor = 0xFF0000; // red
+		child.textColor = 0xFF0000; // red
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		child.textColor = 0xFF0000; // red
 		graphics.addChild(blackBox);
 		graphics.addChild(child);
 	}
@@ -241,10 +240,10 @@ public final class AS3_vs_AS2
 	public static function checkConstructorHasNoArgs(obj:SerializableClass):void {
 		var className:String = obj.__CLASS_NAME__;
 		if (checkedClasses[className]!=null) return;
+		checkedClasses[className] = true;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		checkedClasses[className] = true;
 		//trace("Checking ctor of "+className);
 		var constructorList:XMLList = describeType(obj).constructor;
 		if (constructorList.length()>0) {
@@ -254,10 +253,10 @@ public final class AS3_vs_AS2
 		}
 	}	
 	
+	public static function IndexOf(arr:Array, val:Object):int {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	public static function IndexOf(arr:Array, val:Object):int {
 		return arr.indexOf(val);
 	}	
 	public static function LastIndexOf(arr:Array, val:Object):int {
@@ -267,10 +266,10 @@ public final class AS3_vs_AS2
 		return str.indexOf(val);
 	}	
 	public static function stringLastIndexOf(str:String, val:String):int {
+		return str.lastIndexOf(val);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		return str.lastIndexOf(val);
 	}	
 }
 }

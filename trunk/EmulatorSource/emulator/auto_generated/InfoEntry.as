@@ -6,8 +6,8 @@ package emulator.auto_generated {
 	import emulator.auto_copied.*
 	public  class InfoEntry extends API_Message {
 		public var key:String;
-		public var value:Object/*Serializable*/;
-		public static function create(key:String, value:Object/*Serializable*/):InfoEntry {
+		public var value:Object;
+		public static function create(key:String, value:Object):InfoEntry {
 			var res:InfoEntry = new InfoEntry();
 			res.key = key;
 

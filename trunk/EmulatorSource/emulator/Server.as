@@ -116,11 +116,28 @@
 		private var txtInfoDetails:TextField;
 		private var iInfoMode:int;
 		
+		private var constructorDelayer:Timer;
 		public function showMsg(msg:String, title:String = ""):void {
 			MsgBox.Show(msg, title);
 		}
+		public function Server ()
+		{
+			constructorDelayer = new Timer(100,0)
+			constructorDelayer.addEventListener(TimerEvent.TIMER,delayConstructor);	
+			constructorDelayer.start();
+		}
+		
+		public function delayConstructor (ev:TimerEvent):void
+		{
+			if(stage != null)
+			{
+				constructorDelayer.stop();
+				constructServer();
+			}	
+		}
+		
 		//Constructor
-		public function Server() {
+		public function constructServer():void {
 			this.stop();
 			afinishedPlayers=new Array();
 			userStateEntrys=new Array();

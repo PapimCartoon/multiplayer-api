@@ -1,6 +1,7 @@
 package come2play_as3.minesweeper
 {
 	import come2play_as3.api.auto_generated.InfoEntry;
+	import come2play_as3.api.auto_generated.PlayerMatchOver;
 	
 	import flash.display.MovieClip;
 	import flash.text.TextField;

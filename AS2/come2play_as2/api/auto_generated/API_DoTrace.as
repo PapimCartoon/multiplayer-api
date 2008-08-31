@@ -5,8 +5,8 @@
 import come2play_as2.api.auto_generated.*;
 	class come2play_as2.api.auto_generated.API_DoTrace extends API_Message {
 		public var name:String;
-		public var message:Object/*Serializable*/;
-		public static function create(name:String, message:Object/*Serializable*/):API_DoTrace {
+		public var message:Object;
+		public static function create(name:String, message:Object):API_DoTrace {
 			var res:API_DoTrace = new API_DoTrace();
 			res.name = name;
 

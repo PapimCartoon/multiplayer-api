@@ -6,8 +6,8 @@ package come2play_as3.api.auto_generated {
 	import come2play_as3.api.auto_copied.*
 	public  class InfoEntry extends API_Message {
 		public var key:String;
-		public var value:Object/*Serializable*/;
-		public static function create(key:String, value:Object/*Serializable*/):InfoEntry {
+		public var value:Object;
+		public static function create(key:String, value:Object):InfoEntry {
 			var res:InfoEntry = new InfoEntry();
 			res.key = key;
 

@@ -9,7 +9,7 @@ package come2play_as3.api.auto_generated {
 			super(someMovieClip);
 		}
 		public function doRegisterOnServer():void { sendMessage( API_DoRegisterOnServer.create() ); }
-		public function doTrace(name:String, message:Object/*Serializable*/):void { sendMessage( API_DoTrace.create(name, message) ); }
+		public function doTrace(name:String, message:Object):void { sendMessage( API_DoTrace.create(name, message) ); }
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
@@ -19,7 +19,7 @@ package come2play_as3.api.auto_generated {
 		public function gotUserInfo(userId:int, infoEntries:Array/*InfoEntry*/):void {}
 		public function gotUserDisconnected(userId:int):void {}
 		public function gotMyUserId(myUserId:int):void {}
-		public function gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, extraMatchInfo:Object/*Serializable*/, matchStartedTime:int, serverEntries:Array/*ServerEntry*/):void {}
+		public function gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, extraMatchInfo:Object, matchStartedTime:int, serverEntries:Array/*ServerEntry*/):void {}
 		public function gotMatchEnded(finishedPlayerIds:Array/*int*/):void {}
 		
 		public function gotStateChanged(serverEntries:Array/*ServerEntry*/):void {}

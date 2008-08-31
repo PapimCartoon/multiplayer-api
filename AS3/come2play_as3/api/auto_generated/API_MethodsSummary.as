@@ -19,7 +19,7 @@ package come2play_as3.api.auto_generated {
 		public static var SUMMARY_API:Array/*API_MethodsSummary*/ = [
 		 new API_MethodsSummary('doFinishedCallback', ['callbackName'], ['String'] )
 		, new API_MethodsSummary('doRegisterOnServer', [], [] )
-		, new API_MethodsSummary('doTrace', ['name', 'message'], ['String', 'Object/*Serializable*/'] )
+		, new API_MethodsSummary('doTrace', ['name', 'message'], ['String', 'Object'] )
 		, new API_MethodsSummary('gotKeyboardEvent', ['isKeyDown', 'charCode', 'keyCode', 'keyLocation', 'altKey', 'ctrlKey', 'shiftKey'], ['Boolean', 'int', 'int', 'int', 'Boolean', 'Boolean', 'Boolean'] )
 		, new API_MethodsSummary('gotCustomInfo', ['infoEntries'], ['Array/*InfoEntry*/'] )
 		, new API_MethodsSummary('gotUserInfo', ['userId', 'infoEntries'], ['int', 'Array/*InfoEntry*/'] )
@@ -28,7 +28,7 @@ package come2play_as3.api.auto_generated {
 
 		, new API_MethodsSummary('gotUserDisconnected', ['userId'], ['int'] )
 		, new API_MethodsSummary('gotMyUserId', ['myUserId'], ['int'] )
-		, new API_MethodsSummary('gotMatchStarted', ['allPlayerIds', 'finishedPlayerIds', 'extraMatchInfo', 'matchStartedTime', 'serverEntries'], ['Array/*int*/', 'Array/*int*/', 'Object/*Serializable*/', 'int', 'Array/*ServerEntry*/'] )
+		, new API_MethodsSummary('gotMatchStarted', ['allPlayerIds', 'finishedPlayerIds', 'extraMatchInfo', 'matchStartedTime', 'serverEntries'], ['Array/*int*/', 'Array/*int*/', 'Object', 'int', 'Array/*ServerEntry*/'] )
 		, new API_MethodsSummary('gotMatchEnded', ['finishedPlayerIds'], ['Array/*int*/'] )
 		, new API_MethodsSummary('gotStateChanged', ['serverEntries'], ['Array/*ServerEntry*/'] )
 		, new API_MethodsSummary('doStoreState', ['userEntries'], ['Array/*UserEntry*/'] )

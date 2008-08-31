@@ -51,7 +51,7 @@ class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 		}
 		conn.onStatus = function(infoObject:Object) { 
 			if (infoObject.level=='error')
-				LocalConnectionUser.showError("LocalConnection.onStatus error! (Are you sure you are running this game inside the emulator?)");
+				StaticFunctions.showError("LocalConnection.onStatus error! (Are you sure you are running this game inside the emulator?)");
 		};
 	}
 	
@@ -77,7 +77,7 @@ class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 	}
 	public static function getChild(graphics:MovieClip, childName:String):MovieClip {
 		var res:MovieClip = graphics[childName];
-		if (res==null) LocalConnectionUser.throwError("Missing child='"+childName+"' in movieclip="+graphics);
+		if (res==null) StaticFunctions.throwError("Missing child='"+childName+"' in movieclip="+graphics);
 		return res;
 	}	
 	public static function loadMovie(graphics:MovieClip, url:String):Void {
@@ -90,11 +90,9 @@ class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 	public static function setVisible(graphics:MovieClip, is_visible:Boolean):Void {
 		graphics._visible = is_visible;
 	} 	
-	public static function setMovieXY(source:MovieClip, target:MovieClip, x_delta:Number, y_delta:Number):Void {
-		var x:Number = source._x;
-		var y:Number = source._y;
-		target._x = x+x_delta;
-		target._y = y+y_delta;		
+	public static function setMovieXY(target:MovieClip, x:Number, y:Number):Void {
+		target._x = x;
+		target._y = y;		
 	} 			
 	
 	// we use CLASS_NAME_FIELD (because when we add CLASS_NAME_FIELD to the prototype, it is serialized in LocalConnection, so no point in having two properties with the same content) 
@@ -127,10 +125,11 @@ class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 		return new classConstructor();
 	}
 
-	public static function duplicateMovie(graphics:MovieClip, name:String):MovieClip {
-		var dup:MovieClip = graphics.duplicateMovieClip(name, graphics._parent.getNextHighestDepth() );
-		//trace("duplicateMovieClip: graphics="+graphics+" name="+name+" dup="+dup+" _root.Square_0_0="+_root["Square_0_0"] );
-		return dup;		
+	public static function createMovieInstance(graphics:MovieClip, linkageName:String, name:String):MovieClip {
+		var depth:Number = graphics.getNextHighestDepth();
+		var newInstance:MovieClip = graphics.attachMovie(linkageName, name,  depth);
+		//trace("createMovieInstance: graphics="+graphics+" linkageName="+linkageName+" name="+name+" depth="+depth+" newInstance="+newInstance);
+		return newInstance;		
 	}	
 	public static function removeMovie(graphics:MovieClip, name:String):Void {
 		graphics.removeMovieClip( graphics._parent[name] );

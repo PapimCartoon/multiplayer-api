@@ -116,7 +116,7 @@ public final class AS3_vs_AS2
 		var _Class:Class = getClassByName(className) as Class;
 		return new _Class();
 	}
-	public static function duplicateMovie(graphics:MovieClip, linkageName:String, name:String):MovieClip {
+	public static function createMovieInstance(graphics:MovieClip, linkageName:String, name:String):MovieClip {
 		var dup:MovieClip = createInstanceOf(linkageName) as MovieClip;
 		dup.name = name;
 		graphics.addChild(dup);
@@ -164,7 +164,6 @@ public final class AS3_vs_AS2
 		blackBox.graphics.beginFill(0x000000);
 		blackBox.graphics.drawRect(0,0,300,300);
 		blackBox.graphics.endFill();
-		if (graphics==null) return;
 		var child:TextField = new TextField();
 		child.text = msg;
 		child.width = 300;

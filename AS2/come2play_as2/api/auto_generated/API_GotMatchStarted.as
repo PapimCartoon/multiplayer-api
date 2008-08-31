@@ -6,13 +6,13 @@ import come2play_as2.api.auto_generated.*;
 	class come2play_as2.api.auto_generated.API_GotMatchStarted extends API_Message {
 		public var allPlayerIds:Array/*int*/;
 		public var finishedPlayerIds:Array/*int*/;
-		public var extraMatchInfo:Object/*Serializable*/;
+		public var extraMatchInfo:Object;
 		public var matchStartedTime:Number;
 		public var serverEntries:Array/*ServerEntry*/;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		public static function create(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, extraMatchInfo:Object/*Serializable*/, matchStartedTime:Number, serverEntries:Array/*ServerEntry*/):API_GotMatchStarted {
+		public static function create(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, extraMatchInfo:Object, matchStartedTime:Number, serverEntries:Array/*ServerEntry*/):API_GotMatchStarted {
 			var res:API_GotMatchStarted = new API_GotMatchStarted();
 			res.allPlayerIds = allPlayerIds;
 			res.finishedPlayerIds = finishedPlayerIds;

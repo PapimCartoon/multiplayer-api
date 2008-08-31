@@ -1,14 +1,14 @@
-#summary Call it when you a player sent an illegal message
+#summary Call it when a player sent an illegal message
 
 {{{
-doFoundHacker(user_id:int, error_description:String)
+doAllFoundHacker(user_id:int, error_description:String)
 }}}
 
 In [ClientGameAPI] all the logic is on the client side,
 therefore the players themselves should check 
 that the other players make only legal moves.
 
-Both players and viewers should call `doFoundHacker`
+Both players and viewers should call `doAllFoundHacker`
 in case of a protocol error.
 
 Consider a game with two players: X and Y.
@@ -25,4 +25,4 @@ then the server decides that player Y is a hacker.
 If no member of the jury called `doFoundHacker`
 then the server decides that player X is a hacker (that falsely reported on player Y).
 If the jury is in disagreement, then this is a bug of the game developer,
-and the the game is canceled.
+and the game is canceled.

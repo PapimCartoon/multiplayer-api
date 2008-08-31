@@ -36,5 +36,5 @@ and the match is over with the score=100 to user_id=41, and score=10 to user_id=
 and you wish to give 90% of the pot to user 41.
 Then all players (users 41 and 43) should call:
 {{{
-  doAllEndMatch([ new PlayerMatchOver(41, 100, 10) , new PlayerMatchOver(43, 10, 10) ])
+  doAllEndMatch([ PlayerMatchOver.create(41, 100, 10) , PlayerMatchOver.create(43, 10, 10) ])
 }}}

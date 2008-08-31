@@ -1,0 +1,31 @@
+#summary Stroring data that needs to be unanimous
+
+{{{
+doAllStoreState(entries:Array/*UserEntry*/)
+}}}
+
+Use `doAllStoreState` the same way you use doStoreState , only instead of one player
+calling the function, all the players must call the function with the same exact parameters.
+
+this function is used to prevent hacking, every time you need to store a state which 
+will give a unanimous answer,
+like the effect that one of the user moves has on the game,
+use doAllStoreState to make sure that all the players have the same data,
+and that none of the players feeds false data to his game.
+
+use this function to store values you want the entire set of players to agree upon,
+for example one of the players threw a dart at a certain vector,
+first the player stores the values of his shot,
+then all the players make the calculation
+and eventually they all call doAllStore State, and save the score of the shot.
+if one of the users claims the score to be different then the other player/s
+the data is sent to a jury which will decide who's cheating.
+
+because this function essentially checks if the data that is stored is 100% true,
+by reviewing all the player entries and comparing them.
+any state stored this way has a storedByUserId of -1.
+
+although it is not essential to use this function in game development
+this function allows to catch hacker's at a much earlier stage of a game
+instead of waiting to the end of the game.
+

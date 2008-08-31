@@ -1,0 +1,38 @@
+#summary preform secret calculations
+
+{{{
+doAllRequestStateCalculation(keys:Array/*String*/)
+}}}
+
+In game development there are many games which need secret game calculations, 
+unlike checkers where all players can calculate if a move is legal,
+there are games where the game board should be secret,
+for example think of the game mine sweeper,
+the game cannot simply be shuffled because whenever you press A brick not containing A mine you should get an indication of how many mines are around,
+on the other hand none of the players can not make this calculations because we must assume one of the players can be a hacker,
+which means he might retrieve the data and have the entire calculated game board in his hands.
+therefore we must choose a third party outside the game to make the calculations for us,
+this third party will be called a calculator,a different user playing in another game room which will do the calculations
+for both players to keep them secret.
+
+to call the calculator all the player in the game need to call doAllRequestStateCalculation with an Array of keys previously stored in the game state
+which will use the calculator to calculate the board or anything else.
+all the keys in the Array sent to the calculator will automatically be public to him, as an impartial side in the game.
+
+after the calculation is done the calculator will store the calculations on the server in the game state,and all
+the game players will receive a gotStateChange event with all the data the calculator stored(the data can be secret)
+
+
+{{{
+GotRequestStateCalculation(serverEntries:Array/*ServerEntry*/)
+}}}
+this event is called on a user playing in another game room, which doesn't even know he was chosen as a calculator.
+the calculator gets the serverEntries with the corresponding keys to the ones the players sent.
+
+
+{{{
+doAllStoreStateCalculation(userEntries:Array/*UserEntry*/)
+}}}
+when the calculator finished calculating the data he was given,he stores all of the data through A doAllStoreStateCalculation
+which acts just like the doAllStoreState function,only instead of saving the game data into his server state,he saves it into
+the players who called the doAllRequestStateCalculation server state.

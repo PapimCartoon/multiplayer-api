@@ -1,13 +1,13 @@
 #summary Call it to store/update/delete you match state
 
 {{{
-doStoreState(entries:Array/*Entry*/)
-gotStoreDState(user_id:int, entries:Array/*Entry*/)
+doStoreState(userEntries:Array/*UserEntry*/)
+gotStateChanged(serverEntries:Array/*ServerEntry*/)
 }}}
 
 Use `doStoreState` to store match state on the server.
 Both players and viewers can store match state, and only when the match is in progress.
-However, a viewer cannot override someone elses `key`, whereas players can use the same key-space.
+However, a viewer cannot override others `key`, whereas players can use the same key-space.
 When the match ends, the state is cleared.
 
 The container promises to update the match state atomically, i.e., 
@@ -17,7 +17,7 @@ With the atomicity guarantee, the match state should always be consistent.
 
 The match state is given to new viewers and new players in [gotMatchStarted].
 
-To delete a key from the map, pass a value of null or ''.
+To delete a key from the map, pass a value of null .
 
 _Important note_:
 You can save user_ids in the match state, but do not save user_info in the match state.
@@ -27,95 +27,45 @@ In such a case, the server will reuse the same user_id for the viewer,
 and it will call `got_user_info` with the viewer information.
 
 
-each `Entry` also has the field `secret_level:EnumSecretLevel`,
-which must be one of the values in `EnumSecretLevel`:
+each `UserEntry` has the fields:
+key - the name in which the ServerEntry will be known
+value - the information you want to be stored
+isSecret - 
+which can be either true or false.
+if true the entry value will only be visible to the user which stored it,the rest will see null.
+if false, all users will see the value
+
+to create a ServerEntry you must call its static create function
+
 {{{
-PUBLIC 
-SECRET
+ServerEntry.create(key:String, value:*, isSecret:Boolean)
 }}}
-
-
-The match state is still handled with [doStoreState]:
-{{{
-doStoreState
-gotStoreDState
-}}}
-However, note that each `Entry` also has the field `secret_level:EnumSecretLevel`,
-which must be one of the values in `EnumSecretLevel`:
-{{{
-PUBLIC 
-SECRET
-}}}
-
-In addition, there are 2 new functions that only jurors can call:
-{{{
-do_juror_unfold_match_state(key:String, to_user_id:int)
-do_juror_shuffle_match_state(keys:Array/*String*/)
-}}}
-
-
 
 The server maintains a memory, that is a mapping from keys to values,
-in addition to some extra information for each key (such as user_id, secret_level, and authorized_user_ids).
-`secret_level` is either .
-
-`PUBLIC` memory is available to everyone, e.g., the state of a TicTacToe board.
-`SECRET` memory is used to pass information to the jurors (the other players don't see the values written to `SECRET` memory, e.g., 
-the positions of suspected mines in a multiplayer minesweeper game.
-Finally, `TOPSECRET` is used to hide information from everyone (even from jurors!) and to reveal it only when all the jurors unanimously decide to do so, e.g., your hand in a poker game or the dominoe pieces in your hand.
-(You can read more about the risk of secrecy theft by jurors in [http://multiplayer-api.googlecode.com/files/SecureClientGameAPI_version1.pdf this paper].)
-
+in addition to some extra information for each key (such as storedByUserId, authorizedUserIds, and changedTimeInMilliSeconds).
 
 Formally, the memory is a dictionary denoted `MATCH_STATE` that maps
-each `key` to an object with fields `user_id`,`value`,`secret_level`, and `authorized_user_ids`:
+each `key` to an object with fields `storedByUserId`,`value`, and `authorizedUserIds`:
 {{{
-MATCH_STATE[key] = {user_id:int, value:Object, secret_level:EnumSecretLevel, authorized_user_ids:Array/*int*/}
+MATCH_STATE[key] = {storedByUserId:int, value:Object,authorizedUserIds:Array/*int*/}
 }}}
-`user_id` may be -1 for jurors.
+`storedByUserId` may be -1 for doAllShuffle,doAllrequestStateCalculation and doAllStoreState which aree all functions that
+are guaranteed to have a genuine value.
 `value` is an arbitrary object.
-`authorized_user_ids` is used only for `TOPSECRET` memory. 
-Users in `authorized_user_ids` will get the `value` 
-when the server calls `got_secure_stored_match_state` 
+`authorizedUserIds` is used to show which users can view the value,null means everyone,blank Array means no one. 
+Users in `authorizedUserIds` will get the `value` 
+when the server calls `gotStateChanged` 
 (Other users will get a `null` value) 
 
 Next we will explain what the server does for each operation.
 
 {{{
-do_store_match_state(entry:Entry)
+do_store_match_state(entry:UserEntry)
 DOES:
-MATCH_STATE[entry.key] = {my_user_id,  entry.value,   entry.secret_level,  entry.secret_level==TOPSECRET ? [my_user_id] : [] }
+MATCH_STATE[entry.key] = {my_user_id,  entry.value,   entry.isSecret,  entry.isSecret ? [my_user_id] : [] }
 }}}
-With similar restrictions on viewers like in [do_store_match_state] 
 
-Whenever a user or juror updates `MATCH_STATE`, then all users and jurors get the callback
-   `got_stored_match_state`.
+Whenever a user updates `MATCH_STATE`, then all users get the callback `gotStateChanged`.
 _However_, some of them will get `null` values (instead of the real `value` that was written),
-according to the rule below.
-
-Consider an entry  
-{{{
-MATCH_STATE[key] = {user_id:int, value:Object, secret_level:EnumSecretLevel, authorized_user_ids:Array/*int*/}
-}}}
-that is sent to user with id=`my_user_id`.
-Then, the value will *not* be `null` if and only if:
- * `secret_level` is `PUBLIC`, or
- * `secret_level` is `SECRET`   and  (`my_user_id==-1` or `my_user_id==user_id`), or
- * `secret_level` is `TOPSECRET`  and  (`my_user_id` is in  `authorized_user_ids`).
-
-
-{{{
-do_juror_unfold_match_state(key:String, to_user_id:int)
-DOES:
-MATCH_STATE[key].authorized_user_ids.push(to_user_id)
-}}}
-The server will also call `got_secure_stored_match_state`  for user `to_user_id`.
-
-
-{{{
-do_juror_shuffle_match_state(keys:Array/*String*/)
-DOES:
-shuffle(MATCH_STATE[keys[0]], MATCH_STATE[keys[1]], ...)
-}}}
-In other words, the server randomly shuffles or reorders the dictionary contents of the given `keys`.
-The server checks that the keys indeed contain values (i.e., that someone stored values in those keys); a juror cannot shuffle keys that are not in `MATCH_STATE`.
+according to the authorizedUserIds Array.
 

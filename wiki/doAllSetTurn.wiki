@@ -7,35 +7,26 @@ doAllSetTurn(userId:int, milliSecondsInTurn:int)
 Some of the games developed are turn-based, i.e., the game proceeds in turns where in each given moment only
 one player has the current turn. 
 For example, Chess or Poker are turn-based games.
-In contrast, Soccer is a real-time game where both players send commands to the server simultenously.
+In contrast, Soccer is a real-time game where both players send commands to the server simultaneously.
 Turn-based games may be played in turns using emails or other means.
 For example, in a game of Chess, one player may make a turn, then the next player will get an email notification
 and he may make the next turn, and so forth.
 
-Turn-based games may use special functions to set who has the current turn, and who should play next.
-The server has a single player that currently has the turn, or null if no one has the turn.
-When no one has the turn, then some player may call `do_start_my_turn`,
-and the server will call `got_start_turn_of`.
-That player may later call `do_end_my_turn`,
-and the server will call `got_end_turn_of` (and then no one has the turn).
+In a Turn-based game whenever the turn changes in response to a change in the game state,all players
+must call the function doAllSetTurn with the userId of the next player and the milliSecondsInTurn of the next player turn,
+if the milliSecondsInTurn will be -1 the time for each turn length will be set from outside,
+for example a server can contain two instances of a chees game one with a 1 minute turn length
+and the other with 10 minutes per turn.
 
-`next_turn_of_player_ids` are the players that may play next.
-If `next_turn_of_player_ids` is empty, then any player may call `do_start_my_turn`.
-Otherwise, only a player in `next_turn_of_player_ids` may later call `do_start_my_turn`.
+The milliSecondsInTurn value is used to prevent stagnation, a situation where one player
+is cheating by deliberately not making a move , thus ruining the game for the rest of the players.
+if the milliSecondsInTurn has passed and the game did not send any input to the server,
+the player which holds the current turn automatically loses.
 
-The reason behind `next_turn_of_player_ids` is for email-based games,
-where only one player connects, makes a move, ends his turn, 
-and the platform notifies the players in `next_turn_of_player_ids` that they can make their next move.
-
-*IMPORTANT*: you should call `do_end_my_turn` after you made all other API calls,
-because when the container gets `do_end_my_turn` in a turn-based game 
-then it saves the match and notifies the users in `next_turn_of_player_ids`.
-The emulator will give a warning (in a turn-based game)
-if you called `do_store_match_state` not during your turn,
-or if the first call to `do_agree_on_match_over` is not during some player's turn.
+all players must call this function with then same exact parameters,
+if one of the users claims one of the parameters is different then the ones the other player/s
+called the data will be sent to a jury which will decide who's cheating. 
 
 
-The Come2Play platform performs a check that an opponent should start his turn within a certain period of time 
-(taking into account the network round trip time). 
-Currently a player should start his turn within 10 seconds of getting `got_end_turn_of`. 
-This will make sure that a turn-based game will not enter stagnation (freezing state where no one makes a turn).
+ 
+

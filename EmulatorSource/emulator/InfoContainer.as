@@ -1,4 +1,7 @@
 package emulator {
+	import flash.display.MovieClip;
+	
+	
 	import emulator.auto_generated.*;
 	
 	import fl.controls.*;
@@ -8,8 +11,9 @@ package emulator {
 	import flash.external.*;
 	import flash.net.*;
 	import flash.text.*;
-
+	import flash.utils.Timer;
 	public class InfoContainer extends MovieClip {
+ 
 		private var ldr:Loader;
 		private var pnlInfo:MovieClip;
 		private var cmbCommands:ComboBox;
@@ -42,33 +46,29 @@ package emulator {
 		private var lblWait:TextField;
 		private var ddsDoOperations:DelayDoSomething;
 		private var ddsGotOperations:DelayDoSomething;
-		
-		
-		private function reportKeyUp(event:KeyboardEvent):void {
-			reportKey(false, event);
-		}
-		private function reportKeyDown(event:KeyboardEvent):void {
-			reportKey(true, event);
-		}		
-		private function reportKey(is_key_down:Boolean,event:KeyboardEvent):void {
-			if (pnlInfo.visible) return;
-			var gotKeyboardEvent:API_GotKeyboardEvent = new API_GotKeyboardEvent();
-			gotKeyboardEvent.altKey = event.altKey;
-			gotKeyboardEvent.charCode = event.charCode;
-			gotKeyboardEvent.ctrlKey = event.ctrlKey;
-			gotKeyboardEvent.isKeyDown = is_key_down;
-			gotKeyboardEvent.keyCode = event.keyCode;
-			gotKeyboardEvent.keyLocation = event.keyLocation;
-			gotKeyboardEvent.shiftKey = event.shiftKey;
-			sendGotOperation(gotKeyboardEvent);
 			
-			//doTrace(new API_DoTrace("gotKeyboardEvent", "is_key_down="+is_key_down+", charCode="+charCode+", keyCode="+keyCode+", keyLocation="+keyLocation+", altKey="+altKey+", ctrlKey="+ctrlKey+", shiftKey="+shiftKey));
+		/*
+		private var delayConstructor:Timer;
+	
+		public function InfoContainer()
+		{
+			constructInfoContainer();
+			delayConstructor =new Timer(100,0);
+			delayConstructor.addEventListener(TimerEvent.TIMER,deleayInfoContainer);
+			delayConstructor.start();
 		}
-		public function doTrace(msg:API_Message):void {	
-			var doTrace:API_DoTrace = msg as API_DoTrace;
-			sendDoOperation(doTrace);
+		
+		public function deleayInfoContainer(ev:TimerEvent):void
+		{
+			if(stage != null)
+			{
+				delayConstructor.stop();
+				constructInfoContainer();
+			}
 		}
-		public function InfoContainer() {
+		*/
+		public function InfoContainer(){
+			
 			stage.addEventListener(KeyboardEvent.KEY_UP, reportKeyUp);
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, reportKeyDown);
 			
@@ -158,6 +158,8 @@ package emulator {
 				pnlParams.addChild(prm);
 				aParams[i] = prm;
 			}
+			
+			
 			/*
 			btnSend = new Button();
 			btnSend.label = "Send";
@@ -165,7 +167,7 @@ package emulator {
 			btnSend.addEventListener(MouseEvent.CLICK, btnSendClick);
 			pnlParams.addChild(btnSend);
 			*/
-
+			
 			lblClient = new Label();
 			lblClient.x = 8;
 			lblClient.y = 1;
@@ -248,24 +250,6 @@ package emulator {
 			connectionToGame = new LocalConnectionImplementation(this,true,sInnerPrefix);
 			connectionToServer = new LocalConnectionImplementation(this,false,sOuterPrefix);
 						
-			/*			
-			lcInner = new LocalConnection();
-			lcInner.client = this;
-			lcInner.addEventListener(StatusEvent.STATUS, onConnectionStatus);
-			lcOuter = new LocalConnection();
-			lcOuter.client = this;
-			lcOuter.addEventListener(StatusEvent.STATUS, onConnectionStatus);
-		
-			
-			
-			
-			sOuterDoChanel=Commands.getDoChanelString(sOuterPrefix);
-			sOuterGotChanel=Commands.getGotChanelString(sOuterPrefix);
-			lcOuter.connect(sOuterGotChanel);
-			sInnerDoChanel=Commands.getDoChanelString(sInnerPrefix);
-			sInnerGotChanel =Commands.getGotChanelString(sInnerPrefix);
-			lcInner.connect(sInnerDoChanel);
-				*/
 			var fromDelay:int = parseInt(root.loaderInfo.parameters["delay_from"]);
 			var toDelay:int = parseInt(root.loaderInfo.parameters["delay_to"]);
 			
@@ -274,6 +258,31 @@ package emulator {
 			ddsGotOperations = new DelayDoSomething(function (msg:API_Message):void { doSomething(msg, false) }, fromDelay, toDelay);
 			
 			resizeStage(null);
+			
+		}
+		private function reportKeyUp(event:KeyboardEvent):void {
+			reportKey(false, event);
+		}
+		private function reportKeyDown(event:KeyboardEvent):void {
+			reportKey(true, event);
+		}		
+		private function reportKey(is_key_down:Boolean,event:KeyboardEvent):void {
+			if (pnlInfo.visible) return;
+			var gotKeyboardEvent:API_GotKeyboardEvent = new API_GotKeyboardEvent();
+			gotKeyboardEvent.altKey = event.altKey;
+			gotKeyboardEvent.charCode = event.charCode;
+			gotKeyboardEvent.ctrlKey = event.ctrlKey;
+			gotKeyboardEvent.isKeyDown = is_key_down;
+			gotKeyboardEvent.keyCode = event.keyCode;
+			gotKeyboardEvent.keyLocation = event.keyLocation;
+			gotKeyboardEvent.shiftKey = event.shiftKey;
+			sendGotOperation(gotKeyboardEvent);
+			
+			//doTrace(new API_DoTrace("gotKeyboardEvent", "is_key_down="+is_key_down+", charCode="+charCode+", keyCode="+keyCode+", keyLocation="+keyLocation+", altKey="+altKey+", ctrlKey="+ctrlKey+", shiftKey="+shiftKey));
+		}
+		public function doTrace(msg:API_Message):void {	
+			var doTrace:API_DoTrace = msg as API_DoTrace;
+			sendDoOperation(doTrace);
 		}
 		
 		public function doSomething(msg:API_Message, isServer:Boolean):void {
@@ -597,3 +606,6 @@ class LocalConnectionImplementation extends LocalConnectionUser
 	}
         
 }
+
+	
+	

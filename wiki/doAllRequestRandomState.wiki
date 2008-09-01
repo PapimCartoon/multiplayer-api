@@ -12,7 +12,7 @@ key the new random state will have,
 and the `isSecret` Boolean which will determine if its a secret random number.
 A random number is secret by default.
 
-when the command will be processed it will send a [gotStateChanged] event containing the random number
+when the command will be processed it will send a `gotStateChanged` event containing the random number
 in case a public random number was requested,
 in case the number requested is secret only the key will be sent.
 in any case the `storedByUserId` will be -1 because the changes were saved by the server.

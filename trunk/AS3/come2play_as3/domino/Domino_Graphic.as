@@ -36,7 +36,7 @@ package come2play_as3.domino
 		
 		public function chooseDomino(ev:MouseEvent):void
 		{
-			if((ev.stageY>300)&&(ev.stageY<345))
+			if((ev.stageY>280)&&(ev.stageY<325))
 			{
 				var pos:int = Math.floor(((ev.stageX)/15)/2);
 				domino_LogicPointer.takeDomino(pos);
@@ -50,7 +50,22 @@ package come2play_as3.domino
 				dominoToMark.y-=20;
 			}
 		}
-		
+		public function reDrawHand():void
+		{
+			var tempDomino:Domino;
+			for(var i:int=0;i<yourDominoes.length;i++)
+			{
+				tempDomino = yourDominoes[i];
+				tempDomino.y=300;
+				tempDomino.x =20+ i*30;
+			}	
+		}
+		public function removeDominoCube(dominoPos:int):void
+		{
+			removeChild(yourDominoes[dominoPos]);
+			yourDominoes.splice(dominoPos,1);
+			reDrawHand();
+		}
 		public function arrangeBoard():void
 		{
 			var tempDomino:Domino;
@@ -61,11 +76,10 @@ package come2play_as3.domino
 				tempDomino = new Domino;
 				tempDomino.lowerNum.gotoAndStop(tempDominoObject.lowerNum+1);
 				tempDomino.upperNum.gotoAndStop(tempDominoObject.upperNum+1);
-				tempDomino.y=300;
-				tempDomino.x =20+ i*30;
 				addChild(tempDomino)
 				yourDominoes.push(tempDomino);
 			}	
+			reDrawHand()
 		}
 	}
 }

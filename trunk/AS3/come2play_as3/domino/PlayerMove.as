@@ -7,13 +7,14 @@ package come2play_as3.domino
 		public var key:String;
 		public var isRight:Boolean;
 		public var dominoCube:DominoCube;
-		public static create(key:String,isRight:Boolean,dominoCube:DominoCube):PlayerMove
+		
+		public static function create(key:String,isRight:Boolean,dominoCube:DominoCube):PlayerMove
 		{
 			var res:PlayerMove = new PlayerMove();
 			res.dominoCube = dominoCube;
 			res.key = key;
 			res.isRight = isRight;
-			
+			return res;
 		}
 		public function get upperNum():int
 		{

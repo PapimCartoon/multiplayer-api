@@ -10,17 +10,27 @@ package come2play_as3.domino
 	{
 		private var domino_MainPointer:Domino_Main;
 		private var domino_Graphic:Domino_Graphic;
+		
+		//graphic related
 		private var leftArrow:LeftArrow;
 		private var rightArrow:RightArrow;
 		private var graphics:MovieClip;
-		private var dominoAmount:int;
-		private var currentDomino:int;
-		private var dominoes:Array/*DominoObject*/;
+		
+		private var dominoAmount:int;// how many dominoes are avaible in the game
+		private var currentDomino:int;//how many dominoes have been drawn already
+		private var dominoes:Array/*DominoObject*/; //my dominoes
+		
+		//game detailes
 		private var players:Array/*int*/;
 		private var myUserId:int;
-		private var boardDominoes:Array/*DominoObject*/
-		private var isMyTurn:Boolean;
-		private var avaibleDominoMoves:Array;
+		
+		private var boardDominoes:Array/*DominoObject*/ // dominoes on board
+		private var isMyTurn:Boolean; // is my turn
+		private var currentDominoMove:DominoObject; //domino choosen to put on board
+		private var choosingSide:Boolean; //am I currently choosing a side for the domino
+		
+		private var avaibleDominoMoves:Array; //aviable dominoes to put on board
+		
 		
 		public function Domino_Logic(domino_MainPointer:Domino_Main,graphics:MovieClip)
 		{
@@ -28,45 +38,64 @@ package come2play_as3.domino
 			this.domino_MainPointer = domino_MainPointer;
 			rightArrow = new RightArrow();
 			leftArrow = new LeftArrow();
+			rightArrow.addEventListener(MouseEvent.CLICK,doRight);
+			leftArrow.addEventListener(MouseEvent.CLICK,doLeft);
 		}
 		
 		public function takeDomino(dominoNum:int):void
 		{
 			if(isMyTurn)
 			{
-				var turnDone:Boolean =false;
-				var dominoMove:DominoObject = dominoes[dominoNum];
-				trace("dominoNum:"+dominoNum)
-				trace(dominoMove.upperNum+"/"+dominoMove.lowerNum)
+				if(avaibleDominoMoves.indexOf(dominoNum)==-1)
+					return;
+				removeArrows()				
+				currentDominoMove = dominoes[dominoNum];
 				var rightDomino:DominoObject = boardDominoes[boardDominoes.length-1];
 				var leftDomino:DominoObject = boardDominoes[0];
-				if((rightDomino.upperNum == dominoMove.upperNum) || (rightDomino.upperNum == dominoMove.lowerNum))
+				if((rightDomino.upperNum == currentDominoMove.upperNum) || (rightDomino.upperNum == currentDominoMove.lowerNum))
 				{
-					trace("in right")
-					turnDone = true;
-					rightArrow.x = 100
-					rightArrow.y = 100
+					rightArrow.x = 20+ dominoNum*30
+					rightArrow.y = 240
 					graphics.addChild(rightArrow);
 				}
-				if((leftDomino.lowerNum == dominoMove.upperNum) || (leftDomino.lowerNum == dominoMove.lowerNum))
+				if((leftDomino.lowerNum == currentDominoMove.upperNum) || (leftDomino.lowerNum == currentDominoMove.lowerNum))
 				{
-					trace("in left")
-					turnDone = true;
-					leftArrow.x = 100
-					leftArrow.y = 100
+					leftArrow.x = dominoNum*30
+					leftArrow.y = 240
 					graphics.addChild(leftArrow);
 				}
-				if(turnDone)
-					dominoes.splice(dominoNum,1)
 			}
+		}
+		private function removeArrows():void
+		{
+			if(graphics.contains(rightArrow))
+				graphics.removeChild(rightArrow);
+			if(graphics.contains(leftArrow))
+				graphics.removeChild(leftArrow);
+		}
+		private function makeMove(isRight:Boolean):void
+		{
+			var playerMove:PlayerMove = PlayerMove.create(currentDominoMove.key,isRight,currentDominoMove.dominoCube);
+			removeArrows();
+			for(var i:int = 0;i<dominoes.length;i++)
+			{
+				var tempDominoObject:DominoObject = dominoes[i];
+				if((currentDominoMove.lowerNum == tempDominoObject.lowerNum)&&(currentDominoMove.upperNum == tempDominoObject.upperNum))
+				{
+					dominoes.splice(i,1);
+					domino_Graphic.removeDominoCube(i);
+				}
+			}
+			domino_MainPointer.sendPlayerMove(playerMove);
+			
 		}
 		private function doLeft(ev:MouseEvent):void
 		{
-			
+			makeMove(false);	
 		}
 		private function doRight(ev:MouseEvent):void
 		{
-			
+			makeMove(true);
 		}
 		private function findDominoes(rightSide:int,leftSide:int):Array/*int*/
 		{

@@ -1,7 +1,7 @@
-#summary Called to pass your user_id
+#summary Called to pass your userId
 
 {{{
-gotMyUserId(my_user_id:int)  
+gotMyUserId(myUserId:int)  
 }}}
 
 `gotMyUserId` is the first callback that is called.
@@ -10,7 +10,7 @@ When a game is in progress, the users can be partitioned into players and viewer
 Every user is identified by a unique `user_id`.
 
 *IMPORTANT*:
-The container may call `gotMyUserId` several times with different values for `my_user_id`.
+The container may call `gotMyUserId` several times with different values for `myUserId`.
 The reason is that the container may wish to support backward and forward when the game is in progress,
 and to achieve this the container tells the game that the game is over, 
-and starts a new game with another value for `my_user_id` so you will see the game as a viewer.
+and starts a new game with another value for `myUserId` so you will see the game as a viewer.

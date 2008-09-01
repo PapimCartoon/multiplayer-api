@@ -201,7 +201,7 @@ import flash.utils.*;
 			}
 			else if(serverEntry.value is PlayerMove)
 			{
-				var playerMove:PlayerMove = serverEntry.value as PlayerMove;
+				var playerMove:PlayerMove = SerializableClass.deserialize(serverEntry.value) as PlayerMove;
 				if(playerMove.takingPlayer != serverEntry.storedByUserId) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" stored the data for another user")
 				if(!mineSweeper_Logic.isMoveTaken(playerMove))					
 					doAllRevealState([RevealEntry.create(playerMove.xPos+"_"+playerMove.yPos,null,2)]);	
@@ -211,14 +211,14 @@ import flash.utils.*;
 			}
 			else if(serverEntry.value is ServerBox)
 			{
-				var serverBox:ServerBox = serverEntry.value as ServerBox;
+				var serverBox:ServerBox = SerializableClass.deserialize(serverEntry.value) as ServerBox;
 				if(serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" stored the data and not the calculator");
 				 mineSweeper_Logic.addBoxesServer(serverBox);
 				//doAllStoreState([UserEntry.create(tempPlayerBox.xPos+"_"+tempPlayerBox.yPos,tempPlayerBox,false)]);
 			}
 			else if(serverEntry.value is Array)
 			{
-				var blankSquares:Array = serverEntry.value as Array;
+				var blankSquares:Array = SerializableClass.deserialize(serverEntry.value) as Array;
 				if(serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" stored the data and not the calculator");	
 				mineSweeper_Logic.addBlankBoxesServer(blankSquares);
 				//doAllStoreState(userEntries);

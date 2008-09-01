@@ -1,5 +1,6 @@
 package come2play_as3.domino
 {
+	import come2play_as3.api.auto_copied.*;
 	import come2play_as3.api.auto_generated.*;
 	
 	import flash.display.MovieClip;
@@ -24,6 +25,11 @@ package come2play_as3.domino
 			setTimeout(doRegisterOnServer,100);
 		}
 
+		public function sendPlayerMove(playerMove:PlayerMove):void
+		{
+			
+		}
+		
 		//override functions
 		
 		override public function gotCustomInfo(infoEntries:Array):void

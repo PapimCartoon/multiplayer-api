@@ -30,8 +30,7 @@ and it will call `got_user_info` with the viewer information.
 each `UserEntry` has the fields:
 key - the name in which the ServerEntry will be known
 value - the information you want to be stored
-isSecret - 
-which can be either true or false.
+isSecret - will the ServerEntry be secret.
 if true the entry value will only be visible to the user which stored it,the rest will see null.
 if false, all users will see the value
 
@@ -49,8 +48,8 @@ each `key` to an object with fields `storedByUserId`,`value`, and `authorizedUse
 {{{
 MATCH_STATE[key] = {storedByUserId:int, value:Object,authorizedUserIds:Array/*int*/}
 }}}
-`storedByUserId` may be -1 for doAllShuffle,doAllrequestStateCalculation and doAllStoreState which aree all functions that
-are guaranteed to have a genuine value.
+`storedByUserId` may be -1 for doAllShuffle,doAllrequestStateCalculation and doAllStoreState which are all functions that
+are not stored by the users playing the game.
 `value` is an arbitrary object.
 `authorizedUserIds` is used to show which users can view the value,null means everyone,blank Array means no one. 
 Users in `authorizedUserIds` will get the `value` 
@@ -60,9 +59,9 @@ when the server calls `gotStateChanged`
 Next we will explain what the server does for each operation.
 
 {{{
-do_store_match_state(entry:UserEntry)
-DOES:
-MATCH_STATE[entry.key] = {my_user_id,  entry.value,   entry.isSecret,  entry.isSecret ? [my_user_id] : [] }
+doStoreState(userEntries:Array/*UserEntry*/)
+DOES ON EACH UserEntry IN userEntries:
+MATCH_STATE[entry.key] = {myUserId,  entry.value,   entry.isSecret,  entry.isSecret ? [myUserId] : [] }
 }}}
 
 Whenever a user updates `MATCH_STATE`, then all users get the callback `gotStateChanged`.

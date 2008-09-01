@@ -12,20 +12,25 @@ Turn-based games may be played in turns using emails or other means.
 For example, in a game of Chess, one player may make a turn, then the next player will get an email notification
 and he may make the next turn, and so forth.
 
-In a Turn-based game whenever the turn changes in response to a change in the game state,all players
-must call the function doAllSetTurn with the userId of the next player and the milliSecondsInTurn of the next player turn,
-if the milliSecondsInTurn will be -1 the time for each turn length will be set from outside,
-for example a server can contain two instances of a chees game one with a 1 minute turn length
-and the other with 10 minutes per turn.
-
-The milliSecondsInTurn value is used to prevent stagnation, a situation where one player
+The `doAllSetTurn` function is used to prevent stagnation, a situation where one player
 is cheating by deliberately not making a move , thus ruining the game for the rest of the players.
 if the milliSecondsInTurn has passed and the game did not send any input to the server,
 the player which holds the current turn automatically loses.
 
-all players must call this function with then same exact parameters,
-if one of the users claims one of the parameters is different then the ones the other player/s
-called the data will be sent to a jury which will decide who's cheating. 
+In a Turn-based game whenever the turn changes in response to a change in the game state,all players
+must call the function doAllSetTurn with the following parameters:
+
+`userId` - is the user id of the next player, if the game has no current player but rather a timer fo all players
+like a trivia game which gives everyone 10 seconds to answer the question then set `userId` to -1
+
+`milliSecondsInTurn` - milliSeconds in turn of the next player turn,
+if the `milliSecondsInTurn` will be -1 the time for each turn length will be set from outside,
+
+for example a server can contain two instances of a chees game one with a 1 minute turn length
+and the other with 10 minutes per turn.
+
+
+
 
 
  

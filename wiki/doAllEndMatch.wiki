@@ -29,7 +29,7 @@ For example, suppose you have 3 players with `player_ids`=41, 42, 43.
 Suppose user_id=42 ended the match with score 90, and he should get 20% of the pot.
 Then all the players (users 41, 42, 43) should call:
 {{{
-  doAllEndMatch([ new PlayerMatchOver(42, 90, 20) ])
+  doAllEndMatch([ PlayerMatchOver.create(42, 90, 20) ])
 }}}
 Now users 41 and 43 continue to play, 
 and the match is over with the score=100 to user_id=41, and score=10 to user_id=43,

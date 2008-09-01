@@ -14,35 +14,49 @@ The functions in `ClientGameAPI` can be divided into two categories: Operations 
 We write `Array/*int*/` to denote an `Array` that contains only `int` objects;
 Similarly, `Array/*String*/` is an `Array` that contains only `String` objects.
 
-Auxiliary classes (`secret_level` is explained in [SecureClientGameAPI]):
+Auxiliary classes 
 {{{
-class Entry { var key:String, value:Object, secret_level:EnumSecretLevel; }
-class UserEntry extends Entry { var user_id:int; }
+class ServerEntry { var key:String, var value:Object, var storedByUserId:int, var authorizedUserIds:Array/*int*/, var changedTimeInMilliSeconds:int; }
+class UserEntry{var key:String, var value:Object, var isSecret:Boolean = false;}
 class PlayerMatchOver { var player_id:int, score:int, pot_percentage:int; }
+class RevealEntry{var key:String, var userIds:Array/*int*/ = null, var depth:int = 1;}
 }}}
-Operations are functions starting with `do_`
+Operations are functions starting with `do`
+
+The Operations are devided into two groups as well:
+
+`do` operations which may be called by a single player
 {{{
-do_register_on_server()
-do_store_trace(function_name:String, argument:Object)
-do_agree_on_match_over(finished_players:Array/*PlayerMatchOver*/)
-do_start_my_turn()
-do_end_my_turn(next_turn_of_player_ids:Array/*int*/)
-do_client_protocol_error_with_description(error_description:String)
-do_store_match_state(entries:Array/*Entry*/)
+doRegisterOnServer()
+doStoreState(userEntries:Array/*UserEntry*/)
+doTrace(function_name:String, message:Object)
 }}}
-Callbacks are functions starting with `got_`
+
+and `doAll` operations which have to be called by all players
 {{{
-got_keyboard_event(is_key_down:Boolean, charCode:int, keyCode:int, keyLocation:int, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean)
-got_error(in_function_name:String, err:Error)
-got_general_info(entries:Array/*Entry*/)  
-got_user_info(user_id:int, entries:Array/*Entry*/) 
-got_user_disconnected(user_id:int)
-got_my_user_id(my_user_id:int) 
-got_match_started(all_player_ids:Array/*int*/, finished_player_ids:Array/*int*/, extra_match_info:Object, match_started_time:int, match_state:Array/*UserEntry*/)
-got_match_over(finished_player_ids:Array/*int*/)
-got_start_turn_of(user_id:int)
-got_end_turn_of(user_id:int)  
-got_stored_match_state(user_id:int, entries:Array/*Entry*/)
+doAllRequestRandomState(key:String, isSecret:Boolean = false)
+doAllShuffleState(keys:Array/*String*/)
+doAllRequestStateCalculation(keys:Array/*String*/)
+doAllStoreStateCalculation(userEntries:Array/*UserEntry*/)
+doAllRevealState(revealEntries:Array/*RevealEntry*/)
+doAllSetTurn(userId:int, milliSecondsInTurn:int = -1)
+doAllStoreState(userEntries:Array/*UserEntry*/)
+doAllEndMatch(finishedPlayers:Array/*PlayerMatchOver*/)
+doAllFoundHacker(userId:int, errorDescription:String)
+}}}
+
+Callbacks are functions starting with `got`
+{{{
+
+gotCustomInfo(infoEntries:Array/*InfoEntry*/) 
+gotStateChanged(serverEntries:Array/*ServerEntry*/) 
+gotRequestStateCalculation(serverEntries:Array/*ServerEntry*/)
+gotKeyboardEvent(isKeyDown:Boolean, charCode:int, keyCode:int, keyLocation:int, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean)
+gotMatchEnded(finishedPlayerIds:Array/*int*/)
+gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, extraMatchInfo:Object, matchStartedTime:int, serverEntries:Array/*ServerEntry*/)
+gotMyUserId(myUserId:int)
+gotUserDisconnected(userId:int)
+gotUserInfo(userId:int, infoEntries:Array/*InfoEntry*/)
 }}}
 
 Operations are functions that your _game_ may call,
@@ -55,44 +69,44 @@ i.e., there is a player that haven't finished playing.
 === High level description of the functions === 
 
 || *Function* || *Description* ||
-|| [do_register_on_server] || Call it after your _game_ finished loading ||
-|| [do_store_trace] || Call it to store traces to help you debug your application in the emulator and online ||
-|| [got_keyboard_event] || Called to pass keyboard down events (see KeyboardEvent) ||
-|| [got_general_info] || Called to pass general info, e.g., url of a logo for branding your game ||
-|| [got_user_info] || Called to pass user specific info, e.g., user name or avatar ||
-|| [got_user_info got_user_disconnected] || Called to inform that the user disconnected ||
-|| [got_my_user_id] || Called to pass your user_id ||
-|| [got_match_started] || Called when a match starts ||
-|| [do_agree_on_match_over] || Call it to end the match. The match will be over when all players called it ||
-|| [got_match_over] || Called when the match is over ||
-|| [do_store_match_state] || Call it to store/update/delete you match state ||
-|| [do_store_match_state got_stored_match_state] || Called when a user changed the match state ||
-|| [do_start_my_turn] || For Turn-based games. Call it to start your turn ||
-|| [do_start_my_turn got_start_turn_of] || Called to acknowledge you have the turn ||
-|| [do_start_my_turn do_end_my_turn] || Call it to end your turn, and set who may play next ||
-|| [do_start_my_turn got_end_turn_of] || Called to acknowledge your turn ended ||
-|| [got_error] || Called when one of the callbacks threw an error ||
-|| [do_client_protocol_error_with_description] || Call it when you have to cancel the game due to an unrecoverable error ||
 
-|| `do_juror_unfold_match_state` || The values of certain keys are unfolded to a certain user ||
-|| `do_juror_shuffle_match_state` || The values of certain keys in the match state are shuffled ||
-|| [do_juror_set_turn] || The juror decides who has the turn (in turn-based games)  ||
+|| [doRegisterOnServer] || Call it after your _game_ finished loading ||
+|| [doStoreState] || Call it to store/update/delete you match state ||
+|| [doTrace] || Call it to store traces to help you debug your application in the emulator and online ||
+
+|| [doAllRequestRandomState] || Call to recive a randoom state ||
+|| [doAllShuffleState] || Call to shuffle a set of ServerEntries||
+|| [doAllRequestStateCalculation] || Call to request secret calculations ||
+|| [doAllStoreStateCalculation] || Call to store calculations made by the calculator ||
+|| [doAllRevealState] || Call to reveal a secret ServerEntry to a player ||
+|| [doAllSetTurn] || Call to set next palyer turn ||
+|| [doAllStoreState] || Call it to store/update/delete you match state unanimously ||
+|| [doAllEndMatch] || Call it to end the match. The match will be over when all players called it ||
+|| [doAllFoundHacker] || Call when one of the users has detected a hacker ||
+
+|| [gotCustomInfo] || Called to pass custom info, e.g., url of a logo for branding your game, seconde per turn etc. ||
+|| [gotStateChanged] || Called when a user changed the match state ||
+|| [gotRequestStateCalculation] || Called when users request `doAllRequestStateCalculation`||
+|| [gotKeyboardEvent] || Called to pass keyboard down events (see KeyboardEvent) ||
+|| [gotMatchEnded] || Called when the match is over ||
+|| [gotMatchStarted] || Called when a match starts ||
+|| [gotMyUserId] || Called to pass your user_id ||
+|| [gotUserDisconnected] || Called to inform that the user disconnected ||
+|| [gotUserInfo] || Called to pass user specific info, e.g., user name or avatar ||
+
 
 
 === Initialization: order of the first callbacks === 
-The first callback is `got_my_user_id`,
-then you may get `got_general_info` and `got_user_info`.
-Then, when a match starts you will get `got_match_started`.
-When a saved game is loaded, you may or may not get `got_start_turn_of`,
-therefore one of the players (in a turn-based game) should call `do_start_my_turn` after getting `got_match_started`.
-
+The first callback is `gotMyUserId`,
+then you may get `gotCustomInfo` and `gotUserInfo`.
+Then, when a match starts you will get `gotMatchStarted`.
 
 === Viewers and players === 
 The set of connected users is partitioned into players and viewers.
 New players cannot join an existing match; players may only leave the match (either by disconnecting or losing/winning the match).
 When a player leaves the match (e.g., by winning or choosing to lose) he becomes a viewer.
 
-Viewers should call the `do_all_*` operations along with all the players.
+Viewers should call the `doAll_*` operations along with all the players.
 
 
 === Serialization ===

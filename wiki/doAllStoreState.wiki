@@ -1,10 +1,10 @@
 #summary Stroring data that needs to be unanimous
 
 {{{
-doAllStoreState(entries:Array/*UserEntry*/)
+doAllStoreState(userEntries:Array/*UserEntry*/)
 }}}
 
-Use `doAllStoreState` the same way you use doStoreState , only instead of one player
+Use `doAllStoreState` the same way you use [doStoreState] , only instead of one player
 calling the function, all the players must call the function with the same exact parameters.
 
 this function is used to prevent hacking, every time you need to store a state which 
@@ -20,6 +20,18 @@ then all the players make the calculation
 and eventually they all call doAllStore State, and save the score of the shot.
 if one of the users claims the score to be different then the other player/s
 the data is sent to a jury which will decide who's cheating.
+
+the function recives the following parameter:
+
+`userEntries` -an Array of UserEntry elsements
+
+{{{
+class UserEntry{var key:String, var value:Object, var isSecret:Boolean = false;}
+}}}
+
+`key` - the key of the `ServerEntry` that will be created
+`value` - the value of the `ServerEntry` that will be created
+`isSecret` - will the data in the `ServerEntry` will be secret
 
 because this function essentially checks if the data that is stored is 100% true,
 by reviewing all the player entries and comparing them.

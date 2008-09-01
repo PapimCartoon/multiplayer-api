@@ -1,7 +1,7 @@
 #summary Called to pass keyboard down events (see KeyboardEvent)
 
 {{{
-got_keyboard_event(is_key_down:Boolean, charCode:int, keyCode:int, keyLocation:int, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean)
+gotKeyboardEvent(is_key_down:Boolean, charCode:int, keyCode:int, keyLocation:int, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean)
 }}}
 
 The container is in charge of capturing keyboard events and passing them to the game.

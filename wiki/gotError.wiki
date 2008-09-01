@@ -1,9 +1,0 @@
-#summary Called when one of the callbacks threw an error
-
-{{{
-gotError(in_function_name:String, err:Error)
-}}}
-
-If any of your callbacks have raised an error, that error is caught and ClientGameAPI will call `gotError`.
-In case of an error, you should call [do_client_protocol_error_with_description].
-You should be very careful not to throw any exceptions in `gotError`, because these exceptions will be silently ignored.

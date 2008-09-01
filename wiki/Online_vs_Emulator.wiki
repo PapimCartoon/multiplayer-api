@@ -9,7 +9,7 @@ This is a list of known differences:
   We simulated network delay on the emulator.
   * Loading process: 
   A flash SWF starts running even before it was downloaded completely.
-  You should call [do_register_on_server] only after your SWF is ready to start a match.
+  You should call [doRegisterOnServer] only after your SWF is ready to start a match.
   In the emulator the loading is instant because the SWF is stored locally. 
   * Spamming protection:
   The online server has spamming protection, i.e., 

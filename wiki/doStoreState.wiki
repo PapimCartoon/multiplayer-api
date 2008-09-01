@@ -20,11 +20,11 @@ The match state is given to new viewers and new players in [gotMatchStarted].
 To delete a key from the map, pass a value of null .
 
 _Important note_:
-You can save user_ids in the match state, but do not save user_info in the match state.
+You can save userIds in the match state, but do not save userInfo in the match state.
 The reason is that a viewer may replace another player 
 (e.g., if one player disconnects, then a viewer may replace him).
-In such a case, the server will reuse the same user_id for the viewer,
-and it will call `got_user_info` with the viewer information.
+In such a case, the server will reuse the same userId for the viewer,
+and it will call [gotUserInfo] with the viewer information.
 
 
 each `UserEntry` has the fields:

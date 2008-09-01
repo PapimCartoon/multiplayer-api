@@ -13,8 +13,8 @@ gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, extra
 }}}
 The only two new functions are for handling the score of the single-player game:
 {{{
-do_connected_set_score(score:int)
-do_connected_match_over(did_win:Boolean)
+doConnectedSetScore(score:int)
+doConnectedEndMatch(didWin:Boolean)
 }}}
 The `score` must be strictly higher than 0.
 As the user advances, his `score` should get higher.

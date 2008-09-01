@@ -11,9 +11,9 @@ Therefore, the Multiplayer API has two APIs that you can choose from: (i) [Clien
 
 In [ClientGameAPI] you use only client side code, and in [ScriptGameAPI] you use both client-side and server-side code.
 
-In [ClientGameAPI], the clients should check the legality of the messages, and should call [do_client_protocol_error_with_description] if there is an illegal message. In [ScriptGameAPI], the script checks the legality of messages, and if a player "lies" to the script, then the script can decide that this player lost.
+In [ClientGameAPI], the clients should check the legality of the messages, and should call [doAllFoundHacker] if there is an illegal message. In [ScriptGameAPI], the script checks the legality of messages, and if a player "lies" to the script, then the script can decide that this player lost.
 
-In [ClientGameAPI], the clients agree together when the match ends, and all of them should call [do_agree_on_match_over] with the same parameters to end the match. In [ScriptGameAPI], the script alone can decide when the match is over, and who is the winner.
+In [ClientGameAPI], the clients agree together when the match ends, and all of them should call [doAllEndMatch] with the same parameters to end the match. In [ScriptGameAPI], the script alone can decide when the match is over, and who is the winner.
 
 The pros of using [ScriptGameAPI] is that it is secure, however there are many cons as well: it is harder to program server-side code, you have use a server to host your script, and it may slow down the game if the script is used very often. 
 

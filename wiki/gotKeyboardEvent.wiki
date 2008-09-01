@@ -1,7 +1,7 @@
 #summary Called to pass keyboard down events (see KeyboardEvent)
 
 {{{
-gotKeyboardEvent(is_key_down:Boolean, charCode:int, keyCode:int, keyLocation:int, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean)
+gotKeyboardEvent(isKeyDown:Boolean, charCode:int, keyCode:int, keyLocation:int, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean)
 }}}
 
 The container is in charge of capturing keyboard events and passing them to the game.
@@ -13,4 +13,4 @@ However, in AS2 there is no way to selectively listen only to a key strokes with
 and even in AS3 it is complicated.
 
 Therefore the game should not listen to keyboard events directly,
-but instead override `got_keyboard_event` to know about key strokes.
+but instead override `gotKeyboardEvent` to know about key strokes.

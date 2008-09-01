@@ -3,7 +3,7 @@
 We use LocalConnection to pass commands, therefore, there is a 40K limit on arguments to these methods.
 
 
-`do_finished_callback` is called by the game after every time the container calls some callback `got*`.
+`doFinishedCallback` is called by the game after every time the container calls some callback `got*`.
 
 
 In [TableOfContent Multiplayer API] section we explained that the API is a bridge between the _game_ (written by game developers) and the _container_ (written by the website hosting the game).
@@ -105,7 +105,7 @@ Note that  deserialize(object)  modifies the object.
 The former question:
 To make sure the container and game use the same LocalConnection channel, we use a flashvar parameter called `prefix`
 to determine the channel name.
-There is one channel for `do_` operations, and another for `got_` callbacks:
+There is one channel for `do` operations, and another for `got_` callbacks:
 {{{
 "DO_CHANEL_" + prefix
 "GOT_CHANEL_" + prefix

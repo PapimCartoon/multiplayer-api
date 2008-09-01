@@ -18,7 +18,7 @@ Auxiliary classes
 {{{
 class ServerEntry { var key:String, var value:Object, var storedByUserId:int, var authorizedUserIds:Array/*int*/, var changedTimeInMilliSeconds:int; }
 class UserEntry{var key:String, var value:Object, var isSecret:Boolean = false;}
-class PlayerMatchOver { var player_id:int, score:int, pot_percentage:int; }
+class PlayerMatchOver { var playerId:int, score:int, potPercentage:int; }
 class RevealEntry{var key:String, var userIds:Array/*int*/ = null, var depth:int = 1;}
 }}}
 Operations are functions starting with `do`
@@ -29,7 +29,7 @@ The Operations are devided into two groups as well:
 {{{
 doRegisterOnServer()
 doStoreState(userEntries:Array/*UserEntry*/)
-doTrace(function_name:String, message:Object)
+doTrace(name:String, message:Object)
 }}}
 
 and `doAll` operations which have to be called by all players
@@ -87,7 +87,7 @@ i.e., there is a player that haven't finished playing.
 || [gotKeyboardEvent] || Called to pass keyboard down events (see KeyboardEvent) ||
 || [gotMatchOver] || Called when the match is over ||
 || [gotMatchStarted] || Called when a match starts ||
-|| [gotMyUserId] || Called to pass your user_id ||
+|| [gotMyUserId] || Called to pass your userId ||
 || [gotUserInfo gotUserDisconnected] || Called to inform that the user disconnected ||
 || [gotUserInfo] || Called to pass user specific info, e.g., user name or avatar ||
 
@@ -103,7 +103,7 @@ The set of connected users is partitioned into players and viewers.
 New players cannot join an existing match; players may only leave the match (either by disconnecting or losing/winning the match).
 When a player leaves the match (e.g., by winning or choosing to lose) he becomes a viewer.
 
-Viewers should call the `doAll_*` operations along with all the players.
+Viewers should call the `doAll*` operations along with all the players.
 
 
 === Serialization ===

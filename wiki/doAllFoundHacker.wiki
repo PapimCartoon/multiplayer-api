@@ -1,7 +1,7 @@
 #summary Call it when a player sent an illegal message
 
 {{{
-doAllFoundHacker(user_id:int, error_description:String)
+doAllFoundHacker(userId:int, errorDescription:String)
 }}}
 
 In [ClientGameAPI] all the logic is on the client side,

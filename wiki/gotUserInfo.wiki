@@ -1,8 +1,8 @@
 #summary Called to pass user specific info, e.g., user name or avatar
 
 {{{
-gotUserInfo(user_id:int, entries:Array/*Entry*/) 
-gotUserDisconnected(user_id:int)
+gotUserInfo(userId:int, infoEntries:Array/*InfoEntry*/) 
+gotUserDisconnected(userId:int)
 }}}
 
 `gotUserInfo` is used to pass user info to the game; 
@@ -12,20 +12,20 @@ and whenever the user info changes (e.g., if the user changed his nick name).
 `gotUserDisconnected` is called when the user disconnects (again only once).
 
 Important note 1:
-The game may not get `gotUserInfo` for all the `user_ids` in the match state of some games,
+The game may not get `gotUserInfo` for all the `userIds` in the match state of some games,
 because some users may have already disconnected.
 For example, imagine a game of poker with 5 players, where 2 players disconnected, and now the game is saved.
 When the game is loaded by the remaining 3 players, then the game will get:
  * `gotUserInfo` for the 3 players that loaded the saved game,
- * `gotMatchStarted` where `all_player_ids` includes the 5 players and `finished_player_ids` is the 2 players that disconnected and `match_state` that includes also the state those 2 players that disconnected
-Therefore the game should not _require_ the existence of `user_info` to display the match state,
+ * `gotMatchStarted` where `allPlayerIds` includes the 5 players and `finishedPlayerIds` is the 2 players that disconnected and `match_state` that includes also the state those 2 players that disconnected
+Therefore the game should not _require_ the existence of `userInfo` to display the match state,
 and if some info is missing, the game should use default values.
 The game _might_ still get the info for the 2 players that disconnected, or some generic info, if those users are no longer in the system.
 
 Important note 2:
 The container may decide to do a _player switch_,
 i.e., replace a player (that disconnected or chose to lose) by a viewer.
-In such a case, the container will simply replace the `user_id` of the viewer by the `user_id` of the player,
+In such a case, the container will simply replace the `user_id` of the viewer by the `userId` of the player,
 and will simply call `gotUserInfo` with the info of the viewer.
 Therefore you should not store user info in the match state, see [doStoreState].
 

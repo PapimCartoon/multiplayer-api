@@ -59,7 +59,7 @@ function processWaitingQueue() {
 	  var message:Message = entry.message;
 	  if (entry.waitingForUsers is not empty) return
 	  remove head of waitingQueue 
-	  if (message is not doAllSetTurn) { // doAllSetTurn is the only doAll* that doesn't change the match state
+	  if (message is not doAllSetTurn and not doAllEndMatch) { // because they do not change the match state
 	    unverifiedQueue.push( new QueueEntry(null, allPlayers, message) )
 	  }
 	  processMessage(entry.fromUser, message) // update match state and broadcast gotStateChanged to all users

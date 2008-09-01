@@ -82,10 +82,10 @@ i.e., there is a player that haven't finished playing.
 || [doAllEndMatch] || Call it to end the match. The match will be over when all players called it ||
 || [doAllFoundHacker] || Call when one of the users has detected a hacker ||
 || [gotCustomInfo] || Called to pass custom info, e.g., url of a logo for branding your game, seconde per turn etc. ||
-|| [gotStateChanged] || Called when a user changed the match state ||
-|| [gotRequestStateCalculation] || Called when users request `doAllRequestStateCalculation`||
+|| [doStoreState gotStateChanged] || Called when a user changed the match state ||
+|| [doAllRequestStateCalculation gotRequestStateCalculation] || Called when users request `doAllRequestStateCalculation`||
 || [gotKeyboardEvent] || Called to pass keyboard down events (see KeyboardEvent) ||
-|| [gotMatchEnded] || Called when the match is over ||
+|| [gotMatchOver] || Called when the match is over ||
 || [gotMatchStarted] || Called when a match starts ||
 || [gotMyUserId] || Called to pass your user_id ||
 || [gotUserDisconnected] || Called to inform that the user disconnected ||

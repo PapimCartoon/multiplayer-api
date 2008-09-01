@@ -15,9 +15,12 @@ package come2play_as3.domino
 		private var rightDominos:Array
 		private var middleDomino:Domino;
 		
+		private var isMiddleVertical:Boolean;
 		public function Domino_Graphic(dominoes:Array,dominoObject:DominoObject,players:Array,myUserId:int,domino_LogicPointer:Domino_Logic)
 		{
 			yourDominoes = new Array();
+			leftDominos = new Array();
+			rightDominos = new Array();
 			this.domino_LogicPointer = domino_LogicPointer;
 			this.dominoes = dominoes;
 			this.players = players;
@@ -28,7 +31,14 @@ package come2play_as3.domino
 			middleDomino = new Domino();
 			middleDomino.lowerNum.gotoAndStop(dominoObject.lowerNum + 1);
 			middleDomino.upperNum.gotoAndStop(dominoObject.upperNum + 1);
-			middleDomino.rotation = 90;
+			if(dominoObject.upperNum == dominoObject.lowerNum)
+				isMiddleVertical = false;	
+			else
+			{
+				middleDomino.rotation = 90;
+				isMiddleVertical = true;
+			}
+			
 			middleDomino.x=180;
 			middleDomino.y=150;
 			addChild(middleDomino);
@@ -57,13 +67,67 @@ package come2play_as3.domino
 			{
 				tempDomino = yourDominoes[i];
 				tempDomino.y=300;
-				tempDomino.x =20+ i*30;
+				tempDomino.x =20 + i*30;
 			}	
 		}
-		public function removeDominoCube(dominoPos:int):void
+		public function reDrawRight():void
 		{
-			removeChild(yourDominoes[dominoPos]);
+			var tempDomino:Domino;
+			for(var i:int=0;i<rightDominos.length;i++)
+			{
+				tempDomino = rightDominos[i];
+				if(tempDomino.lowerNum == tempDomino.upperNum)
+				{
+					tempDomino.rotation = 90;
+					tempDomino.y=210;
+					tempDomino.x =210 - i*30;
+				}				
+				else
+				{
+					tempDomino.y=210;
+					tempDomino.x =210 - i*30;
+				}
+			}	
+		}
+		public function reDrawLeft():void
+		{
+			var tempDomino:Domino;
+			for(var i:int=0;i<leftDominos.length;i++)
+			{
+				tempDomino = leftDominos[i];
+				if(tempDomino.lowerNum == tempDomino.upperNum)
+				{
+					tempDomino.rotation = 90;
+					tempDomino.y=150;
+					tempDomino.x =150 - i*30;
+				}				
+				else
+				{
+					tempDomino.y=150;
+					tempDomino.x =150 - i*30;
+				}
+			}	
+		}	
+		public function addPlayerDominoCube(playerMove:PlayerMove,playerId:int):void
+		{
+			
+		}
+		
+		public function addDominoCubeToBoard(dominoPos:int,isRight:Boolean):void
+		{
+			var movingDomino:Domino = yourDominoes[dominoPos]
 			yourDominoes.splice(dominoPos,1);
+			if(isRight)
+			{
+				rightDominos.push(movingDomino);
+				reDrawRight();
+			}
+			else
+			{
+				leftDominos.push(movingDomino);
+				reDrawLeft();
+			}
+					
 			reDrawHand();
 		}
 		public function arrangeBoard():void

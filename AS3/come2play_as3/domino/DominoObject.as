@@ -10,13 +10,12 @@ package come2play_as3.domino
 			this.key = key;
 		}
 		public function get upperNum():int
-		{
-			return dominoCube.upperNum;
-		}
+		{return dominoCube.upperNum;}
 		public function get lowerNum():int
-		{
-			return dominoCube.lowerNum;
-		}
+		{return dominoCube.lowerNum;}
+		public function get right():int
+		{return dominoCube.upperNum;}
+		public function get left():int{return dominoCube.lowerNum;}
 
 	}
 }

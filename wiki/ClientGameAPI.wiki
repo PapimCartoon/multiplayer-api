@@ -69,11 +69,9 @@ i.e., there is a player that haven't finished playing.
 === High level description of the functions === 
 
 || *Function* || *Description* ||
-
 || [doRegisterOnServer] || Call it after your _game_ finished loading ||
 || [doStoreState] || Call it to store/update/delete you match state ||
 || [doTrace] || Call it to store traces to help you debug your application in the emulator and online ||
-
 || [doAllRequestRandomState] || Call to recive a randoom state ||
 || [doAllShuffleState] || Call to shuffle a set of ServerEntries||
 || [doAllRequestStateCalculation] || Call to request secret calculations ||
@@ -83,7 +81,6 @@ i.e., there is a player that haven't finished playing.
 || [doAllStoreState] || Call it to store/update/delete you match state unanimously ||
 || [doAllEndMatch] || Call it to end the match. The match will be over when all players called it ||
 || [doAllFoundHacker] || Call when one of the users has detected a hacker ||
-
 || [gotCustomInfo] || Called to pass custom info, e.g., url of a logo for branding your game, seconde per turn etc. ||
 || [gotStateChanged] || Called when a user changed the match state ||
 || [gotRequestStateCalculation] || Called when users request `doAllRequestStateCalculation`||

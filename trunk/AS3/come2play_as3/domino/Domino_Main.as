@@ -9,6 +9,7 @@ package come2play_as3.domino
 	public class Domino_Main extends ClientGameAPI
 	{
 		private static var cubeMaxValue:int = 6;
+		private var currentTurn:int = 0;
 		
 		private var domino_Logic:Domino_Logic;
 		private var myUserId:int; //my user id
@@ -24,10 +25,14 @@ package come2play_as3.domino
 			domino_Logic  = new Domino_Logic(this,graphics);
 			setTimeout(doRegisterOnServer,100);
 		}
-
+		
+		private function getTurnOf():int
+		{
+			return players[currentTurn%players.length];	
+		}
 		public function sendPlayerMove(playerMove:PlayerMove):void
 		{
-			
+			doStoreState([UserEntry.create("Move_"+playerMove.key,playerMove,false)])
 		}
 		
 		//override functions
@@ -72,11 +77,19 @@ package come2play_as3.domino
 					}
 				}
 				domino_Logic.makeBoard();
-				doAllSetTurn(players[0],-1);
-				if(myUserId == players[0])
+				doAllSetTurn(getTurnOf(),-1);
+				if(myUserId == getTurnOf())
 				{
 					domino_Logic.allowTurn();
 				}
+			}
+			else if(serverEntry.value is PlayerMove)
+			{
+				if(getTurnOf() == myUserId) return;
+				if (serverEntry.storedByUserId != getTurnOf()) doAllFoundHacker(serverEntry.storedByUserId,"the user tried to play in someone elses turn");
+				var playerMove:PlayerMove = SerializableClass.deserialize(serverEntry.value) as PlayerMove;
+				domino_Logic.addPlayerDominoCube(playerMove,getTurnOf());
+				currentTurn ++;
 			}
 				
 		}

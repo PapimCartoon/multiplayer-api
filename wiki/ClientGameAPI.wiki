@@ -75,7 +75,7 @@ i.e., there is a player that haven't finished playing.
 || [doAllRequestRandomState] || Call to recive a randoom state ||
 || [doAllShuffleState] || Call to shuffle a set of ServerEntries||
 || [doAllRequestStateCalculation] || Call to request secret calculations ||
-|| [doAllStoreStateCalculation] || Call to store calculations made by the calculator ||
+|| [doAllRequestStateCalculation doAllStoreStateCalculation] || Call to store calculations made by the calculator ||
 || [doAllRevealState] || Call to reveal a secret ServerEntry to a player ||
 || [doAllSetTurn] || Call to set next palyer turn ||
 || [doAllStoreState] || Call it to store/update/delete you match state unanimously ||

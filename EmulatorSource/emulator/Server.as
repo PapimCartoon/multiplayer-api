@@ -932,8 +932,8 @@
 				}
 				else
 				{
-					addMessageLog("Server","Error","Can't shuffle a key that does not exist");
-					showMsg("Can't shuffle a key that does not exist","Error");
+					addMessageLog("Server","Error","Can't shuffle " + msg.keys[i] + " key does not exist");
+					showMsg("Can't shuffle " + msg.keys[i] + " key does not exist","Error");
 					gameOver();
 					return;		
 
@@ -943,17 +943,17 @@
 			
 			var shuffleLen:int=shuffleIndexArr.length;
 			var serverEntry:ServerEntry;
-			var serverEntries:Array/*ServerEntry*/
+			var serverEntries:Array =new Array/*ServerEntry*/
 			for (i=0;i<shuffleLen;i++)
 			{
-				shuffleIndex=Math.floor(Math.random()*(shuffleIndexArr.length+1))
+				shuffleIndex=Math.floor(Math.random()*(shuffleIndexArr.length-i))
 				serverEntry=doShuffleOn(shuffleIndexArr.splice(shuffleIndex,1),shuffleMapKeys.shift());
 				tempServerEntry = new ServerEntry();
 				tempServerEntry.key =serverEntry.key; 
 				tempServerEntry.value = null;
 				tempServerEntry.authorizedUserIds = [];
 				tempServerEntry.storedByUserId = -1;
-				tempServerEntry.changedTimeInMilliSeconds = getTimer()-matchStartTime;
+				tempServerEntry.changedTimeInMilliSeconds = serverEntry.changedTimeInMilliSeconds;
 				serverEntries.push(tempServerEntry);
 			}
 			broadcast(API_GotStateChanged.create(serverEntries));
@@ -961,18 +961,25 @@
 		private function doAllRevealState(msg:API_DoAllRevealState):void
 		{
 			var revealIndex:int;
+			var serverEntry:ServerEntry;
 			var serverEnries:Array=new Array();
 			var key:String;
-
 			for each(var revealEntry:RevealEntry in msg.revealEntries)
-			{	
+			{
 				key=revealEntry.key
 				for(var i:int=1;i<=revealEntry.depth;i++)	
 				{			
 					revealIndex=isKeyExist(key)
-					if(revealIndex!=-1)	
+					if(revealIndex==-1)	
 					{
-						var serverEntry:ServerEntry=userStateEntrys[revealIndex];
+						addMessageLog("Server","Error","Can't reveal " + key + " key does not exist");
+						showMsg("Can't reveal " + key + " key does not exist","Error");
+						gameOver();
+						return;		
+					}
+					else
+					{
+						serverEntry=userStateEntrys[revealIndex];
 						if(revealEntry.depth != i)
 						{
 							if(typeof(serverEntry.value)=="string")
@@ -987,18 +994,26 @@
 							serverEnries.push(serverEntry);
 						}
 					}
+				}
+			}		
+			var tempServerEnries:Array;
+			for each(var user:User in aUsers)
+			{
+				tempServerEnries = new Array();
+				for each(serverEntry in serverEnries)
+				{
+					if(serverEntry.authorizedUserIds == null)
+						tempServerEnries.push(serverEntry);
 					else
 					{
-						addMessageLog("Server","Error","Can't reveal a key that does not exist");
-						showMsg("Can't reveal a key that does not exist","Error");
-						gameOver();
-						return;		
+						if(serverEntry.authorizedUserIds.indexOf(user.ID)!=-1)
+							tempServerEnries.push(serverEntry);
+						else
+							tempServerEnries.push(ServerEntry.create(serverEntry.key,null,serverEntry.storedByUserId,serverEntry.authorizedUserIds,serverEntry.changedTimeInMilliSeconds));
 					}
 				}
-				
+				user.sendOperation(API_GotStateChanged.create(tempServerEnries))
 			}
-
-			broadcast(API_GotStateChanged.create(serverEnries));
 		}
 		private function doAllRequestRandomState(msg:API_DoAllRequestRandomState):void
 		{

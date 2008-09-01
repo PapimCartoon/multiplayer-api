@@ -1,0 +1,3 @@
+#summary ServerEntry
+
+class ServerEntry { var key:String, var value:Object, var storedByUserId:int, var authorizedUserIds:Array/*int*/, var changedTimeInMilliSeconds:int; }

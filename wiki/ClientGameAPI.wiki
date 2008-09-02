@@ -64,7 +64,7 @@ and callbacks are functions that the _container_ may call on your game.
 Your class may override some of the callbacks and respond appropriately to them; it is not mandatory to override _all_ the callbacks.
 
 You may call an operation only when the game is in progress,
-i.e., there is a player that hasn’t finished playing.
+i.e., there is a player that hasnï¿½t finished playing.
 
 === High level description of the functions === 
 
@@ -85,7 +85,7 @@ i.e., there is a player that hasn’t finished playing.
 || [doStoreState gotStateChanged] || Called when a user changed the match state ||
 || [doAllRequestStateCalculation gotRequestStateCalculation] || Called when users request `doAllRequestStateCalculation`||
 || [gotKeyboardEvent] || Called to pass keyboard down events (see KeyboardEvent) ||
-|| [gotMatchOver] || Called when the match is over ||
+|| [doAllEndMatch] || Called when the match is over ||
 || [gotMatchStarted] || Called when a match starts ||
 || [gotMyUserId] || Called to pass your userId ||
 || [gotUserInfo gotUserDisconnected] || Called to inform that the user disconnected ||

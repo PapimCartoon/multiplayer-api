@@ -17,7 +17,7 @@ It achieves it by declaring a player which has not made a move after the specifi
 
 Important note:
 It is crucial to understand that a move does not have to be an active participation of the player.
-A move can also be a signal, which triggers a `doAllSetTurn` function by all the players, made by the game to show that the player isn’t deliberately blocking communication.
+A move can also be a signal, which triggers a `doAllSetTurn` function by all the players, made by the game to show that the player isn't deliberately blocking communication.
 
 
 To call a `doAllSetTurn` function all players must call the function function with the following parameters:

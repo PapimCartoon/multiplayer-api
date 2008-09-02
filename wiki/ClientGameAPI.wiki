@@ -2,24 +2,24 @@
 
 The communication between your game and our server is done by writing a class that extends `ClientGameAPI.as`, and instantiating one instance of your class.
 
-`ClientGameAPI` does not inherit from any other class.
-If you want your class to extend an extra class (in addition to `ClientGameAPI`), 
-then you can modify `ClientGameAPI` and make it inherit from the extra class.
-For example, if you want your class to extend `MovieClip` then you can modify `ClientGameAPI` like this:
-{{{
-... ClientGameAPI extends MovieClip ...
-}}}
-
 The functions in `ClientGameAPI` can be divided into two categories: Operations and Callbacks.
 We write `Array/*int*/` to denote an `Array` that contains only `int` objects;
 Similarly, `Array/*String*/` is an `Array` that contains only `String` objects.
 
-Auxiliary classes 
+Auxiliary classes:
 {{{
-class ServerEntry { var key:String, var value:Object, var storedByUserId:int, var authorizedUserIds:Array/*int*/, var changedTimeInMilliSeconds:int; }
-class UserEntry{var key:String, var value:Object, var isSecret:Boolean = false;}
-class PlayerMatchOver { var playerId:int, score:int, potPercentage:int; }
-class RevealEntry{var key:String, var userIds:Array/*int*/ = null, var depth:int = 1;}
+class ServerEntry { 
+  var key:String, value:Object, storedByUserId:int, authorizedUserIds:Array/*int*/, changedTimeInMilliSeconds:int; 
+}
+class UserEntry { 
+  var key:String, value:Object, isSecret:Boolean = false;
+}
+class PlayerMatchOver { 
+  var playerId:int, score:int, potPercentage:int; 
+}
+class RevealEntry {
+  var key:String, userIds:Array/*int*/ = null, depth:int = 1;
+}
 }}}
 Operations are functions starting with `do`
 
@@ -47,7 +47,6 @@ doAllFoundHacker(userId:int, errorDescription:String)
 
 Callbacks are functions starting with `got`
 {{{
-
 gotCustomInfo(infoEntries:Array/*InfoEntry*/) 
 gotStateChanged(serverEntries:Array/*ServerEntry*/) 
 gotRequestStateCalculation(serverEntries:Array/*ServerEntry*/)
@@ -63,32 +62,32 @@ Operations are functions that your _game_ may call,
 and callbacks are functions that the _container_ may call on your game.
 Your class may override some of the callbacks and respond appropriately to them; it is not mandatory to override _all_ the callbacks.
 
-You may call an operation only when the game is in progress,
-i.e., there is a player that hasn�t finished playing.
+You may call an operation (except `doRegisterOnServer` and `doTrace`) only when the game is in progress,
+i.e., there is a player that hasn?t finished playing.
 
 === High level description of the functions === 
 
 || *Function* || *Description* ||
 || [doRegisterOnServer] || Call it after your _game_ finished loading ||
-|| [doStoreState] || Call it to store/update/delete you match state ||
+|| [doStoreState] || Call it to store/update/delete your match state ||
 || [doTrace] || Call it to store traces to help you debug your application in the emulator and online ||
-|| [doAllRequestRandomState] || Call to receive a random state ||
-|| [doAllShuffleState] || Call to shuffle a set of serverEntries||
-|| [doAllRequestStateCalculation] || Call to request secret calculations ||
-|| [doAllRequestStateCalculation doAllStoreStateCalculation] || Call to store calculations made by the calculator ||
-|| [doAllRevealState] || Call to reveal a secret `ServerEntry` to a player ||
-|| [doAllSetTurn] || Call to set next player turn ||
-|| [doAllStoreState] || Call it to store/update/delete you match state unanimously ||
-|| [doAllEndMatch] || Call it to end the match. The match will be over when all players called it ||
+|| [doAllRequestRandomState] || Call to receive a randoom state ||
+|| [doAllShuffleState] || Call to shuffle an array of ServerEntry ||
+|| [doAllRequestStateCalculation] || Call to request calculations from a set of impartial calculators ||
+|| [doAllRequestStateCalculation doAllStoreStateCalculation] || Call to store calculations made by a calculator ||
+|| [doAllRevealState] || Call to reveal a secret ServerEntry to a player ||
+|| [doAllSetTurn] || Call to set next player's turn ||
+|| [doAllStoreState] || Call it to store/update/delete your match state unanimously ||
+|| [doAllEndMatch] || Call it to end the match ||
 || [doAllFoundHacker] || Call when one of the users has detected a hacker ||
-|| [gotCustomInfo] || Called to pass custom info, e.g., url of a logo for branding your game, seconds per turn etc. ||
-|| [doStoreState gotStateChanged] || Called when a user changed the match state ||
-|| [doAllRequestStateCalculation gotRequestStateCalculation] || Called when users request `doAllRequestStateCalculation`||
-|| [gotKeyboardEvent] || Called to pass keyboard down events (see KeyboardEvent) ||
+|| [gotCustomInfo] || Called to pass custom info, e.g., url of a logo for branding your game, seconds per turn, etc. ||
+|| [doStoreState gotStateChanged] || Called after the match state changed  ||
+|| [doAllRequestStateCalculation gotRequestStateCalculation] || Called on the calculators after all players requested `doAllRequestStateCalculation`||
+|| [gotKeyboardEvent] || Called to pass keyboard events (see KeyboardEvent) ||
 || [gotMatchEnded] || Called when the match is over ||
 || [gotMatchStarted] || Called when a match starts ||
 || [gotMyUserId] || Called to pass your userId ||
-|| [gotUserInfo gotUserDisconnected] || Called to inform that the user disconnected ||
+|| [gotUserInfo gotUserDisconnected] || Called to inform that a user disconnected ||
 || [gotUserInfo] || Called to pass user specific info, e.g., user name or avatar ||
 
 
@@ -103,14 +102,10 @@ The set of connected users is partitioned into players and viewers.
 New players cannot join an existing match; players may only leave the match (either by disconnecting or losing/winning the match).
 When a player leaves the match (e.g., by winning or choosing to lose) he becomes a viewer.
 
-Viewers should call the `doAll*` operations along with all the players.
+Viewers may call the `doAll*` operations along with all the players.
 
+In a future version of the API, we plan to add the ability to add new players to an ongoing match.
 
-=== Serialization ===
-This remark is relevant to functions with parameters of type `Object` or `Array/*Object*/`.
-Objects are serialized when sent to the server, and therefore must contain only standard types: `Array`, `int`, `Number` (double-precision), `Boolean`, or `String`.
-Important note: an `Array` may not contain anything except the above standard types.
-You may not pass any other classes.
 
 === Harming the server ===
 Come2Play have several mechanisms to protect its servers from bad game developers:
@@ -135,5 +130,4 @@ A saved match contains the following information:
   * ids of current players and the ids of players that already ended the match
 
 Note that the following is not saved and should be restarted after the match is loaded:
-  * Who has the current turn,
-  * The timers.
+  * who has the current turn.

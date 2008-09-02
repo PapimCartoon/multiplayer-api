@@ -85,7 +85,7 @@ i.e., there is a player that hasn�t finished playing.
 || [doStoreState gotStateChanged] || Called when a user changed the match state ||
 || [doAllRequestStateCalculation gotRequestStateCalculation] || Called when users request `doAllRequestStateCalculation`||
 || [gotKeyboardEvent] || Called to pass keyboard down events (see KeyboardEvent) ||
-|| [doAllEndMatch] || Called when the match is over ||
+|| [gotMatchEnded] || Called when the match is over ||
 || [gotMatchStarted] || Called when a match starts ||
 || [gotMyUserId] || Called to pass your userId ||
 || [gotUserInfo gotUserDisconnected] || Called to inform that the user disconnected ||

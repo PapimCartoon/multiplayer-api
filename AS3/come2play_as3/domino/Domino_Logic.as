@@ -15,6 +15,7 @@ package come2play_as3.domino
 		//graphic related
 		private var leftArrow:LeftArrow;
 		private var rightArrow:RightArrow;
+		private var noMovesBox:NoMovesBox;
 		private var graphics:MovieClip;
 		
 		private var dominoAmount:int;// how many dominoes are avaible in the game
@@ -39,6 +40,8 @@ package come2play_as3.domino
 			this.domino_MainPointer = domino_MainPointer;
 			rightArrow = new RightArrow();
 			leftArrow = new LeftArrow();
+			noMovesBox = new NoMovesBox();
+			noMovesBox.confirm_btn.addEventListener(MouseEvent.CLICK,noMovesConfirmed);
 			rightArrow.addEventListener(MouseEvent.CLICK,doRight);
 			leftArrow.addEventListener(MouseEvent.CLICK,doLeft);
 		}
@@ -51,15 +54,13 @@ package come2play_as3.domino
 					return;
 				removeArrows()				
 				currentDominoMove = dominoes[dominoNum];
-				var rightDomino:DominoObject = dominoBoard.right();
-				var leftDomino:DominoObject = dominoBoard.left();
-				if((rightDomino.right == currentDominoMove.upperNum) || (rightDomino.right == currentDominoMove.lowerNum))
+				if((dominoBoard.right == currentDominoMove.upperNum) || (dominoBoard.right == currentDominoMove.lowerNum))
 				{
 					rightArrow.x = 35+ dominoNum*30
 					rightArrow.y = 240
 					graphics.addChild(rightArrow);
 				}
-				if((leftDomino.left == currentDominoMove.upperNum) || (leftDomino.left == currentDominoMove.lowerNum))
+				if((dominoBoard.left == currentDominoMove.upperNum) || (dominoBoard.left == currentDominoMove.lowerNum))
 				{
 					leftArrow.x = dominoNum*30
 					leftArrow.y = 240
@@ -79,9 +80,9 @@ package come2play_as3.domino
 			var playerMove:PlayerMove = PlayerMove.create(currentDominoMove.key,isRight,currentDominoMove.dominoCube);
 			removeArrows();
 			if(isRight)
-				dominoBoard.addToRight(currentDominoMove);
+				dominoBoard.addToRight(currentDominoMove.dominoCube);
 			else
-				dominoBoard.addToLeft(currentDominoMove);	
+				dominoBoard.addToLeft(currentDominoMove.dominoCube);	
 			for(var i:int = 0;i<dominoes.length;i++)
 			{
 				var tempDominoObject:DominoObject = dominoes[i];
@@ -98,6 +99,15 @@ package come2play_as3.domino
 		public function addPlayerDominoCube(playerMove:PlayerMove,playerId:int):void
 		{
 			domino_Graphic.addPlayerDominoCube(playerMove,playerId);
+			if(playerMove.isRight)
+				dominoBoard.addToRight(playerMove.dominoCube);
+			else
+				dominoBoard.addToLeft(playerMove.dominoCube);
+		}
+		private function noMovesConfirmed(ev:MouseEvent):void
+		{
+			graphics.removeChild(noMovesBox);
+			domino_MainPointer.noMoves();
 		}
 		private function doLeft(ev:MouseEvent):void
 		{
@@ -107,7 +117,7 @@ package come2play_as3.domino
 		{
 			makeMove(true);
 		}
-		private function findDominoes(rightSide:int,leftSide:int):Array/*int*/
+		private function findAvaibleMoves(rightSide:int,leftSide:int):Array/*int*/
 		{
 			var i:int;
 			var avaibleMoves:Array = new Array();
@@ -142,10 +152,17 @@ package come2play_as3.domino
 		public function allowTurn():void
 		{
 			isMyTurn = true;
-			var rightDomino:DominoObject = dominoBoard.right();
-			var leftDomino:DominoObject = dominoBoard.left();
-			avaibleDominoMoves = findDominoes(rightDomino.right,leftDomino.left);
+			avaibleDominoMoves = findAvaibleMoves(dominoBoard.right,dominoBoard.left);
+			if(avaibleDominoMoves.length == 0)
+				graphics.addChild(noMovesBox);
 			domino_Graphic.markCubes(avaibleDominoMoves);
+		}
+		public function nextDomino(revealToUser:int):RevealEntry
+		{
+			if(dominoAmount > currentDomino)
+				return RevealEntry.create("domino_"+(currentDomino++),[revealToUser],1);
+			else
+				return null;
 		}
 		
 		public function getCubesArray(cubeMaxValue:int):Array/*UserEntry*/
@@ -199,25 +216,38 @@ package come2play_as3.domino
 	
 }
 	import come2play_as3.domino.DominoObject;
+	import come2play_as3.domino.DominoCube;
 	
 
 class DominoBoard
 {
-	public var boardDominoes:Array = new Array/*DominoObject*/
-	private var endPos:int;
+	//public var boardDominoes:Array = new Array/*DominoObject*/
+	//private var endPos:int;
+	private var leftValue:int;
+	private var rightValue:int
+	private var middleDominoObject:DominoObject;
 	public function addToMiddle(dominoObject:DominoObject):void{
-		boardDominoes.push(dominoObject);
-		endPos = 0;
+		rightValue = dominoObject.right;
+		leftValue = dominoObject.left;
+		middleDominoObject = dominoObject;
+		//boardDominoes.push(dominoObject);
+		//endPos = 0;
 	}
-	public function addToLeft(dominoObject:DominoObject):void{
-		boardDominoes.unshift(dominoObject);
-		endPos++;
+	public function addToLeft(dominoCube:DominoCube):void{
+		if(leftValue == dominoCube.upperNum)
+			leftValue = dominoCube.lowerNum;
+		else
+			leftValue = dominoCube.upperNum;
+			trace("Left="+leftValue);
 	}
-	public function addToRight(dominoObject:DominoObject):void{
-		boardDominoes.push(dominoObject);
-		endPos++;
+	public function addToRight(dominoCube:DominoCube):void{
+		if(rightValue == dominoCube.upperNum)
+			rightValue = dominoCube.lowerNum;
+		else
+			rightValue = dominoCube.upperNum;
+			trace("Right="+rightValue);
 	}
-	public function left():DominoObject{return boardDominoes[0];}
-	public function right():DominoObject{return boardDominoes[endPos];}
-	public function middle():DominoObject{return boardDominoes[0];}
+	public function get left():int{return leftValue;}
+	public function get right():int{return rightValue;}
+	public function middle():DominoObject{return middleDominoObject;}
 }

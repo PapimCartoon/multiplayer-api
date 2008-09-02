@@ -16,7 +16,7 @@ To call the calculator all the game players have to call `doAllRequestStateCalcu
 `keys` -  an Array of keys previously stored in the game state which will used by the calculator.
 All keys in the Array sent to the calculator will automatically be public to him, as an impartial side in the game.
 
-After the calculations are done the calculator will store the calculations on the server in the game state, as either secret serverEntries or public ones.
+After the calculations are done the calculator will store the calculations on the server in the game state, as either secret `serverEntries` or public ones.
 
 
 {{{
@@ -24,8 +24,8 @@ GotRequestStateCalculation(serverEntries:Array/*ServerEntry*/)
 }}}
 
 This event is called on a user playing in another game room, which doesn't even know he was chosen as a calculator.
-The calculator gets the serverEntries with the corresponding keys to the ones the players sent.
-Essentially this is the function where you will decide what game calculation should be made on the serverEntries sent by the other players.
+The calculator gets the `serverEntries` with the corresponding keys to the ones the players sent.
+Essentially this is the function where you will decide what game calculation should be made on the `serverEntries` sent by the other players.
 
 
 {{{

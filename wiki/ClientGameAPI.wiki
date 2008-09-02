@@ -63,7 +63,7 @@ and callbacks are functions that the _container_ may call on your game.
 Your class may override some of the callbacks and respond appropriately to them; it is not mandatory to override _all_ the callbacks.
 
 You may call an operation (except `doRegisterOnServer` and `doTrace`) only when the game is in progress,
-i.e., there is a player that hasn?t finished playing.
+i.e., there is a player that hasn't finished playing.
 
 === High level description of the functions === 
 

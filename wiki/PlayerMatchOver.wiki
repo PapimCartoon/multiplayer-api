@@ -3,17 +3,17 @@
 {{{
 class PlayerMatchOver{ playerId:int, score:int, potPercentage:int}
 }}}
-_playerId_ - an id of a finishing player.
+*playerId* - an id of a finishing player.
 
 
-_score_ - determines the winners and losers in the match.
+*score* - determines the winners and losers in the match.
 
 The user with the highest score is the winner, and if all scores are identical than we have a tie.
 
 The rating of the players is affected by the relative differences in the scores.
 
 
-_potPercentage_ - determines how the stake (or betting pot) should be divided among the players,
+*potPercentage* - determines how the stake (or betting pot) should be divided among the players,
 
 And it is a number between -1 and 100.
 
@@ -22,7 +22,7 @@ If `potPercentage` is -1, then the player should get his stake back (e.g., if th
 Otherwise, `potPercentage` represents the percentage of the pot that the player should receive.
 
 
-_example_: 
+*example*: 
 Let's take a game with stakes of 100 credits,
 
 If the first player finishing  the game got potPercentage of 30,  he will receive  30 credits.

@@ -10,7 +10,7 @@ In [TableOfContent Multiplayer API] section we explained that the API is a bridg
 The game SWF is loaded by a _container_ that communicates with the _game_ using a LocalConnection. 
 There are two issues:
   * How to determine the channel name that the container and game should use, and
-  * What happens to objects of type `ServerEntry`, `UserEntry`, 'RevealEntry', and `PlayerMatchOver` when they are passed over a LocalConnection?
+  * What happens to objects of type [ServerEntry], [UserEntry], [RevealEntry], and [PlayerMatchOver] when they are passed over a LocalConnection?
 
 The later question:
 Each class that we would like to pass over the LocalConnection must:
@@ -18,7 +18,7 @@ Each class that we would like to pass over the LocalConnection must:
 # have a constructor without arguments
 # be a public class
 
-It is important that all of the above will be followed, or else the Class will not be transfered properly.
+It is important that all of the above will be followed, or else the Class will not be transferred properly.
 
 Good Example:
 

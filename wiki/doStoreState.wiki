@@ -33,7 +33,7 @@ Formally, the memory is a dictionary denoted `MATCH_STATE` that maps each `key` 
 {{{
 MATCH_STATE[key] = {storedByUserId:int, value:Object,authorizedUserIds:Array/*int*/}
 }}}
-`storedByUserId` - `storedByUserId`   may be -1 for [doAllShuffle], [doAllRequestStateCalculation] and [doAllStoreState] which are all functions that are not stored by the users playing the game.
+`storedByUserId` - `storedByUserId`   may be -1 for [doAllShuffleState], [doAllRequestStateCalculation] and [doAllStoreState] which are all functions that are not stored by the users playing the game.
 `value` - an arbitrary object.
 `authorizedUserIds` - used to show which users can view the value, null means everyone, blank Array means no one. 
 Users in `authorizedUserIds` will get the `value` when the server calls `gotStateChanged` 

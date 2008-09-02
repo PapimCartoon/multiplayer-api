@@ -1,9 +1,9 @@
-#summary Call it to reveal a secret entry to a player. 
+#summary Call it to reveal a secret entry to a player.
 
 {{{
 doAllRevealState(revealEntries:Array/*RevealEntry*/)
 }}}
 
-To reveal a secret `ServerEntry` to a user, all players must call `doAllRevealState` with the following parameters:
+To reveal a secret [ServerEntry] to a user, all players must call `doAllRevealState` with the following parameters:
 
-`revealEntries` - an Array of [RevealEntry] elements
+*revealEntries :* an Array of [RevealEntry] elements

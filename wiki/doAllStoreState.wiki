@@ -16,7 +16,7 @@ If one of the players claims the outcome is different than the other player/s, t
 
 The function receives the following parameter:
 
-`userEntries` -an Array of `UserEntry` elements.
+`userEntries` -an Array of [UserEntry] elements.
 
 Because this function essentially checks if the data that is stored is 100% true, by reviewing all the player entries and comparing them.
 Any state stored this way has a storedByUserId of -1.

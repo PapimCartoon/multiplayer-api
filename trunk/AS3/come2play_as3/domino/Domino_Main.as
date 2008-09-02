@@ -8,7 +8,7 @@ package come2play_as3.domino
 	
 	public class Domino_Main extends ClientGameAPI
 	{
-		private static var cubeMaxValue:int = 6;
+		private static var cubeMaxValue:int = 7;
 		private var currentTurn:int = 0;
 		
 		private var domino_Logic:Domino_Logic;
@@ -33,8 +33,19 @@ package come2play_as3.domino
 		public function sendPlayerMove(playerMove:PlayerMove):void
 		{
 			doStoreState([UserEntry.create("Move_"+playerMove.key,playerMove,false)])
+			currentTurn ++;
+			doAllSetTurn(getTurnOf(),-1);
 		}
-		
+		public function noMoves():void
+		{
+			doStoreState([UserEntry.create("player_"+myUserId,NoMoves.create(myUserId),false)]);
+			var userEntry:RevealEntry = domino_Logic.nextDomino(myUserId);
+			if(userEntry != null)
+				doAllRevealState([userEntry]);
+			currentTurn ++;
+			doAllSetTurn(getTurnOf(),-1);
+			
+		}
 		//override functions
 		
 		override public function gotCustomInfo(infoEntries:Array):void
@@ -85,11 +96,31 @@ package come2play_as3.domino
 			}
 			else if(serverEntry.value is PlayerMove)
 			{
-				if(getTurnOf() == myUserId) return;
+				if(serverEntry.storedByUserId == myUserId) return;
 				if (serverEntry.storedByUserId != getTurnOf()) doAllFoundHacker(serverEntry.storedByUserId,"the user tried to play in someone elses turn");
-				var playerMove:PlayerMove = SerializableClass.deserialize(serverEntry.value) as PlayerMove;
+				var playerMove:PlayerMove = serverEntry.value as PlayerMove;
 				domino_Logic.addPlayerDominoCube(playerMove,getTurnOf());
+				//todo: test if domino is correct
 				currentTurn ++;
+				doAllSetTurn(getTurnOf(),-1);
+				if(myUserId == getTurnOf())
+				{
+					domino_Logic.allowTurn();
+				}
+			}
+			else if(serverEntry.value is NoMoves)
+			{
+				if(serverEntry.storedByUserId == myUserId) return;
+				var noMoves:NoMoves = serverEntry.value as NoMoves;
+				var userEntry:RevealEntry = domino_Logic.nextDomino(noMoves.userId);
+				if(userEntry != null)
+					doAllRevealState([userEntry]);
+				currentTurn ++;
+				doAllSetTurn(getTurnOf(),-1);
+				if(myUserId == getTurnOf())
+				{
+					domino_Logic.allowTurn();
+				}
 			}
 				
 		}

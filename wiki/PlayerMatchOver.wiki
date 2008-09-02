@@ -13,6 +13,6 @@ If `potPercentage` is -1, then the player should get his stake back (e.g., if th
 Otherwise, `potPercentage` represents the percentage of the pot that the player should receive.
 
 For example: 
-Let’s take a game with stakes of 100 credits,
+Let's take a game with stakes of 100 credits,
 If the first player finishing  the game got potPercentage of 30,  he will receive  30 credits.
 The second player finishing will receive a relative pot Percentage, meaning that if his potPercentage is 30 as well he will only get 21 credits.

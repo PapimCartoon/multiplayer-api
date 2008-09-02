@@ -5,4 +5,5 @@ class InfoEntry{key:String, value:Object}
 }}}
 
 `key` - the key name of the `InfoEntry`, such as `logo_swf_full_url`.
+
 `value` - the value of the `InfoEntry`,such as the full url of the logo in th case of `logo_swf_full_url`.

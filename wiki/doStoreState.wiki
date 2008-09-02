@@ -25,7 +25,7 @@ The reason is that a viewer may replace another player
 In such a case, the server will reuse the same userId for the viewer, and it will call [gotUserInfo] with the viewer information.
 
 To call a `doStoreState` function, you must send her the following parameter:
-`userEntries` - an Array of `UserEntry` elements
+`userEntries` - an Array of [UserEntry] elements
 
 The server maintains a memory, that is a mapping from keys to values, in addition to some extra information for each key (such as storedByUserId, authorizedUserIds, and changedTimeInMilliSeconds).
 
@@ -43,7 +43,7 @@ Next we will explain what the server does for each operation.
 
 {{{
 doStoreState(userEntries:Array/*UserEntry*/)
-DOES ON EACH ` UserEntry` IN ` userEntries`:
+DOES ON EACH [UserEntry] IN ` userEntries`:
 MATCH_STATE[entry.key] = {myUserId,  entry.value,   entry.isSecret,  entry.isSecret ? [myUserId] : [] }
 }}}
 

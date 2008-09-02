@@ -35,6 +35,21 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 			}
 			allOperationsWithParameters.push(methodName+"("+args.join(", ")+")");
 		}
+		
+		// write about our classes that are used in do* operations: 
+		allOperationsWithParameters.push("");
+		var classPrefix:String = "{'"+
+			SerializableClass.CLASS_NAME_FIELD+"': '"+SerializableClass.REPLACE_TO+
+				".auto_generated"+(AS3_vs_AS2.isAS3 ? "::" : ".");
+		allOperationsWithParameters.push(
+			classPrefix+"PlayerMatchOver', 'playerId': int, 'score': int, 'potPercentage': int}");
+		allOperationsWithParameters.push(
+			classPrefix+"RevealEntry', 'key': String, 'userIds': int[], 'depth': int}");
+		allOperationsWithParameters.push(
+			classPrefix+"UserEntry', 'key': String, 'value': *, 'isSecret': boolean}");
+
+		allOperationsWithParameters.push("\nExamples:\n");
+		allOperationsWithParameters.push("doStoreState([{'__CLASS_NAME__':'COME2PLAY_PACKAGE.auto_generated::UserEntry', 'key': 'String', 'value': 'value', 'isSecret': false}])");
 		exampleOperationsText.text = allOperationsWithParameters.join("\n");
 		
 		if (shouldTestPassNumbers) {	
@@ -85,10 +100,11 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 	private function dispatchOperation():Void {
 		try {
 			var inputStr:String = operationInput.text;
+			inputStr = StaticFunctions.trim(inputStr);			
 			if (inputStr=='') return;
-			var firstParen:Number = inputStr./*String*/indexOf("(");
+			var firstParen:Number = AS3_vs_AS2.stringIndexOf(inputStr,"(");
 			if (firstParen==-1) return;
-			var lastParen:Number = inputStr./*String*/lastIndexOf(")");
+			var lastParen:Number = AS3_vs_AS2.stringLastIndexOf(inputStr, ")");
 			if (lastParen==-1) return;			
 			var methodName:String = inputStr.substr(0,firstParen);
 			var params:String = inputStr.substring(firstParen+1, lastParen);
@@ -105,11 +121,13 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 		}
 	}
     /*override*/ public function sendMessage(msg:API_Message):Void {
-		storeTrace(msg.getMethodName(), msg.getParametersAsString());
+		if (!(msg instanceof API_DoFinishedCallback)) 
+			storeTrace(msg.getMethodName(), msg.getParametersAsString());
 		super.sendMessage(msg);
 	}
 	/*override*/ public function gotMessage(msg:API_Message):Void {
-		storeTrace(msg.getMethodName(), msg.getParametersAsString());
+		if (!(msg instanceof API_GotKeyboardEvent)) 
+			storeTrace(msg.getMethodName(), msg.getParametersAsString());
 		super.gotMessage(msg);		
 	}
 }

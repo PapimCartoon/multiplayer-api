@@ -39,29 +39,32 @@ public final class StaticFunctions
 		if (!val) throwError("An assertion failed with the following arguments="+JSON.stringify(args));
 	}
 	
+	public static function isEmptyChar(str:String):Boolean {
+		return str==" " || str=="\n" || str=="\t" || str=="\r"; //String.fromCharCode(10)
+	}
 	public static function trim(str:String):String {
 	   var j:int, strlen:int, k:int;
 	   strlen = str.length
 	   j = 0;
-	   while (str.charAt(j) == " ") {
-		  j++
-	   } 
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	   while (isEmptyChar(str.charAt(j))) {
+		  j++
+	   } 
 	   if(j>0) {
 		  str = str.substring(j)
 		  if(j == strlen) return str;
 	   }
 	   k = str.length - 1;
-	   while(str.charAt(k) == " ") {
+	   while(isEmptyChar(str.charAt(k))) {
 		  k--;
-	   }
-	   return str.substring(0,k+1);
-	}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	   }
+	   return str.substring(0,k+1);
+	}
 	
 	// e.g., random(0,2) returns either 0 or 1
 	public static function random(fromInclusive:int, toExclusive:int):int {
@@ -69,12 +72,12 @@ public final class StaticFunctions
 		return Math.floor( delta * Math.random() ) + fromInclusive;
 	}
 	public static function startsWith(str:String, start:String):Boolean {
-		return str.substr(0, start.length)==start;
-	}
-	public static function endsWith(str:String, suffix:String):Boolean {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		return str.substr(0, start.length)==start;
+	}
+	public static function endsWith(str:String, suffix:String):Boolean {
 		return str.substr(str.length-suffix.length, suffix.length)==suffix;
 	}
 	
@@ -82,12 +85,12 @@ public final class StaticFunctions
 	public static function performReflectionFromFlashVars(_someMovieClip:MovieClip):void {		
 		var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(_someMovieClip);
 		for (var key:String in parameters) {
-			if (startsWith(key,REFLECTION_PREFIX))
-				performReflection(parameters[key]);				
-		}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			if (startsWith(key,REFLECTION_PREFIX))
+				performReflection(parameters[key]);				
+		}
 	}
 	public static function performReflection(reflStr:String):void {
 		var eqIndex:int = AS3_vs_AS2.stringIndexOf(reflStr,"=");
@@ -95,12 +98,12 @@ public final class StaticFunctions
 		var before:String = reflStr.substr(0, eqIndex);
 		var after:String = reflStr.substr(eqIndex+1);
 		var val_obj:Object = JSON.parse(after);
-		var dotIndex:int = AS3_vs_AS2.stringLastIndexOf(before,".");
-		var clzName:String = trim(before.substr(0, dotIndex));
-		var fieldName:String = trim(before.substr(dotIndex+1));
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		var dotIndex:int = AS3_vs_AS2.stringLastIndexOf(before,".");
+		var clzName:String = trim(before.substr(0, dotIndex));
+		var fieldName:String = trim(before.substr(dotIndex+1));
 		var ClassReference:Object = AS3_vs_AS2.getClassByName(clzName);
 		//trace("Setting field "+fieldName+" in class "+clzName+" to val="+val_obj); 
 		ClassReference[fieldName] = val_obj;		

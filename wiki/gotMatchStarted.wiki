@@ -8,20 +8,30 @@ gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, extra
 
 The parameters it gets are as follows:
 
-`allPlayerIds` - are the userId's of all the players.
-`finishedPlayerIds` -  are the userId's of those that already finished playing, `finishedPlayerIds` is always a subset of `allPlayerIds`.
+*allPlayerIds :* - are the userId's of all the players.
 
-For example, if a viewer connects after some players already disconnected, then the viewer will get in `finishedPlayerIds` the set of players that have already disconnected.
+*finishedPlayerIds :* -  are the userId's of those that already finished playing, `finishedPlayerIds` is always a subset of `allPlayerIds`.
+
+
+For example, if a viewer connects after some players already disconnected,
+
+then the viewer will get in `finishedPlayerIds` the set of players that have already disconnected.
+
 Same thing happens if the players load a saved match which was saved after some players disconnected.
+
 See example in [gotUserInfo].
 
 If the match is saved and then loaded, the value of `matchStartedTime` will be the same.
 
 If your game has different variants, you may use `extraMatchInfo` to pass your game extra parameters.
+
 E.g., in the game of Go it can contain: the size of the board (9x9, 13x13, or 19x19), the komi, etc.
+
 In the game of Puzzle it can be the picture domain (animal pictures, travel pictures, etc).
+
 This mechanism is useful if you want to develop many variants of the same game.
 With a single SWF you can create many game variants (by choosing different `extraMatchInfo` for each game variant).
+
 The `extraMatchInfo` will be entered when you submit the game online, or in the emulator when you start a new match.
 
 `serverEntries` is either an empty array (of length 0) if the players started a new game, or it is a loaded game with the match state that the players stored by calling [doStoreState].

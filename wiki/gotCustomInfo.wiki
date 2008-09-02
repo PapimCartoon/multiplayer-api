@@ -8,7 +8,7 @@ gotCustomInfo(infoEntries:Array/*InfoEntry*/)
 
 It gets the following parameter:
 
-`infoEntries` - an Array of `InfoEntry` elements. 
+`infoEntries` - an Array of [InfoEntry] elements. 
 
 These are the keys that are currently supported:
 
@@ -24,5 +24,5 @@ These are the keys that are currently supported:
   logoMovieClip._yscale = 40;
   }}}
   
-2. `seconds_per_move` - `seconds_per_move` holds the amount of second’s allotted to each move in the game in games where [doAllSetTurn] `milliSecondsInTurn` is set to -1  
+2. `seconds_per_move` - `seconds_per_move` holds the amount of second's allotted to each move in the game in games where [doAllSetTurn] `milliSecondsInTurn` is set to -1  
 3. `seconds_per_match` - `seconds_per_match` holds the amount of seconds allotted to the entire game

@@ -5,11 +5,13 @@ class PlayerMatchOver{ playerId:int, score:int, potPercentage:int}
 }}}
 ` playerId ` - an id of a finishing player.
 
+
 ` score ` - determines the winners and losers in the match.
 
 The user with the highest score is the winner, and if all scores are identical than we have a tie.
 
 The rating of the players is affected by the relative differences in the scores.
+
 
 ` potPercentage ` - determines how the stake (or betting pot) should be divided among the players,
 

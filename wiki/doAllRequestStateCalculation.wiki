@@ -8,7 +8,7 @@ In game development there are many games which need secret game calculations; un
 Take mine sweeper for example , the game cannot simply be shuffled because whenever you press a brick without a mine you should get an indication of how many mines are around the brick,
 On the other hand the game cannot be calculated by one of the players because we must assume one of the players can be a hacker and might retrieve the data and have the entire calculated game board at his disposal.
 Therefore we must choose a third party outside the game to make the calculations for us.
- This third party will be called a calculator.
+This third party will be called a calculator.
 
 Calculator - a calculator is a different user playing in another game room which will do the calculations for both players to keep them secret.
 
@@ -36,4 +36,4 @@ When the calculator is finished with the data calculations he was given, he cann
 Therefore the calculator will use a special function called `doAllStoreStateCalculation` which acts similarly to the [doAllStoreState] function, only instead of saving the game data into the calculator server state, the calculator saves it into the game state of players which called the `doAllRequestStateCalculation`.
 
 `doAllRequestStateCalculation` should be called with the following parameter:
- userEntries – an Array of `UserEntry`
+ userEntries - an Array of [UserEntry]

@@ -5,21 +5,29 @@ doAllFoundHacker(userId:int, errorDescription:String)
 }}}
 
 In [ClientGameAPI] all the logic is on the client side,
+
 Therefore the players themselves should check that the other players make only legal moves.
 
 Both players and viewers should call `doAllFoundHacker` in case of a protocol error.
 
 Consider a game with two players: X and Y.
+
 Suppose that player Y stored an illegal match state.
+
 Then player X should call `doAllFoundHacker(Y,description)`.
+
 The server will randomly pick a jury that will judge whether
 Player X or player Y is the hacker.
 
 The jury is a set of users that are playing in another game.
+
 The server will pass to the jury the match state, and then the final message that caused player X to call `doAllFoundHacker`.
+
 If all members of the jury called `doAllFoundHacker`,
+
 Then the server decides that player Y is a hacker.
-If no member of the jury called `doAllFoundHacker`
-Then the server decides that player X is a hacker (that falsely reported on player Y).
+
+If no member of the jury called `doAllFoundHacker` Then the server decides that player X is a hacker (that falsely reported on player Y).
+
 If the jury is in disagreement, then this is a bug of the game developer,
 And the game is canceled.

@@ -4,16 +4,12 @@
 doAllShuffleState(keys:Array/*String*/)
 }}}
 
-Some of the games developed need to have the ability to shuffle values,games such as
-poker,domino,puzzles and many many more.
+Some games that are developed need to have the ability to shuffle values.
+ Games such as:  Poker, Domino, Hearts, The Clue, puzzles and many more.
 
-to do a shuffle you must call `doAllShuffleState` which will shuffles certein ServerEntries between themselves
-for example: one player stores all the cards needed for a game on the server,each card in a diffrent `ServerEntry`
-and then all the users call `doAllShuffleState` on the keys of the ServerEntries with the cards.
+To do a shuffle you must call `doAllShuffleState` which will shuffles certain serverEntries between themselves.
+For example: all players store the cards needed for a game of Poker using a [doAllStoreState] on the server, each card in a different `ServerEntry`, and then all the users call `doAllShuffleState` on the keys of the serverEntries with the cards, the `doAllShuffleState` function will shuffle the cards between themselves and turn the server entries that were stored and shuffled by the users into secret ones.
 
-this function recives the following parameter
-
-- `keys` - an Array of keys already stored on the server.
-
-after the shuffle all the ServerEntires shuffled will become secret to everyone
-and the storedByUserId of all the serverEntries will be set to -1,to reflect the fact that they were indeed shuffled by the server.
+This function receives the following parameter:
+ `keys` - an Array of keys already stored on the server.
+After the shuffle all the serverEntires shuffled will become secret to everyone, and the storedByUserId of all the serverEntries will be set to -1, to reflect the fact that they were indeed shuffled by the server.

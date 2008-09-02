@@ -1,6 +1,6 @@
 #summary Call it to store traces to help you debug your application in the emulator and online
 
-DoTrace(name:String, message:Object/*Serializable*/)
+doTrace(name:String, message:Object/*Serializable*/)
 
-Used to store traces to help debug the game.
-Note that in the online version, we store only the last 100 traces (and discard old traces).
+Used to store traces to help debug the game. 
+Note that in the online version, we store only store the last 100 traces (and discard old traces).

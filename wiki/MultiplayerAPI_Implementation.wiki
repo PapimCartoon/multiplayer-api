@@ -1,26 +1,24 @@
 #summary The Multiplayer API implementation details using LocalConnection (the protocol between the game and the container).
 
-We use LocalConnection to pass commands, therefore, there is a 40K limit on arguments to these methods.
+We use LocalConnection to pass commands; therefore, there is a 40K limit on arguments to these methods.
 
 
 `doFinishedCallback` is called by the game after every time the container calls some callback `got*`.
 
 
 In [TableOfContent Multiplayer API] section we explained that the API is a bridge between the _game_ (written by game developers) and the _container_ (written by the website hosting the game).
-The game SWF is loaded by a _container_ that communicates with the _game_ 
-using a LocalConnection. 
+The game SWF is loaded by a _container_ that communicates with the _game_ using a LocalConnection. 
 There are two issues:
-  * how to determine the channel name that the container and game should use, and
-  * what happens to objects of type `ServerEntry`, `UserEntry`, 'RevealEntry', and `PlayerMatchOver` when they are passed over a LocalConnection?
+  * How to determine the channel name that the container and game should use, and
+  * What happens to objects of type `ServerEntry`, `UserEntry`, 'RevealEntry', and `PlayerMatchOver` when they are passed over a LocalConnection?
 
 The later question:
-each class that we would like to pass over the LocalConnection must:
-#be a Subclasses of SerializableClass
-#have a constructor without arguments
-#be a public class
+Each class that we would like to pass over the LocalConnection must:
+# be a Subclasses of SerializableClass
+# have a constructor without arguments
+# be a public class
 
-it is important that all of the above will be followed, or else
-none of the Classes will be transfered properly.
+It is important that all of the above will be followed, or else the Class will not be transfered properly.
 
 Good Example:
 
@@ -80,32 +78,24 @@ package somePackage {
  
 Explanation on why private classes cannot be serialized:
 Only public should inherit from SerializableClass.
-If the class is not public,
-then flash chooses some random name for its package.
-For example, in the BAD code above,
-the qualified name of PrivateClass will be:
- PublicClass.as$54::PrivateClass
-And this number may change, if you recompile a slightly modified code.
+If the class is not public, then flash chooses some random name for its package.
+For example, in the BAD code above, the qualified name of PrivateClass will be:
+ PublicClass.as$54::PrivateClass.
+This number may change, if you recompile a slightly modified code.
  
 Explanation on the implementation of serialization:
 
-- When an object is sent over a LocalConnection,
-flash removes all type-information and turns that object into
-a primitive object (that has only primitive types, Array and Object fields).
+- When an object is sent over a LocalConnection, flash removes all type-information and turns that object into a primitive object (that has only primitive types, Array and Object fields).
 
-- When class A inherits from SerializableClass,
-it gets the field __CLASS_NAME__, which is set in the constructor.
+- When class  inherits from SerializableClass, it gets the field __CLASS_NAME__, which is set in the constructor.
 
-- When you deserialize an object, a new instance of the correct class
-is created (that is why you must have an empty constructor),
-and then we traverse and the object and set all the fields.
-Note that  deserialize(object)  modifies the object.
+- When you deserialize an object, a new instance of the correct class is created (that is why you must have an empty constructor), and then we traverse and the object and set all the fields.
+Note that deserialize(object) modifies the object.
  
 
 The former question:
-To make sure the container and game use the same LocalConnection channel, we use a flashvar parameter called `prefix`
-to determine the channel name.
-There is one channel for `do` operations, and another for `got_` callbacks:
+To make sure the container and game use the same LocalConnection channel, we use a flashvar parameter called `prefix` , to determine the channel name.
+There is one channel for `do` operations, and another for `got` callbacks:
 {{{
 "DO_CHANEL_" + prefix
 "GOT_CHANEL_" + prefix

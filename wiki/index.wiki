@@ -9,7 +9,7 @@ The _game_ and _container_ communicate using a LocalConnection, and thus each ca
 
 How to use this project:
   * Read the wiki pages, start in the [TableOfContent Table Of Contents] 
-  * checkout the latest version of the emulator from the [http://multiplayer-api.googlecode.com/svn/trunk SVN]. If you are not familiar with SVN, you can also 
+  * Checkout the latest version of the emulator from the [http://multiplayer-api.googlecode.com/svn/trunk SVN]. If you are not familiar with SVN, you can also 
 [http://code.google.com/p/multiplayer-api/downloads/list download] the emulator.
   * Look at the [http://code.google.com/p/multiplayer-api/issues/list issue tracker] to check for future releases, bugs, and requested features.
   * Mailing list: If you join, you will receive emails from codesite-noreply@google.com
@@ -26,14 +26,14 @@ How to use this project:
   * Become an API or Emulator developer, and help us add features to the emulator
 
 ==== How to work with the SVN: ====
-  * You should have a gmail account.
+  * You should have a Gmail account.
   * Install an SVN client on your computer (I recommend [http://tortoisesvn.tigris.org Tortoise SVN])
   * Find out what is your password [http://code.google.com/hosting/settings here] 
-  * Checkout the code from [https://multiplayer-api.googlecode.com/svn/trunk/] using your gmail account and the special password you got in the previous step.
-  * Before reporting a bug, make sure you UPDATE your SVN to the latest version.
+  * Checkout the code from [https://multiplayer-api.googlecode.com/svn/trunk/] using your Gmail account and the special password you got in the previous step.
+  * _Before_ reporting a bug, make sure you UPDATE your SVN to the latest version.
 
 ==== License note: ==== 
 The API and Emulator are open source, and anyone can use, modify, or distribute them, both in open source projects or in commercial projects. Phrased differently, you may develop commercial games using this API, or develop a commercial container for API games; you do not even have to mention you are using this open source API.
 
 The API is open source, and we hope that many companies will endorse it, and game developers will have many places to submit their multiplayer games.
-[Come2Play] is a company that started this Multiplayer API project, and it opened-sourced its documentation and Emulator. 
+[Come2Play] is a company that started this Multiplayer API project and it opened-sourced its documentation and Emulator.

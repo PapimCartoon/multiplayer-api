@@ -1,16 +1,13 @@
 #summary Table of contents: Multiplayer API, emulator, and tutorials
 
 This wiki contains documentation about the Multiplayer API, the emulator, and tutorials for creating multiplayer games in flash.
-This project main target audience is game developers that wish to create new multiplayer flash games, 
-or to convert single-player flash games to multiplayer.
-Make sure you read the [index] page that contains general info, target audience, mailing lists, licensing comments, 
+This project main target audience is game developers that wish to create new multiplayer flash games, or to convert single-player flash games to multiplayer.
+Make sure you read the [index] page that contains general info, target audience, mailing lists and licensing comments.
 
 = Multiplayer API =
 The Multiplayer API is a set of APIs to develop multiplayer flash games.
-Each API is a set of functions in actionscript (AS) that communicate using LocalConnection 
-with a container that should communicate these operations to a multiplayer server. 
-The resulting game is a SWF file, written either in actionscript2 (AS2) or actionscript3 (AS3), 
-published for flash version 8 or higher.
+Each API is a set of functions in actionscript (AS) that communicate using LocalConnection with a container that should communicate these operations to a multiplayer server. 
+The resulting game is a SWF file, written either in actionscript2 (AS2) or actionscript3 (AS3),  published for flash version 8 or higher.
 
 
 === Multiplayer APIs ===
@@ -18,42 +15,35 @@ The Multiplayer API is composed of 2 APIs:
   * [ClientGameAPI] - for developing multiplayer games.
   * [ConnectedGameAPI] - for converting single-player games to multiplayer.
 
-You should write a class that extends one of the above APIs,
-and when your SWF is loaded, it should create one instance of that class.
+You should write a class that extends one of the above APIs, and when your SWF is loaded, it should create one instance of that class.
 
 [MultiplayerAPI_Implementation The Multiplayer API Implementation] describes the internal implementation that uses LocalConnection. 
 The implementation details should not concern game developers, but they are important for websites hosting the games.
 
 You may either test the games in the [Emulator], or submit your game online to a gaming website that supports this API. 
 One such website is [http://www.come2play.com Come2Play].
-Another distribution channel is Skype GameXN - in the near future we will write a container that translates 
-this Multiplayer API to Skype GameXN platform.
+Another distribution channel is Skype GameXN - in the near future we will write a container that translates this Multiplayer API to Skype GameXN platform.
 
 The current version of the [Emulator] does not support [ConnectedGameAPI].
 
 
 === AS2 vs AS3 ===
-Although AS2 and AS3 have major differences, we tried to abstract away these differences by hiding them behind a LocalConnection and 
-using almost identical signatures for the class ClientGameAPI.
-The only difference in the signatures between the AS2 and AS3 versions, 
-is that the type `Number` in AS2 was changed into `int` in AS3, 
-and `void` to `Void`.
+Although AS2 and AS3 have major differences, we tried to abstract away these differences by hiding them behind a LocalConnection and using almost identical signatures for the class ClientGameAPI.
+The only difference in the signatures between the AS2 and AS3 versions, is that the type `Number` in AS2 was changed into `int` in AS3, and `void` to `Void`.
 The remainder of this wiki describes the AS3 version.
 We recommend using AS3 because it is more stable, fast, and easier to debug.
 
 === Debugging and error handling in AS3 ===
 In "Publish Setting" you should select the option "Permit debugging".
-This will include the line number of the error in the stacktraces, e.g.,
+This will include the line number of the error in the stacktraces, e.g.
 {{{
-	at MyAPI/sendDoOperation()[X:\Come2Play\API_GoogleCodeSVN\AS3\TestClientGameAPI\TestClientGameAPI.as:121]
+at MyAPI/sendDoOperation()[X:\Come2Play\API_GoogleCodeSVN\AS3\TestClientGameAPI\TestClientGameAPI.as:121]
 }}}
-Remember that the stack traces of an error are available only in the debugger version of the flash player (and not in the release version),
-see `Error.getStackTrace()`.
+Remember that the stack traces of an error are available only in the debugger version of the flash player (and not in the release version), see `Error.getStackTrace()`.
 Therefore you should run the emulator and do online testing using the [http://www.adobe.com/support/flashplayer/downloads.html Adobe Flash Player Debugger].
 
 === trace() function ===
-If your game is using the builtin `trace()` function, and you want to see the traces,
-then you should create a file `mm.cfg` in
+If your game is using the built-in `trace()` function, and you want to see the traces, then you should create a file `mm.cfg` in
 {{{
 C:\Documents and Settings\<USER_NAME>
 }}}
@@ -67,8 +57,7 @@ After creating this file, the traces should be written to
 C:\Documents and Settings\<USER_NAME>\Application Data\Macromedia\Flash Player\Logs\flashlog.txt
 }}}
 
-See http://livedocs.adobe.com/flex/3/html/help.html?content=logging_04.html#196092
-for more explanations.
+See http://livedocs.adobe.com/flex/3/html/help.html?content=logging_04.html#196092 for more explanations.
 
 
 === FPS ===
@@ -78,23 +67,20 @@ We recommend using less than 40 fps to avoid overloading slow computers.
 
 === obfuscate ===
 We suggest that you encrypt/obfuscate your code to make it difficult for users to crack or steal your code.
-There are many programs for that purpose, one of them is Amayeta (http://www.amayeta.com/). 
+There are many programs for that purpose; one of them is Amayeta (http://www.amayeta.com/). 
 
 === Keyboard and Mouse events===
 Note that the game and chat might be in the same chat window.
-If you listen to events like this:
-`Key.addListener` or `Mouse.addListener`
-then you will receive events even when the user is entering a chat line
-or scrolling in the user list.
-Therefore your game should be careful and not do irreversible actions based 
-on such actions that might be done in the chat area.
-In a future version we are planning to add functions that will pass keyboard and mouse events to the game via the LocalConnection.
+If you listen to MouseEvents:
+`Mouse.addListener` then you will receive events even when the user is scrolling in the user list.
+Therefore your game should be careful and not do irreversible actions based on such actions that might be done in the chat area.
+In a future version we are planning to add functions that will pass mouse events to the game via the LocalConnection.
 
 
 
 = Emulator =
 When developing your game, you should use the [Emulator].
-After you finished testing in the emulator, you may submit the game to any company that endorse this multiplayer API.
+After you finished testing in the emulator, you may submit the game to any company that endorses this multiplayer API.
 One such company is [http://www.come2play.com Come2Play].
 
 [Online_vs_Emulator Online testing vs the Emulator] discusses the differences you may find between the emulator and the online version, and common pitfalls.

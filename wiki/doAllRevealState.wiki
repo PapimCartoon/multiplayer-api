@@ -4,27 +4,6 @@
 doAllRevealState(revealEntries:Array/*RevealEntry*/)
 }}}
 
-To reveal a secret `ServerEntry` to a user, all players must call `doAllRevealState`  with the followin parameters:
+To reveal a secret `ServerEntry` to a user, all players must call `doAllRevealState` with the following parameters:
 
-
-
-`revealEntries` - an Array of RevealEntry elsements
-{{{
-class RevealEntry{var key:String, var userIds:Array/*int*/ = null, var depth:int = 1;}
-}}}
-`key` - the key of the `ServerEntry` to reveal
-`userIds` - an array of user ids to reveal the `ServerEntry` to
-`depth` - in case depth is greater then 1 the value of the revealed ServerState is counted as a pointer 
-to the next ServerEntry
-
-for example if you send doAllRevealState(RevealEntry.create("guess_7", null , 2))
-
-and the server has a `ServerEntry` with the key "guess_7"  with the value "Wrong_Guess" then
-instead of getting the `ServerEntry` with the key "guess_7"
-you will get a `ServerEntry` with the key "Wrong_Guess".
-
-the bigger the number in the depth the more times a pointer will be followed
-
-*a pointer `ServerEntry` value must be a String.
-
-the revealed ServerEntry array will be sent to all the users by a gotStateChangedEvent
+`revealEntries` - an Array of [RevealEntry] elements

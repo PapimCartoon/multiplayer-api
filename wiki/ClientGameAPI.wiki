@@ -23,7 +23,7 @@ class RevealEntry{var key:String, var userIds:Array/*int*/ = null, var depth:int
 }}}
 Operations are functions starting with `do`
 
-The Operations are devided into two groups as well:
+The Operations are divided into two groups as well:
 
 `do` operations which may be called by a single player
 {{{
@@ -64,7 +64,7 @@ and callbacks are functions that the _container_ may call on your game.
 Your class may override some of the callbacks and respond appropriately to them; it is not mandatory to override _all_ the callbacks.
 
 You may call an operation only when the game is in progress,
-i.e., there is a player that haven't finished playing.
+i.e., there is a player that hasn’t finished playing.
 
 === High level description of the functions === 
 
@@ -72,16 +72,16 @@ i.e., there is a player that haven't finished playing.
 || [doRegisterOnServer] || Call it after your _game_ finished loading ||
 || [doStoreState] || Call it to store/update/delete you match state ||
 || [doTrace] || Call it to store traces to help you debug your application in the emulator and online ||
-|| [doAllRequestRandomState] || Call to recive a randoom state ||
-|| [doAllShuffleState] || Call to shuffle a set of ServerEntries||
+|| [doAllRequestRandomState] || Call to receive a random state ||
+|| [doAllShuffleState] || Call to shuffle a set of serverEntries||
 || [doAllRequestStateCalculation] || Call to request secret calculations ||
 || [doAllRequestStateCalculation doAllStoreStateCalculation] || Call to store calculations made by the calculator ||
-|| [doAllRevealState] || Call to reveal a secret ServerEntry to a player ||
-|| [doAllSetTurn] || Call to set next palyer turn ||
+|| [doAllRevealState] || Call to reveal a secret `ServerEntry` to a player ||
+|| [doAllSetTurn] || Call to set next player turn ||
 || [doAllStoreState] || Call it to store/update/delete you match state unanimously ||
 || [doAllEndMatch] || Call it to end the match. The match will be over when all players called it ||
 || [doAllFoundHacker] || Call when one of the users has detected a hacker ||
-|| [gotCustomInfo] || Called to pass custom info, e.g., url of a logo for branding your game, seconde per turn etc. ||
+|| [gotCustomInfo] || Called to pass custom info, e.g., url of a logo for branding your game, seconds per turn etc. ||
 || [doStoreState gotStateChanged] || Called when a user changed the match state ||
 || [doAllRequestStateCalculation gotRequestStateCalculation] || Called when users request `doAllRequestStateCalculation`||
 || [gotKeyboardEvent] || Called to pass keyboard down events (see KeyboardEvent) ||
@@ -121,19 +121,19 @@ To avoid overloading the server, you can send at most 10 operations every second
 The message size should generally be smaller than 1KB (and must always be smaller than 10KB!).
 
 To avoid running out of memory on the server,
-and the total memory of the map is limited to 1MB.
+And the total memory of the map is limited to 1MB.
 The Come2Play platform tracks the maximum match state that your game uses,
-and automatically sends the game developer warning when the game is about to reach the maximum match state.
+And automatically sends the game developer warning when the game is about to reach the maximum match state.
 
 
 
 === Saved matches ===
 The users may agree to save their match, and may decide to load it later.
 A saved match contains the following information:
-  * the game name (in the emulator we use the SWF name as the identifier for the game)
+  * The game name (in the emulator we use the SWF name as the identifier for the game)
   * match state (user ids, keys, values)
   * ids of current players and the ids of players that already ended the match
 
 Note that the following is not saved and should be restarted after the match is loaded:
-  * who has the current turn,
-  * the timers.
+  * Who has the current turn,
+  * The timers.

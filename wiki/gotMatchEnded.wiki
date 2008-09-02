@@ -8,5 +8,5 @@ gotMatchEnded(finishedPlayerIds:Array/*int*/)
 Note that `finishedPlayerIds` may contain only a subset of the players (see the TicTacToe demo for such an example).
 
 `gotMatchEnded` may be called if:
-  * the player disconnected, choose to lose, agree with the players that he can quit the game, etc. 
+  * The player disconnected, choose to lose, agree with the players that he can quit the game, etc. 
   * All the players called [doAllEndMatch].

@@ -1,29 +1,22 @@
-#summary preform secret calculations
+#summary perform secret calculations
 
 {{{
 doAllRequestStateCalculation(keys:Array/*String*/)
 }}}
 
-In game development there are many games which need secret game calculations, 
-unlike checkers where all players can calculate if a move is legal,
-there are games where the game board should be secret,
-take mine sweeper for example ,
-the game cannot simply be shuffled because whenever you press a brick without a mine you should get an indication of how many mines are around,
-this data will not be created by a shuffle and none of the players can make this calculation because we must assume one of the players can be a hacker,
-which means he might retrieve the data and have the entire calculated game board in his hands.
-therefore we must choose a third party outside the game to make the calculations for us,
-this third party will be called a calculator.
-A calculator is a different user playing in another game room which will do the calculations
-for both players to keep them secret.
+In game development there are many games which need secret game calculations; unlike checkers where all players can calculate if a move is legal, there are games where the game board should be a secret one, and should only be revealed as the game progresses. 
+Take mine sweeper for example , the game cannot simply be shuffled because whenever you press a brick without a mine you should get an indication of how many mines are around the brick,
+On the other hand the game cannot be calculated by one of the players because we must assume one of the players can be a hacker and might retrieve the data and have the entire calculated game board at his disposal.
+Therefore we must choose a third party outside the game to make the calculations for us.
+ This third party will be called a calculator.
 
-to call the calculator all the player in the game need to call `doAllRequestStateCalculation` with the following parameters:
+Calculator - a calculator is a different user playing in another game room which will do the calculations for both players to keep them secret.
 
+To call the calculator all the game players have to call `doAllRequestStateCalculation` with the following parameters:
 `keys` -  an Array of keys previously stored in the game state which will used by the calculator.
+All keys in the Array sent to the calculator will automatically be public to him, as an impartial side in the game.
 
-all keys in the Array sent to the calculator will automatically be public to him, as an impartial side in the game.
-
-after the calculation is done the calculator will store the calculations on the server in the game state,
-as either secret ServerEntries or public ones.
+After the calculations are done the calculator will store the calculations on the server in the game state, as either secret serverEntries or public ones.
 
 
 {{{
@@ -31,13 +24,16 @@ GotRequestStateCalculation(serverEntries:Array/*ServerEntry*/)
 }}}
 
 This event is called on a user playing in another game room, which doesn't even know he was chosen as a calculator.
-the calculator gets the serverEntries with the corresponding keys to the ones the players sent.
+The calculator gets the serverEntries with the corresponding keys to the ones the players sent.
+Essentially this is the function where you will decide what game calculation should be made on the serverEntries sent by the other players.
 
 
 {{{
 doAllStoreStateCalculation(userEntries:Array/*UserEntry*/)
 }}}
 
-When the calculator finished with the data he was given,he stores a set of userEntries through A `doAllStoreStateCalculation`
-which acts just like the [doAllStoreState] function,only instead of saving the game data into his server state,he saves it into
-the game state of players which called the `doAllRequestStateCalculation`.
+When the calculator is finished with the data calculations he was given, he cannot simply use [doStoreState] to commit the calculations he has made,because he is not an active player/viewer in the game.
+Therefore the calculator will use a special function called `doAllStoreStateCalculation` which acts similarly to the [doAllStoreState] function, only instead of saving the game data into the calculator server state, the calculator saves it into the game state of players which called the `doAllRequestStateCalculation`.
+
+`doAllRequestStateCalculation` should be called with the following parameter:
+ userEntries – an Array of `UserEntry`

@@ -5,12 +5,6 @@ gotKeyboardEvent(isKeyDown:Boolean, charCode:int, keyCode:int, keyLocation:int, 
 }}}
 
 The container is in charge of capturing keyboard events and passing them to the game.
-The game should not listen to keyboard events directly, because
-the container may capture some of these events and the game should not respond to them.
-For example, if the container has a chat component, and the user is typing in the chat,
-then the game should not respond to those key strokes.
-However, in AS2 there is no way to selectively listen only to a key strokes within a certain movieclip,
-and even in AS3 it is complicated.
-
-Therefore the game should not listen to keyboard events directly,
-but instead override `gotKeyboardEvent` to know about key strokes.
+The game should not listen to keyboard events directly, because the container may capture some of these events and the game should not respond to them.
+For example, if the container has a chat component, and the user is typing in the chat, then the game should not respond to those key strokes.
+Therefore the game should not listen to keyboard events directly, but instead override `gotKeyboardEvent` to know about key strokes.

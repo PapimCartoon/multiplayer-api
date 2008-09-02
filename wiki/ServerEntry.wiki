@@ -1,3 +1,11 @@
-#summary ServerEntry
+#summary ServerEntry Class
 
+{{{
 class ServerEntry { var key:String, var value:Object, var storedByUserId:int, var authorizedUserIds:Array/*int*/, var changedTimeInMilliSeconds:int; }
+}}}
+` key ` - the name by which this `ServerEntry`  will be called
+` value ` - the value of this `ServerEntry` .
+` storedByUserId ` - the id of the user which stored this `ServerEntry`  .
+` authorizedUserIds ` - users which will recive the `ServerEntry`   `value` and not null, if  `authorizedUserIds ` is null all users will receive the value, if it’s an empty Array then none of the users will receive the value.
+` changedTimeInMilliSeconds ` - how much time has passed since the beginning of the game till this `ServerEntry`  was stored.
+

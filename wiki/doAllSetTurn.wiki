@@ -4,22 +4,44 @@
 doAllSetTurn(userId:int, milliSecondsInTurn:int)
 }}}
 
-Some of the games developed are turn-based, i.e., the game proceeds in turns where in each given moment only one player has the current turn. 
+Some of the games developed are turn-based, i.e.,
+
+the game proceeds in turns where in each given moment only one player has the current turn. 
+
 For example, Chess and Poker are turn-based games.
+
 In contrast, Soccer is a real-time game where both players send commands to the server simultaneously.
+
 Turn-based games may be played in turns using emails or other means.
-For example, in a game of Chess, one player may make a turn, and then the next player will get an email notification telling him he may make the next turn, and so forth.
+
+For example, in a game of Chess, one player may make a turn, 
+
+And then the next player will get an email notification telling him he may make the next turn, and so forth.
 
 The `doAllSetTurn` function is used to prevent stagnation.
-Stagnation is a situation where one player is cheating by deliberately not making a move, thus ruining the game for the rest of the players.
+
+Stagnation is a situation where one player is cheating by deliberately not making a move,
+
+thus ruining the game for the rest of the players.
+
 Essentially what the `doAllSetTurn` function does is to force a specific player or the entire game players to make a move.
+
 It achieves it by declaring a player which has not made a move after the specified time as a loser automatically.
 
-Important note:
+===Important note :===
 It is crucial to understand that a move does not have to be an active participation of the player.
-A move can also be a signal, which triggers a `doAllSetTurn` function by all the players, made by the game to show that the player isn't deliberately blocking communication.
+
+A move can also be a signal, which triggers a `doAllSetTurn` function by all the players,
+
+made by the game to show that the player isn't deliberately blocking communication.
 
 
 To call a `doAllSetTurn` function all players must call the function function with the following parameters:
-`userId` - is the user id of the next player, if the game has no current player but rather a timer for all players like a trivia game which gives everyone 10 seconds to answer the question then set `userId` as -1
-`milliSecondsInTurn` - milliseconds in turn of the next player turn, if the `milliSecondsInTurn` will be set as -1 the time for each turn length will be set from outside, for example a server can contain two instances of a Chess game one with a 1 minute turn length and the other with 10 minutes per turn.
+
+*userId :*  is the user id of the next player, if the game has no current player but rather a timer for all players like a trivia game which gives everyone 10 seconds to answer the question then set `userId` as -1.
+
+*milliSecondsInTurn :* milliseconds in turn of the next player turn, 
+
+if the `milliSecondsInTurn` will be set as -1 the time for each turn length will be set from outside,
+
+for example a server can contain two instances of a Chess game one with a 1 minute turn length and the other with 10 minutes per turn.

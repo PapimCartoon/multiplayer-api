@@ -4,19 +4,45 @@
 doAllStoreState(userEntries:Array/*UserEntry*/)
 }}}
 
-Use `doAllStoreState` the same way you use [doStoreState], only instead of one player
-Calling the function, all players must call the function with the same exact parameters.
+Use `doAllStoreState` the same way you use [doStoreState],
 
-This function is used to prevent hacking, every time you need to store a state which 
-Will give a unanimous answer, like the effect that one of the user moves has on the game, use `doAllStoreState` to make sure that all the players have the same data in their game, and that none of the players feeds false data to his game.
+only instead of one player Calling the function,
+
+all players must call the function with the same exact parameters.
+
+
+This function is used to prevent hacking,
+
+every time you need to store a state which will give a unanimous answer,
+
+like the effect that one of the user moves has on the game,
+
+use `doAllStoreState` to make sure that all the players have the same data in their game,
+
+and that none of the players feeds false data to his game.
+
 
 Use this function to store values you want the entire set of players to agree upon.
-For example one of the players threw a dart at a certain vector, first the player stores the values of his shot, and then all the players make the calculation, eventually they all call `doAllStoreState` and save the score of the shot.
-If one of the players claims the outcome is different than the other player/s, then the data will be sent to a jury which will decide whose cheating.
+
+For example one of the players threw a dart at a certain vector,
+
+first the player stores the values of his shot,
+
+and then all the players make the calculation,
+
+eventually they all call `doAllStoreState` and save the score of the shot.
+
+If one of the players claims the outcome is different than the other player/s,
+
+then the data will be sent to a jury which will decide whose cheating.
+
 
 The function receives the following parameter:
 
-`userEntries` -an Array of [UserEntry] elements.
+*userEntries :* an Array of [UserEntry] elements.
 
-Because this function essentially checks if the data that is stored is 100% true, by reviewing all the player entries and comparing them.
+Because this function essentially checks if the data that is stored is 100% true,
+
+by reviewing all the player entries and comparing them.
+
 Any state stored this way has a storedByUserId of -1.

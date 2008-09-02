@@ -23,11 +23,14 @@ public final class StaticFunctions
 		if (!val) throwError("An assertion failed with the following arguments="+JSON.stringify(args));
 	}
 	
+	public static function isEmptyChar(str:String):Boolean {
+		return str==" " || str=="\n" || str=="\t" || str=="\r"; //String.fromCharCode(10)
+	}
 	public static function trim(str:String):String {
 	   var j:int, strlen:int, k:int;
 	   strlen = str.length
 	   j = 0;
-	   while (str.charAt(j) == " ") {
+	   while (isEmptyChar(str.charAt(j))) {
 		  j++
 	   } 
 	   if(j>0) {
@@ -35,7 +38,7 @@ public final class StaticFunctions
 		  if(j == strlen) return str;
 	   }
 	   k = str.length - 1;
-	   while(str.charAt(k) == " ") {
+	   while(isEmptyChar(str.charAt(k))) {
 		  k--;
 	   }
 	   return str.substring(0,k+1);

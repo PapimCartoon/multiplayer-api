@@ -20,11 +20,14 @@ class come2play_as2.api.auto_copied.StaticFunctions
 		if (!val) throwError("An assertion failed with the following arguments="+JSON.stringify(args));
 	}
 	
+	public static function isEmptyChar(str:String):Boolean {
+		return str==" " || str=="\n" || str=="\t" || str=="\r"; //String.fromCharCode(10)
+	}
 	public static function trim(str:String):String {
 	   var j:Number, strlen:Number, k:Number;
 	   strlen = str.length
 	   j = 0;
-	   while (str.charAt(j) == " ") {
+	   while (isEmptyChar(str.charAt(j))) {
 		  j++
 	   } 
 	   if(j>0) {
@@ -32,7 +35,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 		  if(j == strlen) return str;
 	   }
 	   k = str.length - 1;
-	   while(str.charAt(k) == " ") {
+	   while(isEmptyChar(str.charAt(k))) {
 		  k--;
 	   }
 	   return str.substring(0,k+1);

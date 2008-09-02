@@ -36,4 +36,4 @@ When the calculator is finished with the data calculations he was given, he cann
 Therefore the calculator will use a special function called `doAllStoreStateCalculation` which acts similarly to the [doAllStoreState] function, only instead of saving the game data into the calculator server state, the calculator saves it into the game state of players which called the `doAllRequestStateCalculation`.
 
 `doAllRequestStateCalculation` should be called with the following parameter:
- userEntries - an Array of [UserEntry]
+userEntries - an Array of [UserEntry]

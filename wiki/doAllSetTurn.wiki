@@ -16,27 +16,8 @@ Turn-based games may be played in turns using emails or other means.
 
 The `doAllSetTurn` function is used to prevent stagnation, a situation where one player
 is cheating by deliberately not making a move , thus ruining the game for the rest of the players.
-if the milliSecondsInTurn has passed and the turn has not changed,
-the player which holds the current turn automatically loses.
 
-
-And then the next player will get an email notification telling him he may make the next turn, and so forth.
-
-`userId` - is the user id of the next player, 
-if the game has no current player but rather a timer for all players, then set `userId` to -1.
-For example, set `userId` to -1 in a trivia game which gives everyone 10 seconds to answer the question.
-
-
-`milliSecondsInTurn` - number of milli-seconds in the turn,
-if the `milliSecondsInTurn` will be -1 the time for each turn length will be set by the container.
-(It will be equal to `seconds_per_move` passed in [gotCustomInfo].)
-
-
-For example, a server can contain two instances of a chees game one with a 1 minute turn length
-and the other with 10 minutes per turn.
-
-
-Essentially what the `doAllSetTurn` function does is to force a specific player or the entire game players to make a move.
+Essentially what the function does is to force a specific player or the entire game players to make a move.
 
 It achieves it by declaring a player which has not made a move after the specified time as a loser automatically.
 
@@ -48,7 +29,7 @@ A move can also be a signal, which triggers a `doAllSetTurn` function by all the
 made by the game to show that the player isn't deliberately blocking communication.
 
 
-To call a `doAllSetTurn` function all players must call the function function with the following parameters:
+To call a `doAllSetTurn` function, all players must call the function with the following parameters:
 
 *userId :*  is the user id of the next player, if the game has no current player but rather a timer for all players like a trivia game which gives everyone 10 seconds to answer the question then set `userId` as -1.
 

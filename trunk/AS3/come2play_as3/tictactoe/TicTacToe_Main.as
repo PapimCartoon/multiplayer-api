@@ -1,4 +1,4 @@
-﻿package come2play_as3.tictactoe 
+package come2play_as3.tictactoe 
 {
 import come2play_as3.api.*;
 import come2play_as3.api.auto_copied.*;
@@ -137,7 +137,7 @@ public final class TicTacToe_Main extends ClientGameAPI {
 		// the moves are done in alternating turns: color 0, then color 1 (in a round robin)	
 		assert(serverEntries.length==1, ["there is one entry per move in TicTacToe"]);	
 		var entry:ServerEntry = serverEntries[0];
-		assert(entry.authorizedUserIds==null, ["All communication in TicTacToe is PUBLIC"]);
+		assert(entry.visibleToUserIds==null, ["All communication in TicTacToe is PUBLIC"]);
 		var userId:int = entry.storedByUserId;
 		if (userId==myUserId) return; // The player ignores his own stores, because he already updated the logic before he sent it to the server
 		var colorOfUser:int = getColor(userId);

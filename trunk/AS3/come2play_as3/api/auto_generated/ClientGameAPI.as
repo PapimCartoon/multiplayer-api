@@ -34,11 +34,12 @@ package come2play_as3.api.auto_generated {
 		
 		// if userId==-1, then nobody has the turn.
 		// if milliSecondsInTurn==-1 then the default time per turn is used,
-		// and if milliSecondsInTurn==0 then the user should do some actions immediately.
-		public function doAllSetTurn(userId:int, milliSecondsInTurn:int/*<InAS3>*/ = -1 /*</InAS3>*/):void { sendMessage( API_DoAllSetTurn.create(userId, milliSecondsInTurn) ); }
+		// and if milliSecondsInTurn==0 then the user should do some actions immediately, i.e., without GUI intervention.
+		// (The time given depends on the network delay).
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		public function doAllSetTurn(userId:int, milliSecondsInTurn:int/*<InAS3>*/ = -1 /*</InAS3>*/):void { sendMessage( API_DoAllSetTurn.create(userId, milliSecondsInTurn) ); }
 		
 		// if userId of RevealEntry is -1, then the entry becomes PUBLIC
 		public function doAllRevealState(revealEntries:Array/*RevealEntry*/):void { sendMessage( API_DoAllRevealState.create(revealEntries) ); }
@@ -48,10 +49,10 @@ package come2play_as3.api.auto_generated {
 		public function doAllRequestRandomState(key:String, isSecret:Boolean/*<InAS3>*/ = false /*</InAS3>*/):void { sendMessage( API_DoAllRequestRandomState.create(key, isSecret) ); }
 		
 		// if userId=-1, then it is a bug of the game developer
-		public function doAllFoundHacker(userId:int, errorDescription:String):void { sendMessage( API_DoAllFoundHacker.create(userId, errorDescription) ); }
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		public function doAllFoundHacker(userId:int, errorDescription:String):void { sendMessage( API_DoAllFoundHacker.create(userId, errorDescription) ); }
 		
 		// doAllRequestStateCalculation is usually used to do a calculation
 		// of an initial state that should be secret to all players.
@@ -61,10 +62,10 @@ package come2play_as3.api.auto_generated {
 		// All these calculators must do the exact same call to doAllStoreStateCalculation,
 		// i.e., the state calculation must be deterministic (you can use doAllRequestRandomState to create a hidden seed for the calculators).
 		// serverEntries are all public (because the calculators should see state that is secret to the users)
-		public function doAllRequestStateCalculation(keys:Array/*String*/):void { sendMessage( API_DoAllRequestStateCalculation.create(keys) ); }
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		public function doAllRequestStateCalculation(keys:Array/*String*/):void { sendMessage( API_DoAllRequestStateCalculation.create(keys) ); }
 		public function gotRequestStateCalculation(serverEntries:Array/*ServerEntry*/):void {}
 		public function doAllStoreStateCalculation(userEntries:Array/*UserEntry*/):void { sendMessage( API_DoAllStoreStateCalculation.create(userEntries) ); }
 		

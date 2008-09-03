@@ -106,7 +106,7 @@ package come2play_as3.pseudoCode
 	  			myEntry=myDominoDeck[i];
 	  			rivalEntry=rivalDominoDeck[i];
 	  			if( (myEntry.key != rivalEntry.key ) || 
-	  				(rivalEntry.authorizedUserIds == null) ||
+	  				(rivalEntry.visibleToUserIds == null) ||
 	  				(myEntry.value.upperNumber != rivalEntry.value.upperNumber ) ||
 	  				(myEntry.value.lowerNumber != rivalEntry.value.lowerNumber ) )
 	  				return false;
@@ -144,7 +144,7 @@ package come2play_as3.pseudoCode
 	    	{
 	    		if(entry.storedByUserId == -1)
 	    		{
-	    			if(entry.authorizedUserIds.length == 0)
+	    			if(entry.visibleToUserIds.length == 0)
 	    			{
 	    			//ignore the shuffled keys return
 	    			}
@@ -184,14 +184,14 @@ package come2play_as3.pseudoCode
 	    		for each(var serverEntry:ServerEntry in serverEntries)
 	    		{
 	    	  		require(serverEntry.storedByUserId == -1);
-	    	  		if(serverEntry.authorizedUserIds[0]==myUserId)
+	    	  		if(serverEntry.visibleToUserIds[0]==myUserId)
 	    	  		{
 	    	  			value = SerializableClass.deserialize(serverEntry.value)
 	    	  			//add Domino to your board graphically
 	    	  		}
 	    	  		else
 	    	  		{
-	    	  			//add hidden domino to serverEntry.authorizedUserIds[0] board
+	    	  			//add hidden domino to serverEntry.visibleToUserIds[0] board
 	    	  		}
 	    	  		cubesDrawn++;
 	    		}
@@ -201,7 +201,7 @@ package come2play_as3.pseudoCode
 	    	else if(value is GameMove)
 	    	{
 	    		var gameMove:GameMove = value as GameMove;
-	    		require(entry.authorizedUserIds == null);
+	    		require(entry.visibleToUserIds == null);
 	    		require(entry.key == getEntryKey());
 	    		require(entry.storedByUserId == getTurnOfId());
 	    		performMove(gameMove);

@@ -81,7 +81,7 @@ package come2play_as3.domino
 				{
 					if (serverEntry.value is DominoCube)
 					{
-						if(serverEntry.authorizedUserIds != null)
+						if(serverEntry.visibleToUserIds != null)
 							domino_Logic.addDominoCube(serverEntry.value as DominoCube,serverEntry.key);
 						else
 							domino_Logic.addDominoMiddle(serverEntry.value as DominoCube,serverEntry.key);

@@ -1,4 +1,4 @@
-﻿package emulator {
+package emulator {
 	import emulator.auto_copied.*;
 	import emulator.auto_generated.*;
 	
@@ -604,7 +604,7 @@
 						playerExist=true;
 				}
 				if(!playerExist)
-					serverEntry.authorizedUserIds.push(revealPlayer);
+					serverEntry.visibleToUserIds.push(revealPlayer);
 			}
 		}
 		private var isProcessingCallback:Boolean = false;
@@ -855,7 +855,7 @@
 			var userStateEntry:ServerEntry = userStateEntrys[index];
 			userStateEntry.key=newKey;
 			userStateEntry.storedByUserId = -1;
-			userStateEntry.authorizedUserIds=new Array();
+			userStateEntry.visibleToUserIds=new Array();
 			return userStateEntry;
 		}
 		//do all function's
@@ -951,7 +951,7 @@
 				tempServerEntry = new ServerEntry();
 				tempServerEntry.key =serverEntry.key; 
 				tempServerEntry.value = null;
-				tempServerEntry.authorizedUserIds = [];
+				tempServerEntry.visibleToUserIds = [];
 				tempServerEntry.storedByUserId = -1;
 				tempServerEntry.changedTimeInMilliSeconds = serverEntry.changedTimeInMilliSeconds;
 				serverEntries.push(tempServerEntry);
@@ -988,7 +988,7 @@
 						else
 						{
 							if(revealEntry.userIds == null)
-								serverEntry.authorizedUserIds = null;			
+								serverEntry.visibleToUserIds = null;			
 							else
 								revealEntryToPlayers(serverEntry,revealEntry);
 							serverEnries.push(serverEntry);
@@ -1002,14 +1002,14 @@
 				tempServerEnries = new Array();
 				for each(serverEntry in serverEnries)
 				{
-					if(serverEntry.authorizedUserIds == null)
+					if(serverEntry.visibleToUserIds == null)
 						tempServerEnries.push(serverEntry);
 					else
 					{
-						if(serverEntry.authorizedUserIds.indexOf(user.ID)!=-1)
+						if(serverEntry.visibleToUserIds.indexOf(user.ID)!=-1)
 							tempServerEnries.push(serverEntry);
 						else
-							tempServerEnries.push(ServerEntry.create(serverEntry.key,null,serverEntry.storedByUserId,serverEntry.authorizedUserIds,serverEntry.changedTimeInMilliSeconds));
+							tempServerEnries.push(ServerEntry.create(serverEntry.key,null,serverEntry.storedByUserId,serverEntry.visibleToUserIds,serverEntry.changedTimeInMilliSeconds));
 					}
 				}
 				user.sendOperation(API_GotStateChanged.create(tempServerEnries))
@@ -1110,12 +1110,12 @@
 			for each(var tempServerState:ServerEntry in userStateEntrys)
 			{
 				serverEntry=new ServerEntry();
-				if(tempServerState.authorizedUserIds==null)
+				if(tempServerState.visibleToUserIds==null)
 					serverEntry = ServerEntry.create(tempServerState.key,tempServerState.value,tempServerState.storedByUserId,null,tempServerState.changedTimeInMilliSeconds);
-				else if(isInArray(u.ID,tempServerState.authorizedUserIds))
-					serverEntry = ServerEntry.create(tempServerState.key,tempServerState.value,tempServerState.storedByUserId,tempServerState.authorizedUserIds,tempServerState.changedTimeInMilliSeconds);				
+				else if(isInArray(u.ID,tempServerState.visibleToUserIds))
+					serverEntry = ServerEntry.create(tempServerState.key,tempServerState.value,tempServerState.storedByUserId,tempServerState.visibleToUserIds,tempServerState.changedTimeInMilliSeconds);				
 				else
-					serverEntry = ServerEntry.create(tempServerState.key,null,tempServerState.storedByUserId,tempServerState.authorizedUserIds,tempServerState.changedTimeInMilliSeconds);
+					serverEntry = ServerEntry.create(tempServerState.key,null,tempServerState.storedByUserId,tempServerState.visibleToUserIds,tempServerState.changedTimeInMilliSeconds);
 				stateEntries.push(serverEntry);
 			}
 			u.sendOperation(API_GotMatchStarted.create(aPlayers,finished_player_ids,extra_match_info,match_started_time,stateEntries));			

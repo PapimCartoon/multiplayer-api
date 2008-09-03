@@ -29,7 +29,7 @@ package come2play_as3.pseudoCode
   		UserEntry2=arr2[i];
   		if((UserEntry1.key != UserEntry2.key ) || 
   		(UserEntry1.value.value != UserEntry2.value.value ) ||
-  		(UserEntry1.authorizedUserIds != UserEntry2.authorizedUserIds ) )
+  		(UserEntry1.visibleToUserIds != UserEntry2.visibleToUserIds ) )
   			return false;
   	}
   	return true;
@@ -134,7 +134,7 @@ package come2play_as3.pseudoCode
       require(serverEntries.length == (allPlayersAndDelear.length * 2));
       for(i=0;i<serverEntries.length;i++)
       {
-      	buildHand(serverEntries[i*2].value,serverEntries[i*2+1].value,serverEntries[i*2+1].authorizedUserIds[0])
+      	buildHand(serverEntries[i*2].value,serverEntries[i*2+1].value,serverEntries[i*2+1].visibleToUserIds[0])
       }
       gamePhase = 2;
       startMove();
@@ -149,7 +149,7 @@ package come2play_as3.pseudoCode
     
     require(entry.storedByUserId==getTurnOfId());
     require(entry.key==getEntryKey());
-    require(entry.authorizedUserIds == null);
+    require(entry.visibleToUserIds == null);
     //var gameMove:GameMove = GameMove.object2GameMove(entry.value);
     //performMove(gameMove);
     */

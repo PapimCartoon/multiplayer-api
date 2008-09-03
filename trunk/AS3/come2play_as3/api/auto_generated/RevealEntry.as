@@ -8,14 +8,14 @@ package come2play_as3.api.auto_generated {
 		public var key:String;
 		public var userIds:Array/*int*/;
 		public var depth:int;
-		public static function create(key:String, userIds:Array/*int*//*<InAS3>*/ = null /*</InAS3>*/, depth:int/*<InAS3>*/ = 1 /*</InAS3>*/):RevealEntry {
+		public static function create(key:String, userIds:Array/*int*//*<InAS3>*/ = null /*</InAS3>*/, depth:int/*<InAS3>*/ = 0 /*</InAS3>*/):RevealEntry {
 			var res:RevealEntry = new RevealEntry();
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
 			res.key = key;
 			res.userIds = userIds;
-			/*<InAS2> if (depth==null) depth = 1;</InAS2>*/
+			/*<InAS2> if (depth==null) depth = 0;</InAS2>*/
 			res.depth = depth;
 			return res;
 		}

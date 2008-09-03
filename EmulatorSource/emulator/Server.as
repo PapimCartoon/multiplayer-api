@@ -590,8 +590,11 @@ package emulator {
 			var unverefiedFunction:QueueEntry = unverifiedQueue[0];
 			if(unverefiedFunction != null)
 			{
-				showMsg(unverefiedFunction.msg.getMethodName()+" Timed out by player/s:"+String(unverefiedFunction.unverifiedUsers),"Error");
-				gameOver();
+				if(unverefiedFunction.length()>1)
+				{
+					showMsg(unverefiedFunction.msg.getMethodName()+" Timed out by player/s:"+String(unverefiedFunction.unverifiedUsers),"Error");
+					gameOver();
+				}
 			}
 		}
 		private function revealEntryToPlayers(serverEntry:ServerEntry,revealEntry:RevealEntry):void
@@ -828,7 +831,7 @@ package emulator {
 						if(!isEquel(newMsg.getMethodParameters(),entry.msg.getMethodParameters()))
 						{
 							gameOver();
-							addMessageLog("Server","Error","Not all parameters for "+newMsg.getMethodName()+" are the same");
+							addMessageLog("Server","Error","Not all parameters for "+newMsg.getMethodName()+" are the same new Mesaage = "+newMsg.getMethodParameters()+" old Message :"+entry.msg.getMethodParameters());
 							showMsg("Not all parameters for "+newMsg.getMethodName()+" are the same","Error");
 							return false;
 						}	
@@ -1004,6 +1007,7 @@ package emulator {
 				tempServerEnries = new Array();
 				for each(serverEntry in serverEnries)
 				{
+					serverEntry.storedByUserId = -1;
 					if(serverEntry.visibleToUserIds == null)
 						tempServerEnries.push(serverEntry);
 					else
@@ -1044,6 +1048,7 @@ package emulator {
 			for each(var palyerMatchOver:PlayerMatchOver in finishedPlayers)
 			{
 				FinishHistory.totalFinishingPlayers++;
+				aPlayers.splice(aPlayers.indexOf(palyerMatchOver.playerId),1);
 				tempFinishedPlayersIds.push(palyerMatchOver.playerId);
 				percentageOfPot+=palyerMatchOver.potPercentage;
 				finishedPart.finishedPlayers.push(palyerMatchOver)	
@@ -1053,7 +1058,7 @@ package emulator {
 			FinishHistory.wholePot-=(FinishHistory.wholePot*percentageOfPot)/100;
 			afinishedPlayers.push(finishedPart);
 			
-			if(FinishHistory.totalFinishingPlayers == aPlayers.length)
+			if (aPlayers.length == 0)
 			{
 				gameOver();
 			}
@@ -1094,7 +1099,7 @@ package emulator {
 					finished_player_ids.splice(index,1);
 				}
 			}
-			if (finished_player_ids.length!=0) throw new Error("Internal error! Illegal player_ids="+finished_player_ids);
+			//if (finished_player_ids.length!=0) throw new Error("Internal error! Illegal player_ids="+finished_player_ids);
 			return res;
 		}	
 		private function isInArray(id:int,idArr:Array):Boolean

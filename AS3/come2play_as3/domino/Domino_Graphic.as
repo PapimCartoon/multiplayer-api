@@ -25,12 +25,18 @@ package come2play_as3.domino
 			dominoLeft.y=220;
 			dominoLeft.selectable = false;
 			addChild(dominoLeft);
+			gameBoard = new GameBoard(dominoObject);
+			addChild(gameBoard);
+			if(players.indexOf(myUserId)!=-1)
+			{
 			yourDominoes = new Array();
 			addEventListener(MouseEvent.CLICK,chooseDomino);
 			arrangeBoard();	
-			gameBoard = new GameBoard(dominoObject);
-			
-			addChild(gameBoard);
+			}
+			else
+			{
+				arrangeBoardViewer();
+			}
 		}
 		
 		public function updateDeck(num:int):void
@@ -64,7 +70,7 @@ package come2play_as3.domino
 				tempDomino.x =20 + i*30;
 			}	
 		}
-		public function addPlayerDominoCube(playerMove:PlayerMove,playerId:int):void
+		public function addPlayerDominoCube(playerMove:PlayerMove,playerId:int):int/*Domino cubes left*/
 		{
 			var playerRelativePos:int =players.indexOf(playerId)-players.indexOf(myUserId);
 			if(playerRelativePos<0) playerRelativePos+=players.length;
@@ -79,6 +85,12 @@ package come2play_as3.domino
 				gameBoard.addDominoRight(tempDomino);
 			else
 				gameBoard.addDominoLeft(tempDomino);
+			var remainingDominoes:int = tempRivalBoard.dominoCount();
+			if(remainingDominoes == 0)
+			{
+				rivalBoards.splice(playerRelativePos,1);
+			}
+			return remainingDominoes;
 			
 		}
 		public function addDominoToRivalDeck(rivalPlayerId:int):void
@@ -87,7 +99,6 @@ package come2play_as3.domino
 			if(playerRelativePos<0) playerRelativePos+=players.length;
 			var tempRivalBoard:RivalPlayerBoard = rivalBoards[playerRelativePos];
 			tempRivalBoard.addDomino();
-			trace("THIS IS COOL")
 		}
 		public function addDominoCubeToBoard(dominoPos:int,isRight:Boolean):void
 		{
@@ -109,6 +120,18 @@ package come2play_as3.domino
 				addChild(tempDomino)
 				yourDominoes.push(tempDomino);
 				reDrawHand();
+		}
+		public function arrangeBoardViewer():void
+		{
+			rivalBoards = new Array
+			for(var i:int = 0;i<players.length;i++)
+			{
+				var playerRelativePos:int =i-players.indexOf(myUserId);
+				if(playerRelativePos<0) playerRelativePos+=players.length;
+				rivalBoards[playerRelativePos] = new RivalPlayerBoard(playerRelativePos,players.length);
+				addChild(rivalBoards[playerRelativePos]);
+
+			}
 		}
 		
 		public function arrangeBoard():void
@@ -289,6 +312,10 @@ class RivalPlayerBoard extends MovieClip
 		for(var i:int=0;i<7;i++)
  			addDomino();
 	}
+	public function dominoCount():int
+	{
+		return dominoes.length;
+	}
 	public function addDomino():void
 	{
 		var tempDominoBack:DominoBack= new DominoBack();
@@ -352,5 +379,16 @@ class RivalPlayerBoard extends MovieClip
 				tempDominoBack.x =40;
 			}
 		}
+		if(playerNum == 4)
+		{
+			for(i=0;i<dominoes.length;i++)
+			{
+				tempDominoBack = dominoes[i]
+				tempDominoBack.y = 280;
+				tempDominoBack.x = 65 + i*23;
+			}
+
+		}
 	}
+	
 }

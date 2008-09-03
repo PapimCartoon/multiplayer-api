@@ -4,8 +4,9 @@
 doAllRevealState(revealEntries:Array/*RevealEntry*/)
 }}}
 
-To reveal a secret [ServerEntry] to a user, all players must call `doAllRevealState`  with the followin parameters:
+To reveal a secret [ServerEntry] to a user, all players must call `doAllRevealState`  with the following parameters:
 
 
+*revealEntries :* - an Array of [RevealEntry] elsements
 
-`revealEntries` - an Array of [RevealEntry] elsements
+all entries revealed this way, will have a `storedByUserId` set to -1

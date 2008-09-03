@@ -48,8 +48,13 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 		allOperationsWithParameters.push(
 			classPrefix+"UserEntry', 'key': String, 'value': *, 'isSecret': boolean}");
 
-		allOperationsWithParameters.push("\nExamples:\n");
-		allOperationsWithParameters.push("doStoreState([{'__CLASS_NAME__':'COME2PLAY_PACKAGE.auto_generated::UserEntry', 'key': 'String', 'value': 'value', 'isSecret': false}])");
+		allOperationsWithParameters.push("\nExamples:");
+		allOperationsWithParameters.push(
+			"\ndoStoreState([{'__CLASS_NAME__':'COME2PLAY_PACKAGE.auto_generated::UserEntry', 'key': 'String', 'value': 'value', 'isSecret': false}])"+
+			"\ndoAllSetTurn(42,10000)"+
+			"\ndoAllEndMatch([{'__CLASS_NAME__': 'COME2PLAY_PACKAGE.auto_generated::PlayerMatchOver', 'playerId': 41, 'score': 1000, 'potPercentage': 20}])"+
+			"\n"
+			);
 		exampleOperationsText.text = allOperationsWithParameters.join("\n");
 		
 		if (shouldTestPassNumbers) {	

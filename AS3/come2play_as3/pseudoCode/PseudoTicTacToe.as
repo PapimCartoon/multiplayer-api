@@ -55,7 +55,7 @@ public class PseudoTicTacToe extends SimplifiedClientGameAPI {
     if (entry.storedByUserId==myUserId) return; // already updated my move
     require(entry.storedByUserId==getTurnOfId());
     require(entry.key==getEntryKey());
-    require(entry.authorizedUserIds == null);
+    require(entry.visibleToUserIds == null);
     var gameMove:GameMove = GameMove.object2GameMove(entry.value);
     performMove(gameMove);
   } 

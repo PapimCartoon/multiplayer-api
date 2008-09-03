@@ -133,7 +133,7 @@ class come2play_as2.tictactoe.TicTacToe_Main extends ClientGameAPI {
 		// the moves are done in alternating turns: color 0, then color 1 (in a round robin)	
 		assert(serverEntries.length==1, ["there is one entry per move in TicTacToe"]);	
 		var entry:ServerEntry = serverEntries[0];
-		assert(entry.authorizedUserIds==null, ["All communication in TicTacToe is PUBLIC"]);
+		assert(entry.visibleToUserIds==null, ["All communication in TicTacToe is PUBLIC"]);
 		var userId:Number = entry.storedByUserId;
 		if (userId==myUserId) return; // The player ignores his own stores, because he already updated the logic before he sent it to the server
 		var colorOfUser:Number = getColor(userId);

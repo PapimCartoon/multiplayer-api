@@ -121,8 +121,8 @@ public class PseudoBattleships extends SimplifiedClientGameAPI {
     if (entry.storedByUserId == myUserId) return; // user move is not relevent
     if(shipStatesCommited != allPlayerIds.length)
     {
-	  require(entry.authorizedUserIds.length ==1);
-      require(entry.authorizedUserIds[0] == entry.storedByUserId);
+	  require(entry.visibleToUserIds.length ==1);
+      require(entry.visibleToUserIds[0] == entry.storedByUserId);
       require(entry.key == "ships_"+entry.storedByUserId);
       shipStatesCommited++;
       if(shipStatesCommited == allPlayerIds.length)
@@ -130,7 +130,7 @@ public class PseudoBattleships extends SimplifiedClientGameAPI {
     }
     else
     {
-    	require(entry.authorizedUserIds == null);
+    	require(entry.visibleToUserIds == null);
     	var value:Object=SerializableClass.deserialize(entry.value);
     	if(value is ShipData)
     	{

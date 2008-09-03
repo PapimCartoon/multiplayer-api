@@ -2,6 +2,7 @@ package come2play_as3.domino
 {
 	import flash.display.MovieClip;
 	import flash.events.MouseEvent;
+	import flash.text.TextField;
 	
 	public class Domino_Graphic extends MovieClip
 	{
@@ -12,20 +13,29 @@ package come2play_as3.domino
 		private var rivalBoards:Array/*RivalPlayerBoard*/
 		private var myUserId:int;
 		private var gameBoard:GameBoard;// gameBoard
-		
+		private var dominoLeft:TextField; //text field with dominoes left
 		public function Domino_Graphic(dominoes:Array,dominoObject:DominoObject,players:Array,myUserId:int,domino_LogicPointer:Domino_Logic)
 		{
-			
 			this.domino_LogicPointer = domino_LogicPointer;
 			this.dominoes = dominoes;
 			this.players = players;
 			this.myUserId = myUserId;
+			dominoLeft = new TextField();
+			dominoLeft.x= 60;
+			dominoLeft.y=220;
+			dominoLeft.selectable = false;
+			addChild(dominoLeft);
 			yourDominoes = new Array();
 			addEventListener(MouseEvent.CLICK,chooseDomino);
 			arrangeBoard();	
 			gameBoard = new GameBoard(dominoObject);
 			
 			addChild(gameBoard);
+		}
+		
+		public function updateDeck(num:int):void
+		{
+			dominoLeft.text = "Deck : "+num;
 		}
 		
 		public function chooseDomino(ev:MouseEvent):void
@@ -71,7 +81,14 @@ package come2play_as3.domino
 				gameBoard.addDominoLeft(tempDomino);
 			
 		}
-		
+		public function addDominoToRivalDeck(rivalPlayerId:int):void
+		{
+			var playerRelativePos:int =players.indexOf(rivalPlayerId)-players.indexOf(myUserId);
+			if(playerRelativePos<0) playerRelativePos+=players.length;
+			var tempRivalBoard:RivalPlayerBoard = rivalBoards[playerRelativePos];
+			tempRivalBoard.addDomino();
+			trace("THIS IS COOL")
+		}
 		public function addDominoCubeToBoard(dominoPos:int,isRight:Boolean):void
 		{
 			var movingDomino:Domino = yourDominoes[dominoPos]
@@ -84,6 +101,16 @@ package come2play_as3.domino
 					
 			reDrawHand();
 		}
+		public function addCubeToYourDeckdrawCube(newDominoCube:DominoCube):void
+		{
+				var tempDomino:Domino = new Domino;
+				tempDomino.lowerNum.gotoAndStop(newDominoCube.lowerNum+1);
+				tempDomino.upperNum.gotoAndStop(newDominoCube.upperNum+1);
+				addChild(tempDomino)
+				yourDominoes.push(tempDomino);
+				reDrawHand();
+		}
+		
 		public function arrangeBoard():void
 		{
 			var tempDomino:Domino;
@@ -91,13 +118,8 @@ package come2play_as3.domino
 			for(var i:int=0;i<dominoes.length;i++)
 			{
 				tempDominoObject = dominoes[i];
-				tempDomino = new Domino;
-				tempDomino.lowerNum.gotoAndStop(tempDominoObject.lowerNum+1);
-				tempDomino.upperNum.gotoAndStop(tempDominoObject.upperNum+1);
-				addChild(tempDomino)
-				yourDominoes.push(tempDomino);
-			}	
-			reDrawHand();
+				addCubeToYourDeckdrawCube(tempDominoObject.dominoCube);
+			}
 			rivalBoards = new Array
 			for(i = 0;i<players.length;i++)
 			{

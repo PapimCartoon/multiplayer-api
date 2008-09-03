@@ -25,7 +25,7 @@ package come2play_as3.domino
 		//game detailes
 		private var players:Array/*int*/;
 		private var myUserId:int;
-		
+		private var movesWithNoAction:int;
 		private var dominoBoard:DominoBoard/*DominoObject*/ // dominoes on board
 		private var isMyTurn:Boolean; // is my turn
 		private var currentDominoMove:DominoObject; //domino choosen to put on board
@@ -41,6 +41,8 @@ package come2play_as3.domino
 			rightArrow = new RightArrow();
 			leftArrow = new LeftArrow();
 			noMovesBox = new NoMovesBox();
+			noMovesBox.x = 100;
+			noMovesBox.y = 100;
 			noMovesBox.confirm_btn.addEventListener(MouseEvent.CLICK,noMovesConfirmed);
 			rightArrow.addEventListener(MouseEvent.CLICK,doRight);
 			leftArrow.addEventListener(MouseEvent.CLICK,doLeft);
@@ -155,14 +157,29 @@ package come2play_as3.domino
 			avaibleDominoMoves = findAvaibleMoves(dominoBoard.right,dominoBoard.left);
 			if(avaibleDominoMoves.length == 0)
 				graphics.addChild(noMovesBox);
-			domino_Graphic.markCubes(avaibleDominoMoves);
+			else
+			{
+				movesWithNoAction = 0;
+				domino_Graphic.markCubes(avaibleDominoMoves);
+			}
 		}
 		public function nextDomino(revealToUser:int):RevealEntry
 		{
 			if(dominoAmount > currentDomino)
-				return RevealEntry.create("domino_"+(currentDomino++),[revealToUser],1);
+			{
+				movesWithNoAction = 0;
+				if(revealToUser !=myUserId)
+					domino_Graphic.addDominoToRivalDeck(revealToUser);
+				domino_Graphic.updateDeck(dominoAmount-(currentDomino+1));
+				return RevealEntry.create("domino_"+(currentDomino++),[revealToUser],0);
+			}
 			else
+			{
+				movesWithNoAction ++;
+				//todo: endGame when needed
 				return null;
+			}
+
 		}
 		
 		public function getCubesArray(cubeMaxValue:int):Array/*UserEntry*/
@@ -175,7 +192,6 @@ package come2play_as3.domino
 			dominoes = new Array();
 			dominoBoard = new DominoBoard;
 			dominoAmount = count;
-			currentDomino = 1;
 			return userEntries;
 		}
 		public function getDominoKeysArray():Array/*String*/
@@ -192,14 +208,20 @@ package come2play_as3.domino
 			var revealEntries:Array/*RevealEntry*/ = new Array();
 			for(var i:int=0;i<players.length;i++)
 				for(var j:int=0;j<7;j++)
-					revealEntries.push(RevealEntry.create("domino_"+(i*7+j+1),[players[i]],1));
-			revealEntries.push(RevealEntry.create("domino_"+(i*7+1),null,1));
+					revealEntries.push(RevealEntry.create("domino_"+(i*7+j+1),[players[i]],0));
+			revealEntries.push(RevealEntry.create("domino_"+(i*7+1),null,0));
+			currentDomino =i*7+2;
 			return revealEntries;
 		}
 		
 		public function addDominoCube(newDominoCube:DominoCube,key:String):void
 		{
 			dominoes.push(new DominoObject(newDominoCube,key));
+		}
+		public function drawCube(newDominoCube:DominoCube,key:String):void
+		{
+			dominoes.push(new DominoObject(newDominoCube,key));
+			domino_Graphic.addCubeToYourDeckdrawCube(newDominoCube);
 		}
 		public function addDominoMiddle(newDominoCube:DominoCube,key:String):void
 		{
@@ -209,8 +231,11 @@ package come2play_as3.domino
 		{
 			if(domino_Graphic != null)
 				graphics.removeChild(domino_Graphic);
+			movesWithNoAction = 0;
 			domino_Graphic = new Domino_Graphic(dominoes,dominoBoard.middle(),players,myUserId,this);
-			graphics.addChild(domino_Graphic)
+			domino_Graphic.updateDeck(dominoAmount-currentDomino);
+			graphics.addChild(domino_Graphic);
+
 		}
 	}
 	
@@ -221,8 +246,6 @@ package come2play_as3.domino
 
 class DominoBoard
 {
-	//public var boardDominoes:Array = new Array/*DominoObject*/
-	//private var endPos:int;
 	private var leftValue:int;
 	private var rightValue:int
 	private var middleDominoObject:DominoObject;
@@ -230,8 +253,6 @@ class DominoBoard
 		rightValue = dominoObject.right;
 		leftValue = dominoObject.left;
 		middleDominoObject = dominoObject;
-		//boardDominoes.push(dominoObject);
-		//endPos = 0;
 	}
 	public function addToLeft(dominoCube:DominoCube):void{
 		if(leftValue == dominoCube.upperNum)

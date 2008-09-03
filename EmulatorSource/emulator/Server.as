@@ -967,7 +967,7 @@
 			for each(var revealEntry:RevealEntry in msg.revealEntries)
 			{
 				key=revealEntry.key
-				for(var i:int=1;i<=revealEntry.depth;i++)	
+				for(var i:int=0;i<=revealEntry.depth;i++)	
 				{			
 					revealIndex=isKeyExist(key)
 					if(revealIndex==-1)	

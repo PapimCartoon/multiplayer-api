@@ -122,6 +122,11 @@ package come2play_as3.domino
 					domino_Logic.allowTurn();
 				}
 			}
+			else if(serverEntries.length == 1)
+			{
+				if(serverEntry.value is DominoCube)
+					domino_Logic.drawCube(serverEntry.value as DominoCube,serverEntry.key);
+			}
 				
 		}
 		override public function gotKeyboardEvent(isKeyDown:Boolean, charCode:int, keyCode:int, keyLocation:int, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean):void

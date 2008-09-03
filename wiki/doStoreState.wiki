@@ -27,16 +27,16 @@ In such a case, the server will reuse the same userId for the viewer, and it wil
 To call a `doStoreState` function, you must send her the following parameter:
 `userEntries` - an Array of [UserEntry] elements
 
-The server maintains a memory, that is a mapping from keys to values, in addition to some extra information for each key (such as storedByUserId, authorizedUserIds, and changedTimeInMilliSeconds).
+The server maintains a memory, that is a mapping from keys to values, in addition to some extra information for each key (such as storedByUserId, visibleToUserIds, and changedTimeInMilliSeconds).
 
-Formally, the memory is a dictionary denoted `MATCH_STATE` that maps each `key` to an object with fields `storedByUserId`, `value`, and `authorizedUserIds`:
+Formally, the memory is a dictionary denoted `MATCH_STATE` that maps each `key` to an object with fields `storedByUserId`, `value`, and `visibleToUserIds`:
 {{{
-MATCH_STATE[key] = {storedByUserId:int, value:Object,authorizedUserIds:Array/*int*/}
+MATCH_STATE[key] = {storedByUserId:int, value:Object,visibleToUserIds:Array/*int*/}
 }}}
 `storedByUserId` - `storedByUserId`   may be -1 for [doAllShuffleState], [doAllRequestStateCalculation] and [doAllStoreState] which are all functions that are not stored by the users playing the game.
 `value` - an arbitrary object.
-`authorizedUserIds` - used to show which users can view the value, null means everyone, blank Array means no one. 
-Users in `authorizedUserIds` will get the `value` when the server calls `gotStateChanged` 
+`visibleToUserIds` - used to show which users can view the value, null means everyone, blank Array means no one. 
+Users in `visibleToUserIds` will get the `value` when the server calls `gotStateChanged` 
 (Other users will get a `null` value) 
 
 Next we will explain what the server does for each operation.
@@ -48,4 +48,4 @@ MATCH_STATE[entry.key] = {myUserId,  entry.value,   entry.isSecret,  entry.isSec
 }}}
 
 Whenever a user updates `MATCH_STATE`, then all users get the callback `gotStateChanged`.
-_However_, some of them will get `null` values (instead of the real `value` that was written), according to the ` authorizedUserIds` Array.
+_However_, some of them will get `null` values (instead of the real `value` that was written), according to the ` visibleToUserIds` Array.

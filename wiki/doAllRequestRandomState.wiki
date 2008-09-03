@@ -18,7 +18,7 @@ The random number value will be an integer in the range of `int.MIN_VALUE` = -21
 
 *isSecret :*  a Boolean which will determine if the random number generated will be a secret one. 
 
-If isSecret is false then the new [ServerEntry] will have `authorizedUserIds` of null,
-And if it’s true [ServerEntry] will have `authorizedUserIds` as an empty Array.
+If isSecret is false then the new [ServerEntry] will have `visibleToUserIds` of null,
+And if it’s true [ServerEntry] will have `visibleToUserIds` as an empty Array.
 
 `storedByUserId` will be -1 because the changes were saved by the server.

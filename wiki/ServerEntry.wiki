@@ -2,7 +2,7 @@
 
 
 {{{
-class ServerEntry { var key:String, var value:Object, var storedByUserId:int, var authorizedUserIds:Array/*int*/, var changedTimeInMilliSeconds:int; }
+class ServerEntry { var key:String, var value:Object, var storedByUserId:int, var visibleToUserIds:Array/*int*/, var changedTimeInMilliSeconds:int; }
 }}}
 *key :*  the name by which this `ServerEntry`  will be called.
 
@@ -10,9 +10,9 @@ class ServerEntry { var key:String, var value:Object, var storedByUserId:int, va
 
 *storedByUserId :*  the id of the user which stored this `ServerEntry`  .
 
-*authorizedUserIds :*  users which will receive the `ServerEntry`   `value` and not null.
+*visibleToUserIds :*  users which will receive the `ServerEntry`   `value` and not null.
 
-if `authorizedUserIds` is null all users will receive the value, if it's an empty Array 
+if `visibleToUserIds` is null all users will receive the value, if it's an empty Array 
 
 then none of the users will receive the value.
 

@@ -70,8 +70,8 @@ class UserEntry {
 }
 }
 class ServerEntry {
-  var key:String, value:Object, storedByUserId:int, authorizedUserIds:Array/*int*/;
-  function isPublic():Boolean { return authorizedUserIds==null; }
+  var key:String, value:Object, storedByUserId:int, visibleToUserIds:Array/*int*/;
+  function isPublic():Boolean { return visibleToUserIds==null; }
 }
 class PlayerMatchOver {
   var playerId:int, score:int, potPercentage:int;

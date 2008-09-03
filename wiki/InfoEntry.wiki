@@ -2,6 +2,7 @@
 
 {{{
 class InfoEntry{key:String, value:Object}
+
 }}}
 
 `key` - the key name of the `InfoEntry`, such as `logo_swf_full_url`.

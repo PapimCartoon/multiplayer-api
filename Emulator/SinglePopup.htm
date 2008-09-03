@@ -12,12 +12,12 @@ function getParametersFromURL() {
 	if (searchStr.length<2) return res;
 	var parameters = searchStr.substring(1);
 	var arr = parameters.split("&");
-	for(var i=0; i<arr.length; i++) {	
+	for(var i=0; i<arr.length; i++) {
 		var key_val = arr[i].split("=");
 		key_val[0] = unescape(key_val[0]);
 		key_val[1] = unescape(key_val[1]);
 		res[ key_val[0] ] = ampSymb(key_val[1]);
-	}			
+	}
 	return res;
 }
 function ampSymb(str){
@@ -111,9 +111,9 @@ if (param_arr['game'] !=null){
             cell.style.verticalAlign="top";
             if(i*2+j<(players_num+viewers_num)+1){
                 if(i==0 && j==0){
-                    writeFlash(cell,"../Emulator/Server.swf","570","470",flashvars+startPrefix+addparams+"&game="+param_arr["game"]+"&oldgame="+param_arr["oldgame"]+"&fps="+param_arr["fps"]+"&delay_from="+param_arr["delay_from"]+"&delay_to="+param_arr["delay_to"]+"&test_file_width="+param_arr["test_file_width"]+"&test_file_height="+param_arr["test_file_height"],"server");
+                    writeFlash(cell,"../Emulator/Emulator.swf","570","470",flashvars+startPrefix+addparams+"&game="+param_arr["game"]+"&oldgame="+param_arr["oldgame"]+"&fps="+param_arr["fps"]+"&delay_from="+param_arr["delay_from"]+"&delay_to="+param_arr["delay_to"]+"&test_file_width="+param_arr["test_file_width"]+"&test_file_height="+param_arr["test_file_height"]+"&isServer=true","server");
                 }else{
-                    writeFlash(cell,"../Emulator/InfoContainer.swf",swf_width,swf_height,flashvars+currentPrefix+"&game="+param_arr["game"]+"&oldgame="+param_arr["oldgame"]+"&delay_from="+param_arr["delay_from"]+"&delay_to="+param_arr["delay_to"]+"&fps="+param_arr["fps"]+"&old_container="+param_arr["old_container"],"client"+i+j);
+                    writeFlash(cell,"../Emulator/Emulator.swf",swf_width,swf_height,flashvars+currentPrefix+"&game="+param_arr["game"]+"&oldgame="+param_arr["oldgame"]+"&delay_from="+param_arr["delay_from"]+"&delay_to="+param_arr["delay_to"]+"&fps="+param_arr["fps"]+"&old_container="+param_arr["old_container"]+"&isServer=false","client"+i+j);
 					currentPrefix++;
                 }
             }

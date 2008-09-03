@@ -47,17 +47,19 @@ package emulator {
 		private var ddsDoOperations:DelayDoSomething;
 		private var ddsGotOperations:DelayDoSomething;
 			
-		/*
+		
 		private var delayConstructor:Timer;
 	
 		public function InfoContainer()
 		{
+			/*
 			constructInfoContainer();
 			delayConstructor =new Timer(100,0);
 			delayConstructor.addEventListener(TimerEvent.TIMER,deleayInfoContainer);
 			delayConstructor.start();
+			*/
 		}
-		
+		/*
 		public function deleayInfoContainer(ev:TimerEvent):void
 		{
 			if(stage != null)
@@ -67,7 +69,7 @@ package emulator {
 			}
 		}
 		*/
-		public function InfoContainer(){
+		public function constructInfoContainer():void{
 			
 			stage.addEventListener(KeyboardEvent.KEY_UP, reportKeyUp);
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, reportKeyDown);

@@ -122,11 +122,13 @@ package emulator {
 		}
 		public function Server ()
 		{
+			/*
 			constructorDelayer = new Timer(100,0)
 			constructorDelayer.addEventListener(TimerEvent.TIMER,delayConstructor);	
 			constructorDelayer.start();
+			*/
 		}
-		
+		/*
 		public function delayConstructor (ev:TimerEvent):void
 		{
 			if(stage != null)
@@ -135,7 +137,7 @@ package emulator {
 				constructServer();
 			}	
 		}
-		
+		*/
 		//Constructor
 		public function constructServer():void {
 			this.stop();
@@ -1821,12 +1823,18 @@ package emulator {
 		
 		private var allSavedGames:Array/*SavedGame*/ = [];
 		private var shrSavedGames:SharedObject;
-		private function loadSavedGames():void {			
+		private function loadSavedGames():void {	
+			try{		
 			shrSavedGames = SharedObject.getLocal("SavedGames");
 			//addMessageLog("Server","Debug",JSON.stringify(shrSavedGames.data.savedGames))
-			//shrSavedGames.data.savedGames = [];//this deletes all saved games
+			//shrSavedGames.data.savedGames = [];
+			
 			if (shrSavedGames.data.savedGames!=null) {
 				allSavedGames = SerializableClass.deserialize(shrSavedGames.data.savedGames) as Array;								
+			}
+			
+			}catch(err:Error) {
+				shrSavedGames.data.savedGames = [];	//this deletes all saved games
 			}
 		} 
 		private function saveToSharedObject():void {

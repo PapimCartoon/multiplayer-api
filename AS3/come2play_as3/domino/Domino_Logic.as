@@ -95,6 +95,8 @@ package come2play_as3.domino
 				}
 			}
 			isMyTurn = false;
+			if(dominoes.length == 0)
+				playerWon(myUserId);
 			domino_MainPointer.sendPlayerMove(playerMove);
 			
 		}
@@ -105,6 +107,10 @@ package come2play_as3.domino
 				dominoBoard.addToRight(playerMove.dominoCube);
 			else
 				dominoBoard.addToLeft(playerMove.dominoCube);
+		}
+		public function playerWon(winingUserId:int):void
+		{
+			//todo : 
 		}
 		private function noMovesConfirmed(ev:MouseEvent):void
 		{
@@ -176,11 +182,16 @@ package come2play_as3.domino
 			else
 			{
 				movesWithNoAction ++;
-				//todo: endGame when needed
+				endMatchTie();
 				return null;
 			}
 
 		}
+		public function endMatchTie():void
+		{
+			//todo:	tie match
+		}
+		
 		
 		public function getCubesArray(cubeMaxValue:int):Array/*UserEntry*/
 		{

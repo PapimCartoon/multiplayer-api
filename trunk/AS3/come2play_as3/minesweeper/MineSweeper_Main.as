@@ -204,7 +204,7 @@ import flash.utils.*;
 				var playerMove:PlayerMove = SerializableClass.deserialize(serverEntry.value) as PlayerMove;
 				if(playerMove.takingPlayer != serverEntry.storedByUserId) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" stored the data for another user")
 				if(!mineSweeper_Logic.isMoveTaken(playerMove))					
-					doAllRevealState([RevealEntry.create(playerMove.xPos+"_"+playerMove.yPos,null,2)]);	
+					doAllRevealState([RevealEntry.create(playerMove.xPos+"_"+playerMove.yPos,null,1)]);	
 				else
 					if(myUserId == playerMove.takingPlayer)
 						doStoreState([UserEntry.create(playerMove.takingPlayer+"_"+playerMove.xPos+"_"+playerMove.yPos,null,false)]);

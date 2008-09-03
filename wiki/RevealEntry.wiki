@@ -1,17 +1,17 @@
 #summary RevealEntry Class
 {{{
-class RevealEntry{var key:String, var userIds:Array/*int*/  = null, var depth:int  = 1;}
+class RevealEntry{var key:String, var userIds:Array/*int*/  = null, var depth:int  = 0;}
 }}}
 *key :*  the key of the [ServerEntry] to reveal.
 
 *userIds :*  an array of user ids to reveal the [ServerEntry] to.
 
-*depth :*  in case depth is greater than 1 the value of the revealed [ServerEntry] is counted as a pointer to the next [ServerEntry].
+*depth :*  in case depth is greater than 0 the value of the revealed [ServerEntry] is counted as a pointer to the key of the next [ServerEntry].
 
 ===For example:===
 
 
-if you send doAllRevealState(RevealEntry.create("guess7", null , 2))
+if you send doAllRevealState(RevealEntry.create("guess7", null , 1))
 
 And the server has a [ServerEntry] with the key "guess7" with the value "WrongGuess",
 
@@ -19,11 +19,7 @@ Then instead of getting the [ServerEntry] with the key "guess7",
 
 You will get a [ServerEntry] with the key "WrongGuess".
 
-The bigger the number in the depth the more times a pointer will be followed
+The bigger the number in the depth the more times the value will be used as a pointer to the next [ServerEntry] key.
 
 *A pointer [ServerEntry] value must be a String.
 
-To create a `RevealEntry` instance you must use it's create function and not a constructor:
-{{{
-RevealEntry.create(key, userIds, depth);
- }}}

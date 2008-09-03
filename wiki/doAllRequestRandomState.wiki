@@ -4,20 +4,21 @@
 doAllRequestRandomState(key:String, isSecret:Boolean = false)
 }}}
 
-Some of the games developed need to have random numbers,if its a public random number to create a dice toss
+Some of the games developed need to have random numbers, if it’s a public random number to create a dice toss
 in a game of backgammon, or a secret random seed to calculate a mine sweeper game board.
 
 If it's a public random number to create an unbiased cube toss In a game of backgammon,
-The random value will be an integer in the range `int.MIN_VALUE` and `int.MAX_VALUE`.
-
 Or a secret random seed to calculate a mine sweeper game board.
 
+When the command will be processed the server will store a [ServerEntry] containing a random number in the key specepifed by the `doAllRequestRandomState call` key.
+The random number value will be an integer in the range of `int.MIN_VALUE` = -2147483648 and `int.MAX_VALUE` =2147483647.
 
-When the command will be processed it will send a `gotStateChanged` event containing the random number
-if a public random number was requested.
-In case the number requested is secret, the value will be null.
-`storedByUserId` will be -1 because the changes were saved by the server.
+*key :*  the key the new [ServerEntry] with the random integer will have.
 
-*key :*  the new key the random state will have.
 
 *isSecret :*  a Boolean which will determine if the random number generated will be a secret one. 
+
+If isSecret is false then the new [ServerEntry] will have `authorizedUserIds` of null,
+And if it’s true [ServerEntry] will have `authorizedUserIds` as an empty Array.
+
+`storedByUserId` will be -1 because the changes were saved by the server.

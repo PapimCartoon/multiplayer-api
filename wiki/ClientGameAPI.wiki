@@ -3,24 +3,16 @@
 The communication between your game and our server is done by writing a class that extends `ClientGameAPI.as`, and instantiating one instance of your class.
 
 The functions in `ClientGameAPI` can be divided into two categories: Operations and Callbacks.
+
+before elaborating on the subject,you must be aware of a few convention used:
+
 We write `Array/*int*/` to denote an `Array` that contains only `int` objects;
 Similarly, `Array/*String*/` is an `Array` that contains only `String` objects.
 
-Auxiliary classes:
-{{{
-class ServerEntry { 
-  var key:String, value:Object, storedByUserId:int, authorizedUserIds:Array/*int*/, changedTimeInMilliSeconds:int; 
-}
-class UserEntry { 
-  var key:String, value:Object, isSecret:Boolean = false;
-}
-class PlayerMatchOver { 
-  var playerId:int, score:int, potPercentage:int; 
-}
-class RevealEntry {
-  var key:String, userIds:Array/*int*/ = null, depth:int = 1;
-}
-}}}
+We use the following auxiliary classes: [ServerEntry] , [UserEntry] , [InfoEntry] , [PlayerMatchOver] and [RevealEntry] .
+
+==Operations==
+
 Operations are functions starting with `do`
 
 The Operations are divided into two groups as well:
@@ -45,6 +37,8 @@ doAllEndMatch(finishedPlayers:Array/*PlayerMatchOver*/)
 doAllFoundHacker(userId:int, errorDescription:String)
 }}}
 
+==Callbacks==
+
 Callbacks are functions starting with `got`
 {{{
 gotCustomInfo(infoEntries:Array/*InfoEntry*/) 
@@ -62,7 +56,7 @@ Operations are functions that your _game_ may call,
 and callbacks are functions that the _container_ may call on your game.
 Your class may override some of the callbacks and respond appropriately to them; it is not mandatory to override _all_ the callbacks.
 
-You may call an operation (except `doRegisterOnServer` and `doTrace`) only when the game is in progress,
+You may call an operation (except [doRegisterOnServer],[doAllFoundHacker] and [doTrace]) only when the game is in progress,
 i.e., there is a player that hasn't finished playing.
 
 === High level description of the functions === 

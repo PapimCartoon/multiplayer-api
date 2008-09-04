@@ -664,7 +664,7 @@ package emulator {
 						entry = waitingQueue[0];
 						if(entry == null)
 						{
-							entry = new QueueEntry(user,msg,aPlayers.concat())	
+							entry = new QueueEntry(user,msg,getOngoingPlayerIds());
 							entry.removeUnverifiedUser(user.ID)
 						}
 						else
@@ -674,7 +674,7 @@ package emulator {
 						    	isNewEntry = false
 						    else
 						    {
-						    	entry = new QueueEntry(user,msg,aPlayers.concat())	
+						    	entry = new QueueEntry(user,msg,getOngoingPlayerIds())	
 						    	entry.removeUnverifiedUser(user.ID)
 						    }
 						    
@@ -762,7 +762,7 @@ package emulator {
 			waitingQueue.shift();
 			if (!((waitingFunction.msg is API_DoAllSetTurn) || (waitingFunction.msg is API_DoAllRequestStateCalculation) ))
 			{
-				waitingFunction.unverifiedUsers = aPlayers.concat()
+				waitingFunction.unverifiedUsers =getOngoingPlayerIds();
 				unverifiedQueue.push(waitingFunction);
 			}
 			queueTimer.reset();
@@ -1048,7 +1048,6 @@ package emulator {
 			for each(var palyerMatchOver:PlayerMatchOver in finishedPlayers)
 			{
 				FinishHistory.totalFinishingPlayers++;
-				aPlayers.splice(aPlayers.indexOf(palyerMatchOver.playerId),1);
 				tempFinishedPlayersIds.push(palyerMatchOver.playerId);
 				percentageOfPot+=palyerMatchOver.potPercentage;
 				finishedPart.finishedPlayers.push(palyerMatchOver)	
@@ -1058,7 +1057,7 @@ package emulator {
 			FinishHistory.wholePot-=(FinishHistory.wholePot*percentageOfPot)/100;
 			afinishedPlayers.push(finishedPart);
 			
-			if (aPlayers.length == 0)
+			if (aPlayers.length == FinishHistory.totalFinishingPlayers)
 			{
 				gameOver();
 			}
@@ -1637,7 +1636,7 @@ package emulator {
 				var arr1:Array;
 				for each (var savedGame:SavedGame in allSavedGames) {
 					try{
-						if (savedGame.playersNum == User.PlayersNum && savedGame.gameName==root.loaderInfo.parameters["game"]) {
+						if (savedGame.players.length <= User.PlayersNum && savedGame.gameName==root.loaderInfo.parameters["game"]) {
 							var itemObj:Object;
 							arr1=new Array();
 							for(var j:int=0;j<savedGame.entries.length;j++){
@@ -1646,9 +1645,7 @@ package emulator {
 							}
 							itemObj=new Object();
 							itemObj[COL_name]=savedGame.name;
-							itemObj[COL_numberOfPlayers]=savedGame.playersNum;
 							itemObj[COL_userIdThatAreStillPlaying]=savedGame.players;
-							itemObj[COL_nextTurnOfUserIds]=savedGame.curTurn;
 							itemObj[COL_matchState]=arr1;
 							itemObj[COL_matchStartedTime]=savedGame.match_started_time;
 							itemObj[COL_extraMatchInfo]=JSON.stringify(savedGame.extra_match_info)
@@ -1708,7 +1705,7 @@ package emulator {
 		private function btnLoadGameClick(evt:MouseEvent):void {
 			cmbLoadName.removeAll();
 			for each (var savedGame:SavedGame in allSavedGames) {
-				if (savedGame.playersNum == User.PlayersNum && savedGame.gameName==root.loaderInfo.parameters["game"]) {
+				if (savedGame.players.length <= User.PlayersNum && savedGame.gameName==root.loaderInfo.parameters["game"]) {
 					cmbLoadName.addItem( { label:savedGame.name,data:savedGame } );
 				}
 			}
@@ -1723,6 +1720,7 @@ package emulator {
 			var savedGame:SavedGame =cmbLoadName.selectedItem.data;
 			userStateEntrys = savedGame.entries.concat();
 			afinishedPlayers=savedGame.finishedGames.concat();
+			aPlayers = savedGame.players.concat();
 			for each(var savedFinishedPlayer:FinishHistory in afinishedPlayers)
 			{
 				var tempPotPercentage:Number = 0;
@@ -1742,38 +1740,8 @@ package emulator {
 			}
 			txtMatchStartedTime.text = match_started_time.toString();
 			showMatchState();
-			iCurTurn = savedGame.curTurn;
-			//aMatchOvers = new Array();
-			/*
-			when debug information will be viewed
-			
-			*/
-			// Yoav: I added a MatchOver for all the players that already finished playing
-			if (savedGame.players.length < savedGame.playersNum) {
-				// some players have already finished playing
-				var ongoing_player_ids:Array = savedGame.players.concat();
-				var finished_player_ids:Array = [];
-			//	var over:MatchOver = new MatchOver();
-				//over.user_ids = [];
-				//over.scores = [];
-				//over.pot_percentages = [];
-				//over.recieved_from = [];
-				for (var user_id:int=1; user_id<=savedGame.playersNum; user_id++) {
-					//over.recieved_from.push(user_id);
-					if (ongoing_player_ids.indexOf(user_id)==-1) {
-						//getUser(user_id).Ended = true; // see send_got_match_started
-						//over.user_ids.push(user_id);
-						//over.scores.push(-1);
-						//over.pot_percentages.push(-1);
-					}
-				}
-			//	aMatchOvers.push(over);
-			}
-
-
-
 			showMatchOver();
-			if (aPlayers.length == User.PlayersNum) {
+			if (aPlayers.length >= savedGame.players.length) {
 				bGameStarted = true;
 				bGameEnded = false;
 				txtExtraMatchInfo.visible = false;
@@ -1795,7 +1763,7 @@ package emulator {
 		private function enableSavedGames():void {
 			var j:int = 0;			
 			for each (var savedGame:SavedGame in allSavedGames) {
-				if (savedGame.playersNum == User.PlayersNum && savedGame.gameName == root.loaderInfo.parameters["game"]) {
+				if (savedGame.players.length <= User.PlayersNum && savedGame.gameName == root.loaderInfo.parameters["game"]) {
 					j++;
 				}
 			}
@@ -1851,16 +1819,7 @@ package emulator {
 			if (txtSaveName.text == "") {
 				return;
 			}
-			var game:SavedGame = new SavedGame();
-			game.entries=userStateEntrys.concat();
-			game.playersNum = User.PlayersNum;
-			game.players = getOngoingPlayerIds();
-			game.extra_match_info=extra_match_info;
-			game.match_started_time=match_started_time;
-			game.name = txtSaveName.text;
-			game.finishedGames=afinishedPlayers.concat();
-			game.curTurn = iCurTurn;
-			game.gameName = root.loaderInfo.parameters["game"];
+			var game:SavedGame = SavedGame.create(userStateEntrys,aPlayers,afinishedPlayers,extra_match_info,match_started_time,txtSaveName.text,root.loaderInfo.parameters["game"]);
 			allSavedGames.push(game);
 			saveToSharedObject();
 
@@ -2225,7 +2184,7 @@ class User extends LocalConnectionUser {
 		}
 	}
 }
-
+ 
 
 class Message {
 	public var sender:String;

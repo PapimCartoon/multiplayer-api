@@ -57,6 +57,7 @@ package come2play_as3.domino
 		{
 			this.players = players;
 			this.myUserId = myUserId
+			currentDomino = 0;
 			dominoes = new Array();
 			dominoBoard = new DominoBoard();
 			rivalPlayersDominoKeys = new Array();
@@ -128,24 +129,47 @@ package come2play_as3.domino
 			checkWin(dominoes.length,myUserId);
 			
 		}
+		public function addKeyTo(key:String,playerId:int):void
+		{
+			if(rivalPlayersDominoKeys[players.indexOf(playerId)] !=null)
+			{
+				var tempRivalPlayersDominoKeys:Array = rivalPlayersDominoKeys[players.indexOf(playerId)];
+				tempRivalPlayersDominoKeys.push(key)
+			}
+			else
+				rivalPlayersDominoKeys[players.indexOf(playerId)] = new Array();	
+		}
 		public function loadBoard():void
 		{
 			for(var i:int=0;i<players.length;i++)
 			{
-					var tempRivalPlayersDominoKeys:Array = new Array();
-					for(var j:int=0;j<7;j++)
-						tempRivalPlayersDominoKeys.push("domino_"+(i*7+j+1));
-					rivalPlayersDominoKeys[i] = tempRivalPlayersDominoKeys;
+				if(rivalPlayersDominoKeys[i] == null)
+					rivalPlayersDominoKeys[i] = new Array();
+					//var tempRivalPlayersDominoKeys:Array = new Array();
+					//for(var j:int=0;j<7;j++)
+					//	tempRivalPlayersDominoKeys.push("domino_"+(i*7+j+1));
+					//rivalPlayersDominoKeys[i] = tempRivalPlayersDominoKeys;
 			}	
 			currentDomino = players.length * 7 + 2;
 			makeBoard();
-		}				
+
+		}	
+		
+		public function debug():void
+		{
+			for(var i:int;i<rivalPlayersDominoKeys.length;i++)
+				domino_MainPointer.doMyTrace(players[i]+")"+rivalPlayersDominoKeys[i].toString());
+		}
+		
+					
 		public function addLodedDominoKey(playerId:int):void
 		{
 			var tempRivalPlayersDominoKeys:Array = rivalPlayersDominoKeys[players.indexOf(playerId)];
-			trace(playerId+"/"+players.indexOf(playerId)+"******************"+currentDomino)
+			if(playerId != myUserId)
+				domino_Graphic.addDominoToRivalDeck(playerId);			
 			tempRivalPlayersDominoKeys.push("domino_"+currentDomino);
-			currentDomino++;
+			domino_Graphic.updateDeck(dominoAmount-currentDomino);
+			currentDomino++;		
 		}
 		
 		public function loadPlayerDominoCube(playerMove:PlayerMove,playerId:int):void
@@ -155,7 +179,7 @@ package come2play_as3.domino
 				var tempRivalPlayersDominoKeys:Array = rivalPlayersDominoKeys[players.indexOf(playerId)]
 				var keyPosition:int =tempRivalPlayersDominoKeys.indexOf(playerMove.key)
 				tempRivalPlayersDominoKeys.splice(tempRivalPlayersDominoKeys.indexOf(playerMove.key),1);	
-				var rivalCubes:int = domino_Graphic.addPlayerDominoCube(playerMove,playerId);
+				var rivalCubes:int = domino_Graphic.putCubeOnBoard(playerMove,playerId);
 				if(playerMove.isRight)
 					dominoBoard.addToRight(playerMove.dominoCube);
 				else
@@ -177,18 +201,27 @@ package come2play_as3.domino
 						domino_Graphic.addDominoCubeToBoard(i,playerMove.isRight);
 					}
 				}
+				rivalCubes = dominoes.length;
+			}
+			if(rivalCubes == 0)
+			{
+				var pos:int = players.indexOf(playerId)
+				players.splice(pos,1);
+				rivalPlayersDominoKeys.splice(pos,1);
+				domino_Graphic.removePlayer(pos);
+				domino_MainPointer.refreshTurn();
+				
 			}
 		}
 		public function addPlayerDominoCube(playerMove:PlayerMove,playerId:int):void
 		{
 			var tempRivalPlayersDominoKeys:Array = rivalPlayersDominoKeys[players.indexOf(playerId)]
 			var keyPosition:int =tempRivalPlayersDominoKeys.indexOf(playerMove.key)
-			trace("*********"+playerMove.key)
 			if(keyPosition != -1)	
 				tempRivalPlayersDominoKeys.splice(tempRivalPlayersDominoKeys.indexOf(playerMove.key),1);
 			else
-				domino_MainPointer.foundHacker(playerId);		
-			var rivalCubes:int = domino_Graphic.addPlayerDominoCube(playerMove,playerId);
+				domino_MainPointer.foundHacker(playerId,playerMove.key);		
+			var rivalCubes:int = domino_Graphic.putCubeOnBoard(playerMove,playerId);
 			if(playerMove.isRight)
 				dominoBoard.addToRight(playerMove.dominoCube);
 			else
@@ -202,8 +235,10 @@ package come2play_as3.domino
 			if(players.length > 2)
 			{	
 				playerMatchOverArr.push(PlayerMatchOver.create(winingUserId,players.length*10,70));
+				domino_Graphic.removePlayer(playerPos);
 				players.splice(playerPos,1);
 				rivalPlayersDominoKeys.splice(playerPos,1);
+				domino_MainPointer.refreshTurn();
 			}
 			else
 			{
@@ -213,7 +248,6 @@ package come2play_as3.domino
 				playerMatchOverArr.push(PlayerMatchOver.create(players[0],0,0));
 				domino_MainPointer.gameEnded = true;
 			}
-			domino_MainPointer.refreshTurn(playerPos);
 			domino_MainPointer.endGame(playerMatchOverArr);
 		}
 		private function noMovesConfirmed(ev:MouseEvent):void

@@ -9,9 +9,9 @@ import flash.events.*;
 import flash.utils.*;
 	public class MineSweeper_Main extends ClientGameAPI
 	{
-		private static var boardHeight:int=12;
-		private static var boardWidth:int=12;
-		private static var mineAmount:int=40;
+		private static var boardHeight:int=10;
+		private static var boardWidth:int=10;
+		private static var mineAmount:int=10;
 		//calculator variables
 		private var emptyBoxes:Array;
 		private var newCalculatorBoard:Array
@@ -29,7 +29,6 @@ import flash.utils.*;
 		{ 
 			super(graphics); 
 			graphics.addChild(new Background);
-			//graphics.addChild(new Bitmap(new Background(330,360)));
 			users = new Array(); 
 			mineSweeper_Logic  = new MineSweeper_Logic(this,graphics,boardWidth,boardHeight);
 			startGraphic= new Starter()
@@ -62,11 +61,7 @@ import flash.utils.*;
 		}
 		public function pressMine(xPos:int,yPos:int,isMine:Boolean):void
 		{
-			var playerMove:PlayerMove = new PlayerMove();
-			playerMove.isMine = isMine;
-			playerMove.takingPlayer = myUserId;
-			playerMove.xPos = xPos;
-			playerMove.yPos = yPos;
+			var playerMove:PlayerMove = PlayerMove.create(xPos,yPos,isMine,myUserId);
 			doStoreState([UserEntry.create(myUserId+"_"+xPos+"_"+ yPos,playerMove,false)]);
 		}
 		
@@ -170,6 +165,10 @@ import flash.utils.*;
 		}
 		override public function gotMatchStarted(allPlayerIds:Array, finishedPlayerIds:Array, extraMatchInfo:Object, matchStartedTime:int, serverEntries:Array):void
 		{
+			trace("Start***************"+myUserId)
+			trace(allPlayerIds)
+			trace(JSON.stringify(users))
+			trace("end*********"+myUserId)
 			players = allPlayerIds;
 			mineSweeper_Logic.renewBoard();
 			loadServerEntries = null;
@@ -201,7 +200,7 @@ import flash.utils.*;
 			}
 			else if(serverEntry.value is PlayerMove)
 			{
-				var playerMove:PlayerMove = SerializableClass.deserialize(serverEntry.value) as PlayerMove;
+				var playerMove:PlayerMove = serverEntry.value as PlayerMove;
 				if(playerMove.takingPlayer != serverEntry.storedByUserId) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" stored the data for another user")
 				if(!mineSweeper_Logic.isMoveTaken(playerMove))					
 					doAllRevealState([RevealEntry.create(playerMove.xPos+"_"+playerMove.yPos,null,1)]);	
@@ -211,17 +210,15 @@ import flash.utils.*;
 			}
 			else if(serverEntry.value is ServerBox)
 			{
-				var serverBox:ServerBox = SerializableClass.deserialize(serverEntry.value) as ServerBox;
+				var serverBox:ServerBox = serverEntry.value as ServerBox;
 				if(serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" stored the data and not the calculator");
 				 mineSweeper_Logic.addBoxesServer(serverBox);
-				//doAllStoreState([UserEntry.create(tempPlayerBox.xPos+"_"+tempPlayerBox.yPos,tempPlayerBox,false)]);
 			}
 			else if(serverEntry.value is Array)
 			{
-				var blankSquares:Array = SerializableClass.deserialize(serverEntry.value) as Array;
+				var blankSquares:Array = serverEntry.value as Array;
 				if(serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" stored the data and not the calculator");	
 				mineSweeper_Logic.addBlankBoxesServer(blankSquares);
-				//doAllStoreState(userEntries);
 			}
 		}
 		override public function gotKeyboardEvent(isKeyDown:Boolean, charCode:int, keyCode:int, keyLocation:int, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean):void

@@ -31,6 +31,7 @@ package come2play_as3.minesweeper
 			var box:Box = boardBricks[xPos][yPos];
 			box.gotoAndStop(10 + borderingMines);
 		}
+
 		public function updateLives(playerNum:int,livesCount:int):void
 		{
 			var player:PlayerGraphicData = playerGraphicDataArr[playerNum];
@@ -81,61 +82,7 @@ package come2play_as3.minesweeper
 				updateLives(i,3);
 			}
 			
-		}
-		public function loadBoard(width:int,height:int,players:Array,loadBoard:Array,playerMoves:Array):void
-		{
-			boardBricks=new Array();
-			var tempBox:Box;
-			for(var i:int=0;i<width;i++)
-			{
-				boardBricks[i] = new Array();
-				for(var j:int = 0;j<height;j++)
-				{
-					tempBox=new Box()
-					tempBox.x = i*16 + 9.5;
-					tempBox.y = j*16 + 7;
-					tempBox.stop();
-					boardBricks[i][j]=tempBox;
-					addChild(boardBricks[i][j]);
-				}
-			}
-			for each(var playerMove:PlayerMove in playerMoves)
-			{
-				var serverBox:ServerBox = loadBoard[playerMove.xPos][playerMove.yPos];
-				tempBox = boardBricks[playerMove.xPos][playerMove.yPos]
-				if(serverBox != null)
-				{
-					if(serverBox.isMine)
-					{
-						if(playerMove.isMine)
-							tempBox.gotoAndStop(44+playerMove.takingPlayer * 11);
-						else
-						{
-							addChild(tempBox);
-							tempBox.gotoAndStop(20+playerMove.takingPlayer * 10);			
-						}
-					}
-					else
-						tempBox.gotoAndStop(serverBox.borderingMines + 10);
-				}
-			}
-			
-			for(i=0;i<players.length;i++)
-			{
-				var playerObj:Object = players[i];
-				for each(var infoEntry:InfoEntry in playerObj.entries)
-					if(infoEntry.key == "name")
-					{
-						var tempName:String = String(infoEntry.value);
-						break;
-					}
-				playerGraphicDataArr[i]=new PlayerGraphicData(i,tempName);
-				addChild(playerGraphicDataArr[i]);	
-				updateLives(i,3);
-			}
-			
 		}		
-		
 
 	}
 }

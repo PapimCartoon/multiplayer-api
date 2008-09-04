@@ -168,6 +168,17 @@ public final class AS3_vs_AS2
 		child.text = msg;
 		child.width = 300;
 		child.height = 300;
+	
+		var buttonText:TextField = new TextField();
+		buttonText.text = "close";
+		var buttonBox:Sprite=new Sprite();
+		buttonBox.graphics.beginFill(0x000000);
+		buttonBox.graphics.drawRect(0,0,10,10);
+		buttonBox.graphics.endFill();
+		buttonBox.addChild(buttonText);
+		var closeBtn:SimpleButton = new SimpleButton(buttonBox,buttonBox,buttonBox,buttonBox);
+		blackBox.addChild(closeBtn);
+		closeBtn.addEventListener(MouseEvent.CLICK, function(graphics:MovieClip,blackBox:MovieClip):void {graphics.removeChild(blackBox);} );
 		//child.backgroundColor = 0xFF0000; // red
 		child.textColor = 0xFF0000; // red
 		graphics.addChild(blackBox);

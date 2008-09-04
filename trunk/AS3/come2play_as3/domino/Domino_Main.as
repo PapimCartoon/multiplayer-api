@@ -8,8 +8,8 @@ package come2play_as3.domino
 	
 	public class Domino_Main extends ClientGameAPI
 	{
-		private static var cubeMaxValue:int = 7;
-		private var currentTurn:int;
+		private static var cubeMaxValue:int = 6;
+		public var currentTurn:int;
 		
 		private var domino_Logic:Domino_Logic;
 		private var myUserId:int; //my user id
@@ -31,6 +31,12 @@ package come2play_as3.domino
 		{
 			return players[currentTurn%players.length];	
 		}
+		public function doMyTrace(traceObj:Object):void
+		{
+			doTrace("Player"+myUserId,traceObj);
+		}
+		
+		
 		public function sendPlayerMove(playerMove:PlayerMove):void
 		{
 			doStoreState([UserEntry.create("Move_"+playerMove.key,playerMove,false)])
@@ -40,9 +46,17 @@ package come2play_as3.domino
 		{
 			doAllEndMatch(playerMatchOverArr);
 		}
-		public function refreshTurn(playerPos:int):void
+		public function refreshTurn():void
 		{
-			currentTurn=playerPos;
+			var oldTurn:int = currentTurn % (players.length+1);
+			oldTurn = oldTurn % players.length;
+			var newTurn:int = currentTurn % players.length;
+			while(oldTurn!=newTurn)
+			{
+				currentTurn++;
+				newTurn= currentTurn % players.length;
+			}
+			currentTurn--;
 		}
 		public function setNextTurn():void
 		{
@@ -51,16 +65,16 @@ package come2play_as3.domino
 		}
 		public function noMoves():void
 		{
-			doStoreState([UserEntry.create("player_"+myUserId,NoMoves.create(myUserId),false)]);
+			doStoreState([UserEntry.create("player_"+currentTurn,NoMoves.create(myUserId),false)]);
 			var userEntry:RevealEntry = domino_Logic.nextDomino(myUserId);
 			if(userEntry != null)
 				doAllRevealState([userEntry]);
 			setNextTurn();
 			
 		}
-		public function foundHacker(playerId:int):void
+		public function foundHacker(playerId:int,key:String):void
 		{
-			doAllFoundHacker(playerId,"player does not have this key");	
+			doAllFoundHacker(playerId,"player does not have this key :"+key);	
 		}
 		public function revealHands(revealEntries:Array/*RevealEntry*/):void
 		{
@@ -95,18 +109,23 @@ package come2play_as3.domino
 			}
 			else
 			{
-				var middleDomino:String = "domino_"+((allPlayerIds.length + finishedPlayerIds.length)*7+1);
+				var middleDomino:String = "domino_"+(allPlayerIds.length*7+1);
 				var playerMoves:Array = new Array();
 				for each(var serverEntry:ServerEntry in serverEntries)
 				{
 					if(serverEntry.key ==middleDomino)
 						domino_Logic.addDominoMiddle(serverEntry.value as DominoCube,serverEntry.key);
 					else if(serverEntry.value is DominoCube)
-						domino_Logic.addDominoCube(serverEntry.value as DominoCube,serverEntry.key)						
+					{
+						domino_Logic.addDominoCube(serverEntry.value as DominoCube,serverEntry.key)	
+						if(serverEntry.visibleToUserIds.length == 0)
+							domino_Logic.addKeyTo(serverEntry.key,serverEntry.visibleToUserIds[0]);
+					}					
 					else
 						playerMoves.push(serverEntry);
 				}
 				domino_Logic.loadBoard();
+				
 				for each(serverEntry in playerMoves)
 				{
 					if(serverEntry.value is PlayerMove)
@@ -118,14 +137,26 @@ package come2play_as3.domino
 					}
 					else if(serverEntry.value is NoMoves)
 					{
+						
+					}
+					else if(serverEntry.visibleToUserIds.length >0)
+					{
+							domino_Logic.addKeyTo(serverEntry.key,serverEntry.visibleToUserIds[0])
+							currentTurn++;
+					}
+					/*
+					{
 						var noMoves:NoMoves = serverEntry.value as NoMoves;
 						domino_Logic.addLodedDominoKey(noMoves.userId)
 						currentTurn++;
-					}
+					}*/
+
 
 				}
+				
+				domino_Logic.debug();
 				currentTurn--;
-				if(players.indexOf(myUserId) != -1)
+				if((players.indexOf(myUserId) != -1) && (finishedPlayerIds.indexOf(myUserId) == -1))
 				{	
 					setNextTurn();
 					if(myUserId == getTurnOf())

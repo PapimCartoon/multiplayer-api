@@ -143,7 +143,9 @@ package come2play_as3.minesweeper
 		{
 			for (var i:int=0;i<playingUsers.length;i++)
 			{
+				
 				var playerObj:Object = playingUsers[i];
+				trace(id+"*************"+playerObj.userId)
 				if(playerObj.userId == id)
 					return i;
 			}
@@ -251,19 +253,23 @@ package come2play_as3.minesweeper
 		private function applyOldMove(serverBox:ServerBox,playerMove:PlayerMove):void
 		{
 			var playerNum:int = findPlayer(playerMove.takingPlayer)
-			playerMove.takingPlayer = playerNum;
+			//playerMove.takingPlayer = playerNum;
 			var playerData:PlayerData = playerGameData[playerNum];
+			madeMoves++;
+			boardLogic[playerMove.xPos][playerMove.yPos] = 0
 			if(playerMove.isMine)
 			{
 				if(serverBox.isMine)
 				{
 					playerData.addLife();
 					playerData.playerScore +=10;
+					mineSweeper_Graphic.foundMine(playerMove.xPos,playerMove.yPos,playerNum);
 				}
 				else
 				{
 					playerData.playerLives --;
 					playerData.playerScore -=5;
+					mineSweeper_Graphic.revealBox(serverBox.borderingMines,serverBox.xPos,serverBox.yPos);
 				}
 			}
 			else
@@ -272,10 +278,12 @@ package come2play_as3.minesweeper
 				{
 					playerData.playerLives --;
 					playerData.playerScore -=5;
+					mineSweeper_Graphic.setOfMine(playerMove.xPos,playerMove.yPos,playerNum);
 				}
 				else
 				{
 					playerData.playerScore ++;
+					mineSweeper_Graphic.revealBox(serverBox.borderingMines,serverBox.xPos,serverBox.yPos);
 				}
 			}
 		}
@@ -305,34 +313,46 @@ package come2play_as3.minesweeper
 			
 			
 			
-			var loadBoard:Array = new Array();
-			var playerMoves:Array =new Array();
 			boardLogic=new Array()
 			for(i=0;i<boardWidth;i++)
 			{
-				loadBoard[i] = new Array();
 				boardLogic[i] = new Array();
 				for(j=0;j<boardHeight;j++)
 				{
 					boardLogic[i][j] = -1 ;
 				}
 			}
+			mineSweeper_Graphic.buildBoard(boardWidth,boardHeight,playingUsers);
+			
+			var blankSquares:Array = new Array();
+			var playerMoves:Array = new Array();
+			var serverBoxes:Array = new Array();
 			for each(var serverEntry:ServerEntry in serverEntries)
 			{
 				if(serverEntry.value is ServerBox)
 				{
 					var serverBox:ServerBox=serverEntry.value as ServerBox
-					loadBoard[serverBox.xPos][serverBox.yPos] = serverBox;
-					boardLogic[serverBox.xPos][serverBox.yPos] = -1;
+					serverBoxes.push(serverBox)
 				}
 				else if(serverEntry.value is PlayerMove)
 				{
-					var playerMove:PlayerMove = serverEntry.value as PlayerMove;
-					playerMoves.push(playerMove);
-					applyOldMove(serverBox,playerMove);
+					playerMoves.push(serverEntry.value as PlayerMove);
+					//applyOldMove(serverBox,playerMove);
+				}
+				else if(serverEntry.value is Array)
+				{
+					blankSquares.push(serverEntry.value as Array);
 				}
 			}
-			mineSweeper_Graphic.loadBoard(boardWidth,boardHeight,playingUsers,loadBoard,playerMoves);
+			
+			for each(var playerMove:PlayerMove in playerMoves)
+			{
+				if(commitServerBox(playerMove,serverBoxes))
+					continue ;
+				if(commitBlankBox(blankSquares,playerMove))
+					continue ;
+			}
+						
 			for(i=0;i<playerGameData.length;i++)
 			{
 				var playerData:PlayerData = playerGameData[i];
@@ -340,8 +360,61 @@ package come2play_as3.minesweeper
 				mineSweeper_Graphic.updateScore(i,playerData.playerScore);
 			}
 			
-			
 		}
+		private function commitServerBox(playerMove:PlayerMove,serverBoxes:Array/*ServerBox*/):Boolean
+		{
+			for each(var serverBox:ServerBox in serverBoxes)
+			{
+				if((serverBox.xPos == playerMove.xPos)&&(serverBox.yPos == playerMove.yPos))
+				{
+					applyOldMove(serverBox,playerMove);
+					return true;
+				}
+			}
+			return false;
+		}
+		private function commitBlankBox(arr:Array/*Array*/,playerMove:PlayerMove):Boolean
+		{
+			//var blankBox:BlankBox;
+			var BlankBoxes:Array;
+			for(var i:int;i<arr.length;i++)
+			{
+				BlankBoxes= arr[i]	
+				for each(var blankBox:BlankBox in BlankBoxes)
+				{
+					if((playerMove.xPos == blankBox.xPos)&&(playerMove.yPos == blankBox.yPos))
+					{
+						loadBlankBoxesServer(arr[i],playerMove.takingPlayer);
+						arr.splice(i,1);
+						return true;
+					}
+				}			
+			}
+			return false;
+		}
+		
+		
+		public function loadBlankBoxesServer(blankSquares:Array,userId:int):void
+		{
+
+			var playerNum:int = findPlayer(userId);
+			var currentData:PlayerData = playerGameData[playerNum];
+			for each(var boxPos:Object in blankSquares)
+			{
+				var blankBox:BlankBox = boxPos as BlankBox
+				if(boardLogic[blankBox.xPos][blankBox.yPos] == -1)
+				{
+					mineSweeper_Graphic.revealBox(blankBox.bordering,blankBox.xPos,blankBox.yPos);
+					boardLogic[blankBox.xPos][blankBox.yPos] = 0
+					currentData.playerScore += 1;
+					madeMoves++;
+				}
+			}
+			mineSweeper_Graphic.updateScore(playerNum,currentData.playerScore);
+			if(madeMoves >= boardHeight * boardWidth)
+				gameOver();
+		}
+		
 		public function addBlankBoxesServer(blankSquares:Array):void
 		{
 
@@ -351,10 +424,13 @@ package come2play_as3.minesweeper
 			for each(var boxPos:Object in blankSquares)
 			{
 				var blankBox:BlankBox = boxPos as BlankBox
-				mineSweeper_Graphic.revealBox(blankBox.bordering,blankBox.xPos,blankBox.yPos);
-				boardLogic[blankBox.xPos][blankBox.yPos] = 0
-				currentData.playerScore += 1;
-				madeMoves++;
+				if(boardLogic[blankBox.xPos][blankBox.yPos] == -1)
+				{
+					mineSweeper_Graphic.revealBox(blankBox.bordering,blankBox.xPos,blankBox.yPos);
+					boardLogic[blankBox.xPos][blankBox.yPos] = 0
+					currentData.playerScore += 1;
+					madeMoves++;
+				}
 			}
 			mineSweeper_Graphic.updateScore(playerNum,currentData.playerScore);
 			if(madeMoves >= boardHeight * boardWidth)

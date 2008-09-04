@@ -70,33 +70,33 @@ package come2play_as3.domino
 				tempDomino.x =20 + i*30;
 			}	
 		}
-		public function addPlayerDominoCube(playerMove:PlayerMove,playerId:int):int/*Domino cubes left*/
+		public function putCubeOnBoard(playerMove:PlayerMove,playerId:int):int/*Domino cubes left*/
 		{
-			var playerRelativePos:int =players.indexOf(playerId)-players.indexOf(myUserId);
-			if(playerRelativePos<0) playerRelativePos+=players.length;
-			var tempRivalBoard:RivalPlayerBoard = rivalBoards[playerRelativePos];
-			tempRivalBoard.removeDomino();
-			var tempDominoCube:DominoCube= playerMove.dominoCube;
-			var tempDomino:Domino = new Domino();
-			tempDomino.lowerNum.gotoAndStop(tempDominoCube.lowerNum +1);
-			tempDomino.upperNum.gotoAndStop(tempDominoCube.upperNum +1);
-			addChild(tempDomino);
-			if(playerMove.isRight)
-				gameBoard.addDominoRight(tempDomino);
-			else
-				gameBoard.addDominoLeft(tempDomino);
-			var remainingDominoes:int = tempRivalBoard.dominoCount();
-			if(remainingDominoes == 0)
-			{
-				rivalBoards.splice(playerRelativePos,1);
-			}
-			return remainingDominoes;
-			
+				var playerRelativePos:int =players.indexOf(playerId);
+				var tempRivalBoard:RivalPlayerBoard = rivalBoards[playerRelativePos];
+				trace("*************************"+rivalBoards.length+"/"+players.length)
+				tempRivalBoard.removeDomino();
+				var tempDominoCube:DominoCube= playerMove.dominoCube;
+				var tempDomino:Domino = new Domino();
+				tempDomino.lowerNum.gotoAndStop(tempDominoCube.lowerNum +1);
+				tempDomino.upperNum.gotoAndStop(tempDominoCube.upperNum +1);
+				addChild(tempDomino);
+				if(playerMove.isRight)
+					gameBoard.addDominoRight(tempDomino);
+				else
+					gameBoard.addDominoLeft(tempDomino);
+				var remainingDominoes:int = tempRivalBoard.dominoCount();
+				return remainingDominoes;
+		}
+		public function removePlayer(pos:int):void
+		{
+			trace("*************************"+rivalBoards.length+"/"+players.length)
+			rivalBoards.splice(pos,1)
 		}
 		public function addDominoToRivalDeck(rivalPlayerId:int):void
 		{
-			var playerRelativePos:int =players.indexOf(rivalPlayerId)-players.indexOf(myUserId);
-			if(playerRelativePos<0) playerRelativePos+=players.length;
+			
+			var playerRelativePos:int =players.indexOf(rivalPlayerId);
 			var tempRivalBoard:RivalPlayerBoard = rivalBoards[playerRelativePos];
 			tempRivalBoard.addDomino();
 		}
@@ -128,8 +128,8 @@ package come2play_as3.domino
 			{
 				var playerRelativePos:int =i-players.indexOf(myUserId);
 				if(playerRelativePos<0) playerRelativePos+=players.length;
-				rivalBoards[playerRelativePos] = new RivalPlayerBoard(playerRelativePos,players.length);
-				addChild(rivalBoards[playerRelativePos]);
+				rivalBoards[i] = new RivalPlayerBoard(playerRelativePos,players.length);
+				addChild(rivalBoards[i]);
 
 			}
 		}
@@ -150,9 +150,8 @@ package come2play_as3.domino
 				{
 					var playerRelativePos:int =i-players.indexOf(myUserId);
 					if(playerRelativePos<0) playerRelativePos+=players.length;
-
-					rivalBoards[playerRelativePos] = new RivalPlayerBoard(playerRelativePos,players.length);
-					addChild(rivalBoards[playerRelativePos]);
+					rivalBoards[i] = new RivalPlayerBoard(playerRelativePos,players.length);
+					addChild(rivalBoards[i]);
 
 				}
 			}

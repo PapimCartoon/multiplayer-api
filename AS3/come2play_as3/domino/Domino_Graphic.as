@@ -74,7 +74,6 @@ package come2play_as3.domino
 		{
 				var playerRelativePos:int =players.indexOf(playerId);
 				var tempRivalBoard:RivalPlayerBoard = rivalBoards[playerRelativePos];
-				trace("*************************"+rivalBoards.length+"/"+players.length)
 				tempRivalBoard.removeDomino();
 				var tempDominoCube:DominoCube= playerMove.dominoCube;
 				var tempDomino:Domino = new Domino();
@@ -90,15 +89,17 @@ package come2play_as3.domino
 		}
 		public function removePlayer(pos:int):void
 		{
-			trace("*************************"+rivalBoards.length+"/"+players.length)
 			rivalBoards.splice(pos,1)
 		}
 		public function addDominoToRivalDeck(rivalPlayerId:int):void
 		{
 			
 			var playerRelativePos:int =players.indexOf(rivalPlayerId);
-			var tempRivalBoard:RivalPlayerBoard = rivalBoards[playerRelativePos];
-			tempRivalBoard.addDomino();
+			if((playerRelativePos!= -1) && (rivalBoards[playerRelativePos]!= null))
+			{
+				var tempRivalBoard:RivalPlayerBoard = rivalBoards[playerRelativePos];
+				tempRivalBoard.addDomino();
+			}
 		}
 		public function addDominoCubeToBoard(dominoPos:int,isRight:Boolean):void
 		{

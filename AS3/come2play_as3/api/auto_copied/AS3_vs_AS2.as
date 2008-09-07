@@ -3,7 +3,9 @@ package come2play_as3.api.auto_copied
 import flash.display.*;
 import flash.events.*;
 import flash.net.*;
+import flash.text.Font;
 import flash.text.TextField;
+import flash.text.TextFormat;
 import flash.utils.*;
 	
 public final class AS3_vs_AS2
@@ -168,21 +170,37 @@ public final class AS3_vs_AS2
 		child.text = msg;
 		child.width = 300;
 		child.height = 300;
-	
+		
 		var buttonText:TextField = new TextField();
+		
+		//buttonText.textColor = 0x000000;
 		buttonText.text = "close";
+		buttonText.setTextFormat(new TextFormat("Times New Roman",14,0x000000),0,5);
+		buttonText.selectable = false;
+		
+		
 		var buttonBox:Sprite=new Sprite();
-		buttonBox.graphics.beginFill(0x000000);
-		buttonBox.graphics.drawRect(0,0,10,10);
+		buttonBox.graphics.beginFill(0xffffff);
+		buttonBox.graphics.drawRect(0,0,40,20);
 		buttonBox.graphics.endFill();
 		buttonBox.addChild(buttonText);
+		buttonBox.x = 240
+		buttonBox.y = 260;
 		var closeBtn:SimpleButton = new SimpleButton(buttonBox,buttonBox,buttonBox,buttonBox);
+		blackBox.addChild(child);
 		blackBox.addChild(closeBtn);
-		closeBtn.addEventListener(MouseEvent.CLICK, function(graphics:MovieClip,blackBox:MovieClip):void {graphics.removeChild(blackBox);} );
+
 		//child.backgroundColor = 0xFF0000; // red
 		child.textColor = 0xFF0000; // red
+		
+		
 		graphics.addChild(blackBox);
-		graphics.addChild(child);
+		closeBtn.addEventListener(MouseEvent.CLICK, 
+			function():void {
+				trace("close")
+				graphics.removeChild(blackBox);
+				} 
+			);
 	}
 	
 	

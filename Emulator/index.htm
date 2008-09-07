@@ -21,7 +21,7 @@ function getParams(arr){
                 if(arr[i][1]=="1"){
                     document.getElementById("old_game").checked=true;
                 }else{
-                    document.getElementById("old_game").checked=false;                
+                    document.getElementById("old_game").checked=false;
                 }
                 break;
             case "logo":
@@ -59,7 +59,7 @@ function getParams(arr){
                 if(arr[i][0].substring(0,3)=="col"){
                     if(!document.getElementById(arr[i][0])){
                         addParam();
-                    } 
+                    }
                 }
                 vals.push(arr[i]);
                 break;
@@ -136,8 +136,13 @@ function removeParam(num,obj){
                                 <td style="text-align: left;">
                                     <img src="title.jpg" alt="Client-side API Emulator" />
                                 </td>
-                                <td style="text-align: left; color: #5b8a2a; width: 115px;" nowrap="nowrap">
-                                    Version 1.0.0<br />
+                                <td>
+                                Your Version: 1.0.0<br />
+                                </td>
+                                <td style="text-align: left; color: #5b8a2a; width: 300px;" nowrap="nowrap">
+
+                                    <IFRAME src ="http://www.come2play.com/developer_emulator_news.asp"
+									 height=60  frameborder = 0  scrolling=no> </IFRAME>
 <!--
                                     <a href="http://code.google.com/p/multiplayer-api" style="color: #5b8a2a;">Check for updates...</a>
 -->
@@ -147,9 +152,9 @@ function removeParam(num,obj){
                     </td>
                 </tr>
                 <tr>
-                    <td style="border-bottom: dotted 1px black;">					
+                    <td style="border-bottom: dotted 1px black;">
 						<b>Important: the first time you install the emulator locally, you must give him permissions to read configuration files.
-						Go <a href="http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager04.html">here</a>, 
+						Go <a href="http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager04.html">here</a>,
 						click on "Always Allow", then click on "Edit locations...", choose "Add location...", and enter the path you used for all your project files and emulator files.
 						<!-- TODO: add printscreen http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager04.html, showing how to do the above. -->
 						</b>
@@ -165,9 +170,9 @@ function removeParam(num,obj){
                                 <td>
 
                                     <input id="test_file_name" name="test_file_name" size="120" value="../AS3/TicTacToe_AS3.swf"/><br>
-									<small>	
+									<small>
 									<nobr>
-									../AS3/TicTacToe_AS3.swf?ROWS=5&COLS=5&WIN_LENGTH=4&PLAYERS_NUM_IN_SINGLE_PLAYER=3&SQUARE_scaleX=66&SQUARE_scaleY=66&SQUARE_deltaX=66&SQUARE_deltaY=66&WINNER_PERCENTAGE=70<br>	
+									../AS3/TicTacToe_AS3.swf?ROWS=5&COLS=5&WIN_LENGTH=4&PLAYERS_NUM_IN_SINGLE_PLAYER=3&SQUARE_scaleX=66&SQUARE_scaleY=66&SQUARE_deltaX=66&SQUARE_deltaY=66&WINNER_PERCENTAGE=70<br>
 									../AS3/TicTacToe_AS3.swf?ROWS=3&COLS=3&WIN_LENGTH=3&PLAYERS_NUM_IN_SINGLE_PLAYER=2&SQUARE_scaleX=100&SQUARE_scaleY=100&SQUARE_deltaX=100&SQUARE_deltaY=100&WINNER_PERCENTAGE=100<br>
 									../AS2/TicTacToe_AS2.swf<br>
 									../AS3/TestClientGameAPI_AS3.swf<br>
@@ -189,6 +194,9 @@ function removeParam(num,obj){
                                     <input type="hidden" id="old_game" name="old_game" value="" />
 									<!-- Is old API? -->
 					<!-- <a href="#"><img src="question.gif" style="border-width:0px;" /> </a>-->
+
+
+
                                 </td>
                             </tr>
                             <tr>
@@ -198,6 +206,7 @@ function removeParam(num,obj){
                                 <td>
                                     <input id="test_file_width" name="test_file_width" size="5" type="text" value="400" /> x <input id="test_file_height" name="test_file_height" size="5" type="text" value="400" /><!-- <a href="#"><img src="question.gif" style="border-width:0px;" /> </a>-->
                                 </td>
+
                             </tr>
                             <tr>
                                 <td>

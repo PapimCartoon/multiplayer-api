@@ -3,10 +3,9 @@
 import come2play_as2.tictactoe.*;
 	class come2play_as2.tictactoe.TicTacToeMove extends SerializableClass
 	{
-		public function TicTacToeMove() {
-			
-		}
-		public var row:Number, col:Number;
+		private var x:String;
+		public static var z:Number;
+		public var row:Number, col:Number, w:String;
 		public static function create(row:Number, col:Number):TicTacToeMove {			
 			var res:TicTacToeMove = new TicTacToeMove();
 		    res.row = row;

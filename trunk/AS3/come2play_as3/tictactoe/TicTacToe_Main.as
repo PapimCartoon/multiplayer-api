@@ -146,7 +146,7 @@ public final class TicTacToe_Main extends ClientGameAPI {
 		// In SinglePlayer: the player already called return before, but a viewer (there can be viewers even for singleplayer games!) still needs to call performMove 
 		if (!isSinglePlayer()) 
 			assert(turnOfColor==colorOfUser, ["Got an entry from player=",userId," of color=",colorOfUser," but expecting one from color=", turnOfColor]);
-		var expectedKey:String = getEntryKey();
+		var expectedKey:int = getEntryKey();
 		assert(entry.key==expectedKey, ["The state key is illegal! Expecting key=",expectedKey," but got key=",entry.key]);
 		performMove(entry.value, false);
 	}
@@ -207,7 +207,11 @@ public final class TicTacToe_Main extends ClientGameAPI {
 		logic.makeMove(turnOfColor, move);
 		// update the graphics
 		var square:TicTacToe_SquareGraphic = getSquareGraphic(move);
-		square.setColor(turnOfColor);	
+		square.setColor(turnOfColor);
+		if (!isSavedGame) {
+			animationStarted();
+			square.startAnimation();
+		}	
 		
 		var didWin:Boolean = logic.isWinner(move);
 		var isBoardFull:Boolean = logic.isBoardFull();
@@ -287,8 +291,8 @@ public final class TicTacToe_Main extends ClientGameAPI {
 		
 		if (!isSavedGame) startMove(true);
 	}
-	private function getEntryKey():String {
-		return ""+logic.getMoveNumber();
+	private function getEntryKey():int {
+		return logic.getMoveNumber();
 	}
 	public function userMadeHisMove(move:TicTacToeMove):void {		
 		doTrace("dispatchMoveIfLegal", [move]);

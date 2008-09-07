@@ -4,8 +4,8 @@
 	import come2play_as2.api.auto_copied.*
 import come2play_as2.api.auto_generated.*;
 	class come2play_as2.api.auto_generated.API_DoAllShuffleState extends API_Message {
-		public var keys:Array/*String*/;
-		public static function create(keys:Array/*String*/):API_DoAllShuffleState {
+		public var keys:Array/*Object*/;
+		public static function create(keys:Array/*Object*/):API_DoAllShuffleState {
 			var res:API_DoAllShuffleState = new API_DoAllShuffleState();
 			res.keys = keys;
 			return res;

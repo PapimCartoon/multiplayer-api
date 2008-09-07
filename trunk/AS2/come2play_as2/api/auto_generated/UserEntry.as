@@ -4,10 +4,10 @@
 	import come2play_as2.api.auto_copied.*
 import come2play_as2.api.auto_generated.*;
 	class come2play_as2.api.auto_generated.UserEntry extends API_Message {
-		public var key:String;
+		public var key/*any type*/;
 		public var value/*any type*/;
 		public var isSecret:Boolean;
-		public static function create(key:String, value/*any type*/, isSecret:Boolean/*<InAS3> = false </InAS3>*/):UserEntry {
+		public static function create(key/*any type*/, value/*any type*/, isSecret:Boolean/*<InAS3> = false </InAS3>*/):UserEntry {
 			var res:UserEntry = new UserEntry();
 
 // This is a AUTOMATICALLY GENERATED! Do not change!

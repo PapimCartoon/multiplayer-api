@@ -4,10 +4,10 @@
 	import come2play_as2.api.auto_copied.*
 import come2play_as2.api.auto_generated.*;
 	class come2play_as2.api.auto_generated.RevealEntry extends API_Message {
-		public var key:String;
+		public var key/*any type*/;
 		public var userIds:Array/*int*/;
 		public var depth:Number;
-		public static function create(key:String, userIds:Array/*int*//*<InAS3> = null </InAS3>*/, depth:Number/*<InAS3> = 0 </InAS3>*/):RevealEntry {
+		public static function create(key/*any type*/, userIds:Array/*int*//*<InAS3> = null </InAS3>*/, depth:Number/*<InAS3> = 0 </InAS3>*/):RevealEntry {
 			var res:RevealEntry = new RevealEntry();
 
 // This is a AUTOMATICALLY GENERATED! Do not change!

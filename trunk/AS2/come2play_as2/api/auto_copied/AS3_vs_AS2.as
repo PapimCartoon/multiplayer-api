@@ -90,6 +90,10 @@ class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 	public static function setVisible(graphics:MovieClip, is_visible:Boolean):Void {
 		graphics._visible = is_visible;
 	} 	
+	public static function setAlpha(target:MovieClip, alphaPercentage:Number):Void {
+		//trace("setAlpha==="+alphaPercentage+" target="+target);
+		target._alpha = alphaPercentage;
+	}
 	public static function setMovieXY(target:MovieClip, x:Number, y:Number):Void {
 		target._x = x;
 		target._y = y;		
@@ -168,6 +172,12 @@ class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 	}
 	
 	public static function checkConstructorHasNoArgs(obj:Object):Void {
+		// can only be done in AS3
+	}
+	public static function checkAllFieldsDeserialized(obj:Object, newInstance:Object):Void {
+		// can only be done in AS3
+	}
+	public static function checkObjectIsSerializable(obj:Object):Void {
 		// can only be done in AS3
 	}
 

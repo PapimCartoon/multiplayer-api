@@ -4,9 +4,9 @@
 	import come2play_as2.api.auto_copied.*
 import come2play_as2.api.auto_generated.*;
 	class come2play_as2.api.auto_generated.API_DoAllRequestRandomState extends API_Message {
-		public var key:String;
+		public var key:Object;
 		public var isSecret:Boolean;
-		public static function create(key:String, isSecret:Boolean/*<InAS3> = false </InAS3>*/):API_DoAllRequestRandomState {
+		public static function create(key:Object, isSecret:Boolean/*<InAS3> = false </InAS3>*/):API_DoAllRequestRandomState {
 			var res:API_DoAllRequestRandomState = new API_DoAllRequestRandomState();
 			res.key = key;
 

@@ -5,10 +5,10 @@ package come2play_as3.api.auto_generated {
 	import come2play_as3.api.*
 	import come2play_as3.api.auto_copied.*
 	public  class RevealEntry extends API_Message {
-		public var key:String;
+		public var key:*;
 		public var userIds:Array/*int*/;
 		public var depth:int;
-		public static function create(key:String, userIds:Array/*int*//*<InAS3>*/ = null /*</InAS3>*/, depth:int/*<InAS3>*/ = 0 /*</InAS3>*/):RevealEntry {
+		public static function create(key:*, userIds:Array/*int*//*<InAS3>*/ = null /*</InAS3>*/, depth:int/*<InAS3>*/ = 0 /*</InAS3>*/):RevealEntry {
 			var res:RevealEntry = new RevealEntry();
 
 // This is a AUTOMATICALLY GENERATED! Do not change!

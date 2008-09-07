@@ -102,6 +102,9 @@ public final class AS3_vs_AS2
 	public static function setVisible(graphics:MovieClip, is_visible:Boolean):void {
 		graphics.visible = is_visible;
 	} 	
+	public static function setAlpha(target:MovieClip, alphaPercentage:int):void {
+		target.alpha = alphaPercentage/100;
+	}
 	public static function setMovieXY(target:MovieClip, x:int, y:int):void {
 		target.x = x;
 		target.y = y;		
@@ -210,13 +213,43 @@ public final class AS3_vs_AS2
 		if (checkedClasses[className]!=null) return;
 		checkedClasses[className] = true;
 		//trace("Checking ctor of "+className);
-		var constructorList:XMLList = describeType(obj).constructor;
+		var descriptionXML:XML = describeType(obj);
+		//trace("descriptionXML="+descriptionXML.toXMLString());
+		var constructorList:XMLList = descriptionXML.constructor;
 		if (constructorList.length()>0) {
 			var constructor:XML = constructorList[0];
 			if (constructor.children().length()!=0)
 				StaticFunctions.throwError("The constructor of class "+className+" that extends SerializableClass has arguments! These are the parameters of the constructor="+constructor.toXMLString()); 
 		}
+		// I want to check that all fields are non-static and public,
+		// but describeType only returns such fields in the first place.
+		//<variable name="col" type="int"/>
 	}	
+	private static var name2classFields:Object = {}; // mapping class names to an array of field names
+	public static function checkAllFieldsDeserialized(obj:Object, newInstance:Object):void {
+		var className:String = getClassName(newInstance);
+		var fieldNames:Array = name2classFields[className];
+		if (fieldNames==null) {
+			fieldNames = [];
+			var fieldsList:XMLList = describeType(newInstance).variable;
+			for each (var fieldInfo:XML in fieldsList)
+				fieldNames.push( fieldInfo.attribute("name") );			
+			name2classFields[className] = fieldNames;			
+		}
+		for each (var fieldName:String in fieldNames)
+			if (!obj.hasOwnProperty(fieldName))
+				throw new Error("When deserializing className="+className+", we didn't find fieldName="+fieldName+" in object="+JSON.stringify(obj));	
+	}
+	public static function checkObjectIsSerializable(obj:Object):void {
+		if (obj==null) return;
+		if (obj is Boolean || obj is String || obj is Number) return;
+		var className:String = getClassName(obj);
+		if (className!="Array" && className!="Object")
+			if (!(obj is SerializableClass))
+				throw new Error("className="+className+" should extend SerializableClass because it was sent over a LocalConnection");
+		for each (var field:Object in obj)
+			checkObjectIsSerializable(field);
+	}
 	
 	public static function IndexOf(arr:Array, val:Object):int {
 		return arr.indexOf(val);

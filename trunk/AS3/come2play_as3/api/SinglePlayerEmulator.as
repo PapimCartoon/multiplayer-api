@@ -4,7 +4,6 @@
 	import come2play_as3.api.auto_generated.*;
 	
 	import flash.display.MovieClip;
-	import flash.net.LocalConnection;
 	
 	/**
 	 * This class simulates a server that works only for a single player.
@@ -41,6 +40,7 @@
 		private var extraMatchInfo:Object/*Serializable*/;
 		private var matchStartedTime:int; 
 		private var userStateEntries:Array/*ServerEntry*/;
+		private var apiMsgsQueue:Array/*API_Message*/ = [];
 		
 		public function SinglePlayerEmulator(graphics:MovieClip) {
 			super(graphics,true, DEFAULT_LOCALCONNECTION_PREFIX);
@@ -54,7 +54,7 @@
 			AS3_vs_AS2.addKeyboardListener(graphics, AS3_vs_AS2.delegate(this, this.reportKeyDown));	
 		}		
 		private function reportKeyDown(is_key_down:Boolean, charCode:int, keyCode:int, keyLocation:int, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean):void {		
-			sendMessage(API_GotKeyboardEvent.create(is_key_down, charCode, keyCode, keyLocation, altKey, ctrlKey, shiftKey) );
+			queueSendMessage(API_GotKeyboardEvent.create(is_key_down, charCode, keyCode, keyLocation, altKey, ctrlKey, shiftKey) );
 		}		
 		
         override public function gotMessage(msg:API_Message):void {
@@ -62,16 +62,31 @@
 				AS3_vs_AS2.myTimeout(AS3_vs_AS2.delegate(this, this.sendNewMatch), 2000);
 			} else if (msg is API_DoRegisterOnServer) {
 				doRegisterOnServer();
+			} else if (msg is API_DoFinishedCallback) {
+				if (apiMsgsQueue.length==0) throwError("Game sent too many DoFinishedCallback");
+				apiMsgsQueue.shift();
+				if (apiMsgsQueue.length>0) sendTopQueue();
 			}				
   		}
   		private function doRegisterOnServer():void {
-  			sendMessage(API_GotMyUserId.create(userId) );
-  			sendMessage(API_GotCustomInfo.create(customInfoEntries) );
-  			sendMessage(API_GotUserInfo.create(userId, userInfoEntries) );
+  			queueSendMessage(API_GotMyUserId.create(userId) );
+  			queueSendMessage(API_GotCustomInfo.create(customInfoEntries) );
+  			queueSendMessage(API_GotUserInfo.create(userId, userInfoEntries) );
 	 		sendNewMatch();
   		}
   		private function sendNewMatch():void {	 
-  			sendMessage(API_GotMatchStarted.create([userId], [], extraMatchInfo, matchStartedTime, userStateEntries) );	 	
+  			queueSendMessage(API_GotMatchStarted.create([userId], [], extraMatchInfo, matchStartedTime, userStateEntries) );	 	
   		}
+  		private function queueSendMessage(msg:API_Message):void {
+  			apiMsgsQueue.push(msg);
+  			if (apiMsgsQueue.length==1) sendTopQueue();
+  		}
+  		
+  		private function sendTopQueue():void {  			
+  			var msg:API_Message = apiMsgsQueue[0];
+  			sendMessage(msg);
+  		}
+  		
+  		
 	}
 }

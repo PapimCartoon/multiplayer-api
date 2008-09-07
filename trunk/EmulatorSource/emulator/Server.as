@@ -696,12 +696,11 @@ package emulator {
 		}
 		private function isPlayer(userId:int):Boolean
 		{
-			for(var i:int=0;i<aPlayers.length;i++)
-			{
-				if(aPlayers[i]==userId)
-					return true;
-			}
-			return false;
+			var finishedPlayers:Array = getFinishedPlayerIds();
+			if((aPlayers.indexOf(userId) != -1) && (finishedPlayers.indexOf(userId) == -1))
+				return true;
+			else
+				return false;
 		}
 		private function processMessage(msg:API_Message):void
 		{
@@ -831,7 +830,7 @@ package emulator {
 						if(!isEquel(newMsg.getMethodParameters(),entry.msg.getMethodParameters()))
 						{
 							gameOver();
-							addMessageLog("Server","Error","Not all parameters for "+newMsg.getMethodName()+" are the same new Mesaage = "+newMsg.getMethodParameters()+" old Message :"+entry.msg.getMethodParameters());
+							addMessageLog("Server","Error","Not all parameters for "+newMsg.getMethodName()+" are the same new Mesaage = "+newMsg.getMethodParameters()+" from player : "+user.ID+" and old Message :"+entry.msg.getMethodParameters()+"from player : "+entry.user.ID);
 							showMsg("Not all parameters for "+newMsg.getMethodName()+" are the same","Error");
 							return false;
 						}	
@@ -1280,7 +1279,7 @@ package emulator {
 					txtInfo.text = "user_id: " + evt.target.selectedItem[COL_player_ids] + "\n" + "key: " + evt.target.selectedItem[COL_key] + "\n" + "data: " + evt.target.selectedItem[COL_data];
 					break;
 				case 2:
-					txtInfo.text = "user_id: " + evt.target.selectedItem[COL_player_ids] + "\n" + "key: " + evt.target.selectedItem[COL_key] + "\n" + "submition_time: " + evt.target.selectedItem.submition_time + "\n" + "expiration_time: " + evt.target.selectedItem.expiration_time + "\n" + "pass_back: " + evt.target.selectedItem.pass_back + "\n" + "pending: " + evt.target.selectedItem.pending;
+					txtInfo.text = "user_id: " + evt.target.selectedItem[COL_User] + "\n" + "Message: " + evt.target.selectedItem[COL_Message];
 					break;
 				case 3:
 					txtInfo.text = "key: " + evt.target.selectedItem[COL_key] + "\n" + "data: " + evt.target.selectedItem[COL_data];
@@ -2003,7 +2002,7 @@ package emulator {
 			}
 		}
 		public function doFoundHacker(user:User, msg:API_DoAllFoundHacker):void {
-			addMessageLog("Server","Error",user.Name+" claimed he found a hacker:"+ msg.toString());
+			addMessageLog("Server","doAllFoundHacker",user.Name+" claimed he found a hacker:"+ msg.toString());
 			showMsg(user.Name+" claimed he found a hacker:"+ msg.toString());
 			gameOver()
 		}

@@ -21,12 +21,13 @@ package come2play_as3.domino
 		private var graphics:MovieClip;
 		
 		private var dominoAmount:int;// how many dominoes are avaible in the game
-		private var currentDomino:int;//how many dominoes have been drawn already
+		public var currentDomino:int;//how many dominoes have been drawn already
 		private var dominoes:Array/*DominoObject*/; //my dominoes
 		
 		//game detailes
 		private var players:Array/*int*/;
 		private var myUserId:int;
+		private var cubeMaxValue:int;
 		private var movesWithNoAction:int;
 		private var dominoBoard:DominoBoard/*DominoObject*/ // dominoes on board
 		private var isMyTurn:Boolean; // is my turn
@@ -38,10 +39,11 @@ package come2play_as3.domino
 		private var avaibleDominoMoves:Array; //aviable dominoes to put on board
 		
 		
-		public function Domino_Logic(domino_MainPointer:Domino_Main,graphics:MovieClip)
+		public function Domino_Logic(domino_MainPointer:Domino_Main,graphics:MovieClip,cubeMaxValue:int)
 		{
 			this.graphics = graphics;
 			this.domino_MainPointer = domino_MainPointer;
+			this.cubeMaxValue = cubeMaxValue;
 			playing = false;
 			rightArrow = new RightArrow();
 			leftArrow = new LeftArrow();
@@ -61,6 +63,7 @@ package come2play_as3.domino
 			dominoes = new Array();
 			dominoBoard = new DominoBoard();
 			rivalPlayersDominoKeys = new Array();
+			dominoAmount = (cubeMaxValue+1)*(cubeMaxValue+2)/2 +1;
 			for(var i:int;i<players.length;i++)
 				rivalPlayersDominoKeys[i] = new Array();
 			
@@ -129,37 +132,81 @@ package come2play_as3.domino
 			checkWin(dominoes.length,myUserId);
 			
 		}
-		public function addKeyTo(key:String,playerId:int):void
+		public function addCubeToBoard(userId:int):void
 		{
-			if(rivalPlayersDominoKeys[players.indexOf(playerId)] !=null)
-			{
-				var tempRivalPlayersDominoKeys:Array = rivalPlayersDominoKeys[players.indexOf(playerId)];
-				tempRivalPlayersDominoKeys.push(key)
-			}
-			else
-				rivalPlayersDominoKeys[players.indexOf(playerId)] = new Array();	
+			domino_Graphic.addDominoToRivalDeck(userId);
 		}
-		public function loadBoard():void
+		public function addKeyTo(playerId:int):void
 		{
-			for(var i:int=0;i<players.length;i++)
+				var tempRivalPlayersDominoKeys:Array = rivalPlayersDominoKeys[players.indexOf(playerId)];
+				tempRivalPlayersDominoKeys.push("domino_"+currentDomino);		
+				currentDomino++;
+		}
+		
+		public function loadBoard(serverEntries:Array/*ServerEntry*/):int
+		{
+			var serverEntry:ServerEntry;
+			for(var i:int=0;i<serverEntries.length;i++)
 			{
-				if(rivalPlayersDominoKeys[i] == null)
-					rivalPlayersDominoKeys[i] = new Array();
-					//var tempRivalPlayersDominoKeys:Array = new Array();
-					//for(var j:int=0;j<7;j++)
-					//	tempRivalPlayersDominoKeys.push("domino_"+(i*7+j+1));
-					//rivalPlayersDominoKeys[i] = tempRivalPlayersDominoKeys;
+				serverEntry = serverEntries[i];
+				var splitKey:Array = serverEntry.key.split("_");
+				if((splitKey[1] < (players.length*7+2)) && (splitKey[0]=="domino"))
+				{
+					if (serverEntry.value is DominoCube)
+					{
+						if(serverEntry.visibleToUserIds != null)
+							addDominoCube(serverEntry.value as DominoCube,serverEntry.key);
+						else
+							addDominoMiddle(serverEntry.value as DominoCube,serverEntry.key);
+					}
+					serverEntries.splice(i,1);
+					i--;
+				}
+			}
+			for(i=0;i<players.length;i++)
+			{
+					var tempRivalPlayersDominoKeys:Array = new Array();
+					for(var j:int=0;j<7;j++)
+						tempRivalPlayersDominoKeys.push("domino_"+(i*7+j+1));
+					rivalPlayersDominoKeys[i] = tempRivalPlayersDominoKeys;
 			}	
 			currentDomino = players.length * 7 + 2;
 			makeBoard();
-
+			var turn:int = 0;
+			for each(serverEntry in serverEntries)
+			{
+				if(serverEntry.value is DominoCube)
+				{
+					
+					var dominoCube:DominoCube = serverEntry.value as DominoCube;
+					drawCube(dominoCube,serverEntry.key);	
+				}
+				else if(serverEntry.value is NoMoves)
+				{
+					var noMoves:NoMoves = serverEntry.value as NoMoves;
+					addKeyTo(noMoves.userId);
+					if(myUserId != noMoves.userId)
+						addCubeToBoard(noMoves.userId);
+				}
+				
+			}
+			for each(serverEntry in serverEntries)
+			{
+				if(serverEntry.value is PlayerMove)
+				{
+					// make move
+					var playerMove:PlayerMove = serverEntry.value as PlayerMove;
+					loadPlayerDominoCube(playerMove,playerMove.playerId);
+				}
+				if(serverEntry.value is PlayerTurn)
+				{
+					var playerTurn:PlayerTurn = serverEntry.value as PlayerTurn;
+					turn = playerTurn.turn;
+				}
+			}
+			domino_Graphic.updateDeck(dominoAmount - currentDomino);
+			return turn;
 		}	
-		
-		public function debug():void
-		{
-			for(var i:int;i<rivalPlayersDominoKeys.length;i++)
-				domino_MainPointer.doMyTrace(players[i]+")"+rivalPlayersDominoKeys[i].toString());
-		}
 		
 					
 		public function addLodedDominoKey(playerId:int):void
@@ -209,8 +256,6 @@ package come2play_as3.domino
 				players.splice(pos,1);
 				rivalPlayersDominoKeys.splice(pos,1);
 				domino_Graphic.removePlayer(pos);
-				domino_MainPointer.refreshTurn();
-				
 			}
 		}
 		public function addPlayerDominoCube(playerMove:PlayerMove,playerId:int):void
@@ -384,14 +429,13 @@ package come2play_as3.domino
 			return finishedPlayers;
 		}
 		
-		public function getCubesArray(cubeMaxValue:int):Array/*UserEntry*/
+		public function getCubesArray():Array/*UserEntry*/
 		{
 			var userEntries:Array/*UserEntry*/ = new Array();
 			var count:int=1;
 			for(var i:int=0;i<=cubeMaxValue;i++)
 				for(var j:int=i;j<=cubeMaxValue;j++)
 					userEntries.push(UserEntry.create("domino_"+(count++),DominoCube.create(i,j),false));
-			dominoAmount = count;
 			return userEntries;
 		}
 		public function getDominoKeysArray():Array/*String*/

@@ -4,10 +4,9 @@ package come2play_as3.tictactoe
 	
 	public final class TicTacToeMove extends SerializableClass
 	{
-		public function TicTacToeMove() {
-			
-		}
-		public var row:int, col:int;
+		private var x:String;
+		public static var z:int;
+		public var row:int, col:int, w:String;
 		public static function create(row:int, col:int):TicTacToeMove {			
 			var res:TicTacToeMove = new TicTacToeMove();
 		    res.row = row;

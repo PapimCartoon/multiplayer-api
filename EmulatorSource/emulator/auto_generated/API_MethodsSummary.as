@@ -39,10 +39,10 @@ package emulator.auto_generated {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		, new API_MethodsSummary('doAllShuffleState', ['keys'], ['Array/*String*/'] )
-		, new API_MethodsSummary('doAllRequestRandomState', ['key', 'isSecret'], ['String', 'Boolean'] )
+		, new API_MethodsSummary('doAllShuffleState', ['keys'], ['Array/*Object*/'] )
+		, new API_MethodsSummary('doAllRequestRandomState', ['key', 'isSecret'], ['Object', 'Boolean'] )
 		, new API_MethodsSummary('doAllFoundHacker', ['userId', 'errorDescription'], ['int', 'String'] )
-		, new API_MethodsSummary('doAllRequestStateCalculation', ['keys'], ['Array/*String*/'] )
+		, new API_MethodsSummary('doAllRequestStateCalculation', ['keys'], ['Array/*Object*/'] )
 		, new API_MethodsSummary('gotRequestStateCalculation', ['serverEntries'], ['Array/*ServerEntry*/'] )
 		, new API_MethodsSummary('doAllStoreStateCalculation', ['userEntries'], ['Array/*UserEntry*/'] )
 		, new API_MethodsSummary('doConnectedSetScore', ['score'], ['int'] )

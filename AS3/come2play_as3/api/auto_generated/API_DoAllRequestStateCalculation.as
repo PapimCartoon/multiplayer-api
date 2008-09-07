@@ -5,8 +5,8 @@ package come2play_as3.api.auto_generated {
 	import come2play_as3.api.*
 	import come2play_as3.api.auto_copied.*
 	public  class API_DoAllRequestStateCalculation extends API_Message {
-		public var keys:Array/*String*/;
-		public static function create(keys:Array/*String*/):API_DoAllRequestStateCalculation {
+		public var keys:Array/*Object*/;
+		public static function create(keys:Array/*Object*/):API_DoAllRequestStateCalculation {
 			var res:API_DoAllRequestStateCalculation = new API_DoAllRequestStateCalculation();
 			res.keys = keys;
 			return res;

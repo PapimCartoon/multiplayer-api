@@ -142,7 +142,7 @@ class come2play_as2.tictactoe.TicTacToe_Main extends ClientGameAPI {
 		// In SinglePlayer: the player already called return before, but a viewer (there can be viewers even for singleplayer games!) still needs to call performMove 
 		if (!isSinglePlayer()) 
 			assert(turnOfColor==colorOfUser, ["Got an entry from player=",userId," of color=",colorOfUser," but expecting one from color=", turnOfColor]);
-		var expectedKey:String = getEntryKey();
+		var expectedKey:Number = getEntryKey();
 		assert(entry.key==expectedKey, ["The state key is illegal! Expecting key=",expectedKey," but got key=",entry.key]);
 		performMove(entry.value, false);
 	}
@@ -203,7 +203,11 @@ class come2play_as2.tictactoe.TicTacToe_Main extends ClientGameAPI {
 		logic.makeMove(turnOfColor, move);
 		// update the graphics
 		var square:TicTacToe_SquareGraphic = getSquareGraphic(move);
-		square.setColor(turnOfColor);	
+		square.setColor(turnOfColor);
+		if (!isSavedGame) {
+			animationStarted();
+			square.startAnimation();
+		}	
 		
 		var didWin:Boolean = logic.isWinner(move);
 		var isBoardFull:Boolean = logic.isBoardFull();
@@ -243,10 +247,10 @@ class come2play_as2.tictactoe.TicTacToe_Main extends ClientGameAPI {
 				}		
 				if (isBoardFull) { // Important: it can happen that someone won and the board has just filled up!				
 					var finishedPlayersIds:Array/*int*/ = [];
-					for (var i248:Number=0; i248<finishedPlayers.length; i248++) { var playerMatchOver:PlayerMatchOver = finishedPlayers[i248]; 
+					for (var i252:Number=0; i252<finishedPlayers.length; i252++) { var playerMatchOver:PlayerMatchOver = finishedPlayers[i252]; 
 						finishedPlayersIds.push(playerMatchOver.playerId);
 					}					
-					for (var i251:Number=0; i251<ongoingColors.length; i251++) { var ongoingColor:Number = ongoingColors[i251]; 
+					for (var i255:Number=0; i255<ongoingColors.length; i255++) { var ongoingColor:Number = ongoingColors[i255]; 
 						var ongoingPlayerId:Number = allPlayerIds[ongoingColor];
 						if (AS3_vs_AS2.IndexOf(finishedPlayersIds, ongoingPlayerId)==-1) {
 							if (didWin) {
@@ -283,8 +287,8 @@ class come2play_as2.tictactoe.TicTacToe_Main extends ClientGameAPI {
 		
 		if (!isSavedGame) startMove(true);
 	}
-	private function getEntryKey():String {
-		return ""+logic.getMoveNumber();
+	private function getEntryKey():Number {
+		return logic.getMoveNumber();
 	}
 	public function userMadeHisMove(move:TicTacToeMove):Void {		
 		doTrace("dispatchMoveIfLegal", [move]);

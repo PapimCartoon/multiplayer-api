@@ -43,9 +43,9 @@ import come2play_as2.api.auto_generated.*;
 		// if userId of RevealEntry is -1, then the entry becomes PUBLIC
 		public function doAllRevealState(revealEntries:Array/*RevealEntry*/):Void { sendMessage( API_DoAllRevealState.create(revealEntries) ); }
 		
-		public function doAllShuffleState(keys:Array/*String*/):Void { sendMessage( API_DoAllShuffleState.create(keys) ); }
+		public function doAllShuffleState(keys:Array/*Object*/):Void { sendMessage( API_DoAllShuffleState.create(keys) ); }
 		
-		public function doAllRequestRandomState(key:String, isSecret:Boolean/*<InAS3> = false </InAS3>*/):Void { sendMessage( API_DoAllRequestRandomState.create(key, isSecret) ); }
+		public function doAllRequestRandomState(key:Object, isSecret:Boolean/*<InAS3> = false </InAS3>*/):Void { sendMessage( API_DoAllRequestRandomState.create(key, isSecret) ); }
 		
 		// if userId=-1, then it is a bug of the game developer
 
@@ -64,7 +64,7 @@ import come2play_as2.api.auto_generated.*;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		public function doAllRequestStateCalculation(keys:Array/*String*/):Void { sendMessage( API_DoAllRequestStateCalculation.create(keys) ); }
+		public function doAllRequestStateCalculation(keys:Array/*Object*/):Void { sendMessage( API_DoAllRequestStateCalculation.create(keys) ); }
 		public function gotRequestStateCalculation(serverEntries:Array/*ServerEntry*/):Void {}
 		public function doAllStoreStateCalculation(userEntries:Array/*UserEntry*/):Void { sendMessage( API_DoAllStoreStateCalculation.create(userEntries) ); }
 		

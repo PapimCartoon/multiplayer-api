@@ -4,7 +4,7 @@
 	import come2play_as2.api.auto_copied.*
 import come2play_as2.api.auto_generated.*;
 	class come2play_as2.api.auto_generated.ServerEntry extends API_Message {
-		public var key:String;
+		public var key/*any type*/;
 		public var value/*any type*/;
 		public var storedByUserId:Number;
 		public var visibleToUserIds:Array/*int*/;
@@ -12,7 +12,7 @@ import come2play_as2.api.auto_generated.*;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		public static function create(key:String, value/*any type*/, storedByUserId:Number, visibleToUserIds:Array/*int*/, changedTimeInMilliSeconds:Number):ServerEntry {
+		public static function create(key/*any type*/, value/*any type*/, storedByUserId:Number, visibleToUserIds:Array/*int*/, changedTimeInMilliSeconds:Number):ServerEntry {
 			var res:ServerEntry = new ServerEntry();
 			res.key = key;
 			res.value = value;

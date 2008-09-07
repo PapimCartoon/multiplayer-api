@@ -5,7 +5,7 @@ package emulator.auto_generated {
 	import emulator.*;
 	import emulator.auto_copied.*
 	public  class ServerEntry extends API_Message {
-		public var key:String;
+		public var key:*;
 		public var value:*;
 		public var storedByUserId:int;
 		public var visibleToUserIds:Array/*int*/;
@@ -13,7 +13,7 @@ package emulator.auto_generated {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		public static function create(key:String, value:*, storedByUserId:int, visibleToUserIds:Array/*int*/, changedTimeInMilliSeconds:int):ServerEntry {
+		public static function create(key:*, value:*, storedByUserId:int, visibleToUserIds:Array/*int*/, changedTimeInMilliSeconds:int):ServerEntry {
 			var res:ServerEntry = new ServerEntry();
 			res.key = key;
 			res.value = value;

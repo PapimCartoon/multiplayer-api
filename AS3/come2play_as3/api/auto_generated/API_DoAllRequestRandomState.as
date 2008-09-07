@@ -5,9 +5,9 @@ package come2play_as3.api.auto_generated {
 	import come2play_as3.api.*
 	import come2play_as3.api.auto_copied.*
 	public  class API_DoAllRequestRandomState extends API_Message {
-		public var key:String;
+		public var key:Object;
 		public var isSecret:Boolean;
-		public static function create(key:String, isSecret:Boolean/*<InAS3>*/ = false /*</InAS3>*/):API_DoAllRequestRandomState {
+		public static function create(key:Object, isSecret:Boolean/*<InAS3>*/ = false /*</InAS3>*/):API_DoAllRequestRandomState {
 			var res:API_DoAllRequestRandomState = new API_DoAllRequestRandomState();
 			res.key = key;
 

@@ -5,8 +5,8 @@ package emulator.auto_generated {
 	import emulator.*;
 	import emulator.auto_copied.*
 	public  class API_DoAllShuffleState extends API_Message {
-		public var keys:Array/*String*/;
-		public static function create(keys:Array/*String*/):API_DoAllShuffleState {
+		public var keys:Array/*Object*/;
+		public static function create(keys:Array/*Object*/):API_DoAllShuffleState {
 			var res:API_DoAllShuffleState = new API_DoAllShuffleState();
 			res.keys = keys;
 			return res;

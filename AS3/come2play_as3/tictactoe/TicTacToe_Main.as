@@ -209,8 +209,7 @@ public final class TicTacToe_Main extends ClientGameAPI {
 		var square:TicTacToe_SquareGraphic = getSquareGraphic(move);
 		square.setColor(turnOfColor);
 		if (!isSavedGame) {
-			animationStarted();
-			square.startAnimation();
+			square.startMoveAnimation();
 		}	
 		
 		var didWin:Boolean = logic.isWinner(move);

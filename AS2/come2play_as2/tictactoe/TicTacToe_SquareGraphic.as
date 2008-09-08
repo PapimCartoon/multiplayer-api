@@ -35,25 +35,30 @@ class come2play_as2.tictactoe.TicTacToe_SquareGraphic
         
     public static var ANIMATION_INTERVAL_MILLI:Number = 50;
     public static var ANIMATION_ALPHA_DELTA:Number = 5;
-    public function startAnimation():Void {
+    private var alphaPercentage:Number;
+    private var animationIntervalId:Number = -1;
+    public function startMoveAnimation():Void {
+    	if (animationIntervalId!=-1) return; // already in animation mode
+    	
+		graphic.animationStarted();
 		soundMovieClip.gotoAndPlay("MakeSound");
 		
-    	var alphaPercentage:Number = 0;
-		var thisObj:TicTacToe_SquareGraphic = this; // for AS2
-    	var func:Function = 
-    		function ():Void {
-    			if (alphaPercentage>=100) {
-    				alphaPercentage = 100;
-    				clearInterval(intervalId);
-    				thisObj.graphic.animationEnded();    				
-    			}   		
-	    		AS3_vs_AS2.setAlpha(thisObj.letter, alphaPercentage);
-	    		alphaPercentage += ANIMATION_ALPHA_DELTA;	 
-	    	};
-		func();
-    	var intervalId:Number =
-    		setInterval(func , ANIMATION_INTERVAL_MILLI);		
+		alphaPercentage = 0;
+		animationStep();
+    	animationIntervalId =
+    		setInterval(AS3_vs_AS2.delegate(this, this.animationStep), ANIMATION_INTERVAL_MILLI);		
     }
+    private function animationStep():Void {
+    	if (alphaPercentage>=100) {
+			alphaPercentage = 100;
+			clearInterval(animationIntervalId);
+			animationIntervalId = -1;
+			graphic.animationEnded();    				
+		}   		
+		AS3_vs_AS2.setAlpha(letter, alphaPercentage);
+		alphaPercentage += ANIMATION_ALPHA_DELTA;
+    }
+    
 	public function setColor(color:Number):Void {
 		letter.gotoAndStop("Color_"+color);
 		btn.gotoAndStop("Btn_None");		

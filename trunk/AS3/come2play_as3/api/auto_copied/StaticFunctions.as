@@ -59,9 +59,14 @@ public final class StaticFunctions
 	private static const REFLECTION_PREFIX:String = "REFLECTION_";
 	public static function performReflectionFromFlashVars(_someMovieClip:MovieClip):void {		
 		var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(_someMovieClip);
+		trace("performReflectionFromFlashVars="+JSON.stringify(parameters));
 		for (var key:String in parameters) {
-			if (startsWith(key,REFLECTION_PREFIX))
-				performReflection(parameters[key]);				
+			if (startsWith(key,REFLECTION_PREFIX)) {
+				var before:String = key.substr(REFLECTION_PREFIX.length);
+				var after:String = parameters[key];
+				trace("Perform reflection for: "+before+"="+after);
+				performReflection2(before, after);	
+			}			
 		}
 	}
 	public static function performReflection(reflStr:String):void {
@@ -69,6 +74,9 @@ public final class StaticFunctions
 		assert(eqIndex>0, ["Missing '=' in the reflection string=",reflStr]);
 		var before:String = reflStr.substr(0, eqIndex);
 		var after:String = reflStr.substr(eqIndex+1);
+		performReflection2(before, after);
+	}
+	public static function performReflection2(before:String, after:String):void {
 		var val_obj:Object = JSON.parse(after);
 		var dotIndex:int = AS3_vs_AS2.stringLastIndexOf(before,".");
 		var clzName:String = trim(before.substr(0, dotIndex));

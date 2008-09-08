@@ -33,40 +33,6 @@ import flash.utils.*;
  * e.g., [ [7,4] , [7,5], [7,6], [8,6], ... ]
  * [7,4] is the tail of the snake.
  */
-public final class Snake_Main extends ClientGameAPI {
-{
-	// you can change these values by setting in the flashvars:
-	// SET_VAR_* , e.g., SET_VAR_MILLISECONDS_BETWEEN_KEY_PRESSES
-	public static var MILLISECONDS_BETWEEN_KEY_PRESSES:int = 500;	
-
-	// match state
-	private var ticksNumber:int = 0;
-	private var snakes:Array/*SnakeInfo*/ = null;
-	// not state
-	private var lastKeyStroke:int;
-	private var lastKeyStrokeTime:int;
-	
-	public function Snake_Main(graphics:MovieClip) {		
-		new CreateGrid(graphics,25,25,100);	
-		graphics.stop();
-	}
-	
-	public function gotKeyboardEvent(isKeyDown:Boolean, charCode:int, keyCode:int, keyLocation:int, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean):void {
-		if (snakes==null) return;
-		if (!isKeyDown) return;
-		
-		var now:int = getTimer();
-		if (lastKeyStroke==keyCode && (now < lastKeyStrokeTime+500)) return;// ...and it's different from the last key pressed
-		lastKeyStrokeTime = now;
-		lastKeyStroke = keyCode;
-		
-		if (!isInPause && myColor!=null && keyCode > 36 && keyCode < 41) { // arrow keys pressed (37 = left, 38 = up, 39 = right, 40 = down)
-			mySubmitEvent(keyCode-37); // save the key (or rather direction) in the turnQueue
-		
-		} else if (withPause && (keyCode == 80 || keyCode == 112)) { // pause/unpause (80 = 'P'   112 = 'p')
-			// The pause option should be enabled only when both sides agree, e.g., in a special room, because it can annoy the opponent if you pause for too long, he won't be ready when the game starts again, etc
-			doPause(!isInPause);
-	}
-
+public final class Snake_Main {
 }
 }

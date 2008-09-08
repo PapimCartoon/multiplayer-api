@@ -136,11 +136,11 @@ public final class AS3_vs_AS2
 		graphics.scaleX = Number(x_percentage)/100;
 		graphics.scaleY = Number(y_percentage)/100;		
 	} 	
-	public static function setVisible(graphics:MovieClip, is_visible:Boolean):void {
+	public static function setVisible(graphics:MovieClip, isVisible:Boolean):void {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		graphics.visible = is_visible;
+		graphics.visible = isVisible;
 	} 	
 	public static function setAlpha(target:MovieClip, alphaPercentage:int):void {
 		target.alpha = alphaPercentage/100;

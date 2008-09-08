@@ -69,22 +69,32 @@ class come2play_as2.tictactoe.TicTacToe_logic {
 	}
 		
 	// checks if there is a winning row, column, or diagonal that passes through square <row,col>
-	public function isWinner(move:TicTacToeMove):Boolean {
-		if (getOwner(move)==SQUARE_AVAILABLE) return false;
-        return isConnectedDelta(move, 0, -1,   0,  1) || // LEFT & RIGHT
-               isConnectedDelta(move, 1,  0,  -1,  0) || // UP & DOWN
-               isConnectedDelta(move, 1,  1,  -1, -1) || // UP_LEFT & DOWN_RIGHT
-               isConnectedDelta(move, 1, -1,  -1,  1);   // UP_RIGHT & DOWN_LEFT
+	// If not, it returns null. 
+	// Otherwise, it returns all the cells that are the "winning cells" (to display in a end-game animation)
+	public function getWinningCells(move:TicTacToeMove):Array/*TicTacToeMove*/ {
+		if (getOwner(move)==SQUARE_AVAILABLE) return null;
+		var res:Array/*TicTacToeMove*/ = [move];
+		var partialRes:Array;
+		// LEFT & RIGHT
+		if ((partialRes = getConnectedDelta2(move, 0, -1,   0,  1)) != null) res = res.concat(partialRes);
+		// UP & DOWN
+		if ((partialRes = getConnectedDelta2(move, 1,  0,  -1,  0)) != null) res = res.concat(partialRes);
+		// UP_LEFT & DOWN_RIGHT
+		if ((partialRes = getConnectedDelta2(move, 1,  1,  -1, -1)) != null) res = res.concat(partialRes);
+		// UP_RIGHT & DOWN_LEFT
+		if ((partialRes = getConnectedDelta2(move, 1, -1,  -1,  1)) != null) res = res.concat(partialRes);
+        return res.length==1 ? null : res;   
 	}	
-    private function isConnectedDelta(move:TicTacToeMove, delta_row:Number, delta_col:Number, delta_row2:Number, delta_col2:Number):Boolean {
-        return  numConnectedDelta(move, delta_row, delta_col) +
-                numConnectedDelta(move, delta_row2, delta_col2) >= 
-                	WIN_LENGTH-1;// I didn't count the square in <row,col> 
+    private function getConnectedDelta2(move:TicTacToeMove, delta_row:Number, delta_col:Number, delta_row2:Number, delta_col2:Number):Array/*TicTacToeMove*/ {
+    	var res1:Array = getConnectedDelta(move, delta_row, delta_col);
+    	var res2:Array = getConnectedDelta(move, delta_row2, delta_col2);
+    	var joined:Array = res1.concat(res2);
+        return joined.length >= WIN_LENGTH-1 ? joined : null;// I didn't count the square in <row,col> 
     }
-    // Counts the number of consecutive squares that have the same owner as square <row,col>
-    private function numConnectedDelta(move:TicTacToeMove, delta_row:Number, delta_col:Number):Number {
+    // returns consecutive squares that have the same owner as square <row,col>
+    private function getConnectedDelta(move:TicTacToeMove, delta_row:Number, delta_col:Number):Array/*TicTacToeMove*/ {
 		var ownedBy:Number = getOwner(move);
-        var res:Number = 0;
+        var res:Array = [];
         var row:Number = move.row;
         var col:Number = move.col;
         for(var i:Number=1; i<WIN_LENGTH; i++) {
@@ -93,7 +103,7 @@ class come2play_as2.tictactoe.TicTacToe_logic {
         	var nextCell:TicTacToeMove = TicTacToeMove.create(row, col);
             if (!isInBoard( nextCell )) break;
             if (getOwner(nextCell)!=ownedBy) break;
-            res++;
+            res.push(nextCell);
         }
         return res;
     }

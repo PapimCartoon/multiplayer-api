@@ -29,6 +29,7 @@ public final class TicTacToe_Main extends ClientGameAPI {
 	private var WINNER_PERCENTAGE:int;
 	
 	private var graphics:MovieClip;
+	private var allCells:Array/*TicTacToeMove*/;
 	private var squares:Array/*TicTacToe_SquareGraphic[]*/;
 	private var logic:TicTacToe_logic;
 	private var allPlayerIds:Array/*int*/;
@@ -55,15 +56,15 @@ public final class TicTacToe_Main extends ClientGameAPI {
 		if (PLAYERS_NUM_IN_SINGLE_PLAYER==0) PLAYERS_NUM_IN_SINGLE_PLAYER = 3;
 		if (WINNER_PERCENTAGE==0) WINNER_PERCENTAGE = 70; 
 		
-		
-		
+		allCells = [];
 		squares = new Array(ROWS);
 		for(var row:int=0; row<ROWS; row++) {
 			squares[row] = new Array(COLS);
 			for(var col:int=0; col<COLS; col++) {
 				var cell:TicTacToeMove = TicTacToeMove.create(row, col);
 				setSquareGraphic(cell, new TicTacToe_SquareGraphic(this, AS3_vs_AS2.getMovieChild(graphics,"Square_"+row+"_"+col), cell) ); 
-			}				
+				allCells.push(cell);
+			}
 		}		
 		doRegisterOnServer();	
 	}
@@ -99,9 +100,9 @@ public final class TicTacToe_Main extends ClientGameAPI {
 			if (entry.key==API_Message.CUSTOM_INFO_KEY_logo_swf_full_url) {
 				var logo_swf_full_url:String = entry.value.toString();	
 				trace("Got logo_swf_full_url="+logo_swf_full_url)
-				for(var row:int=0; row<ROWS; row++) 
-					for(var col:int=0; col<COLS; col++)
-						getSquareGraphic( TicTacToeMove.create(row, col) ).gotLogo(logo_swf_full_url);
+				for each (var cell:TicTacToeMove in allCells) {
+					getSquareGraphic(cell).gotLogo(logo_swf_full_url);
+				}
 			}		
 		}
 	}
@@ -124,6 +125,9 @@ public final class TicTacToe_Main extends ClientGameAPI {
 		if (finishedPlayerIds.length>0)
 			matchOverForPlayers(finishedPlayerIds);
 		
+		for each (var move:TicTacToeMove in allCells) {		
+			getSquareGraphic(move).clearWinAnimation();
+		}
 		startMove(true);
 	}
 	override public function gotMatchEnded(finishedPlayerIds:Array/*int*/):void {
@@ -212,7 +216,14 @@ public final class TicTacToe_Main extends ClientGameAPI {
 			square.startMoveAnimation();
 		}	
 		
-		var didWin:Boolean = logic.isWinner(move);
+		var winningCells:Array/*TicTacToeMove*/ = logic.getWinningCells(move);
+		var didWin:Boolean = winningCells!=null;
+		if (didWin) {
+			for each (var winCell:TicTacToeMove in winningCells) {
+				getSquareGraphic(winCell).startWinAnimation();
+			}
+		}
+		
 		var isBoardFull:Boolean = logic.isBoardFull();
 		if (didWin || isBoardFull) {
 			//game is over for one player (but the other players, if there are more than 2 remaining players, will continue playing)
@@ -309,20 +320,18 @@ public final class TicTacToe_Main extends ClientGameAPI {
 		if (isInProgress && !isSinglePlayer()) {
 			doAllSetTurn(allPlayerIds[turnOfColor],-1);
 		}		
-		for(var row:int=0; row<ROWS; row++)
-			for(var col:int=0; col<COLS; col++) {
-				var move:TicTacToeMove = TicTacToeMove.create(row,col);				
-				if (logic.isSquareAvailable(move)) {
-					var square:TicTacToe_SquareGraphic = getSquareGraphic(move);
-					square.startMove(
-						!isInProgress ? TicTacToe_SquareGraphic.BTN_NONE : // the match was over
-						myColor==VIEWER ? TicTacToe_SquareGraphic.BTN_NONE : // a viewer never has the turn
-						isSinglePlayer() ? turnOfColor : // single player always has the turn
-						myColor==turnOfColor ?  
-							turnOfColor : // I have the turn
-							TicTacToe_SquareGraphic.BTN_NONE); // not my turn		
-				}							
-			}
+		for each (var move:TicTacToeMove in allCells) {				
+			if (logic.isSquareAvailable(move)) {
+				var square:TicTacToe_SquareGraphic = getSquareGraphic(move);
+				square.startMove(
+					!isInProgress ? TicTacToe_SquareGraphic.BTN_NONE : // the match was over
+					myColor==VIEWER ? TicTacToe_SquareGraphic.BTN_NONE : // a viewer never has the turn
+					isSinglePlayer() ? turnOfColor : // single player always has the turn
+					myColor==turnOfColor ?  
+						turnOfColor : // I have the turn
+						TicTacToe_SquareGraphic.BTN_NONE); // not my turn		
+			}					
+		}
 	}
 }
 }

@@ -32,31 +32,63 @@ class come2play_as2.tictactoe.TicTacToe_SquareGraphic
     private function showOrHideLogo(shouldAdd:Boolean):Void {
     	AS3_vs_AS2.setVisible(logoContainer,shouldAdd);
     }
+    
+
+	// the winning animation changes the visibility of the square
+	// when winCounter=0 it disappears, otherwise it appears, and it counts till WIN_ANIMATION_COUNT   
+    public static var WIN_ANIMATION_INTERVAL_MILLI:Number = 100;
+    public static var WIN_ANIMATION_COUNT:Number = 10;//you appear 5 times more than disappear
+    private var winAnimationIntervalId:Number = -1;
+    private var winCounter:Number = 0;
+    public function startWinAnimation():Void {
+    	clearWinAnimation();
+    	winCounter = 0;
+    	winAnimationStep();
+    	winAnimationIntervalId =
+    		setInterval(AS3_vs_AS2.delegate(this, this.winAnimationStep), WIN_ANIMATION_INTERVAL_MILLI);    	    	
+    }
+    private function winAnimationStep():Void {
+    	setVisible(winCounter!=0);
+    	winCounter = (winCounter+1) % WIN_ANIMATION_COUNT;
+    }
+    public function clearWinAnimation():Void {
+    	if (winAnimationIntervalId==-1) return;
+    	clearInterval(winAnimationIntervalId);
+    	winAnimationIntervalId = -1;
+		setAlpha(100);    	
+    }
         
-    public static var ANIMATION_INTERVAL_MILLI:Number = 50;
-    public static var ANIMATION_ALPHA_DELTA:Number = 5;
+    // the move animation changes the alpha from 0% to 100%, in steps of MOVE_ANIMATION_ALPHA_DELTA    
+    public static var MOVE_ANIMATION_INTERVAL_MILLI:Number = 50;
+    public static var MOVE_ANIMATION_ALPHA_DELTA:Number = 5;
     private var alphaPercentage:Number;
-    private var animationIntervalId:Number = -1;
+    private var moveAnimationIntervalId:Number = -1;
     public function startMoveAnimation():Void {
-    	if (animationIntervalId!=-1) return; // already in animation mode
+    	if (moveAnimationIntervalId!=-1) return; // already in animation mode
     	
 		graphic.animationStarted();
 		soundMovieClip.gotoAndPlay("MakeSound");
 		
 		alphaPercentage = 0;
-		animationStep();
-    	animationIntervalId =
-    		setInterval(AS3_vs_AS2.delegate(this, this.animationStep), ANIMATION_INTERVAL_MILLI);		
+		moveAnimationStep();
+    	moveAnimationIntervalId =
+    		setInterval(AS3_vs_AS2.delegate(this, this.moveAnimationStep), MOVE_ANIMATION_INTERVAL_MILLI);		
     }
-    private function animationStep():Void {
+    private function moveAnimationStep():Void {
     	if (alphaPercentage>=100) {
 			alphaPercentage = 100;
-			clearInterval(animationIntervalId);
-			animationIntervalId = -1;
+			clearInterval(moveAnimationIntervalId);
+			moveAnimationIntervalId = -1;
 			graphic.animationEnded();    				
 		}   		
-		AS3_vs_AS2.setAlpha(letter, alphaPercentage);
-		alphaPercentage += ANIMATION_ALPHA_DELTA;
+		setAlpha(alphaPercentage);
+		alphaPercentage += MOVE_ANIMATION_ALPHA_DELTA;
+    }
+    private function setAlpha(alpha:Number):Void {
+		AS3_vs_AS2.setAlpha(letter, alpha);    	
+    }
+    private function setVisible(isVisible:Boolean):Void {
+		AS3_vs_AS2.setVisible(letter, isVisible);    	
     }
     
 	public function setColor(color:Number):Void {

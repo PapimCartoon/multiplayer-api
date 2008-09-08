@@ -73,6 +73,7 @@ function getParams(arr){
     }
 }
 var param_num=2;
+var custom_param_num=0;
 function clientNumChanged(){
     var num1=parseInt(document.getElementById("players_num").value);
     if(isNaN(num1) || num1<=0){
@@ -109,6 +110,21 @@ function addParam(){
     }
     param_num++;
 }
+function addCustomParam(){
+    var tbl=document.getElementById("tblCustomInfo");
+    var row=tbl.rows[0];
+    var cell=row.insertCell(custom_param_num);
+    cell.innerHTML="<input id=\"col"+param_num+"\" name=\"col"+param_num+"\" size=\"50\" style=\"width: 130px;\" type=\"text\" value=\"param"+param_num+"\" />&nbsp;<a style=\"cursor:pointer;color:blue;\" onclick=\"removeParam("+param_num+",this);\">x</a>";
+    for(var i=1;i<tbl.rows.length;i++){
+        row=tbl.rows[i];
+        cell=row.insertCell(custom_param_num);
+        cell.innerHTML="<input id=\"val"+(i-1)+param_num+"\" name=\"val"+(i-1)+param_num+"\" size=\"50\" style=\"width: 150px;\" type=\"text\" value=\"\"/>";
+    }
+    custom_param_num++;
+
+
+
+}
 function removeParam(num,obj){
     obj.style.display="none";
     var tbl=document.getElementById("tblClients");
@@ -130,23 +146,24 @@ function removeParam(num,obj){
             <input type="hidden" id="old_container" value="../AS2/OldAPI_Converter/OldContainer_board.swf" />
             <table border="0" cellpadding="10" cellspacing="0">
                 <tr>
-                    <td style="background-color: #c3e958; padding: 10px;">
+                    <td style="background-color: #c3e958;">
                         <table border="0" width="100%">
                             <tr>
-                                <td style="text-align: left;">
+                                <td style="text-align: left;" width="30%">
                                     <img src="title.jpg" alt="Client-side API Emulator" />
                                 </td>
-                                <td>
+                                <td style="text-align: left; color: #5b8a2a;" width="20%" nowrap="nowrap">
                                 Your Version: 1.0.0<br />
                                 </td>
-                                <td style="text-align: left; color: #5b8a2a; width: 300px;" nowrap="nowrap">
+                                <td style="text-align: right; color: #5b8a2a;" width="50%" nowrap="nowrap">
 
                                     <IFRAME src ="http://www.come2play.com/developer_emulator_news.asp"
-									 height=60  frameborder = 0  scrolling=no> </IFRAME>
+									 height=60 width="50%" frameborder = 0  scrolling=no> </IFRAME>
 <!--
                                     <a href="http://code.google.com/p/multiplayer-api" style="color: #5b8a2a;">Check for updates...</a>
 -->
                                 </td>
+                                <!--<td width="30%"></td>-->
                             </tr>
                         </table>
                     </td>
@@ -169,13 +186,13 @@ function removeParam(num,obj){
                                 </td>
                                 <td>
 
-                                    <input id="test_file_name" name="test_file_name" size="120" value="../AS3/TicTacToe_AS3.swf"/><br>
+                                    <input id="test_file_name" name="test_file_name" size="120" value="../AS3/SWFs/TicTacToe_AS3.swf"/><br>
 									<small>
 									<nobr>
-									../AS3/TicTacToe_AS3.swf?ROWS=5&COLS=5&WIN_LENGTH=4&PLAYERS_NUM_IN_SINGLE_PLAYER=3&SQUARE_scaleX=66&SQUARE_scaleY=66&SQUARE_deltaX=66&SQUARE_deltaY=66&WINNER_PERCENTAGE=70<br>
-									../AS3/TicTacToe_AS3.swf?ROWS=3&COLS=3&WIN_LENGTH=3&PLAYERS_NUM_IN_SINGLE_PLAYER=2&SQUARE_scaleX=100&SQUARE_scaleY=100&SQUARE_deltaX=100&SQUARE_deltaY=100&WINNER_PERCENTAGE=100<br>
-									../AS2/TicTacToe_AS2.swf<br>
-									../AS3/TestClientGameAPI_AS3.swf<br>
+									../AS3/SWFs/TicTacToe_AS3.swf?ROWS=5&COLS=5&WIN_LENGTH=4&PLAYERS_NUM_IN_SINGLE_PLAYER=3&SQUARE_scaleX=66&SQUARE_scaleY=66&SQUARE_deltaX=66&SQUARE_deltaY=66&WINNER_PERCENTAGE=70<br>
+									../AS3/SWFs/TicTacToe_AS3.swf?ROWS=3&COLS=3&WIN_LENGTH=3&PLAYERS_NUM_IN_SINGLE_PLAYER=2&SQUARE_scaleX=100&SQUARE_scaleY=100&SQUARE_deltaX=100&SQUARE_deltaY=100&WINNER_PERCENTAGE=100<br>
+									../AS2/SWFs/TicTacToe_AS2.swf<br>
+									../AS3/SWFs/TestClientGameAPI_AS3.swf<br>
 									To use reflection: ?REFLECTION_come2play_as3.tictactoe.TicTacToe_SquareGraphic.MOVE_ANIMATION_INTERVAL_MILLI=500<br>
 									</nobr>
 									</small>
@@ -210,12 +227,18 @@ function removeParam(num,obj){
 
                             </tr>
                             <tr>
-                                <td>
-                                    Logo:
-                                </td>
-                                <td>
-                                    <input name="logo" id="logo" size="50" type="text" value="example_logo.jpg" /><!-- <a href="#"><img src="question.gif" style="border-width:0px;" /> </a>-->
-                                </td>
+                            	<td colspan =2>
+                            	<table id="tblCustomInfo">
+                            		<tr>
+                                		<td width = 243>
+                                		    Logo:
+                               			</td>
+                                		<td>
+                                    		<input name="logo" id="logo" size="50" type="text" value="example_logo.jpg" /><!-- <a href="#"><img src="question.gif" style="border-width:0px;" /> </a>-->
+                                		</td>
+                            		</tr>
+                            	</table>
+                            	<td>
                             </tr>
                             <tr>
                                 <td>

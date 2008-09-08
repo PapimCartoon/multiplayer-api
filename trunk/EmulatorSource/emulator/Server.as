@@ -40,9 +40,9 @@ package emulator {
 		private var lcFramework:LocalConnection;
 		 
 		private var aUsers:Array;
-		private var userStateEntrys:Array;/*UserStateEntry*/ //state information
-
-		private var serverEntery:Array;/*InfoEntry*/ //extra server information
+		//private var userStateEntrys:Array;/*UserStateEntry*/ //state information
+		private var serverState:ObjectDictionary;
+		private var serverInfoEnteries:Array;/*InfoEntry*/ //extra server information
 		private var aParams:Array;
 		private var aPlayers:Array; //array of all the players
 		private var afinishedPlayers:Array;/*PlayerMatchOver*/
@@ -142,7 +142,7 @@ package emulator {
 		public function constructServer():void {
 			this.stop();
 			afinishedPlayers=new Array();
-			userStateEntrys=new Array();
+			serverState = new ObjectDictionary();
 			unverifiedQueue=new Array();
 			waitingQueue=new Array();
 			queueTimer=new Timer(10000,0);
@@ -556,12 +556,12 @@ package emulator {
 				aUsers.push(u);
 			}
 			
-			serverEntery=new Array();
+			serverInfoEnteries=new Array();
 			if (root.loaderInfo.parameters["logo"]!=null && root.loaderInfo.parameters["logo"] != "") {
 				var tempInfoEntry:InfoEntry=new InfoEntry();
 				tempInfoEntry.key="logo_swf_full_url";
 				tempInfoEntry.value=loaderInfo.parameters["logo"];
-				serverEntery.push(tempInfoEntry);
+				serverInfoEnteries.push(tempInfoEntry);
 			}
 			
 			if (root.loaderInfo.parameters["game"] == null) {
@@ -603,7 +603,7 @@ package emulator {
 			for each(var revealPlayer:int in revealEntry.userIds)
 			{
 				playerExist=false;
-				for each(var serverPlayer:int in serverEntry)
+				for each(var serverPlayer:int in serverEntry.visibleToUserIds)
 				{
 					if(serverPlayer == revealPlayer)
 						playerExist=true;
@@ -844,7 +844,7 @@ package emulator {
 			}
 			return false;
 		}
-		private function isKeyExist(testKey:String):int
+		/*private function isKeyExist(testKey:String):int
 		{
 			for(var i:int=0;i<userStateEntrys.length;i++)
 			{
@@ -853,14 +853,17 @@ package emulator {
 					return i;	
 			}
 			return -1;	
-		}
-		private function doShuffleOn(index:int,newKey:String):ServerEntry
+		}*/
+		private function doShuffleOn(serverEntryArray:Array/*ServerEntry*/,key:Object):ServerEntry
 		{
-			var userStateEntry:ServerEntry = userStateEntrys[index];
-			userStateEntry.key=newKey;
-			userStateEntry.storedByUserId = -1;
-			userStateEntry.visibleToUserIds=new Array();
-			return userStateEntry;
+			var serverEntry:ServerEntry = serverEntryArray[0] as ServerEntry;
+			serverEntry.visibleToUserIds = new Array();
+			serverEntry.key = key;
+			serverEntry.storedByUserId = -1;
+			serverState.put(key,serverEntry);
+			var newServerState:ServerEntry = serverState.getValue(key) as ServerEntry
+			
+			return serverEntry;
 		}
 		//do all function's
 		private function doAllStoreState(msg:API_DoAllStoreState):void
@@ -903,11 +906,11 @@ package emulator {
 		private function doAllRequestStateCalculation(msg:API_DoAllRequestStateCalculation):void
 		{
 			var serverEntries:Array =/*ServerEntry*/ new Array();
-			for each(var key:String in msg.keys)
+			for each(var key:Object in msg.keys)
 			{
-				var keyPos:int=isKeyExist(key);
-				if(keyPos != -1)
-					serverEntries.push(userStateEntrys[keyPos]);
+				var keyExist:Boolean=serverState.hasKey(key);
+				if(keyExist)
+					serverEntries.push(serverState.getValue(key));
 				else
 				{
 					showMsg("Key " + key + " does not exist","Error");
@@ -921,37 +924,36 @@ package emulator {
 		private function doAllShuffleState(msg:API_DoAllShuffleState):void
 		{
 			
-			var shuffleIndex:int;
-			var shuffleIndexArr:Array=new Array();
-			var shuffleMapKeys:Array=new Array();
+			var serverStateKeys:Array/*Object*/ = new Array();
+			var serverStateValues:Array/*ServerEntry*/ = new Array();
 			var tempServerEntry:ServerEntry;
-			for(var i:int=0;i<msg.keys.length;i++)
+			
+			for each(var key:Object in msg.keys)
 			{
-				shuffleIndex=isKeyExist(msg.keys[i])
-				if(shuffleIndex!=-1)	
+				if(serverState.hasKey(key))	
 				{
-					tempServerEntry = userStateEntrys[shuffleIndex];
-					shuffleIndexArr.push(shuffleIndex);
-					shuffleMapKeys.push(tempServerEntry.key);
+					tempServerEntry = serverState.getValue(key) as ServerEntry;
+					serverStateValues.push(tempServerEntry);
+					serverStateKeys.push(key);
 				}
 				else
 				{
-					addMessageLog("Server","Error","Can't shuffle " + msg.keys[i] + " key does not exist");
-					showMsg("Can't shuffle " + msg.keys[i] + " key does not exist","Error");
+					addMessageLog("Server","Error","Can't shuffle " + JSON.stringify(key) + " key does not exist");
+					showMsg("Can't shuffle " + JSON.stringify(key) + " key does not exist","Error");
 					gameOver();
 					return;		
 
 				}
-				
-			}
-			
-			var shuffleLen:int=shuffleIndexArr.length;
+			}			
+
 			var serverEntry:ServerEntry;
 			var serverEntries:Array =new Array/*ServerEntry*/
-			for (i=0;i<shuffleLen;i++)
+			var shuffleIndex:int;
+			trace("***************" + serverStateValues.length + "**********************")
+			while(serverStateValues.length > 0)
 			{
-				shuffleIndex=Math.floor(Math.random()*(shuffleIndexArr.length-i))
-				serverEntry=doShuffleOn(shuffleIndexArr.splice(shuffleIndex,1),shuffleMapKeys.shift());
+				shuffleIndex=Math.floor(Math.random()*serverStateValues.length)
+				serverEntry=doShuffleOn(serverStateValues.splice(shuffleIndex,1),serverStateKeys.shift());
 				tempServerEntry = new ServerEntry();
 				tempServerEntry.key =serverEntry.key; 
 				tempServerEntry.value = null;
@@ -964,17 +966,16 @@ package emulator {
 		}
 		private function doAllRevealState(msg:API_DoAllRevealState):void
 		{
-			var revealIndex:int;
-			var serverEntry:ServerEntry;
+			var stateData:ServerEntry;
 			var serverEnries:Array=new Array();
-			var key:String;
+			var serverEntry:ServerEntry;
+			var key:Object;
 			for each(var revealEntry:RevealEntry in msg.revealEntries)
 			{
 				key=revealEntry.key
 				for(var i:int=0;i<=revealEntry.depth;i++)	
 				{			
-					revealIndex=isKeyExist(key)
-					if(revealIndex==-1)	
+					if(!serverState.hasKey(key))	
 					{
 						addMessageLog("Server","Error","Can't reveal " + key + " key does not exist");
 						showMsg("Can't reveal " + key + " key does not exist","Error");
@@ -983,14 +984,15 @@ package emulator {
 					}
 					else
 					{
-						serverEntry=userStateEntrys[revealIndex];
+						stateData= serverState.getValue(revealEntry.key) as ServerEntry;
 						if(revealEntry.depth != i)
 						{
-							if(typeof(serverEntry.value)=="string")
-								key = String(serverEntry.value);
+							if(serverState.hasKey(stateData.value))
+								key = stateData.value;
 						}
 						else
 						{
+							serverEntry = serverState.getValue(key) as ServerEntry;
 							if(revealEntry.userIds == null)
 								serverEntry.visibleToUserIds = null;			
 							else
@@ -1112,7 +1114,8 @@ package emulator {
 			u.Ended = finished_player_ids.indexOf(u.ID)!=-1;
 			var stateEntries:Array=new Array();
 			var serverEntry:ServerEntry;
-			for each(var tempServerState:ServerEntry in userStateEntrys)
+			var serverStateEntries:Array/*ServerEntry*/ = serverState.getValues();
+			for each(var tempServerState:ServerEntry in serverStateEntries)
 			{
 				serverEntry=new ServerEntry();
 				if(tempServerState.visibleToUserIds==null)
@@ -1534,14 +1537,15 @@ package emulator {
 			if(iInfoMode==1){
 				tblInfo.removeAll();
 				var itemObj:Object;
-				for(var i:int=0;i<userStateEntrys.length;i++){
+				var serverStateEntrys:Array/*ServerEntry*/ = serverState.getValues();
+				for each(var tempServerEntry:ServerEntry in serverStateEntrys)
+				{
 					itemObj=new Object();
-					var tempServerEntry:ServerEntry = userStateEntrys[i];
 					itemObj[COL_player_ids]=tempServerEntry.storedByUserId;
 					itemObj[COL_key]=tempServerEntry.key
 					itemObj[COL_data]=tempServerEntry.getParametersAsString()
 					tblInfo.addItem(itemObj);
-					tblInfo.verticalScrollPosition = tblInfo.maxVerticalScrollPosition+30;
+					tblInfo.verticalScrollPosition = tblInfo.maxVerticalScrollPosition+30;	
 				}
 				txtInfo.text="";
 			}
@@ -1552,9 +1556,9 @@ package emulator {
 			if(iInfoMode==3){
 				tblInfo.removeAll();
 				var itemObj:Object;
-				for(var i:int=0;i<serverEntery.length;i++){
+				for(var i:int=0;i<serverInfoEnteries.length;i++){
 					itemObj=new Object();
-					var tempServerInfo:InfoEntry = serverEntery[i];
+					var tempServerInfo:InfoEntry = serverInfoEnteries[i];
 					itemObj[COL_key]=tempServerInfo.key;
 					itemObj[COL_data]=tempServerInfo.value;
 					tblInfo.addItem(itemObj);
@@ -1632,20 +1636,23 @@ package emulator {
 			if(iInfoMode==6){
 				tblInfo.removeAll();
 				
-				var arr1:Array;
+				var serverEntryOutput:Array;
+				var serverStateKeys:Array;
 				for each (var savedGame:SavedGame in allSavedGames) {
 					try{
 						if (savedGame.players.length <= User.PlayersNum && savedGame.gameName==root.loaderInfo.parameters["game"]) {
 							var itemObj:Object;
-							arr1=new Array();
-							for(var j:int=0;j<savedGame.entries.length;j++){
-								var tempServerEntry:ServerEntry = savedGame.entries[j];
-								arr1.push("{user_id: "+tempServerEntry.storedByUserId+", key: "+tempServerEntry.key+", data: "+tempServerEntry.toString()+"}");
+							serverEntryOutput=new Array();
+							serverStateKeys = savedGame.serverState.getKeys();
+							for each(var key:Object in serverStateKeys)
+							{
+								var tempServerEntry:ServerEntry = savedGame.serverState.getValue(key) as ServerEntry;
+								serverEntryOutput.push("{user_id: "+tempServerEntry.storedByUserId+", key: "+tempServerEntry.key+", data: "+tempServerEntry.toString()+"}");
 							}
 							itemObj=new Object();
 							itemObj[COL_name]=savedGame.name;
 							itemObj[COL_userIdThatAreStillPlaying]=savedGame.players;
-							itemObj[COL_matchState]=arr1;
+							itemObj[COL_matchState]=serverEntryOutput;
 							itemObj[COL_matchStartedTime]=savedGame.match_started_time;
 							itemObj[COL_extraMatchInfo]=JSON.stringify(savedGame.extra_match_info)
 							tblInfo.addItem(itemObj);
@@ -1716,8 +1723,11 @@ package emulator {
 			if (cmbLoadName.selectedIndex == -1) {
 				return;
 			}
-			var savedGame:SavedGame =cmbLoadName.selectedItem.data;
-			userStateEntrys = savedGame.entries.concat();
+			var transferByteArray:ByteArray = new ByteArray()
+			transferByteArray.writeObject(cmbLoadName.selectedItem.data);
+			transferByteArray.position = 0;
+			var savedGame:SavedGame = SerializableClass.deserialize(transferByteArray.readObject()) as SavedGame;
+			serverState = savedGame.serverState;
 			afinishedPlayers=savedGame.finishedGames.concat();
 			aPlayers = savedGame.players.concat();
 			for each(var savedFinishedPlayer:FinishHistory in afinishedPlayers)
@@ -1818,8 +1828,11 @@ package emulator {
 			if (txtSaveName.text == "") {
 				return;
 			}
-			var game:SavedGame = SavedGame.create(userStateEntrys,aPlayers,afinishedPlayers,extra_match_info,match_started_time,txtSaveName.text,root.loaderInfo.parameters["game"]);
-			allSavedGames.push(game);
+			var game:SavedGame = SavedGame.create(serverState,aPlayers,afinishedPlayers,extra_match_info,match_started_time,txtSaveName.text,root.loaderInfo.parameters["game"]);
+			var transferByteArray:ByteArray = new ByteArray();
+			transferByteArray.writeObject(game);
+			transferByteArray.position = 0;
+			allSavedGames.push(transferByteArray.readObject());
 			saveToSharedObject();
 
 			txtSaveName.text = "";
@@ -1860,7 +1873,7 @@ package emulator {
 			btnLoadGame.visible = false;
 			iCurTurn=-1;
 			afinishedPlayers=new Array();
-			userStateEntrys=new Array();
+			serverState=new ObjectDictionary();
 			showMatchState();
 			showMatchOver();
 			matchStartTime=getTimer();
@@ -1905,7 +1918,7 @@ package emulator {
 			broadcast(API_GotUserInfo.create(u.ID,u.entries)); //note, this must be before you call u.wasRegistered = true 
 			u.wasRegistered = true;		
 			u.sendOperation(API_GotMyUserId.create(u.ID));
-			u.sendOperation(API_GotCustomInfo.create(serverEntery));
+			u.sendOperation(API_GotCustomInfo.create(serverInfoEnteries));
 				
 			// important: note that this is not a broadcast!
 			// send to "u" the info of all the registered users
@@ -1979,27 +1992,12 @@ package emulator {
 				showMsg("Error: Can't store match state, key is empty","Error");
 				return;
 			}
-			if (userStateEntrys.length>=1000) {
+			if (serverState.size()>=1000) {
 				addMessageLog("Server", "do_store_match_state", "Error: you stored more than a 1000 keys!");
 				showMsg("Error: you stored more than a 1000 keys!","Error");
 				return;
 			}
-			var isRewrite:Boolean=false;
-			for(var index:int=0;index<userStateEntrys.length;index++)
-			{
-				var tempServerState:ServerEntry = userStateEntrys[index];
-				if(tempServerState.key == stateEntery.key)
-				{
-					isRewrite=true;
-					break;
-				}
-			}
-			if (isRewrite) {
-				userStateEntrys.splice(index,1);
-			}
-			if (stateEntery.value!=null && stateEntery.value!="") {
-				userStateEntrys.push(stateEntery);
-			}
+			serverState.put(stateEntery.key,stateEntery);
 		}
 		public function doFoundHacker(user:User, msg:API_DoAllFoundHacker):void {
 			addMessageLog("Server","doAllFoundHacker",user.Name+" claimed he found a hacker:"+ msg.toString());
@@ -2022,7 +2020,7 @@ package emulator {
 			FinishHistory.totalFinishingPlayers=0;
 			FinishHistory.wholePot=100;
 			iCurTurn=-1;
-			serverEntery=new Array;
+			serverInfoEnteries=new Array;
 			unverifiedQueue=new Array;
 			waitingQueue=new Array;
 			//afinishedPlayers=new Array();

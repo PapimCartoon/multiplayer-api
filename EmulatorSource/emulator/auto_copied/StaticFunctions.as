@@ -84,25 +84,36 @@ public final class StaticFunctions
 	private static const REFLECTION_PREFIX:String = "REFLECTION_";
 	public static function performReflectionFromFlashVars(_someMovieClip:MovieClip):void {		
 		var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(_someMovieClip);
-		for (var key:String in parameters) {
+		trace("performReflectionFromFlashVars="+JSON.stringify(parameters));
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			if (startsWith(key,REFLECTION_PREFIX))
-				performReflection(parameters[key]);				
+		for (var key:String in parameters) {
+			if (startsWith(key,REFLECTION_PREFIX)) {
+				var before:String = key.substr(REFLECTION_PREFIX.length);
+				var after:String = parameters[key];
+				trace("Perform reflection for: "+before+"="+after);
+				performReflection2(before, after);	
+			}			
 		}
 	}
 	public static function performReflection(reflStr:String):void {
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		var eqIndex:int = AS3_vs_AS2.stringIndexOf(reflStr,"=");
 		assert(eqIndex>0, ["Missing '=' in the reflection string=",reflStr]);
 		var before:String = reflStr.substr(0, eqIndex);
 		var after:String = reflStr.substr(eqIndex+1);
+		performReflection2(before, after);
+	}
+	public static function performReflection2(before:String, after:String):void {
 		var val_obj:Object = JSON.parse(after);
+		var dotIndex:int = AS3_vs_AS2.stringLastIndexOf(before,".");
+		var clzName:String = trim(before.substr(0, dotIndex));
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		var dotIndex:int = AS3_vs_AS2.stringLastIndexOf(before,".");
-		var clzName:String = trim(before.substr(0, dotIndex));
 		var fieldName:String = trim(before.substr(dotIndex+1));
 		var ClassReference:Object = AS3_vs_AS2.getClassByName(clzName);
 		//trace("Setting field "+fieldName+" in class "+clzName+" to val="+val_obj); 

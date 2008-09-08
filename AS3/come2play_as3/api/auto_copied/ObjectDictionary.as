@@ -92,7 +92,7 @@ public final class ObjectDictionary
         if (AS3_vs_AS2.isBoolean(o))	
 			return o ? 523 : 521;		
         if (AS3_vs_AS2.isNumber(o))
-        	return AS3_vs_AS2.convertToInt(o); // I multiply by 31 so that small fractions will have different hashes 
+        	return AS3_vs_AS2.convertToInt(o);  
         var res:int;
 	    if (AS3_vs_AS2.isString(o)) {
 	    	var str:String = o.toString();
@@ -118,7 +118,7 @@ public final class ObjectDictionary
        	return res; 
 	}
 	public static function areEqual(o1:Object, o2:Object):Boolean {
-		if (o1===o2) return true;
+		if (o1===o2) return true; // because false==[] or {} was true!
 		if (o1==null || o2==null) return false;
 		var t:String = typeof(o1);
 		if (t!=typeof(o2)) 

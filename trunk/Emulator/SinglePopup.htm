@@ -90,18 +90,30 @@ if (param_arr['game'] !=null){
     }catch(err){
         swf_height=442;
     }
-    var i,j,paramnum;
+    var i,j,param_num,custom_param_num;
     param_num=parseInt(param_arr["param_num"]);
     for(j=0;j<param_num;j++){
-        addparams+="&col"+j+"="+param_arr["col"+j];
+        addparams+="&col_"+j+"="+param_arr["col_"+j];
         for(i=0;i<(players_num+viewers_num);i++){
             try{
-                addparams+="&val"+i+j+"="+param_arr["val"+i+j];
+                addparams+="&val_"+i+"_"+j+"="+param_arr["val_"+i+"_"+j];
             }catch(err){
-                addparams+="&val"+i+j+"=";
+                addparams+="&val_"+i+"_"+j+"=";
             }
         }
     }
+	addparams+="&custom_param_num="+param_arr["custom_param_num"];
+	custom_param_num=parseInt(param_arr["custom_param_num"]);
+	for(i=1;i<custom_param_num;i++)
+	{
+	try{
+		addparams+="&paramNum_"+i+"="+param_arr["paramNum_"+i]+"&"+param_arr["paramNum_"+i]+"="+param_arr[param_arr["paramNum_"+i]]
+		
+	}catch(err){
+	     addparams+="&paramNum_"+i+"=";
+    }
+	}
+	
     var row,cell;
     var tbl=document.createElement("table");
     for(i=0;i<((players_num+viewers_num)/2+1);i++){

@@ -8,7 +8,7 @@ package emulator {
 			try{
 				var arr:Array;
 				var shrParams:SharedObject = SharedObject.getLocal("Come2PlayParams","/");
-				arr = shrParams.data.params;
+				arr = shrParams.data.params
 				if (ExternalInterface.available) {
 					ExternalInterface.call("getParams", arr);
 				}			

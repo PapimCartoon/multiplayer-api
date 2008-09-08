@@ -5,8 +5,10 @@
 
     <script language="javascript">
 function getParams(arr){
-    var obj;
+    var obj,customParam,customVals;
     var vals=new Array();
+	customVals = new Array();
+	customParam = new Array();
     for(var i=0;i<arr.length;i++){
         switch(arr[i][0]){
             case "players_num":
@@ -23,9 +25,6 @@ function getParams(arr){
                 }else{
                     document.getElementById("old_game").checked=false;
                 }
-                break;
-            case "logo":
-                document.getElementById("logo").value=arr[i][1];
                 break;
             case "fps":
                 document.getElementById("fps").value=arr[i][1];
@@ -56,24 +55,44 @@ function getParams(arr){
                 document.getElementById("old_container").value=arr[i][1];
                 break;
             default:
-                if(arr[i][0].substring(0,3)=="col"){
+                if(arr[i][0].substring(0,4)=="col_"){
                     if(!document.getElementById(arr[i][0])){
                         addParam();
                     }
                 }
+				else if(arr[i][0].substring(0,9)=="paramNum_")
+				{
+					addCustomParam();
+					customParam[ arr[i][0] ] = arr[i][1];
+				}
+				else
+				{
+					customVals[arr[i][0]] = arr[i][1]
+				}
                 vals.push(arr[i]);
                 break;
         }
     }
     for(var i=0;i<vals.length;i++){
-        obj=document.getElementById(vals[i][0]);
-        if(obj){
-            obj.value=vals[i][1];
-        }
+		if(customParam[vals[i][0]]==null)
+		{
+	        obj=document.getElementById(vals[i][0]);
+	        if(obj){
+	            obj.value=vals[i][1];
+	        }
+		}
+		else
+		{
+		var pos = vals[i][0].substring(9,10);
+		obj=document.getElementById("paramName_"+pos);
+		obj.value = customParam[vals[i][0]]
+		obj=document.getElementById("paramValue_"+pos);
+		obj.value = customVals[customParam[vals[i][0]]]
+		}
     }
 }
 var param_num=2;
-var custom_param_num=0;
+var custom_param_num=1;
 function clientNumChanged(){
     var num1=parseInt(document.getElementById("players_num").value);
     if(isNaN(num1) || num1<=0){
@@ -102,40 +121,46 @@ function addParam(){
     var tbl=document.getElementById("tblClients");
     var row=tbl.rows[0];
     var cell=row.insertCell(param_num);
-    cell.innerHTML="<input id=\"col"+param_num+"\" name=\"col"+param_num+"\" size=\"50\" style=\"width: 130px;\" type=\"text\" value=\"param"+param_num+"\" />&nbsp;<a style=\"cursor:pointer;color:blue;\" onclick=\"removeParam("+param_num+",this);\">x</a>";
+    cell.innerHTML="<input id=\"col_"+param_num+"\" name=\"col_"+param_num+"\" size=\"50\" style=\"width: 130px;\" type=\"text\" value=\"param"+param_num+"\" />&nbsp;<a style=\"cursor:pointer;color:blue;\" onclick=\"removeParam("+param_num+",this);\">x</a>";
     for(var i=1;i<tbl.rows.length;i++){
         row=tbl.rows[i];
         cell=row.insertCell(param_num);
-        cell.innerHTML="<input id=\"val"+(i-1)+param_num+"\" name=\"val"+(i-1)+param_num+"\" size=\"50\" style=\"width: 150px;\" type=\"text\" value=\"\"/>";
+        cell.innerHTML="<input id=\"val_"+(i-1)+"_"+param_num+"\" name=\"val_"+(i-1)+"_"+param_num+"\" size=\"50\" style=\"width: 150px;\" type=\"text\" value=\"\"/>";
     }
     param_num++;
-}
-function addCustomParam(){
-    var tbl=document.getElementById("tblCustomInfo");
-    var row=tbl.rows[0];
-    var cell=row.insertCell(custom_param_num);
-    cell.innerHTML="<input id=\"col"+param_num+"\" name=\"col"+param_num+"\" size=\"50\" style=\"width: 130px;\" type=\"text\" value=\"param"+param_num+"\" />&nbsp;<a style=\"cursor:pointer;color:blue;\" onclick=\"removeParam("+param_num+",this);\">x</a>";
-    for(var i=1;i<tbl.rows.length;i++){
-        row=tbl.rows[i];
-        cell=row.insertCell(custom_param_num);
-        cell.innerHTML="<input id=\"val"+(i-1)+param_num+"\" name=\"val"+(i-1)+param_num+"\" size=\"50\" style=\"width: 150px;\" type=\"text\" value=\"\"/>";
-    }
-    custom_param_num++;
-
-
-
 }
 function removeParam(num,obj){
     obj.style.display="none";
     var tbl=document.getElementById("tblClients");
     var row=tbl.rows[0];
-    var cell=document.getElementById("col"+num);
+    var cell=document.getElementById("col_"+num);
     cell.style.display="none";
     for(var i=1;i<tbl.rows.length;i++){
         row=tbl.rows[i];
-        cell=document.getElementById("val"+(i-1)+num);
+        cell=document.getElementById("val_"+(i-1)+"_"+num);
         cell.style.display="none";
     }
+}
+function addCustomParam(){
+	var tbl=document.getElementById("tblCustomInfo");
+	tbl.insertRow(custom_param_num);
+	var row= tbl.rows[custom_param_num];
+	var cell0=row.insertCell(0);
+	var cell1=row.insertCell(1);
+	cell0.innerHTML="<input type=text width = 30 value = 'param: "+custom_param_num+" name' name='paramName_"+custom_param_num+"' id='paramName_"+custom_param_num+"'>";
+	cell1.innerHTML="<input type=text width = 50 value = 'insert value here' name='paramValue_"+custom_param_num+"' id='paramValue_"+custom_param_num+"'> <a style=\"cursor:pointer;color:blue;\" onclick=\"removeCustomParam("+custom_param_num+");\">x</a>";
+	custom_param_num++;
+}
+function removeCustomParam(num){
+    var tbl=document.getElementById("tblCustomInfo");
+	tbl.deleteRow(num);
+	custom_param_num--;
+	var tempData;
+	for(var i=num;i<custom_param_num;i++)
+	{
+		tempData = document.getElementById("paramValue_"+(i+1)).value
+		tbl.rows[i].cells[1].innerHTML="<input type=text width = 50 value = '"+tempData+"' name='paramValue_"+i+"' id='paramValue_"+i+"'> <a style=\"cursor:pointer;color:blue;\" onclick=\"removeCustomParam("+i+");\">x</a>"
+	}
 }
     </script>
     <script language="javascript" src="FlashObject.js"></script>
@@ -227,18 +252,24 @@ function removeParam(num,obj){
 
                             </tr>
                             <tr>
-                            	<td colspan =2>
-                            	<table id="tblCustomInfo">
-                            		<tr>
-                                		<td width = 243>
-                                		    Logo:
-                               			</td>
-                                		<td>
-                                    		<input name="logo" id="logo" size="50" type="text" value="example_logo.jpg" /><!-- <a href="#"><img src="question.gif" style="border-width:0px;" /> </a>-->
-                                		</td>
-                            		</tr>
-                            	</table>
+								<td>
+									Custom Info:
+								</td>
+								<td>
+	                            	<table id="tblCustomInfo">
+	                            		<tr>
+											<td width =160>Key</td>
+											<td width =160>Value</td>
+	                            		</tr>
+	                            	</table>
+								</td>
+                            </tr>
+                            <tr>
                             	<td>
+                            	</td>
+                            	<td>
+                            		                  <a style="cursor:pointer;color:blue;" onclick="addCustomParam();">Add parameter</a><!-- <a href="#"><img src="question.gif" style="border-width:0px;" /> </a>-->
+                            	</td>
                             </tr>
                             <tr>
                                 <td>
@@ -264,34 +295,34 @@ function removeParam(num,obj){
                                     <table cellpadding="0" cellspacing="0" style="border: solid 1px black; border-collapse: collapse;" id="tblClients">
                                         <tr>
                                             <th>
-                                                <input id="col0" name="col0" size="50" style="width: 150px;" type="text" value="name" readonly="readonly" />
+                                                <input id="col_0" name="col_0" size="50" style="width: 150px;" type="text" value="name" readonly="readonly" />
                                             </th>
                                             <th>
-                                                <input id="col1" name="col1" size="50" style="width: 150px;" type="text" value="avatar_url" readonly="readonly" />
+                                                <input id="col_1" name="col_1" size="50" style="width: 150px;" type="text" value="avatar_url" readonly="readonly" />
                                             </th>
                                         </tr>
                                         <tr>
                                             <td>
-                                                <input id="val00" name="val00" size="50" style="width: 150px;" type="text" value="" />
+                                                <input id="val_0_0" name="val_0_0" size="50" style="width: 150px;" type="text" value="" />
                                             </td>
                                             <td>
-                                                <input id="val01" name="val01" size="50" style="width: 150px;" type="text" value="" />
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <input id="val10" name="val10" size="50" style="width: 150px;" type="text" value="" />
-                                            </td>
-                                            <td>
-                                                <input id="val11" name="val11" size="50" style="width: 150px;" type="text" value="" />
+                                                <input id="val_0_1" name="val_0_1" size="50" style="width: 150px;" type="text" value="" />
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>
-                                                <input id="val20" name="val20" size="50" style="width: 150px;" type="text" value="" />
+                                                <input id="val_1_0" name="val_1_0" size="50" style="width: 150px;" type="text" value="" />
                                             </td>
                                             <td>
-                                                <input id="val21" name="val21" size="50" style="width: 150px;" type="text" value="" />
+                                                <input id="val_1_1" name="val_1_1" size="50" style="width: 150px;" type="text" value="" />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <input id="val_2_0" name="val_2_0" size="50" style="width: 150px;" type="text" value="" />
+                                            </td>
+                                            <td>
+                                                <input id="val_2_1" name="val_2_1" size="50" style="width: 150px;" type="text" value="" />
                                             </td>
                                         </tr>
                                     </table>
@@ -417,7 +448,7 @@ function btn_click(){
         to=from;
     }
     document.getElementById("delay_to").value=to;
-    var addparams="players_num="+players_num+"&viewers_num="+viewers_num+"&logo="+ampSymb(document.getElementById("logo").value)+"&game="+ampSymb(safeName())+"&test_file_width="+document.getElementById("test_file_width").value+"&test_file_height="+document.getElementById("test_file_height").value+"&fps="+fps+"&delay_from="+from+"&delay_to="+to+"&old_container="+document.getElementById("old_container").value;
+    var addparams="players_num="+players_num+"&viewers_num="+viewers_num+"&game="+ampSymb(safeName())+"&test_file_width="+document.getElementById("test_file_width").value+"&test_file_height="+document.getElementById("test_file_height").value+"&fps="+fps+"&delay_from="+from+"&delay_to="+to+"&old_container="+document.getElementById("old_container").value;
     try{
         swf_width=parseInt(document.getElementById("test_file_width").value)+20;
     }catch(err){
@@ -430,23 +461,37 @@ function btn_click(){
     }
     var i,j,k=0;
     for(j=0;j<param_num;j++){
-        if(document.getElementById("col"+j).style.display=="none"){
+        if(document.getElementById("col_"+j).style.display=="none"){
             continue;
         }
-        if(document.getElementById("col"+j).value==""){
+        if(document.getElementById("col_"+j).value==""){
             continue;
         }
-        addparams+="&col"+k+"="+ampSymb(document.getElementById("col"+j).value);
+        addparams+="&col_"+k+"="+ampSymb(document.getElementById("col_"+j).value);
         for(i=0;i<(players_num+viewers_num);i++){
             try{
-                addparams+="&val"+i+""+k+"="+ampSymb(document.getElementById("val"+i+""+j).value);
+                addparams+="&val_"+i+"_"+k+"="+ampSymb(document.getElementById("val_"+i+"_"+j).value);
             }catch(err){
-                addparams+="&val"+i+""+k+"=";
+                addparams+="&val_"+i+"_"+k+"=";
             }
         }
         k++;
     }
-    addparams+="&param_num="+k+"&client_width="+swf_width+"&client_height="+swf_height;
+	addparams+="&param_num="+k+"&client_width="+swf_width+"&client_height="+swf_height;
+	for(i=1;i<custom_param_num;i++)
+	{
+	    if(document.getElementById("paramName_"+i).value=="none"){
+            continue;
+        }
+        if(document.getElementById("paramValue_"+i).value==""){
+            continue;
+        }
+		addparams+="&paramNum_"+i+"="+document.getElementById("paramName_"+i).value+"&"+document.getElementById("paramName_"+i).value+"="+document.getElementById("paramValue_"+i).value;
+	}
+	addparams+="&custom_param_num="+custom_param_num
+	
+	
+    
     if(document.getElementById("single_popup").checked){
         single_popup=window.open("SinglePopup.htm?"+addparams+old+"&single_popup=1","_blank","menubar=0,titlebar=0,toolbar=0,resizable=1,scrollbars=1");
     }else{

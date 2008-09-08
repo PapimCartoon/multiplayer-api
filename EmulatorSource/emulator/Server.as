@@ -557,13 +557,17 @@ package emulator {
 			}
 			
 			serverInfoEnteries=new Array();
-			if (root.loaderInfo.parameters["logo"]!=null && root.loaderInfo.parameters["logo"] != "") {
-				var tempInfoEntry:InfoEntry=new InfoEntry();
-				tempInfoEntry.key="logo_swf_full_url";
-				tempInfoEntry.value=loaderInfo.parameters["logo"];
-				serverInfoEnteries.push(tempInfoEntry);
+			if(root.loaderInfo.parameters["custom_param_num"]!=null)
+			{
+				var count:int = int(root.loaderInfo.parameters["custom_param_num"])
+				for(i=1;i<count;i++)
+				{
+					var key:String = root.loaderInfo.parameters["paramNum_"+i]
+					var infoEntry:InfoEntry = InfoEntry.create(key,root.loaderInfo.parameters[key]);
+					trace(key+"*********"+root.loaderInfo.parameters[key])
+					serverInfoEnteries.push(infoEntry);
+				}
 			}
-			
 			if (root.loaderInfo.parameters["game"] == null) {
 				showMsg("Parameter 'game' must be passed in the url.","Error");
 				return;
@@ -2102,7 +2106,7 @@ class User extends LocalConnectionUser {
 			
 			iID = iNextId++;
 			sServer = _server;
-			sName = sServer.root.loaderInfo.parameters["val" + (iID - 1) + "0"];
+			sName = sServer.root.loaderInfo.parameters["val_" + (iID - 1)+"_" + "0"];
 			sName = sName.replace( /^\s+|\s+$/g, "");
 			if (sName==null || sName == "") {
 				if(iID<=PlayersNum){
@@ -2118,10 +2122,10 @@ class User extends LocalConnectionUser {
 			tempEntery.key = "name";
 			tempEntery.value = sName;
 			entries[0]=tempEntery;
-			for (var i:int = 1; sServer.root.loaderInfo.parameters["col" + i] != null;i++ ) {
+			for (var i:int = 1; sServer.root.loaderInfo.parameters["col_" + i] != null;i++ ) {
 				tempEntery=new InfoEntry();
-				tempEntery.key = sServer.root.loaderInfo.parameters["col" + i];
-				tempEntery.value = sServer.root.loaderInfo.parameters["val" + (iID - 1) + i];	
+				tempEntery.key = sServer.root.loaderInfo.parameters["col_" + i];
+				tempEntery.value = sServer.root.loaderInfo.parameters["val_" + (iID - 1)+"_"+ i];	
 				entries.push(tempEntery);
 			}
 			

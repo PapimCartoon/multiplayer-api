@@ -1,7 +1,7 @@
 #summary shuffles a given set of keys
 
 {{{
-doAllShuffleState(keys:Array/*String*/)
+doAllShuffleState(keys:Array/*Object*/)
 }}}
 
 Some games that are developed need to have the ability to shuffle values.

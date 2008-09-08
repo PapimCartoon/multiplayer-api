@@ -1,7 +1,7 @@
 #summary Generating public and secret random numbers
 
 {{{
-doAllRequestRandomState(key:String, isSecret:Boolean = false)
+doAllRequestRandomState(key:Object, isSecret:Boolean = false)
 }}}
 
 Some of the games developed need to have random numbers, if it’s a public random number to create a dice toss

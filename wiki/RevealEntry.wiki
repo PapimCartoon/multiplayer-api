@@ -1,6 +1,6 @@
 #summary RevealEntry Class
 {{{
-class RevealEntry{var key:String, var userIds:Array/*int*/  = null, var depth:int  = 0;}
+class RevealEntry{var key:Object, var userIds:Array/*int*/  = null, var depth:int  = 0;}
 }}}
 *key :*  the key of the [ServerEntry] to reveal.
 
@@ -21,5 +21,4 @@ You will get a [ServerEntry] with the key "WrongGuess".
 
 The bigger the number in the depth the more times the value will be used as a pointer to the next [ServerEntry] key.
 
-*A pointer [ServerEntry] value must be a String.
 

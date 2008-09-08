@@ -2,9 +2,9 @@
 
 
 {{{
-class ServerEntry { var key:String, var value:Object, var storedByUserId:int, var visibleToUserIds:Array/*int*/, var changedTimeInMilliSeconds:int; }
+class ServerEntry { var key:Object, var value:Object, var storedByUserId:int, var visibleToUserIds:Array/*int*/, var changedTimeInMilliSeconds:int; }
 }}}
-*key :*  the name by which this `ServerEntry`  will be called.
+*key :*  an Object by which the `ServerEntry`  will be called.
 
 *value :*  the value of this `ServerEntry` .
 

@@ -26,9 +26,9 @@ doTrace(name:String, message:Object)
 
 and `doAll` operations which have to be called by all players
 {{{
-doAllRequestRandomState(key:String, isSecret:Boolean = false)
-doAllShuffleState(keys:Array/*String*/)
-doAllRequestStateCalculation(keys:Array/*String*/)
+doAllRequestRandomState(key:Object, isSecret:Boolean = false)
+doAllShuffleState(keys:Array/*Object*/)
+doAllRequestStateCalculation(keys:Array/*Object*/)
 doAllStoreStateCalculation(userEntries:Array/*UserEntry*/)
 doAllRevealState(revealEntries:Array/*RevealEntry*/)
 doAllSetTurn(userId:int, milliSecondsInTurn:int = -1)

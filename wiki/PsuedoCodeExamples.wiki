@@ -49,28 +49,28 @@ class SimplifiedClientGameAPI extends ClientGameAPI {
   function doAllEndMatch(finishedPlayers:Array/*PlayerMatchOver*/):void { /* send operation to server */ }
   function doAllSetTurn(userId:int, milliSecondsInTurn:int):void { /* send operation to server */ }
   function doAllRevealState(revealEntries:RevealEntry[]):void { /* send operation to server */ }
-  function doAllShuffleState(keys:String[]):void { /* send operation to server */ }
+  function doAllShuffleState(keys:Object[]):void { /* send operation to server */ }
   function doAllFoundHacker(userId:int, errorDescription:String):void { /* send operation to server */ }
-  function doAllRequestStateCalculation(keys:String[]):void { /* send operation to server */ }
+  function doAllRequestStateCalculation(keys:Object[]):void { /* send operation to server */ }
   function doAllStoreStateCalculation(userEntries:UserEntry[]):void { /* send operation to server */ }
 }
 class RevealEntry {
-  var key:String, userIds:Array/*int*/;
-  function RevealEntry(key:String, userIds:Array/*int*/) {
+  var key:Object, userIds:Array/*int*/;
+  function RevealEntry(key:Object, userIds:Array/*int*/) {
     this.key = key;
     this.userIds = userIds;
 }
 }
 class UserEntry {
-  var key:String, value:Object, isSecret:boolean;
-  function UserEntry(key:String, value:Object, isSecret:boolean) {
+  var key:Object, value:Object, isSecret:boolean;
+  function UserEntry(key:Object, value:Object, isSecret:boolean) {
     this.key = key;
     this.value = value;
     this.isSecret = isSecret;
 }
 }
 class ServerEntry {
-  var key:String, value:Object, storedByUserId:int, visibleToUserIds:Array/*int*/;
+  var key:Object, value:Object, storedByUserId:int, visibleToUserIds:Array/*int*/;
   function isPublic():Boolean { return visibleToUserIds==null; }
 }
 class PlayerMatchOver {

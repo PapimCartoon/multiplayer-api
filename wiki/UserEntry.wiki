@@ -1,7 +1,7 @@
 #summary UserEntry Class
 
 {{{
-class UserEntry{var key:String, var value:Object, var isSecret:Boolean = false;}
+class UserEntry{var key:Object, var value:Object, var isSecret:Boolean = false;}
 }}}
 
 *key :*  the key of the [ServerEntry] that will be created.

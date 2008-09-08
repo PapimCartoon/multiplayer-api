@@ -1,7 +1,7 @@
 #summary perform secret calculations
 
 {{{
-doAllRequestStateCalculation(keys:Array/*String*/)
+doAllRequestStateCalculation(keys:Array/*Object*/)
 }}}
 
 In game development there are many games which need secret game calculations;

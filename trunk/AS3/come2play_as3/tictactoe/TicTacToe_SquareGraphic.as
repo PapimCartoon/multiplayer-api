@@ -59,12 +59,12 @@ public final class TicTacToe_SquareGraphic
     	if (winAnimationIntervalId==-1) return;
     	clearInterval(winAnimationIntervalId);
     	winAnimationIntervalId = -1;
-		setAlpha(100);    	
+		setVisible(true);    	
     }
         
     // the move animation changes the alpha from 0% to 100%, in steps of MOVE_ANIMATION_ALPHA_DELTA    
     public static var MOVE_ANIMATION_INTERVAL_MILLI:int = 50;
-    public static var MOVE_ANIMATION_ALPHA_DELTA:int = 5;
+    public static var MOVE_ANIMATION_ALPHA_DELTA:int = 20;
     private var alphaPercentage:int;
     private var moveAnimationIntervalId:int = -1;
     public function startMoveAnimation():void {

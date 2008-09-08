@@ -205,8 +205,7 @@ class come2play_as2.tictactoe.TicTacToe_Main extends ClientGameAPI {
 		var square:TicTacToe_SquareGraphic = getSquareGraphic(move);
 		square.setColor(turnOfColor);
 		if (!isSavedGame) {
-			animationStarted();
-			square.startAnimation();
+			square.startMoveAnimation();
 		}	
 		
 		var didWin:Boolean = logic.isWinner(move);
@@ -247,10 +246,10 @@ class come2play_as2.tictactoe.TicTacToe_Main extends ClientGameAPI {
 				}		
 				if (isBoardFull) { // Important: it can happen that someone won and the board has just filled up!				
 					var finishedPlayersIds:Array/*int*/ = [];
-					for (var i252:Number=0; i252<finishedPlayers.length; i252++) { var playerMatchOver:PlayerMatchOver = finishedPlayers[i252]; 
+					for (var i251:Number=0; i251<finishedPlayers.length; i251++) { var playerMatchOver:PlayerMatchOver = finishedPlayers[i251]; 
 						finishedPlayersIds.push(playerMatchOver.playerId);
 					}					
-					for (var i255:Number=0; i255<ongoingColors.length; i255++) { var ongoingColor:Number = ongoingColors[i255]; 
+					for (var i254:Number=0; i254<ongoingColors.length; i254++) { var ongoingColor:Number = ongoingColors[i254]; 
 						var ongoingPlayerId:Number = allPlayerIds[ongoingColor];
 						if (AS3_vs_AS2.IndexOf(finishedPlayersIds, ongoingPlayerId)==-1) {
 							if (didWin) {

@@ -5,16 +5,23 @@ class come2play_as2.api.auto_copied.ObjectDictionary
 	// each entry is: [key,value]
 	private var hashMap:Object;
 	private var pSize:Number;
+	// the order of inserted keys and values is important in the API for server entries
+	private var allKeys:Array;
+	private var allValues:Array;
 	public function ObjectDictionary() {
 		hashMap = new Object();
-		pSize = 0;		
+		pSize = 0;	
+		allKeys = [];
+		allValues = [];	
 	}
 	
 	private function getEntry(key:Object):Array {
-		var hash:Number = hashObject(key);
+		return getEntry2(key, hashObject(key));
+	}
+	private function getEntry2(key:Object, hash:Number):Array {
 		if (hashMap[hash]==null) return null;
 		var entries:Array = hashMap[hash];
-		for (var i16:Number=0; i16<entries.length; i16++) { var entry:Array = entries[i16]; 
+		for (var i23:Number=0; i23<entries.length; i23++) { var entry:Array = entries[i23]; 
 			if (areEqual(entry[0],key)) return entry;
 		}
 		return null;		
@@ -22,14 +29,11 @@ class come2play_as2.api.auto_copied.ObjectDictionary
 	public function size():Number {
 		return pSize;
 	}
-	public function getKeys():Array {
-		var res:Array = [];
-		for (var i26:Number=0; i26<hashMap.length; i26++) { var entries:Array = hashMap[i26]; 
-			for (var i27:Number=0; i27<entries.length; i27++) { var entry:Array = entries[i27]; 
-				res.push( entry[0] );
-			}
-		}
-		return res;		
+	public function getValues():Array {		
+		return allValues;		
+	}
+	public function getKeys():Array {		
+		return allKeys;		
 	}
 	public function hasKey(key:Object):Boolean {
 		return getEntry(key)!=null;
@@ -44,26 +48,39 @@ class come2play_as2.api.auto_copied.ObjectDictionary
 		var entries:Array = hashMap[hash];
 		for (var i:Number=0; i<entries.length; i++) {
 			var entry:Array = entries[i];
-			if (areEqual(entry[0],key)) {
+			var oldKey:Object = entry[0];
+			if (areEqual(oldKey,key)) {
 				entries.splice(i,1);
 				pSize--;
+				
+				var indexInAll:Number = AS3_vs_AS2.IndexOf(allKeys,oldKey);
+				if (indexInAll==-1) throw new Error("Internal error in ObjectDictionary");
+				allKeys.splice(indexInAll,1);
+				allValues.splice(indexInAll,1);
+				
 				return entry[1];					
 			}				
 		}
 		return null;
 	}
-	public function put(key:Object, value:Object):Void {		
-		var entry:Array = getEntry(key);
+	public function put(key:Object, value:Object):Void {
+		var hash:Number = hashObject(key);		
+		var entry:Array = getEntry2(key, hash);
 		if (entry==null) {
-			var newEntry:Array = [key, value];
-			var hash:Number = hashObject(key);
 			if (hashMap[hash]==null) hashMap[hash] = [];
 			var entries:Object = hashMap[hash];
-			entries.push( newEntry );
-			pSize++;		
+			entries.push( [key, value] );
+			pSize++;
+			
+			allKeys.push(key);
+			allValues.push(value);		
 		} else {
 			// replace value
-			entry[1] = value;			
+			entry[1] = value;		
+						
+			var oldKey:Object = entry[0];
+			var indexInAll:Number = AS3_vs_AS2.IndexOf(allKeys,oldKey);
+			allValues[indexInAll] = value;
 		}
 	}
 	

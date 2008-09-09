@@ -1066,9 +1066,11 @@ package emulator {
 			{
 				gameOver();
 			}
-			
-			queueTimer.start();
-			broadcast(API_GotMatchEnded.create(tempFinishedPlayersIds));
+			else
+			{
+				queueTimer.start();
+				broadcast(API_GotMatchEnded.create(tempFinishedPlayersIds));
+			}
 			
 		}
 		
@@ -1991,7 +1993,7 @@ package emulator {
 			
 		}
 		private function doStoreOneState(stateEntery:ServerEntry):void {		
-			if (stateEntery.key == "") {
+			if (stateEntery.key == null) {
 				addMessageLog("Server", "do_store_match_state", "Error: Can't store match state, key is empty");
 				showMsg("Error: Can't store match state, key is empty","Error");
 				return;

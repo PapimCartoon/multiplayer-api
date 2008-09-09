@@ -147,8 +147,8 @@ function addCustomParam(){
 	var row= tbl.rows[custom_param_num];
 	var cell0=row.insertCell(0);
 	var cell1=row.insertCell(1);
-	cell0.innerHTML="<input type=text width = 30 value = 'param: "+custom_param_num+" name' name='paramName_"+custom_param_num+"' id='paramName_"+custom_param_num+"'>";
-	cell1.innerHTML="<input type=text width = 50 value = 'insert value here' name='paramValue_"+custom_param_num+"' id='paramValue_"+custom_param_num+"'> <a style=\"cursor:pointer;color:blue;\" onclick=\"removeCustomParam("+custom_param_num+");\">x</a>";
+	cell0.innerHTML="<input type=text size = 20 value = 'param: "+custom_param_num+" name' name='paramName_"+custom_param_num+"' id='paramName_"+custom_param_num+"'>";
+	cell1.innerHTML="<input type=text size = 70 value = 'insert value here' name='paramValue_"+custom_param_num+"' id='paramValue_"+custom_param_num+"'> <a style=\"cursor:pointer;color:blue;\" onclick=\"removeCustomParam("+custom_param_num+");\">x</a>";
 	custom_param_num++;
 }
 function removeCustomParam(num){
@@ -178,7 +178,7 @@ function removeCustomParam(num){
                                     <img src="title.jpg" alt="Client-side API Emulator" />
                                 </td>
                                 <td style="text-align: left; color: #5b8a2a;" width="20%" nowrap="nowrap">
-                                Your Version: 1.0.0<br />
+                                Your Version: 1.0.1<br />
                                 </td>
                                 <td style="text-align: right; color: #5b8a2a;" width="50%" nowrap="nowrap">
 
@@ -259,7 +259,7 @@ function removeCustomParam(num){
 	                            	<table id="tblCustomInfo">
 	                            		<tr>
 											<td width =160>Key</td>
-											<td width =160>Value</td>
+											<td width =600>Value</td>
 	                            		</tr>
 	                            	</table>
 								</td>
@@ -489,9 +489,9 @@ function btn_click(){
 		addparams+="&paramNum_"+i+"="+document.getElementById("paramName_"+i).value+"&"+document.getElementById("paramName_"+i).value+"="+document.getElementById("paramValue_"+i).value;
 	}
 	addparams+="&custom_param_num="+custom_param_num
-	
-	
-    
+
+
+
     if(document.getElementById("single_popup").checked){
         single_popup=window.open("SinglePopup.htm?"+addparams+old+"&single_popup=1","_blank","menubar=0,titlebar=0,toolbar=0,resizable=1,scrollbars=1");
     }else{

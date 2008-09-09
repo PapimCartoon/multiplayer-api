@@ -9,6 +9,9 @@ import flash.events.*;
 import flash.utils.*;
 	public class MineSweeper_Main extends ClientGameAPI
 	{
+		private var loadTimer:Timer;
+		private var graphics:MovieClip;
+		
 		private static var boardHeight:int=10;
 		private static var boardWidth:int=10;
 		private static var mineAmount:int=10;
@@ -27,18 +30,32 @@ import flash.utils.*;
  	**/
 		public function MineSweeper_Main(graphics:MovieClip)
 		{ 
-			super(graphics); 
-			graphics.addChild(new Background);
-			users = new Array(); 
-			mineSweeper_Logic  = new MineSweeper_Logic(this,graphics,boardWidth,boardHeight);
-			startGraphic= new Starter()
-			startGraphic.x=170;
-			startGraphic.y=160;
-			startGraphic.stop();
-			graphics.addChild(startGraphic);
-			startGraphic.addEventListener("starterEnd",startGame);
-			setTimeout(doRegisterOnServer,100);
+			loadTimer = new Timer(100,0);
+			loadTimer.addEventListener(TimerEvent.TIMER,constructGame)
+			super(graphics);
+			this.graphics = graphics;
+			loadTimer.start();
+			//setTimeout(doRegisterOnServer,100);
 		}
+		public function constructGame(ev:TimerEvent):void
+		{
+			if(graphics != null)
+			{
+				 
+				graphics.addChild(new Background);
+				users = new Array(); 
+				mineSweeper_Logic  = new MineSweeper_Logic(this,graphics,boardWidth,boardHeight);
+				startGraphic= new Starter()
+				startGraphic.x=170;
+				startGraphic.y=160;
+				startGraphic.stop();
+				graphics.addChild(startGraphic);
+				startGraphic.addEventListener("starterEnd",startGame);
+				doRegisterOnServer();
+				loadTimer.stop();
+			}
+		}
+		
 		private function startGame(ev:Event):void
 		{
 			if(loadServerEntries == null)

@@ -4,11 +4,16 @@ package come2play_as3.domino
 	import come2play_as3.api.auto_generated.*;
 	
 	import flash.display.MovieClip;
+	import flash.events.TimerEvent;
+	import flash.utils.Timer;
 	import flash.utils.setTimeout;
 	
 	public class Domino_Main extends ClientGameAPI
 	{
-		private static var cubeMaxValue:int = 7;
+		private var cubeMaxValue:int = 7;
+		private var graphics:MovieClip;
+		private var loadTimer:Timer
+		
 		public var currentTurn:int;
 		
 		private var domino_Logic:Domino_Logic;
@@ -21,11 +26,24 @@ package come2play_as3.domino
  	**/
 		public function Domino_Main(graphics:MovieClip)
 		{ 
+			loadTimer = new Timer(100,0);
+			loadTimer.addEventListener(TimerEvent.TIMER,constructGame);
+			this.graphics = graphics;
 			super(graphics); 
-			users = new Array(); 
-			domino_Logic  = new Domino_Logic(this,graphics,cubeMaxValue);
-			setTimeout(doRegisterOnServer,100);
+			loadTimer.start();
+			//setTimeout(doRegisterOnServer,100);
 		}
+		private function constructGame(ev:TimerEvent):void
+		{
+			if(graphics.stage != null)
+			{
+				users = new Array(); 
+				domino_Logic  = new Domino_Logic(this,graphics,cubeMaxValue);
+				setTimeout(doRegisterOnServer,100);
+				loadTimer.stop();
+			}
+		}
+		
 		
 		private function getTurnOf():int
 		{

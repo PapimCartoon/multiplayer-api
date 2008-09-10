@@ -26,7 +26,7 @@ package come2play_as3.Template
 		override public function gotCustomInfo(infoEntries:Array):void
 		{
 			/*
-			This function gets info wich is used to customize your game.
+			This function gets info which is used to customize your game.
 			such as:
 			logo
 			seconds per turn

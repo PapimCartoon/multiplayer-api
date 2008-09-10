@@ -81,8 +81,8 @@ public final class AS3_vs_AS2
 		conn.addEventListener(StatusEvent.STATUS, 
 			function (event:StatusEvent):void {
         		if (event.level=='error')
-        			StaticFunctions.showError("LocalConnection.onStatus error="+event+" (Are you sure you are running this game inside the emulator?)"); 
-  			});		
+        			StaticFunctions.showError("LocalConnection.onStatus error="+event+" client="+client+" client's class="+getClassName(client)+". Are you sure you are running this game inside the emulator?)"); 
+  			});	
 	}
 	public static function myTimeout(func:Function, in_milliseconds:int):void {
 

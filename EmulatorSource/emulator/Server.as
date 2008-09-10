@@ -40,7 +40,6 @@ package emulator {
 		private var lcFramework:LocalConnection;
 		 
 		private var aUsers:Array;
-		//private var userStateEntrys:Array;/*UserStateEntry*/ //state information
 		private var serverState:ObjectDictionary;
 		private var serverInfoEnteries:Array;/*InfoEntry*/ //extra server information
 		private var aParams:Array;
@@ -64,6 +63,7 @@ package emulator {
 		private var aFilters:Array;
 		private var aConditions:Array;
 		private var btnSend:Button;
+		private var logingCheckBox:DisableLoging;
 
 		private var txtLog:TextArea;
 		private var tblLog:DataGrid;
@@ -122,27 +122,13 @@ package emulator {
 		}
 		public function Server ()
 		{
-			/*
-			constructorDelayer = new Timer(100,0)
-			constructorDelayer.addEventListener(TimerEvent.TIMER,delayConstructor);	
-			constructorDelayer.start();
-			*/
+
 		}
-		/*
-		public function delayConstructor (ev:TimerEvent):void
-		{
-			if(stage != null)
-			{
-				constructorDelayer.stop();
-				constructServer();
-			}	
-		}
-		*/
-		//Constructor
+
 		public function constructServer():void {
 			this.stop();
 			afinishedPlayers=new Array();
-			serverState = new ObjectDictionary();
+			serverState =ObjectDictionary.create();
 			unverifiedQueue=new Array();
 			waitingQueue=new Array();
 			queueTimer=new Timer(10000,0);
@@ -486,6 +472,14 @@ package emulator {
 			txtTooltipMatchStartedTime.visible = false;
 			this.addChild(txtTooltipMatchStartedTime);
 			
+			logingCheckBox = new DisableLoging();
+			logingCheckBox.isLoging.label = "Log calls";
+			logingCheckBox.isLoging.selected = true;
+			logingCheckBox.x = 10
+			logingCheckBox.y = 420;
+			logingCheckBox.isLoging.addEventListener(MouseEvent.CLICK,handleLoging)
+			this.addChild(logingCheckBox);
+			
 			iInfoMode=0;
 			
 			MsgBox = new MessageBox();
@@ -589,6 +583,18 @@ package emulator {
 					END OF CONSTRUCTOR
 		*************************************************
 		*/
+		private var isLoging:Boolean = true;
+		private function handleLoging(ev:MouseEvent):void
+		{
+			if(isLoging)
+			{
+				isLoging=false;	
+			}
+			else
+			{
+				isLoging = true;	
+			}
+		}
 		private function queTimeoutError(ev:TimerEvent):void
 		{
 			var unverefiedFunction:QueueEntry = unverifiedQueue[0];
@@ -1137,17 +1143,20 @@ package emulator {
 		
 		public function addMessageLog(user:String, funcname:String, message:String):void {
 			
-			var msg:Message = new Message();
-			msg.message = message.replace(/(\s)+/gm, " ");
-			msg.sender = user;
-			msg.funcname = funcname;
-			msg.num = iMessages++;
-			msg.time = new Date().toTimeString().substr(0,8);
-			aMessages.push(msg);
-			if ((aConditions[0]=="" || msg.num==aConditions[0]) && (aConditions[1]=="" || msg.sender.indexOf(aConditions[1])>-1) && (aConditions[2]=="" || msg.funcname.indexOf(aConditions[2])>-1) && (aConditions[3]=="" || msg.message.indexOf(aConditions[3])>-1) && (aConditions[4]=="" || msg.time.indexOf(aConditions[4])>-1)) {
-				tblLog.addItem( { Num:msg.num, User:msg.sender, FunctionName:msg.funcname, Arguments:msg.message, Time:msg.time } );
-				tblLog.verticalScrollPosition = tblLog.maxVerticalScrollPosition+30;
-				setTimeout(resizeColumn,100,null);
+			if(isLoging)
+			{
+				var msg:Message = new Message();
+				msg.message = message.replace(/(\s)+/gm, " ");
+				msg.sender = user;
+				msg.funcname = funcname;
+				msg.num = iMessages++;
+				msg.time = new Date().toTimeString().substr(0,8);
+				aMessages.push(msg);
+				if ((aConditions[0]=="" || msg.num==aConditions[0]) && (aConditions[1]=="" || msg.sender.indexOf(aConditions[1])>-1) && (aConditions[2]=="" || msg.funcname.indexOf(aConditions[2])>-1) && (aConditions[3]=="" || msg.message.indexOf(aConditions[3])>-1) && (aConditions[4]=="" || msg.time.indexOf(aConditions[4])>-1)) {
+					tblLog.addItem( { Num:msg.num, User:msg.sender, FunctionName:msg.funcname, Arguments:msg.message, Time:msg.time } );
+					tblLog.verticalScrollPosition = tblLog.maxVerticalScrollPosition+30;
+					setTimeout(resizeColumn,100,null);
+				}
 			}
 			
 		}
@@ -1776,6 +1785,8 @@ package emulator {
 		}
 		
 		private function enableSavedGames():void {
+			
+		try{		
 			var j:int = 0;			
 			for each (var savedGame:SavedGame in allSavedGames) {
 				if (savedGame.players.length <= User.PlayersNum && savedGame.gameName == root.loaderInfo.parameters["game"]) {
@@ -1783,6 +1794,10 @@ package emulator {
 				}
 			}
 			btnLoadGame.enabled = j>0;
+			}catch(err:Error) {
+				addMessageLog("Server","error","Contact come2Play")
+				shrSavedGames.data.savedGames = [];	//this deletes all saved games
+			}
 		}
 		private function loadDeleteClick(evt:MouseEvent):void {
 			if (cmbLoadName.selectedIndex == -1) {
@@ -1838,7 +1853,9 @@ package emulator {
 			var transferByteArray:ByteArray = new ByteArray();
 			transferByteArray.writeObject(game);
 			transferByteArray.position = 0;
-			allSavedGames.push(transferByteArray.readObject());
+			allSavedGames.push(SerializableClass.deserialize(transferByteArray.readObject()) as SavedGame);
+			//todo
+			//allSavedGames.push(SerializableClass.deserialize(transferByteArray.readObject() as SavedGame);
 			saveToSharedObject();
 
 			txtSaveName.text = "";
@@ -1879,7 +1896,7 @@ package emulator {
 			btnLoadGame.visible = false;
 			iCurTurn=-1;
 			afinishedPlayers=new Array();
-			serverState=new ObjectDictionary();
+			serverState=ObjectDictionary.create();
 			showMatchState();
 			showMatchOver();
 			matchStartTime=getTimer();
@@ -2003,7 +2020,12 @@ package emulator {
 				showMsg("Error: you stored more than a 1000 keys!","Error");
 				return;
 			}
-			serverState.put(stateEntery.key,stateEntery);
+			//if(serverState.hasKey(stateEntery.key))
+			//	serverState.remove(stateEntery.key);
+			if((stateEntery.value == null) || (stateEntery.value == ""))
+				serverState.remove(stateEntery.key);
+			else
+				serverState.put(stateEntery.key,stateEntery);
 		}
 		public function doFoundHacker(user:User, msg:API_DoAllFoundHacker):void {
 			addMessageLog("Server","doAllFoundHacker",user.Name+" claimed he found a hacker:"+ msg.toString());

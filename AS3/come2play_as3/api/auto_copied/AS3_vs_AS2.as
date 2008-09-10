@@ -3,7 +3,6 @@ package come2play_as3.api.auto_copied
 import flash.display.*;
 import flash.events.*;
 import flash.net.*;
-import flash.text.Font;
 import flash.text.TextField;
 import flash.text.TextFormat;
 import flash.utils.*;
@@ -56,7 +55,7 @@ public final class AS3_vs_AS2
 		conn.addEventListener(StatusEvent.STATUS, 
 			function (event:StatusEvent):void {
         		if (event.level=='error')
-        			StaticFunctions.showError("LocalConnection.onStatus error="+event+" (Are you sure you are running this game inside the emulator?)"); 
+        			StaticFunctions.showError("LocalConnection.onStatus error="+event+" client="+client+" client's class="+getClassName(client)+". Are you sure you are running this game inside the emulator?)"); 
   			});		
 	}
 	public static function myTimeout(func:Function, in_milliseconds:int):void {
@@ -263,5 +262,19 @@ public final class AS3_vs_AS2
 	public static function stringLastIndexOf(str:String, val:String):int {
 		return str.lastIndexOf(val);
 	}	
+	public static function waitForStage(graphics:MovieClip, gameConsructor:Function):void
+	{
+		var stageTimer:Timer = new Timer(100,0);
+		stageTimer.start();	
+		stageTimer.addEventListener(TimerEvent.TIMER,function():void {
+				if(graphics.stage)
+				{
+					stageTimer.stop();
+					gameConsructor();
+				}
+				} 
+			);
+	}		
+
 }
 }

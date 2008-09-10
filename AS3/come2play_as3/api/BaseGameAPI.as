@@ -33,7 +33,6 @@ package come2play_as3.api {
 				nonFinishedMsg = msg;    			 
         		hackerUserId = -1;
         		//if (runningAnimationsNumber>0) should I postpone processing of this message?
-        		
 	    		if (msg is API_GotStateChanged) {
 	    			var stateChanged:API_GotStateChanged = msg as API_GotStateChanged;
 	    			var serverEntry:ServerEntry = stateChanged.serverEntries[0];

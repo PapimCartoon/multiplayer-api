@@ -343,7 +343,7 @@ package emulator {
 		}
 		
 		private function onLoadComplete(evt:Event):void {
-			loaded = true;
+			loaded = true;			
 		}
 		
 		private function onCommandSelect(evt:Event):void {
@@ -605,6 +605,10 @@ class LocalConnectionImplementation extends LocalConnectionUser
 	}
 	override public function gotMessage(msg:API_Message):void{
 		infoContainer.gotMessage(msg, isServer);
+	}
+	public function toString():String
+	{
+		return "prefix: "+prefix+" isServer : "+isServer
 	}
         
 }

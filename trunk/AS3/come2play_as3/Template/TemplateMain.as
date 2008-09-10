@@ -4,6 +4,7 @@ package come2play_as3.Template
 	
 	import come2play_as3.api.auto_generated.*;
 	
+	import flash.display.MovieClip;
 	import flash.utils.setTimeout;
 	/**
 	 * your main class should extend ClientGameAPI,in case you want your main class to extend another class,
@@ -13,14 +14,26 @@ package come2play_as3.Template
 	 */
 	public class TemplateMain extends ClientGameAPI
 	{
-		var templateLogic:TemplateLogic;
+		private var templateLogic:TemplateLogic;
+		private var graphics:MovieClip;
 		public function TemplateMain(graphics:MovieClip)
 		{
+			/*
+			your main game constructor should be empty besides the foloowing lines of code
+			*/
+			this.graphics = graphics;
 			super(graphics); //sends the stage to the ClientGameAPI
 			
-			templateLogic = new TemplateLogic(this);
+			AS3_vs_AS2.waitForStage(graphics,constructGame);
+			/*
+			the function above should call your constructor,to avoid a case where the stage is not loaded	
+			*/
 			
-			setTimeout(doRegisterOnServer); // registers user on server should be the first command called
+		}
+		private function constructGame():void
+		{
+			templateLogic = new TemplateLogic(this);
+			doRegisterOnServer();// registers user on server should be the first command called
 		}
 		
 		override public function gotCustomInfo(infoEntries:Array):void

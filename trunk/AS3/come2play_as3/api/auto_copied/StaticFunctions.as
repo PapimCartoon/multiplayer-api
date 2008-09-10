@@ -8,6 +8,7 @@ public final class StaticFunctions
 {			
 	public static var SHOULD_SHOW_ERRORS:Boolean = true;
 	public static var someMovieClip:MovieClip; // so we can display error messages on the stage
+	
 	public static function showError(msg:String):void {
 		var msg:String = "An ERRRRRRRRRRROR occurred:\n"+msg;
 		System.setClipboard(msg);
@@ -85,5 +86,6 @@ public final class StaticFunctions
 		//trace("Setting field "+fieldName+" in class "+clzName+" to val="+val_obj); 
 		ClassReference[fieldName] = val_obj;		
 	}
+
 }
 }

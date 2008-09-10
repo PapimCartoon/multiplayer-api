@@ -88,7 +88,13 @@ package come2play_as3.api.auto_copied
         public function gotMessage(msg:API_Message):void {}
         
         public function sendMessage(msg:API_Message):void {
-        	myTrace(['sendMessage: ',msg]);        						  
+        	myTrace(['sendMessage: ',msg]);
+        	if (msg is API_DoRegisterOnServer)
+        		AS3_vs_AS2.myTimeout(AS3_vs_AS2.delegate(this, this.reallySendMessage,msg),100);
+        	else
+        		reallySendMessage(msg);
+        }
+        private function reallySendMessage(msg:API_Message):void {        						  
 			try{
 				AS3_vs_AS2.checkObjectIsSerializable(msg);
 				lcUser.send(sSendChanel, "localconnection_callback", msg);  

@@ -12,7 +12,6 @@ package come2play_as3.domino
 	{
 		private var cubeMaxValue:int = 7;
 		private var graphics:MovieClip;
-		private var loadTimer:Timer
 		
 		public var currentTurn:int;
 		
@@ -26,22 +25,16 @@ package come2play_as3.domino
  	**/
 		public function Domino_Main(graphics:MovieClip)
 		{ 
-			loadTimer = new Timer(100,0);
-			loadTimer.addEventListener(TimerEvent.TIMER,constructGame);
+
 			this.graphics = graphics;
 			super(graphics); 
-			loadTimer.start();
-			//setTimeout(doRegisterOnServer,100);
+			AS3_vs_AS2.waitForStage(graphics,constructGame);
 		}
-		private function constructGame(ev:TimerEvent):void
+		private function constructGame():void
 		{
-			if(graphics.stage != null)
-			{
 				users = new Array(); 
 				domino_Logic  = new Domino_Logic(this,graphics,cubeMaxValue);
-				setTimeout(doRegisterOnServer,100);
-				loadTimer.stop();
-			}
+				doRegisterOnServer();
 		}
 		
 		
@@ -112,7 +105,7 @@ package come2play_as3.domino
 		
 		override public function gotCustomInfo(infoEntries:Array):void
 		{
-				
+				trace("came in")
 		}
 		override public function gotMyUserId(myUserId:int):void
 		{

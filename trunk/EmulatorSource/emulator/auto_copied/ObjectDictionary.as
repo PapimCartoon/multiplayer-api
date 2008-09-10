@@ -10,23 +10,24 @@ package emulator.auto_copied
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-public final class ObjectDictionary
+public final class ObjectDictionary extends SerializableClass
 {
 	// maps a hash of an object to an array of entries
 	// each entry is: [key,value]
-	private var hashMap:Object;
-	private var pSize:int;
+	public var hashMap:Object;
+	public var pSize:int;
 	// the order of inserted keys and values is important in the API for server entries
-	private var allKeys:Array;
-	private var allValues:Array;
-	public function ObjectDictionary() {
+	public var allKeys:Array;
+	public var allValues:Array;
 
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
-		hashMap = new Object();
-		pSize = 0;	
-		allKeys = [];
-		allValues = [];	
+	static public function create():ObjectDictionary
+	{
+		var res:ObjectDictionary = new ObjectDictionary();
+		res.hashMap = new Object();
+		res.pSize = 0;	
+		res.allKeys = [];
+		res.allValues = [];	
+		return res;
 	}
 	
 	private function getEntry(key:Object):Array {

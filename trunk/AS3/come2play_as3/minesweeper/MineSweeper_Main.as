@@ -9,7 +9,6 @@ import flash.events.*;
 import flash.utils.*;
 	public class MineSweeper_Main extends ClientGameAPI
 	{
-		private var loadTimer:Timer;
 		private var graphics:MovieClip;
 		
 		private static var boardHeight:int=10;
@@ -30,18 +29,12 @@ import flash.utils.*;
  	**/
 		public function MineSweeper_Main(graphics:MovieClip)
 		{ 
-			loadTimer = new Timer(100,0);
-			loadTimer.addEventListener(TimerEvent.TIMER,constructGame)
 			super(graphics);
 			this.graphics = graphics;
-			loadTimer.start();
-			//setTimeout(doRegisterOnServer,100);
+			AS3_vs_AS2.waitForStage(graphics,constructGame);
 		}
 		public function constructGame(ev:TimerEvent):void
-		{
-			if(graphics != null)
-			{
-				 
+		{ 
 				graphics.addChild(new Background);
 				users = new Array(); 
 				mineSweeper_Logic  = new MineSweeper_Logic(this,graphics,boardWidth,boardHeight);
@@ -52,8 +45,6 @@ import flash.utils.*;
 				graphics.addChild(startGraphic);
 				startGraphic.addEventListener("starterEnd",startGame);
 				doRegisterOnServer();
-				loadTimer.stop();
-			}
 		}
 		
 		private function startGame(ev:Event):void

@@ -44,6 +44,13 @@ function getParams(arr){
             case "delay_to":
                 document.getElementById("delay_to").value=arr[i][1];
                 break;
+            case "paramNum_1":
+				if(arr[i][1]!="logo_swf_full_url")
+				{
+					customParam[ arr[i][0] ] = arr[i][1];
+					vals.push(arr[i]);
+				}
+            	break;
             case "single_popup":
                 if(arr[i][1]=="1"){
                     document.getElementById("single_popup").checked=true;
@@ -92,7 +99,7 @@ function getParams(arr){
     }
 }
 var param_num=2;
-var custom_param_num=1;
+var custom_param_num=2;
 function clientNumChanged(){
     var num1=parseInt(document.getElementById("players_num").value);
     if(isNaN(num1) || num1<=0){
@@ -158,8 +165,11 @@ function removeCustomParam(num){
 	var tempData;
 	for(var i=num;i<custom_param_num;i++)
 	{
+		tempData = document.getElementById("paramName_"+(i+1)).value
+		tbl.rows[i].cells[0].innerHTML="<input type=text size = 20 value = '"+tempData+"' name='paramName_"+i+"' id='paramName_"+i+"'>";
+
 		tempData = document.getElementById("paramValue_"+(i+1)).value
-		tbl.rows[i].cells[1].innerHTML="<input type=text width = 50 value = '"+tempData+"' name='paramValue_"+i+"' id='paramValue_"+i+"'> <a style=\"cursor:pointer;color:blue;\" onclick=\"removeCustomParam("+i+");\">x</a>"
+		tbl.rows[i].cells[1].innerHTML="<input type=text width = 70 value = '"+tempData+"' name='paramValue_"+i+"' id='paramValue_"+i+"'> <a style=\"cursor:pointer;color:blue;\" onclick=\"removeCustomParam("+i+");\">x</a>"
 	}
 }
     </script>
@@ -260,6 +270,14 @@ function removeCustomParam(num){
 	                            		<tr>
 											<td width =160>Key</td>
 											<td width =600>Value</td>
+	                            		</tr>
+	                            		<tr>
+	                            			<td>
+	                            				<input type="text" id="paramName_1" name="paramName_1" value="logo_swf_full_url" size="20"/>
+	                            			</td>
+	                            			<td>
+	                            				<input type="text" id="paramValue_1" name="paramValue_1" value="X:/come2play/API_GoogleCodeSVN/Emulator/example_logo.jpg" size="70"/> <a onclick="removeCustomParam(1);" style="cursor: pointer; color: blue;">x</a>
+	                            			</td>
 	                            		</tr>
 	                            	</table>
 								</td>

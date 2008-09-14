@@ -130,11 +130,11 @@ package come2play_as3.snakeCode
 		}
 		public function getStartingSnake():Array/*UserEntry*/
 		{
-			var i:int = 0;
+			var i:int = 3;
 			var userEntries:Array/*UserEntry*/ = new Array();
 			for each(var snakePart:SnakePart in confirmedParts)
 			{
-				userEntries.unshift( UserEntry.create(userId+"-"+i++,PlayerMove.createFromSnakePart(snakePart,snakeVector,userId),false));
+				userEntries.unshift( UserEntry.create(userId+"-"+i--,PlayerMove.createFromSnakePart(snakePart,snakeVector,userId),false));
 			}
 			return userEntries;
 		}

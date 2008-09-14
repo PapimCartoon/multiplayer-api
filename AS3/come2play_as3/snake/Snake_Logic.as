@@ -146,7 +146,8 @@ package come2play_as3.snakeCode
 			
 			snakeGraphic = new Snake_Graphic(allPlayerSnakes,allPlayerIds);
 			graphic.addChild(snakeGraphic);
-			moveTick.start();
+			if(allPlayerIds.indexOf(myUserId) != -1)
+				moveTick.start();
 			return userEntries;
 		}
 		

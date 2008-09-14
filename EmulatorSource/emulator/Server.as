@@ -558,7 +558,7 @@ package emulator {
 				{
 					var key:String = root.loaderInfo.parameters["paramNum_"+i]
 					var infoEntry:InfoEntry = InfoEntry.create(key,root.loaderInfo.parameters[key]);
-					trace(key+"*********"+root.loaderInfo.parameters[key])
+					//trace(key+"*********"+root.loaderInfo.parameters[key])
 					serverInfoEnteries.push(infoEntry);
 				}
 			}
@@ -879,6 +879,13 @@ package emulator {
 		private function doAllStoreState(msg:API_DoAllStoreState):void
 		{
 			var serverEntries:Array =/*ServerEntry*/ new Array();
+			if (msg.userEntries.length == 0)
+			{
+				showMsg("doAllStoreState must get at least 1 UserEntry","Error");
+				addMessageLog("Server","Error","doAllStoreState must get at least 1 UserEntry")
+				gameOver();
+				return;
+			}
 			for each(var userEntry:UserEntry in msg.userEntries)
 			{
 				if(userEntry.isSecret)
@@ -897,6 +904,13 @@ package emulator {
 		private function doAllStoreStateCalculation(msg:API_DoAllStoreStateCalculation):void
 		{
 			var serverEntries:Array =/*ServerEntry*/ new Array();
+			if (msg.userEntries.length == 0)
+			{
+				showMsg("doAllStoreStateCalculation must get at least 1 UserEntry","Error");
+				addMessageLog("Server","Error","doAllStoreStateCalculation must get at least 1 UserEntry")
+				gameOver();
+				return;
+			}
 			for each(var userEntry:UserEntry in msg.userEntries)
 			{
 				if(userEntry.isSecret)
@@ -933,6 +947,14 @@ package emulator {
 		}
 		private function doAllShuffleState(msg:API_DoAllShuffleState):void
 		{
+			if (msg.keys.length < 2)
+			{
+				showMsg("doAllShuffleState must get at least 2 keys","Error");
+				addMessageLog("Server","Error","doAllShuffleState must get at least 2 keys")
+				gameOver();
+				return;
+			}
+			
 			
 			var serverStateKeys:Array/*Object*/ = new Array();
 			var serverStateValues:Array/*ServerEntry*/ = new Array();
@@ -959,7 +981,6 @@ package emulator {
 			var serverEntry:ServerEntry;
 			var serverEntries:Array =new Array/*ServerEntry*/
 			var shuffleIndex:int;
-			trace("***************" + serverStateValues.length + "**********************")
 			while(serverStateValues.length > 0)
 			{
 				shuffleIndex=Math.floor(Math.random()*serverStateValues.length)
@@ -976,6 +997,14 @@ package emulator {
 		}
 		private function doAllRevealState(msg:API_DoAllRevealState):void
 		{
+			if (msg.revealEntries.length == 0)
+			{	
+				showMsg("doAllRevealState must get at least 1 RevealEntry","Error");
+				addMessageLog("Server","Error","doAllRevealState must get at least 1 RevealEntry")
+				gameOver();
+				return;
+			}
+			
 			var stateData:ServerEntry;
 			var serverEnries:Array=new Array();
 			var serverEntry:ServerEntry;
@@ -1051,6 +1080,14 @@ package emulator {
 		}
 		private function doAllEndMatch(msg:API_DoAllEndMatch):void
 		{
+			if (msg.finishedPlayers.length == 0)
+			{
+				
+				showMsg("doAllEndMatch must get at least 1 PlayerMatchOver","Error");
+				addMessageLog("Server","Error","doAllEndMatch must get at least 1 PlayerMatchOver")
+				gameOver();
+				return;
+			}		
 			var tempFinishedPlayersIds:Array=new Array();
 			var finishedPlayers:Array = msg.finishedPlayers;
 			var finishedPart:FinishHistory=new FinishHistory();
@@ -1983,6 +2020,14 @@ package emulator {
 		}
 		public function doStoreState(waitingFunction:QueueEntry):void {
 			var msg:API_DoStoreState = waitingFunction.msg as API_DoStoreState;
+			if (msg.userEntries.length == 0)
+			{	
+				showMsg("doStoreState must get at least 1 UserEntry","Error");
+				addMessageLog("Server","Error","doStoreState must get at least 1 UserEntry")
+				gameOver();
+				return;
+			}
+			
 			var serverEntries:Array;
 			for each(var tempUser:User in aUsers)
 			{

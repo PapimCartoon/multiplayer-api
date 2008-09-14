@@ -20,11 +20,11 @@ You should write a class that extends one of the above APIs, and when your SWF i
 [MultiplayerAPI_Implementation The Multiplayer API Implementation] describes the internal implementation that uses LocalConnection. 
 The implementation details should not concern game developers, but they are important for websites hosting the games.
 
-You may either test the games in the [Emulator], or submit your game online to a gaming website that supports this API. 
+You may either test the games in the [http://multiplayer-api.googlecode.com/files/EmulatorAPI-Version1.0.3.zip Emulator], or submit your game online to a gaming website that supports this API. 
 One such website is [http://www.come2play.com Come2Play].
 Another distribution channel is Skype GameXN - in the near future we will write a container that translates this Multiplayer API to Skype GameXN platform.
 
-The current version of the [Emulator] does not support [ConnectedGameAPI].
+The current version of the [http://multiplayer-api.googlecode.com/files/EmulatorAPI-Version1.0.3.zip Emulator] does not support [ConnectedGameAPI].
 
 
 === AS2 vs AS3 ===

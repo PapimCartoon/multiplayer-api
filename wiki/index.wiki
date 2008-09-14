@@ -26,12 +26,11 @@ How to use this project:
   * Become an API or Emulator developer, and help us add features to the emulator
 
 ==== How to work with the SVN: ====
-  * You should have a Gmail account.
-  * Install an SVN client on your computer (I recommend [http://tortoisesvn.tigris.org Tortoise SVN])
-  * Find out what is your password [http://code.google.com/hosting/settings here] 
+  * Firs you should open your own Gmail account.
+  * Install an SVN client on your computer (I recommend [http://tortoisesvn.tigris.org Tortoise SVN]), press [http://tortoisesvn.net/docs/release/TortoiseSVN_en/tsvn-dug-checkout.html here] for help
+  * Generate a password corresponding to you Gmail account [http://code.google.com/hosting/settings here] 
   * Checkout the code from [https://multiplayer-api.googlecode.com/svn/trunk/] using your Gmail account and the special password you got in the previous step.
   * _Before_ reporting a bug, make sure you UPDATE your SVN to the latest version.
-
 ==== License note: ==== 
 The API and Emulator are open source, and anyone can use, modify, or distribute them, both in open source projects or in commercial projects. Phrased differently, you may develop commercial games using this API, or develop a commercial container for API games; you do not even have to mention you are using this open source API.
 

@@ -35,6 +35,7 @@ package come2play_as3.api {
         		//if (runningAnimationsNumber>0) should I postpone processing of this message?
 	    		if (msg is API_GotStateChanged) {
 	    			var stateChanged:API_GotStateChanged = msg as API_GotStateChanged;
+	    			if (stateChanged.serverEntries.length < 1) throwError("The container sent a store message without without any user entries");
 	    			var serverEntry:ServerEntry = stateChanged.serverEntries[0];
 	    			hackerUserId = serverEntry.storedByUserId;
 	    		}

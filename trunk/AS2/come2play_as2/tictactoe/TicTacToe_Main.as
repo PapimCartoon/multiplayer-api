@@ -28,8 +28,8 @@ class come2play_as2.tictactoe.TicTacToe_Main extends ClientGameAPI {
 	private var allCells:Array/*TicTacToeMove*/;
 	private var squares:Array/*TicTacToe_SquareGraphic[]*/;
 	private var logic:TicTacToe_logic;
-	private var allPlayerIds:Array/*int*/;
-	private var ongoingColors:Array/*int*/;
+	private var allPlayerIds:Array/*int*/; // never changes since starting the game
+	private var ongoingColors:Array/*int*/; // when a player finishes (wins/disconnects) we remove him from ongoingColors 
 	private var myUserId:Number = -42;
 	private var turnOfColor:Number; // a number between 0 and allPlayerIds.length
 	private static var VIEWER:Number = -1; 	
@@ -141,11 +141,12 @@ class come2play_as2.tictactoe.TicTacToe_Main extends ClientGameAPI {
 		var userId:Number = entry.storedByUserId;
 		if (userId==myUserId) return; // The player ignores his own stores, because he already updated the logic before he sent it to the server
 		var colorOfUser:Number = getColor(userId);
-		if (colorOfUser==-1) return;  // viewers can store match state, so we just ignore whatever a viewer placed in the match state
-		if (AS3_vs_AS2.IndexOf(ongoingColors, colorOfUser)==-1) return; // player already disconnected
+		if (colorOfUser==-1) return;  // viewers cannot store match state in TicTacToe, so we just ignore whatever a viewer placed in the match state		
 		// In SinglePlayer: the player already called return before, but a viewer (there can be viewers even for singleplayer games!) still needs to call performMove 
-		if (!isSinglePlayer()) 
+		if (!isSinglePlayer()) {
+			if (AS3_vs_AS2.IndexOf(ongoingColors, colorOfUser)==-1) return; // player already disconnected 
 			assert(turnOfColor==colorOfUser, ["Got an entry from player=",userId," of color=",colorOfUser," but expecting one from color=", turnOfColor]);
+		}
 		var expectedKey:Number = getEntryKey();
 		assert(entry.key==expectedKey, ["The state key is illegal! Expecting key=",expectedKey," but got key=",entry.key]);
 		performMove(entry.value, false);
@@ -154,7 +155,7 @@ class come2play_as2.tictactoe.TicTacToe_Main extends ClientGameAPI {
 	private function matchOverForPlayers(finishedPlayerIds:Array/*int*/):Boolean {
 		if (logic==null) return false; // match already ended
 		var colors:Array/*int*/ = [];
-		for (var i159:Number=0; i159<finishedPlayerIds.length; i159++) { var playerId:Number = finishedPlayerIds[i159]; 
+		for (var i160:Number=0; i160<finishedPlayerIds.length; i160++) { var playerId:Number = finishedPlayerIds[i160]; 
 			var colorOfPlayerId:Number = getColor(playerId);
 			assert(colorOfPlayerId!=-1, ["Didn't find playerId=",playerId]); 
 			colors.push(colorOfPlayerId);
@@ -163,7 +164,7 @@ class come2play_as2.tictactoe.TicTacToe_Main extends ClientGameAPI {
 	}
 	private function matchOverForColors(colors:Array/*int*/):Boolean {	
 		var shouldChangeTurnOfColor:Boolean = false;
-		for (var i168:Number=0; i168<colors.length; i168++) { var color:Number = colors[i168]; 
+		for (var i169:Number=0; i169<colors.length; i169++) { var color:Number = colors[i169]; 
 			var ongoingIndex:Number = AS3_vs_AS2.IndexOf(ongoingColors, color);
 			if (ongoingIndex==-1) continue; // already finished (when the game ends normally, I immediately call matchOverForColors. see performMove) 
 			ongoingColors.splice(ongoingIndex, 1);
@@ -198,12 +199,13 @@ class come2play_as2.tictactoe.TicTacToe_Main extends ClientGameAPI {
 	}
 	private static function arrayCopy(arr:Array):Array {
 		var res:Array = [];
-		for (var i203:Number=0; i203<arr.length; i203++) { var x:Object = arr[i203]; 
+		for (var i204:Number=0; i204<arr.length; i204++) { var x:Object = arr[i204]; 
 			res.push(x);
 		}
 		return res;			
 	}
 	private function performMove(move:TicTacToeMove, isSavedGame:Boolean):Void {
+		doTrace("performMove",["move=",move," isSavedGame=",isSavedGame]);
 		logic.makeMove(turnOfColor, move);
 		// update the graphics
 		var square:TicTacToe_SquareGraphic = getSquareGraphic(move);
@@ -215,7 +217,7 @@ class come2play_as2.tictactoe.TicTacToe_Main extends ClientGameAPI {
 		var winningCells:Array/*TicTacToeMove*/ = logic.getWinningCells(move);
 		var didWin:Boolean = winningCells!=null;
 		if (didWin) {
-			for (var i220:Number=0; i220<winningCells.length; i220++) { var winCell:TicTacToeMove = winningCells[i220]; 
+			for (var i222:Number=0; i222<winningCells.length; i222++) { var winCell:TicTacToeMove = winningCells[i222]; 
 				getSquareGraphic(winCell).startWinAnimation();
 			}
 		}
@@ -257,10 +259,10 @@ class come2play_as2.tictactoe.TicTacToe_Main extends ClientGameAPI {
 				}		
 				if (isBoardFull) { // Important: it can happen that someone won and the board has just filled up!				
 					var finishedPlayersIds:Array/*int*/ = [];
-					for (var i262:Number=0; i262<finishedPlayers.length; i262++) { var playerMatchOver:PlayerMatchOver = finishedPlayers[i262]; 
+					for (var i264:Number=0; i264<finishedPlayers.length; i264++) { var playerMatchOver:PlayerMatchOver = finishedPlayers[i264]; 
 						finishedPlayersIds.push(playerMatchOver.playerId);
 					}					
-					for (var i265:Number=0; i265<ongoingColors.length; i265++) { var ongoingColor:Number = ongoingColors[i265]; 
+					for (var i267:Number=0; i267<ongoingColors.length; i267++) { var ongoingColor:Number = ongoingColors[i267]; 
 						var ongoingPlayerId:Number = allPlayerIds[ongoingColor];
 						if (AS3_vs_AS2.IndexOf(finishedPlayersIds, ongoingPlayerId)==-1) {
 							if (didWin) {
@@ -316,7 +318,7 @@ class come2play_as2.tictactoe.TicTacToe_Main extends ClientGameAPI {
 		if (isInProgress && !isSinglePlayer()) {
 			doAllSetTurn(allPlayerIds[turnOfColor],-1);
 		}		
-		for (var i321:Number=0; i321<allCells.length; i321++) { var move:TicTacToeMove = allCells[i321]; 
+		for (var i323:Number=0; i323<allCells.length; i323++) { var move:TicTacToeMove = allCells[i323]; 
 			if (logic.isSquareAvailable(move)) {
 				var square:TicTacToe_SquareGraphic = getSquareGraphic(move);
 				square.startMove(

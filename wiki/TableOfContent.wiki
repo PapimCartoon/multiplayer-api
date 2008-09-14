@@ -65,21 +65,21 @@ Frame per seconds (FPS):
 Your game may run in any fps you may choose.
 We recommend using less than 40 fps to avoid overloading slow computers.
 
+=== Keyboard and Mouse events===
+Note that the game and chat might be in the same window.
+If you listen to MouseEvents:
+using `Mouse.addListener` or stage.addEventlistenr you will receive events from your game,but from the chat utility and surrounding container as well.
+Therefore your game should be careful and not do irreversible actions based on such actions that might be done in the chat area.
+In a future version we are planning to add functions that will pass mouse events to the game via the LocalConnection.
+the keyboard events are already passed down through the LocalConnection,and you should only use the specified [gotKeyboardEvent] function
+to receive them.
+
 === obfuscate ===
 We suggest that you encrypt/obfuscate your code to make it difficult for users to crack or steal your code.
 There are many programs for that purpose; one of them is Amayeta (http://www.amayeta.com/). 
 
-=== Keyboard and Mouse events===
-Note that the game and chat might be in the same chat window.
-If you listen to MouseEvents:
-`Mouse.addListener` then you will receive events even when the user is scrolling in the user list.
-Therefore your game should be careful and not do irreversible actions based on such actions that might be done in the chat area.
-In a future version we are planning to add functions that will pass mouse events to the game via the LocalConnection.
-
-
-
 = Emulator =
-When developing your game, you should use the [Emulator].
+When developing your game, you should use the [http://multiplayer-api.googlecode.com/files/EmulatorAPI-Version1.0.3.zip Emulator].
 After you finished testing in the emulator, you may submit the game to any company that endorses this multiplayer API.
 One such company is [http://www.come2play.com Come2Play].
 
@@ -87,7 +87,16 @@ One such company is [http://www.come2play.com Come2Play].
 
 Coming soon (TODO): a video showing how to use the emulator.
 
+
 = Creating multiplayer games =
+This section contains [PsuedoCodeExamples pseudo code examples] describing the way you should use the API to comunicate with the server,the [PsuedoCodeExamples pseudo code examples]
+use real flash commands to make the code easier to read and use.
+
+you will also find [FullGames full game source] code for you to learn and work on.
+
+And after learning and understanding the API we offer a basic [http://multiplayer-api.googlecode.com/files/Template.zip Template] to work on
+
 Coming soon (TODO): this section will contain tutorials on creating both turn-based and real-time games.
+
 
 [TicTacToe] explains about the implementation of TicTacToe using [ClientGameAPI].

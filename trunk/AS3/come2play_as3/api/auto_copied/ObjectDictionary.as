@@ -4,6 +4,7 @@ public final class ObjectDictionary extends SerializableClass
 {
 	// maps a hash of an object to an array of entries
 	// each entry is: [key,value]
+	//all the variables of this class are public because it extends SerializableClass
 	public var hashMap:Object;
 	public var pSize:int;
 	// the order of inserted keys and values is important in the API for server entries

@@ -35,7 +35,7 @@ function getText(){
 }
     </script>
 </head>
-<body onbeforeunload="var str=window.opener.beforeUnloadServer();if(str!=null)event.returnValue =str;" onunload="window.opener.unloadServer();" style="width: 100%; height: 100%;">
+<body onbeforeunload="window.opener.unloadServer();" style="width: 100%; height: 100%;">
     <div style="width:100%;height:100%;position:absolute;padding:0px 20px 10px 0px;">
     <div id="divGame" style="width:100%;height:100%;">
     </div></div>

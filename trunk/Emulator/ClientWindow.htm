@@ -39,7 +39,14 @@ function parseObj(str){
 }
     </script>
 </head>
-<body onbeforeunload="var str=window.opener.beforeUnloads();if(str!=null)event.returnValue =str;" onunload="window.opener.unloadServer();" style="width: 100%; height: 100%;">
+<!-- to ask the user if he is sure or not:
+onbeforeunload="event.returnValue ='are you sure you want to close?';"
+We removed this, because in some versions of IE7, you cannot have both:
+onbeforeunload
+onunload
+Only one of them will work.
+-->
+<body onbeforeunload="window.opener.unloadServer();" style="width: 100%; height: 100%;">
     <div style="width:100%;height:100%;position:absolute;padding:0px 20px 10px 0px;">
     <div id="divGame" style="width:100%;height:100%;">
     </div></div>
@@ -49,18 +56,6 @@ try{
     writeFlash(document.getElementById("divGame"),"../Emulator/Emulator.swf","100%","100%","prefix="+param_arr["prefix"]+"&game="+param_arr["game"]+"&oldgame="+param_arr["oldgame"]+"&fps="+param_arr["gameFrameRate"]+"&delay_from="+param_arr["delay_from"]+"&delay_to="+param_arr["delay_to"]+"&old_container="+param_arr["old_container"]+"&client_height="+param_arr["gameHeight"]+"&client_width="+param_arr["gameWidth"]+"&isServer=false","client");
 }catch(err){
   alert(err.message);
-}
-var silent=false;
-function unloadAll(){
-    if(!silent){
-        window.opener.unloadWindow();
-    }
-}
-function beforeUnloadWindow(){
-    if(!silent){
-        return "Close this window?";
-    }
-    return "";
 }
     </script>
 </body>

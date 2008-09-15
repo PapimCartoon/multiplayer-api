@@ -1,4 +1,4 @@
-import come2play_as2.api.auto_copied.*;
+﻿import come2play_as2.api.auto_copied.*;
 
 class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 	public static var isAS3:Boolean = false;
@@ -84,8 +84,14 @@ class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 		graphics.loadMovie(url);
 	}
 	public static function scaleMovie(graphics:MovieClip, x_percentage:Number, y_percentage:Number):Void {
-		graphics._xscale = x_percentage;
-		graphics._yscale = y_percentage;		
+		scaleMovieX(graphics,x_percentage);
+		scaleMovieY(graphics,y_percentage);	
+	}		
+	public static function scaleMovieX(graphics:MovieClip, x_percentage:Number):Void {
+		graphics._xscale = x_percentage;		
+	}		
+	public static function scaleMovieY(graphics:MovieClip, y_percentage:Number):Void {
+		graphics._yscale = y_percentage;
 	}		
 	public static function setVisible(graphics:MovieClip, is_visible:Boolean):Void {
 		graphics._visible = is_visible;

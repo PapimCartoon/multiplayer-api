@@ -5,6 +5,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 {			
 	public static var SHOULD_SHOW_ERRORS:Boolean = true;
 	public static var someMovieClip:MovieClip; // so we can display error messages on the stage
+	
 	public static function showError(msg:String):Void {
 		var msg:String = "An ERRRRRRRRRRROR occurred:\n"+msg;
 		System.setClipboard(msg);
@@ -82,4 +83,5 @@ class come2play_as2.api.auto_copied.StaticFunctions
 		//trace("Setting field "+fieldName+" in class "+clzName+" to val="+val_obj); 
 		ClassReference[fieldName] = val_obj;		
 	}
+
 }

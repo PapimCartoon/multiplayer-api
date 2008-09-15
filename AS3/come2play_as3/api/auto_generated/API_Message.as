@@ -18,16 +18,16 @@ package come2play_as3.api.auto_generated {
 		public static const USER_INFO_KEY_supervisor:String = "supervisor";
 		public static const USER_INFO_KEY_credibility:String = "credibility";
 		public static const USER_INFO_KEY_game_rating:String = "game_rating";
-		public static const CUSTOM_INFO_KEY_logoFullUrl:String = "logoFullUrl";
-		public static const CUSTOM_INFO_KEY_secondsPerMatch:String = "secondsPerMatch";
-		public static const CUSTOM_INFO_KEY_secondsPerMove:String = "secondsPerMove";
-		public static const CUSTOM_INFO_KEY_gameStageX:String = "gameStageX";
-		public static const CUSTOM_INFO_KEY_gameStageY:String = "gameStageY";
+		public static const CUSTOM_INFO_KEY_logoFullUrl:String = "CONTAINER_logoFullUrl";
+		public static const CUSTOM_INFO_KEY_secondsPerMatch:String = "CONTAINER_secondsPerMatch";
+		public static const CUSTOM_INFO_KEY_secondsPerMove:String = "CONTAINER_secondsPerMove";
+		public static const CUSTOM_INFO_KEY_gameStageX:String = "CONTAINER_gameStageX";
+		public static const CUSTOM_INFO_KEY_gameStageY:String = "CONTAINER_gameStageY";
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		public static const CUSTOM_INFO_KEY_gameHeight:String = "gameHeight";
-		public static const CUSTOM_INFO_KEY_gameWidth:String = "gameWidth";
-		public static const CUSTOM_INFO_KEY_gameFrameRate:String = "gameFrameRate";
+		public static const CUSTOM_INFO_KEY_gameHeight:String = "CONTAINER_gameHeight";
+		public static const CUSTOM_INFO_KEY_gameWidth:String = "CONTAINER_gameWidth";
+		public static const CUSTOM_INFO_KEY_gameFrameRate:String = "CONTAINER_gameFrameRate";
 	}
 }

@@ -22,6 +22,7 @@ import flash.utils.*;
 public final class TicTacToe_Main extends ClientGameAPI {
 	
 	// for example, you can have a board of size 5x5, with WIN_LENGTH=4
+	private var grid:CreateGrid;
 	private var ROWS:int;
 	private var COLS:int;
 	private var WIN_LENGTH:int;
@@ -39,13 +40,23 @@ public final class TicTacToe_Main extends ClientGameAPI {
 	private static const VIEWER:int = -1; 	
 	private var myColor:int; // either VIEWER, or a number between 0 and allPlayerIds.length
 	
+	// We may use the player's avatars instead of the default symbols (of "X" and "O")
+	private var shouldUseAvatars:Boolean = true; 
+	private var userId2Avatar:Object;
+	
 	public function TicTacToe_Main(graphics:MovieClip) {
 		super(graphics);
-		var grid:CreateGrid = new CreateGrid(graphics, "TicTacToeSquare", 3,3,100, 50);		
+		
+		// we might get resized later (when the height and width are passed), 
+		// so it's best to hide the board until the game starts.
+		AS3_vs_AS2.setVisible(graphics,false);
+		 
+		grid = new CreateGrid(graphics, "TicTacToeSquare", 3,3,84,100,50);		
 		graphics.stop();
 		this.graphics = graphics;
 		this.ROWS = grid.ROWS;
 		this.COLS = grid.COLS;
+		userId2Avatar = {};
 		var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(graphics);
 		
 		WIN_LENGTH = AS3_vs_AS2.convertToInt(parameters["WIN_LENGTH"]);
@@ -94,28 +105,64 @@ public final class TicTacToe_Main extends ClientGameAPI {
 		this.myUserId = myUserId;
 	}
 	override public function gotUserInfo(userId:int, entries:Array/*InfoEntry*/):void {
+		// we use only the user's avatars
+		for each (var entry:InfoEntry in entries) {
+			if (entry.key==API_Message.USER_INFO_KEY_avatar_url) {
+				userId2Avatar[userId] = entry.value.toString();
+			}
+		}
 	}
+
+	// To change the symbols of TicTacToe from the default ones (which are "X" and "O"),
+	// use custom info keys: TicTacToeSymbol_0, ..., TicTacToeSymbol_3
+	public static var TicTacToeSymbol:String = "TicTacToeSymbol_";
 	override public function gotCustomInfo(entries:Array/*InfoEntry*/):void {
 		for each (var entry:InfoEntry in entries) {
+			var key:String = entry.key;
 			var value:String = entry.value.toString();
-			if (entry.key==API_Message.CUSTOM_INFO_KEY_logoFullUrl) {
-				var logoFullUrl:String = value;
+			if (key==API_Message.CUSTOM_INFO_KEY_logoFullUrl) {
 				for each (var cell:TicTacToeMove in allCells) {
-					getSquareGraphic(cell).gotLogo(logoFullUrl);
+					getSquareGraphic(cell).gotLogo(value);
 				}
-			} else if (entry.key==API_Message.CUSTOM_INFO_KEY_gameHeight) {
+			} else if (key==API_Message.CUSTOM_INFO_KEY_gameHeight) {
 				var height:int = int(value);
-				// TicTacToe is designed for 400x400, if the size is different we scale
-				AS3_vs_AS2.scaleMovieY(graphics, 100*height/400);		
-			} else if (entry.key==API_Message.CUSTOM_INFO_KEY_gameWidth) {
+				// we scale the TicTacToe size according to the grid size
+				AS3_vs_AS2.scaleMovieY(graphics, 100*height/grid.height());		
+			} else if (key==API_Message.CUSTOM_INFO_KEY_gameWidth) {
 				var width:int = int(value);
-				AS3_vs_AS2.scaleMovieX(graphics, 100*width/400);								
+				AS3_vs_AS2.scaleMovieX(graphics, 100*width/grid.width());	
+			} else if (key=="TicTacToe_shouldUseAvatars") {
+				shouldUseAvatars = Boolean(value);					
+			} else if (StaticFunctions.startsWith(key,TicTacToeSymbol)) {
+				var color:int = int(key.substr(TicTacToeSymbol.length));				
+				replaceSymbol(color, value);				
 			}	
 		}
 	}
+	private function replaceSymbol(color:int, symbolUrl:String):void {
+		for each (var cell:TicTacToeMove in allCells) {
+			getSquareGraphic(cell).gotSymbol(color,symbolUrl);
+		}
+	}
 	override public function gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, extraMatchInfo:Object/*Serializable*/, matchStartedTime:int, userStateEntries:Array/*ServerEntry*/):void {
+		AS3_vs_AS2.setVisible(graphics,true);
 		this.allPlayerIds = allPlayerIds;
-		assert(allPlayerIds.length<=4, ["The graphics of TicTacToe can handle at most 4 players. allPlayerIds=", allPlayerIds]);
+		assert(allPlayerIds.length<=TicTacToe_SquareGraphic.MAX_SYMBOLS, ["The graphics of TicTacToe can handle at most ",TicTacToe_SquareGraphic.MAX_SYMBOLS," players. allPlayerIds=", allPlayerIds]);
+		
+		if (shouldUseAvatars) {
+			// set the player's avatars instead of the default TicTacToe symbols
+			// Sometimes two players uses the same avatar. In that case I do not replace one of the symbols. 
+			var avatarUrlExists:Object = {};
+			for (var colorId:int=0; colorId<allPlayerIds.length; colorId++) {
+				var playerId:int = allPlayerIds[colorId];
+				var avatarUrl:String = userId2Avatar[playerId];
+				if (avatarUrl!=null && avatarUrl!='' && avatarUrlExists[avatarUrl]==null) {
+					avatarUrlExists[avatarUrl] = true; // to mark that we saw this avatarUrl 
+					replaceSymbol(colorId, avatarUrl);
+				}
+			}
+		}
+		
 		turnOfColor = 0;
 		var indexOfMyUserId:int = AS3_vs_AS2.IndexOf(allPlayerIds,myUserId);
 		myColor = indexOfMyUserId==-1 ? VIEWER : 

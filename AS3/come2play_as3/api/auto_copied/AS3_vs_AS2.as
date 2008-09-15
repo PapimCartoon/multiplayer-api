@@ -50,6 +50,10 @@ public final class AS3_vs_AS2
 	public static function addOnPress(movie:IEventDispatcher, func:Function):void {		
 		movie.addEventListener(MouseEvent.CLICK , function (event:MouseEvent):void { func(); });
 	}
+	public static function addOnMouseOver(movie:IEventDispatcher, mouseOverFunc:Function, mouseOutFunc:Function):void {		
+		movie.addEventListener(MouseEvent.MOUSE_OVER , function (event:MouseEvent):void { mouseOverFunc(); });		
+		movie.addEventListener(MouseEvent.MOUSE_OUT , function (event:MouseEvent):void { mouseOutFunc(); });
+	}
 	public static function addStatusListener(conn:LocalConnection, client:Object, functions:Array):void {
 		conn.client = client;
 		conn.addEventListener(StatusEvent.STATUS, 
@@ -70,7 +74,7 @@ public final class AS3_vs_AS2
 	public static function getTimeString():String {
 		return new Date().toLocaleTimeString();
 	}
-	public static function getLoaderInfoParameters(someMovieClip:MovieClip):Object {
+	public static function getLoaderInfoParameters(someMovieClip:DisplayObject):Object {
 		return someMovieClip.loaderInfo.parameters;
 	}
 	public static function getMovieChild(graphics:MovieClip, childName:String):MovieClip {
@@ -82,35 +86,38 @@ public final class AS3_vs_AS2
 		return res;
 	}	
 	private static var prevent_garbage_collection:Array = [];
-	public static function loadMovie(graphics:MovieClip, url:String):void {
+	public static function loadMovieIntoNewChild(graphics:MovieClip, url:String):DisplayObject {
 		var loader:Loader = new Loader();
 		prevent_garbage_collection.push(loader);
+		var newMovie:DisplayObjectContainer = new Sprite();
 		var contentLoaderInfo:LoaderInfo = loader.contentLoaderInfo;
 		contentLoaderInfo.addEventListener(Event.COMPLETE, function (event:Event):void {
-		        graphics.addChild(loader.content);
+				newMovie.addChild(loader.content);		        
 			}  );
 		contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, function (event:IOErrorEvent):void {
 		        trace("Error in loading movie from url="+url+" event="+event);
 		    }  );
+		graphics.addChild(newMovie);
 		loader.load(new URLRequest(url));
+		return newMovie;
 	}
-	public static function scaleMovie(graphics:MovieClip, x_percentage:int, y_percentage:int):void {
+	public static function scaleMovie(graphics:DisplayObject, x_percentage:int, y_percentage:int):void {
 		scaleMovieX(graphics,x_percentage);
 		scaleMovieY(graphics,y_percentage);		
 	} 	
-	public static function scaleMovieX(graphics:MovieClip, x_percentage:int):void {
+	public static function scaleMovieX(graphics:DisplayObject, x_percentage:int):void {
 		graphics.scaleX = Number(x_percentage)/100;		
 	} 	
-	public static function scaleMovieY(graphics:MovieClip, y_percentage:int):void {
+	public static function scaleMovieY(graphics:DisplayObject, y_percentage:int):void {
 		graphics.scaleY = Number(y_percentage)/100;		
 	} 	
-	public static function setVisible(graphics:MovieClip, isVisible:Boolean):void {
+	public static function setVisible(graphics:DisplayObject, isVisible:Boolean):void {
 		graphics.visible = isVisible;
 	} 	
-	public static function setAlpha(target:MovieClip, alphaPercentage:int):void {
+	public static function setAlpha(target:DisplayObject, alphaPercentage:int):void {
 		target.alpha = alphaPercentage/100;
 	}
-	public static function setMovieXY(target:MovieClip, x:int, y:int):void {
+	public static function setMovieXY(target:DisplayObject, x:int, y:int):void {
 		target.x = x;
 		target.y = y;		
 	} 	
@@ -132,8 +139,8 @@ public final class AS3_vs_AS2
 		graphics.addChild(dup);
 		return dup;
 	}
-	public static function removeMovie(graphics:MovieClip, name:String):void {
-		graphics.parent.removeChild( graphics.parent.getChildByName(name) );
+	public static function removeMovie(graphics:DisplayObject):void {
+		graphics.parent.removeChild( graphics );
 	}
 	public static function addKeyboardListener(graphics:MovieClip, func:Function):void {
 		var isStageReady:Boolean = graphics.stage!=null;

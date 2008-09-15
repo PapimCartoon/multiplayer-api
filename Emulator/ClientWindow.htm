@@ -53,7 +53,15 @@ Only one of them will work.
     <script language="JavaScript">
 var param_arr = getParametersFromURL();
 try{
-    writeFlash(document.getElementById("divGame"),"../Emulator/Emulator.swf","100%","100%","prefix="+param_arr["prefix"]+"&game="+param_arr["game"]+"&oldgame="+param_arr["oldgame"]+"&fps="+param_arr["gameFrameRate"]+"&delay_from="+param_arr["delay_from"]+"&delay_to="+param_arr["delay_to"]+"&old_container="+param_arr["old_container"]+"&client_height="+param_arr["gameHeight"]+"&client_width="+param_arr["gameWidth"]+"&isServer=false","client");
+	if(param_arr["isPlayer"] == "true"){
+		document.title="Player :";
+	}else{
+		document.title="Viewer :";
+	}
+	document.title += param_arr["clientNum"];
+	
+	
+    writeFlash(document.getElementById("divGame"),"../Emulator/Emulator.swf","100%","100%","prefix="+param_arr["prefix"]+"&game="+param_arr["game"]+"&oldgame="+param_arr["oldgame"]+"&fps="+param_arr["gameFrameRate"]+"&delay_from="+param_arr["delay_from"]+"&delay_to="+param_arr["delay_to"]+"&old_container="+param_arr["old_container"]+"&height="+param_arr["height"]+"&width="+param_arr["width"]+"&isServer=false&isPlayer="+param_arr["isPlayer"]+"&clientNum="+param_arr["clientNum"],"client");
 }catch(err){
   alert(err.message);
 }

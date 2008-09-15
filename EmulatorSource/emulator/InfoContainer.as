@@ -69,25 +69,27 @@ package emulator {
 			
 			btnStart = new Button();
 			btnStart.label = "Start";
+			btnStart.textField.selectable = false;
 			btnStart.addEventListener(MouseEvent.CLICK, btnStartClick);
 			this.addChild(btnStart);
 			
 			lblWait = new TextField();
+			lblWait.selectable = false;
 			lblWait.text = "Waiting for oponent...";
 			lblWait.visible = false;
 			lblWait.autoSize = TextFieldAutoSize.LEFT;
 			this.addChild(lblWait);
 			var width:int
 			var height:int
-			if ((root.loaderInfo.parameters["client_width"] != null) &&  (root.loaderInfo.parameters["client_height"] != null))
+			/*if ((root.loaderInfo.parameters["client_width"] != null) &&  (root.loaderInfo.parameters["client_height"] != null))
 			{
 				width = Number(root.loaderInfo.parameters["client_width"])
 				height =Number(root.loaderInfo.parameters["client_height"])
-			}
-			else if((root.loaderInfo.parameters["test_file_width"] != null) &&  (root.loaderInfo.parameters["test_file_height"] != null))
+			}*/
+			if((root.loaderInfo.parameters["width"] != null) &&  (root.loaderInfo.parameters["height"] != null))
 			{
-				width = Number(root.loaderInfo.parameters["test_file_width"])
-				height =Number(root.loaderInfo.parameters["test_file_height"])
+				width = Number(root.loaderInfo.parameters["width"])
+				height =Number(root.loaderInfo.parameters["height"])
 			}
 			frameSprite = new Sprite();
 			var tempMod:int = Math.round(Math.random() *12);

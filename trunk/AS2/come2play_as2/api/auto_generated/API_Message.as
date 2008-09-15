@@ -17,15 +17,15 @@ import come2play_as2.api.auto_generated.*;
 		public static var USER_INFO_KEY_supervisor:String = "supervisor";
 		public static var USER_INFO_KEY_credibility:String = "credibility";
 		public static var USER_INFO_KEY_game_rating:String = "game_rating";
-		public static var CUSTOM_INFO_KEY_logoFullUrl:String = "logoFullUrl";
-		public static var CUSTOM_INFO_KEY_secondsPerMatch:String = "secondsPerMatch";
-		public static var CUSTOM_INFO_KEY_secondsPerMove:String = "secondsPerMove";
-		public static var CUSTOM_INFO_KEY_gameStageX:String = "gameStageX";
-		public static var CUSTOM_INFO_KEY_gameStageY:String = "gameStageY";
+		public static var CUSTOM_INFO_KEY_logoFullUrl:String = "CONTAINER_logoFullUrl";
+		public static var CUSTOM_INFO_KEY_secondsPerMatch:String = "CONTAINER_secondsPerMatch";
+		public static var CUSTOM_INFO_KEY_secondsPerMove:String = "CONTAINER_secondsPerMove";
+		public static var CUSTOM_INFO_KEY_gameStageX:String = "CONTAINER_gameStageX";
+		public static var CUSTOM_INFO_KEY_gameStageY:String = "CONTAINER_gameStageY";
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		public static var CUSTOM_INFO_KEY_gameHeight:String = "gameHeight";
-		public static var CUSTOM_INFO_KEY_gameWidth:String = "gameWidth";
-		public static var CUSTOM_INFO_KEY_gameFrameRate:String = "gameFrameRate";
+		public static var CUSTOM_INFO_KEY_gameHeight:String = "CONTAINER_gameHeight";
+		public static var CUSTOM_INFO_KEY_gameWidth:String = "CONTAINER_gameWidth";
+		public static var CUSTOM_INFO_KEY_gameFrameRate:String = "CONTAINER_gameFrameRate";
 	}

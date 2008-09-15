@@ -32,7 +32,7 @@ public final class CreateGrid
 	public var SQUARE_deltaY:int;
 	public var Square_Example:MovieClip;
 	public function CreateGrid(graphics:MovieClip, squareLinkageName:String, 
-		defaultRows:int, defaultCols:int, defaultSize:int, defaultStartPos:int) {
+		defaultRows:int, defaultCols:int, defaultSize:int, defaultScale:int, defaultStartPos:int) {
 		
 		var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(graphics);
 		trace("CreateGrid: url parameters are="+JSON.stringify(parameters));
@@ -49,8 +49,8 @@ public final class CreateGrid
 		if (ROWS==0) ROWS = defaultRows; 
 		if (COLS==0) COLS = defaultCols;
 		var defaultSize:int = defaultSize;
-		if (SQUARE_scaleX==0) SQUARE_scaleX = defaultSize; 
-		if (SQUARE_scaleY==0) SQUARE_scaleY = defaultSize; 
+		if (SQUARE_scaleX==0) SQUARE_scaleX = defaultScale; 
+		if (SQUARE_scaleY==0) SQUARE_scaleY = defaultScale; 
 		if (SQUARE_deltaX==0) SQUARE_deltaX = defaultSize; 
 		if (SQUARE_deltaY==0) SQUARE_deltaY = defaultSize; 
 		if (SQUARE_startX==0) SQUARE_startX = defaultStartPos; 
@@ -66,6 +66,11 @@ public final class CreateGrid
 		AS3_vs_AS2.setMovieXY(dup, SQUARE_startX + SQUARE_deltaX*row, SQUARE_startY + SQUARE_deltaY*col);
 		AS3_vs_AS2.scaleMovie(dup, SQUARE_scaleX, SQUARE_scaleY);		
 	}
-
+	public function width():int {
+		return 2*SQUARE_startX + SQUARE_deltaX*ROWS;
+	}
+	public function height():int {
+		return 2*SQUARE_startY + SQUARE_deltaY*COLS;
+	}
 }
 }

@@ -1,4 +1,4 @@
-﻿import come2play_as2.api.auto_copied.*;
+import come2play_as2.api.auto_copied.*;
 
 class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 	public static var isAS3:Boolean = false;
@@ -42,7 +42,11 @@ class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 	}
 	public static function addOnPress(movie:MovieClip, func:Function):Void {
 		//trace("Adding onPress to movie="+movie+" func="+func);
-		movie.onPress = function () {trace("Pressed on movie="+movie+" func="+func); func(); };
+		movie.onPress = func; //function () {trace("Pressed on movie="+movie+" func="+func); func(); };
+	}	
+	public static function addOnMouseOver(movie:MovieClip, mouseOverFunc:Function, mouseOutFunc:Function):Void {		
+		movie.onRollOver = mouseOverFunc; 
+		movie.onRollOut = mouseOutFunc; 
 	}
 	public static function addStatusListener(conn:LocalConnection, client:Object, functions:Array):Void {
 		for (var i:Number=0; i<functions.length; i++) {
@@ -80,8 +84,13 @@ class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 		if (res==null) StaticFunctions.throwError("Missing child='"+childName+"' in movieclip="+graphics);
 		return res;
 	}	
-	public static function loadMovie(graphics:MovieClip, url:String):Void {
-		graphics.loadMovie(url);
+	public static function loadMovieIntoNewChild(graphics:MovieClip, url:String):MovieClip {
+		// create a new child, and load the url into that new child
+		var depth:Number = graphics.getNextHighestDepth();
+		var res:MovieClip = graphics.createEmptyMovieClip("LOADMOVIE"+depth,depth);
+		var inner:MovieClip = res.createEmptyMovieClip("INNER",0); // I need another inner clip, because if we immediately call setVisible(res, false), then when the movie is later loaded then the visible turns back to true.
+		inner.loadMovie(url);
+		return res;
 	}
 	public static function scaleMovie(graphics:MovieClip, x_percentage:Number, y_percentage:Number):Void {
 		scaleMovieX(graphics,x_percentage);
@@ -141,8 +150,8 @@ class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 		//trace("createMovieInstance: graphics="+graphics+" linkageName="+linkageName+" name="+name+" depth="+depth+" newInstance="+newInstance);
 		return newInstance;		
 	}	
-	public static function removeMovie(graphics:MovieClip, name:String):Void {
-		graphics.removeMovieClip( graphics._parent[name] );
+	public static function removeMovie(graphics:MovieClip):Void {
+		graphics.removeMovieClip();
 	}
 	public static function addKeyboardListener(graphics:MovieClip, func:Function):Void {
 		var myListener:Object = {};

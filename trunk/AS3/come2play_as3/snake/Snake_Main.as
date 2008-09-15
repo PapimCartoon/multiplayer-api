@@ -28,13 +28,19 @@ package come2play_as3.snakeCode
 		}
 		public function constructGame():void
 		{
-			waitingMove = false;	
+			waitingMove = false;
+			trace("***************************")
+			trace("stage is************"+graphics.stage.x+"/"+graphics.stage.y)	
+			trace("***************************")
 			snakeLogic = new Snake_Logic(graphics,this);
 			doRegisterOnServer();	
 		}
 		
 		public function makeMove(playerMove:PlayerMove):void
 		{
+			trace("***************************")
+			trace("stage is************"+graphics.stage.x+"/"+graphics.stage.y)	
+			trace("***************************")
 			if(waitingMove)
 			{
 				waitingMove = false;

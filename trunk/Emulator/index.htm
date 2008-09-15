@@ -26,17 +26,8 @@ function getParams(arr){
                     document.getElementById("old_game").checked=false;
                 }
                 break;
-            case "fps":
-                document.getElementById("fps").value=arr[i][1];
-                break;
             case "game":
                 document.getElementById("test_file_name").value=arr[i][1];
-                break;
-            case "test_file_width":
-                document.getElementById("test_file_width").value=arr[i][1];
-                break;
-            case "test_file_height":
-                document.getElementById("test_file_height").value=arr[i][1];
                 break;
             case "delay_from":
                 document.getElementById("delay_from").value=arr[i][1];
@@ -45,12 +36,33 @@ function getParams(arr){
                 document.getElementById("delay_to").value=arr[i][1];
                 break;
             case "paramNum_1":
-				if(arr[i][1]!="logo_swf_full_url")
+				if(arr[i][1]!="logoFullUrl")
 				{
 					customParam[ arr[i][0] ] = arr[i][1];
 					vals.push(arr[i]);
 				}
             	break;
+            case "paramNum_2":
+            	if(arr[i][1]!="gameWidth")
+				{
+					customParam[ arr[i][0] ] = arr[i][1];
+					vals.push(arr[i]);
+				}
+            break;
+            case "paramNum_3":
+            	if(arr[i][1]!="gameHeight")
+				{
+					customParam[ arr[i][0] ] = arr[i][1];
+					vals.push(arr[i]);
+				}
+            break;
+            case "paramNum_4":
+            	if(arr[i][1]!="gameFrameRate")
+				{
+					customParam[ arr[i][0] ] = arr[i][1];
+					vals.push(arr[i]);
+				}
+            break;
             case "single_popup":
                 if(arr[i][1]=="1"){
                     document.getElementById("single_popup").checked=true;
@@ -99,7 +111,7 @@ function getParams(arr){
     }
 }
 var param_num=2;
-var custom_param_num=2;
+var custom_param_num=5;
 function clientNumChanged(){
     var num1=parseInt(document.getElementById("players_num").value);
     if(isNaN(num1) || num1<=0){
@@ -155,7 +167,11 @@ function addCustomParam(){
 	var cell0=row.insertCell(0);
 	var cell1=row.insertCell(1);
 	cell0.innerHTML="<input type=text size = 20 value = 'param: "+custom_param_num+" name' name='paramName_"+custom_param_num+"' id='paramName_"+custom_param_num+"'>";
-	cell1.innerHTML="<input type=text size = 70 value = 'insert value here' name='paramValue_"+custom_param_num+"' id='paramValue_"+custom_param_num+"'> <a style=\"cursor:pointer;color:blue;\" onclick=\"removeCustomParam("+custom_param_num+");\">x</a>";
+	if(custom_param_num >4){
+		cell1.innerHTML="<input type=text size = 70 value = 'insert value here' name='paramValue_"+custom_param_num+"' id='paramValue_"+custom_param_num+"'> <a style=\"cursor:pointer;color:blue;\" onclick=\"removeCustomParam("+custom_param_num+");\">x</a>";
+	}else{
+		cell1.innerHTML="<input type=text size = 70 value = 'insert value here' name='paramValue_"+custom_param_num+"' id='paramValue_"+custom_param_num+"'>";
+	}
 	custom_param_num++;
 }
 function removeCustomParam(num){
@@ -169,7 +185,11 @@ function removeCustomParam(num){
 		tbl.rows[i].cells[0].innerHTML="<input type=text size = 20 value = '"+tempData+"' name='paramName_"+i+"' id='paramName_"+i+"'>";
 
 		tempData = document.getElementById("paramValue_"+(i+1)).value
-		tbl.rows[i].cells[1].innerHTML="<input type=text width = 70 value = '"+tempData+"' name='paramValue_"+i+"' id='paramValue_"+i+"'> <a style=\"cursor:pointer;color:blue;\" onclick=\"removeCustomParam("+i+");\">x</a>"
+		if(i>4){
+			tbl.rows[i].cells[1].innerHTML="<input type=text width = 70 value = '"+tempData+"' name='paramValue_"+i+"' id='paramValue_"+i+"'> <a style=\"cursor:pointer;color:blue;\" onclick=\"removeCustomParam("+i+");\">x</a>"
+		}else{
+			tbl.rows[i].cells[1].innerHTML="<input type=text width = 70 value = '"+tempData+"' name='paramValue_"+i+"' id='paramValue_"+i+"'>"
+		}
 	}
 }
     </script>
@@ -253,15 +273,6 @@ function removeCustomParam(num){
                                 </td>
                             </tr>
                             <tr>
-                                <td>
-                                    Size:
-                                </td>
-                                <td>
-                                    <input id="test_file_width" name="test_file_width" size="5" type="text" value="400" /> x <input id="test_file_height" name="test_file_height" size="5" type="text" value="400" /><!-- <a href="#"><img src="question.gif" style="border-width:0px;" /> </a>-->
-                                </td>
-
-                            </tr>
-                            <tr>
 								<td>
 									Custom Info:
 								</td>
@@ -273,10 +284,34 @@ function removeCustomParam(num){
 	                            		</tr>
 	                            		<tr>
 	                            			<td>
-	                            				<input type="text" id="paramName_1" name="paramName_1" value="logo_swf_full_url" size="20"/>
+	                            				<input type="text" id="paramName_1" name="paramName_1" value="logoFullUrl" size="20"/>
 	                            			</td>
 	                            			<td>
-	                            				<input type="text" id="paramValue_1" name="paramValue_1" value="X:/come2play/API_GoogleCodeSVN/Emulator/example_logo.jpg" size="70"/> <a onclick="removeCustomParam(1);" style="cursor: pointer; color: blue;">x</a>
+	                            				<input type="text" id="paramValue_1" name="paramValue_1" value="X:/come2play/API_GoogleCodeSVN/Emulator/example_logo.jpg" size="70"/>
+	                            			</td>
+	                            		</tr>
+	                            		<tr>
+	                            			<td>
+	                            				<input type="text" id="paramName_2" name="paramName_2" value="gameWidth" size="20"/>
+	                            			</td>
+	                            			<td>
+	                            				<input type="text" id="paramValue_2" name="paramValue_2" value="400" size="70"/>
+	                            			</td>
+	                            		</tr>
+	                            		<tr>
+	                            			<td>
+	                            				<input type="text" id="paramName_3" name="paramName_3" value="gameHeight" size="20"/>
+	                            			</td>
+	                            			<td>
+	                            				<input type="text" id="paramValue_3" name="paramValue_3" value="400" size="70"/>
+	                            			</td>
+	                            		</tr>
+	                            		<tr>
+	                            			<td>
+	                            				<input type="text" id="paramName_4" name="paramName_4" value="gameFrameRate" size="20"/>
+	                            			</td>
+	                            			<td>
+	                            				<input type="text" id="paramValue_4" name="paramValue_4" value="20" size="70"/>
 	                            			</td>
 	                            		</tr>
 	                            	</table>
@@ -358,14 +393,6 @@ function removeCustomParam(num){
                             </tr>
                             <tr>
                                 <td>
-                                    Game board frame per seconds (FPS):
-                                </td>
-                                <td>
-                                    <input type="text" id="fps" name="fps" size="2" value="10" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
                                     Server Delay time:
                                 </td>
                                 <td nowrap="nowrap">
@@ -418,7 +445,7 @@ var server;
 var single_popup;
 var initPrefix = Math.floor(Math.random()*1000000);
 var flashvars="prefix=";
-var swf_width=520,swf_height=442;
+var swf_width=500,swf_height=400;
 var unloading=false;
 function safeName() {
     var res = document.getElementById("test_file_name").value;
@@ -439,7 +466,6 @@ function btn_click(){
     if(isNaN(players_num)){
         players_num=2;
     }
-    var fps=document.getElementById("fps").value;
     var old;
     if(document.getElementById("old_game").checked){
         old="&oldgame=1";
@@ -466,16 +492,16 @@ function btn_click(){
         to=from;
     }
     document.getElementById("delay_to").value=to;
-    var addparams="players_num="+players_num+"&viewers_num="+viewers_num+"&game="+ampSymb(safeName())+"&test_file_width="+document.getElementById("test_file_width").value+"&test_file_height="+document.getElementById("test_file_height").value+"&fps="+fps+"&delay_from="+from+"&delay_to="+to+"&old_container="+document.getElementById("old_container").value;
+    var addparams="players_num="+players_num+"&viewers_num="+viewers_num+"&game="+ampSymb(safeName())+"&delay_from="+from+"&delay_to="+to+"&old_container="+document.getElementById("old_container").value;
     try{
-        swf_width=parseInt(document.getElementById("test_file_width").value)+20;
+        swf_width=parseInt(document.getElementById("paramValue_2").value);
     }catch(err){
-        swf_width=520;
+        swf_width=500;
     }
     try{
-        swf_height=parseInt(document.getElementById("test_file_height").value)+42;
+        swf_height=parseInt(document.getElementById("paramValue_3").value);
     }catch(err){
-        swf_height=442;
+        swf_height=400;
     }
     var i,j,k=0;
     for(j=0;j<param_num;j++){
@@ -543,7 +569,7 @@ function clientClick(num){
     var from,to;
     to=document.getElementById("delay_to").value;
     from=document.getElementById("delay_from").value;
-	clients[num]=window.open("ClientWindow.htm?game="+ampSymb(safeName())+"&width="+swf_width+"&height="+swf_height+"&"+flashvars+(initPrefix+num)+old+"&delay_from="+from+"&delay_to="+to+"&old_container="+document.getElementById("old_container").value,"_blank","width="+swf_width+",height="+swf_height+",left="+(50*(num+1))+",top="+(50*(num+1))+",menubar=0,titlebar=0,toolbar=0,resizable=1");
+	clients[num]=window.open("ClientWindow.htm?game="+ampSymb(safeName())+"&width="+swf_width+"&height="+swf_height+"&"+flashvars+(initPrefix+num)+old+"&delay_from="+from+"&delay_to="+to+"&old_container="+document.getElementById("old_container").value,"_blank","width="+(swf_width+70)+",height="+(swf_height+65)+",left="+(50*(num+1))+",top="+(50*(num+1))+",menubar=0,titlebar=0,toolbar=0,resizable=1");
     }else{
 	clients[num].focus();
 

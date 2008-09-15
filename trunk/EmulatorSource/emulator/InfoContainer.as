@@ -1,7 +1,4 @@
 package emulator {
-	import flash.display.MovieClip;
-	
-	
 	import emulator.auto_generated.*;
 	
 	import fl.controls.*;
@@ -46,33 +43,21 @@ package emulator {
 		private var lblWait:TextField;
 		private var ddsDoOperations:DelayDoSomething;
 		private var ddsGotOperations:DelayDoSomething;
-			
+		private var frameSprite:Sprite;	
 		
 		private var delayConstructor:Timer;
 	
 		public function InfoContainer()
 		{
-			/*
-			constructInfoContainer();
-			delayConstructor =new Timer(100,0);
-			delayConstructor.addEventListener(TimerEvent.TIMER,deleayInfoContainer);
-			delayConstructor.start();
-			*/
+
 		}
-		/*
-		public function deleayInfoContainer(ev:TimerEvent):void
-		{
-			if(stage != null)
-			{
-				delayConstructor.stop();
-				constructInfoContainer();
-			}
-		}
-		*/
+
 		public function constructInfoContainer():void{
 			
 			stage.addEventListener(KeyboardEvent.KEY_UP, reportKeyUp);
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, reportKeyDown);
+			//stage.addEventListener(Mouse
+			
 			
 			stage.scaleMode = StageScaleMode.NO_SCALE;
             stage.align = StageAlign.TOP_LEFT;
@@ -92,12 +77,29 @@ package emulator {
 			lblWait.visible = false;
 			lblWait.autoSize = TextFieldAutoSize.LEFT;
 			this.addChild(lblWait);
-			
+			var width:int
+			var height:int
+			if ((root.loaderInfo.parameters["client_width"] != null) &&  (root.loaderInfo.parameters["client_height"] != null))
+			{
+				width = Number(root.loaderInfo.parameters["client_width"])
+				height =Number(root.loaderInfo.parameters["client_height"])
+			}
+			else if((root.loaderInfo.parameters["test_file_width"] != null) &&  (root.loaderInfo.parameters["test_file_height"] != null))
+			{
+				width = Number(root.loaderInfo.parameters["test_file_width"])
+				height =Number(root.loaderInfo.parameters["test_file_height"])
+			}
+			frameSprite = new Sprite();
+			var tempMod:int = Math.round(Math.random() *12);
+			frameSprite.graphics.lineStyle(2,0x0000ff);
+			frameSprite.graphics.drawRect(0,0,width,height);
+			frameSprite.x = 36 + tempMod;
+			frameSprite.y = 30 + tempMod;
+			this.addChild(frameSprite);
 			ldr = new Loader();
-			ldr.y = 23;
-			ldr.x = 3;
+			ldr.x = 36 + tempMod;
+			ldr.y = 30 + tempMod;	
 			this.addChild(ldr);
-			
 			pnlBackground = new MovieClip();
 			this.addChild(pnlBackground);
 			
@@ -422,7 +424,7 @@ package emulator {
 			lblWait.x =(_x-lblWait.width)/2;
 			lblWait.y = ((_y - 20) - lblWait.height) / 2 + 20;
 			
-			txtSize.text = "Game Size: " + Math.round(stage.stageWidth-20) + "x" + Math.round(stage.stageHeight-42);
+			txtSize.text = "Game Size: " + Math.round(stage.stageWidth) + "x" + Math.round(stage.stageHeight);
 			txtSize.x = stage.stageWidth - txtSize.width - 13;
 		}
 		
@@ -453,7 +455,16 @@ package emulator {
 		
         public function gotMessage(msg:API_Message,isServer:Boolean):void
         {
-        try{		
+        try{	
+        		if(msg is API_GotCustomInfo)
+				{
+					var CustomMessage:API_GotCustomInfo = msg as API_GotCustomInfo
+					CustomMessage.infoEntries.push(InfoEntry.create("gameStageX",frameSprite.x))
+					CustomMessage.infoEntries.push(InfoEntry.create("gameStageY",frameSprite.y))
+					sendGotOperation(CustomMessage);
+					return;
+				}
+        		
 				if (msg is API_GotMyUserId)
 					gotMyUserId(msg as API_GotMyUserId );
 				else if (msg is API_GotMatchStarted)
@@ -462,7 +473,6 @@ package emulator {
 					gotUserInfo(msg as API_GotUserInfo);
 				else if(msg is API_GotMatchEnded)
 					gotMatchEnded(msg as API_GotMatchEnded);
-				
 
 				if (isServer)
 					sendDoOperation(msg);
@@ -562,21 +572,6 @@ package emulator {
 		public function gotMatchEnded(msg:API_GotMatchEnded):void { 
 			matchOverForIds(msg.finishedPlayerIds);
 		}
-		/*public function gotTurnOf(msg:API_GotTurnOf):void
-		{
-			if(msg.userId==-1)
-				txtTurn.text = "";
-			else
-			{
-			var u:UserInfo = new UserInfo();
-			for (var i:int = 0; i < aUsers.length; i++) {
-				u = aUsers[i];
-				if (u.userID == msg.userId) {
-					txtTurn.text = u.userName + "'s turn";
-				}
-			}	
-			}
-		}*/
 		
 		//Do functions
 		public function do_client_protocol_error_with_description(error_description:Object):void {

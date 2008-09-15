@@ -446,14 +446,13 @@ var single_popup;
 var initPrefix = Math.floor(Math.random()*1000000);
 var flashvars="prefix=";
 var swf_width=500,swf_height=400;
-var unloading=false;
 function safeName() {
     var res = document.getElementById("test_file_name").value;
     if (res.indexOf('?')==-1 || res.substring(res.length-1)=='&') return res;
     return res+'&';
 }
 function btn_click(){
-    document.getElementById("divLinks").innerHTML="";
+    //document.getElementById("divLinks").innerHTML="";
     try{
         viewers_num=parseInt(document.getElementById("viewers_num").value);
     }catch(err){}
@@ -537,9 +536,9 @@ function btn_click(){
 
 
     if(document.getElementById("single_popup").checked){
-        single_popup=window.open("SinglePopup.htm?"+addparams+old+"&single_popup=1","_blank","menubar=0,titlebar=0,toolbar=0,resizable=1,scrollbars=1");
+        single_popup=window.open("SinglePopup.htm?"+addparams+old+"&single_popup=1","singlepopup","menubar=0,titlebar=0,toolbar=0,resizable=1,scrollbars=1");
     }else{
-        server=window.open("ServerWindow.htm?"+flashvars+initPrefix+"&"+addparams+old+"&single_popup=0","_blank","width=570,height=470,menubar=0,titlebar=0,toolbar=0,resizable=1,statusbar=0");
+        server=window.open("ServerWindow.htm?"+flashvars+initPrefix+"&"+addparams+old+"&single_popup=0","server","width=570,height=470,menubar=0,titlebar=0,toolbar=0,resizable=1,statusbar=0");
         var str="<a style=\"cursor:pointer;color:blue;\" onclick=\"serverClick();\">Server</a>";
 	clients=new Array();
 	for(i=0;i<players_num;i++){
@@ -555,7 +554,6 @@ function btn_click(){
 		*/
 	document.getElementById("divLinks").innerHTML=str;
     }
-    unloading=false;
 }
 function serverClick(){
     server.focus();
@@ -577,21 +575,21 @@ function clientClick(num){
     var from,to;
     to=document.getElementById("delay_to").value;
     from=document.getElementById("delay_from").value;
-	clients[num]=window.open("ClientWindow.htm?game="+ampSymb(safeName())+"&width="+swf_width+"&height="+swf_height+"&"+flashvars+(initPrefix+num)+old+"&delay_from="+from+"&delay_to="+to+"&old_container="+document.getElementById("old_container").value,"_blank","width="+(swf_width+70)+",height="+(swf_height+65)+",left="+(50*(num+1))+",top="+(50*(num+1))+",menubar=0,titlebar=0,toolbar=0,resizable=1");
+	clients[num]=window.open("ClientWindow.htm?game="+ampSymb(safeName())+"&width="+swf_width+"&height="+swf_height+"&"+flashvars+(initPrefix+num)+old+"&delay_from="+from+"&delay_to="+to+"&old_container="+document.getElementById("old_container").value,"client"+num,"width="+(swf_width+70)+",height="+(swf_height+65)+",left="+(50*(num+1))+",top="+(50*(num+1))+",menubar=0,titlebar=0,toolbar=0,resizable=1");
     }else{
 	clients[num].focus();
 
     }
 }
+
+// unloadServer is called from the clients as well
 function unloadServer(){
-    unloading=true;
-    document.getElementById("divLinks").innerHTML="";
+    //document.getElementById("divLinks").innerHTML="";
     for(var i=0;i<players_num+viewers_num;i++){
         try{
             if(clients[i]!=null){
-			    clients[i].silent=true;
-                clients[i].close();
 				clients[i].document.getElementById("divGame").innerHTML="";
+                clients[i].close();
             }
         }catch(err){}
     }
@@ -601,18 +599,6 @@ function unloadServer(){
             server.close();
         }
     }catch(err){}
-}
-function beforeUnloadServer(){
-    if(!unloading){
-        return "All game windows will be closed.";
-    }
-    return null;
-}
-function beforeUnloads(){
-    if(!unloading){
-        return "All game windows will be closed.";
-    }
-    return null;
 }
     </script>
     <div id="divGetParams"></div>

@@ -549,7 +549,6 @@ package emulator {
 				var u:User = new User(sPrefix+user_index, this);			
 				aUsers.push(u);
 			}
-			
 			serverInfoEnteries=new Array();
 			if(root.loaderInfo.parameters["custom_param_num"]!=null)
 			{
@@ -557,8 +556,7 @@ package emulator {
 				for(i=1;i<count;i++)
 				{
 					var key:String = root.loaderInfo.parameters["paramNum_"+i]
-					var infoEntry:InfoEntry = InfoEntry.create(key,root.loaderInfo.parameters[key]);
-					//trace(key+"*********"+root.loaderInfo.parameters[key])
+					var infoEntry:InfoEntry = InfoEntry.create(key,root.loaderInfo.parameters[key]);				
 					serverInfoEnteries.push(infoEntry);
 				}
 			}
@@ -801,19 +799,6 @@ package emulator {
 			doNextInQueue();	
 		}
 		
-		private function spliceNum(arr:Array,value:Number):int
-		{
-			var tempLen:Number=arr.length;
-			for(var i:Number=0;i<tempLen;i++)
-			{
-				if(arr[i]==value)
-				{
-				arr.splice(i,1);
-				return i;
-				}
-			}
-			return -1;
-		}
 		private function isEquel(obj1:Object,obj2:Object):Boolean
 		{ 
 			for(var prop:String in obj1)
@@ -854,16 +839,6 @@ package emulator {
 			}
 			return false;
 		}
-		/*private function isKeyExist(testKey:String):int
-		{
-			for(var i:int=0;i<userStateEntrys.length;i++)
-			{
-				var testedServerEntry:ServerEntry = userStateEntrys[i];
-				if(testedServerEntry.key==testKey)
-					return i;	
-			}
-			return -1;	
-		}*/
 		private function doShuffleOn(serverEntryArray:Array/*ServerEntry*/,key:Object):ServerEntry
 		{
 			var serverEntry:ServerEntry = serverEntryArray[0] as ServerEntry;
@@ -1150,14 +1125,7 @@ package emulator {
 			}
 			//if (finished_player_ids.length!=0) throw new Error("Internal error! Illegal player_ids="+finished_player_ids);
 			return res;
-		}	
-		private function isInArray(id:int,idArr:Array):Boolean
-		{
-			for(var i:int=0;i<idArr.length;i++)
-				if(id==idArr[i])
-					return true;
-			return false;
-		}		
+		}			
 		private function send_got_match_started(u:User):void {	
 			var finished_player_ids:Array = getFinishedPlayerIds();
 			u.Ended = finished_player_ids.indexOf(u.ID)!=-1;
@@ -1169,7 +1137,7 @@ package emulator {
 				serverEntry=new ServerEntry();
 				if(tempServerState.visibleToUserIds==null)
 					serverEntry = ServerEntry.create(tempServerState.key,tempServerState.value,tempServerState.storedByUserId,null,tempServerState.changedTimeInMilliSeconds);
-				else if(isInArray(u.ID,tempServerState.visibleToUserIds))
+				else if(tempServerState.visibleToUserIds.indexOf(u.ID) != -1)
 					serverEntry = ServerEntry.create(tempServerState.key,tempServerState.value,tempServerState.storedByUserId,tempServerState.visibleToUserIds,tempServerState.changedTimeInMilliSeconds);				
 				else
 					serverEntry = ServerEntry.create(tempServerState.key,null,tempServerState.storedByUserId,tempServerState.visibleToUserIds,tempServerState.changedTimeInMilliSeconds);
@@ -1942,31 +1910,7 @@ package emulator {
 				send_got_match_started(usr);
 			}
 		}
-		
-		private function compareArrays(arr1:Array, arr2:Array):Boolean {
-			if (arr1 == null) {
-				if (arr2 == null) {
-					return true;
-				}
-				return false;
-			}
-			if (arr2 == null) {
-				return false;
-			}
-			if (arr1.length != arr2.length) {
-				return false;
-			}
-			for (var i:int = 0; i < arr1.length; i++) {
-				if (arr1[i] != arr2[i]) {
-					return false;
-				}
-			}
-			return true;
-		}
-		
-		
 		//Do functions
-		
 		private function broadcast(msg:API_Message):void {
 			for each (var user:User in aUsers) {
 				user.sendOperation(msg);
@@ -1994,7 +1938,8 @@ package emulator {
 			
 			if (bGameStarted) send_got_match_started(u);
 			
-			if (aPlayers.length < User.PlayersNum) {
+			//if (aPlayers.length < User.PlayersNum) {
+			if(User.PlayersNum >= u.ID){
 				aPlayers.push(u.ID);
 				if (aPlayers.length == User.PlayersNum) {
 					if (!getStartParams()) {

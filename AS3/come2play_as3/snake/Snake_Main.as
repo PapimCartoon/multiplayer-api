@@ -5,6 +5,7 @@ package come2play_as3.snakeCode
 	
 	import flash.display.MovieClip;
 
+
 	public class Snake_Main extends ClientGameAPI
 	{
 		private var snakeLogic:Snake_Logic;

@@ -2,9 +2,7 @@ package come2play_as3.snakeCode
 {
 	import come2play_as3.api.auto_copied.AS3_vs_AS2;
 	import come2play_as3.api.auto_generated.*;
-	
 	import flash.display.MovieClip;
-
 
 	public class Snake_Main extends ClientGameAPI
 	{

@@ -66,13 +66,17 @@ Your game may run in any fps you may choose.
 We recommend using less than 40 fps to avoid overloading slow computers.
 
 === Keyboard and Mouse events===
+
 Note that the game and chat might be in the same window.
-If you listen to MouseEvents:
-using `Mouse.addListener` or stage.addEventlistenr you will receive events from your game,but from the chat utility and surrounding container as well.
-Therefore your game should be careful and not do irreversible actions based on such actions that might be done in the chat area.
-In a future version we are planning to add functions that will pass mouse events to the game via the LocalConnection.
-the keyboard events are already passed down through the LocalConnection,and you should only use the specified [gotKeyboardEvent] function
-to receive them.
+which means you are going to get Keyboard and Mouse input, from your game and from
+the container of your game.
+this issues represents a serious problem in case of a keyboard event, and therefore we have
+created a special callback function you should use called [gotKeyboardEvent] to receive your keyboard input from.
+
+in the case of mouse events, the problem is less serious and you can rely on listening to game mouse Events directly.
+but in case you use the mouse’s absolute position in your calculations you should take your game position into account,
+This will be passed down to your game through the [gotCustomInfo] callback.
+
 
 === obfuscate ===
 We suggest that you encrypt/obfuscate your code to make it difficult for users to crack or steal your code.

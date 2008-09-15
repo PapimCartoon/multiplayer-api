@@ -6,6 +6,10 @@ This is a list of known differences:
   * Network delay:
   Online you have network delay and might have network errors.
   We simulated network delay on the emulator.
+  * Game positioning:
+  Every time you restart the emulator your game will be in a slightly different position, this is made to simulate the fact that your game can
+  be played on a variety of containers, depending on the site at which they are presented, and therefore you should use the 'gameStageX' and the
+  'gameStageY' passed to you in the [gotCustomInfo] callback to modify your mouse based calculations.
   * Loading process: 
   A flash SWF starts running even before it was downloaded completely.
   You should call [doRegisterOnServer] only after your SWF is ready to start a match.

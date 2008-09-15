@@ -12,13 +12,14 @@ It gets the following parameter:
 
 These are the keys that are currently supported:
 
-1. *`logo_swf_full_url` :*  `logo_swf_full_url` is a full url (starting with `http://`) 
-That contains a logo in a flash SWF file of size 100x100 pixels, and it is vector based.
+1. *`logoFullUrl` :*  `logoFullUrl` is a full url (starting with `http://`) 
+That points to a logo SWF or Jpg file of 100x100 pixels in diameter, preferably vector based.
 
 The game should place the logo in various places in the game
 (e.g., in every square in a TicTacToe game, or on every Chess piece, etc)
-Because the logo is vector based,
 
+
+Because the logo is vector based,
 it can be placed in a rectangular space of any size,
 e.g., if you want to put the logo in a 40x40 space, 
 Then modify the logo movie clip (called `logoMovieClip`):
@@ -26,7 +27,19 @@ Then modify the logo movie clip (called `logoMovieClip`):
   logoMovieClip._xscale = 40;
   logoMovieClip._yscale = 40;
   }}}
-  
-2. *`seconds_per_move` :* - `seconds_per_move` holds the amount of second's allotted to each move in the game in games where [doAllSetTurn] `milliSecondsInTurn` is set to -1  
+ 
+2. * `gameStageX` :* - represents the x value where the game is positioned in the container, becuase the container holds many features such as a chat,
+turn time,playing users and more.therfore your game will not always be positioned at x = 0 and y = 0,and then in case you want to make calculations
+based on the absolute stageX and StageY you should subtract these values
 
-3. *`seconds_per_match` :* - `seconds_per_match` holds the amount of seconds allotted to the entire game
+3. * `gameStageY` :* - represents the y value where the game is positioned in the container. see explanation above.
+
+4.* `gameHeight` :* - represents the height at which the game will be shown(in case you game can be stretched and shrinked)
+
+5.* `gameWidth` :* -represents the width at which the game will be shown(in case you game can be stretched and shrinked)
+
+6.* `gameFrameRate` :* - represents the frame rate at which your game will run.
+ 
+7. *`seconds_per_move` :* - `seconds_per_move` holds the amount of second's allotted to each move in the game in games where [doAllSetTurn] `milliSecondsInTurn` is set to -1  
+
+8. *`seconds_per_match` :* - `seconds_per_match` holds the amount of seconds allotted to the entire game

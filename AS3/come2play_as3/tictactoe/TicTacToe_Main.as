@@ -97,13 +97,20 @@ public final class TicTacToe_Main extends ClientGameAPI {
 	}
 	override public function gotCustomInfo(entries:Array/*InfoEntry*/):void {
 		for each (var entry:InfoEntry in entries) {
-			if (entry.key==API_Message.CUSTOM_INFO_KEY_logo_swf_full_url) {
-				var logo_swf_full_url:String = entry.value.toString();	
-				trace("Got logo_swf_full_url="+logo_swf_full_url)
+			var value:String = entry.value.toString();
+			if (entry.key==API_Message.CUSTOM_INFO_KEY_logoFullUrl) {
+				var logoFullUrl:String = value;
 				for each (var cell:TicTacToeMove in allCells) {
-					getSquareGraphic(cell).gotLogo(logo_swf_full_url);
+					getSquareGraphic(cell).gotLogo(logoFullUrl);
 				}
-			}		
+			} else if (entry.key==API_Message.CUSTOM_INFO_KEY_gameHeight) {
+				var height:int = int(value);
+				// TicTacToe is designed for 400x400, if the size is different we scale
+				AS3_vs_AS2.scaleMovieY(graphics, 100*height/400);		
+			} else if (entry.key==API_Message.CUSTOM_INFO_KEY_gameWidth) {
+				var width:int = int(value);
+				AS3_vs_AS2.scaleMovieX(graphics, 100*width/400);								
+			}	
 		}
 	}
 	override public function gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, extraMatchInfo:Object/*Serializable*/, matchStartedTime:int, userStateEntries:Array/*ServerEntry*/):void {

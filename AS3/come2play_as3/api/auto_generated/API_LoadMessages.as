@@ -6,11 +6,6 @@ package come2play_as3.api.auto_generated {
 	import come2play_as3.api.auto_copied.*
 	public  class API_LoadMessages  {
 		public static function useAll():void {
-			
-			new API_GotMyUserId();
-			new API_GotCustomInfo();
-			
-			
 			new API_DoFinishedCallback();
 			new API_DoRegisterOnServer();
 			new API_DoTrace();
@@ -18,10 +13,10 @@ package come2play_as3.api.auto_generated {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			
+			new API_GotCustomInfo();
 			new API_GotUserInfo();
 			new API_GotUserDisconnected();
-			
+			new API_GotMyUserId();
 			new API_GotMatchStarted();
 			new API_GotMatchEnded();
 			new API_GotStateChanged();

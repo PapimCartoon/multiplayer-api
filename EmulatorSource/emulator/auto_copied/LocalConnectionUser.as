@@ -122,35 +122,41 @@ package emulator.auto_copied
         public function gotMessage(msg:API_Message):void {}
         
         public function sendMessage(msg:API_Message):void {
-        	myTrace(['sendMessage: ',msg]);        						  
-			try{
+        	myTrace(['sendMessage: ',msg]);
+        	if (msg is API_DoRegisterOnServer)
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+        		AS3_vs_AS2.myTimeout(AS3_vs_AS2.delegate(this, this.reallySendMessage,msg),100);
+        	else
+        		reallySendMessage(msg);
+        }
+        private function reallySendMessage(msg:API_Message):void {        						  
+			try{
 				AS3_vs_AS2.checkObjectIsSerializable(msg);
 				lcUser.send(sSendChanel, "localconnection_callback", msg);  
 			}catch(err:Error) { 
 				passError(msg, err);
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			}        	
         }
         
         public function localconnection_callback(msgObj:Object):void {
         	try{
         		var deserializedMsg:Object = SerializableClass.deserialize(msgObj);
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
         		var msg:API_Message = deserializedMsg as API_Message;
         		if (msg==null) throwError("msgObj="+JSON.stringify(msgObj)+" is not an API_Message");
         		
         		myTrace(['gotMessage: ',msg]);
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
         		gotMessage(msg);
 			} catch(err:Error) { 
 				passError(msgObj, err);
 			} 
         }
 	}
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 }

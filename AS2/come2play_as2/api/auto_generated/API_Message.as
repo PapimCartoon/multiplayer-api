@@ -17,5 +17,15 @@ import come2play_as2.api.auto_generated.*;
 		public static var USER_INFO_KEY_supervisor:String = "supervisor";
 		public static var USER_INFO_KEY_credibility:String = "credibility";
 		public static var USER_INFO_KEY_game_rating:String = "game_rating";
-		public static var CUSTOM_INFO_KEY_logo_swf_full_url:String = "logo_swf_full_url";
+		public static var CUSTOM_INFO_KEY_logoFullUrl:String = "logoFullUrl";
+		public static var CUSTOM_INFO_KEY_secondsPerMatch:String = "secondsPerMatch";
+		public static var CUSTOM_INFO_KEY_secondsPerMove:String = "secondsPerMove";
+		public static var CUSTOM_INFO_KEY_gameStageX:String = "gameStageX";
+		public static var CUSTOM_INFO_KEY_gameStageY:String = "gameStageY";
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+		public static var CUSTOM_INFO_KEY_gameHeight:String = "gameHeight";
+		public static var CUSTOM_INFO_KEY_gameWidth:String = "gameWidth";
+		public static var CUSTOM_INFO_KEY_gameFrameRate:String = "gameFrameRate";
 	}

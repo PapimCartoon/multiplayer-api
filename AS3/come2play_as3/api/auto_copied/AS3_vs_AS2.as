@@ -95,7 +95,13 @@ public final class AS3_vs_AS2
 		loader.load(new URLRequest(url));
 	}
 	public static function scaleMovie(graphics:MovieClip, x_percentage:int, y_percentage:int):void {
-		graphics.scaleX = Number(x_percentage)/100;
+		scaleMovieX(graphics,x_percentage);
+		scaleMovieY(graphics,y_percentage);		
+	} 	
+	public static function scaleMovieX(graphics:MovieClip, x_percentage:int):void {
+		graphics.scaleX = Number(x_percentage)/100;		
+	} 	
+	public static function scaleMovieY(graphics:MovieClip, y_percentage:int):void {
 		graphics.scaleY = Number(y_percentage)/100;		
 	} 	
 	public static function setVisible(graphics:MovieClip, isVisible:Boolean):void {

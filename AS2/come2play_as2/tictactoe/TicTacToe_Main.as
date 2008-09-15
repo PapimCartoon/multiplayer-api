@@ -93,13 +93,20 @@ class come2play_as2.tictactoe.TicTacToe_Main extends ClientGameAPI {
 	}
 	/*override*/ public function gotCustomInfo(entries:Array/*InfoEntry*/):Void {
 		for (var i97:Number=0; i97<entries.length; i97++) { var entry:InfoEntry = entries[i97]; 
-			if (entry.key==API_Message.CUSTOM_INFO_KEY_logo_swf_full_url) {
-				var logo_swf_full_url:String = entry.value.toString();	
-				trace("Got logo_swf_full_url="+logo_swf_full_url)
+			var value:String = entry.value.toString();
+			if (entry.key==API_Message.CUSTOM_INFO_KEY_logoFullUrl) {
+				var logoFullUrl:String = value;
 				for (var i101:Number=0; i101<allCells.length; i101++) { var cell:TicTacToeMove = allCells[i101]; 
-					getSquareGraphic(cell).gotLogo(logo_swf_full_url);
+					getSquareGraphic(cell).gotLogo(logoFullUrl);
 				}
-			}		
+			} else if (entry.key==API_Message.CUSTOM_INFO_KEY_gameHeight) {
+				var height:Number = int(value);
+				// TicTacToe is designed for 400x400, if the size is different we scale
+				AS3_vs_AS2.scaleMovieY(graphics, 100*height/400);		
+			} else if (entry.key==API_Message.CUSTOM_INFO_KEY_gameWidth) {
+				var width:Number = int(value);
+				AS3_vs_AS2.scaleMovieX(graphics, 100*width/400);								
+			}	
 		}
 	}
 	/*override*/ public function gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, extraMatchInfo:Object/*Serializable*/, matchStartedTime:Number, userStateEntries:Array/*ServerEntry*/):Void {
@@ -114,14 +121,14 @@ class come2play_as2.tictactoe.TicTacToe_Main extends ClientGameAPI {
 		for (var color:Number=0; color<playersNum; color++)
 			ongoingColors.push(color);
 		logic = new TicTacToe_logic(ROWS,COLS,WIN_LENGTH, playersNum);
-		for (var i119:Number=0; i119<userStateEntries.length; i119++) { var serverEntry:ServerEntry = userStateEntries[i119]; 
+		for (var i126:Number=0; i126<userStateEntries.length; i126++) { var serverEntry:ServerEntry = userStateEntries[i126]; 
 			if (!isSinglePlayer()) turnOfColor = getColor(serverEntry.storedByUserId);	// some users may have disconnected in the middle of the game	
 			performMove(serverEntry.value, true);	//we should not call doAllEndMatch when loading the match	
 		}
 		if (finishedPlayerIds.length>0)
 			matchOverForPlayers(finishedPlayerIds);
 		
-		for (var i126:Number=0; i126<allCells.length; i126++) { var move:TicTacToeMove = allCells[i126]; 
+		for (var i133:Number=0; i133<allCells.length; i133++) { var move:TicTacToeMove = allCells[i133]; 
 			getSquareGraphic(move).clearWinAnimation();
 		}
 		startMove(true);
@@ -155,7 +162,7 @@ class come2play_as2.tictactoe.TicTacToe_Main extends ClientGameAPI {
 	private function matchOverForPlayers(finishedPlayerIds:Array/*int*/):Boolean {
 		if (logic==null) return false; // match already ended
 		var colors:Array/*int*/ = [];
-		for (var i160:Number=0; i160<finishedPlayerIds.length; i160++) { var playerId:Number = finishedPlayerIds[i160]; 
+		for (var i167:Number=0; i167<finishedPlayerIds.length; i167++) { var playerId:Number = finishedPlayerIds[i167]; 
 			var colorOfPlayerId:Number = getColor(playerId);
 			assert(colorOfPlayerId!=-1, ["Didn't find playerId=",playerId]); 
 			colors.push(colorOfPlayerId);
@@ -164,7 +171,7 @@ class come2play_as2.tictactoe.TicTacToe_Main extends ClientGameAPI {
 	}
 	private function matchOverForColors(colors:Array/*int*/):Boolean {	
 		var shouldChangeTurnOfColor:Boolean = false;
-		for (var i169:Number=0; i169<colors.length; i169++) { var color:Number = colors[i169]; 
+		for (var i176:Number=0; i176<colors.length; i176++) { var color:Number = colors[i176]; 
 			var ongoingIndex:Number = AS3_vs_AS2.IndexOf(ongoingColors, color);
 			if (ongoingIndex==-1) continue; // already finished (when the game ends normally, I immediately call matchOverForColors. see performMove) 
 			ongoingColors.splice(ongoingIndex, 1);
@@ -199,7 +206,7 @@ class come2play_as2.tictactoe.TicTacToe_Main extends ClientGameAPI {
 	}
 	private static function arrayCopy(arr:Array):Array {
 		var res:Array = [];
-		for (var i204:Number=0; i204<arr.length; i204++) { var x:Object = arr[i204]; 
+		for (var i211:Number=0; i211<arr.length; i211++) { var x:Object = arr[i211]; 
 			res.push(x);
 		}
 		return res;			
@@ -217,7 +224,7 @@ class come2play_as2.tictactoe.TicTacToe_Main extends ClientGameAPI {
 		var winningCells:Array/*TicTacToeMove*/ = logic.getWinningCells(move);
 		var didWin:Boolean = winningCells!=null;
 		if (didWin) {
-			for (var i222:Number=0; i222<winningCells.length; i222++) { var winCell:TicTacToeMove = winningCells[i222]; 
+			for (var i229:Number=0; i229<winningCells.length; i229++) { var winCell:TicTacToeMove = winningCells[i229]; 
 				getSquareGraphic(winCell).startWinAnimation();
 			}
 		}
@@ -259,10 +266,10 @@ class come2play_as2.tictactoe.TicTacToe_Main extends ClientGameAPI {
 				}		
 				if (isBoardFull) { // Important: it can happen that someone won and the board has just filled up!				
 					var finishedPlayersIds:Array/*int*/ = [];
-					for (var i264:Number=0; i264<finishedPlayers.length; i264++) { var playerMatchOver:PlayerMatchOver = finishedPlayers[i264]; 
+					for (var i271:Number=0; i271<finishedPlayers.length; i271++) { var playerMatchOver:PlayerMatchOver = finishedPlayers[i271]; 
 						finishedPlayersIds.push(playerMatchOver.playerId);
 					}					
-					for (var i267:Number=0; i267<ongoingColors.length; i267++) { var ongoingColor:Number = ongoingColors[i267]; 
+					for (var i274:Number=0; i274<ongoingColors.length; i274++) { var ongoingColor:Number = ongoingColors[i274]; 
 						var ongoingPlayerId:Number = allPlayerIds[ongoingColor];
 						if (AS3_vs_AS2.IndexOf(finishedPlayersIds, ongoingPlayerId)==-1) {
 							if (didWin) {
@@ -318,7 +325,7 @@ class come2play_as2.tictactoe.TicTacToe_Main extends ClientGameAPI {
 		if (isInProgress && !isSinglePlayer()) {
 			doAllSetTurn(allPlayerIds[turnOfColor],-1);
 		}		
-		for (var i323:Number=0; i323<allCells.length; i323++) { var move:TicTacToeMove = allCells[i323]; 
+		for (var i330:Number=0; i330<allCells.length; i330++) { var move:TicTacToeMove = allCells[i330]; 
 			if (logic.isSquareAvailable(move)) {
 				var square:TicTacToe_SquareGraphic = getSquareGraphic(move);
 				square.startMove(

@@ -1,18 +1,23 @@
 import come2play_as2.api.auto_copied.*;
-class come2play_as2.api.auto_copied.ObjectDictionary
+class come2play_as2.api.auto_copied.ObjectDictionary extends SerializableClass
 {
 	// maps a hash of an object to an array of entries
 	// each entry is: [key,value]
-	private var hashMap:Object;
-	private var pSize:Number;
+	//all the variables of this class are public because it extends SerializableClass
+	public var hashMap:Object;
+	public var pSize:Number;
 	// the order of inserted keys and values is important in the API for server entries
-	private var allKeys:Array;
-	private var allValues:Array;
-	public function ObjectDictionary() {
-		hashMap = new Object();
-		pSize = 0;	
-		allKeys = [];
-		allValues = [];	
+	public var allKeys:Array;
+	public var allValues:Array;
+
+	static public function create():ObjectDictionary
+	{
+		var res:ObjectDictionary = new ObjectDictionary();
+		res.hashMap = new Object();
+		res.pSize = 0;	
+		res.allKeys = [];
+		res.allValues = [];
+		return res;
 	}
 	
 	private function getEntry(key:Object):Array {
@@ -21,7 +26,7 @@ class come2play_as2.api.auto_copied.ObjectDictionary
 	private function getEntry2(key:Object, hash:Number):Array {
 		if (hashMap[hash]==null) return null;
 		var entries:Array = hashMap[hash];
-		for (var i23:Number=0; i23<entries.length; i23++) { var entry:Array = entries[i23]; 
+		for (var i28:Number=0; i28<entries.length; i28++) { var entry:Array = entries[i28]; 
 			if (areEqual(entry[0],key)) return entry;
 		}
 		return null;		

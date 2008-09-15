@@ -81,11 +81,6 @@ package emulator {
 			this.addChild(lblWait);
 			var width:int
 			var height:int
-			/*if ((root.loaderInfo.parameters["client_width"] != null) &&  (root.loaderInfo.parameters["client_height"] != null))
-			{
-				width = Number(root.loaderInfo.parameters["client_width"])
-				height =Number(root.loaderInfo.parameters["client_height"])
-			}*/
 			if((root.loaderInfo.parameters["width"] != null) &&  (root.loaderInfo.parameters["height"] != null))
 			{
 				width = Number(root.loaderInfo.parameters["width"])

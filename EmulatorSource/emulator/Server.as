@@ -31,7 +31,7 @@ package emulator {
 		private static const COL_matchState:String="Match_state";
 		private static const COL_matchStartedTime:String="Match_started_time";
 		private static const COL_extraMatchInfo:String= "Extra_match_info";
-		
+		private static const COL_serverEntries:String= "Server_Entries";
 		//Private variables
 		private var isTurnBasedGame:Boolean = false;
 		private var bGameStarted:Boolean = false;
@@ -41,6 +41,7 @@ package emulator {
 		 
 		private var aUsers:Array;
 		private var serverState:ObjectDictionary;
+		private var deltaHistory:DeltaHistory;
 		private var serverInfoEnteries:Array;/*InfoEntry*/ //extra server information
 		private var aParams:Array;
 		private var aPlayers:Array; //array of all the players
@@ -129,6 +130,7 @@ package emulator {
 			this.stop();
 			afinishedPlayers=new Array();
 			serverState =ObjectDictionary.create();
+			deltaHistory = new DeltaHistory();
 			unverifiedQueue=new Array();
 			waitingQueue=new Array();
 			queueTimer=new Timer(10000,0);
@@ -306,6 +308,9 @@ package emulator {
 
 			btnSavedGames = tbsPanel["_btnSavedGames"];
 			btnSavedGames.addEventListener(MouseEvent.CLICK, btnSavedGamesClick);
+
+			btnSavedGames = tbsPanel["_btnHistory"];
+			btnSavedGames.addEventListener(MouseEvent.CLICK, btnHistoryClick);
 			
 			btnNewGame = new Button();
 			btnNewGame.x = 490;
@@ -1404,26 +1409,29 @@ package emulator {
 			}*/
 		}
 		
-		private function btnLogClick(evt:MouseEvent):void {
+		private function btnLogClick(ev:MouseEvent):void {
 			tbsPanel.gotoAndStop("Log");
 			pnlCommands.visible = false;
+			logingCheckBox.visible = true;
 			pnlLog.visible = true;
 			pnlInfo.visible=false;
 			iInfoMode=0;
 		}
 		
-		private function btnCommandsClick(evt:MouseEvent):void {
+		private function btnCommandsClick(ev:MouseEvent):void {
 			tbsPanel.gotoAndStop("Command");
 			pnlCommands.visible = true;
+			logingCheckBox.visible = false;
 			pnlLog.visible = false;
 			pnlInfo.visible=false;
 			iInfoMode=0;
 		}
 
 
-		private function btnMatchStateClick(evt:MouseEvent):void {
+		private function btnMatchStateClick(ev:MouseEvent):void {
 			tbsPanel.gotoAndStop("MatchState");
 			pnlCommands.visible = false;
+			logingCheckBox.visible = false;
 			pnlLog.visible = false;
 			pnlInfo.visible=true;
 			if(iInfoMode!=1){
@@ -1436,9 +1444,10 @@ package emulator {
 		}
 		
 		
-		private function btnGeneralInfoClick(evt:MouseEvent):void {
+		private function btnGeneralInfoClick(ev:MouseEvent):void {
 			tbsPanel.gotoAndStop("GeneralInfo");
 			pnlCommands.visible = false;
+			logingCheckBox.visible = false;
 			pnlLog.visible = false;
 			pnlInfo.visible=true;
 			if(iInfoMode!=3){
@@ -1455,6 +1464,7 @@ package emulator {
 			
 			tbsPanel.gotoAndStop("Store");
 			pnlCommands.visible = false;
+			logingCheckBox.visible = false;
 			pnlLog.visible = false;
 			pnlInfo.visible=true;
 			if(iInfoMode!=7){
@@ -1469,6 +1479,7 @@ package emulator {
 		{
 			tbsPanel.gotoAndStop("DoAllQue");
 			pnlCommands.visible = false;
+			logingCheckBox.visible = false;
 			pnlLog.visible = false;
 			pnlInfo.visible=true;
 			if(iInfoMode!=2){
@@ -1479,9 +1490,10 @@ package emulator {
 			}
 		}
 		
-		private function btnUserInfoClick(evt:MouseEvent):void {
+		private function btnUserInfoClick(ev:MouseEvent):void {
 			tbsPanel.gotoAndStop("UserInfo");
 			pnlCommands.visible = false;
+			logingCheckBox.visible = false;
 			pnlLog.visible = false;
 			pnlInfo.visible=true;
 			if(iInfoMode!=4){
@@ -1494,9 +1506,10 @@ package emulator {
 		}
 		
 
-		private function btnMatchOverClick(evt:MouseEvent):void {
+		private function btnMatchOverClick(ev:MouseEvent):void {
 			tbsPanel.gotoAndStop("MatchOver");
 			pnlCommands.visible = false;
+			logingCheckBox.visible = false;
 			pnlLog.visible = false;
 			pnlInfo.visible=true;
 			if(iInfoMode!=5){
@@ -1508,9 +1521,10 @@ package emulator {
 			}
 		}
 		
-		private function btnSavedGamesClick(evt:MouseEvent):void {
+		private function btnSavedGamesClick(ev:MouseEvent):void {
 			tbsPanel.gotoAndStop("SavedGames");
 			pnlCommands.visible = false;
+			logingCheckBox.visible = false;
 			pnlLog.visible = false;
 			pnlInfo.visible=true;
 			if(iInfoMode!=6){
@@ -1518,6 +1532,23 @@ package emulator {
 				tblInfo.columns=[COL_name,COL_numberOfPlayers, COL_userIdThatAreStillPlaying,COL_nextTurnOfUserIds,COL_matchState, COL_matchStartedTime, COL_extraMatchInfo];
 				showSavedGames();
 			}
+		}
+		private function btnHistoryClick(ev:MouseEvent):void
+		{
+			tbsPanel.gotoAndStop("History");
+			pnlCommands.visible = false;
+			logingCheckBox.visible = false;
+			pnlLog.visible = false;
+			pnlInfo.visible=true;
+			if(iInfoMode!=8){
+				iInfoMode=8;	
+				tblInfo.columns=[COL_player_ids,COL_serverEntries];
+				showHistory();
+			}	
+		}
+		private function showHistory():void
+		{
+			//todo print history
 		}
 		private function showStoreQue():void
 		{
@@ -1748,6 +1779,7 @@ package emulator {
 			transferByteArray.position = 0;
 			var savedGame:SavedGame = SerializableClass.deserialize(transferByteArray.readObject()) as SavedGame;
 			serverState = savedGame.serverState;
+			deltaHistory = savedGame.deltaHistory;
 			afinishedPlayers=savedGame.finishedGames.concat();
 			aPlayers = savedGame.players.concat();
 			for each(var savedFinishedPlayer:FinishHistory in afinishedPlayers)
@@ -1854,13 +1886,11 @@ package emulator {
 			if (txtSaveName.text == "") {
 				return;
 			}
-			var game:SavedGame = SavedGame.create(serverState,aPlayers,afinishedPlayers,extra_match_info,match_started_time,txtSaveName.text,root.loaderInfo.parameters["game"]);
+			var game:SavedGame = SavedGame.create(serverState,aPlayers,afinishedPlayers,extra_match_info,match_started_time,txtSaveName.text,root.loaderInfo.parameters["game"],deltaHistory);
 			var transferByteArray:ByteArray = new ByteArray();
 			transferByteArray.writeObject(game);
 			transferByteArray.position = 0;
 			allSavedGames.push(SerializableClass.deserialize(transferByteArray.readObject()) as SavedGame);
-			//todo
-			//allSavedGames.push(SerializableClass.deserialize(transferByteArray.readObject() as SavedGame);
 			saveToSharedObject();
 
 			txtSaveName.text = "";

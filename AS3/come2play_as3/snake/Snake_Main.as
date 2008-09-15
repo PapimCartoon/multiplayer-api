@@ -115,6 +115,7 @@ package come2play_as3.snakeCode
 				if(infoEntry.key == "xMax") xMax =int(infoEntry.value);
 				if(infoEntry.key == "yMax") yMax =int(infoEntry.value);
 				if(infoEntry.key == "snakeSpeed") snakeSpeed =int(infoEntry.value);
+				if(infoEntry.key == "gameStageX") trace("gameStageX: **********: "+String(infoEntry.value))
 			}
 		}
 		override public function gotMatchEnded(finishedPlayerIds:Array):void

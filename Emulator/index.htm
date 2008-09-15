@@ -542,9 +542,17 @@ function btn_click(){
         server=window.open("ServerWindow.htm?"+flashvars+initPrefix+"&"+addparams+old+"&single_popup=0","_blank","width=570,height=470,menubar=0,titlebar=0,toolbar=0,resizable=1,statusbar=0");
         var str="<a style=\"cursor:pointer;color:blue;\" onclick=\"serverClick();\">Server</a>";
 	clients=new Array();
+	for(i=0;i<players_num;i++){
+	    str+=", <a style=\"cursor:pointer;color:blue;\" onclick=\"clientClick("+i+");\">Player "+i+"</a>";
+    }
+	for(j=0;j<viewers_num;j++){
+	    str+=", <a style=\"cursor:pointer;color:blue;\" onclick=\"clientClick("+(i+j)+");\">Viewer "+j+"</a>";
+	}
+	/*
 	for(i=0;i<(players_num+viewers_num);i++){
 	    str+=", <a style=\"cursor:pointer;color:blue;\" onclick=\"clientClick("+i+");\">Client"+i+"</a>";
         }
+		*/
 	document.getElementById("divLinks").innerHTML=str;
     }
     unloading=false;
@@ -581,9 +589,9 @@ function unloadServer(){
     for(var i=0;i<players_num+viewers_num;i++){
         try{
             if(clients[i]!=null){
-				clients[i].document.getElementById("divGame").innerHTML="";
-                clients[i].silent=true;
+			    clients[i].silent=true;
                 clients[i].close();
+				clients[i].document.getElementById("divGame").innerHTML="";
             }
         }catch(err){}
     }
@@ -595,6 +603,12 @@ function unloadServer(){
     }catch(err){}
 }
 function beforeUnloadServer(){
+    if(!unloading){
+        return "All game windows will be closed.";
+    }
+    return null;
+}
+function beforeUnloads(){
     if(!unloading){
         return "All game windows will be closed.";
     }

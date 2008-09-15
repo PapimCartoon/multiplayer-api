@@ -6,7 +6,8 @@ package emulator
 	{
 		//public static const CLASS_VERSION_NUMBER:int = 3; 
 		//public var classVersionNumberForSharedObject:int = CLASS_VERSION_NUMBER;
-		public var serverState:ObjectDictionary
+		public var serverState:ObjectDictionary;
+		public var deltaHistory:DeltaHistory;
 		public var players:Array;/*int*/
 		public var finishedGames:Array;/*FinishHistory*/
 		public var extra_match_info:Object;
@@ -14,9 +15,10 @@ package emulator
 		public var name:String;
 		public var gameName:String;
 		
-		static public function create(serverState:ObjectDictionary,players:Array,finishedGames:Array,extra_match_info:Object,match_started_time:int,name:String,gameName:String):SavedGame
+		static public function create(serverState:ObjectDictionary,players:Array,finishedGames:Array,extra_match_info:Object,match_started_time:int,name:String,gameName:String,deltaHistory:DeltaHistory):SavedGame
 		{
 			var res:SavedGame = new SavedGame();
+			res.deltaHistory = deltaHistory;
 			res.serverState = serverState;
 			res.players = players.concat();
 			res.finishedGames = finishedGames.concat();

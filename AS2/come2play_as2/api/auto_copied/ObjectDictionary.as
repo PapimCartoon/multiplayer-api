@@ -10,14 +10,12 @@ class come2play_as2.api.auto_copied.ObjectDictionary extends SerializableClass
 	public var allKeys:Array;
 	public var allValues:Array;
 
-	static public function create():ObjectDictionary
+	public function ObjectDictionary()
 	{
-		var res:ObjectDictionary = new ObjectDictionary();
-		res.hashMap = new Object();
-		res.pSize = 0;	
-		res.allKeys = [];
-		res.allValues = [];
-		return res;
+		hashMap = new Object();
+		pSize = 0;	
+		allKeys = [];
+		allValues = [];
 	}
 	
 	private function getEntry(key:Object):Array {
@@ -26,7 +24,7 @@ class come2play_as2.api.auto_copied.ObjectDictionary extends SerializableClass
 	private function getEntry2(key:Object, hash:Number):Array {
 		if (hashMap[hash]==null) return null;
 		var entries:Array = hashMap[hash];
-		for (var i28:Number=0; i28<entries.length; i28++) { var entry:Array = entries[i28]; 
+		for (var i26:Number=0; i26<entries.length; i26++) { var entry:Array = entries[i26]; 
 			if (areEqual(entry[0],key)) return entry;
 		}
 		return null;		

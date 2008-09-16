@@ -11,14 +11,12 @@ public final class ObjectDictionary extends SerializableClass
 	public var allKeys:Array;
 	public var allValues:Array;
 
-	static public function create():ObjectDictionary
+	public function ObjectDictionary()
 	{
-		var res:ObjectDictionary = new ObjectDictionary();
-		res.hashMap = new Object();
-		res.pSize = 0;	
-		res.allKeys = [];
-		res.allValues = [];
-		return res;
+		hashMap = new Object();
+		pSize = 0;	
+		allKeys = [];
+		allValues = [];
 	}
 	
 	private function getEntry(key:Object):Array {

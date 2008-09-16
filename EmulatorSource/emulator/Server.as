@@ -132,7 +132,7 @@ package emulator {
 		public function constructServer():void {
 			this.stop();
 			afinishedPlayers=new Array();
-			serverState =ObjectDictionary.create();
+			serverState = new ObjectDictionary();
 			deltaHistory = new DeltaHistory();
 			unverifiedQueue=new Array();
 			waitingQueue=new Array();
@@ -890,7 +890,7 @@ package emulator {
 					doStoreOneState(ServerEntry.create(userEntry.key,userEntry.value,-1,null,getTimer()-matchStartTime));	
 				}
 			}
-			deltaHistory.addFullDelta(serverEntries,getOngoingPlayerIds());	
+			deltaHistory.addDelta(getOngoingPlayerIds(),serverEntries);	
 			broadcast(API_GotStateChanged.create(serverEntries));
 		}
 		private function doAllStoreStateCalculation(msg:API_DoAllStoreStateCalculation):void
@@ -917,7 +917,7 @@ package emulator {
 					doStoreOneState(serverEntry);	
 				}
 			}
-			deltaHistory.addFullDelta(serverEntries,getOngoingPlayerIds());	
+			deltaHistory.addDelta(getOngoingPlayerIds(),serverEntries);	
 			broadcast(API_GotStateChanged.create(serverEntries));	
 		}
 		private function doAllRequestStateCalculation(msg:API_DoAllRequestStateCalculation):void
@@ -986,7 +986,7 @@ package emulator {
 				tempServerEntry.changedTimeInMilliSeconds = serverEntry.changedTimeInMilliSeconds;
 				serverEntries.push(tempServerEntry);
 			}
-			deltaHistory.addFullDelta(serverEntries,getOngoingPlayerIds());
+			deltaHistory.addDelta(getOngoingPlayerIds(),serverEntries);	
 			broadcast(API_GotStateChanged.create(serverEntries));
 		}
 		private function doAllRevealState(msg:API_DoAllRevealState):void
@@ -1000,7 +1000,7 @@ package emulator {
 			}
 			
 			var stateData:ServerEntry;
-			var serverEnries:Array=new Array();
+			var serverEntries:Array=new Array();
 			var serverEntry:ServerEntry;
 			var key:Object;
 			for each(var revealEntry:RevealEntry in msg.revealEntries)
@@ -1030,32 +1030,31 @@ package emulator {
 								serverEntry.visibleToUserIds = null;			
 							else
 								revealEntryToPlayers(serverEntry,revealEntry);
-							serverEnries.push(serverEntry);
+							serverEntries.push(serverEntry);
 						}
 					}
 				}
 			}		
-			var tempServerEnries:Array;
+			var tempServerEntries:Array;
+			deltaHistory.addDelta(getOngoingPlayerIds(),serverEntries);	
 			for each(var user:User in aUsers)
 			{
-				tempServerEnries = new Array();
-				for each(serverEntry in serverEnries)
+				tempServerEntries = new Array();
+				for each(serverEntry in serverEntries)
 				{
 					serverEntry.storedByUserId = -1;
 					if(serverEntry.visibleToUserIds == null)
-						tempServerEnries.push(serverEntry);
+						tempServerEntries.push(serverEntry);
 					else
 					{
 						if(serverEntry.visibleToUserIds.indexOf(user.ID)!=-1)
-							tempServerEnries.push(serverEntry);
+							tempServerEntries.push(serverEntry);
 						else
-							tempServerEnries.push(ServerEntry.create(serverEntry.key,null,serverEntry.storedByUserId,serverEntry.visibleToUserIds,serverEntry.changedTimeInMilliSeconds));
+							tempServerEntries.push(ServerEntry.create(serverEntry.key,null,serverEntry.storedByUserId,serverEntry.visibleToUserIds,serverEntry.changedTimeInMilliSeconds));
 					}
 				}
-				user.sendOperation(API_GotStateChanged.create(tempServerEnries))
-				deltaHistory.addPlayerDelta(PlayerDelta.create(user.ID,tempServerEnries));
+				user.sendOperation(API_GotStateChanged.create(tempServerEntries))
 			}
-			deltaHistory.nextTurn();
 		}
 		private function doAllRequestRandomState(msg:API_DoAllRequestRandomState):void
 		{
@@ -1071,7 +1070,7 @@ package emulator {
 				serverEntry = ServerEntry.create(msg.key,randomSeed,-1,null,getTimer()-matchStartTime);
 				doStoreOneState(serverEntry);
 			}
-			deltaHistory.addFullDelta([serverEntry],getOngoingPlayerIds());
+			deltaHistory.addDelta(getOngoingPlayerIds(),[serverEntry]);	
 			broadcast(API_GotStateChanged.create([serverEntry]));
 		}
 		private function doAllEndMatch(msg:API_DoAllEndMatch):void
@@ -1100,7 +1099,7 @@ package emulator {
 			finishedPart.pot=FinishHistory.wholePot;
 			FinishHistory.wholePot-=(FinishHistory.wholePot*percentageOfPot)/100;
 			afinishedPlayers.push(finishedPart);
-			
+			deltaHistory.addPlayerMatchOver(getOngoingPlayerIds(),finishedPart);
 			if (aPlayers.length == FinishHistory.totalFinishingPlayers)
 			{
 				gameOver();
@@ -1573,6 +1572,7 @@ package emulator {
 			goBackToHistory.visible = true;
 			pnlInfo.visible=true;
 			if(iInfoMode!=8){
+				changedToDelta = 0;
 				iInfoMode=8;	
 				tblInfo.columns=[COL_changeNum,COL_player_ids,COL_serverEntries];
 				showHistory();
@@ -1581,6 +1581,101 @@ package emulator {
 		private function doGoBack(ev:MouseEvent):void
 		{
 			trace("*********"+changedToDelta)
+			//todo revert
+			//todo finished games
+			//todo finished players
+			if(changedToDelta!=0)
+			{
+				//general game state
+				var serverEntries:Array/*ServerEntry*/ = deltaHistory.getServerEntries(changedToDelta);
+				
+				//var ongoingPlayers:Array/*int*/ = = deltaHistory.getOngoingPlayers(changedToDelta); 
+				serverState = new ObjectDictionary();
+				for each(var severEntry:ServerEntry in serverEntries)
+				{
+					if(severEntry.value == null)
+						serverState.remove(severEntry.key)
+					else
+						serverState.put(severEntry.key,severEntry);
+				}	
+				bGameStarted = true;
+				bGameEnded = false;
+				txtExtraMatchInfo.visible = false;
+				txtMatchStartedTime.visible = false;
+				txtTooltipExtraMatchInfo.visible = false;
+				txtTooltipMatchStartedTime.visible = false;
+				btnNewGame.visible = false;
+				btnCancelGame.visible = true;
+				btnSaveGame.visible = true;
+				btnLoadGame.visible = false;
+				for each (var usr:User in aUsers) {
+					send_got_match_started(usr);						
+				}
+				pnlLoad.visible = false;
+				showMsg("History was restored","Message");
+		
+				
+			
+			
+			
+			
+	
+			
+			/*
+			if (cmbLoadName.selectedIndex == -1) {
+				return;
+			}
+			var transferByteArray:ByteArray = new ByteArray()
+			transferByteArray.writeObject(cmbLoadName.selectedItem.data);
+			transferByteArray.position = 0;
+			var savedGame:SavedGame = SerializableClass.deserialize(transferByteArray.readObject()) as SavedGame;
+			serverState = savedGame.serverState;
+			deltaHistory = savedGame.deltaHistory;
+			afinishedPlayers=savedGame.finishedGames.concat();
+			aPlayers = savedGame.players.concat();
+			
+			for each(var savedFinishedPlayer:FinishHistory in afinishedPlayers)
+			{
+				var tempPotPercentage:Number = 0;
+				for each(var playerMatchOver:PlayerMatchOver in savedFinishedPlayer.finishedPlayers)
+				{
+					tempPotPercentage += playerMatchOver.potPercentage
+					FinishHistory.totalFinishingPlayers ++;
+				}
+				FinishHistory.wholePot -= FinishHistory.wholePot*tempPotPercentage / 100;
+			}			
+			extra_match_info=savedGame.extra_match_info;
+			match_started_time = savedGame.match_started_time;
+			if(extra_match_info!=null){
+				txtExtraMatchInfo.text = JSON.stringify(extra_match_info);
+			}else {
+				txtExtraMatchInfo.text = "";
+			}
+			
+			txtMatchStartedTime.text = match_started_time.toString();
+			showMatchState();
+			showMatchOver();
+			
+			if (aPlayers.length >= savedGame.players.length) {
+				bGameStarted = true;
+				bGameEnded = false;
+				txtExtraMatchInfo.visible = false;
+				txtMatchStartedTime.visible = false;
+				txtTooltipExtraMatchInfo.visible = false;
+				txtTooltipMatchStartedTime.visible = false;
+				btnNewGame.visible = false;
+				btnCancelGame.visible = true;
+				btnSaveGame.visible = true;
+				btnLoadGame.visible = false;
+				for each (var usr:User in aUsers) {
+					send_got_match_started(usr);						
+				}
+				*/
+			}
+			pnlLoad.visible = false;
+			showMsg("Saved game was loaded","Message");
+			
+			
 			//todo: commit change
 		}
 		private function showHistory():void
@@ -1588,22 +1683,23 @@ package emulator {
 			if(iInfoMode==8){
 				tblInfo.removeAll();
 				var itemObj:Object;
-				var len:int = deltaHistory.getDeltaLength();
-				var dataArray:Array = new Array();
-				for (var i:int =0;i < len;i++)
+				
+				var counter:int = 0;
+				for each(var palyerDelta:PlayerDelta in deltaHistory.gameTurns)
 				{
-					dataArray = deltaHistory.getTurnForPrint(i);
 					itemObj=new Object();
-					itemObj[COL_changeNum]=i;
-					itemObj[COL_player_ids]=dataArray[0];
-					itemObj[COL_serverEntries]=dataArray[1];		
+					itemObj[COL_changeNum] =counter;
+					itemObj[COL_player_ids]=palyerDelta.playerIds;
+					if(palyerDelta.serverEntries.length > 0 )
+						itemObj[COL_serverEntries]=palyerDelta.serverEntries;
+					else
+						itemObj[COL_serverEntries]=palyerDelta.finishHistory;			
 					tblInfo.addItem(itemObj);
 					tblInfo.verticalScrollPosition = tblInfo.maxVerticalScrollPosition+30;
+					counter++;	
 				}
 				txtInfo.text="";
-			}
-			
-			
+			}		
 		}
 		private function showStoreQue():void
 		{
@@ -1986,7 +2082,7 @@ package emulator {
 			btnLoadGame.visible = false;
 			iCurTurn=-1;
 			afinishedPlayers=new Array();
-			serverState=ObjectDictionary.create();
+			serverState= new ObjectDictionary();
 			deltaHistory = new DeltaHistory();
 			showMatchState();
 			showMatchOver();
@@ -2059,30 +2155,37 @@ package emulator {
 				return;
 			}
 			
-			var serverEntries:Array;
+			var serverEntries:Array=new Array();
+			var serverEntry:ServerEntry;
+			for each (var userEntry:UserEntry in msg.userEntries)
+			{
+				
+				if(userEntry.isSecret)
+					serverEntry = ServerEntry.create(userEntry.key,userEntry.value,waitingFunction.user.ID,[waitingFunction.user.ID],getTimer()-matchStartTime);
+				else
+					serverEntry = ServerEntry.create(userEntry.key,userEntry.value,waitingFunction.user.ID,null,getTimer()-matchStartTime);
+				doStoreOneState(serverEntry);
+				serverEntries.push(serverEntry);
+			}
+			deltaHistory.addDelta(getOngoingPlayerIds(),serverEntries);
+			
+			var tempServerEntries:Array;
 			for each(var tempUser:User in aUsers)
 			{
-				serverEntries=new Array();
-				for each (var userEntry:UserEntry in msg.userEntries)
+				tempServerEntries = new Array();
+				for each(serverEntry in serverEntries)
 				{
-					if(!userEntry.isSecret)
-					{
-						serverEntries.push(ServerEntry.create(userEntry.key,userEntry.value,waitingFunction.user.ID,null,getTimer()-matchStartTime));	
-						doStoreOneState(ServerEntry.create(userEntry.key,userEntry.value,waitingFunction.user.ID,null,getTimer()-matchStartTime));
-					}
+					if(serverEntry.visibleToUserIds == null)
+						tempServerEntries.push(serverEntry);
+					else if(serverEntry.visibleToUserIds.indexOf(tempUser.ID)!=-1)
+						tempServerEntries.push(serverEntry);
 					else
-					{
-						if(waitingFunction.user.ID == tempUser.ID)
-							serverEntries.push(ServerEntry.create(userEntry.key,userEntry.value,waitingFunction.user.ID,[waitingFunction.user.ID],getTimer()-matchStartTime));
-						else
-							serverEntries.push(ServerEntry.create(userEntry.key,null,waitingFunction.user.ID,[waitingFunction.user.ID],getTimer()-matchStartTime));
-						doStoreOneState(ServerEntry.create(userEntry.key,userEntry.value,waitingFunction.user.ID,[waitingFunction.user.ID],getTimer()-matchStartTime));
-					}
+						tempServerEntries.push(ServerEntry.create(serverEntry.key,null,serverEntry.storedByUserId,serverEntry.visibleToUserIds,serverEntry.changedTimeInMilliSeconds));
+					
 				}
-				deltaHistory.addPlayerDelta(PlayerDelta.create(tempUser.ID,serverEntries));
-				tempUser.sendOperation(API_GotStateChanged.create(serverEntries));
+				tempUser.sendOperation(API_GotStateChanged.create(tempServerEntries));
 			}
-			deltaHistory.nextTurn();
+			
 			showMatchState();
 			
 		}

@@ -27,7 +27,7 @@ package emulator
 			var str:String = playerId+" : ";
 			for each(var serverEntry:ServerEntry in serverEntries)
 			{
-				str+="/n"+serverEntry.toString()	
+				str+="\n"+serverEntry.toString()	
 			}
 			return str;
 		}

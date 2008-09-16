@@ -8,6 +8,9 @@ package emulator
 		public static var totalFinishingPlayers:int=0;
 		public var pot:int;
 		public var finishedPlayers:Array=new Array/*PlayerMatchOver*/;
-		
+		public function toString():String
+		{
+			return "pot: "+pot+" devided between :"+finishedPlayers;
+		}
 	}
 }

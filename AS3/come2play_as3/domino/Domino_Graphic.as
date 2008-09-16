@@ -14,12 +14,17 @@ package come2play_as3.domino
 		private var myUserId:int;
 		private var gameBoard:GameBoard;// gameBoard
 		private var dominoLeft:TextField; //text field with dominoes left
-		public function Domino_Graphic(dominoes:Array,dominoObject:DominoObject,players:Array,myUserId:int,domino_LogicPointer:Domino_Logic)
+		
+		private var stageX:int;
+		private var stageY:int;
+		public function Domino_Graphic(dominoes:Array,dominoObject:DominoObject,players:Array,myUserId:int,stageX:int,stageY:int,domino_LogicPointer:Domino_Logic)
 		{
 			this.domino_LogicPointer = domino_LogicPointer;
 			this.dominoes = dominoes;
 			this.players = players;
 			this.myUserId = myUserId;
+			this.stageX = stageX + 5;
+			this.stageY = stageY;
 			dominoLeft = new TextField();
 			dominoLeft.x= 60;
 			dominoLeft.y=220;
@@ -46,9 +51,9 @@ package come2play_as3.domino
 		
 		public function chooseDomino(ev:MouseEvent):void
 		{
-			if((ev.stageY>280)&&(ev.stageY<325))
+			if(((ev.stageY-stageY)>240)&&((ev.stageY-stageY)<300))
 			{
-				var pos:int = Math.floor(((ev.stageX)/15)/2);
+				var pos:int = Math.floor((ev.stageX-stageX)/30);
 				domino_LogicPointer.takeDomino(pos);
 			}
 		}

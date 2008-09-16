@@ -19,7 +19,8 @@ package come2play_as3.domino
 		private var rightArrow:RightArrow;
 		private var noMovesBox:NoMovesBox;
 		private var graphics:MovieClip;
-		
+		private var stageX:int;
+		private var stageY:int;
 		private var dominoAmount:int;// how many dominoes are avaible in the game
 		public var currentDomino:int;//how many dominoes have been drawn already
 		private var dominoes:Array/*DominoObject*/; //my dominoes
@@ -39,11 +40,10 @@ package come2play_as3.domino
 		private var avaibleDominoMoves:Array; //aviable dominoes to put on board
 		
 		
-		public function Domino_Logic(domino_MainPointer:Domino_Main,graphics:MovieClip,cubeMaxValue:int)
+		public function Domino_Logic(domino_MainPointer:Domino_Main,graphics:MovieClip)
 		{
 			this.graphics = graphics;
 			this.domino_MainPointer = domino_MainPointer;
-			this.cubeMaxValue = cubeMaxValue;
 			playing = false;
 			rightArrow = new RightArrow();
 			leftArrow = new LeftArrow();
@@ -55,10 +55,13 @@ package come2play_as3.domino
 			leftArrow.addEventListener(MouseEvent.CLICK,doLeft);
 		}
 		
-		public function newGame(players:Array,myUserId:int):void
+		public function newGame(players:Array,myUserId:int,cubeMaxValue:int,stageX:int,stageY:int):void
 		{
 			this.players = players;
 			this.myUserId = myUserId
+			this.cubeMaxValue = cubeMaxValue;
+			this.stageX = stageX;
+			this.stageY = stageY;
 			currentDomino = 0;
 			dominoes = new Array();
 			dominoBoard = new DominoBoard();
@@ -484,7 +487,7 @@ package come2play_as3.domino
 				if(domino_Graphic != null)
 					graphics.removeChild(domino_Graphic);
 				movesWithNoAction = 0;
-				domino_Graphic = new Domino_Graphic(dominoes,dominoBoard.middle(),players,myUserId,this);
+				domino_Graphic = new Domino_Graphic(dominoes,dominoBoard.middle(),players,myUserId,stageX,stageY,this);
 				domino_Graphic.updateDeck(dominoAmount-currentDomino);
 				graphics.addChild(domino_Graphic);
 			}

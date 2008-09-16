@@ -17,7 +17,8 @@ package emulator
 		{
 			if(currentTurn < gameTurns.length)
 			{
-				gameTurns = gameTurns.slice(0,currentTurn);
+				trace("tryed to cahnge ***********************************")
+				gameTurns = gameTurns.slice(0,currentTurn+1);
 			}
 			currentTurn++
 		}
@@ -36,15 +37,31 @@ package emulator
 			currentTurn = tillTurn;
 			var playerDelta:PlayerDelta;
 			var serverEntries:Array/*ServerEntry*/ = new Array();
-			for(var i:int;i<=tillTurn;i++)
+			for(var i:int=0;i<=tillTurn;i++)
 			{
 				playerDelta = gameTurns[i]
 				serverEntries = serverEntries.concat(playerDelta.serverEntries);
 			}
 			return serverEntries;
 		}
-		
-			
+		public function getFinishedGames(tillTurn:int):Array/*FinishHistory*/
+		{
+			currentTurn = tillTurn;
+			var playerDelta:PlayerDelta;
+			var finishedHistory:Array/*FinishHistory*/ = new Array();
+			for(var i:int=0;i<=tillTurn;i++)
+			{
+				playerDelta = gameTurns[i];
+				if(playerDelta.serverEntries.length == 0)
+					finishedHistory.push(playerDelta.finishHistory);
+			}
+			return finishedHistory;
+		}
+		public function getPlayers(tillTurn:int):Array/*int*/
+		{
+			var playerDelta:PlayerDelta = gameTurns[tillTurn]
+			return playerDelta.playerIds;
+		}	
 		public function toString():String
 		{
 			var str:String ="";

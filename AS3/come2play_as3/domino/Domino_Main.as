@@ -4,13 +4,12 @@ package come2play_as3.domino
 	import come2play_as3.api.auto_generated.*;
 	
 	import flash.display.MovieClip;
-	import flash.events.TimerEvent;
-	import flash.utils.Timer;
-	import flash.utils.setTimeout;
 	
 	public class Domino_Main extends ClientGameAPI
 	{
 		private var cubeMaxValue:int = 7;
+		private var stageX:int;
+		private var stageY:int;
 		private var graphics:MovieClip;
 		
 		public var currentTurn:int;
@@ -33,7 +32,7 @@ package come2play_as3.domino
 		private function constructGame():void
 		{
 				users = new Array(); 
-				domino_Logic  = new Domino_Logic(this,graphics,cubeMaxValue);
+				domino_Logic  = new Domino_Logic(this,graphics);
 				doRegisterOnServer();
 		}
 		
@@ -105,7 +104,15 @@ package come2play_as3.domino
 		
 		override public function gotCustomInfo(infoEntries:Array):void
 		{
-				trace("came in")
+			for each (var infoEntry:InfoEntry in infoEntries)
+			{
+				switch(infoEntry.key)
+				{
+					case "CONTAINER_gameStageX" : stageX = int(infoEntry.value);break;
+					case "CONTAINER_gameStageY" : stageY = int(infoEntry.value); break;
+					case "cubeMaxValue" : cubeMaxValue =int(infoEntry.value); break;
+				}
+			}
 		}
 		override public function gotMyUserId(myUserId:int):void
 		{
@@ -118,7 +125,7 @@ package come2play_as3.domino
 		override public function gotMatchStarted(allPlayerIds:Array, finishedPlayerIds:Array, extraMatchInfo:Object, matchStartedTime:int, serverEntries:Array):void
 		{
 			players=allPlayerIds;
-			domino_Logic.newGame(players,myUserId);
+			domino_Logic.newGame(players,myUserId,cubeMaxValue,stageX,stageY);
 			gameEnded = false;
 			currentTurn = 0;	
 			if(serverEntries.length == 0)

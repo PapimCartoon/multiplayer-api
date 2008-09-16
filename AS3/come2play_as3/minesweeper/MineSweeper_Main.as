@@ -14,6 +14,8 @@ import flash.utils.*;
 		private static var boardHeight:int=10;
 		private static var boardWidth:int=10;
 		private static var mineAmount:int=10;
+		private var stageX:int = 0;
+		private var stageY:int = 0;
 		//calculator variables
 		private var emptyBoxes:Array;
 		private var newCalculatorBoard:Array
@@ -33,18 +35,18 @@ import flash.utils.*;
 			this.graphics = graphics;
 			AS3_vs_AS2.waitForStage(graphics,constructGame);
 		}
-		public function constructGame(ev:TimerEvent):void
+		public function constructGame():void
 		{ 
-				graphics.addChild(new Background);
-				users = new Array(); 
-				mineSweeper_Logic  = new MineSweeper_Logic(this,graphics,boardWidth,boardHeight);
-				startGraphic= new Starter()
-				startGraphic.x=170;
-				startGraphic.y=160;
-				startGraphic.stop();
-				graphics.addChild(startGraphic);
-				startGraphic.addEventListener("starterEnd",startGame);
-				doRegisterOnServer();
+			graphics.addChild(new Background);
+			mineSweeper_Logic  = new MineSweeper_Logic(this,graphics);	
+			users = new Array(); 
+			startGraphic= new Starter()
+			startGraphic.x=170;
+			startGraphic.y=160;
+			startGraphic.stop();
+			graphics.addChild(startGraphic);
+			startGraphic.addEventListener("starterEnd",startGame);
+			doRegisterOnServer();
 		}
 		
 		private function startGame(ev:Event):void
@@ -77,7 +79,17 @@ import flash.utils.*;
 		
 		override public function gotCustomInfo(infoEntries:Array):void
 		{
-				
+			for each (var infoEntry:InfoEntry in infoEntries)
+			{
+				switch (infoEntry.key)
+				{
+					case "CONTAINER_gameStageX" : stageX = int(infoEntry.value);break;
+					case "CONTAINER_gameStageY" : stageY = int(infoEntry.value); break;
+					case "boardSize" : boardWidth = boardHeight = int(infoEntry.value); break;
+					case "mineAmount" : mineAmount = int(infoEntry.value); break;
+				}
+
+			}	
 		}
 		override public function gotRequestStateCalculation(serverEntries:Array):void
 		{
@@ -165,7 +177,6 @@ import flash.utils.*;
 		override public function gotMyUserId(myUserId:int):void
 		{
 			this.myUserId = myUserId;
-			mineSweeper_Logic.myUserId = myUserId;
 		}
 		override public function gotUserInfo(userId:int, entries:Array/*InfoEntry*/):void 
 		{
@@ -173,12 +184,8 @@ import flash.utils.*;
 		}
 		override public function gotMatchStarted(allPlayerIds:Array, finishedPlayerIds:Array, extraMatchInfo:Object, matchStartedTime:int, serverEntries:Array):void
 		{
-			trace("Start***************"+myUserId)
-			trace(allPlayerIds)
-			trace(JSON.stringify(users))
-			trace("end*********"+myUserId)
 			players = allPlayerIds;
-			mineSweeper_Logic.renewBoard();
+			mineSweeper_Logic.renewBoard(boardWidth,boardHeight,stageX,stageY,myUserId);
 			loadServerEntries = null;
 			if(serverEntries.length == 0)
 			{

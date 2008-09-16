@@ -15,6 +15,7 @@ package emulator {
 			 
 		private static const COL_player_ids:String = "player_ids";
 		private static const COL_scores:String = "scores";
+		private static const COL_changeNum:String = "Num";
 		private static const COL_pot_percentages:String = "pot_percentages";
 		private static const COL_total_pot_percentages:String = "total_pot_percentages";
 		private static const COL_Parameters:String="Parameters";
@@ -52,6 +53,7 @@ package emulator {
 		private var unverifiedQueue:Array;
 		private var waitingQueue:Array;
 		private var queueTimer:Timer;
+		private var changedToDelta:int;
 		
 		private var extra_match_info:Object;
 		private var match_started_time:int;
@@ -81,6 +83,7 @@ package emulator {
 		
 		private var btnStoreQue:SimpleButton;
 		private var btnDoAllQue:SimpleButton;
+		private var goBackToHistory:Button;
 		
 		private var btnNewGame:Button;
 		private var btnLoadGame:Button;
@@ -311,6 +314,14 @@ package emulator {
 
 			btnSavedGames = tbsPanel["_btnHistory"];
 			btnSavedGames.addEventListener(MouseEvent.CLICK, btnHistoryClick);
+			goBackToHistory = new Button()
+			goBackToHistory.x = 480;
+			goBackToHistory.y = 306;
+			goBackToHistory.width = 60;
+			goBackToHistory.label ="Revert"
+			goBackToHistory.addEventListener(MouseEvent.CLICK, doGoBack);
+			goBackToHistory.visible = false;
+			this.addChild(goBackToHistory);
 			
 			btnNewGame = new Button();
 			btnNewGame.x = 490;
@@ -737,17 +748,17 @@ package emulator {
 				var randomStateMessage:API_DoAllRequestRandomState=msg as API_DoAllRequestRandomState;	
 				doAllRequestRandomState(randomStateMessage);
 			}
-			else if(msg is API_DoAllRevealState)
+			else if(msg is API_DoAllRevealState) 
 			{
 				var revealStateMessage:API_DoAllRevealState=msg as API_DoAllRevealState;	
 				doAllRevealState(revealStateMessage);
 			}
-			else if(msg is API_DoAllRequestStateCalculation)
+			else if(msg is API_DoAllRequestStateCalculation) 
 			{
 				var requestStateCalculation:API_DoAllRequestStateCalculation=msg as API_DoAllRequestStateCalculation;	
 				doAllRequestStateCalculation(requestStateCalculation);
 			}
-			else if(msg is API_DoAllStoreStateCalculation)
+			else if(msg is API_DoAllStoreStateCalculation) 
 			{
 				var storeStateCalculation:API_DoAllStoreStateCalculation=msg as API_DoAllStoreStateCalculation;	
 				doAllStoreStateCalculation(storeStateCalculation);
@@ -878,7 +889,8 @@ package emulator {
 					serverEntries.push(ServerEntry.create(userEntry.key,userEntry.value,-1,null,getTimer()-matchStartTime));
 					doStoreOneState(ServerEntry.create(userEntry.key,userEntry.value,-1,null,getTimer()-matchStartTime));	
 				}
-			}	
+			}
+			deltaHistory.addFullDelta(serverEntries,getOngoingPlayerIds());	
 			broadcast(API_GotStateChanged.create(serverEntries));
 		}
 		private function doAllStoreStateCalculation(msg:API_DoAllStoreStateCalculation):void
@@ -904,7 +916,8 @@ package emulator {
 					serverEntries.push(serverEntry);
 					doStoreOneState(serverEntry);	
 				}
-			}	
+			}
+			deltaHistory.addFullDelta(serverEntries,getOngoingPlayerIds());	
 			broadcast(API_GotStateChanged.create(serverEntries));	
 		}
 		private function doAllRequestStateCalculation(msg:API_DoAllRequestStateCalculation):void
@@ -973,6 +986,7 @@ package emulator {
 				tempServerEntry.changedTimeInMilliSeconds = serverEntry.changedTimeInMilliSeconds;
 				serverEntries.push(tempServerEntry);
 			}
+			deltaHistory.addFullDelta(serverEntries,getOngoingPlayerIds());
 			broadcast(API_GotStateChanged.create(serverEntries));
 		}
 		private function doAllRevealState(msg:API_DoAllRevealState):void
@@ -1039,7 +1053,9 @@ package emulator {
 					}
 				}
 				user.sendOperation(API_GotStateChanged.create(tempServerEnries))
+				deltaHistory.addPlayerDelta(PlayerDelta.create(user.ID,tempServerEnries));
 			}
+			deltaHistory.nextTurn();
 		}
 		private function doAllRequestRandomState(msg:API_DoAllRequestRandomState):void
 		{
@@ -1055,7 +1071,7 @@ package emulator {
 				serverEntry = ServerEntry.create(msg.key,randomSeed,-1,null,getTimer()-matchStartTime);
 				doStoreOneState(serverEntry);
 			}
-			
+			deltaHistory.addFullDelta([serverEntry],getOngoingPlayerIds());
 			broadcast(API_GotStateChanged.create([serverEntry]));
 		}
 		private function doAllEndMatch(msg:API_DoAllEndMatch):void
@@ -1325,6 +1341,12 @@ package emulator {
 						"match_state: " + evt.target.selectedItem[COL_matchState] + "\n" + 
 						"match_started_time: " + evt.target.selectedItem[COL_matchStartedTime] + "\n" + "extra_match_info: " + evt.target.selectedItem[COL_extraMatchInfo];
 					break;
+				case 8:
+					changedToDelta = evt.target.selectedItem[COL_changeNum];
+					txtInfo.text = "num: " + evt.target.selectedItem[COL_changeNum] + "\n" + 
+						"Player_ID's: " + evt.target.selectedItem[COL_player_ids] + "\n" + 
+						"Server Entries: " + evt.target.selectedItem[COL_serverEntries];
+				break;
 			}
 		}
 		
@@ -1412,6 +1434,7 @@ package emulator {
 		private function btnLogClick(ev:MouseEvent):void {
 			tbsPanel.gotoAndStop("Log");
 			pnlCommands.visible = false;
+			goBackToHistory.visible = false;
 			logingCheckBox.visible = true;
 			pnlLog.visible = true;
 			pnlInfo.visible=false;
@@ -1422,6 +1445,7 @@ package emulator {
 			tbsPanel.gotoAndStop("Command");
 			pnlCommands.visible = true;
 			logingCheckBox.visible = false;
+			goBackToHistory.visible = false;
 			pnlLog.visible = false;
 			pnlInfo.visible=false;
 			iInfoMode=0;
@@ -1432,6 +1456,7 @@ package emulator {
 			tbsPanel.gotoAndStop("MatchState");
 			pnlCommands.visible = false;
 			logingCheckBox.visible = false;
+			goBackToHistory.visible = false;
 			pnlLog.visible = false;
 			pnlInfo.visible=true;
 			if(iInfoMode!=1){
@@ -1448,6 +1473,7 @@ package emulator {
 			tbsPanel.gotoAndStop("GeneralInfo");
 			pnlCommands.visible = false;
 			logingCheckBox.visible = false;
+			goBackToHistory.visible = false;
 			pnlLog.visible = false;
 			pnlInfo.visible=true;
 			if(iInfoMode!=3){
@@ -1464,6 +1490,7 @@ package emulator {
 			
 			tbsPanel.gotoAndStop("Store");
 			pnlCommands.visible = false;
+			goBackToHistory.visible = false;
 			logingCheckBox.visible = false;
 			pnlLog.visible = false;
 			pnlInfo.visible=true;
@@ -1480,6 +1507,7 @@ package emulator {
 			tbsPanel.gotoAndStop("DoAllQue");
 			pnlCommands.visible = false;
 			logingCheckBox.visible = false;
+			goBackToHistory.visible = false;
 			pnlLog.visible = false;
 			pnlInfo.visible=true;
 			if(iInfoMode!=2){
@@ -1494,6 +1522,7 @@ package emulator {
 			tbsPanel.gotoAndStop("UserInfo");
 			pnlCommands.visible = false;
 			logingCheckBox.visible = false;
+			goBackToHistory.visible = false;
 			pnlLog.visible = false;
 			pnlInfo.visible=true;
 			if(iInfoMode!=4){
@@ -1510,6 +1539,7 @@ package emulator {
 			tbsPanel.gotoAndStop("MatchOver");
 			pnlCommands.visible = false;
 			logingCheckBox.visible = false;
+			goBackToHistory.visible = false;
 			pnlLog.visible = false;
 			pnlInfo.visible=true;
 			if(iInfoMode!=5){
@@ -1525,6 +1555,7 @@ package emulator {
 			tbsPanel.gotoAndStop("SavedGames");
 			pnlCommands.visible = false;
 			logingCheckBox.visible = false;
+			goBackToHistory.visible = false;
 			pnlLog.visible = false;
 			pnlInfo.visible=true;
 			if(iInfoMode!=6){
@@ -1539,16 +1570,40 @@ package emulator {
 			pnlCommands.visible = false;
 			logingCheckBox.visible = false;
 			pnlLog.visible = false;
+			goBackToHistory.visible = true;
 			pnlInfo.visible=true;
 			if(iInfoMode!=8){
 				iInfoMode=8;	
-				tblInfo.columns=[COL_player_ids,COL_serverEntries];
+				tblInfo.columns=[COL_changeNum,COL_player_ids,COL_serverEntries];
 				showHistory();
 			}	
 		}
+		private function doGoBack(ev:MouseEvent):void
+		{
+			trace("*********"+changedToDelta)
+			//todo: commit change
+		}
 		private function showHistory():void
 		{
-			//todo print history
+			if(iInfoMode==8){
+				tblInfo.removeAll();
+				var itemObj:Object;
+				var len:int = deltaHistory.getDeltaLength();
+				var dataArray:Array = new Array();
+				for (var i:int =0;i < len;i++)
+				{
+					dataArray = deltaHistory.getTurnForPrint(i);
+					itemObj=new Object();
+					itemObj[COL_changeNum]=i;
+					itemObj[COL_player_ids]=dataArray[0];
+					itemObj[COL_serverEntries]=dataArray[1];		
+					tblInfo.addItem(itemObj);
+					tblInfo.verticalScrollPosition = tblInfo.maxVerticalScrollPosition+30;
+				}
+				txtInfo.text="";
+			}
+			
+			
 		}
 		private function showStoreQue():void
 		{
@@ -1932,6 +1987,7 @@ package emulator {
 			iCurTurn=-1;
 			afinishedPlayers=new Array();
 			serverState=ObjectDictionary.create();
+			deltaHistory = new DeltaHistory();
 			showMatchState();
 			showMatchOver();
 			matchStartTime=getTimer();
@@ -2023,9 +2079,10 @@ package emulator {
 						doStoreOneState(ServerEntry.create(userEntry.key,userEntry.value,waitingFunction.user.ID,[waitingFunction.user.ID],getTimer()-matchStartTime));
 					}
 				}
-
+				deltaHistory.addPlayerDelta(PlayerDelta.create(tempUser.ID,serverEntries));
 				tempUser.sendOperation(API_GotStateChanged.create(serverEntries));
 			}
+			deltaHistory.nextTurn();
 			showMatchState();
 			
 		}
@@ -2068,7 +2125,7 @@ package emulator {
 			FinishHistory.totalFinishingPlayers=0;
 			FinishHistory.wholePot=100;
 			iCurTurn=-1;
-			serverInfoEnteries=new Array;
+			//serverInfoEnteries=new Array;
 			unverifiedQueue=new Array;
 			waitingQueue=new Array;
 			//afinishedPlayers=new Array();
@@ -2080,7 +2137,8 @@ package emulator {
 			btnCancelGame.visible = false;
 			btnLoadGame.visible = true;
 			btnSaveGame.visible = false;
-			broadcast(API_GotMatchEnded.create(arr));
+			if(arr.length > 0)
+				broadcast(API_GotMatchEnded.create(arr));
 		}
 		
 		private function getAllUserIds():Array {

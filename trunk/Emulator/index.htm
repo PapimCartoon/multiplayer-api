@@ -36,28 +36,28 @@ function getParams(arr){
                 document.getElementById("delay_to").value=arr[i][1];
                 break;
             case "paramNum_1":
-				if(arr[i][1]!="logoFullUrl")
+				if(arr[i][1]!="CONTAINER_logoFullUrl")
 				{
 					customParam[ arr[i][0] ] = arr[i][1];
 					vals.push(arr[i]);
 				}
             	break;
             case "paramNum_2":
-            	if(arr[i][1]!="gameWidth")
+            	if(arr[i][1]!="CONTAINER_gameWidth")
 				{
 					customParam[ arr[i][0] ] = arr[i][1];
 					vals.push(arr[i]);
 				}
             break;
             case "paramNum_3":
-            	if(arr[i][1]!="gameHeight")
+            	if(arr[i][1]!="CONTAINER_gameHeight")
 				{
 					customParam[ arr[i][0] ] = arr[i][1];
 					vals.push(arr[i]);
 				}
             break;
             case "paramNum_4":
-            	if(arr[i][1]!="gameFrameRate")
+            	if(arr[i][1]!="CONTAINER_gameFrameRate")
 				{
 					customParam[ arr[i][0] ] = arr[i][1];
 					vals.push(arr[i]);
@@ -166,7 +166,7 @@ function addCustomParam(){
 	var row= tbl.rows[custom_param_num];
 	var cell0=row.insertCell(0);
 	var cell1=row.insertCell(1);
-	cell0.innerHTML="<input type=text size = 20 value = 'param: "+custom_param_num+" name' name='paramName_"+custom_param_num+"' id='paramName_"+custom_param_num+"'>";
+	cell0.innerHTML="<input type=text size = 30 value = 'param: "+custom_param_num+" name' name='paramName_"+custom_param_num+"' id='paramName_"+custom_param_num+"'>";
 	if(custom_param_num >4){
 		cell1.innerHTML="<input type=text size = 70 value = 'insert value here' name='paramValue_"+custom_param_num+"' id='paramValue_"+custom_param_num+"'> <a style=\"cursor:pointer;color:blue;\" onclick=\"removeCustomParam("+custom_param_num+");\">x</a>";
 	}else{
@@ -182,7 +182,7 @@ function removeCustomParam(num){
 	for(var i=num;i<custom_param_num;i++)
 	{
 		tempData = document.getElementById("paramName_"+(i+1)).value
-		tbl.rows[i].cells[0].innerHTML="<input type=text size = 20 value = '"+tempData+"' name='paramName_"+i+"' id='paramName_"+i+"'>";
+		tbl.rows[i].cells[0].innerHTML="<input type=text size = 30 value = '"+tempData+"' name='paramName_"+i+"' id='paramName_"+i+"'>";
 
 		tempData = document.getElementById("paramValue_"+(i+1)).value
 		if(i>4){
@@ -284,7 +284,7 @@ function removeCustomParam(num){
 	                            		</tr>
 	                            		<tr>
 	                            			<td>
-	                            				<input type="text" id="paramName_1" name="paramName_1" value="logoFullUrl" size="20"/>
+	                            				<input type="text" id="paramName_1" name="paramName_1" value="CONTAINER_logoFullUrl" size="30"/>
 	                            			</td>
 	                            			<td>
 	                            				<input type="text" id="paramValue_1" name="paramValue_1" value="X:/come2play/API_GoogleCodeSVN/Emulator/example_logo.jpg" size="70"/>
@@ -292,7 +292,7 @@ function removeCustomParam(num){
 	                            		</tr>
 	                            		<tr>
 	                            			<td>
-	                            				<input type="text" id="paramName_2" name="paramName_2" value="gameWidth" size="20"/>
+	                            				<input type="text" id="paramName_2" name="paramName_2" value="CONTAINER_gameWidth" size="30"/>
 	                            			</td>
 	                            			<td>
 	                            				<input type="text" id="paramValue_2" name="paramValue_2" value="400" size="70"/>
@@ -300,7 +300,7 @@ function removeCustomParam(num){
 	                            		</tr>
 	                            		<tr>
 	                            			<td>
-	                            				<input type="text" id="paramName_3" name="paramName_3" value="gameHeight" size="20"/>
+	                            				<input type="text" id="paramName_3" name="paramName_3" value="CONTAINER_gameHeight" size="30"/>
 	                            			</td>
 	                            			<td>
 	                            				<input type="text" id="paramValue_3" name="paramValue_3" value="400" size="70"/>
@@ -308,7 +308,7 @@ function removeCustomParam(num){
 	                            		</tr>
 	                            		<tr>
 	                            			<td>
-	                            				<input type="text" id="paramName_4" name="paramName_4" value="gameFrameRate" size="20"/>
+	                            				<input type="text" id="paramName_4" name="paramName_4" value="CONTAINER_gameFrameRate" size="30"/>
 	                            			</td>
 	                            			<td>
 	                            				<input type="text" id="paramValue_4" name="paramValue_4" value="20" size="70"/>
@@ -545,7 +545,7 @@ function btn_click(){
 		}
 		if( single_popup!= null ){
 		single_popup.close();
-		}	
+		}
         server=window.open("ServerWindow.htm?"+flashvars+initPrefix+"&"+addparams+old+"&single_popup=0","server","width=570,height=470,menubar=0,titlebar=0,toolbar=0,resizable=1,statusbar=0");
         var str="<a style=\"cursor:pointer;color:blue;\" onclick=\"serverClick();\">Server</a>";
 	clients=new Array();

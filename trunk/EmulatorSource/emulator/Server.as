@@ -707,6 +707,7 @@ package emulator {
 					}			
           			if (isNewEntry) {
             			waitingQueue.push(entry)
+            			showWaitingFunctionQue();
          			 }
 					addMessageLog(user.Name, msg.getMethodName(), msg.toString());
 					doNextInQueue();
@@ -783,10 +784,12 @@ package emulator {
 				processMessage(waitingFunction.msg);
 			}
 			waitingQueue.shift();
+			showWaitingFunctionQue();
 			if (!((waitingFunction.msg is API_DoAllSetTurn) || (waitingFunction.msg is API_DoAllRequestStateCalculation) ))
 			{
 				waitingFunction.unverifiedUsers =getOngoingPlayerIds();
 				unverifiedQueue.push(waitingFunction);
+				showUnverifiedQue();
 			}
 			queueTimer.reset();
 			queueTimer.start();
@@ -811,6 +814,7 @@ package emulator {
 		{
 			
 			var waitingFunction:QueueEntry=unverifiedQueue.shift();
+			showUnverifiedQue();
 			queueTimer.reset();
 			doNextInQueue();	
 		}
@@ -857,18 +861,15 @@ package emulator {
 		}
 		private function doShuffleOn(serverEntryArray:Array/*ServerEntry*/,key:Object):ServerEntry
 		{
-			var serverEntry:ServerEntry = serverEntryArray[0] as ServerEntry;
-			serverEntry.visibleToUserIds = new Array();
-			serverEntry.key = key;
-			serverEntry.storedByUserId = -1;
+			var serverEntryCopy:ServerEntry = serverEntryArray[0] as ServerEntry;
+			var serverEntry:ServerEntry = ServerEntry.create(key,serverEntryCopy.value,-1,[],serverEntryCopy.changedTimeInMilliSeconds);
 			serverState.put(key,serverEntry);
-			var newServerState:ServerEntry = serverState.getValue(key) as ServerEntry
-			
 			return serverEntry;
 		}
 		//do all function's
 		private function doAllStoreState(msg:API_DoAllStoreState):void
 		{
+			var broadcastServerEntries:Array =/*ServerEntry*/ new Array();
 			var serverEntries:Array =/*ServerEntry*/ new Array();
 			if (msg.userEntries.length == 0)
 			{
@@ -881,20 +882,24 @@ package emulator {
 			{
 				if(userEntry.isSecret)
 				{
-					serverEntries.push(ServerEntry.create(userEntry.key,null,-1,[],getTimer()-matchStartTime));
+					broadcastServerEntries.push(ServerEntry.create(userEntry.key,null,-1,[],getTimer()-matchStartTime));
 					doStoreOneState(ServerEntry.create(userEntry.key,userEntry.value,-1,[],getTimer()-matchStartTime));
+					serverEntries.push(ServerEntry.create(userEntry.key,userEntry.value,-1,[],getTimer()-matchStartTime));
 				}
 				else
 				{
+					broadcastServerEntries.push(ServerEntry.create(userEntry.key,userEntry.value,-1,null,getTimer()-matchStartTime));
+					doStoreOneState(ServerEntry.create(userEntry.key,userEntry.value,-1,null,getTimer()-matchStartTime));
 					serverEntries.push(ServerEntry.create(userEntry.key,userEntry.value,-1,null,getTimer()-matchStartTime));
-					doStoreOneState(ServerEntry.create(userEntry.key,userEntry.value,-1,null,getTimer()-matchStartTime));	
 				}
 			}
 			deltaHistory.addDelta(getOngoingPlayerIds(),serverEntries);	
-			broadcast(API_GotStateChanged.create(serverEntries));
+			showHistory()
+			broadcast(API_GotStateChanged.create(broadcastServerEntries));
 		}
 		private function doAllStoreStateCalculation(msg:API_DoAllStoreStateCalculation):void
 		{
+			var broadcastServerEntries:Array =/*ServerEntry*/ new Array();
 			var serverEntries:Array =/*ServerEntry*/ new Array();
 			if (msg.userEntries.length == 0)
 			{
@@ -903,22 +908,26 @@ package emulator {
 				gameOver();
 				return;
 			}
+			
 			for each(var userEntry:UserEntry in msg.userEntries)
 			{
 				if(userEntry.isSecret)
 				{
-					serverEntries.push(ServerEntry.create(userEntry.key,null,-1,[],getTimer()-matchStartTime));
+					broadcastServerEntries.push(ServerEntry.create(userEntry.key,null,-1,[],getTimer()-matchStartTime));
+					serverEntries.push(ServerEntry.create(userEntry.key,userEntry.value,-1,[],getTimer()-matchStartTime));
 					doStoreOneState(ServerEntry.create(userEntry.key,userEntry.value,-1,[],getTimer()-matchStartTime));
 				}
 				else
 				{
 					var serverEntry:ServerEntry = ServerEntry.create(userEntry.key,userEntry.value,-1,null,getTimer()-matchStartTime)
+					broadcastServerEntries.push(serverEntry);
 					serverEntries.push(serverEntry);
 					doStoreOneState(serverEntry);	
 				}
 			}
 			deltaHistory.addDelta(getOngoingPlayerIds(),serverEntries);	
-			broadcast(API_GotStateChanged.create(serverEntries));	
+			showHistory()
+			broadcast(API_GotStateChanged.create(broadcastServerEntries));	
 		}
 		private function doAllRequestStateCalculation(msg:API_DoAllRequestStateCalculation):void
 		{
@@ -974,19 +983,16 @@ package emulator {
 			var serverEntry:ServerEntry;
 			var serverEntries:Array =new Array/*ServerEntry*/
 			var shuffleIndex:int;
+			var broadcastServerEntries:Array = new Array/*ServerEntry*/
 			while(serverStateValues.length > 0)
 			{
 				shuffleIndex=Math.floor(Math.random()*serverStateValues.length)
 				serverEntry=doShuffleOn(serverStateValues.splice(shuffleIndex,1),serverStateKeys.shift());
-				tempServerEntry = new ServerEntry();
-				tempServerEntry.key =serverEntry.key; 
-				tempServerEntry.value = null;
-				tempServerEntry.visibleToUserIds = [];
-				tempServerEntry.storedByUserId = -1;
-				tempServerEntry.changedTimeInMilliSeconds = serverEntry.changedTimeInMilliSeconds;
-				serverEntries.push(tempServerEntry);
+				serverEntries.push(serverEntry);
+				broadcastServerEntries.push(ServerEntry.create(serverEntry.key,null,-1,[],serverEntry.changedTimeInMilliSeconds));
 			}
 			deltaHistory.addDelta(getOngoingPlayerIds(),serverEntries);	
+			showHistory()
 			broadcast(API_GotStateChanged.create(serverEntries));
 		}
 		private function doAllRevealState(msg:API_DoAllRevealState):void
@@ -1036,7 +1042,8 @@ package emulator {
 				}
 			}		
 			var tempServerEntries:Array;
-			deltaHistory.addDelta(getOngoingPlayerIds(),serverEntries);	
+			deltaHistory.addDelta(getOngoingPlayerIds(),serverEntries);
+			showHistory()	
 			for each(var user:User in aUsers)
 			{
 				tempServerEntries = new Array();
@@ -1063,14 +1070,16 @@ package emulator {
 			if(msg.isSecret)
 			{
 				serverEntry = ServerEntry.create(msg.key,null,-1,[],getTimer()-matchStartTime)
+				deltaHistory.addDelta(getOngoingPlayerIds(),[ServerEntry.create(msg.key,randomSeed,-1,[],getTimer()-matchStartTime)]);	
 				doStoreOneState(ServerEntry.create(msg.key,randomSeed,-1,[],getTimer()-matchStartTime));
 			}
 			else
 			{
 				serverEntry = ServerEntry.create(msg.key,randomSeed,-1,null,getTimer()-matchStartTime);
+				deltaHistory.addDelta(getOngoingPlayerIds(),[serverEntry]);	
 				doStoreOneState(serverEntry);
 			}
-			deltaHistory.addDelta(getOngoingPlayerIds(),[serverEntry]);	
+			showHistory()
 			broadcast(API_GotStateChanged.create([serverEntry]));
 		}
 		private function doAllEndMatch(msg:API_DoAllEndMatch):void
@@ -1109,7 +1118,8 @@ package emulator {
 				queueTimer.start();
 				broadcast(API_GotMatchEnded.create(tempFinishedPlayersIds));
 			}
-			
+			showMatchOver();
+			showHistory();
 		}
 		
 		private function doAllSetTurn(msg:API_DoAllSetTurn):void
@@ -1498,7 +1508,7 @@ package emulator {
 				
 				tblInfo.columns=[COL_User,COL_MethodName,COL_Parameters,COL_UnverifiedPlayers];
 				
-				showStoreQue();
+				showUnverifiedQue();
 			}
 		}
 		private function btnDoAll(ev:MouseEvent):void
@@ -1513,7 +1523,7 @@ package emulator {
 				iInfoMode=2;
 				
 				tblInfo.columns=[COL_User,COL_Message];
-				showDoAllQue();
+				showWaitingFunctionQue();
 			}
 		}
 		
@@ -1572,7 +1582,7 @@ package emulator {
 			goBackToHistory.visible = true;
 			pnlInfo.visible=true;
 			if(iInfoMode!=8){
-				changedToDelta = 0;
+				changedToDelta = -1;
 				iInfoMode=8;	
 				tblInfo.columns=[COL_changeNum,COL_player_ids,COL_serverEntries];
 				showHistory();
@@ -1581,15 +1591,26 @@ package emulator {
 		private function doGoBack(ev:MouseEvent):void
 		{
 			trace("*********"+changedToDelta)
-			//todo revert
-			//todo finished games
-			//todo finished players
-			if(changedToDelta!=0)
+			gameOver();
+			if(changedToDelta!=-1)
 			{
 				//general game state
 				var serverEntries:Array/*ServerEntry*/ = deltaHistory.getServerEntries(changedToDelta);
-				
-				//var ongoingPlayers:Array/*int*/ = = deltaHistory.getOngoingPlayers(changedToDelta); 
+				afinishedPlayers = deltaHistory.getFinishedGames(changedToDelta); 
+				aPlayers = deltaHistory.getPlayers(0)	
+				FinishHistory.wholePot = 100;
+				FinishHistory.totalFinishingPlayers = 0;
+				for each(var savedFinishedPlayer:FinishHistory in afinishedPlayers)
+				{
+					var tempPotPercentage:Number = 0;
+					for each(var playerMatchOver:PlayerMatchOver in savedFinishedPlayer.finishedPlayers)
+					{
+						tempPotPercentage += playerMatchOver.potPercentage
+						FinishHistory.totalFinishingPlayers ++;
+					}
+					FinishHistory.wholePot -= FinishHistory.wholePot*tempPotPercentage / 100;
+				}
+						
 				serverState = new ObjectDictionary();
 				for each(var severEntry:ServerEntry in serverEntries)
 				{
@@ -1612,69 +1633,9 @@ package emulator {
 					send_got_match_started(usr);						
 				}
 				pnlLoad.visible = false;
-				showMsg("History was restored","Message");
-		
-				
-			
-			
-			
-			
-	
-			
-			/*
-			if (cmbLoadName.selectedIndex == -1) {
-				return;
-			}
-			var transferByteArray:ByteArray = new ByteArray()
-			transferByteArray.writeObject(cmbLoadName.selectedItem.data);
-			transferByteArray.position = 0;
-			var savedGame:SavedGame = SerializableClass.deserialize(transferByteArray.readObject()) as SavedGame;
-			serverState = savedGame.serverState;
-			deltaHistory = savedGame.deltaHistory;
-			afinishedPlayers=savedGame.finishedGames.concat();
-			aPlayers = savedGame.players.concat();
-			
-			for each(var savedFinishedPlayer:FinishHistory in afinishedPlayers)
-			{
-				var tempPotPercentage:Number = 0;
-				for each(var playerMatchOver:PlayerMatchOver in savedFinishedPlayer.finishedPlayers)
-				{
-					tempPotPercentage += playerMatchOver.potPercentage
-					FinishHistory.totalFinishingPlayers ++;
-				}
-				FinishHistory.wholePot -= FinishHistory.wholePot*tempPotPercentage / 100;
-			}			
-			extra_match_info=savedGame.extra_match_info;
-			match_started_time = savedGame.match_started_time;
-			if(extra_match_info!=null){
-				txtExtraMatchInfo.text = JSON.stringify(extra_match_info);
-			}else {
-				txtExtraMatchInfo.text = "";
-			}
-			
-			txtMatchStartedTime.text = match_started_time.toString();
-			showMatchState();
-			showMatchOver();
-			
-			if (aPlayers.length >= savedGame.players.length) {
-				bGameStarted = true;
-				bGameEnded = false;
-				txtExtraMatchInfo.visible = false;
-				txtMatchStartedTime.visible = false;
-				txtTooltipExtraMatchInfo.visible = false;
-				txtTooltipMatchStartedTime.visible = false;
-				btnNewGame.visible = false;
-				btnCancelGame.visible = true;
-				btnSaveGame.visible = true;
-				btnLoadGame.visible = false;
-				for each (var usr:User in aUsers) {
-					send_got_match_started(usr);						
-				}
-				*/
 			}
 			pnlLoad.visible = false;
-			showMsg("Saved game was loaded","Message");
-			
+			showMsg("History was restored","Message");
 			
 			//todo: commit change
 		}
@@ -1701,7 +1662,7 @@ package emulator {
 				txtInfo.text="";
 			}		
 		}
-		private function showStoreQue():void
+		private function showUnverifiedQue():void
 		{
 			if(iInfoMode==7){
 				tblInfo.removeAll();
@@ -1719,7 +1680,7 @@ package emulator {
 				txtInfo.text="";
 			}
 		}
-		private function showDoAllQue():void
+		private function showWaitingFunctionQue():void
 		{
 			if(iInfoMode==2){
 				tblInfo.removeAll();
@@ -2168,7 +2129,7 @@ package emulator {
 				serverEntries.push(serverEntry);
 			}
 			deltaHistory.addDelta(getOngoingPlayerIds(),serverEntries);
-			
+			showHistory()
 			var tempServerEntries:Array;
 			for each(var tempUser:User in aUsers)
 			{
@@ -2186,7 +2147,6 @@ package emulator {
 				tempUser.sendOperation(API_GotStateChanged.create(tempServerEntries));
 			}
 			
-			showMatchState();
 			
 		}
 		private function doStoreOneState(stateEntery:ServerEntry):void {		
@@ -2206,6 +2166,7 @@ package emulator {
 				serverState.remove(stateEntery.key);
 			else
 				serverState.put(stateEntery.key,stateEntery);
+			showMatchState();
 		}
 		public function doFoundHacker(user:User, msg:API_DoAllFoundHacker):void {
 			addMessageLog("Server","doAllFoundHacker",user.Name+" claimed he found a hacker:"+ msg.toString());
@@ -2230,7 +2191,9 @@ package emulator {
 			iCurTurn=-1;
 			//serverInfoEnteries=new Array;
 			unverifiedQueue=new Array;
+			showUnverifiedQue();
 			waitingQueue=new Array;
+			showWaitingFunctionQue();
 			//afinishedPlayers=new Array();
 			bGameEnded = true;
 			txtMatchStartedTime.text = "";

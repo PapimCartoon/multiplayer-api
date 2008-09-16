@@ -21,17 +21,15 @@ package come2play_as3.minesweeper
 		private var isMine:Boolean;
 		private var madeMoves:int;
 		public var myUserId:int;
-		public function MineSweeper_Logic(mineSweeper_MainPointer:MineSweeper_Main,graphics:MovieClip,boardWidth:int,boardHeight:int)
+		private var stageX:int;
+		private var stageY:int;
+		public function MineSweeper_Logic(mineSweeper_MainPointer:MineSweeper_Main,graphics:MovieClip)
 		{
 			this.mineSweeper_MainPointer = mineSweeper_MainPointer;
 			this.graphics = graphics;
-			this.boardWidth = boardWidth;
-			this.boardHeight = boardHeight;
-			
-			shift = new Shift()
+			shift = new Shift();
 			shift.x = 250;
 			shift.y = 300;
-			
 			
 			shift.addEventListener(MouseEvent.CLICK,pressShift);
 			shift.addEventListener(MouseEvent.ROLL_OVER,overShift);
@@ -75,8 +73,13 @@ package come2play_as3.minesweeper
 				shift.gotoAndStop(1);
 				
 		}
-		public function renewBoard():void
+		public function renewBoard(boardWidth:int,boardHeight:int,stageX:int,stageY:int,myUserId:int):void
 		{
+			this.boardWidth = boardWidth;
+			this.boardHeight = boardHeight;
+			this.stageX = stageX;
+			this.stageY = stageY;
+			this.myUserId = myUserId;
 			if(mineSweeper_Graphic!=null)
 				this.graphics.removeChild(mineSweeper_Graphic);
 		}
@@ -133,8 +136,8 @@ package come2play_as3.minesweeper
 		}
 		private function selectMine(ev:MouseEvent):void
 		{
-			var posX:int = Math.floor((ev.stageX-14.5)/16);
-			var posY:int = Math.floor((ev.stageY-30)/16);
+			var posX:int = Math.floor((ev.stageX-(stageX+9.5))/16);
+			var posY:int = Math.floor((ev.stageY-(stageY+7))/16);
 			if((posX> -1)&&(posX<(boardWidth+1))&&(posY>-1)&&(posY<(boardHeight+1)))
 				if(boardLogic[posX][posY] ==-1)
 					mineSweeper_MainPointer.pressMine(posX,posY,isMine);

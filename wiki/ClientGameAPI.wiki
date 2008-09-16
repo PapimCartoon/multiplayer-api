@@ -4,7 +4,7 @@ The communication between your game and our server is done by writing a class th
 
 The functions in `ClientGameAPI` can be divided into two categories: Operations and Callbacks.
 
-before elaborating on the subject,you must be aware of a few convention used:
+Before elaborating on the subject, you must be aware of a few convention used:
 
 We write `Array/*int*/` to denote an `Array` that contains only `int` objects;
 Similarly, `Array/*String*/` is an `Array` that contains only `String` objects.

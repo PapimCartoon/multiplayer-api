@@ -1,5 +1,41 @@
 #summary An insecure multiplayer API
 
+{{{
+<?php
+
+$reader = new XMLReader();
+$reader->open("http://www.come2play.com/channel_rss_currently_playing.asp?channel_id={channel_id}");
+
+while ($reader->read()) {
+    switch ($reader->nodeType) {
+      case (XMLREADER::ELEMENT):
+      if ($reader->localName == "item") {
+          $node = $reader->expand();
+          $dom = new DomDocument();
+          $n = $dom->importNode($node,true);
+          $dom->appendChild($n);
+          $xp = new DomXpath($dom);
+
+          $game_id = $xp->query("/item/game_id")->item(0)->nodeValue;
+          $title = $xp->query("/item/title")->item(0)->nodeValue;
+          $description = $xp->query("/item/description")->item(0)->nodeValue;
+          $link = $xp->query("/item/link")->item(0)->nodeValue;
+          ?>
+         <p>
+            <img src="http://www.come2play.com/shared/images/games/thumbnail_<?=$game_id?>.gif" width="70" height="70" style="float:left;" />
+            <strong><a href="<?=$link?>" target="come2play_iframe"><?=$title?></a></strong>
+            <br /><?=$description?>
+        </p>
+        <div style="clear:both"></div>
+        <?php
+       }
+    }
+}
+?>
+}}}
+
+
+
 The communication between your game and our server is done by writing a class that extends `ClientGameAPI.as`, and instantiating one instance of your class.
 
 The functions in `ClientGameAPI` can be divided into two categories: Operations and Callbacks.

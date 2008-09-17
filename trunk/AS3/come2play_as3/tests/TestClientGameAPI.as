@@ -14,8 +14,9 @@ public class TestClientGameAPI extends ClientGameAPI {
 	private var exampleOperationsText:Object;
 	private var operationInput:Object;
 	
-	private var test_Arr:Array;
-	private static const shouldTestPassNumbers:Boolean = false;
+	private var myUserId:int;
+	private var allPlayerIds:Array/*int*/;
+	public static var shouldTest:Boolean = true;
 	
 	public function TestClientGameAPI(rootGraphics:MovieClip) {
 		super(rootGraphics);
@@ -57,35 +58,263 @@ public class TestClientGameAPI extends ClientGameAPI {
 			"\ndoAllEndMatch([{'__CLASS_NAME__': 'COME2PLAY_PACKAGE.auto_generated::PlayerMatchOver', 'playerId': 41, 'score': 1000, 'potPercentage': 20}])"+
 			"\n"
 			);
-		exampleOperationsText.text = allOperationsWithParameters.join("\n");
-		
-		if (shouldTestPassNumbers) {	
-			test_Arr = getNumberArr();
-			trace("test_Arr="+test_Arr);
-		}
+		exampleOperationsText.text = allOperationsWithParameters.join("\n");		
 		AS3_vs_AS2.addOnPress(my_graphics.sendOperation, AS3_vs_AS2.delegate(this, this.dispatchOperation) );
 		doRegisterOnServer();			
 	}
 	
-	override public function gotMyUserId(userId:int):void {		
-		if (shouldTestPassNumbers) doStoreState([ UserEntry.create("test", test_Arr, false)]);
+	override public function gotMyUserId(userId:int):void {	
+		myUserId = userId;	
 	}
-	override public function gotStateChanged(serverEntries:Array/*ServerEntry*/):void { 
-		if (shouldTestPassNumbers) {
-			var state:ServerEntry = serverEntries[0];
-			var value:Array = AS3_vs_AS2.asArray(state.value);  
-			for (var i:int=0; i<test_Arr.length; i++) {
-				var val:int = test_Arr[i];
-				var val2:int = value[i];
-				if (val!=val2) {
-					LocalConnectionUser.throwError("Found different values, val="+val+" val2="+val2);
-				}
-			}			
+	private function generateKey():Object {
+		var obj:Object = {};
+		var order:Boolean = Math.random()>0.5;
+		obj[order ? "a" : "b"] = order ? 't' : 42;
+		obj[!order ? "a" : "b"] = !order ? 't' : 42;
+		// obj is the same, regardless of the order
+		return [42,true,obj];
+	}
+	
+	private var testDoubleNumbers:Boolean = false;
+	override public function gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, extraMatchInfo:Object, matchStartedTime:int, serverEntries:Array/*ServerEntry*/):void {
+		this.allPlayerIds = allPlayerIds;
+		if (!shouldTest) return;
+		var test_Arr:Array = null;
+		if (myUserId==allPlayerIds[0]) {
+			test_Arr = testDoubleNumbers ? getNumberArr() : [Math.sqrt(2)];			
 		}
+		
+		expect(
+		function ():void {
+			if (myUserId==allPlayerIds[0]) 
+				doStoreState([ UserEntry.create("testNumbers"+myUserId, test_Arr, false)]);
+		},
+		function (entries:Array):void {
+			var entry:ServerEntry = entries[0];	
+			require(entry.key=="testNumbers"+allPlayerIds[0]);
+			require(entry.visibleToUserIds==null);
+			require(entry.storedByUserId==allPlayerIds[0]);
+			if (myUserId==allPlayerIds[0]) require(ObjectDictionary.areEqual(entry.value, test_Arr));	
+		});
+
+		
+		expect(
+		function ():void {
+			// testing doAllStoreState with public and secret entries.
+			doAllStoreState( 
+				[ 
+				UserEntry.create("doAllStoreState-public","val-doAllStoreState-public",false), 
+				UserEntry.create("doAllStoreState-secret","val-doAllStoreState-secret",true) 
+				]);			
+		},
+		function (entries:Array):void {		
+			require(entries.length==2);
+			var entry1:ServerEntry = entries[0];
+			var entry2:ServerEntry = entries[1];
+			require(entry1.storedByUserId==-1);
+			require(entry2.storedByUserId==-1);
+			require(entry1.key=="doAllStoreState-public");
+			require(entry1.visibleToUserIds==null);		
+			require(entry1.value=="val-doAllStoreState-public");
+			require(entry2.key=="doAllStoreState-secret");
+			require(entry2.visibleToUserIds.length==0);
+			require(entry2.value==null);			
+		});
+		
+				
+		var key:Object = generateKey();
+		var sameKey:Object = generateKey();
+		expect(
+		function ():void {
+			// We test reveal	
+			doAllStoreState([UserEntry.create(key, "val-doStoreState1",false) ]);
+		},
+		function (entries:Array):void {	
+			var entry:ServerEntry = entries[0];		
+			require(ObjectDictionary.areEqual(entry.key, sameKey));
+			require(entry.visibleToUserIds==null);
+			require(entry.storedByUserId==-1);		
+			require(entry.value=="val-doStoreState1");		
+		});
+					
+		expect(
+		function ():void {
+			// we test storing the same key with different values&secret
+			doAllStoreState([UserEntry.create(sameKey, "val-doStoreState2",true) ]);			
+		},
+		function (entries:Array):void {
+			var entry:ServerEntry = entries[0];	
+			require(ObjectDictionary.areEqual(entry.key, sameKey));
+			require(entry.visibleToUserIds.length==0);
+			require(entry.storedByUserId==-1);		
+			require(entry.value==null);				
+		});
+				
+		expect(
+		function ():void {
+			// reveal all secret values
+			doAllRevealState([RevealEntry.create(key)]);
+		},
+		function (entries:Array):void {	
+			var entry:ServerEntry = entries[0];	
+			require(ObjectDictionary.areEqual(entry.key, sameKey));
+			require(entry.visibleToUserIds==null);
+			require(entry.storedByUserId==-1);		
+			require(entry.value=="val-doStoreState2");				
+		});
+		
+		
+			
+		expect(
+		function ():void {
+			// test reveal with depth>0
+			var userEntries:Array = [];
+			var i:int;
+			for (i=1; i<12; i++)
+				userEntries.push( UserEntry.create(i, i+1,true) );
+			doAllStoreState(userEntries);
+		},
+		function (entries:Array):void {	
+			for (var j:int=1; j<12; j++) {
+				var entry:ServerEntry = entries[j-1];
+				require(entry.key==j);
+				require(entry.visibleToUserIds.length==0);
+				require(entry.storedByUserId==-1);
+				require(entry.value==null);
+			}								
+		});
+		
+				
+		expect(
+		function ():void {
+			doAllRevealState(
+			[ 
+				// this will reveal 6 entries to all players
+				RevealEntry.create(1,null,5), 
+				// this will reveal entries 8 till 11 to the first player
+				RevealEntry.create(8,[allPlayerIds[0]],100) 
+			]);				
+		},
+		function (entries:Array):void {		
+			require(entries.length==6+4);
+			var entry:ServerEntry;
+			var j:int;
+			for (j=1; j<=6; j++) {
+				entry = entries[j-1];
+				require(entry.key==j);
+				require(entry.visibleToUserIds==null);
+				require(entry.storedByUserId==-1);
+				require(entry.value==j+1);
+			}			
+			for (j=8; j<12; j++) {		
+				entry = entries[6+j-8];
+				require(entry.key==j);
+				require(entry.visibleToUserIds.length==1 && entry.visibleToUserIds[0]==allPlayerIds[0]);
+				require(entry.storedByUserId==-1);
+				require(entry.value== (allPlayerIds[0]==myUserId ? j+1 : null) );
+			}							
+		});	
+		
+			
+		expect(
+		function ():void {
+			// test shuffle - shuffle will cause these entries to be invisible
+			doAllShuffleState([5,6,7,8,9]);
+		},
+		function (entries:Array):void {		
+			require(entries.length==5);
+			var entry:ServerEntry;
+			var j:int;
+			for (j=5; j<=9; j++) {
+				entry = entries[j-5];	
+				require(entry.key==j);
+				require(entry.visibleToUserIds.length==0);
+				require(entry.storedByUserId==-1);
+				require(entry.value==null);
+			}		
+		});
+		
+			
+		expect(
+		function ():void {
+			var revealEntries:Array = [];
+			for (var i:int=5; i<=9; i++)
+				revealEntries.push(RevealEntry.create(i,null,0));		
+			doAllRevealState(revealEntries);			
+		},
+		function (entries:Array):void {		
+			require(entries.length==5);		
+			var entry:ServerEntry;
+			var j:int;
+			var sum:int = 0;
+			for (j=5; j<=9; j++) {
+				entry = entries[j-5];	
+				require(entry.key==j);
+				require(entry.visibleToUserIds==null);
+				require(entry.storedByUserId==-1);			
+				// the values were shuffled, so I just check the sum of all values did not change.	
+				sum += j+1;
+				sum -= entry.value;
+			}		
+			require(sum==0);
+		});
+		
+		expect(
+		function ():void {
+			// to end the game I simulate a real-time game:
+			// the first one to store a certain value will win!
+			doStoreState([UserEntry.create("winner","I won!",true)]);			
+		},
+		function (entries:Array):void {		
+			require(entries.length==1);
+			var entry:ServerEntry = entries[0];
+			var winnerId:int = entry.storedByUserId;	
+			require(entry.key=="winner");
+			require(entry.visibleToUserIds.length==1 && entry.visibleToUserIds[0]==winnerId);
+			require(winnerId!=-1);
+			require(entry.value== (myUserId==winnerId ? "I won!" : null) );		
+			
+			var finishedPlayers:Array = [];
+			for each (var id:int in allPlayerIds) {
+				finishedPlayers.push( PlayerMatchOver.create(id, id==winnerId ? 1000 : -1000, id==winnerId ? 100 : 0) );		
+			}
+			doAllEndMatch(finishedPlayers);			
+		});
+		doNext();
+	}
+	override public function gotMatchEnded(finishedPlayerIds:Array/*int*/):void {
+		require(funcDoArr.length==0);
+		require(funcResArr.length==0);
+		lastTime = 0;
+	}
+		
+	private var funcDoArr:Array/*Function*/ = [];
+	private var funcResArr:Array/*Function*/ = [];
+	private var lastTime:int = 0;
+	private function require(bool:Boolean):void {
+		if (!bool) StaticFunctions.throwError("require failed!")
+	}
+	private function expect(funcDo:Function, funcRes:Function):void {
+		funcDoArr.push(funcDo);	
+		funcResArr.push(funcRes);	
+	}
+	private function doNext():void {
+		var funcDo:Function = funcDoArr.shift();
+		funcDo();
+	}
+	override public function gotStateChanged(serverEntries:Array/*ServerEntry*/):void {
+		var entry:ServerEntry = serverEntries[0];	
+		require(lastTime<=entry.changedTimeInMilliSeconds);
+		lastTime = entry.changedTimeInMilliSeconds;
+		
+		if (funcResArr.length==0) return; // because the last doStoreState is done by all players and therefore gotStateChanged may be called several times  
+		var funcRes:Function = funcResArr.shift();
+		funcRes(serverEntries);
+		if (funcDoArr.length>0) doNext();
 	}		
 	public static function getNumberArr():Array {
 		var res:Array = [];
-		for (var i:int=0; i<4; i++) {
+		for (var i:int=0; i<2; i++) {
 			var num:Number = Math.random()-0.5;
 			while (num!=0 && num!=Number.NEGATIVE_INFINITY && num!=Number.POSITIVE_INFINITY && num!=Number.MAX_VALUE && num!=Number.MIN_VALUE) {					
 				res.push(num);

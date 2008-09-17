@@ -13,13 +13,14 @@ package come2play_as3.api {
 	 */ 
 	public class BaseGameAPI extends LocalConnectionUser 
 	{        
-		private var sPrefix:String;
 		public function BaseGameAPI(_someMovieClip:MovieClip) {
-			super(_someMovieClip, false, sPrefix = getPrefixFromFlashVars(_someMovieClip));
-			if (sPrefix==null) 
+			super(_someMovieClip, false, getPrefixFromFlashVars(_someMovieClip));
+			if (getPrefixFromFlashVars(_someMovieClip)==null) 
 				new SinglePlayerEmulator(_someMovieClip);
 			StaticFunctions.performReflectionFromFlashVars(_someMovieClip);	
 		}
+		private var transactionDepth:int = 0;
+		private var msgsInTransaction:Array/*API_Message*/ = [];
 		private var hackerUserId:int = -1;
 		private var runningAnimationsNumber:int = 0;
 		private var nonFinishedMsg:API_Message = null;
@@ -28,6 +29,7 @@ package come2play_as3.api {
 		}
         override public function gotMessage(msg:API_Message):void {
         	try {
+        		startTransaction();
         		if (nonFinishedMsg!=null)
         			throwError("The container sent an API message without waiting for DoFinishedCallback");
 				nonFinishedMsg = msg;    			 
@@ -45,14 +47,14 @@ package come2play_as3.api {
 				if (func==null) return;
 				func.apply(this, msg.getMethodParameters());
     		} finally {
-    			sendFinishedCallback();        			
+    			endTransaction();       
+    			sendFinishedCallback(); 			
     		}        		   	
         }
         private function sendFinishedCallback():void {        	
         	if (runningAnimationsNumber>0 || nonFinishedMsg==null) return;
-        	var msg:API_Message = nonFinishedMsg;    	
+			super.sendMessage( API_DoFinishedCallback.create(nonFinishedMsg.getMethodName()) );    	
         	nonFinishedMsg = null;
-			sendMessage( API_DoFinishedCallback.create(msg.getMethodName()) );
         }
         public function animationStarted():void {
         	runningAnimationsNumber++;        	
@@ -62,6 +64,34 @@ package come2play_as3.api {
         		throwError("Called animationEnded too many times!");
         	runningAnimationsNumber--;
         	sendFinishedCallback();        	        	
+        }
+        
+        
+        override public function sendMessage(msg:API_Message):void {
+        	if (msg is API_DoRegisterOnServer || msg is API_DoTrace) {
+        		super.sendMessage(msg);
+        		return;
+        	}
+        	if (!(msg is API_DoStoreState || 
+        		  StaticFunctions.startsWith(msg.getMethodName(), "doAll")))
+        		StaticFunctions.throwError("Illegal sendMessage="+msg);
+        	msgsInTransaction.push(msg);        	
+        	finishTransaction();        	
+        }
+        private function finishTransaction():void {
+        	if (transactionDepth==0 && msgsInTransaction.length>0) {       		
+        		super.sendMessage( API_Transaction.create(msgsInTransaction) );
+        		msgsInTransaction = [];
+        	}        	
+        }
+        public function startTransaction():void {
+        	transactionDepth++;
+        }
+        public function endTransaction():void {
+        	if (transactionDepth<=0) 
+        		StaticFunctions.throwError("You called endTransaction when no transaction is in progress");
+        	transactionDepth--;    	
+        	finishTransaction();
         }
 	}
 }

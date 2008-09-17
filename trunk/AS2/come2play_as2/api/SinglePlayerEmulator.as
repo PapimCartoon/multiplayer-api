@@ -59,8 +59,13 @@ import come2play_as2.api.*;
 			queueSendMessage(API_GotKeyboardEvent.create(is_key_down, charCode, keyCode, keyLocation, altKey, ctrlKey, shiftKey) );
 		}		
 		
-        /*override*/ public function gotMessage(msg:API_Message):Void {
-			if (msg instanceof API_DoAllEndMatch) {
+        /*override*/ public function gotMessage(msg:API_Message):Void {        	
+			if (msg instanceof API_Transaction) {
+				var transaction:API_Transaction = API_Transaction(msg);
+				for (var i65:Number=0; i65<transaction.messages.length; i65++) { var innerMsg:API_Message = transaction.messages[i65]; 
+					gotMessage(innerMsg);
+				}
+			} else if (msg instanceof API_DoAllEndMatch) {
 				AS3_vs_AS2.myTimeout(AS3_vs_AS2.delegate(this, this.sendNewMatch), 2000);
 			} else if (msg instanceof API_DoRegisterOnServer) {
 				doRegisterOnServer();

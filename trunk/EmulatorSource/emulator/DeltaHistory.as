@@ -17,7 +17,6 @@ package emulator
 		{
 			if(currentTurn < gameTurns.length)
 			{
-				trace("tryed to cahnge ***********************************")
 				gameTurns = gameTurns.slice(0,currentTurn+1);
 			}
 			currentTurn++
@@ -32,6 +31,10 @@ package emulator
 			checkIfTop();
 			gameTurns.push(PlayerDelta.create(ongoingPlayerIds,[],finishHistory));
 		}	
+		public function getDelta(deltaNum:int):PlayerDelta
+		{
+			return gameTurns[deltaNum];
+		}
 		public function getServerEntries(tillTurn:int):Array/*ServerEntry*/
 		{
 			currentTurn = tillTurn;

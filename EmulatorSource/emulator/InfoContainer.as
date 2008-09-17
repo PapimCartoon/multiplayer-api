@@ -458,7 +458,7 @@ package emulator {
 					var CustomMessage:API_GotCustomInfo = msg as API_GotCustomInfo
 					CustomMessage.infoEntries.push(InfoEntry.create("CONTAINER_gameStageX",frameSprite.x))
 					CustomMessage.infoEntries.push(InfoEntry.create("CONTAINER_gameStageY",frameSprite.y))
-					sendGotOperation(CustomMessage);
+					sendGotOperation(msg);
 					return;
 				}
         		

@@ -1,4 +1,4 @@
-﻿package come2play_as3.api
+package come2play_as3.api
 {
 	import come2play_as3.api.auto_copied.*;
 	import come2play_as3.api.auto_generated.*;
@@ -61,8 +61,13 @@
 			queueSendMessage(API_GotKeyboardEvent.create(is_key_down, charCode, keyCode, keyLocation, altKey, ctrlKey, shiftKey) );
 		}		
 		
-        override public function gotMessage(msg:API_Message):void {
-			if (msg is API_DoAllEndMatch) {
+        override public function gotMessage(msg:API_Message):void {        	
+			if (msg is API_Transaction) {
+				var transaction:API_Transaction = msg as API_Transaction;
+				for each (var innerMsg:API_Message in transaction.messages) {
+					gotMessage(innerMsg);
+				}
+			} else if (msg is API_DoAllEndMatch) {
 				AS3_vs_AS2.myTimeout(AS3_vs_AS2.delegate(this, this.sendNewMatch), 2000);
 			} else if (msg is API_DoRegisterOnServer) {
 				doRegisterOnServer();

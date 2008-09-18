@@ -2141,10 +2141,9 @@ package emulator {
 				if(dicArray[serverEntry.key] == null)
 				{
 					dicArray[serverEntry.key] = true;
-					serverEntries.push(serverEntry);
+					serverEntries.unshift(serverEntry);
 				}
 			}
-			
 			
 			var tempServerEntries:Array/*ServerEntry*/;
 			for each(var tempUser:User in aUsers)

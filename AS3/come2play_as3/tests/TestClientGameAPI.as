@@ -81,10 +81,14 @@ public class TestClientGameAPI extends ClientGameAPI {
 		if (!shouldTest) return;
 		var test_Arr:Array = null;
 		if (myUserId==allPlayerIds[0]) {
-			test_Arr = testDoubleNumbers ? getNumberArr() : [Math.sqrt(2)]; 
-			doStoreState([ UserEntry.create("testNumbers"+myUserId, test_Arr, false)]);			
+			test_Arr = testDoubleNumbers ? getNumberArr() : [Math.sqrt(2)]; 		
 		}		
 		expect(
+		function ():void {
+			if (myUserId==allPlayerIds[0]) {
+				doStoreState([ UserEntry.create("testNumbers"+myUserId, test_Arr, false)]);			
+			}				
+		},
 		function (entries:Array):void {
 			var entry:ServerEntry = entries[0];	
 			require(entry.key=="testNumbers"+allPlayerIds[0]);
@@ -93,13 +97,16 @@ public class TestClientGameAPI extends ClientGameAPI {
 			if (myUserId==allPlayerIds[0]) require(ObjectDictionary.areEqual(entry.value, test_Arr));	
 		});
 
-		// testing doAllStoreState with public and secret entries.
-		doAllStoreState( 
-			[ 
-			UserEntry.create("doAllStoreState-public","val-doAllStoreState-public",false), 
-			UserEntry.create("doAllStoreState-secret","val-doAllStoreState-secret",true) 
-			]);		
 		expect(
+		function ():void {
+			// testing doAllStoreState with public and secret entries.
+			doAllStoreState( 
+				[ 
+				UserEntry.create("doAllStoreState-public","val-doAllStoreState-public",false), 
+				UserEntry.create("doAllStoreState-secret","val-doAllStoreState-secret",true) 
+				]);		
+			
+		},
 		function (entries:Array):void {		
 			require(entries.length==2);
 			var entry1:ServerEntry = entries[0];
@@ -117,9 +124,12 @@ public class TestClientGameAPI extends ClientGameAPI {
 				
 		var key:Object = generateKey();
 		var sameKey:Object = generateKey();
-		// We test reveal	
-		doAllStoreState([UserEntry.create(key, "val-doStoreState1",false) ]);
 		expect(
+		function ():void {
+			// We test reveal	
+			doAllStoreState([UserEntry.create(key, "val-doStoreState1",false) ]);
+			
+		},
 		function (entries:Array):void {	
 			var entry:ServerEntry = entries[0];		
 			require(ObjectDictionary.areEqual(entry.key, sameKey));
@@ -128,9 +138,12 @@ public class TestClientGameAPI extends ClientGameAPI {
 			require(entry.value=="val-doStoreState1");		
 		});
 					
-		// we test storing the same key with different values&secret
-		doAllStoreState([UserEntry.create(sameKey, "val-doStoreState2",true) ]);
 		expect(
+		function ():void {
+			// we test storing the same key with different values&secret
+			doAllStoreState([UserEntry.create(sameKey, "val-doStoreState2",true) ]);
+			
+		},
 		function (entries:Array):void {
 			var entry:ServerEntry = entries[0];	
 			require(ObjectDictionary.areEqual(entry.key, sameKey));
@@ -139,9 +152,11 @@ public class TestClientGameAPI extends ClientGameAPI {
 			require(entry.value==null);				
 		});
 				
-		// reveal all secret values
-		doAllRevealState([RevealEntry.create(key)]);
 		expect(
+		function ():void {
+			// reveal all secret values
+			doAllRevealState([RevealEntry.create(key)]);			
+		},
 		function (entries:Array):void {	
 			var entry:ServerEntry = entries[0];	
 			require(ObjectDictionary.areEqual(entry.key, sameKey));
@@ -152,13 +167,16 @@ public class TestClientGameAPI extends ClientGameAPI {
 		
 		
 			
-		// test reveal with depth>0
-		var userEntries:Array = [];
-		var i:int;
-		for (i=1; i<12; i++)
-			userEntries.push( UserEntry.create(i, i+1,true) );
-		doAllStoreState(userEntries);
 		expect(
+		function ():void {
+			// test reveal with depth>0
+			var userEntries:Array = [];
+			var i:int;
+			for (i=1; i<12; i++)
+				userEntries.push( UserEntry.create(i, i+1,true) );
+			doAllStoreState(userEntries);
+			
+		},
 		function (entries:Array):void {	
 			for (var j:int=1; j<12; j++) {
 				var entry:ServerEntry = entries[j-1];
@@ -170,14 +188,16 @@ public class TestClientGameAPI extends ClientGameAPI {
 		});
 		
 				
-		doAllRevealState(
-		[ 
-			// this will reveal 6 entries to all players
-			RevealEntry.create(1,null,5), 
-			// this will reveal entries 8 till 11 to the first player
-			RevealEntry.create(8,[allPlayerIds[0]],100) 
-		]);		
 		expect(
+		function ():void {
+			doAllRevealState(
+			[ 
+				// this will reveal 6 entries to all players
+				RevealEntry.create(1,null,5), 
+				// this will reveal entries 8 till 11 to the first player
+				RevealEntry.create(8,[allPlayerIds[0]],100) 
+			]);					
+		},
 		function (entries:Array):void {		
 			require(entries.length==6+4);
 			var entry:ServerEntry;
@@ -199,9 +219,11 @@ public class TestClientGameAPI extends ClientGameAPI {
 		});	
 		
 			
-		// test shuffle - shuffle will cause these entries to be invisible
-		doAllShuffleState([5,6,7,8,9]);
 		expect(
+		function ():void {
+			// test shuffle - shuffle will cause these entries to be invisible
+			doAllShuffleState([5,6,7,8,9]);			
+		},
 		function (entries:Array):void {		
 			require(entries.length==5);
 			var entry:ServerEntry;
@@ -217,11 +239,13 @@ public class TestClientGameAPI extends ClientGameAPI {
 		
 			
 			
-		var revealEntries:Array = [];
-		for (i=5; i<=9; i++)
-			revealEntries.push(RevealEntry.create(i,null,0));		
-		doAllRevealState(revealEntries);
 		expect(
+		function ():void {
+			var revealEntries:Array = [];
+			for (var i:int=5; i<=9; i++)
+				revealEntries.push(RevealEntry.create(i,null,0));		
+			doAllRevealState(revealEntries);			
+		},
 		function (entries:Array):void {		
 			require(entries.length==5);		
 			var entry:ServerEntry;
@@ -242,10 +266,13 @@ public class TestClientGameAPI extends ClientGameAPI {
 		
 		// to end the game I simulate a real-time game:
 		// the first one to store a certain value will win!
-		doStoreState([UserEntry.create("winner","I won!",true)]);	
 		var didSendEndMatch:Boolean = false;
-		for (i=0; i<allPlayerIds.length; i++)
+		for (var i:int=0; i<allPlayerIds.length; i++)
 			expect(
+			function ():void {
+				if (!didSendEndMatch)
+					doStoreState([UserEntry.create("winner","I won!",true)]);
+			},
 			function (entries:Array):void {		
 				require(entries.length==1);
 				var entry:ServerEntry = entries[0];
@@ -264,18 +291,28 @@ public class TestClientGameAPI extends ClientGameAPI {
 					doAllEndMatch(finishedPlayers);
 				}			
 			});
+			
+		// start the first transaction
+		doTransaction();
 	}
 	override public function gotMatchEnded(finishedPlayerIds:Array/*int*/):void {
 		require(funcResArr.length==0);
+		require(funcDoArr.length==0);
 		lastTime = 0;
+	}
+	private function doTransaction():void {
+		var funcDo:Function = funcDoArr.shift();
+		funcDo();		
 	}
 		
 	private var funcResArr:Array/*Function*/ = [];
+	private var funcDoArr:Array/*Function*/ = [];
 	private var lastTime:int = 0;
 	private function require(bool:Boolean):void {
 		if (!bool) StaticFunctions.throwError("require failed!")
 	}
-	private function expect(funcRes:Function):void {
+	private function expect(funcDo:Function, funcRes:Function):void {
+		funcDoArr.push(funcDo);
 		funcResArr.push(funcRes);	
 	}
 	override public function gotStateChanged(serverEntries:Array/*ServerEntry*/):void {
@@ -286,6 +323,7 @@ public class TestClientGameAPI extends ClientGameAPI {
 		require(funcResArr.length>0);  
 		var funcRes:Function = funcResArr.shift();
 		funcRes(serverEntries);
+		if (funcResArr.length>0) doTransaction();
 	}		
 	public static function getNumberArr():Array {
 		var res:Array = [];

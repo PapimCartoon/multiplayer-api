@@ -193,30 +193,57 @@ public class TestClientGameAPI extends ClientGameAPI {
 			doAllRevealState(
 			[ 
 				// this will reveal 6 entries to all players
-				RevealEntry.create(1,null,5), 
-				// this will reveal entries 8 till 11 to the first player
-				RevealEntry.create(8,[allPlayerIds[0]],100) 
+				RevealEntry.create(1,null,5), //keys 1..6
+				RevealEntry.create(3,null,1), // will not reveal anything new
+				RevealEntry.create(4,null,3), // key 7
+				// this will reveal entries 9 till 11 to the first player
+				RevealEntry.create(9,[allPlayerIds[0]],100) 
 			]);					
 		},
 		function (entries:Array):void {		
-			require(entries.length==6+4);
+			require(entries.length==7+3);
 			var entry:ServerEntry;
 			var j:int;
-			for (j=1; j<=6; j++) {
+			for (j=1; j<=7; j++) {
 				entry = entries[j-1];
 				require(entry.key==j);
 				require(entry.visibleToUserIds==null);
 				require(entry.storedByUserId==-1);
 				require(entry.value==j+1);
 			}			
-			for (j=8; j<12; j++) {		
-				entry = entries[6+j-8];
+			for (j=9; j<12; j++) {		
+				entry = entries[7+j-9];
 				require(entry.key==j);
 				require(entry.visibleToUserIds.length==1 && entry.visibleToUserIds[0]==allPlayerIds[0]);
 				require(entry.storedByUserId==-1);
 				require(entry.value== (allPlayerIds[0]==myUserId ? j+1 : null) );
 			}							
 		});	
+		
+		if (allPlayerIds.length>=2) {
+			expect(
+			function ():void {
+				doAllRevealState(
+				[ 
+					RevealEntry.create(1,null,5), // will not reveal anything new
+					RevealEntry.create(9,[allPlayerIds[0]]), // will not reveal anything new
+					// this will reveal entries 10 till 11 to the second player as well
+					RevealEntry.create(10,[allPlayerIds[0], allPlayerIds[1]],100) // note that I entered the id of player 0 again! to make sure it is filtered.
+				]);					
+			},
+			function (entries:Array):void {			
+				require(entries.length==2);
+				var entry:ServerEntry;
+				var j:int;
+				for (j=10; j<12; j++) {		
+					entry = entries[j-10];
+					require(entry.key==j);
+					require(entry.visibleToUserIds.length==2 && entry.visibleToUserIds[1]==allPlayerIds[1]);
+					require(entry.storedByUserId==-1);
+					require(entry.value== (allPlayerIds[0]==myUserId || allPlayerIds[1]==myUserId ? j+1 : null) );
+				}
+			});
+		}
 		
 			
 		expect(

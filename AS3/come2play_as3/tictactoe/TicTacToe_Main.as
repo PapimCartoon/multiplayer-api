@@ -196,8 +196,11 @@ public final class TicTacToe_Main extends ClientGameAPI {
 		assert(serverEntries.length==1, ["there is one entry per move in TicTacToe"]);	
 		var entry:ServerEntry = serverEntries[0];
 		assert(entry.visibleToUserIds==null, ["All communication in TicTacToe is PUBLIC"]);
+		
+		var expectedKey:int = getEntryKey();
+		if (entry.key!=expectedKey) return; // if the user pressed several times and therefore sent his move several times
+		
 		var userId:int = entry.storedByUserId;
-		if (userId==myUserId) return; // The player ignores his own stores, because he already updated the logic before he sent it to the server
 		var colorOfUser:int = getColor(userId);
 		if (colorOfUser==-1) return;  // viewers cannot store match state in TicTacToe, so we just ignore whatever a viewer placed in the match state		
 		// In SinglePlayer: the player already called return before, but a viewer (there can be viewers even for singleplayer games!) still needs to call performMove 
@@ -205,8 +208,6 @@ public final class TicTacToe_Main extends ClientGameAPI {
 			if (AS3_vs_AS2.IndexOf(ongoingColors, colorOfUser)==-1) return; // player already disconnected 
 			assert(turnOfColor==colorOfUser, ["Got an entry from player=",userId," of color=",colorOfUser," but expecting one from color=", turnOfColor]);
 		}
-		var expectedKey:int = getEntryKey();
-		assert(entry.key==expectedKey, ["The state key is illegal! Expecting key=",expectedKey," but got key=",entry.key]);
 		performMove(entry.value, false);
 	}
 	
@@ -367,7 +368,8 @@ public final class TicTacToe_Main extends ClientGameAPI {
 		if (!isSinglePlayer() && myColor!=turnOfColor) return; // not my turn
 		if (!logic.isSquareAvailable(move)) return; // already filled this square (e.g., if you press on the keyboard, you may choose a cell that is already full)
 		doStoreState( [UserEntry.create(getEntryKey(), move, false)] );		
-		performMove(move, false);		
+		// We do not update the graphics here. We update the graphics only after the server called gotStateChanged
+		// Note that as a result, if the user presses quickly on the same button, there might be several identical calls to doStoreState.
 	}
 	private function startMove(isInProgress:Boolean):void {
 		//trace("startMove with isInProgress="+isInProgress);

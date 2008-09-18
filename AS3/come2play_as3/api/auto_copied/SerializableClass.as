@@ -28,33 +28,43 @@ public class SerializableClass
 			__CLASS_NAME__ = REPLACE_TO + __CLASS_NAME__.substr(REPLACE_IN_NAME.length);			
 		}
 	}
+	public static function isToStringObject(str:String):Boolean {
+		return str=="[object Object]";
+	}
+	public static function isObject(o:Object):Boolean {
+		return isToStringObject(o.toString());	
+	}
 	public static function deserialize(object:Object):Object {
 		try {
 			if (object==null) 
 				return object;
-			var className:String = 
-				object.hasOwnProperty(CLASS_NAME_FIELD) ? object[CLASS_NAME_FIELD] : null;
-	
-			var res:Object = object; // we modify the object itself (so we can recurse into arrays and objects)
-	
-			var newObject:Object = null;
-			if (className!=null) {
-				var isAPI_Package:Boolean =
-					StaticFunctions.startsWith(className, REPLACE_TO);
-				if (isAPI_Package) {
-					className = REPLACE_IN_NAME + className.substr(REPLACE_TO.length);
-				}			 
-				if (isInAPI || isAPI_Package) {
-					newObject = AS3_vs_AS2.createInstanceOf(className);	
-					if (newObject!=null) res = newObject;
+			var isArray:Boolean = AS3_vs_AS2.isArray(object);
+			var isObject:Boolean = isObject(object);
+			var res:Object = object;
+			if (isArray || isObject) {				
+				var className:String = 
+					object.hasOwnProperty(CLASS_NAME_FIELD) ? object[CLASS_NAME_FIELD] : null;
+				res = isArray ? [] : {}; // we create a new copy
+		
+				var newObject:Object = null;
+				if (className!=null) {
+					var isAPI_Package:Boolean =
+						StaticFunctions.startsWith(className, REPLACE_TO);
+					if (isAPI_Package) {
+						className = REPLACE_IN_NAME + className.substr(REPLACE_TO.length);
+					}			 
+					if (isInAPI || isAPI_Package) {
+						newObject = AS3_vs_AS2.createInstanceOf(className);	
+						if (newObject!=null) res = newObject;
+					}
 				}
+				if (newObject!=null)
+					AS3_vs_AS2.checkAllFieldsDeserialized(object, newObject);
+					
+				for (var key:String in object)
+					res[key] = deserialize(object[key]); // might throw an illegal assignment (due to type mismatch)
 			}
-			if (newObject!=null)
-				AS3_vs_AS2.checkAllFieldsDeserialized(object, newObject);
-				
-			for (var key:String in object)
-				res[key] = deserialize(object[key]); // might throw an illegal assignment (due to type mismatch)
-			
+			trace(JSON.stringify(object)+" object="+object+" res="+res+" isArray="+isArray+" isObject="+isObject);
 			return res; 						
 		} catch (err:Error) {
 			// I can't throw an exception, because if a hacker stored illegal value in className, 

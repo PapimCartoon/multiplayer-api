@@ -25,12 +25,12 @@ package emulator
 		}
 		public function toString():String
 		{
-			var str:String = playerIds+" \n ";
+			var str:String = "Player ids: "+playerIds+" \n ";
 			if(serverEntries.length > 0)
 				str+=serverEntries.toString();
 			else
 				str+=finishHistory.toString();
-			return str;
+			return "{"+str+"}";
 		}
 	}
 }

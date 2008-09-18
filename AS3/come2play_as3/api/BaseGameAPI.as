@@ -13,16 +13,20 @@ package come2play_as3.api {
 	 */ 
 	public class BaseGameAPI extends LocalConnectionUser 
 	{        
+		public static var MAX_ANIMATION_MILLISECONDS:int = 10*1000; // max 10 seconds for animations
+		
 		public function BaseGameAPI(_someMovieClip:MovieClip) {
 			super(_someMovieClip, false, getPrefixFromFlashVars(_someMovieClip));
 			if (getPrefixFromFlashVars(_someMovieClip)==null) 
 				new SinglePlayerEmulator(_someMovieClip);
 			StaticFunctions.performReflectionFromFlashVars(_someMovieClip);	
+			setInterval(AS3_vs_AS2.delegate(this, this.checkAnimationEnded), MAX_ANIMATION_MILLISECONDS);
 		}
 		private var transactionDepth:int = 0;
 		private var msgsInTransaction:Array/*API_Message*/ = [];
 		private var hackerUserId:int = -1;
 		private var runningAnimationsNumber:int = 0;
+		private var animationStartedOn:int = -1; 
 		private var nonFinishedMsg:API_Message = null;
 		override public function gotError(withObj:Object, err:Error):void {
 			sendMessage( API_DoAllFoundHacker.create(hackerUserId, "Got error withObj="+JSON.stringify(withObj)+" err="+AS3_vs_AS2.error2String(err)) );
@@ -57,13 +61,24 @@ package come2play_as3.api {
         	nonFinishedMsg = null;
         }
         public function animationStarted():void {
+        	if (runningAnimationsNumber==0) 
+        		animationStartedOn = getTimer();
         	runningAnimationsNumber++;        	
         }
         public function animationEnded():void {
         	if (runningAnimationsNumber<=0)
         		throwError("Called animationEnded too many times!");
         	runningAnimationsNumber--;
+        	if (runningAnimationsNumber==0)
+        		animationStartedOn = -1;
         	sendFinishedCallback();        	        	
+        }
+        private function checkAnimationEnded():void {
+        	if (animationStartedOn==-1) return; // animation is not running
+        	var now:int = getTimer();
+        	if (now - animationStartedOn < MAX_ANIMATION_MILLISECONDS) return; // animation is running for a short time
+        	// animation is running for too long
+        	StaticFunctions.throwError("An animation is running for more than MAX_ANIMATION_MILLISECONDS="+MAX_ANIMATION_MILLISECONDS+". It started "+animationStartedOn+" milliseconds after the script started.");         	
         }
         
         

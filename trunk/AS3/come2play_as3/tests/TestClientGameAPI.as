@@ -243,28 +243,27 @@ public class TestClientGameAPI extends ClientGameAPI {
 		// to end the game I simulate a real-time game:
 		// the first one to store a certain value will win!
 		doStoreState([UserEntry.create("winner","I won!",true)]);	
-		expect(
-		function (entries:Array):void {		
-			require(entries.length==1);
-			var entry:ServerEntry = entries[0];
-			var winnerId:int = entry.storedByUserId;	
-			require(entry.key=="winner");
-			require(entry.visibleToUserIds.length==1 && entry.visibleToUserIds[0]==winnerId);
-			require(winnerId!=-1);
-			require(entry.value== (myUserId==winnerId ? "I won!" : null) );		
-			
-			var finishedPlayers:Array = [];
-			for each (var id:int in allPlayerIds) {
-				finishedPlayers.push( PlayerMatchOver.create(id, id==winnerId ? 1000 : -1000, id==winnerId ? 100 : 0) );		
-			}
-			doAllEndMatch(finishedPlayers);			
-		});
-		// I ignore the store state of other players
-		for (i=0; i<allPlayerIds.length-1; i++)
+		var didSendEndMatch:Boolean = false;
+		for (i=0; i<allPlayerIds.length; i++)
 			expect(
-				function (entries:Array):void {
-				}
-			);	
+			function (entries:Array):void {		
+				require(entries.length==1);
+				var entry:ServerEntry = entries[0];
+				var winnerId:int = entry.storedByUserId;	
+				require(entry.key=="winner");
+				require(entry.visibleToUserIds.length==1 && entry.visibleToUserIds[0]==winnerId);
+				require(winnerId!=-1);
+				require(entry.value== (myUserId==winnerId ? "I won!" : null) );		
+				
+				if (!didSendEndMatch) {
+					didSendEndMatch = true;
+					var finishedPlayers:Array = [];
+					for each (var id:int in allPlayerIds) {
+						finishedPlayers.push( PlayerMatchOver.create(id, id==winnerId ? 1000 : -1000, id==winnerId ? 100 : 0) );		
+					}
+					doAllEndMatch(finishedPlayers);
+				}			
+			});
 	}
 	override public function gotMatchEnded(finishedPlayerIds:Array/*int*/):void {
 		require(funcResArr.length==0);

@@ -4,6 +4,7 @@ package come2play_as3.api
 	import come2play_as3.api.auto_generated.*;
 	
 	import flash.display.MovieClip;
+	import flash.utils.getTimer;
 	
 	/**
 	 * This class simulates a server that works only for a single player.
@@ -67,6 +68,16 @@ package come2play_as3.api
 				for each (var innerMsg:API_Message in transaction.messages) {
 					gotMessage(innerMsg);
 				}
+			} else if (msg is API_DoStoreState) {
+				var doStore:API_DoStoreState = msg as API_DoStoreState;				
+				var userEntries:Array/*UserEntry*/ = doStore.userEntries;
+				var serverEntries:Array/*ServerEntry*/ = [];
+				for each (var userEntry:UserEntry in userEntries) {
+					var serverEntry:ServerEntry = ServerEntry.create(userEntry.key, userEntry.value, userId,userEntry.isSecret ? [userId] : null, getTimer());
+					serverEntries.push(serverEntry); 
+				}
+				queueSendMessage(API_GotStateChanged.create(serverEntries));
+				
 			} else if (msg is API_DoAllEndMatch) {
 				AS3_vs_AS2.myTimeout(AS3_vs_AS2.delegate(this, this.sendNewMatch), 2000);
 			} else if (msg is API_DoRegisterOnServer) {

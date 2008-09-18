@@ -47,7 +47,8 @@ package emulator {
 		private var aParams:Array;
 		private var aPlayers:Array; //array of all the players
 		private var afinishedPlayers:Array;/*PlayerMatchOver*/
-
+		public var playByPlayTimer:Timer;
+		
 		private var matchStartTime:int;
 		// queue related variables
 		private var unverifiedQueue:Array;
@@ -85,6 +86,7 @@ package emulator {
 		private var btnStoreQue:SimpleButton;
 		private var btnDoAllQue:SimpleButton;
 		private var goBackToHistory:Button;
+		private var playByPlay:Button;
 		
 		private var btnNewGame:Button;
 		private var btnLoadGame:Button;
@@ -138,6 +140,10 @@ package emulator {
 			unverifiedQueue=new Array();
 			queueTimer=new Timer(10000,0);
 			queueTimer.addEventListener(TimerEvent.TIMER,queTimeoutError);
+			
+			playByPlayTimer=new Timer(1000,0);
+			playByPlayTimer.addEventListener(TimerEvent.TIMER,doOneMove);		
+
 			tbsPanel = new TabDialog();
 			tbsPanel.x = 3;
 			tbsPanel.y = 52;
@@ -316,13 +322,22 @@ package emulator {
 			btnSavedGames.addEventListener(MouseEvent.CLICK, btnHistoryClick);
 			
 			goBackToHistory = new Button()
-			goBackToHistory.x = 440;
+			goBackToHistory.x = 410;
 			goBackToHistory.y = 306;
 			goBackToHistory.width = 60;
 			goBackToHistory.label ="Revert"
 			goBackToHistory.addEventListener(MouseEvent.CLICK, doGoBack);
 			goBackToHistory.visible = false;
 			this.addChild(goBackToHistory);
+			
+			playByPlay = new Button
+			playByPlay.x = 480;
+			playByPlay.y = 306;
+			playByPlay.width = 60;
+			playByPlay.label ="Replay"
+			playByPlay.addEventListener(MouseEvent.CLICK, doPlayByPlay);
+			playByPlay.visible = false;
+			this.addChild(playByPlay);
 			
 
 			
@@ -614,12 +629,12 @@ package emulator {
 		}
 		private function queTimeoutError(ev:TimerEvent):void
 		{
-			var unverefiedFunction:QueueEntry = unverifiedQueue[0];
+			var unverefiedFunction:WaitingFunction = unverifiedQueue[0];
 			if(unverefiedFunction != null)
 			{
-				if(unverefiedFunction.length()>1)
+				if(unverefiedFunction.unverifiedUsers.length > 1)
 				{
-					showMsg(unverefiedFunction.transaction[0].getMethodName()+" Timed out by player/s:"+String(unverefiedFunction.unverifiedUsers),"Error");
+					showMsg(unverefiedFunction.msg+" Timed out by player/s:"+String(unverefiedFunction.unverifiedUsers),"Error");
 					gameOver();
 				}
 			}
@@ -666,7 +681,7 @@ package emulator {
 				var foundHackerMsg:API_DoAllFoundHacker=msg as API_DoAllFoundHacker;
 				doFoundHacker(user,foundHackerMsg);
 			}
-			else if(msg is API_Transaction)
+			else if((msg is API_Transaction) && (!playByPlayTimer.running))
 			{
 				var transMsg:API_Transaction = 	msg as API_Transaction;		
 				if(transMsg.messages.length == 0) throw new Error("Transaction cannot be empty");
@@ -681,7 +696,7 @@ package emulator {
 				if(!isPlayer(user.ID)) return;
 				for each(msg in transMsg.messages)
 					addMessageLog(user.Name, msg.getMethodName(), msg.toString());	
-				waitingQueue.push(new QueueEntry(user,new Transaction(transMsg.messages),getOngoingPlayerIds(),getTimer()-matchStartTime));
+				waitingQueue.push(new QueueEntry(user,new Transaction(transMsg.messages),getTimer()-matchStartTime));
 				
 				processQueue(waitingQueue,false);
 				showWaitingFunctionQue();
@@ -752,17 +767,20 @@ package emulator {
 			var serverEntries:Array = new Array();
 			if (processedwaitingQueue.waitingDoStore())
 			{
-				var queueEntry:QueueEntry = processedwaitingQueue.popDoStore();
+				var queueEntry:QueueEntry = processedwaitingQueue.shiftDoStore();
 				for each(msg in queueEntry.transaction.messageArray)
 					serverEntries = serverEntries.concat(doStoreState(msg as API_DoStoreState,queueEntry.user.ID));
+				addToQue(queueEntry);
 				storeServerEntries(serverEntries);
 			}
 			else if(processedwaitingQueue.waitingDoAll())
 			{
-				
-				var doAll:Array/*QueueEntry*/ = processedwaitingQueue.popDoAll();
-				var queuEntry:QueueEntry = doAll[0];
-				if(queuEntry.transaction.length > 1)
+				var doAll:Array/*QueueEntry*/ = processedwaitingQueue.shiftDoAll();
+				var len:int = 0;
+				for each (var queuEntry:QueueEntry in doAll)
+					if(len < queuEntry.transaction.length)
+						len = queuEntry.transaction.length;
+				if(len > 1)
 				{
 					var tempWaitingQueue:MessagQueue = new MessagQueue(aPlayers.length);
 					for (var i:int = 0;i<doAll.length;i++)
@@ -771,15 +789,20 @@ package emulator {
 						for each (msg in queueEntry.transaction.messageArray)
 						{
 							
-							tempWaitingQueue.unshift(new QueueEntry(queueEntry.user,new Transaction([msg]),[],queueEntry.timeRecived));
+							tempWaitingQueue.push(new QueueEntry(queueEntry.user,new Transaction([msg]),queueEntry.timeRecived));
 						}	
 					}
 					serverEntries = processQueue(tempWaitingQueue,true);
 				}
-				else
+				else if(len == 1)
 				{
 					if(!checkDoAlls(doAll)) return [];
 					serverEntries =	processMessage(queuEntry.transaction.messageArray[0]);
+					addToQue(queuEntry);
+				}
+				else
+				{
+					return [];
 				}
 			}
 			else 
@@ -796,45 +819,46 @@ package emulator {
 					sendStateChanged(serverEntries);
 					deltaHistory.addDelta(getOngoingPlayerIds(),serverEntries);
 					showHistory();
-				}
+				}		
+
 			}
 			queueTimer.reset();
 			queueTimer.start();
-			processQueue(processedwaitingQueue,isTransaction);
-			
+			showWaitingFunctionQue();
+			processQueue(processedwaitingQueue,isTransaction);		
 			return [];
 
-
-/*
-			showWaitingFunctionQue();
-			if (!((waitingFunction.msg is API_DoAllSetTurn) || (waitingFunction.msg is API_DoAllRequestStateCalculation) ))
+		}
+		private function addToQue(queueEntry:QueueEntry):void
+		{
+			for each(var msg:API_Message in queueEntry.transaction.messageArray)
 			{
-				waitingFunction.unverifiedUsers =getOngoingPlayerIds();
-				unverifiedQueue.push(waitingFunction);
-				showUnverifiedQue();
-			}
-			*/
-
+				if (!((msg is API_DoAllSetTurn) || (msg is API_DoAllRequestStateCalculation) ))
+				{
+					var waitingFunction:WaitingFunction = new WaitingFunction(queueEntry.user,msg,getOngoingPlayerIds())
+					unverifiedQueue.push(waitingFunction);
+					showUnverifiedQue();
+				}
+			}	
 		}
 		private function verefyAction(user:User):void
 		{
-			for each(var unverifiedFunction:QueueEntry in unverifiedQueue)
+			for each(var unverifiedFunction:WaitingFunction in unverifiedQueue)
 			{
-					if(unverifiedFunction.removeUnverifiedUser(user.ID))
-					{
-						if(unverifiedFunction.length() == 0)
-						{
-							actionVerefied();	
-						}
-						return;
-					}
-			}
-			
+				var userIndex:int = unverifiedFunction.unverifiedUsers.indexOf(user.ID);
+				if(userIndex != -1)
+				{
+					unverifiedFunction.unverifiedUsers.splice(userIndex,1);	
+					if(unverifiedFunction.unverifiedUsers.length == 0)	
+						actionVerefied();
+					return;
+				}
+			}	
 		}
 		private function actionVerefied():void
 		{
 			
-			var waitingFunction:QueueEntry=unverifiedQueue.shift();
+			var waitingFunction:WaitingFunction=unverifiedQueue.shift();
 			showUnverifiedQue();
 			queueTimer.reset();
 			processQueue(waitingQueue,false);	
@@ -842,21 +866,18 @@ package emulator {
 		
 		private function isEquel(obj1:Object,obj2:Object):Boolean
 		{ 
+			if (! (typeof(obj1) == "object") )
+				return (obj1 == obj2)
 			for(var prop:String in obj1)
-				if(typeof(obj1[prop])=="object")
-				{
-					if(!isEquel(obj1[prop],obj2[prop]))
-						return false;
-				}
-				else
-				{
-					if(obj1[prop]!=obj2[prop])
-						return false;
-				}
+			{
+				if (!isEquel(obj1[prop],obj2[prop]))
+					return false
+			}
 			return true;
 		}
 		private function checkDoAlls(doAllArray:Array/*QueueEntry*/):Boolean
 		{
+
 			var queueEntry:QueueEntry = doAllArray[0];
 			var msg:API_Message = queueEntry.transaction.messageArray[0];
 			
@@ -864,9 +885,15 @@ package emulator {
 			for each(var checkedQueueEntry:QueueEntry in doAllArray)
 			{
 				checkedMsg = checkedQueueEntry.transaction.messageArray[0];
+				if(checkedMsg.getMethodName() != msg.getMethodName())		
+				{
+					addMessageLog("Server","Error",checkedQueueEntry.user.Name + " : called " + checkedMsg.getMethodName() + "\n while " + queueEntry.user.Name+" : called  "+ msg.getMethodName());
+					gameOver();
+					return false;
+				}
 				if(!isEquel(checkedMsg.getMethodParameters(),msg.getMethodParameters()))
 				{
-					//todo : add error message
+					addMessageLog("Server","Error",checkedMsg.getMethodName()+" : "+checkedMsg.getMethodParameters()+" is diffrent then "+msg.getMethodName()+" : "+msg.getMethodParameters());
 					gameOver();
 					return false
 				}
@@ -1059,6 +1086,7 @@ package emulator {
 			{
 				FinishHistory.totalFinishingPlayers++;
 				tempFinishedPlayersIds.push(palyerMatchOver.playerId);
+				waitingQueue.removePlayer(palyerMatchOver.playerId);
 				percentageOfPot+=palyerMatchOver.potPercentage;
 				finishedPart.finishedPlayers.push(palyerMatchOver)	
 			}
@@ -1100,7 +1128,7 @@ package emulator {
 			
 			return finishedPlayerIds;
 		}
-		private function getOngoingPlayerIds():Array/*int*/ {
+		public function getOngoingPlayerIds():Array/*int*/ {
 			var res:Array = [];
 			var finished_player_ids:Array = getFinishedPlayerIds();
 			for each (var id:int in aPlayers) {
@@ -1402,6 +1430,7 @@ package emulator {
 			tbsPanel.gotoAndStop("Log");
 			pnlCommands.visible = false;
 			goBackToHistory.visible = false;
+			playByPlay.visible = false;
 			logingCheckBox.visible = true;
 			pnlLog.visible = true;
 			pnlInfo.visible=false;
@@ -1412,6 +1441,7 @@ package emulator {
 			tbsPanel.gotoAndStop("Command");
 			pnlCommands.visible = true;
 			logingCheckBox.visible = false;
+			playByPlay.visible = false;
 			goBackToHistory.visible = false;
 			pnlLog.visible = false;
 			pnlInfo.visible=false;
@@ -1423,6 +1453,7 @@ package emulator {
 			tbsPanel.gotoAndStop("MatchState");
 			pnlCommands.visible = false;
 			logingCheckBox.visible = false;
+			playByPlay.visible = false;
 			goBackToHistory.visible = false;
 			pnlLog.visible = false;
 			pnlInfo.visible=true;
@@ -1441,6 +1472,7 @@ package emulator {
 			pnlCommands.visible = false;
 			logingCheckBox.visible = false;
 			goBackToHistory.visible = false;
+			playByPlay.visible = false;
 			pnlLog.visible = false;
 			pnlInfo.visible=true;
 			if(iInfoMode!=3){
@@ -1458,6 +1490,7 @@ package emulator {
 			tbsPanel.gotoAndStop("Store");
 			pnlCommands.visible = false;
 			goBackToHistory.visible = false;
+			playByPlay.visible = false;
 			logingCheckBox.visible = false;
 			pnlLog.visible = false;
 			pnlInfo.visible=true;
@@ -1474,6 +1507,7 @@ package emulator {
 			tbsPanel.gotoAndStop("DoAllQue");
 			pnlCommands.visible = false;
 			logingCheckBox.visible = false;
+			playByPlay.visible = false;
 			goBackToHistory.visible = false;
 			pnlLog.visible = false;
 			pnlInfo.visible=true;
@@ -1489,6 +1523,7 @@ package emulator {
 			tbsPanel.gotoAndStop("UserInfo");
 			pnlCommands.visible = false;
 			logingCheckBox.visible = false;
+			playByPlay.visible = false;
 			goBackToHistory.visible = false;
 			pnlLog.visible = false;
 			pnlInfo.visible=true;
@@ -1506,6 +1541,7 @@ package emulator {
 			tbsPanel.gotoAndStop("MatchOver");
 			pnlCommands.visible = false;
 			logingCheckBox.visible = false;
+			playByPlay.visible = false;
 			goBackToHistory.visible = false;
 			pnlLog.visible = false;
 			pnlInfo.visible=true;
@@ -1523,6 +1559,7 @@ package emulator {
 			pnlCommands.visible = false;
 			logingCheckBox.visible = false;
 			goBackToHistory.visible = false;
+			playByPlay.visible = false;
 			pnlLog.visible = false;
 			pnlInfo.visible=true;
 			if(iInfoMode!=6){
@@ -1536,6 +1573,7 @@ package emulator {
 			tbsPanel.gotoAndStop("History");
 			pnlCommands.visible = false;
 			logingCheckBox.visible = false;
+			playByPlay.visible = true;
 			pnlLog.visible = false;
 			goBackToHistory.visible = true;
 			pnlInfo.visible=true;
@@ -1568,16 +1606,57 @@ package emulator {
 				send_got_match_started(usr);						
 			}	
 		}
-
-
-		private function doGoBack(ev:MouseEvent):void
+		private function stopPlayByPlayTimer():void
 		{
-			gameOver();
-			if(changedToDelta!=-1)
+			playByPlayTimer.stop();
+			playByPlay.label = "Replay";
+		}
+		
+		
+		private function doOneMove(ev:TimerEvent):void
+		{
+			if(changedToDelta < deltaHistory.gameTurns.length)
 			{
-				//general game state
-				var serverEntries:Array/*ServerEntry*/ = deltaHistory.getServerEntries(changedToDelta);
-				afinishedPlayers = deltaHistory.getFinishedGames(changedToDelta); 
+				tblInfo.selectedIndex = changedToDelta;
+				var playerDelta:PlayerDelta = deltaHistory.getDelta(changedToDelta);
+				if (playerDelta.serverEntries.length > 0)
+				{
+					var serverEntries:Array/*ServerEntry*/ = playerDelta.serverEntries;
+					sendStateChanged(serverEntries);
+					//todo : replay
+				}
+				else if (playerDelta.finishHistory != null)
+				{
+					//todo: send finished game
+				}
+				
+				changedToDelta++;
+			}
+			else
+				stopPlayByPlayTimer();
+		}
+		
+		private function doPlayByPlay(ev:MouseEvent):void
+		{
+			if(changedToDelta == -1) return;
+			if (playByPlayTimer.running)
+			{
+				stopPlayByPlayTimer();
+			}
+			else
+			{				
+				playByPlay.label = "Pause";
+				gameOver();
+				loadToDelta(changedToDelta);
+				startGame();
+				playByPlayTimer.start();
+			}
+		}
+		
+		public function loadToDelta(delta:int):void
+		{
+				var serverEntries:Array/*ServerEntry*/ = deltaHistory.getServerEntries(delta);
+				afinishedPlayers = deltaHistory.getFinishedGames(delta); 
 				aPlayers = deltaHistory.getPlayers(0)	
 				FinishHistory.wholePot = 100;
 				FinishHistory.totalFinishingPlayers = 0;
@@ -1600,9 +1679,18 @@ package emulator {
 					else
 						serverState.put(severEntry.key,severEntry);
 				}	
+		}
+
+		private function doGoBack(ev:MouseEvent):void
+		{	
+			if(changedToDelta!=-1)
+			{
+				//general game state
+				gameOver();
+				loadToDelta(changedToDelta);
 				startGame();
 				pnlLoad.visible = false;
-			pnlLoad.visible = false;
+				pnlLoad.visible = false;
 			//showMsg("History was restored","Message");
 			}
 		}
@@ -1634,18 +1722,15 @@ package emulator {
 			if(iInfoMode==7){
 				tblInfo.removeAll();
 				var itemObj:Object;
-				for each(var unverifiedFunction:QueueEntry in unverifiedQueue)
+				for each(var unverifiedFunction:WaitingFunction in unverifiedQueue)
 				{
-					for each(var msg:API_Message in unverifiedFunction.transaction)
-					{
-						itemObj=new Object();
-						itemObj[COL_User]=unverifiedFunction.user.ID;
-						itemObj[COL_MethodName]=msg.getMethodName();
-						itemObj[COL_Parameters]=msg.getParametersAsString();
-						itemObj[COL_UnverifiedPlayers]=unverifiedFunction.unverifiedUsers.toString();
-						tblInfo.addItem(itemObj);
-						tblInfo.verticalScrollPosition = tblInfo.maxVerticalScrollPosition+30;
-					}
+					itemObj=new Object();
+					itemObj[COL_User]=unverifiedFunction.user.ID;
+					itemObj[COL_MethodName]=unverifiedFunction.msg.getMethodName();
+					itemObj[COL_Parameters]=unverifiedFunction.msg.getParametersAsString();
+					itemObj[COL_UnverifiedPlayers]=unverifiedFunction.unverifiedUsers.toString();
+					tblInfo.addItem(itemObj);
+					tblInfo.verticalScrollPosition = tblInfo.maxVerticalScrollPosition+30;
 				}
 				txtInfo.text="";
 			}
@@ -1655,16 +1740,13 @@ package emulator {
 			if(iInfoMode==2){
 				tblInfo.removeAll();
 				var itemObj:Object;
-				for each(var waitingFunction:QueueEntry in  waitingQueue)
+				for each(var waitingFunction:WaitingFunction in  waitingQueue)
 				{
 					itemObj=new Object();
-					for each (var msg:API_Message in waitingFunction.transaction)
-					{
-						itemObj[COL_User] = waitingFunction.unverifiedUsers;
-						itemObj[COL_Message] = msg.toString();
-						tblInfo.addItem(itemObj);
-						tblInfo.verticalScrollPosition = tblInfo.maxVerticalScrollPosition+30;
-					}
+					itemObj[COL_User] = waitingFunction.unverifiedUsers;
+					itemObj[COL_Message] = waitingFunction.msg.toString();
+					tblInfo.addItem(itemObj);
+					tblInfo.verticalScrollPosition = tblInfo.maxVerticalScrollPosition+30;
 				}
 				txtInfo.text="";
 			}
@@ -1865,11 +1947,12 @@ package emulator {
 			var savedGame:SavedGame = SerializableClass.deserialize(transferByteArray.readObject()) as SavedGame;
 			serverState = savedGame.serverState;
 			deltaHistory = savedGame.deltaHistory;
-			afinishedPlayers=savedGame.finishedGames.concat();
+			afinishedPlayers = savedGame.finishedGames.concat();
 			aPlayers = savedGame.players.concat();
 			for each(var savedFinishedPlayer:FinishHistory in afinishedPlayers)
 			{
 				var tempPotPercentage:Number = 0;
+				trace("A**************"+savedGame.finishedGames)
 				for each(var playerMatchOver:PlayerMatchOver in savedFinishedPlayer.finishedPlayers)
 				{
 					tempPotPercentage += playerMatchOver.potPercentage
@@ -1959,11 +2042,14 @@ package emulator {
 			if (txtSaveName.text == "") {
 				return;
 			}
+			
+
 			var game:SavedGame = SavedGame.create(serverState,aPlayers,afinishedPlayers,extra_match_info,match_started_time,txtSaveName.text,root.loaderInfo.parameters["game"],deltaHistory);
 			var transferByteArray:ByteArray = new ByteArray();
 			transferByteArray.writeObject(game);
 			transferByteArray.position = 0;
-			allSavedGames.push(SerializableClass.deserialize(transferByteArray.readObject()) as SavedGame);
+			var tempSaveGame:SavedGame = SerializableClass.deserialize(transferByteArray.readObject()) as SavedGame
+			allSavedGames.push(tempSaveGame);
 			saveToSharedObject();
 
 			txtSaveName.text = "";
@@ -1992,27 +2078,13 @@ package emulator {
 			if (!getStartParams()) {
 				return;
 			}
-			bGameStarted = true;
-			bGameEnded = false;
-			txtExtraMatchInfo.visible = false;
-			txtMatchStartedTime.visible = false;
-			txtTooltipExtraMatchInfo.visible = false;
-			txtTooltipMatchStartedTime.visible = false;
-			btnNewGame.visible = false;
-			btnCancelGame.visible = true;
-			btnSaveGame.visible = true;
-			btnLoadGame.visible = false;
-			iCurTurn=-1;
 			afinishedPlayers=new Array();
 			serverState= new ObjectDictionary();
 			deltaHistory = new DeltaHistory();
 			showMatchState();
 			showMatchOver();
 			matchStartTime=getTimer();
-			var usr:User;
-			for each (usr in aUsers) {
-				send_got_match_started(usr);
-			}
+			startGame();
 		}
 		//Do functions
 		private function broadcast(msg:API_Message):void {
@@ -2059,13 +2131,26 @@ package emulator {
 			for each(var serverEntry:ServerEntry in serverEntries)
 				doStoreOneState(serverEntry);
 		}
-		public function sendStateChanged(serverEntries:Array/*ServerEntry*/):void
+		public function sendStateChanged(oldServerEntries:Array/*ServerEntry*/):void
 		{
+			var serverEntries:Array/*ServerEntry*/ = new Array
+			var dicArray:Array = new Array();
+			for(var i:int = (oldServerEntries.length -1);i>=0;i--)
+			{
+				var serverEntry:ServerEntry = oldServerEntries[i];
+				if(dicArray[serverEntry.key] == null)
+				{
+					dicArray[serverEntry.key] = true;
+					serverEntries.push(serverEntry);
+				}
+			}
+			
+			
 			var tempServerEntries:Array/*ServerEntry*/;
 			for each(var tempUser:User in aUsers)
 			{
 				tempServerEntries = new Array();
-				for each(var serverEntry:ServerEntry in serverEntries)
+				for each(serverEntry in serverEntries)
 				{
 					if(serverEntry.visibleToUserIds == null)
 						tempServerEntries.push(serverEntry);
@@ -2251,7 +2336,7 @@ class User extends LocalConnectionUser {
 	
 	public function sendOperation(msg:API_Message):void {
 			if (!wasRegistered) return;
-			actionQueue.push(new WaitingFunction(this,msg));
+			actionQueue.push(new WaitingFunction(this,msg,sServer.getOngoingPlayerIds()));
 			if(actionQueue.length==1)
 			{
 				doSendOperation();	
@@ -2259,7 +2344,13 @@ class User extends LocalConnectionUser {
     }
 	public function do_finished_callback(methodName:String):void {
 		if(methodName=="gotKeyboardEvent") return;
-		if(actionQueue.length==0) throw new Error("A Callback has been summoned with no corresponding doALLFunction");
+		if(actionQueue.length == 0)
+		{
+			if(sServer.playByPlayTimer.running)
+				return;
+			else
+				throw new Error("A Callback has been summoned with no corresponding doALLFunction");	
+		} 
 		var waitingFunction:WaitingFunction = actionQueue.shift();
 		var tempMsg:API_Message = waitingFunction.msg as API_Message;
 		if(methodName == tempMsg.getMethodName())
@@ -2301,7 +2392,8 @@ class User extends LocalConnectionUser {
 class MessagQueue
 {
 	private var allPlayerMessages:Array/*Array*/;
-	
+	private var mod:int = 1;
+	private var serverPointer:Server;
 	public function toString():String
 	{
 		var str:String ="";
@@ -2328,27 +2420,37 @@ class MessagQueue
 	}
 	public function push(message:QueueEntry):void
 	{
-		var playerMessages:Array = allPlayerMessages[message.user.ID -1];
+		var playerMessages:Array = allPlayerMessages[message.user.ID -mod];
 		playerMessages.push(message);
+	}
+	public function removePlayer(playerId:int):void
+	{
+		allPlayerMessages.splice(playerId - mod,1);
+		mod++;
 	}
 	public function unshift(message:QueueEntry):void
 	{
-		var playerMessages:Array = allPlayerMessages[message.user.ID -1];
+		var playerMessages:Array = allPlayerMessages[message.user.ID -mod];
 		playerMessages.unshift(message);
 	}
-	public function popDoAll():Array
+	public function shiftDoAll():Array
 	{
 		var doAllMessages:Array = new Array;
+		//var ongoingPlayers:Array = serverPointer.getOngoingPlayerIds();
 		for each (var playerMessages:Array in allPlayerMessages)
-			doAllMessages.push(playerMessages.pop());
+		{
+			var tempQueueEntry:QueueEntry = playerMessages.shift();
+			if(tempQueueEntry != null)
+				doAllMessages.push(tempQueueEntry);
+		}
 		return doAllMessages;
 	}
 	public function head(userId:int):QueueEntry
 	{
-		var playerMessages:Array = allPlayerMessages[userId - 1];
+		var playerMessages:Array = allPlayerMessages[userId - mod];
 		return playerMessages[0];
 	}
-	public function popDoStore():QueueEntry
+	public function shiftDoStore():QueueEntry
 	{
 		var firstIndex:int = 0;
 		var tempQueueEntry:QueueEntry
@@ -2367,14 +2469,15 @@ class MessagQueue
 			}
 		}
 		playerMessages = allPlayerMessages[firstIndex];
-		return playerMessages.pop();
+		return playerMessages.shift();
 	}
 	public function waitingDoAll():Boolean
 	{
 		for each (var playerMessages:Array/*QueueEntry*/ in allPlayerMessages)	
 		{
 			var tempQueueEntry:QueueEntry = playerMessages[0];
-			if(tempQueueEntry == null) return false;
+			if(tempQueueEntry == null) 
+				return false;
 		}
 		return true
 	}
@@ -2400,30 +2503,18 @@ class Message {
 }
 
 class QueueEntry{
-	public var unverifiedUsers:Array;
 	public var user:User;
 	public var transaction:Transaction;
 	public var timeRecived:int;
-	public function QueueEntry(user:User,transaction:Transaction,unverifiedUsers:Array,timeRecived:int)
+	public function QueueEntry(user:User,transaction:Transaction,timeRecived:int)
 	{
 		this.timeRecived = timeRecived;
-		this.unverifiedUsers = unverifiedUsers;
 		this.user = user;
 		this.transaction = transaction;	
 	}
-	public function removeUnverifiedUser(userId:int):Boolean
+	public function toString():String
 	{
-		for(var i:int=0;i<unverifiedUsers.length;i++)
-			if(unverifiedUsers[i] == userId)
-			{
-				unverifiedUsers.splice(i,1);
-				return true;
-			}
-		return false;
-	}
-	public function length():int
-	{
-		return unverifiedUsers.length;
+		return user.ID + " : " + transaction.toString();
 	}
 }
 class Transaction
@@ -2446,13 +2537,24 @@ class Transaction
 	{
 		return messageArray.length;
 	}
+	public function toString():String
+	{
+		var str:String = "";
+		for each(var msg:API_Message in messageArray)
+		{
+			str +="\n"+ msg.toString();
+		}
+		return str;
+	}
 }
 class WaitingFunction{
 	public var user:User;
-	public var msg:Object;
-	public function WaitingFunction(user:User,msg:Object)
+	public var msg:API_Message;
+	public var unverifiedUsers:Array;
+	public function WaitingFunction(user:User,msg:API_Message,unverifiedUsers:Array)
 	{
 		this.user = user;
 		this.msg = msg;
+		this.unverifiedUsers = unverifiedUsers;
 	}
 }

@@ -159,8 +159,7 @@ package come2play_as3.domino
 				}
 				return;
 			}
-			
-			if(serverEntries.length == (players.length * 7 +1))
+			if(serverEntries.length == ((cubeMaxValue+1)*(cubeMaxValue+2)/2 ))
 			{
 				if(serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+"tried to fake a board");
 				for each(serverEntry in serverEntries)

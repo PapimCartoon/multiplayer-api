@@ -69,7 +69,7 @@ package come2play_as3.api.auto_copied
 				argToString = "ERROR in toString() method of "+AS3_vs_AS2.getClassName(arg)+" err="+AS3_vs_AS2.error2String(e);
 	        }
 	        
-	        if (argToString=="[object Object]") {
+	        if (SerializableClass.isToStringObject(argToString)) {
 	        	res = [];
 	        	for (var z:String in arg) {
 	                res.push( stringify(z) + ':' + stringify(arg[z]) );

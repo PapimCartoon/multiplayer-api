@@ -33,6 +33,7 @@ package emulator
 		}	
 		public function getDelta(deltaNum:int):PlayerDelta
 		{
+			currentTurn = deltaNum;
 			return gameTurns[deltaNum];
 		}
 		public function getServerEntries(tillTurn:int):Array/*ServerEntry*/

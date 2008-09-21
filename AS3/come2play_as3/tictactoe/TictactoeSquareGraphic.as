@@ -21,15 +21,16 @@ public final class TictactoeSquareGraphic
 	private var allSymbols:Array/*DisplayObject*/;
 	private var currentTurnForMouseOver:int = BTN_NONE;
 
-	private var move:TictactoeCell;
+	private var move:TictactoeSquare;
 	private var logoContainer:MovieClip;
 		
-	public function TictactoeSquareGraphic(graphic:TictactoeMain, square:MovieClip, move:TictactoeCell) {
+	public function TictactoeSquareGraphic(graphic:TictactoeMain, square:MovieClip, move:TictactoeSquare) {
 		this.graphic = graphic;
 		this.buttonContainer = AS3_vs_AS2.getMovieChild(square,"buttonContainer");
 		this.logoContainer = AS3_vs_AS2.getMovieChild(square,"logoContainer");
 		this.symbolsContainer = AS3_vs_AS2.getMovieChild(square,"symbolsContainer");
-		this.soundMovieClip = AS3_vs_AS2.getMovieChild(square,"soundMovieClip");		
+		this.soundMovieClip = AS3_vs_AS2.getMovieChild(square,"soundMovieClip");
+		soundMovieClip.stop(); // for some reason the sound started playing immediately		
 		this.move = move;
 		if (AS3_vs_AS2.isAS3) {
 			addButtonListeners(buttonContainer);

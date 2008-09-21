@@ -45,10 +45,10 @@ public final class TictactoeLogic {
 		}
 	}
 	
-	public function getOwner(move:TictactoeCell):int {
+	public function getOwner(move:TictactoeSquare):int {
 		return gameState[move.row][move.col];
 	}
-	public function setOwner(move:TictactoeCell, owner:int):void {
+	public function setOwner(move:TictactoeSquare, owner:int):void {
 		gameState[move.row][move.col] = owner;
 	}
 	public function getMoveNumber():int {
@@ -57,15 +57,15 @@ public final class TictactoeLogic {
 	public function isBoardFull():Boolean {
 		return filledNum==ROWS*COLS;
 	}
-	public function isSquareAvailable(move:TictactoeCell):Boolean {
+	public function isSquareAvailable(move:TictactoeSquare):Boolean {
 		return isInBoard(move) && getOwner(move)==SQUARE_AVAILABLE;
 	}
-	public function isInBoard(move:TictactoeCell):Boolean {
+	public function isInBoard(move:TictactoeSquare):Boolean {
 		return move.row>=0 && move.col>=0 && move.row<ROWS && move.col<COLS;
 	}
 	
 	// Makes a move in TicTacToe by placing either X or O in square <row,col>
-	public function makeMove(color:int, move:TictactoeCell):void {
+	public function makeMove(color:int, move:TictactoeSquare):void {
 		if (!isSquareAvailable(move)) LocalConnectionUser.throwError("Square "+move+" is not available");
 		if (color<0 || color>=PLAYERS_NUM) LocalConnectionUser.throwError("Illegal color="+color);
 		setOwner(move, color);
@@ -75,9 +75,9 @@ public final class TictactoeLogic {
 	// checks if there is a winning row, column, or diagonal that passes through square <row,col>
 	// If not, it returns null. 
 	// Otherwise, it returns all the cells that are the "winning cells" (to display in a end-game animation)
-	public function getWinningCells(move:TictactoeCell):Array/*TictactoeCell*/ {
+	public function getWinningCells(move:TictactoeSquare):Array/*TictactoeSquare*/ {
 		if (getOwner(move)==SQUARE_AVAILABLE) return null;
-		var res:Array/*TictactoeCell*/ = [move];
+		var res:Array/*TictactoeSquare*/ = [move];
 		var partialRes:Array;
 		// LEFT & RIGHT
 		if ((partialRes = getConnectedDelta2(move, 0, -1,   0,  1)) != null) res = res.concat(partialRes);
@@ -89,14 +89,14 @@ public final class TictactoeLogic {
 		if ((partialRes = getConnectedDelta2(move, 1, -1,  -1,  1)) != null) res = res.concat(partialRes);
         return res.length==1 ? null : res;   
 	}	
-    private function getConnectedDelta2(move:TictactoeCell, delta_row:int, delta_col:int, delta_row2:int, delta_col2:int):Array/*TictactoeCell*/ {
+    private function getConnectedDelta2(move:TictactoeSquare, delta_row:int, delta_col:int, delta_row2:int, delta_col2:int):Array/*TictactoeSquare*/ {
     	var res1:Array = getConnectedDelta(move, delta_row, delta_col);
     	var res2:Array = getConnectedDelta(move, delta_row2, delta_col2);
     	var joined:Array = res1.concat(res2);
         return joined.length >= WIN_LENGTH-1 ? joined : null;// I didn't count the square in <row,col> 
     }
     // returns consecutive squares that have the same owner as square <row,col>
-    private function getConnectedDelta(move:TictactoeCell, delta_row:int, delta_col:int):Array/*TictactoeCell*/ {
+    private function getConnectedDelta(move:TictactoeSquare, delta_row:int, delta_col:int):Array/*TictactoeSquare*/ {
 		var ownedBy:int = getOwner(move);
         var res:Array = [];
         var row:int = move.row;
@@ -104,7 +104,7 @@ public final class TictactoeLogic {
         for(var i:int=1; i<WIN_LENGTH; i++) {
         	row += delta_row;
         	col += delta_col;
-        	var nextCell:TictactoeCell = TictactoeCell.create(row, col);
+        	var nextCell:TictactoeSquare = TictactoeSquare.create(row, col);
             if (!isInBoard( nextCell )) break;
             if (getOwner(nextCell)!=ownedBy) break;
             res.push(nextCell);

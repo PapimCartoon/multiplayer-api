@@ -12,7 +12,7 @@ import flash.utils.*;
  * 
  * When a player wins, he gets some of the stakes, and the rest continue playing, 
  * until only a single player remains (and he doesn't get any stakes).
- * The first winner will get 70% of the pot (can be changed using the customization "TicTacToe_WINNER_PERCENTAGE"),
+ * The first winner will get 70% of the pot (can be changed using customization),
  * the second one will get 70% of what remained,
  * and so on, until the last winner will get the entire 100% of the remainder.
  * (and the loser gets nothing).
@@ -27,9 +27,9 @@ public final class TictactoeMain extends ClientGameAPI {
 	private var grid:CreateGrid;
 	// graphics is the root movieclip which will contain all the cell movieclips
 	private var graphics:MovieClip;
-	// allCells contains all TictactoeCell objects
-	private var allCells:Array/*TictactoeCell*/;
-	// squares[row][col] is the square at position TictactoeCell(row,col)
+	// allCells contains all TictactoeSquare objects
+	private var allCells:Array/*TictactoeSquare*/;
+	// squares[row][col] is the square at position TictactoeSquare(row,col)
 	private var squares:Array/*TictactoeSquareGraphic[]*/;
 	private var logic:TictactoeLogic;
 	// allPlayerIds does not change since getting gotMatchStarted
@@ -43,6 +43,7 @@ public final class TictactoeMain extends ClientGameAPI {
 	private var userId2Avatar:Object;
 	private var height:int;
 	private var width:int;
+	private var logoFullUrl:String;
 	
 	////////////////////////////////////////////////////
 	// Customizable fields (see gotCustomInfo)
@@ -73,18 +74,7 @@ public final class TictactoeMain extends ClientGameAPI {
 		graphics.stop();
 		this.graphics = graphics;
 		userId2Avatar = {};
-		var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(graphics);
 				
-		allCells = [];
-		squares = new Array(ROWS());
-		for(var row:int=0; row<ROWS(); row++) {
-			squares[row] = new Array(COLS());
-			for(var col:int=0; col<COLS(); col++) {
-				var cell:TictactoeCell = TictactoeCell.create(row, col);
-				setSquareGraphic(cell, new TictactoeSquareGraphic(this, AS3_vs_AS2.getMovieChild(graphics,"Square_"+row+"_"+col), cell) ); 
-				allCells.push(cell);
-			}
-		}		
 		doRegisterOnServer();	
 	}
 	private function ROWS():int {
@@ -97,10 +87,10 @@ public final class TictactoeMain extends ClientGameAPI {
 	private function getColor(playerId:int):int {
 		return AS3_vs_AS2.IndexOf(allPlayerIds, playerId);
 	}
-	private function getSquareGraphic(move:TictactoeCell):TictactoeSquareGraphic {
+	private function getSquareGraphic(move:TictactoeSquare):TictactoeSquareGraphic {
 		return squares[move.row][move.col];
 	}
-	private function setSquareGraphic(move:TictactoeCell, sqaure:TictactoeSquareGraphic):void {
+	private function setSquareGraphic(move:TictactoeSquare, sqaure:TictactoeSquareGraphic):void {
 		squares[move.row][move.col] = sqaure;
 	}
 	
@@ -112,7 +102,7 @@ public final class TictactoeMain extends ClientGameAPI {
 		if (delta>=0 && delta<9) {
 			var col:int =  2-int(delta/3);
 			var row:int =  (delta%3);
-			userMadeHisMove( TictactoeCell.create(row, col) );
+			userMadeHisMove( TictactoeSquare.create(row, col) );
 		}
 	}
 	override public function gotMyUserId(myUserId:int):void {
@@ -132,27 +122,20 @@ public final class TictactoeMain extends ClientGameAPI {
 			var key:String = entry.key;
 			var value:* = entry.value;
 			if (key==API_Message.CUSTOM_INFO_KEY_logoFullUrl) {
-				for each (var cell:TictactoeCell in allCells) {
-					getSquareGraphic(cell).gotLogo(value);
-				}
+				logoFullUrl = value;
 			} else if (key==API_Message.CUSTOM_INFO_KEY_gameHeight) {
 				height = value;
 			} else if (key==API_Message.CUSTOM_INFO_KEY_gameWidth) {
 				width = value;
 			} else if (StaticFunctions.startsWith(key, TicTacToePrefix)) {
-				this[ key.substr(TicTacToePrefix.length) ] = value;
-				if (customSymbols!=null)
-					for (var i:int=0; i<customSymbols.length; i++) {
-						var customSymbol:String = customSymbols[i];
-						replaceSymbol(i,customSymbol);
-					}						
+				this[ key.substr(TicTacToePrefix.length) ] = value;									
 			} else {
 				grid.gotCustomInfo(key, value);
 			}	
 		}
 	}
 	private function replaceSymbol(color:int, symbolUrl:String):void {
-		for each (var cell:TictactoeCell in allCells) {
+		for each (var cell:TictactoeSquare in allCells) {
 			getSquareGraphic(cell).gotSymbol(color,symbolUrl);
 		}
 	}
@@ -160,6 +143,28 @@ public final class TictactoeMain extends ClientGameAPI {
 		if (!didCreateGrid) {
 			didCreateGrid = true;
 			grid.createMovieClips(graphics, "TicTacToeSquare");
+			
+			allCells = [];
+			squares = new Array(ROWS());
+			for(var row:int=0; row<ROWS(); row++) {
+				squares[row] = new Array(COLS());
+				for(var col:int=0; col<COLS(); col++) {
+					var cell:TictactoeSquare = TictactoeSquare.create(row, col);
+					setSquareGraphic(cell, new TictactoeSquareGraphic(this, AS3_vs_AS2.getMovieChild(graphics,"Square_"+row+"_"+col), cell) ); 
+					allCells.push(cell);
+				}
+			}		
+			if (customSymbols!=null)
+				for (var i:int=0; i<customSymbols.length; i++) {
+					var customSymbol:String = customSymbols[i];
+					replaceSymbol(i,customSymbol);
+				}	
+				
+			if (logoFullUrl!=null)
+				for each (var square:TictactoeSquare in allCells) {
+					getSquareGraphic(square).gotLogo(logoFullUrl);
+				}
+			
 			// we scale the TicTacToe size according to the grid size	
 			AS3_vs_AS2.scaleMovieY(graphics, 100*height/grid.height());	
 			AS3_vs_AS2.scaleMovieX(graphics, 100*width/grid.width());	
@@ -198,7 +203,7 @@ public final class TictactoeMain extends ClientGameAPI {
 		if (finishedPlayerIds.length>0)
 			matchOverForPlayers(finishedPlayerIds);
 		
-		for each (var move:TictactoeCell in allCells) {		
+		for each (var move:TictactoeSquare in allCells) {		
 			getSquareGraphic(move).clearWinAnimation();
 		}
 		startMove(true);
@@ -282,7 +287,7 @@ public final class TictactoeMain extends ClientGameAPI {
 		}
 		return res;			
 	}
-	private function performMove(move:TictactoeCell, isSavedGame:Boolean):void {
+	private function performMove(move:TictactoeSquare, isSavedGame:Boolean):void {
 		doTrace("performMove",["move=",move," isSavedGame=",isSavedGame]);
 		logic.makeMove(turnOfColor, move);
 		// update the graphics
@@ -292,10 +297,10 @@ public final class TictactoeMain extends ClientGameAPI {
 			square.startMoveAnimation();
 		}	
 		
-		var winningCells:Array/*TictactoeCell*/ = logic.getWinningCells(move);
+		var winningCells:Array/*TictactoeSquare*/ = logic.getWinningCells(move);
 		var didWin:Boolean = winningCells!=null;
 		if (didWin) {
-			for each (var winCell:TictactoeCell in winningCells) {
+			for each (var winCell:TictactoeSquare in winningCells) {
 				getSquareGraphic(winCell).startWinAnimation();
 			}
 		}
@@ -380,7 +385,7 @@ public final class TictactoeMain extends ClientGameAPI {
 	private function getEntryKey():int {
 		return logic.getMoveNumber();
 	}
-	public function userMadeHisMove(move:TictactoeCell):void {		
+	public function userMadeHisMove(move:TictactoeSquare):void {		
 		doTrace("dispatchMoveIfLegal", [move]);
 		if (logic==null) return; // game not in progress
 		if (myColor==VIEWER) return; // viewer cannot make a move
@@ -397,7 +402,7 @@ public final class TictactoeMain extends ClientGameAPI {
 		if (isInProgress && !isSinglePlayer()) {
 			doAllSetTurn(allPlayerIds[turnOfColor],-1);
 		}		
-		for each (var move:TictactoeCell in allCells) {				
+		for each (var move:TictactoeSquare in allCells) {				
 			if (logic.isSquareAvailable(move)) {
 				var square:TictactoeSquareGraphic = getSquareGraphic(move);
 				square.startMove(

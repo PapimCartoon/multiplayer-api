@@ -96,7 +96,35 @@ public class TestClientGameAPI extends ClientGameAPI {
 			require(entry.storedByUserId==allPlayerIds[0]);
 			if (myUserId==allPlayerIds[0]) require(ObjectDictionary.areEqual(entry.value, test_Arr));	
 		});
-
+		/*myCodeStart*/
+		expect(
+		function ():void {
+			if (myUserId==allPlayerIds[0]) {
+				doStoreState([ UserEntry.create("a","b", true),UserEntry.create("b","c", true),UserEntry.create("c","d", true),UserEntry.create("d","e", true),UserEntry.create("e","f", true),UserEntry.create("f","g", true),UserEntry.create("g","h", true),UserEntry.create("h","i", true),UserEntry.create("i","j", true),UserEntry.create("j","k", true),UserEntry.create("k","x", true)]);							
+			}
+		},
+		function (entries:Array):void {
+			var entry:ServerEntry = entries[0];	
+			require(entries.length == 11);
+			require(entry.visibleToUserIds != null);
+		});
+		expect(
+		function ():void {
+			doAllRevealState([RevealEntry.create("a",null,3),RevealEntry.create("e",[2],0)]);
+		},
+		function (entries:Array):void {
+			var entry0:ServerEntry = entries[0];
+			var entry1:ServerEntry = entries[1];
+			var entry2:ServerEntry = entries[2];
+			var entry3:ServerEntry = entries[3];
+			var entry4:ServerEntry = entries[4];
+			require(entry0.visibleToUserIds == null)
+			require(entry1.visibleToUserIds == null)
+			require(entry2.visibleToUserIds == null)
+			require(entry3.visibleToUserIds == null)
+			require(entry4.visibleToUserIds != null)
+		});
+		/*myCodeEnd*/
 		expect(
 		function ():void {
 			// testing doAllStoreState with public and secret entries.

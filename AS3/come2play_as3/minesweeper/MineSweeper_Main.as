@@ -185,7 +185,7 @@ import flash.utils.*;
 		override public function gotMatchStarted(allPlayerIds:Array, finishedPlayerIds:Array, extraMatchInfo:Object, matchStartedTime:int, serverEntries:Array):void
 		{
 			players = allPlayerIds;
-			mineSweeper_Logic.renewBoard(boardWidth,boardHeight,stageX,stageY,myUserId);
+			//mineSweeper_Logic.makeBoard(boardWidth,boardHeight,stageX,stageY,myUserId);
 			loadServerEntries = null;
 			if(serverEntries.length == 0)
 			{
@@ -205,35 +205,38 @@ import flash.utils.*;
 		}
 		override public function gotStateChanged(serverEntries:Array):void
 		{
-			var serverEntry:ServerEntry = serverEntries[0]
-				
+			var serverEntry1:ServerEntry = serverEntries[0]
+			var serverEntry2:ServerEntry = serverEntries[1]	
 			if(serverEntries.length > boardHeight * boardWidth)
 			{
 				//got calculations made by calculator	
-				if(serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" stored the data and not the calculator");
+				if(serverEntry1.storedByUserId != -1) doAllFoundHacker(serverEntry1.storedByUserId,serverEntry1.storedByUserId+" stored the data and not the calculator");
 				startGraphic.play();
 			}
-			else if(serverEntry.value is PlayerMove)
+			else if(serverEntry1.value is PlayerMove)
 			{
-				var playerMove:PlayerMove = serverEntry.value as PlayerMove;
-				if(playerMove.takingPlayer != serverEntry.storedByUserId) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" stored the data for another user")
+				var playerMove:PlayerMove = serverEntry1.value as PlayerMove;
+				if(playerMove.takingPlayer != serverEntry1.storedByUserId) doAllFoundHacker(serverEntry1.storedByUserId,serverEntry1.storedByUserId+" stored the data for another user")
 				if(!mineSweeper_Logic.isMoveTaken(playerMove))					
 					doAllRevealState([RevealEntry.create(playerMove.xPos+"_"+playerMove.yPos,null,1)]);	
 				else
 					if(myUserId == playerMove.takingPlayer)
 						doStoreState([UserEntry.create(playerMove.takingPlayer+"_"+playerMove.xPos+"_"+playerMove.yPos,null,false)]);
 			}
-			else if(serverEntry.value is ServerBox)
+			else if(serverEntry1.value is ServerBox)
 			{
-				var serverBox:ServerBox = serverEntry.value as ServerBox;
-				if(serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" stored the data and not the calculator");
+				var serverBox:ServerBox = serverEntry1.value as ServerBox;
+				if(serverEntry1.storedByUserId != -1) doAllFoundHacker(serverEntry1.storedByUserId,serverEntry1.storedByUserId+" stored the data and not the calculator");
 				 mineSweeper_Logic.addBoxesServer(serverBox);
 			}
-			else if(serverEntry.value is Array)
+			else if(serverEntry2.value != null)
 			{
-				var blankSquares:Array = serverEntry.value as Array;
-				if(serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" stored the data and not the calculator");	
-				mineSweeper_Logic.addBlankBoxesServer(blankSquares);
+				if(serverEntry2.value is Array)
+				{
+					var blankSquares:Array = serverEntry2.value as Array;
+					if(serverEntry2.storedByUserId != -1) doAllFoundHacker(serverEntry2.storedByUserId,serverEntry2.storedByUserId+" stored the data and not the calculator");	
+					mineSweeper_Logic.addBlankBoxesServer(blankSquares);
+				}
 			}
 		}
 		override public function gotKeyboardEvent(isKeyDown:Boolean, charCode:int, keyCode:int, keyLocation:int, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean):void

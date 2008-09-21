@@ -27,7 +27,7 @@ package come2play_as3.api {
 		private var runningAnimationsNumber:int = 0;
 		private var animationStartedOn:int = -1; 
 
-		override public function gotError(withObj:Object, err:Error):void {
+		public function gotError(withObj:Object, err:Error):void {
 			sendMessage( API_DoAllFoundHacker.create(hackerUserId, 
 				"Got error withObj="+JSON.stringify(withObj)+
 				" err="+AS3_vs_AS2.error2String(err)+
@@ -58,6 +58,14 @@ package come2play_as3.api {
 	    		var func:Function = this[methodName] as Function;
 				if (func==null) return;
 				func.apply(this, msg.getMethodParameters());
+        	} catch (err:Error) {
+        		try{				
+        			trace(getErrorMessage(msg, err));
+					gotError(msg, err);
+				} catch (err2:Error) { 
+					// to avoid an infinite loop, I can't call passError again.
+					showError("Another error occurred when calling gotError. The new error is="+AS3_vs_AS2.error2String(err2));
+				}
     		} finally {       
         		// we end a transaction
     			sendFinishedCallback(); 			

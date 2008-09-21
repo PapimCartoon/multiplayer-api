@@ -672,7 +672,11 @@ package emulator {
 			}
 			
 			if(valueChanged)
+			{
+				doStoreOneState(serverEntry);
+				serverEntry.storedByUserId = -1;
 				return serverEntry;
+			}
 			else
 				return null;
 		}
@@ -704,7 +708,7 @@ package emulator {
 				var foundHackerMsg:API_DoAllFoundHacker=msg as API_DoAllFoundHacker;
 				doFoundHacker(user,foundHackerMsg);
 			}
-			else if((msg is API_Transaction) && (!playByPlayTimer.running))
+			else if((msg is API_Transaction))
 			{
 				var transMsg:API_Transaction = 	msg as API_Transaction;	
 				var isCallback:Boolean = false;
@@ -721,8 +725,8 @@ package emulator {
 						user.do_finished_callback(finishedCallbackMsg.callbackName)
 					}
 				}
-
-				
+				if(playByPlayTimer.running)
+					return;
 				if(transMsg.messages.length == 0) 
 				{
 					if(isCallback)
@@ -759,6 +763,7 @@ package emulator {
 		private function processMessage(msg:API_Message):Array/*ServerEntry*/
 		{
 			var serverEntries:Array = new Array();
+			var saved:Boolean = false;
 			addMessageLog("sewrver","what is alon?",msg.getMethodName());
 			if(msg is API_DoAllSetTurn)
 			{
@@ -782,7 +787,8 @@ package emulator {
 			}
 			else if(msg is API_DoAllRevealState) 
 			{
-				var revealStateMessage:API_DoAllRevealState=msg as API_DoAllRevealState;	
+				var revealStateMessage:API_DoAllRevealState=msg as API_DoAllRevealState;
+				saved = true;	
 				serverEntries = doAllRevealState(revealStateMessage);
 			}
 			else if(msg is API_DoAllRequestStateCalculation) 
@@ -800,7 +806,7 @@ package emulator {
 				var storeState:API_DoAllStoreState = msg as API_DoAllStoreState;
 				serverEntries = doAllStoreState(storeState);
 			}
-			if(serverEntries.length > 0)
+			if((serverEntries.length > 0) &&(!saved))
 				storeServerEntries(serverEntries);
 			return serverEntries;
 		}
@@ -1082,10 +1088,9 @@ package emulator {
 					}
 					else
 					{
-						stateData = serverState.getValue(revealEntry.key) as ServerEntry;
+						stateData = serverState.getValue(key) as ServerEntry;
 						if(revealEntry.depth > i)
 						{	
-							addMessageLog("funny","is visible: "+serverState.hasKey(stateData.value),"true")
 							if(serverState.hasKey(stateData.value))
 							{
 								tempServerEntry = revealEntryToPlayers(stateData,revealEntry);
@@ -1102,7 +1107,7 @@ package emulator {
 						}
 					}
 				}
-			}		
+			}	
 			return serverEntries;
 		}
 		private function doAllRequestRandomState(msg:API_DoAllRequestRandomState):Array/*ServerEntry*/
@@ -1663,6 +1668,8 @@ package emulator {
 		
 		private function doOneMove(ev:TimerEvent):void
 		{
+			var finishedPlayerIds:Array/*int*/ = new Array;
+			var finishedPlayer:PlayerMatchOver
 			if(changedToDelta < deltaHistory.gameTurns.length)
 			{
 				tblInfo.selectedIndex = changedToDelta;
@@ -1671,11 +1678,17 @@ package emulator {
 				{
 					var serverEntries:Array/*ServerEntry*/ = playerDelta.serverEntries;
 					sendStateChanged(serverEntries);
-					//todo : replay
 				}
 				else if (playerDelta.finishHistory != null)
 				{
-					//todo: send finished game
+					FinishHistory.wholePot -= playerDelta.finishHistory.pot;
+					for each(finishedPlayer in playerDelta.finishHistory.finishedPlayers)
+					{
+						finishedPlayerIds.push(finishedPlayer.playerId);
+						FinishHistory.totalFinishingPlayers ++;
+					}
+					afinishedPlayers.push(playerDelta.finishHistory);
+					broadcast(API_GotMatchEnded.create(finishedPlayerIds));
 				}
 				
 				changedToDelta++;
@@ -1703,30 +1716,33 @@ package emulator {
 		
 		public function loadToDelta(delta:int):void
 		{
-				var serverEntries:Array/*ServerEntry*/ = deltaHistory.getServerEntries(delta);
-				afinishedPlayers = deltaHistory.getFinishedGames(delta); 
-				aPlayers = deltaHistory.getPlayers(0)	
-				FinishHistory.wholePot = 100;
-				FinishHistory.totalFinishingPlayers = 0;
-				for each(var savedFinishedPlayer:FinishHistory in afinishedPlayers)
+			/*
+			the reason we save the endmatches as well is because we want to have the pot data
+			*/
+			var serverEntries:Array/*ServerEntry*/ = deltaHistory.getServerEntries(delta);
+			afinishedPlayers = deltaHistory.getFinishedGames(delta); 
+			aPlayers = deltaHistory.getPlayers(0)	
+			FinishHistory.wholePot = 100;
+			FinishHistory.totalFinishingPlayers = 0;
+			for each(var savedFinishedPlayer:FinishHistory in afinishedPlayers)
+			{
+				var tempPotPercentage:Number = 0;
+				for each(var playerMatchOver:PlayerMatchOver in savedFinishedPlayer.finishedPlayers)
 				{
-					var tempPotPercentage:Number = 0;
-					for each(var playerMatchOver:PlayerMatchOver in savedFinishedPlayer.finishedPlayers)
-					{
-						tempPotPercentage += playerMatchOver.potPercentage
-						FinishHistory.totalFinishingPlayers ++;
-					}
-					FinishHistory.wholePot -= FinishHistory.wholePot*tempPotPercentage / 100;
+					tempPotPercentage += playerMatchOver.potPercentage
+					FinishHistory.totalFinishingPlayers ++;
 				}
-						
-				serverState = new ObjectDictionary();
-				for each(var severEntry:ServerEntry in serverEntries)
-				{
-					if(severEntry.value == null)
-						serverState.remove(severEntry.key)
-					else
-						serverState.put(severEntry.key,severEntry);
-				}	
+				FinishHistory.wholePot -= FinishHistory.wholePot*tempPotPercentage / 100;
+			}
+					
+			serverState = new ObjectDictionary();
+			for each(var severEntry:ServerEntry in serverEntries)
+			{
+				if(severEntry.value == null)
+					serverState.remove(severEntry.key)
+				else
+					serverState.put(severEntry.key,severEntry);
+			}	
 		}
 
 		private function doGoBack(ev:MouseEvent):void
@@ -1996,11 +2012,10 @@ package emulator {
 			serverState = savedGame.serverState;
 			deltaHistory = savedGame.deltaHistory;
 			afinishedPlayers = savedGame.finishedGames.concat();
-			aPlayers = savedGame.players.concat();
+			//aPlayers = savedGame.players.concat();
 			for each(var savedFinishedPlayer:FinishHistory in afinishedPlayers)
 			{
 				var tempPotPercentage:Number = 0;
-				trace("A**************"+savedGame.finishedGames)
 				for each(var playerMatchOver:PlayerMatchOver in savedFinishedPlayer.finishedPlayers)
 				{
 					tempPotPercentage += playerMatchOver.potPercentage
@@ -2186,9 +2201,9 @@ package emulator {
 			for(var i:int = (oldServerEntries.length -1);i>=0;i--)
 			{
 				var serverEntry:ServerEntry = oldServerEntries[i];
-				if(dicArray[serverEntry.key] == null)
+				if(dicArray[JSON.stringify(serverEntry.key)] == null)
 				{
-					dicArray[serverEntry.key] = true;
+					dicArray[JSON.stringify(serverEntry.key)] = true;
 					serverEntries.unshift(serverEntry);
 				}
 			}

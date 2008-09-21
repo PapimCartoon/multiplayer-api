@@ -80,7 +80,7 @@ public class SerializableClass
 				for (var key:String in object)
 					res[key] = deserialize(object[key]); // might throw an illegal assignment (due to type mismatch)
 			}
-			trace(JSON.stringify(object)+" object="+object+" res="+res+" isArray="+isArray+" isObject="+isObject);
+			//trace(JSON.stringify(object)+" object="+object+" res="+res+" isArray="+isArray+" isObject="+isObject);
 			return res; 						
 		} catch (err:Error) {
 			// I can't throw an exception, because if a hacker stored illegal value in className, 

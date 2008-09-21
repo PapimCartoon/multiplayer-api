@@ -590,7 +590,7 @@ package emulator {
 				for(i=1;i<count;i++)
 				{
 					var key:String = root.loaderInfo.parameters["paramNum_"+i]
-					var infoEntry:InfoEntry = InfoEntry.create(key,root.loaderInfo.parameters[key]);				
+					var infoEntry:InfoEntry = InfoEntry.create(key,JSON.parse(root.loaderInfo.parameters[key]));				
 					serverInfoEnteries.push(infoEntry);
 				}
 			}
@@ -639,24 +639,45 @@ package emulator {
 				}
 			}
 		}
-		private function revealEntryToPlayers(serverEntry:ServerEntry,revealEntry:RevealEntry):void
+		private function revealEntryToPlayers(serverEntryMold:ServerEntry,revealEntry:RevealEntry):ServerEntry
 		{
+			var serverEntry:ServerEntry = ServerEntry.create(serverEntryMold.key,serverEntryMold.value,serverEntryMold.storedByUserId,serverEntryMold.visibleToUserIds,serverEntryMold.changedTimeInMilliSeconds);
+			var valueChanged:Boolean = false;
 			var playerExist:Boolean;
-			for each(var revealPlayer:int in revealEntry.userIds)
+			if(revealEntry.userIds == null)
 			{
-				playerExist=false;
-				for each(var serverPlayer:int in serverEntry.visibleToUserIds)
+				if(serverEntry.visibleToUserIds != null)
 				{
-					if(serverPlayer == revealPlayer)
-						playerExist=true;
+					valueChanged  = true;
+					serverEntry.visibleToUserIds = null;
 				}
-				if(!playerExist)
-					serverEntry.visibleToUserIds.push(revealPlayer);
+				
 			}
+			else if(serverEntry.visibleToUserIds != null)
+			{
+				for each(var revealPlayer:int in revealEntry.userIds)
+				{
+					playerExist=false;
+					for each(var serverPlayer:int in serverEntry.visibleToUserIds)
+					{
+						if(serverPlayer == revealPlayer)
+							playerExist=true;
+					}
+					if(!playerExist)
+					{
+						valueChanged = true;
+						serverEntry.visibleToUserIds.push(revealPlayer);
+					}
+				}
+			}
+			
+			if(valueChanged)
+				return serverEntry;
+			else
+				return null;
 		}
 		private var isProcessingCallback:Boolean = false;
 		public function got_user_localconnection_callback(user:User, msg:API_Message):void {
-
 			if(msg is API_DoTrace)
 			{
 				var traceMsg:API_DoTrace=msg as API_DoTrace;
@@ -668,6 +689,7 @@ package emulator {
 			}
 			else if(msg is API_DoFinishedCallback)
 			{
+				/*
 				var finishedCallbackMsg:API_DoFinishedCallback = msg as API_DoFinishedCallback;
 				if(finishedCallbackMsg.callbackName != "gotKeyboardEvent")
 				{
@@ -675,6 +697,7 @@ package emulator {
 					verefyAction(user);
 					user.do_finished_callback(finishedCallbackMsg.callbackName)
 				}
+				*/
 			}
 			else if(msg is API_DoAllFoundHacker)
 			{
@@ -683,8 +706,30 @@ package emulator {
 			}
 			else if((msg is API_Transaction) && (!playByPlayTimer.running))
 			{
-				var transMsg:API_Transaction = 	msg as API_Transaction;		
-				if(transMsg.messages.length == 0) throw new Error("Transaction cannot be empty");
+				var transMsg:API_Transaction = 	msg as API_Transaction;	
+				var isCallback:Boolean = false;
+				var callbackMsg:API_Message = transMsg.messages[0];
+				if(callbackMsg is API_DoFinishedCallback)
+				{
+					transMsg.messages.shift();
+					isCallback = true;
+					var finishedCallbackMsg:API_DoFinishedCallback = callbackMsg as API_DoFinishedCallback;
+					if(finishedCallbackMsg.callbackName != "gotKeyboardEvent")
+					{
+						addMessageLog(user.Name, finishedCallbackMsg.getMethodName(), finishedCallbackMsg.toString());
+						verefyAction(user);
+						user.do_finished_callback(finishedCallbackMsg.callbackName)
+					}
+				}
+
+				
+				if(transMsg.messages.length == 0) 
+				{
+					if(isCallback)
+						return;
+					else
+						throw new Error("Transaction cannot be empty");
+				}
 				if (!bGameStarted) {
 					addMessageLog("Server", msg.getMethodName(), "Error: game not started");
 					return;
@@ -734,7 +779,6 @@ package emulator {
 			{
 				var randomStateMessage:API_DoAllRequestRandomState=msg as API_DoAllRequestRandomState;	
 				serverEntries = doAllRequestRandomState(randomStateMessage);
-				addMessageLog("Server","bad : "+serverEntries.length,serverEntries[0].key+" : "+serverEntries[0].value);
 			}
 			else if(msg is API_DoAllRevealState) 
 			{
@@ -1023,6 +1067,7 @@ package emulator {
 			var serverEntries:Array=new Array();
 			var serverEntry:ServerEntry;
 			var key:Object;
+			var tempServerEntry:ServerEntry
 			for each(var revealEntry:RevealEntry in msg.revealEntries)
 			{
 				key=revealEntry.key
@@ -1037,20 +1082,23 @@ package emulator {
 					}
 					else
 					{
-						stateData= serverState.getValue(revealEntry.key) as ServerEntry;
-						if(revealEntry.depth != i)
-						{
+						stateData = serverState.getValue(revealEntry.key) as ServerEntry;
+						if(revealEntry.depth > i)
+						{	
+							addMessageLog("funny","is visible: "+serverState.hasKey(stateData.value),"true")
 							if(serverState.hasKey(stateData.value))
+							{
+								tempServerEntry = revealEntryToPlayers(stateData,revealEntry);
+								if(tempServerEntry != null)
+									serverEntries.push(tempServerEntry);
 								key = stateData.value;
+							}
 						}
 						else
 						{
-							serverEntry = serverState.getValue(key) as ServerEntry;
-							if(revealEntry.userIds == null)
-								serverEntry.visibleToUserIds = null;			
-							else
-								revealEntryToPlayers(serverEntry,revealEntry);
-							serverEntries.push(serverEntry);
+							tempServerEntry = revealEntryToPlayers(stateData,revealEntry);
+							if(tempServerEntry != null)
+								serverEntries.push(tempServerEntry);
 						}
 					}
 				}

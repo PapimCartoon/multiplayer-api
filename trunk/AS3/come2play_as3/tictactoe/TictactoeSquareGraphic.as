@@ -7,12 +7,12 @@ import flash.display.*;
 import flash.utils.clearInterval;
 import flash.utils.setInterval;
 
-public final class TicTacToe_SquareGraphic
+public final class TictactoeSquareGraphic
 {
 	public static const BTN_NONE:int = -2; 
 	public static const MAX_SYMBOLS:int = 4; 	
 	
-	private var graphic:TicTacToe_Main;
+	private var graphic:TictactoeMain;
 	private var soundMovieClip:MovieClip;
 	private var buttonContainer:MovieClip;
 	
@@ -21,10 +21,10 @@ public final class TicTacToe_SquareGraphic
 	private var allSymbols:Array/*DisplayObject*/;
 	private var currentTurnForMouseOver:int = BTN_NONE;
 
-	private var move:TicTacToeMove;
+	private var move:TictactoeCell;
 	private var logoContainer:MovieClip;
 		
-	public function TicTacToe_SquareGraphic(graphic:TicTacToe_Main, square:MovieClip, move:TicTacToeMove) {
+	public function TictactoeSquareGraphic(graphic:TictactoeMain, square:MovieClip, move:TictactoeCell) {
 		this.graphic = graphic;
 		this.buttonContainer = AS3_vs_AS2.getMovieChild(square,"buttonContainer");
 		this.logoContainer = AS3_vs_AS2.getMovieChild(square,"logoContainer");

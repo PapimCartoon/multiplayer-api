@@ -62,9 +62,19 @@ import come2play_as2.api.*;
         /*override*/ public function gotMessage(msg:API_Message):Void {        	
 			if (msg instanceof API_Transaction) {
 				var transaction:API_Transaction = API_Transaction(msg);
-				for (var i65:Number=0; i65<transaction.messages.length; i65++) { var innerMsg:API_Message = transaction.messages[i65]; 
+				for (var i66:Number=0; i66<transaction.messages.length; i66++) { var innerMsg:API_Message = transaction.messages[i66]; 
 					gotMessage(innerMsg);
 				}
+			} else if (msg instanceof API_DoStoreState) {
+				var doStore:API_DoStoreState = API_DoStoreState(msg);				
+				var userEntries:Array/*UserEntry*/ = doStore.userEntries;
+				var serverEntries:Array/*ServerEntry*/ = [];
+				for (var i73:Number=0; i73<userEntries.length; i73++) { var userEntry:UserEntry = userEntries[i73]; 
+					var serverEntry:ServerEntry = ServerEntry.create(userEntry.key, userEntry.value, userId,userEntry.isSecret ? [userId] : null, getTimer());
+					serverEntries.push(serverEntry); 
+				}
+				queueSendMessage(API_GotStateChanged.create(serverEntries));
+				
 			} else if (msg instanceof API_DoAllEndMatch) {
 				AS3_vs_AS2.myTimeout(AS3_vs_AS2.delegate(this, this.sendNewMatch), 2000);
 			} else if (msg instanceof API_DoRegisterOnServer) {

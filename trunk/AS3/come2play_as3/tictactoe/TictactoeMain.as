@@ -56,18 +56,17 @@ public final class TictactoeMain extends ClientGameAPI {
 	public static var TicTacToePrefix:String = "TicTacToe_";
 	// We may use the player's avatars instead of the default symbols (of "X" and "O")
 	private var shouldUseAvatars:Boolean = true; 
-	// for example, you can have a board of size 5x5, with WIN_LENGTH=4
-	private var WIN_LENGTH:int = 3;
-	private var PLAYERS_NUM_IN_SINGLE_PLAYER:int = 3;
-	private var WINNER_PERCENTAGE:int = 70;
+	// for example, you can have a board of size 5x5, with winLength=4
+	private var winLength:int = 3;
+	private var playersNumInSinglePlayer:int = 3;
+	private var winnerPercentage:int = 70;
 	// use customSymbols to change the symbols of TicTacToe from the default ones (which are "X" and "O")
 	private var customSymbols:Array/*String*/ = null;
 	
 	public function TictactoeMain(graphics:MovieClip) {
 		super(graphics);
-		
-		// we might get resized later (when the height and width are passed), 
-		// so it's best to hide the board until the game starts.
+		 
+		// It's best to hide the board until the game starts.
 		AS3_vs_AS2.setVisible(graphics,false);
 		 
 		grid = new CreateGrid(3,3,84,100,50);		
@@ -195,7 +194,7 @@ public final class TictactoeMain extends ClientGameAPI {
 		ongoingColors = [];
 		for (var color:int=0; color<playersNum; color++)
 			ongoingColors.push(color);
-		logic = new TictactoeLogic(ROWS(),COLS(),WIN_LENGTH, playersNum);
+		logic = new TictactoeLogic(ROWS(),COLS(),winLength, playersNum);
 		for each (var serverEntry:ServerEntry in userStateEntries) {
 			if (!isSinglePlayer()) turnOfColor = getColor(serverEntry.storedByUserId);	// some users may have disconnected in the middle of the game	
 			performMove(serverEntry.value, true);	//we should not call doAllEndMatch when loading the match	
@@ -266,7 +265,7 @@ public final class TictactoeMain extends ClientGameAPI {
 		return shouldChangeTurnOfColor;
 	}
 	private function playersNumber():int {
-		return isSinglePlayer() ? PLAYERS_NUM_IN_SINGLE_PLAYER : allPlayerIds.length;
+		return isSinglePlayer() ? playersNumInSinglePlayer : allPlayerIds.length;
 	}
 	private function isSinglePlayer():Boolean {
 		return allPlayerIds.length==1;
@@ -324,7 +323,7 @@ public final class TictactoeMain extends ClientGameAPI {
 					if (isBoardFull || ongoingColors.length==2) {
 						percentage = 100; // there won't be any other winners
 					} else {
-						percentage = WINNER_PERCENTAGE; 
+						percentage = winnerPercentage; 
 					}
 					var winnerId:int = allPlayerIds[turnOfColor];
 					finishedPlayers.push(

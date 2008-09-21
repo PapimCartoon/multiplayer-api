@@ -12,7 +12,7 @@ import come2play_as2.api.auto_copied.*;
  * Written by: Yoav Zibin (yoav@zibin.net)
  */
 import come2play_as2.tictactoe.*;
-class come2play_as2.tictactoe.TicTacToe_logic { 	
+class come2play_as2.tictactoe.TictactoeLogic { 	
 	public static var SQUARE_AVAILABLE:Number = -1;
 	
 	// for example, you can have a board of size 5x5, with WIN_LENGTH=4
@@ -27,7 +27,7 @@ class come2play_as2.tictactoe.TicTacToe_logic {
 	// The number of squares which are not SQUARE_AVAILABLE
 	private var filledNum:Number; 
 	
-	public function TicTacToe_logic(ROWS:Number, COLS:Number, WIN_LENGTH:Number, PLAYERS_NUM:Number) {
+	public function TictactoeLogic(ROWS:Number, COLS:Number, WIN_LENGTH:Number, PLAYERS_NUM:Number) {
 		this.ROWS = ROWS;
 		this.COLS = COLS;
 		this.WIN_LENGTH = WIN_LENGTH;
@@ -41,10 +41,10 @@ class come2play_as2.tictactoe.TicTacToe_logic {
 		}
 	}
 	
-	public function getOwner(move:TicTacToeMove):Number {
+	public function getOwner(move:TictactoeSquare):Number {
 		return gameState[move.row][move.col];
 	}
-	public function setOwner(move:TicTacToeMove, owner:Number):Void {
+	public function setOwner(move:TictactoeSquare, owner:Number):Void {
 		gameState[move.row][move.col] = owner;
 	}
 	public function getMoveNumber():Number {
@@ -53,15 +53,15 @@ class come2play_as2.tictactoe.TicTacToe_logic {
 	public function isBoardFull():Boolean {
 		return filledNum==ROWS*COLS;
 	}
-	public function isSquareAvailable(move:TicTacToeMove):Boolean {
+	public function isSquareAvailable(move:TictactoeSquare):Boolean {
 		return isInBoard(move) && getOwner(move)==SQUARE_AVAILABLE;
 	}
-	public function isInBoard(move:TicTacToeMove):Boolean {
+	public function isInBoard(move:TictactoeSquare):Boolean {
 		return move.row>=0 && move.col>=0 && move.row<ROWS && move.col<COLS;
 	}
 	
 	// Makes a move in TicTacToe by placing either X or O in square <row,col>
-	public function makeMove(color:Number, move:TicTacToeMove):Void {
+	public function makeMove(color:Number, move:TictactoeSquare):Void {
 		if (!isSquareAvailable(move)) LocalConnectionUser.throwError("Square "+move+" is not available");
 		if (color<0 || color>=PLAYERS_NUM) LocalConnectionUser.throwError("Illegal color="+color);
 		setOwner(move, color);
@@ -71,9 +71,9 @@ class come2play_as2.tictactoe.TicTacToe_logic {
 	// checks if there is a winning row, column, or diagonal that passes through square <row,col>
 	// If not, it returns null. 
 	// Otherwise, it returns all the cells that are the "winning cells" (to display in a end-game animation)
-	public function getWinningCells(move:TicTacToeMove):Array/*TicTacToeMove*/ {
+	public function getWinningCells(move:TictactoeSquare):Array/*TictactoeSquare*/ {
 		if (getOwner(move)==SQUARE_AVAILABLE) return null;
-		var res:Array/*TicTacToeMove*/ = [move];
+		var res:Array/*TictactoeSquare*/ = [move];
 		var partialRes:Array;
 		// LEFT & RIGHT
 		if ((partialRes = getConnectedDelta2(move, 0, -1,   0,  1)) != null) res = res.concat(partialRes);
@@ -85,14 +85,14 @@ class come2play_as2.tictactoe.TicTacToe_logic {
 		if ((partialRes = getConnectedDelta2(move, 1, -1,  -1,  1)) != null) res = res.concat(partialRes);
         return res.length==1 ? null : res;   
 	}	
-    private function getConnectedDelta2(move:TicTacToeMove, delta_row:Number, delta_col:Number, delta_row2:Number, delta_col2:Number):Array/*TicTacToeMove*/ {
+    private function getConnectedDelta2(move:TictactoeSquare, delta_row:Number, delta_col:Number, delta_row2:Number, delta_col2:Number):Array/*TictactoeSquare*/ {
     	var res1:Array = getConnectedDelta(move, delta_row, delta_col);
     	var res2:Array = getConnectedDelta(move, delta_row2, delta_col2);
     	var joined:Array = res1.concat(res2);
         return joined.length >= WIN_LENGTH-1 ? joined : null;// I didn't count the square in <row,col> 
     }
     // returns consecutive squares that have the same owner as square <row,col>
-    private function getConnectedDelta(move:TicTacToeMove, delta_row:Number, delta_col:Number):Array/*TicTacToeMove*/ {
+    private function getConnectedDelta(move:TictactoeSquare, delta_row:Number, delta_col:Number):Array/*TictactoeSquare*/ {
 		var ownedBy:Number = getOwner(move);
         var res:Array = [];
         var row:Number = move.row;
@@ -100,7 +100,7 @@ class come2play_as2.tictactoe.TicTacToe_logic {
         for(var i:Number=1; i<WIN_LENGTH; i++) {
         	row += delta_row;
         	col += delta_col;
-        	var nextCell:TicTacToeMove = TicTacToeMove.create(row, col);
+        	var nextCell:TictactoeSquare = TictactoeSquare.create(row, col);
             if (!isInBoard( nextCell )) break;
             if (getOwner(nextCell)!=ownedBy) break;
             res.push(nextCell);

@@ -46,6 +46,9 @@ public class SerializableClass
 	}
 	public static function isToStringObject(str:String):Boolean {
 		return str=="[object Object]";
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 	}
 	public static function isObject(o:Object):Boolean {
 		return isToStringObject(o.toString());	
@@ -55,9 +58,12 @@ public class SerializableClass
 			if (object==null) 
 				return object;
 			var isArray:Boolean = AS3_vs_AS2.isArray(object);
-			var isObject:Boolean = isObject(object);
+			var isObj:Boolean = isObject(object);
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			var res:Object = object;
-			if (isArray || isObject) {				
+			if (isArray || isObj) {				
 				var className:String = 
 					object.hasOwnProperty(CLASS_NAME_FIELD) ? object[CLASS_NAME_FIELD] : null;
 				res = isArray ? [] : {}; // we create a new copy
@@ -66,6 +72,9 @@ public class SerializableClass
 				if (className!=null) {
 					var isAPI_Package:Boolean =
 						StaticFunctions.startsWith(className, REPLACE_TO);
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 					if (isAPI_Package) {
 						className = REPLACE_IN_NAME + className.substr(REPLACE_TO.length);
 					}			 
@@ -76,16 +85,22 @@ public class SerializableClass
 				}
 				if (newObject!=null)
 					AS3_vs_AS2.checkAllFieldsDeserialized(object, newObject);
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 					
 				for (var key:String in object)
 					res[key] = deserialize(object[key]); // might throw an illegal assignment (due to type mismatch)
 			}
-			//trace(JSON.stringify(object)+" object="+object+" res="+res+" isArray="+isArray+" isObject="+isObject);
+			//trace(JSON.stringify(object)+" object="+object+" res="+res+" isArray="+isArray+" isObj="+isObj);
 			return res; 						
 		} catch (err:Error) {
 			// I can't throw an exception, because if a hacker stored illegal value in className, 
 			//	then it will cause an error (that may be discovered only in the reveal stage)
 			// instead the client should do a "is" check.
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			trace("Exception thrown in deserialize:"+AS3_vs_AS2.error2String(err));
 			if (IS_THROWING_EXCEPTIONS)
 				throw err;

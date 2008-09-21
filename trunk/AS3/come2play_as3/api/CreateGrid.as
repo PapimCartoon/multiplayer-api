@@ -6,36 +6,36 @@ import flash.display.*;
 public final class CreateGrid
 {
 	/**
-	 * graphics should have a movieclip called 
-	 * "Square_Example"
-	 * This movieclip will be duplicated into a grid of movieclips:
+	 * graphics should have a linkage name called <squareLinkageName>.
+	 * A grid of movieclips will be instantiated and added as children to graphics. 
+	 * The movieclips will be called:
 	 * Square_<ROW>_<COL>
 	 * For example,
 	 * Square_0_0 , Square_0_1 , Square_0_2 , ...
 	 * Square_1_0 , Square_1_1 , Square_1_2 , ...
+	 * Square_2_0 , Square_2_1 , Square_2_2 , ...
 	 * ...
+	 * 
 	 * The grid parameters are determined by gotCustomInfo:
-	 * The grid size is ROWS and COLS
+	 * The grid size is ROWS times COLS
 	 * The movieclips are scaled by:
-	 * SQUARE_scaleX and SQUARE_scaleY
-	 * (for example, if they are 50, the the size is reduced by half.)
-	 * The distance between the squares are:
-	 * SQUARE_deltaX and SQUARE_deltaY
+	 * squareScaleX and squareScaleY
+	 * (for example, if they are 50, then the size is reduced by half.)
+	 * The distance between the squares is:
+	 * squareDeltaX and squareDeltaY
 	 * And the initial position of the first square is: 
-	 * SQUARE_startX and SQUARE_startY
+	 * squareStartX and squareStartY
 	 */
 	public static var GridPrefix:String = "Grid_";
 	public var ROWS:int;
 	public var COLS:int;
-	public var SQUARE_scaleX:int;
-	public var SQUARE_scaleY:int;
-	public var SQUARE_startX:int;
-	public var SQUARE_startY:int;
-	public var SQUARE_deltaX:int;
-	public var SQUARE_deltaY:int;
-	
-	public var Square_Example:MovieClip;
-	
+	public var squareScaleX:int;
+	public var squareScaleY:int;
+	public var squareStartX:int;
+	public var squareStartY:int;
+	public var squareDeltaX:int;
+	public var squareDeltaY:int;
+		
 	public function gotCustomInfo(key:String, value:*):void {
 		if (StaticFunctions.startsWith(key,GridPrefix)) {
 			this[ key.substr(GridPrefix.length) ] = value;
@@ -47,12 +47,12 @@ public final class CreateGrid
 		
 		ROWS = defaultRows; 
 		COLS = defaultCols;
-		SQUARE_scaleX = defaultScale; 
-		SQUARE_scaleY = defaultScale; 
-		SQUARE_deltaX = defaultSize; 
-		SQUARE_deltaY = defaultSize; 
-		SQUARE_startX = defaultStartPos; 
-		SQUARE_startY = defaultStartPos; 
+		squareScaleX = defaultScale; 
+		squareScaleY = defaultScale; 
+		squareDeltaX = defaultSize; 
+		squareDeltaY = defaultSize; 
+		squareStartX = defaultStartPos; 
+		squareStartY = defaultStartPos; 
 	}
 	public function createMovieClips(graphics:MovieClip, squareLinkageName:String):void {
 		for (var row:int=0; row<ROWS; row++)
@@ -62,14 +62,14 @@ public final class CreateGrid
 			}
 	}
 	public function placeInGrid(dup:MovieClip, row:int, col:int):void {
-		AS3_vs_AS2.setMovieXY(dup, SQUARE_startX + SQUARE_deltaX*row, SQUARE_startY + SQUARE_deltaY*col);
-		AS3_vs_AS2.scaleMovie(dup, SQUARE_scaleX, SQUARE_scaleY);		
+		AS3_vs_AS2.setMovieXY(dup, squareStartX + squareDeltaX*row, squareStartY + squareDeltaY*col);
+		AS3_vs_AS2.scaleMovie(dup, squareScaleX, squareScaleY);		
 	}
 	public function width():int {
-		return 2*SQUARE_startX + SQUARE_deltaX*ROWS;
+		return 2*squareStartX + squareDeltaX*ROWS;
 	}
 	public function height():int {
-		return 2*SQUARE_startY + SQUARE_deltaY*COLS;
+		return 2*squareStartY + squareDeltaY*COLS;
 	}
 }
 }

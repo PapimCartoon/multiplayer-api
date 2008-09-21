@@ -10,3 +10,5 @@ To reveal a secret [ServerEntry] to a user, all players must call `doAllRevealSt
 *revealEntries :* - an Array of [RevealEntry] elsements
 
 all entries revealed this way, will have a `storedByUserId` set to -1
+every [ServerEntry] which was already revealed to all the users in the 'userIds' array in the [RevealEntry]
+is not sent to the users playing the game,because its state has not changed

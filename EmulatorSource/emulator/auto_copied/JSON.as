@@ -97,7 +97,7 @@ package emulator.auto_copied
 				argToString = "ERROR in toString() method of "+AS3_vs_AS2.getClassName(arg)+" err="+AS3_vs_AS2.error2String(e);
 	        }
 	        
-	        if (argToString=="[object Object]") {
+	        if (SerializableClass.isToStringObject(argToString)) {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 

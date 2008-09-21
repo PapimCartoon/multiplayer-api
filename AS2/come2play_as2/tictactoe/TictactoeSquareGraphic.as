@@ -3,12 +3,12 @@ import come2play_as2.api.auto_copied.*;
 
 
 import come2play_as2.tictactoe.*;
-class come2play_as2.tictactoe.TicTacToe_SquareGraphic
+class come2play_as2.tictactoe.TictactoeSquareGraphic
 {
 	public static var BTN_NONE:Number = -2; 
 	public static var MAX_SYMBOLS:Number = 4; 	
 	
-	private var graphic:TicTacToe_Main;
+	private var graphic:TictactoeMain;
 	private var soundMovieClip:MovieClip;
 	private var buttonContainer:MovieClip;
 	
@@ -17,15 +17,16 @@ class come2play_as2.tictactoe.TicTacToe_SquareGraphic
 	private var allSymbols:Array/*DisplayObject*/;
 	private var currentTurnForMouseOver:Number = BTN_NONE;
 
-	private var move:TicTacToeMove;
+	private var move:TictactoeSquare;
 	private var logoContainer:MovieClip;
 		
-	public function TicTacToe_SquareGraphic(graphic:TicTacToe_Main, square:MovieClip, move:TicTacToeMove) {
+	public function TictactoeSquareGraphic(graphic:TictactoeMain, square:MovieClip, move:TictactoeSquare) {
 		this.graphic = graphic;
 		this.buttonContainer = AS3_vs_AS2.getMovieChild(square,"buttonContainer");
 		this.logoContainer = AS3_vs_AS2.getMovieChild(square,"logoContainer");
 		this.symbolsContainer = AS3_vs_AS2.getMovieChild(square,"symbolsContainer");
-		this.soundMovieClip = AS3_vs_AS2.getMovieChild(square,"soundMovieClip");		
+		this.soundMovieClip = AS3_vs_AS2.getMovieChild(square,"soundMovieClip");
+		soundMovieClip.stop(); // for some reason the sound started playing immediately		
 		this.move = move;
 		if (AS3_vs_AS2.isAS3) {
 			addButtonListeners(buttonContainer);

@@ -39,9 +39,9 @@ public class SerializableClass
 			if (object==null) 
 				return object;
 			var isArray:Boolean = AS3_vs_AS2.isArray(object);
-			var isObject:Boolean = isObject(object);
+			var isObj:Boolean = isObject(object);
 			var res:Object = object;
-			if (isArray || isObject) {				
+			if (isArray || isObj) {				
 				var className:String = 
 					object.hasOwnProperty(CLASS_NAME_FIELD) ? object[CLASS_NAME_FIELD] : null;
 				res = isArray ? [] : {}; // we create a new copy
@@ -64,7 +64,7 @@ public class SerializableClass
 				for (var key:String in object)
 					res[key] = deserialize(object[key]); // might throw an illegal assignment (due to type mismatch)
 			}
-			trace(JSON.stringify(object)+" object="+object+" res="+res+" isArray="+isArray+" isObject="+isObject);
+			//trace(JSON.stringify(object)+" object="+object+" res="+res+" isArray="+isArray+" isObj="+isObj);
 			return res; 						
 		} catch (err:Error) {
 			// I can't throw an exception, because if a hacker stored illegal value in className, 

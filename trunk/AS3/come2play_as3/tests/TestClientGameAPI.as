@@ -20,7 +20,7 @@ public class TestClientGameAPI extends ClientGameAPI {
 	
 	public function TestClientGameAPI(rootGraphics:MovieClip) {
 		super(rootGraphics);
-		trace("Constructor of TestClientGameAPI");
+		trace("Constructor of TestClientGameAPI version 2");
 		var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(rootGraphics);		
 		my_graphics = AS3_vs_AS2.createMovieInstance(rootGraphics, "TestClientGameGraphics","client");
 		outTracesText = my_graphics.outTracesText;
@@ -329,6 +329,7 @@ public class TestClientGameAPI extends ClientGameAPI {
 	}
 	private function doTransaction():void {
 		var funcDo:Function = funcDoArr.shift();
+		trace("doTransaction");
 		funcDo();		
 	}
 		

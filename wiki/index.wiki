@@ -1,6 +1,14 @@
 #summary Starting point to reading the wiki
 
 Welcome to the Multiplayer API project!
+
+the reason you are viewing this project here on google code and not on the come2play site,
+is because this API is an open source project, and although we sponsor it, we want it to be open and free to
+the wide audience so that anyone can use, change or contribute to the API.
+
+
+==so what is the API?==
+
 The Multiplayer API is a bridge between two parties:
   * *Game developers*, that develop a _game_ as a SWF
   * *Websites that host games*, that develop a _container_ that includes the _game_ SWF.

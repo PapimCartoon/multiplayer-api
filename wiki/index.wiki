@@ -1,5 +1,7 @@
 #summary Starting point to reading the wiki
 
+[http://www.come2play.com/Developer.asp http://www.come2play.com/Shared/Products/C2P_Multi_API_Logo_Small.gif]
+
 Welcome to the Multiplayer API project!
 
 The reason you are viewing this project here on google code and not on the [http://www.come2play.com come2play] site,

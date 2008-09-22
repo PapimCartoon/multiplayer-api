@@ -2,7 +2,7 @@
 
 Welcome to the Multiplayer API project!
 
-the reason you are viewing this project here on google code and not on the [www.come2play.com come2play] site,
+the reason you are viewing this project here on google code and not on the [http://www.come2play.com come2play] site,
 is because this API is an open source project, and although we sponsor it, we want it to be open and free to
 the wide audience so that anyone can use, change or contribute to the API.
 

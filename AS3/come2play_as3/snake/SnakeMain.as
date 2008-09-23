@@ -2,6 +2,7 @@ package come2play_as3.snake
 {
 	import come2play_as3.api.auto_copied.AS3_vs_AS2;
 	import come2play_as3.api.auto_generated.*;
+	
 	import flash.display.MovieClip;
 
 	public class SnakeMain extends ClientGameAPI
@@ -126,7 +127,15 @@ package come2play_as3.snake
 			tail = 0;
 			paused = false;
 			if(serverEntries.length > 0 )
+			{
+				for each (var id:int in finishedPlayerIds)
+				{
+					var tempPos:int = allPlayerIds.indexOf(id);
+					if(tempPos != -1)
+						allPlayerIds.splice(tempPos,1);
+				}
 				snakeLogic.loadGame(myUserId,allPlayerIds,xMax,yMax,serverEntries);	
+			}
 			else
 			{
 				var userEntries:Array/*UserEntry*/ = snakeLogic.startGame(myUserId,allPlayerIds,xMax,yMax,snakeSpeed);

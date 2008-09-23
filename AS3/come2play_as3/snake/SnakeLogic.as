@@ -34,7 +34,6 @@ package come2play_as3.snake
 		{
 			if(moveGap < allPlayerIds.length * 3)
 			{
-				snakeMainPointer.doTrace(myUserId+" : blabla","i make move "+allPlayerIds.length);
 				var playerMove:PlayerMove
 				
 				for each(var playerSnake:VirtualSnake in allPlayerSnakes)
@@ -43,10 +42,7 @@ package come2play_as3.snake
 					if (playerMove !=null)
 					{
 						if (playerMove.userId == myUserId)
-						{
-							snakeMainPointer.doTrace(myUserId+" : sending","when "+allPlayerIds.length);
 							snakeMainPointer.makeMove(playerMove);	
-						}
 					}
 					moveGap++;
 				}
@@ -66,7 +62,7 @@ package come2play_as3.snake
 				moveTick.stop();
 			else
 			{
-				moveTick.delay = snakeSpeed + 100*quelength;
+				moveTick.delay = snakeSpeed + 200*quelength;
 				if(!moveTick.running)
 					moveTick.start();
 			}	
@@ -85,8 +81,6 @@ package come2play_as3.snake
 				allPlayerSnakes.splice(pos,1);
 				snakeGraphic.removeSnake(pos);
 				interactionBoard.removeSnake(pos);
-				
-				snakeMainPointer.doTrace("Strop","remove snake : "+pos);
 			}
 			
 			if(allPlayerIds.length == 1)
@@ -101,10 +95,7 @@ package come2play_as3.snake
 					
 			}
 			if(allPlayerIds.length < 2)
-			{
-				snakeMainPointer.doTrace("Strop","in logic");
 				moveTick.stop();
-			}
 			snakeMainPointer.finishGame(finishedPlayers);
 			
 		}

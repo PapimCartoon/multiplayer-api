@@ -33,6 +33,7 @@ package emulator {
 		private static const COL_matchStartedTime:String="Match_started_time";
 		private static const COL_extraMatchInfo:String= "Extra_match_info";
 		private static const COL_serverEntries:String= "Server_Entries";
+		private static const COL_TimeSent:String = "Time_Sent";
 		//Private variables
 		private var isTurnBasedGame:Boolean = false;
 		private var bGameStarted:Boolean = false;
@@ -874,7 +875,7 @@ package emulator {
 				else
 				{
 					sendStateChanged(serverEntries);
-					deltaHistory.addDelta(getOngoingPlayerIds(),serverEntries);
+					deltaHistory.addDelta(getOngoingPlayerIds(),serverEntries,getTimer()-matchStartTime);
 					showHistory();
 				}		
 
@@ -1157,7 +1158,7 @@ package emulator {
 			finishedPart.pot=FinishHistory.wholePot;
 			FinishHistory.wholePot-=(FinishHistory.wholePot*percentageOfPot)/100;
 			afinishedPlayers.push(finishedPart);
-			deltaHistory.addPlayerMatchOver(getOngoingPlayerIds(),finishedPart);
+			deltaHistory.addPlayerMatchOver(getOngoingPlayerIds(),finishedPart,getTimer()-matchStartTime);
 			if (aPlayers.length == FinishHistory.totalFinishingPlayers)
 			{
 				gameOver();
@@ -1407,7 +1408,8 @@ package emulator {
 				break;
 				case 8:
 					changedToDelta = evt.target.selectedItem[COL_changeNum];
-					txtInfo.text = "num: " + evt.target.selectedItem[COL_changeNum] + "\n" + 
+					txtInfo.text = "num: " + evt.target.selectedItem[COL_changeNum] + "\n" +
+						"State Change time :"+ evt.target.selectedItem[COL_TimeSent] + "\n" +
 						"Player_ID's: " + evt.target.selectedItem[COL_player_ids] + "\n" + 
 						"Server Entries: " + evt.target.selectedItem[COL_serverEntries];
 				break;
@@ -1649,13 +1651,14 @@ package emulator {
 			if(iInfoMode!=8){
 				changedToDelta = -1;
 				iInfoMode=8;	
-				tblInfo.columns=[COL_changeNum,COL_player_ids,COL_serverEntries];
+				tblInfo.columns=[COL_changeNum,COL_TimeSent,COL_player_ids,COL_serverEntries];
 				showHistory();
 			}	
 		}
 
 		private function startGame():void
-		{			
+		{	
+			matchStartTime=getTimer();		
 			bGameStarted = true;
 			bGameEnded = false;
 			txtExtraMatchInfo.visible = false;
@@ -1708,11 +1711,33 @@ package emulator {
 					afinishedPlayers.push(playerDelta.finishHistory);
 					broadcast(API_GotMatchEnded.create(finishedPlayerIds));
 				}
-				
+				changeTimerTime();
 				changedToDelta++;
 			}
 			else
 				stopPlayByPlayTimer();
+		}
+		
+		private function changeTimerTime():void
+		{
+			var nextTime:int = deltaHistory.getNextTime() ;
+			if(nextTime < 0)
+				stopPlayByPlayTimer();
+			nextTime -= (getTimer()-matchStartTime);
+			if(nextTime > 0) 
+			{
+				playByPlayTimer.reset();
+				playByPlayTimer.delay = nextTime;
+				playByPlayTimer.start();
+				
+			}
+			else
+			{
+				playByPlayTimer.reset();
+				playByPlayTimer.delay = 15;
+				playByPlayTimer.start();
+			}
+
 		}
 		
 		private function doPlayByPlay(ev:MouseEvent):void
@@ -1730,6 +1755,7 @@ package emulator {
 				startGame();
 				changedToDelta++;
 				playByPlayTimer.start();
+				changeTimerTime();
 			}
 		}
 		
@@ -1788,6 +1814,7 @@ package emulator {
 				{
 					itemObj=new Object();
 					itemObj[COL_changeNum] =counter;
+					itemObj[COL_TimeSent] = palyerDelta.changedTime;
 					itemObj[COL_player_ids]=palyerDelta.playerIds;
 					if(palyerDelta.serverEntries.length > 0 )
 						itemObj[COL_serverEntries]=palyerDelta.serverEntries;
@@ -2165,7 +2192,6 @@ package emulator {
 			deltaHistory = new DeltaHistory();
 			showMatchState();
 			showMatchOver();
-			matchStartTime=getTimer();
 			startGame();
 		}
 		//Do functions

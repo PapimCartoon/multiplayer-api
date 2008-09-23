@@ -1,7 +1,7 @@
 package emulator
 {
 	import emulator.auto_copied.SerializableClass;
-	import emulator.auto_generated.ServerEntry;
+	
 	import flash.utils.ByteArray;
 
 	public class PlayerDelta extends SerializableClass
@@ -9,11 +9,13 @@ package emulator
 		public var playerIds:Array;
 		public var serverEntries:Array;/*ServerEntry*/
 		public var finishHistory:FinishHistory;
-		static public function create(playerIds:Array/*int*/,serverEntries:Array/*ServerEntry*/,finishHistory:FinishHistory/*PlayerMatchOver*/):PlayerDelta
+		public var changedTime:int;
+		static public function create(playerIds:Array/*int*/,serverEntries:Array/*ServerEntry*/,finishHistory:FinishHistory/*PlayerMatchOver*/,changedTime:int):PlayerDelta
 		{
 			var res:PlayerDelta = new PlayerDelta();
 			res.playerIds = playerIds;
 			res.finishHistory = finishHistory;
+			res.changedTime = changedTime;
 			//the ByteArray is used so that when the user changes the server entries the resualt will stay the same
 			var transferByteArray:ByteArray = new ByteArray()
 			transferByteArray.writeObject(serverEntries);

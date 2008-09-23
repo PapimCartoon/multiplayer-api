@@ -21,15 +21,23 @@ package emulator
 			}
 			currentTurn++
 		}
-		public function addDelta(ongoingPlayerIds:Array/*int*/,serverEntries:Array/*ServerEntry*/):void
+		public function getNextTime():int
 		{
-			checkIfTop();
-			gameTurns.push(PlayerDelta.create(ongoingPlayerIds,serverEntries,null));
+			var playerDelta:PlayerDelta = gameTurns[currentTurn+1];
+			if(playerDelta != null)
+				return playerDelta.changedTime;
+			else
+				return -1;
 		}
-		public function addPlayerMatchOver(ongoingPlayerIds:Array/*int*/,finishHistory:FinishHistory):void
+		public function addDelta(ongoingPlayerIds:Array/*int*/,serverEntries:Array/*ServerEntry*/,changedTime:int):void
 		{
 			checkIfTop();
-			gameTurns.push(PlayerDelta.create(ongoingPlayerIds,[],finishHistory));
+			gameTurns.push(PlayerDelta.create(ongoingPlayerIds,serverEntries,null,changedTime));
+		}
+		public function addPlayerMatchOver(ongoingPlayerIds:Array/*int*/,finishHistory:FinishHistory,changedTime:int):void
+		{
+			checkIfTop();
+			gameTurns.push(PlayerDelta.create(ongoingPlayerIds,[],finishHistory,changedTime));
 		}	
 		public function getDelta(deltaNum:int):PlayerDelta
 		{

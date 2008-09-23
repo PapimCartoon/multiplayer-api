@@ -23,6 +23,7 @@ package come2play_as3.api {
 			setInterval(AS3_vs_AS2.delegate(this, this.checkAnimationInterval), MAX_ANIMATION_MILLISECONDS);
 		}
 		private var msgsInTransaction:Array/*API_Message*/ = null;
+		private var canSendDoAll:Boolean = false;
 		private var hackerUserId:int = -1;
 		private var runningAnimationsNumber:int = 0;
 		private var animationStartedOn:int = -1; 
@@ -38,11 +39,17 @@ package come2play_as3.api {
 		}
         override public function gotMessage(msg:API_Message):void {
         	try {
-        		if (isInTransaction())
+        		if (isInTransaction()) {
+					if (msg is API_GotKeyboardEvent) {
+						trace("We ignore a keyboard event. It is a bug in the emulator that will be fixed promptly. msg="+msg);
+						return;
+					}
         			throwError("The container sent an API message without waiting for DoFinishedCallback");
+				}
         		if (runningAnimationsNumber!=0)
         			throwError("Internal error! runningAnimationsNumber="+runningAnimationsNumber+" msgsInTransaction="+msgsInTransaction);
 				msgsInTransaction = []; // we start a transaction
+				canSendDoAll = msg is API_GotMatchStarted || msg is API_GotMatchEnded || msg is API_GotStateChanged;
 				msgsInTransaction.push( API_DoFinishedCallback.create(msg.getMethodName()) );
 				
         		hackerUserId = -1;
@@ -117,9 +124,9 @@ package come2play_as3.api {
         	if (!isStore && !StaticFunctions.startsWith(msg.getMethodName(), "doAll"))
         		throwError("Illegal sendMessage="+msg);
         	
-        	if (!isInTransaction()) {
+        	if (!isInTransaction() || !canSendDoAll) {
         		if (!isStore)
-        			throwError("You can only call doStoreState in user events. Other 'doAll' functions may be called only when the server calls some 'got' function. You called function="+msg);
+        			throwError("You can only call a doAll* message when the server calls gotStateChanged, gotMatchStarted or gotMatchEnded. You called function="+msg);
         		super.sendMessage( API_Transaction.create([msg]) );
         		return;
         	}

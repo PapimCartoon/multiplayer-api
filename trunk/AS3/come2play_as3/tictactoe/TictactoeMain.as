@@ -38,6 +38,7 @@ public final class TictactoeMain extends ClientGameAPI {
 	private var ongoingColors:Array/*int*/;  
 	private var myUserId:int = -42;
 	private var turnOfColor:int; // a number between 0 and allPlayerIds.length
+	private var shouldSendMove:Boolean; // to prevent the user sending his move several times
 	private var myColor:int; // either VIEWER, or a number between 0 and allPlayerIds.length
 	// contains a mapping from userId to his avatar (see gotUserInfo)
 	private var userId2Avatar:Object;
@@ -220,12 +221,13 @@ public final class TictactoeMain extends ClientGameAPI {
 		var entry:ServerEntry = serverEntries[0];
 		assert(entry.visibleToUserIds==null, ["All communication in TicTacToe is PUBLIC"]);
 		
-		var expectedKey:int = getEntryKey();
-		if (entry.key!=expectedKey) return; // if the user pressed several times and therefore sent his move several times
-		
 		var userId:int = entry.storedByUserId;
 		var colorOfUser:int = getColor(userId);
-		if (colorOfUser==-1) return;  // viewers cannot store match state in TicTacToe, so we just ignore whatever a viewer placed in the match state		
+		assert(colorOfUser!=-1, ["viewers cannot store match state in TicTacToe"]);
+
+		var expectedKey:int = getEntryKey();
+		assert(entry.key==expectedKey, ["Expecting key=",expectedKey]);
+
 		// In SinglePlayer: the player already called return before, but a viewer (there can be viewers even for singleplayer games!) still needs to call performMove 
 		if (!isSinglePlayer()) {
 			if (AS3_vs_AS2.IndexOf(ongoingColors, colorOfUser)==-1) return; // player already disconnected 
@@ -287,7 +289,6 @@ public final class TictactoeMain extends ClientGameAPI {
 		return res;			
 	}
 	private function performMove(move:TictactoeSquare, isSavedGame:Boolean):void {
-		doTrace("performMove",["move=",move," isSavedGame=",isSavedGame]);
 		logic.makeMove(turnOfColor, move);
 		// update the graphics
 		var square:TictactoeSquareGraphic = getSquareGraphic(move);
@@ -386,13 +387,18 @@ public final class TictactoeMain extends ClientGameAPI {
 	}
 	public function userMadeHisMove(move:TictactoeSquare):void {		
 		doTrace("dispatchMoveIfLegal", [move]);
+		if (!shouldSendMove) return; // user already sent his move
 		if (logic==null) return; // game not in progress
-		if (myColor==VIEWER) return; // viewer cannot make a move
-		if (!isSinglePlayer() && myColor!=turnOfColor) return; // not my turn
+		if (!isMyTurn()) return; // not my turn
 		if (!logic.isSquareAvailable(move)) return; // already filled this square (e.g., if you press on the keyboard, you may choose a cell that is already full)
+
+		shouldSendMove = false;
 		doStoreState( [UserEntry.create(getEntryKey(), move, false)] );		
 		// We do not update the graphics here. We update the graphics only after the server called gotStateChanged
 		// Note that as a result, if the user presses quickly on the same button, there might be several identical calls to doStoreState.
+	}
+	private function isMyTurn():Boolean {
+		return myColor!=VIEWER && (isSinglePlayer() || myColor==turnOfColor);
 	}
 	private function startMove(isInProgress:Boolean):void {
 		//trace("startMove with isInProgress="+isInProgress);
@@ -401,6 +407,7 @@ public final class TictactoeMain extends ClientGameAPI {
 		if (isInProgress && !isSinglePlayer()) {
 			doAllSetTurn(allPlayerIds[turnOfColor],-1);
 		}		
+		if (isMyTurn()) shouldSendMove = true;
 		for each (var move:TictactoeSquare in allCells) {				
 			if (logic.isSquareAvailable(move)) {
 				var square:TictactoeSquareGraphic = getSquareGraphic(move);

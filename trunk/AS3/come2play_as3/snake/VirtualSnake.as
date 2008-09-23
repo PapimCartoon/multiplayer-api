@@ -1,4 +1,4 @@
-package come2play_as3.snakeCode
+package come2play_as3.snake
 {
 	public class VirtualSnake
 	{
@@ -29,17 +29,12 @@ package come2play_as3.snakeCode
 			{
 				for each(var playerMove:PlayerMove in realSnake.futureParts)
 				{
-					if(isPlayer)
-						confirmedSnakeParts.unshift(SnakePart.create(playerMove.xpos,playerMove.ypos,playerMove.eating));
-					else
-						guessedSnakeParts.unshift(SnakePart.create(playerMove.xpos,playerMove.ypos,playerMove.eating));
+					guessedSnakeParts.unshift(SnakePart.create(playerMove.xpos,playerMove.ypos,playerMove.eating));
 				}	
 			}
 		}
 		public function confirmMove(playerMove:PlayerMove):void
 		{
-			if(!isPlayer)
-			{
 				var oldestGuessedMove:SnakePart = guessedSnakeParts.pop();
 				if(oldestGuessedMove == null)
 				{
@@ -69,7 +64,6 @@ package come2play_as3.snakeCode
 					}
 				}
 			//todo: confirm move from real snake
-			}
 		}
 		public function moveForward(isEating:Boolean):PlayerMove
 		{
@@ -102,10 +96,7 @@ package come2play_as3.snakeCode
 				tempSnakePart.ypos=0;
 			if(tempSnakePart.ypos < 0)
 				tempSnakePart.ypos=yMax;
-			if(isPlayer)
-				confirmedSnakeParts.unshift(tempSnakePart);
-			else
-				guessedSnakeParts.unshift(tempSnakePart);
+			guessedSnakeParts.unshift(tempSnakePart);
 			if(!isEating)
 			{
 				if(confirmedSnakeParts.length >0)	

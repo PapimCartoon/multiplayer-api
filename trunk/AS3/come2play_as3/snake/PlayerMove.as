@@ -1,4 +1,4 @@
-package come2play_as3.snakeCode
+package come2play_as3.snake
 {
 	import come2play_as3.api.auto_copied.SerializableClass;
 	

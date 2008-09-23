@@ -1,4 +1,4 @@
-package come2play_as3.snakeCode
+package come2play_as3.snake
 {
 	import come2play_as3.api.auto_copied.RandomGenerator;
 	import come2play_as3.api.auto_generated.PlayerMatchOver;
@@ -8,21 +8,21 @@ package come2play_as3.snakeCode
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
 	
-	public class Snake_Logic
+	public class SnakeLogic
 	{
 		private var snakeSpeed:int = 500;
 		private var myUserId:int;
 		private var allPlayerIds:Array/*int*/;
 		private var graphic:MovieClip;
-		private var snakeGraphic:Snake_Graphic;
-		private var snakeMainPointer:Snake_Main;
+		private var snakeGraphic:SnakeGraphic;
+		private var snakeMainPointer:SnakeMain;
 		private var allPlayerSnakes:Array/*PlayerSnake*/
 		private var foodCubeGenerator:RandomGenerator;
 		private var interactionBoard:InteractionBoard;
-		
+		private var moveGap:int;
 		public var moveTick:Timer
 		
-		public function Snake_Logic(graphic:MovieClip,snakeMainPointer:Snake_Main)
+		public function SnakeLogic(graphic:MovieClip,snakeMainPointer:SnakeMain)
 		{
 			this.graphic = graphic;
 			this.snakeMainPointer = snakeMainPointer;
@@ -32,19 +32,27 @@ package come2play_as3.snakeCode
 		
 		private function makeMove(ev:TimerEvent):void
 		{
-			var playerMove:PlayerMove
-			
-			for each(var playerSnake:VirtualSnake in allPlayerSnakes)
+			if(moveGap < allPlayerIds.length * 3)
 			{
-				playerMove = playerSnake.moveForward((snakeMainPointer.tick % 50) == 0);	
-				if(playerSnake.userId == myUserId)
+				snakeMainPointer.doTrace(myUserId+" : blabla","i make move "+allPlayerIds.length);
+				var playerMove:PlayerMove
+				
+				for each(var playerSnake:VirtualSnake in allPlayerSnakes)
 				{
-					snakeMainPointer.makeMove(playerMove);
-					interactionBoard.addMove(allPlayerIds.indexOf(myUserId),playerMove);			
-				}	
+					playerMove = playerSnake.moveForward((snakeMainPointer.tick % 50) == 0);	
+					if (playerMove !=null)
+					{
+						if (playerMove.userId == myUserId)
+						{
+							snakeMainPointer.doTrace(myUserId+" : sending","when "+allPlayerIds.length);
+							snakeMainPointer.makeMove(playerMove);	
+						}
+					}
+					moveGap++;
+				}
+				updateSpeed();
+				printSnakes();
 			}
-			updateSpeed();
-			printSnakes();
 		}
 		public function foundHacker(userId:int,message:String):void
 		{
@@ -66,9 +74,9 @@ package come2play_as3.snakeCode
 		
 		public function finishGame(deadPlayers:Array):void
 		{
-			if(deadPlayers.length == allPlayerIds.length)
-				moveTick.stop();
 			var finishedPlayers:Array/*PlayerMatchOver*/ = new Array();
+			
+			
 			for each(var playerId:int in deadPlayers)
 			{
 				finishedPlayers.push(PlayerMatchOver.create(playerId,0,0));
@@ -77,6 +85,8 @@ package come2play_as3.snakeCode
 				allPlayerSnakes.splice(pos,1);
 				snakeGraphic.removeSnake(pos);
 				interactionBoard.removeSnake(pos);
+				
+				snakeMainPointer.doTrace("Strop","remove snake : "+pos);
 			}
 			
 			if(allPlayerIds.length == 1)
@@ -90,11 +100,17 @@ package come2play_as3.snakeCode
 				interactionBoard.removeSnake(pos);
 					
 			}
+			if(allPlayerIds.length < 2)
+			{
+				snakeMainPointer.doTrace("Strop","in logic");
+				moveTick.stop();
+			}
 			snakeMainPointer.finishGame(finishedPlayers);
 			
 		}
-		public function makeRivalMove(playerMove:PlayerMove):void
+		public function makePlayerMove(playerMove:PlayerMove):void
 		{
+			moveGap--;
 			var pos:int = allPlayerIds.indexOf(playerMove.userId);
 			interactionBoard.addMove(pos,playerMove);
 			if(allPlayerIds.indexOf(myUserId) == -1)
@@ -130,6 +146,7 @@ package come2play_as3.snakeCode
 			this.allPlayerIds = allPlayerIds;
 			allPlayerSnakes = new Array();
 			interactionBoard= new InteractionBoard(allPlayerSnakes,myUserId,this);
+			moveGap = 0;
 			var userEntries:Array/*UserEntry*/ = new Array();
 			for(var i:int = 0;i<allPlayerIds.length;i++)
 			{
@@ -137,14 +154,13 @@ package come2play_as3.snakeCode
 				userEntries = userEntries.concat(tempRealSnake.getStartingSnake());
 				interactionBoard.addRealSnake(tempRealSnake,i);
 				if(allPlayerIds[i] == myUserId)
-					allPlayerSnakes[i]= new VirtualSnake(tempRealSnake,true,false);	
-					
+					allPlayerSnakes[i]= new VirtualSnake(tempRealSnake,true,false);			
 				else
 					allPlayerSnakes[i]= new VirtualSnake(tempRealSnake,false,false);
 				
 			}
 			
-			snakeGraphic = new Snake_Graphic(allPlayerSnakes,allPlayerIds);
+			snakeGraphic = new SnakeGraphic(allPlayerSnakes,allPlayerIds);
 			graphic.addChild(snakeGraphic);
 			if(allPlayerIds.indexOf(myUserId) != -1)
 				moveTick.start();
@@ -157,6 +173,7 @@ package come2play_as3.snakeCode
 		{
 			if(snakeGraphic != null)
 				graphic.removeChild(snakeGraphic);
+			moveGap = 0;
 			this.myUserId = myUserId;	
 			this.allPlayerIds = allPlayerIds;
 			if(snakeSpeed > 0)
@@ -236,7 +253,7 @@ package come2play_as3.snakeCode
 					allPlayerSnakes[i]= new VirtualSnake(tempRealSnake,false,true);	
 			}
 			
-			snakeGraphic = new Snake_Graphic(allPlayerSnakes,allPlayerIds);
+			snakeGraphic = new SnakeGraphic(allPlayerSnakes,allPlayerIds);
 			graphic.addChild(snakeGraphic);
 			if(allPlayerIds.indexOf(myUserId) != -1)
 				moveTick.start();
@@ -244,21 +261,22 @@ package come2play_as3.snakeCode
 
 	}
 }
-	import come2play_as3.snakeCode.*;
+	import come2play_as3.snake.*;
 	
 class InteractionBoard
 {
 	private var allPlayerRealSnakes:Array/*RealSanke*/;
 	private var allPlayerVirtualSnakes:Array/*VirtualSnake*/;
-	private var snakeLogicPointer:Snake_Logic;
+	private var snakeLogicPointer:SnakeLogic;
 	public var myUserId:int
-	public function InteractionBoard(allPlayerVirtualSnakes:Array,myUserId:int,snakeLogicPointer:Snake_Logic)
+	public function InteractionBoard(allPlayerVirtualSnakes:Array,myUserId:int,snakeLogicPointer:SnakeLogic)
 	{
 		this.snakeLogicPointer = snakeLogicPointer;
 		this.allPlayerVirtualSnakes = allPlayerVirtualSnakes;
 		this.myUserId = myUserId;
 		allPlayerRealSnakes =new Array();
 	}
+	
 	public function addRealSnake(realSnake:RealSnake,pos:int):void
 	{
 		allPlayerRealSnakes[pos] = realSnake;
@@ -267,7 +285,10 @@ class InteractionBoard
 	public function queueLength(playerNum:int):int
 	{
 		var realSnake:RealSnake = allPlayerRealSnakes[playerNum];
-		return realSnake.queueLength;
+		if(realSnake == null)
+			return 0
+		else
+			return realSnake.queueLength;
 	}
 	
 	public function addMove(playerNum:int,playerMove:PlayerMove):void

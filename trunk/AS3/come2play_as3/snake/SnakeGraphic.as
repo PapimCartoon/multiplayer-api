@@ -1,13 +1,13 @@
-package come2play_as3.snakeCode
+package come2play_as3.snake
 {
 	import flash.display.MovieClip;
 	
-	public class Snake_Graphic extends MovieClip
+	public class SnakeGraphic extends MovieClip
 	{
 		private var allPlayerGraphicSnakes:Array/*GraphicSnake*/;
 		private var allPlayerIds:Array/*int*/;
 		private var foodCube:Food;
-		public function Snake_Graphic(allPlayerSnakes:Array/*PlayerSnake*/,allPlayerIds:Array/*int*/)
+		public function SnakeGraphic(allPlayerSnakes:Array/*PlayerSnake*/,allPlayerIds:Array/*int*/)
 		{
 			this.allPlayerIds = allPlayerIds;
 			allPlayerGraphicSnakes = new Array();
@@ -44,10 +44,8 @@ package come2play_as3.snakeCode
 
 
 
-	import come2play_as3.snakeCode.PlayerSnake;
-	import come2play_as3.snakeCode.SnakePart;
 	import flash.display.MovieClip;
-	import come2play_as3.snakeCode.PlayerMove;
+	import come2play_as3.snake.SnakePart;
 	
 
 class GraphicSnake extends MovieClip 

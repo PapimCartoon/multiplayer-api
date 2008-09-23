@@ -686,6 +686,7 @@ package emulator {
 			{
 				var traceMsg:API_DoTrace=msg as API_DoTrace;
 				addMessageLog(String(user.ID),"doTrace",traceMsg.getParametersAsString());
+				trace("***** doTrace on: "+traceMsg.getParametersAsString())
 			}
 			else if(msg is API_DoRegisterOnServer)
 			{
@@ -834,7 +835,7 @@ package emulator {
 						len = queuEntry.transaction.length;
 				if(len > 1)
 				{
-					var tempWaitingQueue:MessagQueue = new MessagQueue(aPlayers.length);
+					var tempWaitingQueue:MessagQueue = new MessagQueue(aPlayers.length,getOngoingPlayerIds());
 					for (var i:int = 0;i<doAll.length;i++)
 					{
 						queueEntry = doAll[i];
@@ -1669,7 +1670,7 @@ package emulator {
 			FinishHistory.totalFinishingPlayers=0;
 			FinishHistory.wholePot=100;
 			iCurTurn=-1;
-			waitingQueue = new MessagQueue(aPlayers.length);
+			waitingQueue = new MessagQueue(aPlayers.length,getOngoingPlayerIds());
 			for each (var usr:User in aUsers) {
 				send_got_match_started(usr);						
 			}	
@@ -2472,7 +2473,7 @@ class User extends LocalConnectionUser {
 class MessagQueue
 {
 	private var allPlayerMessages:Array/*Array*/;
-	private var mod:int = 1;
+	private var allPlayers:Array;
 	private var serverPointer:Server;
 	public function toString():String
 	{
@@ -2492,25 +2493,28 @@ class MessagQueue
 		return str;
 	}
 	
-	public function MessagQueue(playersNum:int)
+	public function MessagQueue(playersNum:int,allPlayers:Array)
 	{
+		this.allPlayers = allPlayers.concat();
 		allPlayerMessages = new Array();
 		for (var i:int=0;i <playersNum;i++)
 			allPlayerMessages[i] = new Array			
 	}
 	public function push(message:QueueEntry):void
 	{
-		var playerMessages:Array = allPlayerMessages[message.user.ID -mod];
-		playerMessages.push(message);
+		var playerMessages:Array = allPlayerMessages[allPlayers.indexOf(message.user.ID)];
+		if (playerMessages != null)
+			playerMessages.push(message);
 	}
 	public function removePlayer(playerId:int):void
 	{
-		allPlayerMessages.splice(playerId - mod,1);
-		mod++;
+		var pos:int = allPlayers.indexOf(playerId);
+		allPlayers.splice(pos,1);
+		allPlayerMessages.splice(pos,1);
 	}
 	public function unshift(message:QueueEntry):void
 	{
-		var playerMessages:Array = allPlayerMessages[message.user.ID -mod];
+		var playerMessages:Array = allPlayerMessages[allPlayers.indexOf(message.user.ID)];
 		playerMessages.unshift(message);
 	}
 	public function shiftDoAll():Array
@@ -2527,7 +2531,7 @@ class MessagQueue
 	}
 	public function head(userId:int):QueueEntry
 	{
-		var playerMessages:Array = allPlayerMessages[userId - mod];
+		var playerMessages:Array = allPlayerMessages[allPlayers.indexOf(userId)];
 		return playerMessages[0];
 	}
 	public function shiftDoStore():QueueEntry

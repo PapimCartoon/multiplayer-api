@@ -1,4 +1,4 @@
-package come2play_as3.snakeCode
+package come2play_as3.snake
 {
 	import come2play_as3.api.auto_generated.UserEntry;
 	
@@ -6,13 +6,13 @@ package come2play_as3.snakeCode
 	{
 		public var futureParts:Array;/*PlayerMove*/
 		public var confirmedParts:Array;/*SnakePart*/
-		public var snakeLogicPointer:Snake_Logic;
+		public var snakeLogicPointer:SnakeLogic;
 		public var playerNum:int;
 		public var userId:int;
 		public var xMax:int = 25;
 		public var yMax:int = 25;
 		private var snakeVector:String;
-		public function RealSnake(playerNum:int,userId:int,xMax:int,yMax:int,confirmedPlayerMoves:Array/*PlayerMove*/,playerFutureMoves:Array/*PlayerMove*/,snakeLogicPointer:Snake_Logic)
+		public function RealSnake(playerNum:int,userId:int,xMax:int,yMax:int,confirmedPlayerMoves:Array/*PlayerMove*/,playerFutureMoves:Array/*PlayerMove*/,snakeLogicPointer:SnakeLogic)
 		{
 			if(xMax > 0)
 				this.xMax = xMax;

@@ -1,4 +1,4 @@
-package come2play_as3.mineSweeper
+package come2play_as3.minesweeper
 {
 	import come2play_as3.api.auto_generated.PlayerMatchOver;
 	import come2play_as3.api.auto_generated.ServerEntry;

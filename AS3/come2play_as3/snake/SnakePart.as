@@ -1,5 +1,6 @@
-package come2play_as3.snakeCode
+package come2play_as3.snake
 {
+	
 	public class SnakePart
 	{
 		public var xpos:int;

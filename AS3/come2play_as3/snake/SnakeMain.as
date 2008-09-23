@@ -1,12 +1,12 @@
-package come2play_as3.snakeCode
+package come2play_as3.snake
 {
 	import come2play_as3.api.auto_copied.AS3_vs_AS2;
 	import come2play_as3.api.auto_generated.*;
 	import flash.display.MovieClip;
 
-	public class Snake_Main extends ClientGameAPI
+	public class SnakeMain extends ClientGameAPI
 	{
-		private var snakeLogic:Snake_Logic;
+		private var snakeLogic:SnakeLogic;
 		private var graphics:MovieClip;
 		private var myUserId:int;
 		private var allPlayerIds:Array;/*int*/
@@ -19,7 +19,7 @@ package come2play_as3.snakeCode
 		public var tail:int;
 		public var tick:int;
 		public var paused:Boolean;
-		public function Snake_Main(graphics:MovieClip)
+		public function SnakeMain(graphics:MovieClip)
 		{
 			super(graphics);
 			this.graphics = graphics;
@@ -28,18 +28,12 @@ package come2play_as3.snakeCode
 		public function constructGame():void
 		{
 			waitingMove = false;
-			trace("***************************")
-			trace("stage is************"+graphics.stage.x+"/"+graphics.stage.y)	
-			trace("***************************")
-			snakeLogic = new Snake_Logic(graphics,this);
+			snakeLogic = new SnakeLogic(graphics,this);
 			doRegisterOnServer();	
 		}
 		
 		public function makeMove(playerMove:PlayerMove):void
 		{
-			trace("***************************")
-			trace("stage is************"+graphics.stage.x+"/"+graphics.stage.y)	
-			trace("***************************")
 			if(waitingMove)
 			{
 				waitingMove = false;
@@ -114,13 +108,15 @@ package come2play_as3.snakeCode
 				if(infoEntry.key == "xMax") xMax =int(infoEntry.value);
 				if(infoEntry.key == "yMax") yMax =int(infoEntry.value);
 				if(infoEntry.key == "snakeSpeed") snakeSpeed =int(infoEntry.value);
-				if(infoEntry.key == "gameStageX") trace("gameStageX: **********: "+String(infoEntry.value))
 			}
 		}
 		override public function gotMatchEnded(finishedPlayerIds:Array):void
 		{
-			if((allPlayerIds.length -finishedPlayerIds.length)< 2)
+			if(allPlayerIds.length< 2)
+			{
 				snakeLogic.moveTick.stop();
+				doTrace("Strop","in Main");
+			}
 		}
 		override public function gotMatchStarted(allPlayerIds:Array, finishedPlayerIds:Array, extraMatchInfo:Object, matchStartedTime:int, serverEntries:Array):void
 		{
@@ -134,7 +130,6 @@ package come2play_as3.snakeCode
 			else
 			{
 				var userEntries:Array/*UserEntry*/ = snakeLogic.startGame(myUserId,allPlayerIds,xMax,yMax,snakeSpeed);
-				doTrace("userEntries","length: "+userEntries.length);
 				doAllStoreState(userEntries);	
 			}
 			
@@ -144,15 +139,11 @@ package come2play_as3.snakeCode
 			var serverEntry:ServerEntry = serverEntries[0];
 			if(serverEntries.length == (4 * allPlayerIds.length))
 			{
-				if(serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,"tried to fake starting snake positins");
+				if (serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,"tried to fake starting snake positins");
 			}
-			else
-			{
-				if(serverEntry.storedByUserId != myUserId)
-				{
-					if(serverEntry.value is PlayerMove)
-						snakeLogic.makeRivalMove(serverEntry.value as PlayerMove);
-				}
+			else if (serverEntry.value is PlayerMove)
+			{		
+				snakeLogic.makePlayerMove(serverEntry.value as PlayerMove);
 			}
 				
 		}

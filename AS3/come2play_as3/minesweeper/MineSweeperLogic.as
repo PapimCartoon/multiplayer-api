@@ -26,6 +26,7 @@ package come2play_as3.mineSweeper
 		value 0 meant untouchde
 		value 1 means pressed
 		value 2 means press callback on this square was recived
+		value 3 means the move is on the board
 		*/
 		private var boardWidth:int;/*board width in squares*/
 		private var boardHeight:int;/*board height in squares*/
@@ -101,7 +102,7 @@ package come2play_as3.mineSweeper
 			this.allPlayerIds = allPlayerIds;
 			if(allPlayerIds.indexOf(myUserId)!= -1)
 				isPlaying = true;
-			madeMoves=0;
+			madeMoves = 0;
 			movesInProcess = new Array();
 			playerGameData = new Array();
 			boardLogic=new Array()
@@ -211,6 +212,7 @@ package come2play_as3.mineSweeper
 				currentData.playerScore += 1;
 			}
 			mineSweeperGraphic.updateLives(playerNum,currentData.playerLives);
+			boardLogic[serverBox.xPos][serverBox.yPos] = 3
 			madeMoves++;
 			if(madeMoves >= boardHeight * boardWidth)
 				gameOver();
@@ -269,9 +271,14 @@ package come2play_as3.mineSweeper
 			{
 				if ((boardLogic[serverBox.xPos][serverBox.yPos] == 2) && (playerId == -1))
 					playerId = findPlayer(serverBox);
-				mineSweeperGraphic.revealBox(serverBox.borderingMines,serverBox.xPos,serverBox.yPos);
-				score ++;
-				madeMoves ++ ;	
+				if(boardLogic[serverBox.xPos][serverBox.yPos] != 3)
+				{
+					mineSweeperGraphic.revealBox(serverBox.borderingMines,serverBox.xPos,serverBox.yPos);
+					score ++;
+					madeMoves ++ ;	
+				}
+				boardLogic[serverBox.xPos][serverBox.yPos] = 3
+
 			}
 			var playerNum:int = allPlayerIds.indexOf(playerId);
 			var currentData:PlayerData = playerGameData[playerNum]

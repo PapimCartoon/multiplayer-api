@@ -21,7 +21,7 @@ package emulator {
 		private static const COL_Parameters:String="Parameters";
 		private static const COL_MethodName:String="Method_Name";
 		private static const COL_UnverifiedPlayers:String="Unverified_Players";
-		private static const COL_User:String="User Id";
+		private static const COL_User:String="Sending_user_Id";
 		private static const COL_Message:String="Message";
 		private static const COL_key:String="key";
 		private static const COL_data:String="data";
@@ -743,6 +743,9 @@ package emulator {
 					return;
 				}
 				if(!isPlayer(user.ID)) return;
+				
+				//addMessageLog("id : "+user.ID,"Transaction","length "+transMsg.messages.length);
+				
 				for each(msg in transMsg.messages)
 					addMessageLog(user.Name, msg.getMethodName(), msg.toString());	
 				waitingQueue.push(new QueueEntry(user,new Transaction(transMsg.messages),getTimer()-matchStartTime));
@@ -764,7 +767,6 @@ package emulator {
 		{
 			var serverEntries:Array = new Array();
 			var saved:Boolean = false;
-			addMessageLog("sewrver","what is alon?",msg.getMethodName());
 			if(msg is API_DoAllSetTurn)
 			{
 				var setTurnMessage:API_DoAllSetTurn=msg as API_DoAllSetTurn;
@@ -848,7 +850,8 @@ package emulator {
 				{
 					if(!checkDoAlls(doAll)) return [];
 					serverEntries =	processMessage(queuEntry.transaction.messageArray[0]);
-					addToQue(queuEntry);
+					if(!isTransaction)
+						addToQue(queuEntry);
 				}
 				else
 				{
@@ -1081,8 +1084,8 @@ package emulator {
 				{			
 					if(!serverState.hasKey(key))	
 					{
-						addMessageLog("Server","Error","Can't reveal " + key + " key does not exist");
-						showMsg("Can't reveal " + key + " key does not exist","Error");
+						addMessageLog("Server","Error","Can't reveal " + JSON.stringify(key) + " key does not exist");
+						showMsg("Can't reveal " + JSON.stringify(key) + " key does not exist","Error");
 						gameOver();
 						return [];		
 					}
@@ -1369,26 +1372,32 @@ package emulator {
 			switch(iInfoMode){
 				case 1:
 					txtInfo.text = "user_id: " + evt.target.selectedItem[COL_player_ids] + "\n" + "key: " + evt.target.selectedItem[COL_key] + "\n" + "data: " + evt.target.selectedItem[COL_data];
-					break;
+				break;
 				case 2:
 					txtInfo.text = "user_id: " + evt.target.selectedItem[COL_User] + "\n" + "Message: " + evt.target.selectedItem[COL_Message];
-					break;
+				break;
 				case 3:
 					txtInfo.text = "key: " + evt.target.selectedItem[COL_key] + "\n" + "data: " + evt.target.selectedItem[COL_data];
-					break;
+				break;
 				case 4:
 					txtInfo.text = "user_id: " + evt.target.selectedItem[COL_player_ids] + "\n" + "key: " + evt.target.selectedItem[COL_key] + "\n" + "data: " + evt.target.selectedItem[COL_data];
-					break;
+				break;
 				case 5:
 					txtInfo.text = "users_id: " + evt.target.selectedItem[COL_player_ids] + "\n" + "score: " + evt.target.selectedItem[COL_scores] + "\n" + "pot_percentage: " + evt.target.selectedItem[COL_pot_percentages];
-					break;
+				break;
 				case 6:
 					txtInfo.text = "name: " + evt.target.selectedItem[COL_name] + "\n" + 
 						"user_ids_that_are_still_playing: " + evt.target.selectedItem[COL_userIdThatAreStillPlaying] + "\n" + 
 						"next_turn_of_user_ids: " + evt.target.selectedItem[COL_nextTurnOfUserIds] + "\n" + 
 						"match_state: " + evt.target.selectedItem[COL_matchState] + "\n" + 
 						"match_started_time: " + evt.target.selectedItem[COL_matchStartedTime] + "\n" + "extra_match_info: " + evt.target.selectedItem[COL_extraMatchInfo];
-					break;
+				break;
+				case 7:
+				txtInfo.text = "Sending user Id : " + evt.target.selectedItem[COL_User]+ "\n" +
+				" Method Name : " + evt.target.selectedItem[COL_MethodName] + "\n" +
+				"Parameters : " + evt.target.selectedItem[COL_Parameters];
+							
+				break;
 				case 8:
 					changedToDelta = evt.target.selectedItem[COL_changeNum];
 					txtInfo.text = "num: " + evt.target.selectedItem[COL_changeNum] + "\n" + 
@@ -1550,7 +1559,7 @@ package emulator {
 			if(iInfoMode!=7){
 				iInfoMode=7;
 				
-				tblInfo.columns=[COL_User,COL_MethodName,COL_Parameters,COL_UnverifiedPlayers];
+				tblInfo.columns=[COL_User,COL_MethodName,COL_Parameters];
 				
 				showUnverifiedQue();
 			}
@@ -1710,6 +1719,7 @@ package emulator {
 				gameOver();
 				loadToDelta(changedToDelta);
 				startGame();
+				changedToDelta++;
 				playByPlayTimer.start();
 			}
 		}
@@ -1783,6 +1793,7 @@ package emulator {
 		}
 		private function showUnverifiedQue():void
 		{
+			//todo : this should show stored queue and not unverefied queue
 			if(iInfoMode==7){
 				tblInfo.removeAll();
 				var itemObj:Object;
@@ -1792,7 +1803,6 @@ package emulator {
 					itemObj[COL_User]=unverifiedFunction.user.ID;
 					itemObj[COL_MethodName]=unverifiedFunction.msg.getMethodName();
 					itemObj[COL_Parameters]=unverifiedFunction.msg.getParametersAsString();
-					itemObj[COL_UnverifiedPlayers]=unverifiedFunction.unverifiedUsers.toString();
 					tblInfo.addItem(itemObj);
 					tblInfo.verticalScrollPosition = tblInfo.maxVerticalScrollPosition+30;
 				}
@@ -1824,8 +1834,8 @@ package emulator {
 				{
 					itemObj=new Object();
 					itemObj[COL_player_ids]=tempServerEntry.storedByUserId;
-					itemObj[COL_key]=tempServerEntry.key
-					itemObj[COL_data]=tempServerEntry.getParametersAsString()
+					itemObj[COL_key]=JSON.stringify(tempServerEntry.key);
+					itemObj[COL_data]=tempServerEntry.getParametersAsString();
 					tblInfo.addItem(itemObj);
 					tblInfo.verticalScrollPosition = tblInfo.maxVerticalScrollPosition+30;	
 				}

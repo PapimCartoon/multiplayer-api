@@ -866,7 +866,10 @@ package emulator {
 			if(serverEntries.length > 0)
 			{
 				if(isTransaction)
+				{
+					 
 					return serverEntries.concat(processQueue(processedwaitingQueue,isTransaction));
+				}
 				else
 				{
 					sendStateChanged(serverEntries);
@@ -878,7 +881,10 @@ package emulator {
 			queueTimer.reset();
 			queueTimer.start();
 			showWaitingFunctionQue();
-			processQueue(processedwaitingQueue,isTransaction);		
+			if(isTransaction)
+				return processQueue(processedwaitingQueue,isTransaction);	
+			else
+				processQueue(processedwaitingQueue,isTransaction);		
 			return [];
 
 		}
@@ -1670,6 +1676,8 @@ package emulator {
 		}
 		private function stopPlayByPlayTimer():void
 		{
+			if(changedToDelta == deltaHistory.gameTurns.length)
+				changedToDelta--; 
 			playByPlayTimer.stop();
 			playByPlay.label = "Replay";
 		}

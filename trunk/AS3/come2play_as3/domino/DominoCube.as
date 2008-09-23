@@ -13,5 +13,7 @@ package come2play_as3.domino
 			res.upperNum = upperNum;
 			return res;
 		}
+		public function get right():int{return upperNum;}
+		public function get left():int{return lowerNum;}
 	}
 }

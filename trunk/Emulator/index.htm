@@ -2,7 +2,6 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>Test emulator</title>
-
     <script language="javascript">
 function getParams(arr){
     var obj,customParam,customVals;
@@ -194,11 +193,13 @@ function removeCustomParam(num){
 }
     </script>
     <script language="javascript" src="FlashObject.js"></script>
+	<LINK REL="Stylesheet" HREF="http://www.come2play.com/css/general1.css" TYPE="Text/css">
 </head>
 <body onunload="unloadServer();">
     <div id="divForm">
         <form target="_self" method="get">
             <input type="hidden" id="old_container" value="../AS2/OldAPI_Converter/OldContainer_board.swf" />
+
             <table border="0" cellpadding="0" cellspacing="0">
                 <tr>
                     <td style="background-color: #c3e958;">
@@ -223,16 +224,17 @@ function removeCustomParam(num){
                         </table>
                     </td>
                 </tr>
-                <tr>
-                    <td style="border-bottom: dotted 1px black;">
-						<b>Important: the first time you install the emulator locally, you must give him permissions to read configuration files.
+                <tr style="background:#fff">
+                    <td style="border-bottom: dotted 1px black; padding:10px 10px 12px;">
+						<b>Important: the first time you install the emulator locally, you must give him permissions to read configuration files.<br />
 						Go <a href="http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager04.html">here</a>,
-						click on "Always Allow", then click on "Edit locations...", choose "Add location...", and enter the path you used for all your project files and emulator files.
+						click on "Always Allow", then click on "Edit locations...", choose "Add location...", and enter the path you <br />
+						used for all your project files and emulator files.
 						<!-- TODO: add printscreen http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager04.html, showing how to do the above. -->
 						</b>
                     </td>
                 </tr>
-                <tr>
+                <tr style="background:#fff">
                     <td>
                         <table cellpadding="5" cellspacing="5" border="0">
                             <tr>
@@ -313,14 +315,8 @@ function removeCustomParam(num){
 	                            			</td>
 	                            		</tr>
 	                            	</table>
+									<a href="javascript:addCustomParam();">Add parameter</a><!-- <a href="#"><img src="question.gif" style="border-width:0px;" /> </a>-->
 								</td>
-                            </tr>
-                            <tr>
-                            	<td>
-                            	</td>
-                            	<td>
-                            		                  <a style="cursor:pointer;color:blue;" onclick="addCustomParam();">Add parameter</a><!-- <a href="#"><img src="question.gif" style="border-width:0px;" /> </a>-->
-                            	</td>
                             </tr>
                             <tr>
                                 <td>
@@ -377,7 +373,7 @@ function removeCustomParam(num){
                                             </td>
                                         </tr>
                                     </table>
-                                    <a style="cursor:pointer;color:blue;" onclick="addParam();">Add parameter</a><!-- <a href="#"><img src="question.gif" style="border-width:0px;" /> </a>-->
+                                    <a href="javascript:addParam();">Add parameter</a><!-- <a href="#"><img src="question.gif" style="border-width:0px;" /> </a>-->
                                 </td>
                             </tr>
                             <tr>

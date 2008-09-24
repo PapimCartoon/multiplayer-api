@@ -4,15 +4,35 @@
 doAllEndMatch(finishedPlayers:Array/*PlayerMatchOver*/)
 }}}
 
-To end a match, all players must call `doAllEndMatch` with the same exact parameters.
 
-When any player calls `doAllEndMatch`, the current turn is over (relevant only to turn-based games).
+== Description ==
 
-`finishedPlayers` is the set of the players that will quit the match.
+When this function is called, all the players who's ID's are in the finishedPlayers array are concidered as finished players
+and are treated as viewers from that point on.
 
-In the common scenario, `finishedPlayers` contains all the players in the match.
+== Parameters ==
 
-However, it is possible that only a subset of the players end the match (but in any case, all players must call `doAllEndMatch`).
+finishedPlayers:Array/*PlayerMatchOver*/  - an array containing an instance of [PlayerMatchOver] for each finishing player.
+
+
+
+== Example ==
+
+lets say we have a player who's id is 1, the player has a score of 50
+and therefore gets 30% of the pot.
+the call each of the users will make would look like this:
+{{{
+
+var playerMatchOver:PlayerMatchOver = PlayerMatchOver.create(1,50,30);
+var finishingPlayers:Array = new Array();
+finishingPlayers.push(playerMatchOver);
+doAllEndMatch(finishingPlayers);
+
+}}}
+
+
+
+it is possible that only a subset of the players end the match (but in any case, all players must call `doAllEndMatch`).
 
 Each element of the array `finishedPlayers` is of type [PlayerMatchOver]:
 

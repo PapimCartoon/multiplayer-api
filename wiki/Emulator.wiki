@@ -3,4 +3,4 @@
 == Important Notice ==
 
 Althogh the API Emulator and server are derived from the same API,there are diffrences between the two
-to learn more about them visit [Online vs Emulator Online_vs_Emulator]
+to learn more about them visit [Online_vs_Emulator Online vs Emulator]

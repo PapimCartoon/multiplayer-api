@@ -1,0 +1,6 @@
+#summary The Emulator is a flash program designed to emulate the API server
+
+== Important Notice ==
+
+Althogh the API Emulator and server are derived from the same API,there are diffrences between the two
+to learn more about them visit [Online vs Emulator Online_vs_Emulator]

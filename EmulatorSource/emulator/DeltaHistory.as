@@ -23,7 +23,7 @@ package emulator
 		}
 		public function getNextTime():int
 		{
-			var playerDelta:PlayerDelta = gameTurns[currentTurn+1];
+			var playerDelta:PlayerDelta = gameTurns[currentTurn];
 			if(playerDelta != null)
 				return playerDelta.changedTime;
 			else

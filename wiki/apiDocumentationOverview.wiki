@@ -1,6 +1,6 @@
 #summary API Documentation Overview: Multiplayer API, emulator, and tutorials
 
-This wiki contains documentation about the Multiplayer API, the emulator, and tutorials for creating multiplayer games in flash.
+This wiki contains documentation about the Multiplayer API, the [Emulator], and tutorials for creating multiplayer games in flash.
 This project main target audience is game developers that wish to create new multiplayer flash games, or to convert single-player flash games to multiplayer.
 Make sure you read the [index] page that contains general info, target audience, mailing lists and licensing comments.
 
@@ -20,11 +20,11 @@ You should write a class that extends one of the above APIs, and when your SWF i
 [MultiplayerAPI_Implementation The Multiplayer API Implementation] describes the internal implementation that uses LocalConnection. 
 The implementation details should not concern game developers, but they are important for websites hosting the games.
 
-You may either test the games in the [http://multiplayer-api.googlecode.com/files/EmulatorAPI-Version1.0.3.zip Emulator], or submit your game online to a gaming website that supports this API. 
+You may either test the games in the [Emulator], or submit your game online to a gaming website that supports this API. 
 One such website is [http://www.come2play.com Come2Play].
 Another distribution channel is Skype GameXN - in the near future we will write a container that translates this Multiplayer API to Skype GameXN platform.
 
-The current version of the [http://multiplayer-api.googlecode.com/files/EmulatorAPI-Version1.0.3.zip Emulator] does not support [ConnectedGameAPI].
+The current version of the [Emulator] does not support [ConnectedGameAPI].
 
 
 === AS2 vs AS3 ===
@@ -33,6 +33,8 @@ The only difference in the signatures between the AS2 and AS3 versions, is that 
 The remainder of this wiki describes the AS3 version.
 We recommend using AS3 because it is more stable, fast, and easier to debug.
 
+To learn more about these differences go to [Online_vs_Emulator]
+
 === Debugging and error handling in AS3 ===
 In "Publish Setting" you should select the option "Permit debugging".
 This will include the line number of the error in the stacktraces, e.g.
@@ -40,7 +42,7 @@ This will include the line number of the error in the stacktraces, e.g.
 at MyAPI/sendDoOperation()[X:\Come2Play\API_GoogleCodeSVN\AS3\TestClientGameAPI\TestClientGameAPI.as:121]
 }}}
 Remember that the stack traces of an error are available only in the debugger version of the flash player (and not in the release version), see `Error.getStackTrace()`.
-Therefore you should run the emulator and do online testing using the [http://www.adobe.com/support/flashplayer/downloads.html Adobe Flash Player Debugger].
+Therefore you should run the [Emulator] and do online testing using the [http://www.adobe.com/support/flashplayer/downloads.html Adobe Flash Player Debugger].
 
 === trace() function ===
 If your game is using the built-in `trace()` function, and you want to see the traces, then you should create a file `mm.cfg` in
@@ -83,13 +85,11 @@ We suggest that you encrypt/obfuscate your code to make it difficult for users t
 There are many programs for that purpose; one of them is Amayeta (http://www.amayeta.com/). 
 
 = Emulator =
-When developing your game, you should use the [http://multiplayer-api.googlecode.com/files/EmulatorAPI-Version1.0.3.zip Emulator].
+When developing your game, you should use the [Emulator].
 After you finished testing in the emulator, you may submit the game to any company that endorses this multiplayer API.
 One such company is [http://www.come2play.com Come2Play].
 
 [Online_vs_Emulator Online testing vs the Emulator] discusses the differences you may find between the emulator and the online version, and common pitfalls.
-
-Coming soon (TODO): a video showing how to use the emulator.
 
 
 = Creating multiplayer games =

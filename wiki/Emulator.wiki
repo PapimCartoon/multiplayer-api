@@ -5,6 +5,12 @@
 Although the Emulator and Server are derived from the same API,there are differences between the two,
 To learn more about them visit [Online_vs_Emulator Online vs Emulator] .
 
+== Download th emulator ==
+
+Press [http://multiplayer-api.googlecode.com/files/EmulatorAPI-Version1.0.3.zip here] if you want to download the emulator,
+although we strongly encourage you to use our SVN instead, as it will usually contain updates before they are officially released in here. 
+
+for an explanation on our SVN and on using an SVN in general go to the [index index page] .
 == Setting up the Emulator ==
 
 Unlike many other API emulators the come2play Emulator uses flash as its engine which means
@@ -124,3 +130,5 @@ Starts a loaded game by loading the saved server state and calling the [gotState
 == Save ==
 
 Saves the server state and history of the game.	
+
+Coming soon (TODO): a video showing how to use the emulator.

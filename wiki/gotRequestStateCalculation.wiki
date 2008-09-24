@@ -1,0 +1,40 @@
+#summary the callback which is called on the calculator flash
+
+
+{{{
+gotRequestStateCalculation(serverEntries:Array/*ServerEntry*/)
+}}}
+
+
+
+=== Description ===
+
+This callback is triggered by a [doAllRequestStateCalculation] call, after getting this callback
+the flash should recognize it is a calculator and do the appropriate calculations
+
+To save the calculations made by the calculator you should call [doAllStoreStateCalculation]
+
+=== Parameters received===
+
+serverEntries - an Array of [ServerEntry] elements, containing the server entries specified in the 
+[doAllRequestStateCalculation] call.
+
+To save server entries using this callback function you should call [doAllStoreStateCalculation].
+
+=== Example ===
+
+lets suppose this is a mine sweeper calculator.
+we expect a random number stored by the server via a [doAllRequestRandomState]
+
+
+override public function gotRequestStateCalculation(serverEntries:Array):void
+{
+	/*
+	check if the serverEntries received from  the users are legal
+	do whatever calculations needed 
+	and then store them using 
+	*/
+	if (serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,"If the storedByUserId is different from -1,then this was not saved by the server and player which saved it there probably broke protocol");
+	doAllStoreStateCalculation(createdUserEntries);
+}
+

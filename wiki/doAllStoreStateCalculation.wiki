@@ -1,0 +1,54 @@
+#summary used to store data on calculators
+
+{{{
+doAllStoreStateCalculation(userEntries:Array/*UserEntry*/)
+}}}
+
+
+=== Description ===
+
+Call this function from a [gotRequestStateCalculation] to transferred the data from the calculator to the game's 
+players.
+
+=== Parameters received===
+
+userEntries - an Array of [UserEntry] elements, containing the data that will be sent to the users 
+via a [gotStateStateChange] callback.
+
+=== Example ===
+
+lets suppose this is a mine sweeper calculator.
+we expect a random number stored by the server via a [doAllRequestRandomState]
+
+
+override public function gotRequestStateCalculation(serverEntries:Array):void
+{
+	/*
+	check if the serverEntries received from  the users are legal
+	do whatever calculations needed 
+	and then store them using 
+	*/
+	if (serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,"If the storedByUserId is different from -1,then this was not saved by the server and player which saved it there probably broke protocol");
+	doAllStoreStateCalculation(createdUserEntries);
+}
+
+
+
+
+
+
+
+
+
+
+
+When the calculator is finished with the data calculations he was given, he cannot simply use [doStoreState] to commit the calculations he has made,
+
+Because he is not an active player/viewer in the game.
+
+Therefore the calculator will use a special function called `doAllStoreStateCalculation` which acts similarly to the [doAllStoreState] function,
+
+Only instead of saving the game data into the calculator server state, the calculator saves it into the game state of players which called the `doAllRequestStateCalculation`.
+
+`doAllRequestStateCalculation` should be called with the following parameter:
+*userEntries :* an Array of [UserEntry]

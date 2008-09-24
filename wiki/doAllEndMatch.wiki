@@ -8,7 +8,7 @@ doAllEndMatch(finishedPlayers:Array/*PlayerMatchOver*/)
 === Description ===
 
 Call this function to end the game for some or all players.
-all the players who's ID's are in the finishedPlayers array are concidered as finished players
+all the players who's ID's are in the finishedPlayers array are considered as finished players
 and are treated as viewers from that point on.
 
 === Parameters ===

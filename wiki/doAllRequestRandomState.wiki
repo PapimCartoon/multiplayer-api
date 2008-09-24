@@ -7,7 +7,7 @@ doAllRequestRandomState(key:Object, isSecret:Boolean = false)
 === Description ===
 
 Call this function when you need a random number for any reason, you should use this function to avoid people faking random numbers.
-the [gotStateChange] of this function will have a server entry with storedByUserId of -1,to signefy the server saved it.
+the [gotStateChange] of this function will have a server entry with storedByUserId of -1,to signify the server saved it.
 
 === Parameters ===
 
@@ -16,29 +16,18 @@ key - the key of the newly created random number
 isSecret - a Boolean stating whether the number will be public or secret to the game's players
 
 
-=== State Change Callback ===
+=== Callback To Users ===
 
 A [ServerEntry] with the following attributes
 
 key - the one given by us in the Parameters
 
-value - a number between 0 and 2147483647 or null if the isSecret parameter wass true
+value - a random number between 0 and 2147483647 or null if the isSecret parameter was true
 
 storedByUserId - (-1) representing that this was saved by the user
 
 visibleToUserIds - null or empty array in case isSecret parameter was true
 
-=== State Change on Server ===
-
-A [ServerEntry] with the following attributes
-
-key - the one given by us in the Parameters
-
-value - a number between 0 and 2147483647 
-
-storedByUserId - (-1) representing that this was saved by the user
-
-visibleToUserIds - null or empty array in case isSecret parameter was true
 
 === Example ===
 
@@ -55,7 +44,7 @@ override public function gotStateChanged(serverEntries:Array):void
 	var serverEntry:ServerEntry = serverEntries[0];
 	if (serverEntry.key == "TurnOf")
 	{
-		if (serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,"If the storedByUserId is diffrent from -1,then this was not saved by the server and player which saved it there probebly broke protocol");
+		if (serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,"If the storedByUserId is different from -1,then this was not saved by the server and player which saved it there probably broke protocol");
 		if(serverEntry.value % 2 == 0)
 		{
 			//let player two be first

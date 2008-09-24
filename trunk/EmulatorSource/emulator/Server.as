@@ -630,15 +630,15 @@ package emulator {
 		}
 		private function queTimeoutError(ev:TimerEvent):void
 		{
-			var unverefiedFunction:WaitingFunction = unverifiedQueue[0];
-			if(unverefiedFunction != null)
+			
+			
+			if (waitingQueue.length() > 1)
 			{
-				if(unverefiedFunction.unverifiedUsers.length > 1)
-				{
-					showMsg(unverefiedFunction.msg+" Timed out by player/s:"+String(unverefiedFunction.unverifiedUsers),"Error");
-					gameOver();
-				}
-			}
+				var queueEntry:QueueEntry = waitingQueue.getStuckMessage();
+				showMsg(queueEntry.transaction.toString()+" Timed out","Error")
+				addMessageLog("Server","Error",queueEntry.transaction.toString()+" Timed out");
+				gameOver();
+			}		
 		}
 		private function revealEntryToPlayers(serverEntryMold:ServerEntry,revealEntry:RevealEntry):ServerEntry
 		{
@@ -693,18 +693,6 @@ package emulator {
 			{
 				doRegisterOnServer(user);
 			}
-			else if(msg is API_DoFinishedCallback)
-			{
-				/*
-				var finishedCallbackMsg:API_DoFinishedCallback = msg as API_DoFinishedCallback;
-				if(finishedCallbackMsg.callbackName != "gotKeyboardEvent")
-				{
-					addMessageLog(user.Name, msg.getMethodName(), msg.toString());
-					verefyAction(user);
-					user.do_finished_callback(finishedCallbackMsg.callbackName)
-				}
-				*/
-			}
 			else if(msg is API_DoAllFoundHacker)
 			{
 				var foundHackerMsg:API_DoAllFoundHacker=msg as API_DoAllFoundHacker;
@@ -751,7 +739,7 @@ package emulator {
 				for each(msg in transMsg.messages)
 					addMessageLog(user.Name, msg.getMethodName(), msg.toString());	
 				waitingQueue.push(new QueueEntry(user,new Transaction(transMsg.messages),getTimer()-matchStartTime));
-				
+				queueTimer.start();
 				processQueue(waitingQueue,false);
 				showWaitingFunctionQue();
 			}
@@ -862,9 +850,12 @@ package emulator {
 			}
 			else 
 			{
+				if(!isTransaction)
+					queueTimer.reset();
 				return [];
 			}
-
+			queueTimer.reset();
+			queueTimer.start();
 			if(serverEntries.length > 0)
 			{
 				if(isTransaction)
@@ -880,8 +871,6 @@ package emulator {
 				}		
 
 			}
-			queueTimer.reset();
-			queueTimer.start();
 			showWaitingFunctionQue();
 			if(isTransaction)
 				return processQueue(processedwaitingQueue,isTransaction);	
@@ -921,7 +910,6 @@ package emulator {
 			
 			var waitingFunction:WaitingFunction=unverifiedQueue.shift();
 			showUnverifiedQue();
-			queueTimer.reset();
 			processQueue(waitingQueue,false);	
 		}
 		
@@ -1160,14 +1148,9 @@ package emulator {
 			afinishedPlayers.push(finishedPart);
 			deltaHistory.addPlayerMatchOver(getOngoingPlayerIds(),finishedPart,getTimer()-matchStartTime);
 			if (aPlayers.length == FinishHistory.totalFinishingPlayers)
-			{
 				gameOver();
-			}
 			else
-			{
-				queueTimer.start();
 				broadcast(API_GotMatchEnded.create(tempFinishedPlayersIds));
-			}
 			showMatchOver();
 			showHistory();
 		}
@@ -1705,6 +1688,7 @@ package emulator {
 					FinishHistory.wholePot -= playerDelta.finishHistory.pot;
 					for each(finishedPlayer in playerDelta.finishHistory.finishedPlayers)
 					{
+						waitingQueue.removePlayer(finishedPlayer.playerId);
 						finishedPlayerIds.push(finishedPlayer.playerId);
 						FinishHistory.totalFinishingPlayers ++;
 					}
@@ -2501,6 +2485,39 @@ class MessagQueue
 	private var allPlayerMessages:Array/*Array*/;
 	private var allPlayers:Array;
 	private var serverPointer:Server;
+	public function MessagQueue(playersNum:int,allPlayers:Array)
+	{
+		this.allPlayers = allPlayers.concat();
+		allPlayerMessages = new Array();
+		for (var i:int=0;i <playersNum;i++)
+			allPlayerMessages[i] = new Array			
+	}
+	public function length():int
+	{
+		var longestQueue:int = 0;
+		for each (var arr:Array in allPlayerMessages)
+		{
+			if(longestQueue < arr.length)
+				longestQueue = arr.length;
+		}
+		return longestQueue;
+	}
+	public function getStuckMessage():QueueEntry
+	{
+		var stuckMessage:int = 0;
+		var stuckMessageQueue:int = 0;
+		for( var i:int;i<allPlayerMessages.length;i++)
+		{
+			var arr:Array = allPlayerMessages[i];
+			if(stuckMessage < arr.length)
+			{
+				stuckMessage = arr.length;
+				stuckMessageQueue = i;
+			}
+		}
+		arr = allPlayerMessages[stuckMessageQueue];
+		return arr.pop();
+	}
 	public function toString():String
 	{
 		var str:String ="";
@@ -2519,13 +2536,6 @@ class MessagQueue
 		return str;
 	}
 	
-	public function MessagQueue(playersNum:int,allPlayers:Array)
-	{
-		this.allPlayers = allPlayers.concat();
-		allPlayerMessages = new Array();
-		for (var i:int=0;i <playersNum;i++)
-			allPlayerMessages[i] = new Array			
-	}
 	public function push(message:QueueEntry):void
 	{
 		var playerMessages:Array = allPlayerMessages[allPlayers.indexOf(message.user.ID)];

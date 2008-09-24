@@ -85,7 +85,7 @@ package emulator {
 		private var btnSavedGames:SimpleButton;
 		
 		private var btnStoreQue:SimpleButton;
-		private var btnDoAllQue:SimpleButton;
+		private var btnUserCallQue:SimpleButton;
 		private var goBackToHistory:Button;
 		private var playByPlay:Button;
 		
@@ -301,17 +301,14 @@ package emulator {
 			btnMatchState = tbsPanel["_btnMatchState"];
 			btnMatchState.addEventListener(MouseEvent.CLICK, btnMatchStateClick);
 
-			btnGeneralInfo = tbsPanel["_btnGeneralInfo"];
+			btnGeneralInfo = tbsPanel["_btnCustomInfo"];
 			btnGeneralInfo.addEventListener(MouseEvent.CLICK, btnGeneralInfoClick);
 
 			btnUserInfo = tbsPanel["_btnUserInfo"];
 			btnUserInfo.addEventListener(MouseEvent.CLICK, btnUserInfoClick);
 			
-			btnStoreQue= tbsPanel["_btnStore"];
-			btnStoreQue.addEventListener(MouseEvent.CLICK, btnStore);
-			
-			btnDoAllQue= tbsPanel["_btnDoAll"];
-			btnDoAllQue.addEventListener(MouseEvent.CLICK, btnDoAll);
+			btnUserCallQue= tbsPanel["_btnUserCallQue"];
+			btnUserCallQue.addEventListener(MouseEvent.CLICK, btnUserCall);
 			
 			btnMatchOver = tbsPanel["_btnMatchOver"];
 			btnMatchOver.addEventListener(MouseEvent.CLICK, btnMatchOverClick);
@@ -1522,7 +1519,7 @@ package emulator {
 		
 		
 		private function btnGeneralInfoClick(ev:MouseEvent):void {
-			tbsPanel.gotoAndStop("GeneralInfo");
+			tbsPanel.gotoAndStop("CustomInfo");
 			pnlCommands.visible = false;
 			logingCheckBox.visible = false;
 			goBackToHistory.visible = false;
@@ -1556,9 +1553,9 @@ package emulator {
 				showUnverifiedQue();
 			}
 		}
-		private function btnDoAll(ev:MouseEvent):void
+		private function btnUserCall(ev:MouseEvent):void
 		{
-			tbsPanel.gotoAndStop("DoAllQue");
+			tbsPanel.gotoAndStop("UserCallQueue");
 			pnlCommands.visible = false;
 			logingCheckBox.visible = false;
 			playByPlay.visible = false;

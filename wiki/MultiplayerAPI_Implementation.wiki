@@ -6,7 +6,7 @@ We use LocalConnection to pass commands; therefore, there is a 40K limit on argu
 `doFinishedCallback` is called by the game after every time the container calls some callback `got*`.
 
 
-In [apiDocumentationMap Multiplayer API] section we explained that the API is a bridge between the _game_ (written by game developers) and the _container_ (written by the website hosting the game).
+In [apiDocumentationOverview Multiplayer API] section we explained that the API is a bridge between the _game_ (written by game developers) and the _container_ (written by the website hosting the game).
 The game SWF is loaded by a _container_ that communicates with the _game_ using a LocalConnection. 
 There are two issues:
   * How to determine the channel name that the container and game should use, and

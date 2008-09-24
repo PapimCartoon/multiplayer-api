@@ -1,0 +1,39 @@
+#summary coding conventions for using the API effectively
+
+= Call types =
+
+In game development using the API, there are two kinds of calls that the developer can use
+
+either a [doStoreState] call or a doAll call.
+
+== doStoreState ==
+
+This call is used to transfer any kind of data from the user to the other game clients, and the server state,
+This call can be made in any part of the game, and may be triggered by user input, timers, or anything else the programmer seems fit.
+
+It is important that all data received by the other clients that was stored using [doStoreState] will be verified thoroughly by the receiving 
+game clients as to the fact that this is the most easy to fake data in the game.
+
+== doAll calls ==
+
+This refers to all the call starting with a doAll as a prefix, these calls must be called by the entire set of the game's players,
+each with the same parameters.
+
+In case one of the players doesn't call the doAll or calls it with different values then the rest of the players will 
+call a [doAllFoundHacker] with his user ID, to decide if he is the hacker.
+
+A doAll call can only be triggered by a [gotMatchStarted] , [gotStateChanged] and [gotMathEnded] callbacks,
+and cannot in any circumstances be called due to user input or anything else for that matter.
+
+= Correct Programming =
+
+To allow several automatic features our container gives.
+Such as play by play functionality and the ability to easily save and load your game at any state,
+You should make sure to make changes in the game's logic only as a result of a received state change.
+
+This may seem strange but imagine a real time game of minesweeper where both players pressed one of the mines
+Almost simultaneously.
+In this case both will think they found the mine and you will have inconsistency between the players.
+But if you mark the mine as someone's only after the state changed callback, then both will get one of the calls first
+and will mark the callback owner as the one who discovered the mine, and will disregard the second callback
+

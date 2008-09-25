@@ -1,9 +1,12 @@
-package come2play_as3.pseudoCode
+package come2play_as3.pseudoCode.tictactoe
 {
-	import come2play_as3.api.*;
-	import come2play_as3.api.auto_generated.*;
+	import come2play_as3.api.auto_generated.PlayerMatchOver;
+	import come2play_as3.api.auto_generated.ServerEntry;
+	import come2play_as3.api.auto_generated.UserEntry;
+	import come2play_as3.pseudoCode.SimplifiedClientGameAPI;
 	
-public class PseudoTicTacToe extends SimplifiedClientGameAPI {
+
+public class PseudoTicTacToe extends SimplifiedClientGameAPI{
   public var turnNumber:int;
   
   public function getTurnOfId():int {
@@ -41,7 +44,6 @@ public class PseudoTicTacToe extends SimplifiedClientGameAPI {
   }
   public function userMadeHisMove(gameMove:GameMove):void {
     doStoreState([ UserEntry.create(getEntryKey(), gameMove, false) ]);
-    performMove(gameMove);
   }
   
   override public function gotMatchStarted2():void {
@@ -52,22 +54,11 @@ public class PseudoTicTacToe extends SimplifiedClientGameAPI {
   override public function gotStateChanged2(serverEntries:Array/*ServerEntry*/):void {
     require(serverEntries.length==1);
     var entry:ServerEntry = serverEntries[0];
-    if (entry.storedByUserId==myUserId) return; // already updated my move
     require(entry.storedByUserId==getTurnOfId());
     require(entry.key==getEntryKey());
     require(entry.visibleToUserIds == null);
-    var gameMove:GameMove = GameMove.object2GameMove(entry.value);
+    var gameMove:GameMove = entry.value as GameMove;
     performMove(gameMove);
   } 
 }
-}
-class GameMove {
-  public var row:int, column:int;
-  function GameMove(row:int, column:int) {
-    this.row = row;
-    this.column = column;
-  }
-  public static function object2GameMove(obj:Object):GameMove {
-    return new GameMove(obj["row"], obj["column"]);
-  }     
 }

@@ -1,11 +1,17 @@
 package come2play_as3.pseudoCode
 {
 	import come2play_as3.api.auto_generated.*;
+	import come2play_as3.pseudoCode.backgammon.PseudoBackgammon;
+	import come2play_as3.pseudoCode.battleShips.PseudoBattleships;
+	import come2play_as3.pseudoCode.domino.PseudoDominoes;
+	import come2play_as3.pseudoCode.mineSweeper.PseudoMineSweeper;
+	import come2play_as3.pseudoCode.tictactoe.PseudoTicTacToe;
+	import come2play_as3.pseudoCode.trivia.PseudoTrivia;
 	
 	import flash.display.*;
 	public class SimplifiedClientGameAPI extends ClientGameAPI {
-	  internal var myUserId:int;
-	  internal var allPlayerIds:Array/*int*/;
+	  protected var myUserId:int;
+	  protected var allPlayerIds:Array/*int*/;
 	  public var state:Array/*ServerEntry*/
 	  public function SimplifiedClientGameAPI()
 	  {
@@ -48,10 +54,8 @@ package come2play_as3.pseudoCode
 			new PseudoBackgammon();
 			new PseudoTicTacToe();
 			new PseudoBattleships();
-			new PseudoBattleships2();
 			new PseudoTrivia();
 			new PseudoDominoes();
-			new PseudoBlackJack();
 			new PseudoMineSweeper();
 			// Ofir: you forgot to commit it!@!!! new PseudoSnake();
 		} 

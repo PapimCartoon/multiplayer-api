@@ -1,16 +1,17 @@
-package come2play_as3.pseudoCode
+package come2play_as3.pseudoCode.trivia
 {
 	import come2play_as3.api.*;
-	import come2play_as3.api.auto_generated.*;
 	import come2play_as3.api.auto_copied.*;
+	import come2play_as3.api.auto_generated.*;
+	import come2play_as3.pseudoCode.SimplifiedClientGameAPI;
 	/**
 	 * The keys in the Match state:
 	 * The calculators store in secret memory:
-	 * question_<i>:Question
-	 * answer_<i>:Answer
+	 * {type:"question",num:<i>}:Question
+	 * {type:"answer",num:<i>}:Answer
 	 * Suppose the players are in their 6 question:
 	 * currentQuestionNum  
-	 * PlayerAnswer_<USER_ID>
+	 * {type:"PlayerAnswer",PlayerAnswer:<USER_ID>}
 	 */
 public class PseudoTrivia extends SimplifiedClientGameAPI
 	{
@@ -24,10 +25,7 @@ public class PseudoTrivia extends SimplifiedClientGameAPI
 		/*
 		This function runs on a player not playing in the current game
 		it gets a random seed and downloads 10 questions and answers (questionAmount)
-		and stores an array of server entries containing questions and answers all as secret
-		key will be built for
-		questions: "question"_Number
-		answers : "answer"_Number
+		and stores an array of server entries containing questions and answers all as secret server entries.
 		*/
 		doAllStoreStateCalculation(requestId,newBoardEntries)
 	}
@@ -40,7 +38,7 @@ public class PseudoTrivia extends SimplifiedClientGameAPI
 	}
 	private function startGame():void
 	{
-		doAllRevealState( [RevealEntry.create("question_"+currentQuestionNum,null)] );
+		doAllRevealState( [RevealEntry.create({type:"question",num:currentQuestionNum},null)] );
 	}
   private function performMove(answer:Answer):void {
     var isQuestionAnswered:Boolean;
@@ -52,17 +50,16 @@ public class PseudoTrivia extends SimplifiedClientGameAPI
     if(!isQuestionAnswered)
     {
     	//mark the question as answered and block the option to answer question
-    	doAllRevealState([RevealEntry.create("answer_"+currentQuestionNum,null)])	
+    	doAllRevealState([RevealEntry.create({type:"answer",num:currentQuestionNum},null)])	
     }
   }
   private function verifyAnswer(newAnswer:Answer):Boolean
   {
   	for each(var serverEntry:ServerEntry in state)
   	{
-  		if(serverEntry.key == "PlayerAnswer_"+newAnswer.playerId)
+  		if((serverEntry.key.type == "PlayerAnswer") && (serverEntry.key.num == newAnswer.playerId))
   		{
-  			var value:Object=SerializableClass.deserialize(serverEntry.value);
-  			var oldAnswer:Answer=value as Answer;
+  			var oldAnswer:Answer=serverEntry.value as Answer;
   			if((oldAnswer.isCorrect == newAnswer.isCorrect) &&
   			  (oldAnswer.playerId == newAnswer.playerId))
   			  	return true;
@@ -77,9 +74,8 @@ public class PseudoTrivia extends SimplifiedClientGameAPI
   {
   	for each(var serverEntry:ServerEntry in state)
   	{
-		var tempSplit:Array=serverEntry.key.split("_");
-		if(tempSplit[0]== "PlayerAnswer");
-			return SerializableClass.deserialize(serverEntry.value) as Answer;
+		if(serverEntry.key.type== "PlayerAnswer");
+			return serverEntry.value as Answer;
   	}
   	return null;
   }
@@ -96,7 +92,7 @@ public class PseudoTrivia extends SimplifiedClientGameAPI
    currentQuestionNum++;
    	if(myUserId == oldAnswer.playerId)
    	{
-   		doStoreState([UserEntry.create("answer_"+currentQuestionNum,oldAnswer,false),
+   		doStoreState([UserEntry.create({type:"answer",num:currentQuestionNum},oldAnswer,false),
    					  UserEntry.create("currentQuestionNum",currentQuestionNum,false)])
    	}
    if(currentQuestionNum>questionAmount) {
@@ -112,34 +108,32 @@ public class PseudoTrivia extends SimplifiedClientGameAPI
    		startGame();
    }
   public function userMadeMove(gameMove:Answer):void {
-    doStoreState([ UserEntry.create("PlayerAnswer"+myUserId, gameMove, false) ]);
+    doStoreState([ UserEntry.create({type:"PlayerAnswer",PlayerAnswer:myUserId}, gameMove, false) ]);
   }
   
 
   override public function gotStateChanged2(serverEntries:Array/*ServerEntry*/):void {
-	var entry:ServerEntry = serverEntries[0];
-    if (entry.key == "randomSeed") {
-    	require(entry.storedByUserId==-1);
+	var serverEntry:ServerEntry = serverEntries[0];
+    if (serverEntry.key == "randomSeed") {
+    	require(serverEntry.storedByUserId==-1);
     	return;//players don't need the secret mine position seed
     }
-	var value:Object =SerializableClass.deserialize(entry.value);
-	    
 	if(serverEntries.length == questionAmount*2)
 	{
 		startGame();
 	}
-	else if(value is Question)
+	else if(serverEntry.value is Question)
 	{
-		var newQuestion:Question=value as Question;
-		require(entry.storedByUserId == -1);
+		var newQuestion:Question=serverEntry.value as Question;
+		require(serverEntry.storedByUserId == -1);
 		//allow users start answering newQuestion
 	}
-	else if(value is Answer)
+	else if(serverEntry.value is Answer)
 	{
-		var newAnswer:Answer=value as Answer;
+		var newAnswer:Answer=serverEntry.value as Answer;
 		if(newAnswer.playerId != -1)
 		{
-			if(entry.key=="PlayerAnswer_"+entry.storedByUserId)
+			if ((serverEntry.key.type=="PlayerAnswer") && (serverEntry.storedByUserId == serverEntry.key.playerId))
 				performMove(newAnswer);
 			else
 			{
@@ -158,12 +152,4 @@ public class PseudoTrivia extends SimplifiedClientGameAPI
     
  }
 }
-import come2play_as3.api.auto_copied.*;
-	
 
-class Question extends SerializableClass {
-  public var text:String;
-}
-class Answer extends SerializableClass {
-  public var text:String,playerId:int,isCorrect:Boolean;
-}

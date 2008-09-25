@@ -122,7 +122,7 @@ import flash.utils.*;
 		{
 			usersData.push({userId:userId,entries:entries});
 		}
-		override public function gotMatchStarted(allPlayerIds:Array, finishedPlayerIds:Array, extraMatchInfo:Object, matchStartedTime:int, serverEntries:Array):void
+		override public function gotMatchStarted(allPlayerIds:Array, finishedPlayerIds:Array, serverEntries:Array):void
 		{
 			this.allPlayerIds = allPlayerIds;
 			loadServerEntries = null;

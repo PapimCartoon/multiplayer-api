@@ -119,7 +119,7 @@ package come2play_as3.domino
 		{
 			
 		}
-		override public function gotMatchStarted(allPlayerIds:Array, finishedPlayerIds:Array, extraMatchInfo:Object, matchStartedTime:int, serverEntries:Array):void
+		override public function gotMatchStarted(allPlayerIds:Array, finishedPlayerIds:Array, serverEntries:Array):void
 		{
 			this.allPlayerIds=allPlayerIds;
 			dominoLogic.newGame(allPlayerIds,myUserId,cubeMaxValue,stageX,stageY);

@@ -58,7 +58,6 @@ package emulator {
 		
 		private var changedToDelta:int;
 		
-		private var extra_match_info:Object;
 		private var match_started_time:int;
 		private var sCurMessageType:String;
 		private var aMessages:Array;
@@ -94,10 +93,6 @@ package emulator {
 		private var btnSaveGame:Button;
 		private var btnCancelGame:Button;
 		private var btnQuestion:MovieClip;
-		private var txtExtraMatchInfo:TextField;
-		private var txtMatchStartedTime:TextField;
-		private var txtTooltipExtraMatchInfo:TextField;
-		private var txtTooltipMatchStartedTime:TextField;
 		private var cmbCommand:ComboBox;
 		private var cmbTarget:ComboBox;
 		private var txtTooltip:TextField;
@@ -375,25 +370,9 @@ package emulator {
 			btnQuestion.addEventListener(MouseEvent.CLICK, btnQuestionClick);
 			this.addChild(btnQuestion);
 			
-			txtExtraMatchInfo = new TextField();
-			txtExtraMatchInfo.border = true;
-			txtExtraMatchInfo.width = 120;
-			txtExtraMatchInfo.height = 20;
-			txtExtraMatchInfo.x = 240;
-			txtExtraMatchInfo.type = TextFieldType.INPUT;
-			txtExtraMatchInfo.addEventListener(MouseEvent.MOUSE_OVER, extraMatchInfoOver);
-			txtExtraMatchInfo.addEventListener(MouseEvent.MOUSE_OUT, extraMatchInfoOut);
-			this.addChild(txtExtraMatchInfo);
+
 			
-			txtMatchStartedTime = new TextField();
-			txtMatchStartedTime.border = true;
-			txtMatchStartedTime.width = 120;
-			txtMatchStartedTime.height = 20;
-			txtMatchStartedTime.x = 365;
-			txtMatchStartedTime.type = TextFieldType.INPUT;
-			txtMatchStartedTime.addEventListener(MouseEvent.MOUSE_OVER, matchStartedTimeOver);
-			txtMatchStartedTime.addEventListener(MouseEvent.MOUSE_OUT, matchStartedTimeOut);
-			this.addChild(txtMatchStartedTime);
+
 			
 			pnlLoad = new MovieClip();
 			pnlLoad.x = 150;
@@ -485,25 +464,7 @@ package emulator {
 			txt.x = 23;
 			lblServer.addChild(txt);
 			this.addChild(lblServer);
-			
-			txtTooltipExtraMatchInfo = new TextField;
-			txtTooltipExtraMatchInfo.autoSize = TextFieldAutoSize.LEFT;
-			txtTooltipExtraMatchInfo.background = true;
-			txtTooltipExtraMatchInfo.text = "custom match info:Object";
-			txtTooltipExtraMatchInfo.x = txtExtraMatchInfo.x;
-			txtTooltipExtraMatchInfo.y = 22;
-			txtTooltipExtraMatchInfo.visible = false;
-			this.addChild(txtTooltipExtraMatchInfo);
-			
-			txtTooltipMatchStartedTime = new TextField;
-			txtTooltipMatchStartedTime.autoSize = TextFieldAutoSize.LEFT;
-			txtTooltipMatchStartedTime.background = true;
-			txtTooltipMatchStartedTime.text = "match started time:long";
-			txtTooltipMatchStartedTime.x = txtMatchStartedTime.x;
-			txtTooltipMatchStartedTime.y = 22;
-			txtTooltipMatchStartedTime.visible = false;
-			this.addChild(txtTooltipMatchStartedTime);
-			
+						
 			logingCheckBox = new DisableLoging();
 			logingCheckBox.isLoging.label = "Log calls";
 			logingCheckBox.isLoging.selected = true;
@@ -695,16 +656,24 @@ package emulator {
 				var foundHackerMsg:API_DoAllFoundHacker=msg as API_DoAllFoundHacker;
 				doFoundHacker(user,foundHackerMsg);
 			}
-			else if((msg is API_Transaction))
+			else if(msg is API_DoStoreState)
+			{
+				if(playByPlayTimer.running)
+					return;
+				addMessageLog(user.Name, msg.getMethodName(), msg.toString());	
+				waitingQueue.push(new QueueEntry(user,new Transaction([msg]),getTimer()-matchStartTime));
+				queueTimer.start();
+				processQueue(waitingQueue,false);
+				showWaitingFunctionQue();
+			}
+			else if(msg is API_Transaction)
 			{
 				var transMsg:API_Transaction = 	msg as API_Transaction;	
 				var isCallback:Boolean = false;
-				var callbackMsg:API_Message = transMsg.messages[0];
-				if(callbackMsg is API_DoFinishedCallback)
+				var finishedCallbackMsg:API_DoFinishedCallback = transMsg.callback;
+				if(finishedCallbackMsg != null)
 				{
-					transMsg.messages.shift();
 					isCallback = true;
-					var finishedCallbackMsg:API_DoFinishedCallback = callbackMsg as API_DoFinishedCallback;
 					if(finishedCallbackMsg.callbackName != "gotKeyboardEvent")
 					{
 						addMessageLog(user.Name, finishedCallbackMsg.getMethodName(), finishedCallbackMsg.toString());
@@ -1141,15 +1110,13 @@ package emulator {
 				percentageOfPot+=palyerMatchOver.potPercentage;
 				finishedPart.finishedPlayers.push(palyerMatchOver)	
 			}
-			
 			finishedPart.pot=FinishHistory.wholePot;
 			FinishHistory.wholePot-=(FinishHistory.wholePot*percentageOfPot)/100;
 			afinishedPlayers.push(finishedPart);
 			deltaHistory.addPlayerMatchOver(getOngoingPlayerIds(),finishedPart,getTimer()-matchStartTime);
+			broadcast(API_GotMatchEnded.create(tempFinishedPlayersIds));
 			if (aPlayers.length == FinishHistory.totalFinishingPlayers)
 				gameOver();
-			else
-				broadcast(API_GotMatchEnded.create(tempFinishedPlayersIds));
 			showMatchOver();
 			showHistory();
 		}
@@ -1205,7 +1172,7 @@ package emulator {
 					serverEntry = ServerEntry.create(tempServerState.key,null,tempServerState.storedByUserId,tempServerState.visibleToUserIds,tempServerState.changedTimeInMilliSeconds);
 				stateEntries.push(serverEntry);
 			}
-			u.sendOperation(API_GotMatchStarted.create(aPlayers,finished_player_ids,extra_match_info,match_started_time,stateEntries));			
+			u.sendOperation(API_GotMatchStarted.create(aPlayers,finished_player_ids,stateEntries));			
 		}
 		
 		public function addMessageLog(user:String, funcname:String, message:String):void {
@@ -1226,31 +1193,6 @@ package emulator {
 				}
 			}
 			
-		}
-		
-		private function getStartParams():Boolean {
-			try {
-				if(txtExtraMatchInfo.text!=""){
-					extra_match_info = JSON.parse(txtExtraMatchInfo.text);
-				}else {
-					extra_match_info = null;
-				}
-				if(txtMatchStartedTime.text!=""){
-					match_started_time=JSON.parse(txtMatchStartedTime.text) as int;
-					if (isNaN(match_started_time)) {
-						showMsg("Can't convert match_started_time to int","Error");
-						return false;
-					}
-				}
-				else {
-					match_started_time = getTimer();
-				}
-				txtMatchStartedTime.text = match_started_time.toString();
-				return true;
-			}catch (err:Error) {
-				showMsg(err.getStackTrace(), "Error");
-			}
-			return false;
 		}
 		
 		private function onConnectionStatus(evt:StatusEvent):void {
@@ -1617,7 +1559,7 @@ package emulator {
 			pnlInfo.visible=true;
 			if(iInfoMode!=6){
 				iInfoMode=6;	
-				tblInfo.columns=[COL_name,COL_numberOfPlayers, COL_userIdThatAreStillPlaying,COL_nextTurnOfUserIds,COL_matchState, COL_matchStartedTime, COL_extraMatchInfo];
+				tblInfo.columns=[COL_name,COL_numberOfPlayers, COL_userIdThatAreStillPlaying,COL_nextTurnOfUserIds,COL_matchState];
 				showSavedGames();
 			}
 		}
@@ -1643,10 +1585,6 @@ package emulator {
 			matchStartTime=getTimer();		
 			bGameStarted = true;
 			bGameEnded = false;
-			txtExtraMatchInfo.visible = false;
-			txtMatchStartedTime.visible = false;
-			txtTooltipExtraMatchInfo.visible = false;
-			txtTooltipMatchStartedTime.visible = false;
 			btnNewGame.visible = false;
 			btnCancelGame.visible = true;
 			btnSaveGame.visible = true;
@@ -1733,7 +1671,8 @@ package emulator {
 			else
 			{				
 				playByPlay.label = "Pause";
-				gameOver();
+				if(!bGameEnded)
+					gameOver();
 				loadToDelta(changedToDelta);
 				startGame();
 				changedToDelta++;
@@ -1778,7 +1717,8 @@ package emulator {
 			if(changedToDelta!=-1)
 			{
 				//general game state
-				gameOver();
+				if(!bGameEnded)
+					gameOver();
 				loadToDelta(changedToDelta);
 				startGame();
 				pnlLoad.visible = false;
@@ -1964,8 +1904,6 @@ package emulator {
 							itemObj[COL_name]=savedGame.name;
 							itemObj[COL_userIdThatAreStillPlaying]=savedGame.players;
 							itemObj[COL_matchState]=serverEntryOutput;
-							itemObj[COL_matchStartedTime]=savedGame.match_started_time;
-							itemObj[COL_extraMatchInfo]=JSON.stringify(savedGame.extra_match_info)
 							tblInfo.addItem(itemObj);
 							tblInfo.verticalScrollPosition = tblInfo.maxVerticalScrollPosition+30;
 						}
@@ -1993,22 +1931,6 @@ package emulator {
 			if (evt.keyCode == 13) {
 				searchClick(null);
 			}
-		}
-		
-		private function extraMatchInfoOver(evt:MouseEvent):void {
-			txtTooltipExtraMatchInfo.visible = true;
-		}
-		
-		private function extraMatchInfoOut(evt:MouseEvent):void {
-			txtTooltipExtraMatchInfo.visible = false;
-		}
-		
-		private function matchStartedTimeOver(evt:MouseEvent):void {
-			txtTooltipMatchStartedTime.visible = true;
-		}
-		
-		private function matchStartedTimeOut(evt:MouseEvent):void {
-			txtTooltipMatchStartedTime.visible = false;
 		}
 		
 		private function btnCancelGameClick(evt:MouseEvent):void {
@@ -2052,14 +1974,6 @@ package emulator {
 				}
 				FinishHistory.wholePot -= FinishHistory.wholePot*tempPotPercentage / 100;
 			}			
-			extra_match_info=savedGame.extra_match_info;
-			match_started_time = savedGame.match_started_time;
-			if(extra_match_info!=null){
-				txtExtraMatchInfo.text = JSON.stringify(extra_match_info);
-			}else {
-				txtExtraMatchInfo.text = "";
-			}
-			txtMatchStartedTime.text = match_started_time.toString();
 			showMatchState();
 			showMatchOver();
 			if (aPlayers.length >= savedGame.players.length) {
@@ -2136,7 +2050,7 @@ package emulator {
 			}
 			
 
-			var game:SavedGame = SavedGame.create(serverState,aPlayers,afinishedPlayers,extra_match_info,match_started_time,txtSaveName.text,root.loaderInfo.parameters["game"],deltaHistory);
+			var game:SavedGame = SavedGame.create(serverState,aPlayers,afinishedPlayers,txtSaveName.text,root.loaderInfo.parameters["game"],deltaHistory);
 			var transferByteArray:ByteArray = new ByteArray();
 			transferByteArray.writeObject(game);
 			transferByteArray.position = 0;
@@ -2165,9 +2079,6 @@ package emulator {
 		
 		private function btnNewGameClick(evt:MouseEvent):void {
 			if (aPlayers.length != User.PlayersNum) {
-				return;
-			}
-			if (!getStartParams()) {
 				return;
 			}
 			afinishedPlayers=new Array();
@@ -2209,9 +2120,6 @@ package emulator {
 			if(User.PlayersNum >= u.ID){
 				aPlayers.push(u.ID);
 				if (aPlayers.length == User.PlayersNum) {
-					if (!getStartParams()) {
-						return;
-					}
 					startGame();
 				}
 			}
@@ -2305,25 +2213,20 @@ package emulator {
 		public function gameOver():void
 		{
 			queueTimer.stop();
-			var usr:User;
-			var arr:Array = new Array();
-			for each (usr in aUsers) {
-				if (aPlayers.indexOf(usr.ID) != -1 && !usr.Ended) {
-					arr.push(usr.ID);
+			var tempPlayerIds:Array = getOngoingPlayerIds();
+			for each (var usr:User in aUsers) {
+				if (aPlayers.indexOf(usr.ID) != -1 && !usr.Ended) {;
 					usr.Ended = true;
 				}
 			}
-
 			bGameEnded = true;
-			txtMatchStartedTime.text = "";
-			txtExtraMatchInfo.visible = true;
-			txtMatchStartedTime.visible = true;
 			btnNewGame.visible = true;
 			btnCancelGame.visible = false;
 			btnLoadGame.visible = true;
 			btnSaveGame.visible = false;
-			if(arr.length > 0)
-				broadcast(API_GotMatchEnded.create(arr));
+
+			if(tempPlayerIds.length > 0)
+				broadcast(API_GotMatchEnded.create(tempPlayerIds));
 		}
 		
 		private function getAllUserIds():Array {

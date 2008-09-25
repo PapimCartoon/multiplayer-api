@@ -17,7 +17,7 @@ public class PseudoTrivia extends SimplifiedClientGameAPI
 		public static var questionAmount:int=10;
 		public var currentQuestionNum:Number;
 		
-	override public function gotRequestStateCalculation(serverEntries:Array):void
+	override public function gotRequestStateCalculation(requestId:int,serverEntries:Array):void
 	{ 
 		var serverEntry:ServerEntry=serverEntries[0];
 		var newBoardEntries:Array/*ServerEntry*/=new Array();
@@ -29,7 +29,7 @@ public class PseudoTrivia extends SimplifiedClientGameAPI
 		questions: "question"_Number
 		answers : "answer"_Number
 		*/
-		doAllStoreStateCalculation(newBoardEntries)
+		doAllStoreStateCalculation(requestId,newBoardEntries)
 	}
 	override public function gotMatchStarted2():void 
 	{

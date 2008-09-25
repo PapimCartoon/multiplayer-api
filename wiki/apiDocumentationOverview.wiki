@@ -1,4 +1,5 @@
 #summary API Documentation Overview: Multiplayer API, emulator, and tutorials
+#labels Featured
 
 This wiki contains documentation about the Multiplayer API, the [Emulator], and tutorials for creating multiplayer games in flash.
 This project main target audience is game developers that wish to create new multiplayer flash games, or to convert single-player flash games to multiplayer.

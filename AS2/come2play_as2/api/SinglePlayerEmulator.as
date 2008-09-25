@@ -33,14 +33,10 @@ import come2play_as2.api.*;
 				];
 		public static var DEFAULT_MATCH_STATE:Array/*ServerEntry*/ = []; // you can change this and load a saved match
 		public static var DEFAULT_USER_ID:Number = 42; 
-		public static var DEFAULT_EXTRA_MATCH_INFO:String = ""; 
-		public static var DEFAULT_MATCH_STARTED_TIME:Number = 999;
 						
 		private var customInfoEntries:Array/*InfoEntry*/;
 		private var userId:Number; 
 		private var userInfoEntries:Array/*InfoEntry*/;
-		private var extraMatchInfo:Object/*Serializable*/;
-		private var matchStartedTime:Number; 
 		private var userStateEntries:Array/*ServerEntry*/;
 		private var apiMsgsQueue:Array/*API_Message*/ = [];
 		
@@ -49,8 +45,6 @@ import come2play_as2.api.*;
 			this.customInfoEntries = DEFAULT_GENERAL_INFO;
 			this.userId = DEFAULT_USER_ID;
 			this.userInfoEntries = DEFAULT_USER_INFO;
-			this.extraMatchInfo = DEFAULT_EXTRA_MATCH_INFO;
-			this.matchStartedTime = DEFAULT_MATCH_STARTED_TIME;
 			this.userStateEntries = DEFAULT_MATCH_STATE;			
 									
 			AS3_vs_AS2.addKeyboardListener(graphics, AS3_vs_AS2.delegate(this, this.reportKeyDown));	
@@ -62,20 +56,27 @@ import come2play_as2.api.*;
         /*override*/ public function gotMessage(msg:API_Message):Void {        	
 			if (msg instanceof API_Transaction) {
 				var transaction:API_Transaction = API_Transaction(msg);
-				for (var i66:Number=0; i66<transaction.messages.length; i66++) { var innerMsg:API_Message = transaction.messages[i66]; 
+				for (var i60:Number=0; i60<transaction.messages.length; i60++) { var innerMsg:API_Message = transaction.messages[i60]; 
 					gotMessage(innerMsg);
 				}
+				gotMessage(transaction.callback);
 			} else if (msg instanceof API_DoStoreState) {
 				var doStore:API_DoStoreState = API_DoStoreState(msg);				
 				var userEntries:Array/*UserEntry*/ = doStore.userEntries;
 				var serverEntries:Array/*ServerEntry*/ = [];
-				for (var i73:Number=0; i73<userEntries.length; i73++) { var userEntry:UserEntry = userEntries[i73]; 
+				for (var i68:Number=0; i68<userEntries.length; i68++) { var userEntry:UserEntry = userEntries[i68]; 
 					var serverEntry:ServerEntry = ServerEntry.create(userEntry.key, userEntry.value, userId,userEntry.isSecret ? [userId] : null, getTimer());
 					serverEntries.push(serverEntry); 
 				}
 				queueSendMessage(API_GotStateChanged.create(serverEntries));
 				
 			} else if (msg instanceof API_DoAllEndMatch) {
+				var endMatch:API_DoAllEndMatch = API_DoAllEndMatch(msg);
+				var finishedPlayerIds:Array = [];
+				for (var i77:Number=0; i77<endMatch.finishedPlayers.length; i77++) { var matchOver:PlayerMatchOver = endMatch.finishedPlayers[i77]; 
+					finishedPlayerIds.push( matchOver.playerId );
+				}
+				queueSendMessage( API_GotMatchEnded.create(finishedPlayerIds) );
 				AS3_vs_AS2.myTimeout(AS3_vs_AS2.delegate(this, this.sendNewMatch), 2000);
 			} else if (msg instanceof API_DoRegisterOnServer) {
 				doRegisterOnServer();
@@ -92,7 +93,7 @@ import come2play_as2.api.*;
 	 		sendNewMatch();
   		}
   		private function sendNewMatch():Void {	 
-  			queueSendMessage(API_GotMatchStarted.create([userId], [], extraMatchInfo, matchStartedTime, userStateEntries) );	 	
+  			queueSendMessage(API_GotMatchStarted.create([userId], [], userStateEntries) );	 	
   		}
   		private function queueSendMessage(msg:API_Message):Void {
   			apiMsgsQueue.push(msg);

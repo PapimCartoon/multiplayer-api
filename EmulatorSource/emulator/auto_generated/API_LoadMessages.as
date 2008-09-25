@@ -3,7 +3,7 @@ package emulator.auto_generated {
 
 	import flash.display.*;	import flash.utils.*;
 	import emulator.*;
-	import emulator.auto_copied.*
+	import emulator.auto_copied.*;
 	public  class API_LoadMessages  {
 		public static function useAll():void {
 			new API_DoFinishedCallback();

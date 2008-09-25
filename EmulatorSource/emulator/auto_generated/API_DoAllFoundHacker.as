@@ -3,7 +3,7 @@ package emulator.auto_generated {
 
 	import flash.display.*;	import flash.utils.*;
 	import emulator.*;
-	import emulator.auto_copied.*
+	import emulator.auto_copied.*;
 	public  class API_DoAllFoundHacker extends API_Message {
 		public var userId:int;
 		public var errorDescription:String;

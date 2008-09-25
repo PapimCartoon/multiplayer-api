@@ -3,7 +3,7 @@ package emulator.auto_generated {
 
 	import flash.display.*;	import flash.utils.*;
 	import emulator.*;
-	import emulator.auto_copied.*
+	import emulator.auto_copied.*;
 	public  class API_DoAllEndMatch extends API_Message {
 		public var finishedPlayers:Array/*PlayerMatchOver*/;
 		public static function create(finishedPlayers:Array/*PlayerMatchOver*/):API_DoAllEndMatch {

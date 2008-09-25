@@ -2,8 +2,10 @@ package come2play_as3.api.auto_generated {
 //Do not change the code below because this class was generated automatically!
 
 	import flash.display.*;	import flash.utils.*;
-	import come2play_as3.api.*
-	import come2play_as3.api.auto_copied.*
+	import come2play_as3.api.*;
+	import come2play_as3.api.auto_copied.*;
+	import come2play_as3.api.auto_generated.*;
+
 	public  class API_GotMatchEnded extends API_Message {
 		public var finishedPlayerIds:Array/*int*/;
 		public static function create(finishedPlayerIds:Array/*int*/):API_GotMatchEnded {

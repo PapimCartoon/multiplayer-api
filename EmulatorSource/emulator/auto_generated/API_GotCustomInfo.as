@@ -3,7 +3,7 @@ package emulator.auto_generated {
 
 	import flash.display.*;	import flash.utils.*;
 	import emulator.*;
-	import emulator.auto_copied.*
+	import emulator.auto_copied.*;
 	public  class API_GotCustomInfo extends API_Message {
 		public var infoEntries:Array/*InfoEntry*/;
 		public static function create(infoEntries:Array/*InfoEntry*/):API_GotCustomInfo {

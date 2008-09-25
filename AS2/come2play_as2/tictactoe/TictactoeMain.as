@@ -135,7 +135,7 @@ class come2play_as2.tictactoe.TictactoeMain extends ClientGameAPI {
 			getSquareGraphic(cell).gotSymbol(color,symbolUrl);
 		}
 	}
-	/*override*/ public function gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, extraMatchInfo:Object/*Serializable*/, matchStartedTime:Number, userStateEntries:Array/*ServerEntry*/):Void {
+	/*override*/ public function gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, userStateEntries:Array/*ServerEntry*/):Void {
 		if (!didCreateGrid) {
 			didCreateGrid = true;
 			grid.createMovieClips(graphics, "TicTacToeSquare");

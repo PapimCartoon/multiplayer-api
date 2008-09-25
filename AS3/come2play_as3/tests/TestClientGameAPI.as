@@ -1,4 +1,4 @@
-package come2play_as3.tests {
+﻿package come2play_as3.tests {
 import come2play_as3.api.*;
 import come2play_as3.api.auto_copied.*;
 import come2play_as3.api.auto_generated.*;
@@ -76,7 +76,7 @@ public class TestClientGameAPI extends ClientGameAPI {
 	}
 	
 	private var testDoubleNumbers:Boolean = false;
-	override public function gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, extraMatchInfo:Object, matchStartedTime:int, serverEntries:Array/*ServerEntry*/):void {
+	override public function gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, serverEntries:Array/*ServerEntry*/):void {
 		this.allPlayerIds = allPlayerIds;
 		if (!shouldTest) return;
 		var test_Arr:Array = null;

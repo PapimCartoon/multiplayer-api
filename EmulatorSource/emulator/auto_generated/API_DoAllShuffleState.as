@@ -3,7 +3,7 @@ package emulator.auto_generated {
 
 	import flash.display.*;	import flash.utils.*;
 	import emulator.*;
-	import emulator.auto_copied.*
+	import emulator.auto_copied.*;
 	public  class API_DoAllShuffleState extends API_Message {
 		public var keys:Array/*Object*/;
 		public static function create(keys:Array/*Object*/):API_DoAllShuffleState {

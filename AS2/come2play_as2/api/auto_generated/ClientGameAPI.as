@@ -1,7 +1,9 @@
 //Do not change the code below because this class was generated automatically!
 
-	import come2play_as2.api.*
-	import come2play_as2.api.auto_copied.*
+	import come2play_as2.api.*;
+	import come2play_as2.api.auto_copied.*;
+	import come2play_as2.api.auto_generated.*;
+
 import come2play_as2.api.auto_generated.*;
 	class come2play_as2.api.auto_generated.ClientGameAPI extends BaseGameAPI {
 		public function ClientGameAPI(someMovieClip:MovieClip) {
@@ -18,7 +20,7 @@ import come2play_as2.api.auto_generated.*;
 		public function gotUserInfo(userId:Number, infoEntries:Array/*InfoEntry*/):Void {}
 		public function gotUserDisconnected(userId:Number):Void {}
 		public function gotMyUserId(myUserId:Number):Void {}
-		public function gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, extraMatchInfo:Object, matchStartedTime:Number, serverEntries:Array/*ServerEntry*/):Void {}
+		public function gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, serverEntries:Array/*ServerEntry*/):Void {}
 		public function gotMatchEnded(finishedPlayerIds:Array/*int*/):Void {}
 		
 		public function gotStateChanged(serverEntries:Array/*ServerEntry*/):Void {}

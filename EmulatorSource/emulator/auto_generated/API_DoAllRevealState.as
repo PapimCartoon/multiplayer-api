@@ -3,7 +3,7 @@ package emulator.auto_generated {
 
 	import flash.display.*;	import flash.utils.*;
 	import emulator.*;
-	import emulator.auto_copied.*
+	import emulator.auto_copied.*;
 	public  class API_DoAllRevealState extends API_Message {
 		public var revealEntries:Array/*RevealEntry*/;
 		public static function create(revealEntries:Array/*RevealEntry*/):API_DoAllRevealState {

@@ -3,7 +3,7 @@ package emulator.auto_generated {
 
 	import flash.display.*;	import flash.utils.*;
 	import emulator.*;
-	import emulator.auto_copied.*
+	import emulator.auto_copied.*;
 	public  class API_MethodsSummary  {
 		public var methodName:String;
 		public var parameterNames:Array/*String*/;
@@ -28,7 +28,7 @@ package emulator.auto_generated {
 
 		, new API_MethodsSummary('gotUserDisconnected', ['userId'], ['int'] )
 		, new API_MethodsSummary('gotMyUserId', ['myUserId'], ['int'] )
-		, new API_MethodsSummary('gotMatchStarted', ['allPlayerIds', 'finishedPlayerIds', 'extraMatchInfo', 'matchStartedTime', 'serverEntries'], ['Array/*int*/', 'Array/*int*/', 'Object', 'int', 'Array/*ServerEntry*/'] )
+		, new API_MethodsSummary('gotMatchStarted', ['allPlayerIds', 'finishedPlayerIds', 'serverEntries'], ['Array/*int*/', 'Array/*int*/', 'Array/*ServerEntry*/'] )
 		, new API_MethodsSummary('gotMatchEnded', ['finishedPlayerIds'], ['Array/*int*/'] )
 		, new API_MethodsSummary('gotStateChanged', ['serverEntries'], ['Array/*ServerEntry*/'] )
 		, new API_MethodsSummary('doStoreState', ['userEntries'], ['Array/*UserEntry*/'] )

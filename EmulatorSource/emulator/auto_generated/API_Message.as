@@ -3,7 +3,7 @@ package emulator.auto_generated {
 
 	import flash.display.*;	import flash.utils.*;
 	import emulator.*;
-	import emulator.auto_copied.*
+	import emulator.auto_copied.*;
 	public  class API_Message extends SerializableClass {
 		public function getParametersAsString():String { throw new Error("You must subclass API_Message!"); return null; }
 		public function toString():String { throw new Error("You must subclass API_Message!"); return null; }

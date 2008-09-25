@@ -74,7 +74,7 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 	}
 	
 	private var testDoubleNumbers:Boolean = false;
-	/*override*/ public function gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, extraMatchInfo:Object, matchStartedTime:Number, serverEntries:Array/*ServerEntry*/):Void {
+	/*override*/ public function gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, serverEntries:Array/*ServerEntry*/):Void {
 		this.allPlayerIds = allPlayerIds;
 		if (!shouldTest) return;
 		var test_Arr:Array = null;

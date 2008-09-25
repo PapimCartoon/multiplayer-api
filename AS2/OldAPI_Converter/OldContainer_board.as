@@ -1,4 +1,4 @@
-﻿import mx.utils.Delegate;
+import mx.utils.Delegate;
 
 class OldContainer_board extends ClientGameAPI{
 	private var loaded:Boolean = false;
@@ -48,7 +48,7 @@ class OldContainer_board extends ClientGameAPI{
 	public function got_my_user_id(user_id:Number):Void {
 		iID = user_id;
 	}
-	public function got_match_started(user_ids:Array, extra_match_info:Object, match_started_time:Number):Void {
+	public function got_match_started(user_ids:Array):Void {
 		bGameStarted = true;
 		players = user_ids;
 		iColor = -1;

@@ -2,8 +2,10 @@ package come2play_as3.api.auto_generated {
 //Do not change the code below because this class was generated automatically!
 
 	import flash.display.*;	import flash.utils.*;
-	import come2play_as3.api.*
-	import come2play_as3.api.auto_copied.*
+	import come2play_as3.api.*;
+	import come2play_as3.api.auto_copied.*;
+	import come2play_as3.api.auto_generated.*;
+
 	public  class RevealEntry extends API_Message {
 		public var key:*;
 		public var userIds:Array/*int*/;

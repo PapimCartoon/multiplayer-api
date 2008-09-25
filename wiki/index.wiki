@@ -9,7 +9,7 @@ is because this API is an open source project, and although we sponsor it, we wa
 the wide audience so that anyone can use, change or contribute to the API.
 
 
-==So what is the API?==
+=== So what is the API? ===
 
 The Multiplayer API is a bridge between two parties:
   * *Game developers*, that develop a _game_ as a SWF
@@ -17,31 +17,37 @@ The Multiplayer API is a bridge between two parties:
 The _game_ and _container_ communicate using a LocalConnection, and thus each can use either AS2 or AS3.
 
 
-How to use this project:
+=== How to use this project ===
+
   * Read the wiki pages, start in the [apiDocumentationOverview API Documentation Overview] 
-  * Checkout the latest version of the [Emulator] from the [http://multiplayer-api.googlecode.com/svn/trunk SVN]. If you are not familiar with SVN, you can also 
-[http://code.google.com/p/multiplayer-api/downloads/list download] the emulator.
+  * Checkout the latest version of the [Emulator] from the [http://multiplayer-api.googlecode.com/svn/trunk SVN]. If you are not familiar with SVN, you can also [http://code.google.com/p/multiplayer-api/downloads/list download] the emulator.
   * Look at the [http://code.google.com/p/multiplayer-api/issues/list issue tracker] to check for future releases, bugs, and requested features.
   * Mailing list: If you join, you will receive emails from codesite-noreply@google.com
-  These are the current mailing lists:
+  
+  *These are the current mailing lists* :
+  
     * [http://groups.google.com/group/multiplayer-api Game developers] - game developers who use this API and wish to share their experiences
     * [http://groups.google.com/group/multiplayer-api-developers API and Emulator developers] - programmers who work on extending this API and its Emulator
     * [http://groups.google.com/group/multiplayer-api-svn-commits SVN commits] - those who wish to get notifications on each commit in the SVN
     * [http://groups.google.com/group/multiplayer-api-issue-changes Issue changes] - those who wish to get notifications on each change in an Issue (e.g., if a new issue opens, or an old one being fixed)
 
 ==== How to contribute: ====
+
   * Comment on the wiki pages, create issues, request enhancements, reports bugs, etc
   * Join the mailing list, and help other developers with problems
   * Become a project member, and help us write the wiki pages, add new games, create more game tutorials, create videos of using the emulator
   * Become an API or Emulator developer, and help us add features to the emulator
 
 ==== How to work with the SVN: ====
+
   * Firs you should open your own Gmail account.
   * Install an SVN client on your computer (I recommend [http://tortoisesvn.tigris.org Tortoise SVN]), press [http://tortoisesvn.net/docs/release/TortoiseSVN_en/tsvn-dug-checkout.html here] for help
   * Generate a password corresponding to you Gmail account [http://code.google.com/hosting/settings here] 
   * Checkout the code from [https://multiplayer-api.googlecode.com/svn/trunk/] using your Gmail account and the special password you got in the previous step.
   * _Before_ reporting a bug, make sure you UPDATE your SVN to the latest version.
+
 ==== License note: ==== 
+
 The API and Emulator are open source, and anyone can use, modify, or distribute them, both in open source projects or in commercial projects. Phrased differently, you may develop commercial games using this API, or develop a commercial container for API games; you do not even have to mention you are using this open source API.
 
 The API is open source, and we hope that many companies will endorse it, and game developers will have many places to submit their multiplayer games.

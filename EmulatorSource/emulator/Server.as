@@ -30,8 +30,6 @@ package emulator {
 		private static const COL_userIdThatAreStillPlaying:String="User_ids_that_are_still_playing";
 		private static const COL_nextTurnOfUserIds:String="Next_turn_of_user_ids";
 		private static const COL_matchState:String="Match_state";
-		private static const COL_matchStartedTime:String="Match_started_time";
-		private static const COL_extraMatchInfo:String= "Extra_match_info";
 		private static const COL_serverEntries:String= "Server_Entries";
 		private static const COL_TimeSent:String = "Time_Sent";
 		//Private variables
@@ -92,7 +90,6 @@ package emulator {
 		private var btnLoadGame:Button;
 		private var btnSaveGame:Button;
 		private var btnCancelGame:Button;
-		private var btnQuestion:MovieClip;
 		private var cmbCommand:ComboBox;
 		private var cmbTarget:ComboBox;
 		private var txtTooltip:TextField;
@@ -364,13 +361,6 @@ package emulator {
 			btnSaveGame.addEventListener(MouseEvent.CLICK, btnSaveGameClick);
 			this.addChild(btnSaveGame);
 			
-			btnQuestion = new QuestionOnWhite();
-			btnQuestion.x = 230;
-			btnQuestion.y = 10;
-			btnQuestion.addEventListener(MouseEvent.CLICK, btnQuestionClick);
-			this.addChild(btnQuestion);
-			
-
 			
 
 			
@@ -1321,8 +1311,8 @@ package emulator {
 					txtInfo.text = "name: " + evt.target.selectedItem[COL_name] + "\n" + 
 						"user_ids_that_are_still_playing: " + evt.target.selectedItem[COL_userIdThatAreStillPlaying] + "\n" + 
 						"next_turn_of_user_ids: " + evt.target.selectedItem[COL_nextTurnOfUserIds] + "\n" + 
-						"match_state: " + evt.target.selectedItem[COL_matchState] + "\n" + 
-						"match_started_time: " + evt.target.selectedItem[COL_matchStartedTime] + "\n" + "extra_match_info: " + evt.target.selectedItem[COL_extraMatchInfo];
+						"match_state: " + evt.target.selectedItem[COL_matchState];
+
 				break;
 				case 7:
 				txtInfo.text = "Sending user Id : " + evt.target.selectedItem[COL_User]+ "\n" +
@@ -1935,10 +1925,6 @@ package emulator {
 		
 		private function btnCancelGameClick(evt:MouseEvent):void {
 			gameOver();
-		}
-		
-		private function btnQuestionClick(evt:MouseEvent):void {
-			showMsg("When starting a new game, you should enter two values that will be passed in the callback got_match_started: extra_match_info of type Object and match_started_time of type int");
 		}
 		
 		private function btnLoadGameClick(evt:MouseEvent):void {

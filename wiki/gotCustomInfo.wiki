@@ -4,15 +4,22 @@
 gotCustomInfo(infoEntries:Array/*InfoEntry*/)  
 }}}
 
-*gotCustomInfo :* is used to pass parameters to the game.
+=== Description ===
 
-It gets the following parameter:
+`gotCustomInfo` is the second callback called when the game starts
+this callback is used to transfer custom information regarding the game.
+such as the game's : frameRate,width,height,x position in the container, y position in the container etc.
 
-*infoEntries :*  an Array of [InfoEntry] elements. 
 
-These are the keys that are currently supported:
 
-1. *`logoFullUrl` :*  `logoFullUrl` is a full URL (starting with `http://`) 
+=== Parameters received===
+
+infoEntries -  an Array of [InfoEntry] elements, each containing a key and its corresponding value.
+
+
+=== Available keys===
+
+1. *`CONTAINER_logoFullUrl` :*  `logoFullUrl` is a full URL (starting with `http://`) 
 That points to a logo SWF or Jpg file of 70x70 pixels in diameter, preferably vector based.
 
 The game should place the logo in various places in the game
@@ -32,14 +39,35 @@ Then modify the logo movie clip (called `logoMovieClip`):
 turn time, playing users and more. therefore your game will not always be positioned at x = 0 and y = 0,and then in case you want to make calculations
 based on the absolute stageX and StageY you should subtract these values
 
-3. * `CONTAINER_gameStageY` :* - represents the y value where the game is positioned in the container. see explanation above.
+3.*`CONTAINER_gameStageY` :       * - represents the y value where the game is positioned in the container. see explanation above.
 
-4.* `CONTAINER_gameHeight` :* - represents the height at which the game will be shown( in case you game can be stretched and shrinked)
+4.*`CONTAINER_gameHeight` :       * - represents the height at which the game will be shown( in case you game can be stretched and shrinked)
 
-5.* `CONTAINER_gameWidth` :* -represents the width at which the game will be shown( in case you game can be stretched and shrinked)
+5.*`CONTAINER_gameWidth` :        * -represents the width at which the game will be shown( in case you game can be stretched and shrinked)
 
-6.* `CONTAINER_gameFrameRate` :* - represents the frame rate at which your game will run.
+6.*`CONTAINER_gameFrameRate` :    * - represents the frame rate at which your game will run.
  
-7. *`CONTAINER_seconds_per_move` :* - `seconds_per_move` holds the amount of second's allotted to each move in the game in games where [doAllSetTurn] `milliSecondsInTurn` is set to -1  
+7.*`CONTAINER_seconds_per_move` :  * - `seconds_per_move` holds the amount of second's allotted to each move in the game in games where [doAllSetTurn] `milliSecondsInTurn` is set to -1  
 
-8. *`CONTAINER_seconds_per_match` :* - `seconds_per_match` holds the amount of seconds allotted to the entire game
+8.*`CONTAINER_seconds_per_match` : * - `seconds_per_match` holds the amount of seconds allotted to the entire game
+
+
+=== Example ===
+
+In a game of TïcTacToe, changing all the cell backgrounds into a specified logo
+
+{{{
+override gotCustomInfo(infoEntries:Array/*InfoEntry*/):void
+{
+	for each(var infoEntry:InfoEntry in infoEntries)
+	{
+		if(infoEntry.key == "CONTAINER_logoFullUrl")
+		{
+			/*
+			load then logo into your cell backgrounds
+			*/
+		}
+		
+	}
+}
+}}}

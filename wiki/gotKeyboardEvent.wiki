@@ -4,18 +4,37 @@
 gotKeyboardEvent(isKeyDown:Boolean, charCode:int, keyCode:int, keyLocation:int, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean)
 }}}
 
-The container is in charge of capturing keyboard events and passing them to the game.
+=== Description ===
 
-The game should not listen to keyboard events directly,
+This callback is called every time a keyboard event is made that is relevant to you game,
+and not to the chat application or any other feature surrounding your game.
 
-because the container may capture some of these events and the game should not respond to them.
+*Important Note*
 
-===For example===
+Your game should not listen to keyboard events directly,
+because some of these events may be sent by the container, and your game should not respond to them.
 
-if the container has a chat component,
+=== Example ===
 
-and the user is typing in the chat, then the game should not respond to those key strokes.
+If I want the game to notify the rest of the users every time I press enter
 
-Therefore the game should not listen to keyboard events directly,
+{{{
 
-but instead override `gotKeyboardEvent` to know about key strokes.
+override public function gotKeyboardEvent(isKeyDown:Boolean, charCode:int, keyCode:int, keyLocation:int, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean):void
+{
+	if(isKeyDown)
+	{
+		if(keyCode == Keyboard.SPACE)
+		{
+			var keyObj:Object = new Object();
+			keyObj.userId = MyUserId;
+			keyObj.type = "space"
+			var userEntry:UserEntry = UserEntry.create(keyObj,true,false);
+			var userEntries:Array = new Array();
+			userEntries.push(userEntry);
+			doStoreState(userEntries);
+		}
+	}
+}
+
+}}}

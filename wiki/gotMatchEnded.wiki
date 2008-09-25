@@ -4,9 +4,18 @@
 gotMatchEnded(finishedPlayerIds:Array/*int*/)
 }}}
 
-`finishedPlayerIds` contains the `userId`'s of the players that finished playing.
-Note that `finishedPlayerIds` may contain only a subset of the players (see the TicTacToe demo for such an example).
+=== Description ===
 
-`gotMatchEnded` may be called if:
-  * The player disconnected, choose to lose, agree with the players that he can quit the game, etc. 
-  * All the players called [doAllEndMatch].
+Called when one or more users finish the game, either by winning losing or disconnecting.
+
+see also [doAllEndMatch]
+
+=== Parameters received===
+
+finishedPlayerIds - an Array of all the users which finished the game.
+
+=== Example ===
+
+if player 1 wins the game and the game goes on, then what you will get is
+finishedPlayerIds with the number 1, representing the finishing players ID.
+

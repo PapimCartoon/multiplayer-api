@@ -4,15 +4,20 @@
 gotMyUserId(myUserId:int)  
 }}}
 
-`gotMyUserId` is the first callback that is called.
 
-It lets the game know what is the `userId` of the user that is running this game.
+=== Description ===
 
-When a game is in progress, the users can be partitioned into players and viewers.
-
+The first callback that is called , this callback lets the game know what is the `userId` of the user that is running this game.
 Every user is identified by a unique `userId`.
 
-*IMPORTANT*:
+When a game is in progress, the users are partitioned into players and viewers.
+
+=== Parameters received===
+
+myUserId - the unique user ID of the user running the game
+
+
+*IMPORTANT*
 
 The container may call `gotMyUserId` several times with different values for `myUserId`.
 

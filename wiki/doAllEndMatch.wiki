@@ -11,6 +11,8 @@ Call this function to end the game for some or all players.
 all the players who's ID's are in the finishedPlayers array are considered as finished players
 and are treated as viewers from that point on.
 
+see also [gotMatchEnded]
+
 === Parameters ===
 
 finishedPlayers:Array - an array containing an instance of [PlayerMatchOver] for each finishing player.

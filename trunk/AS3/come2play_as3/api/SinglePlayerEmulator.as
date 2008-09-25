@@ -36,14 +36,10 @@ package come2play_as3.api
 				];
 		public static var DEFAULT_MATCH_STATE:Array/*ServerEntry*/ = []; // you can change this and load a saved match
 		public static var DEFAULT_USER_ID:int = 42; 
-		public static var DEFAULT_EXTRA_MATCH_INFO:String = ""; 
-		public static var DEFAULT_MATCH_STARTED_TIME:int = 999;
 						
 		private var customInfoEntries:Array/*InfoEntry*/;
 		private var userId:int; 
 		private var userInfoEntries:Array/*InfoEntry*/;
-		private var extraMatchInfo:Object/*Serializable*/;
-		private var matchStartedTime:int; 
 		private var userStateEntries:Array/*ServerEntry*/;
 		private var apiMsgsQueue:Array/*API_Message*/ = [];
 		
@@ -52,8 +48,6 @@ package come2play_as3.api
 			this.customInfoEntries = DEFAULT_GENERAL_INFO;
 			this.userId = DEFAULT_USER_ID;
 			this.userInfoEntries = DEFAULT_USER_INFO;
-			this.extraMatchInfo = DEFAULT_EXTRA_MATCH_INFO;
-			this.matchStartedTime = DEFAULT_MATCH_STARTED_TIME;
 			this.userStateEntries = DEFAULT_MATCH_STATE;			
 									
 			AS3_vs_AS2.addKeyboardListener(graphics, AS3_vs_AS2.delegate(this, this.reportKeyDown));	
@@ -68,6 +62,7 @@ package come2play_as3.api
 				for each (var innerMsg:API_Message in transaction.messages) {
 					gotMessage(innerMsg);
 				}
+				gotMessage(transaction.callback);
 			} else if (msg is API_DoStoreState) {
 				var doStore:API_DoStoreState = msg as API_DoStoreState;				
 				var userEntries:Array/*UserEntry*/ = doStore.userEntries;
@@ -79,6 +74,12 @@ package come2play_as3.api
 				queueSendMessage(API_GotStateChanged.create(serverEntries));
 				
 			} else if (msg is API_DoAllEndMatch) {
+				var endMatch:API_DoAllEndMatch = msg as API_DoAllEndMatch;
+				var finishedPlayerIds:Array = [];
+				for each (var matchOver:PlayerMatchOver in endMatch.finishedPlayers) {
+					finishedPlayerIds.push( matchOver.playerId );
+				}
+				queueSendMessage( API_GotMatchEnded.create(finishedPlayerIds) );
 				AS3_vs_AS2.myTimeout(AS3_vs_AS2.delegate(this, this.sendNewMatch), 2000);
 			} else if (msg is API_DoRegisterOnServer) {
 				doRegisterOnServer();
@@ -95,7 +96,7 @@ package come2play_as3.api
 	 		sendNewMatch();
   		}
   		private function sendNewMatch():void {	 
-  			queueSendMessage(API_GotMatchStarted.create([userId], [], extraMatchInfo, matchStartedTime, userStateEntries) );	 	
+  			queueSendMessage(API_GotMatchStarted.create([userId], [], userStateEntries) );	 	
   		}
   		private function queueSendMessage(msg:API_Message):void {
   			apiMsgsQueue.push(msg);

@@ -2,8 +2,10 @@ package come2play_as3.api.auto_generated {
 //Do not change the code below because this class was generated automatically!
 
 	import flash.display.*;	import flash.utils.*;
-	import come2play_as3.api.*
-	import come2play_as3.api.auto_copied.*
+	import come2play_as3.api.*;
+	import come2play_as3.api.auto_copied.*;
+	import come2play_as3.api.auto_generated.*;
+
 	public  class API_MethodsSummary  {
 		public var methodName:String;
 		public var parameterNames:Array/*String*/;
@@ -28,7 +30,7 @@ package come2play_as3.api.auto_generated {
 
 		, new API_MethodsSummary('gotUserDisconnected', ['userId'], ['int'] )
 		, new API_MethodsSummary('gotMyUserId', ['myUserId'], ['int'] )
-		, new API_MethodsSummary('gotMatchStarted', ['allPlayerIds', 'finishedPlayerIds', 'extraMatchInfo', 'matchStartedTime', 'serverEntries'], ['Array/*int*/', 'Array/*int*/', 'Object', 'int', 'Array/*ServerEntry*/'] )
+		, new API_MethodsSummary('gotMatchStarted', ['allPlayerIds', 'finishedPlayerIds', 'serverEntries'], ['Array/*int*/', 'Array/*int*/', 'Array/*ServerEntry*/'] )
 		, new API_MethodsSummary('gotMatchEnded', ['finishedPlayerIds'], ['Array/*int*/'] )
 		, new API_MethodsSummary('gotStateChanged', ['serverEntries'], ['Array/*ServerEntry*/'] )
 		, new API_MethodsSummary('doStoreState', ['userEntries'], ['Array/*UserEntry*/'] )

@@ -3,7 +3,7 @@ package emulator.auto_generated {
 
 	import flash.display.*;	import flash.utils.*;
 	import emulator.*;
-	import emulator.auto_copied.*
+	import emulator.auto_copied.*;
 	public  class API_DoAllRequestRandomState extends API_Message {
 		public var key:Object;
 		public var isSecret:Boolean;

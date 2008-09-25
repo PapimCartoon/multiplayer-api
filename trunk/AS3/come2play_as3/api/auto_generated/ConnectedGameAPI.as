@@ -2,8 +2,10 @@ package come2play_as3.api.auto_generated {
 //Do not change the code below because this class was generated automatically!
 
 	import flash.display.*;	import flash.utils.*;
-	import come2play_as3.api.*
-	import come2play_as3.api.auto_copied.*
+	import come2play_as3.api.*;
+	import come2play_as3.api.auto_copied.*;
+	import come2play_as3.api.auto_generated.*;
+
 	public  class ConnectedGameAPI extends BaseGameAPI {
 		public function ConnectedGameAPI(someMovieClip:MovieClip) {
 			super(someMovieClip);
@@ -19,7 +21,7 @@ package come2play_as3.api.auto_generated {
 		public function gotUserInfo(userId:int, infoEntries:Array/*InfoEntry*/):void {}
 		public function gotUserDisconnected(userId:int):void {}
 		public function gotMyUserId(myUserId:int):void {}
-		public function gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, extraMatchInfo:Object, matchStartedTime:int, serverEntries:Array/*ServerEntry*/):void {}
+		public function gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, serverEntries:Array/*ServerEntry*/):void {}
 		public function gotMatchEnded(finishedPlayerIds:Array/*int*/):void {}
 		
 		public function doStoreState(userEntries:Array/*UserEntry*/):void { sendMessage( API_DoStoreState.create(userEntries) ); }

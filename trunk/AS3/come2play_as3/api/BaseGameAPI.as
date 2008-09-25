@@ -1,4 +1,4 @@
-package come2play_as3.api {
+﻿package come2play_as3.api {
 	import come2play_as3.api.auto_copied.*;
 	import come2play_as3.api.auto_generated.*;
 	
@@ -21,12 +21,14 @@ package come2play_as3.api {
 				new SinglePlayerEmulator(_someMovieClip);
 			StaticFunctions.performReflectionFromFlashVars(_someMovieClip);	
 			setInterval(AS3_vs_AS2.delegate(this, this.checkAnimationInterval), MAX_ANIMATION_MILLISECONDS);
+			currentPlayerIds = [];
 		}
 		private var msgsInTransaction:Array/*API_Message*/ = null;
-		private var canSendDoAll:Boolean = false;
+		private var currentCallback:API_Message = null;
 		private var hackerUserId:int = -1;
 		private var runningAnimationsNumber:int = 0;
 		private var animationStartedOn:int = -1; 
+		private var currentPlayerIds:Array/*int*/;
 
 		public function gotError(withObj:Object, err:Error):void {
 			sendMessage( API_DoAllFoundHacker.create(hackerUserId, 
@@ -35,31 +37,49 @@ package come2play_as3.api {
 				" runningAnimationsNumber="+runningAnimationsNumber+
 				" animationStartedOn="+animationStartedOn+
 				" runningAnimationsNumber="+runningAnimationsNumber+
+				" currentPlayerIds="+currentPlayerIds+
+				" currentCallback="+currentCallback+
 				" msgsInTransaction="+msgsInTransaction) );
+		}
+		private function checkContainer(val:Boolean):void {
+			if (!val) throwError("We have an error in the container!");
+		}
+		private function subtractArray(arr:Array, minus:Array):Array {
+			var res:Array = arr.concat();
+			for each (var o:Object in minus) {
+				var indexOf:int = AS3_vs_AS2.IndexOf(res, o);
+				checkContainer(indexOf!=-1);
+				res.splice(indexOf, 1);
+			}
+			return res;
 		}
         override public function gotMessage(msg:API_Message):void {
         	try {
-        		if (isInTransaction()) {
-					if (msg is API_GotKeyboardEvent) {
-						trace("We ignore a keyboard event. It is a bug in the emulator that will be fixed promptly. msg="+msg);
-						return;
-					}
+        		if (isInTransaction()) {					
         			throwError("The container sent an API message without waiting for DoFinishedCallback");
 				}
-        		if (runningAnimationsNumber!=0)
-        			throwError("Internal error! runningAnimationsNumber="+runningAnimationsNumber+" msgsInTransaction="+msgsInTransaction);
+        		if (runningAnimationsNumber!=0 || currentCallback!=null)
+        			throwError("Internal error! runningAnimationsNumber="+runningAnimationsNumber+" msgsInTransaction="+msgsInTransaction+" currentCallback="+currentCallback);
 				msgsInTransaction = []; // we start a transaction
-				canSendDoAll = msg is API_GotMatchStarted || msg is API_GotMatchEnded || msg is API_GotStateChanged;
-				msgsInTransaction.push( API_DoFinishedCallback.create(msg.getMethodName()) );
+				currentCallback = msg;
 				
         		hackerUserId = -1;
 	    		if (msg is API_GotStateChanged) {
+					checkContainer(currentPlayerIds.length>0);
 	    			var stateChanged:API_GotStateChanged = msg as API_GotStateChanged;
 	    			if (stateChanged.serverEntries.length >= 1) {
 		    			var serverEntry:ServerEntry = stateChanged.serverEntries[0];
 		    			hackerUserId = serverEntry.storedByUserId;
 		    		}
-	    		}
+	    		} else if (msg is API_GotMatchStarted) {
+					checkContainer(currentPlayerIds.length==0);
+					var matchStarted:API_GotMatchStarted = msg as API_GotMatchStarted;
+					currentPlayerIds = subtractArray(matchStarted.allPlayerIds, matchStarted.finishedPlayerIds);
+	    		} else if (msg is API_GotMatchEnded) {
+					checkContainer(currentPlayerIds.length>0);
+					var matchEnded:API_GotMatchEnded = msg as API_GotMatchEnded;
+					currentPlayerIds = subtractArray(currentPlayerIds, matchEnded.finishedPlayerIds);
+				}
 	    		var methodName:String = msg.getMethodName();
 	    		if (AS3_vs_AS2.isAS3 && !this.hasOwnProperty(methodName)) return;
 	    		var func:Function = this[methodName] as Function;
@@ -88,11 +108,16 @@ package come2play_as3.api {
         private function sendFinishedCallback():void {
         	checkInsideTransaction();        	
         	if (runningAnimationsNumber>0) return;
-       		super.sendMessage( API_Transaction.create(msgsInTransaction) );
+			if (isInGotRequestStateCalculation() && msgsInTransaction.length==0) 
+				throwError("When the server calls gotRequestStateCalculation, you must call doAllStoreStateCalculation");
+       		super.sendMessage( API_Transaction.create(API_DoFinishedCallback.create(currentCallback.getMethodName()), msgsInTransaction) );
     		msgsInTransaction = null;
+			currentCallback = null;
         }
         public function animationStarted():void {
         	checkInsideTransaction();
+			if (!canDoAnimations())
+				throwError("You can do animations only when the server calls gotMatchStarted, gotMatchEnded, or gotStateChanged");
         	if (runningAnimationsNumber==0) 
         		animationStartedOn = getTimer();
         	runningAnimationsNumber++;        	
@@ -113,8 +138,16 @@ package come2play_as3.api {
         	// animation is running for too long
         	throwError("An animation is running for more than MAX_ANIMATION_MILLISECONDS="+MAX_ANIMATION_MILLISECONDS+". It started "+animationStartedOn+" milliseconds after the script started.");         	
         }
+        public function canDoAnimations():Boolean {
+			return currentCallback is API_GotMatchStarted || 
+				currentCallback is API_GotMatchEnded || 
+				currentCallback is API_GotStateChanged;
+		}
+        public function isInGotRequestStateCalculation():Boolean {
+			return currentCallback is API_GotRequestStateCalculation;
+		}
         
-        
+		private static const ERROR_DO_ALL:String = "You can only call a doAll* message when the server calls gotStateChanged, gotMatchStarted, gotMatchEnded, or gotRequestStateCalculation.";
         override public function sendMessage(msg:API_Message):void {
         	if (msg is API_DoRegisterOnServer || msg is API_DoTrace) {
         		super.sendMessage(msg);
@@ -124,13 +157,22 @@ package come2play_as3.api {
         	if (!isStore && !StaticFunctions.startsWith(msg.getMethodName(), "doAll"))
         		throwError("Illegal sendMessage="+msg);
         	
-        	if (!isInTransaction() || !canSendDoAll) {
-        		if (!isStore)
-        			throwError("You can only call a doAll* message when the server calls gotStateChanged, gotMatchStarted or gotMatchEnded. You called function="+msg);
-        		super.sendMessage( API_Transaction.create([msg]) );
-        		return;
-        	}
-        	msgsInTransaction.push(msg);   
+			if (isInTransaction()) {
+				if (isStore) {
+					// ok
+				} else if (isInGotRequestStateCalculation()) {
+					if (!(msg is API_DoAllStoreStateCalculation))
+						throwError("When the server calls gotRequestStateCalculation you must respond with doAllStoreStateCalculation");
+				} else if (!canDoAnimations()) {
+					throwError(ERROR_DO_ALL);
+				}
+				msgsInTransaction.push(msg);
+				return;
+			}
+			// not in transaction, then you must send doStore
+       		if (!isStore)
+				throwError(ERROR_DO_ALL);				        			
+       		super.sendMessage( msg );
         }
 	}
 }

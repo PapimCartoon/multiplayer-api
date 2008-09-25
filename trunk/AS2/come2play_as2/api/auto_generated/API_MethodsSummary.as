@@ -1,7 +1,9 @@
 //Do not change the code below because this class was generated automatically!
 
-	import come2play_as2.api.*
-	import come2play_as2.api.auto_copied.*
+	import come2play_as2.api.*;
+	import come2play_as2.api.auto_copied.*;
+	import come2play_as2.api.auto_generated.*;
+
 import come2play_as2.api.auto_generated.*;
 	class come2play_as2.api.auto_generated.API_MethodsSummary  {
 		public var methodName:String;
@@ -27,7 +29,7 @@ import come2play_as2.api.auto_generated.*;
 
 		, new API_MethodsSummary('gotUserDisconnected', ['userId'], ['int'] )
 		, new API_MethodsSummary('gotMyUserId', ['myUserId'], ['int'] )
-		, new API_MethodsSummary('gotMatchStarted', ['allPlayerIds', 'finishedPlayerIds', 'extraMatchInfo', 'matchStartedTime', 'serverEntries'], ['Array/*int*/', 'Array/*int*/', 'Object', 'int', 'Array/*ServerEntry*/'] )
+		, new API_MethodsSummary('gotMatchStarted', ['allPlayerIds', 'finishedPlayerIds', 'serverEntries'], ['Array/*int*/', 'Array/*int*/', 'Array/*ServerEntry*/'] )
 		, new API_MethodsSummary('gotMatchEnded', ['finishedPlayerIds'], ['Array/*int*/'] )
 		, new API_MethodsSummary('gotStateChanged', ['serverEntries'], ['Array/*ServerEntry*/'] )
 		, new API_MethodsSummary('doStoreState', ['userEntries'], ['Array/*UserEntry*/'] )

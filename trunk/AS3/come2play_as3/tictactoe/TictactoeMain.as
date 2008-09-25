@@ -139,7 +139,7 @@ public final class TictactoeMain extends ClientGameAPI {
 			getSquareGraphic(cell).gotSymbol(color,symbolUrl);
 		}
 	}
-	override public function gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, extraMatchInfo:Object/*Serializable*/, matchStartedTime:int, userStateEntries:Array/*ServerEntry*/):void {
+	override public function gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, userStateEntries:Array/*ServerEntry*/):void {
 		if (!didCreateGrid) {
 			didCreateGrid = true;
 			grid.createMovieClips(graphics, "TicTacToeSquare");

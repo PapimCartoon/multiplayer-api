@@ -17,7 +17,7 @@ package come2play_as3.pseudoCode
 	  override public function gotMyUserId(myUserId:int):void {
 	    this.myUserId = myUserId;
 	  }
-	  override public function gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, extraMatchInfo:Object/*Serializable*/, matchStartedTime:int, serverEntries:Array/*ServerEntry*/):void {
+	  override public function gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, serverEntries:Array/*ServerEntry*/):void {
 	    this.allPlayerIds = allPlayerIds;
 	    gotMatchStarted2();
 	  }

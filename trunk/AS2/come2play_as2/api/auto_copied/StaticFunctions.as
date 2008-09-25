@@ -5,9 +5,17 @@ class come2play_as2.api.auto_copied.StaticFunctions
 {			
 	public static var SHOULD_SHOW_ERRORS:Boolean = true;
 	public static var someMovieClip:MovieClip; // so we can display error messages on the stage
-	
+	public static var allTraces:Array = [];
+	public static var MAX_TRACES_NUM:Number = 50;
+	public static function storeTrace(obj:Object):Void {
+		if (allTraces.length>=MAX_TRACES_NUM) allTraces.shift();
+		allTraces.push(["Time: ", getTimer(), " Trace: ", obj]);
+	}
 	public static function showError(msg:String):Void {
-		var msg:String = "An ERRRRRRRRRRROR occurred:\n"+msg;
+		var msg:String = "An ERRRRRRRRRRROR occurred:\n"+msg+"\n"+
+			(allTraces.length==0 ? '' : 
+				(allTraces.length<MAX_TRACES_NUM ? "All":"The last "+MAX_TRACES_NUM)+" stored traces are:\n"+
+				allTraces.join("\n"));
 		System.setClipboard(msg);
 		if (SHOULD_SHOW_ERRORS) AS3_vs_AS2.showError(someMovieClip, msg);
 		trace("\n\n\n"+msg+"\n\n\n");

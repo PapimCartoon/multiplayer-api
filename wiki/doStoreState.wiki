@@ -2,50 +2,58 @@
 
 {{{
 doStoreState(userEntries:Array/*UserEntry*/)
-gotStateChanged(serverEntries:Array/*ServerEntry*/)
 }}}
 
-Use `doStoreState` to store match state on the server.
+=== Description ===
+
+Use this function to store the match state on the server.
 Both players and viewers can store match state, and only when the match is in progress.
 However, a viewer cannot override a stored `key`, whereas players can use the same key-space.
 When the match ends, the state is cleared.
 
-The container promises to update the match state atomically, i.e., either to insert _all_ the entries, or not to insert any.
-Atomicity is important in rare cases where the player disconnects in the middle of sending a network packet.
-With the atomicity guarantee, the match state should always be consistent.
+This function will trigger a [gotStateChanged]
 
-The match state is given to new viewers and new players in [gotMatchStarted].
+For more information about storing information go to [MatchState].
 
-To delete a key from the map, pass a value of null.
+=== Parameters ===
 
-_Important note_:
-You can save user Ids in the match state, but do not save user Info in the match state.
-The reason is that a viewer may replace another player 
-(e.g., if one player disconnects, then a viewer may replace him).
-In such a case, the server will reuse the same userId for the viewer, and it will call [gotUserInfo] with the viewer information.
+userEntries - an Array of [UserEntry] elements to be stored on the server.
 
-To call a `doStoreState` function, you must send her the following parameter:
-`userEntries` - an Array of [UserEntry] elements
 
-The server maintains a memory, that is a mapping from keys to values, in addition to some extra information for each key (such as storedByUserId, visibleToUserIds, and changedTimeInMilliSeconds).
+=== Triggered gotStateChange on users ===
 
-Formally, the memory is a dictionary denoted `MATCH_STATE` that maps each `key` to an object with fields `storedByUserId`, `value`, and `visibleToUserIds`:
-{{{
-MATCH_STATE[key] = {storedByUserId:int, value:Object,visibleToUserIds:Array/*int*/}
-}}}
-`storedByUserId` - `storedByUserId`   may be -1 for [doAllShuffleState], [doAllRequestStateCalculation] and [doAllStoreState] which are all functions that are not stored by the users playing the game.
-`value` - an arbitrary object.
-`visibleToUserIds` - used to show which users can view the value, null means everyone, blank Array means no one. 
-Users in `visibleToUserIds` will get the `value` when the server calls `gotStateChanged` 
-(Other users will get a `null` value) 
+An array of [ServerEntry] elements, each representing a [UserEntry] stored,
+all with storedByUserId with the id of the storing user.
+with either the stored value, or null if the value is Secret
 
-Next we will explain what the server does for each operation.
+=== Example ===
+
+player 1 stores are secret number on user input
 
 {{{
-doStoreState(userEntries:Array/*UserEntry*/)
-DOES ON EACH [UserEntry] IN ` userEntries`:
-MATCH_STATE[entry.key] = {myUserId,  entry.value,   entry.isSecret,  entry.isSecret ? [myUserId] : [] }
-}}}
 
-Whenever a user updates `MATCH_STATE`, then all users get the callback `gotStateChanged`.
-_However_, some of them will get `null` values (instead of the real `value` that was written), according to the ` visibleToUserIds` Array.
+public function onUserInput(num:int):void
+{
+	var keyObj:Object = new Object();
+	keyObj.userId = myUserId;
+	keyObj.type = "number";
+	var userEntry:UserEntry = UserEntry.create(keyObj,num,false);
+	var userEntries:Arrat = new Array();
+	userEntries.push(userEntry);
+	doStoreState(userEntries);
+}
+
+
+override public function gotStateChanged(serverEntries:Array):void
+{
+	var serverEntry:ServerEntry = serverEntries[0];
+	if(serverEntry.type == "number")
+	{
+		if (serverEntry.storedByUserId != serverEntry.key.userId) doAllFoundHacker(serverEntry.storedByUserId,"player tried to store a value on someone else's key");
+		trace("player " + serverEntry.key.userId + " typed "+serverEntry.value);
+	
+	}
+	
+}
+
+}}}

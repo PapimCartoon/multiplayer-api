@@ -9,6 +9,10 @@ doAllRevealState(revealEntries:Array/*RevealEntry*/)
 
 Call this function to reveal a secret stored state to a subset of users
 
+This function will trigger a [gotStateChanged]
+
+For more information about storing information go to [MatchState].
+
 === Parameters ===
 
 revealEntries - an Array of [RevealEntry] elements each holding a key pointing to the [ServerEntry] to be revealed, 
@@ -91,7 +95,7 @@ override public function gotStateChanged(serverEntries:Array):void
 		if(guesses.length == allPlayerIds.length)
 		{
 			var revealEntry:RevealEntry = RevealEntry.create("randomNumber",null,0);
-			doAllRevealState(revealEntry);
+			doAllRevealState([revealEntry]);
 		}
 	}
 

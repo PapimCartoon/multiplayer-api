@@ -6,14 +6,14 @@ doAllFoundHacker(userId:int, errorDescription:String)
 
 === Description ===
 
-Call this function when you suspect one of the players sent a message which does not correspond with a legeal move.
+Call this function when you suspect one of the players sent a message which does not correspond with a legal move.
 
 
 === Parameters ===
 
 userId - an int representing the ID of the suspected user
 
-errorDescription - a short description of what message was expected, or why was the move ilegal.
+errorDescription - a short description of what message was expected, or why was the move illegal.
 
 
 === Example ===

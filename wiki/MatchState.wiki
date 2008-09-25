@@ -1,0 +1,42 @@
+#summary How does the match state works
+
+
+The server maintains a memory, that is a mapping from keys to values, in addition to some extra information for each key (such as storedByUserId, visibleToUserIds, and changedTimeInMilliSeconds).
+
+Formally, the memory is a dictionary denoted `MATCH_STATE` that maps each `key` to an object with fields `storedByUserId`, `value`, and `visibleToUserIds`:
+{{{
+MATCH_STATE[key] = {storedByUserId:int, value:Object,visibleToUserIds:Array/*int*/}
+}}}
+`storedByUserId` - `storedByUserId`   may be -1 for [doAllShuffleState], [doAllRequestStateCalculation] and [doAllStoreState] which are all functions that are not stored by the users playing the game.
+`value` - an arbitrary object.
+`visibleToUserIds` - used to show which users can view the value, null means everyone, blank Array means no one. 
+Users in `visibleToUserIds` will get the `value` when the server calls [gotStateChanged] 
+(Other users will get a `null` value) 
+
+
+The container promises to update the match state atomically, i.e., either to insert _all_ the entries, or not to insert any.
+Atomicity is important in rare cases where the player disconnects in the middle of sending a network packet.
+With the atomicity guarantee, the match state should always be consistent.
+
+The match state is given to new viewers and new players in [gotMatchStarted], or in a case were users load a saved game.
+
+
+
+_Important note_:
+You can save user Ids in the match state, but do not save user Info in the match state.
+The reason is that a viewer may replace another player 
+(e.g., if one player disconnects, then a viewer may replace him).
+In such a case, the server will reuse the same userId for the viewer, and it will call [gotUserInfo] with the viewer information.
+
+=== Example ===
+
+Lets take [doStoreState] and explain what the server does with it.
+
+{{{
+doStoreState(userEntries:Array/*UserEntry*/)
+DOES ON EACH [UserEntry] IN ` userEntries`:
+MATCH_STATE[userEntry.key] = {storerId/*id of storing user*/,  userEntry.value,  entry.isSecret ? [myUserId] : [] }
+}}}
+
+Whenever a user updates `MATCH_STATE`, then all users get the callback `gotStateChanged`.
+_However_, some of them will get `null` values (instead of the real `value` that was written), according to the ` visibleToUserIds` Array.

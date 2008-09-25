@@ -9,6 +9,10 @@ doAllRequestRandomState(key:Object, isSecret:Boolean = false)
 Call this function when you need a random number for any reason, you should use this function to avoid people faking random numbers.
 the [gotStateChange] of this function will have a server entry with storedByUserId of -1,to signify the server saved it.
 
+This function will trigger a [gotStateChanged].
+
+For more information about storing information go to [MatchState].
+
 === Parameters ===
 
 key - the key of the newly created random number
@@ -16,7 +20,7 @@ key - the key of the newly created random number
 isSecret - a Boolean stating whether the number will be public or secret to the game's players
 
 
-=== Callback To Users ===
+=== Triggered gotStateChange on users ===
 
 A [ServerEntry] with the following attributes
 

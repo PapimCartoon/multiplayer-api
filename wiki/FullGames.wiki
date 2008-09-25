@@ -1,6 +1,6 @@
 #summary Full code examples of games using ClientGameAPI
 
-To help you statt off the creation of your game we provide you, with a few games full source code
+To help you start off the creation of your game we provide you, with a few games full source code
 Again like in the pseudoCode examples we provide you with one out of each category(for now not all games are made yet)
 more full games will become available soon.
 

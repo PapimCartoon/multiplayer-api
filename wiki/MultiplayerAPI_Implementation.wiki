@@ -90,7 +90,7 @@ Explanation on the implementation of serialization:
 - When class  inherits from SerializableClass, it gets the field __CLASS_NAME__, which is set in the constructor.
 
 - When you deserialize an object, a new instance of the correct class is created (that is why you must have an empty constructor), and then we traverse and the object and set all the fields.
-Note that deserialize(object) modifies the object.
+Note that deserialize( object) modifies the object.
  
 
 The former question:

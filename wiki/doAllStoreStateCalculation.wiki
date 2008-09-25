@@ -10,7 +10,11 @@ doAllStoreStateCalculation(userEntries:Array/*UserEntry*/)
 Call this function from a [gotRequestStateCalculation] to transferred the data from the calculator to the game's 
 players.
 
-=== Parameters received===
+This function will trigger a [gotStateChanged]
+
+For more information about storing information go to [MatchState].
+
+=== Triggered gotStateChange on users ===
 
 userEntries - an Array of [UserEntry] elements, containing the data that will be sent to the users 
 via a [gotStateStateChange] callback.

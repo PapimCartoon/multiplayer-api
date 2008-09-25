@@ -6,9 +6,9 @@ class UserEntry{var key:Object, var value:Object, var isSecret:Boolean = false;}
 
 === Parameters ===
 
-*key :*  the key of the [ServerEntry] that will be created.
+*key :*  the key of the [ServerEntry] that will be created, if such a key exists it will be overwritten.
 
-*value :*  the value of the [ServerEntry] that will be created.
+*value :*  the value of the [ServerEntry] that will be created, if null it will delete an existing key.
 
 *isSecret :*  will the data in the [ServerEntry]  be secret.
 

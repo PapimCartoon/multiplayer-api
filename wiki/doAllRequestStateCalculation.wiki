@@ -8,8 +8,11 @@ doAllRequestStateCalculation(keys:Array/*Object*/)
 === Description ===
 
 Call this function when you need secret calculations that require logic to be made.
-
 to make this function work properly sell also [gotRequestStateCalculation]
+
+This function will trigger a [gotStateChanged]
+
+For more information about storing information go to [MatchState].
 
 === Parameters ===
 

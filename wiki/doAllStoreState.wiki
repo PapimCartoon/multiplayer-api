@@ -4,27 +4,28 @@
 doAllStoreState(userEntries:Array/*UserEntry*/)
 }}}
 
-Use `doAllStoreState` the same way you use [doStoreState],
+=== Description ===
 
-only instead of one player Calling the function,
+Call this function to store values the entire set of user may reach using calculations,
+like who's turn it is or the cards a deck of cards needs to hold.
 
-all players must call the function with the same exact parameters.
+This function will trigger a [gotStateChanged]
+
+For more information about storing information go to [MatchState].
+
+=== Parameters ===
+
+userEntries - an Array of [UserEntry] elements to be stored by all the game users.
+
+=== Triggered gotStateChange on users ===
+
+An array of [ServerEntry] elements, each representing a [UserEntry] stored,
+all with storedByUserId of -1
 
 
-This function is used to prevent hacking,
+=== Example ===
 
-every time you need to store a state which will give a unanimous answer,
-
-like the effect that one of the user moves has on the game,
-
-use `doAllStoreState` to make sure that all the players have the same data in their game,
-
-and that none of the players feeds false data to his game.
-
-
-Use this function to store values you want the entire set of players to agree upon.
-
-For example one of the players threw a dart at a certain vector,
+One of the players threw a dart at a certain vector,
 
 first the player stores the values of his shot,
 
@@ -34,15 +35,17 @@ eventually they all call `doAllStoreState` and save the score of the shot.
 
 If one of the players claims the outcome is different than the other player/s,
 
-then the data will be sent to a jury which will decide whose cheating.
+then the data will be sent to a jury which will decide who is cheating.
 
 
-The function receives the following parameter:
+=== Why should I use this? ===
 
-*userEntries :* an Array of [UserEntry] elements.
+This function is used to prevent hacking,
 
-Because this function essentially checks if the data that is stored is 100% true,
+every time you need to store a state which will give a unanimous answer,
 
-by reviewing all the player entries and comparing them.
+Use this function to store values you want the entire set of players to agree upon.
 
-Any state stored this way has a storedByUserId of -1.
+
+
+

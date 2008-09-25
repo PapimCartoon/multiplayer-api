@@ -1,4 +1,4 @@
-#summary Called to pass general info, e.g., url of a logo for branding your game
+#summary Called to pass general info, e.g., URL of a logo for branding your game
 
 {{{
 gotCustomInfo(infoEntries:Array/*InfoEntry*/)  
@@ -12,7 +12,7 @@ It gets the following parameter:
 
 These are the keys that are currently supported:
 
-1. *`logoFullUrl` :*  `logoFullUrl` is a full url (starting with `http://`) 
+1. *`logoFullUrl` :*  `logoFullUrl` is a full URL (starting with `http://`) 
 That points to a logo SWF or Jpg file of 70x70 pixels in diameter, preferably vector based.
 
 The game should place the logo in various places in the game
@@ -28,15 +28,15 @@ Then modify the logo movie clip (called `logoMovieClip`):
   logoMovieClip._yscale = 40;
   }}}
  
-2. * `CONTAINER_gameStageX` :* - represents the x value where the game is positioned in the container, becuase the container holds many features such as a chat,
-turn time,playing users and more.therfore your game will not always be positioned at x = 0 and y = 0,and then in case you want to make calculations
+2. * `CONTAINER_gameStageX` :* - represents the x value where the game is positioned in the container, because the container holds many features such as a chat,
+turn time, playing users and more. therefore your game will not always be positioned at x = 0 and y = 0,and then in case you want to make calculations
 based on the absolute stageX and StageY you should subtract these values
 
 3. * `CONTAINER_gameStageY` :* - represents the y value where the game is positioned in the container. see explanation above.
 
-4.* `CONTAINER_gameHeight` :* - represents the height at which the game will be shown(in case you game can be stretched and shrinked)
+4.* `CONTAINER_gameHeight` :* - represents the height at which the game will be shown( in case you game can be stretched and shrinked)
 
-5.* `CONTAINER_gameWidth` :* -represents the width at which the game will be shown(in case you game can be stretched and shrinked)
+5.* `CONTAINER_gameWidth` :* -represents the width at which the game will be shown( in case you game can be stretched and shrinked)
 
 6.* `CONTAINER_gameFrameRate` :* - represents the frame rate at which your game will run.
  

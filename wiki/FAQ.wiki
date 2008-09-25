@@ -29,5 +29,5 @@ To conclude, if you wrote your game well, then in [ClientGameAPI] a hacker can c
 while in [ScriptGameAPI] the hacker will lose the game.
 
 On [Come2Play] platform, a game developer gets a summary of all errors in his games.
-The game developer should examine the errors to see if the bugs are on his side, or if a hacker caused the cancelation.
+The game developer should examine the errors to see if the bugs are on his side, or if a hacker caused the cancellation.
 If it is a hacker, then the game developer should report it and [Come2Play] will examine that hacker account and may take legal actions against him.

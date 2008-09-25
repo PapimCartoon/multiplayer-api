@@ -5,7 +5,7 @@
 Although the Emulator and Server are derived from the same API,there are differences between the two,
 To learn more about them visit [Online_vs_Emulator Online vs Emulator] .
 
-== Download th emulator ==
+== Download the emulator ==
 
 Press [http://multiplayer-api.googlecode.com/files/EmulatorAPI-Version1.0.3.zip here] if you want to download the emulator,
 although we strongly encourage you to use our SVN instead, as it will usually contain updates before they are officially released in here. 

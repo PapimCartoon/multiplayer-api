@@ -93,7 +93,7 @@ One such company is [http://www.come2play.com Come2Play].
 
 
 = Creating multiplayer games =
-This section contains [PsuedoCodeExamples pseudo code examples] describing the way you should use the API to comunicate with the server,the [PsuedoCodeExamples pseudo code examples]
+This section contains [PsuedoCodeExamples pseudo code examples] describing the way you should use the API to communicate with the server, the [PsuedoCodeExamples pseudo code examples]
 use real flash commands to make the code easier to read and use.
 
 you will also find [FullGames full game source] code for you to learn and work on.

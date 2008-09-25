@@ -4,24 +4,50 @@
 doAllSetTurn(userId:int, milliSecondsInTurn:int)
 }}}
 
-Some of the games developed are turn-based, i.e.,
+=== Description ===
 
-the game proceeds in turns where in each given moment only one player has the current turn. 
+Call this function to prevent hackers for stagnating your game
 
-For example, Chess and Poker are turn-based games.
 
-In contrast, Soccer is a real-time game where both players send commands to the server simultaneously.
+=== Parameters ===
 
-Turn-based games may be played in turns using emails or other means.
+userId -  the user ID of the player you want  to make a move, -1 for all players
+
+milliSecondsInTurn - the time the user has to make his turn before being declared as a hacker.
+
+
+=== Example ===
+
+==== Example 1 ====
+it is the player 1 turn to play in a game of TicTacToe where each move must be made after a maximum of 5 seconds
+{{{
+	doAllSetTurn(1, 5000);
+}}}
+
+In this example you have to remember that as the game developer you must declare a player
+which hasn't made his turn after 5 seconds as the loser, to prevent him from being considered a hacker.
+
+
+==== Example 2 ====
+we are playing a trivia game where everyone has 10 seconds to answer a question
+{{{
+	doAllSetTurn(-1, 10000);
+}}}
+
+In this example you have to remember that as the game developer you must declare a player
+which hasn't submitted his answer after 10 seconds as the submitter of a blank answer, to prevent him from being considered a hacker.
+
+
+=== Why should I use this? ===
 
 The `doAllSetTurn` function is used to prevent stagnation, a situation where one player
 is cheating by deliberately not making a move , thus ruining the game for the rest of the players.
 
 Essentially what the function does is to force a specific player or the entire game players to make a move.
 
-It achieves it by declaring a player which has not made a move after the specified time as a loser automatically.
+It achieves it by declaring a player which has not made a move after the specified time as a hacker.
 
-===Important note :===
+=== Important note ===
 It is crucial to understand that a move does not have to be an active participation of the player.
 
 A move can also be a signal, which triggers a `doAllSetTurn` function by all the players,
@@ -29,12 +55,3 @@ A move can also be a signal, which triggers a `doAllSetTurn` function by all the
 made by the game to show that the player isn't deliberately blocking communication.
 
 
-To call a `doAllSetTurn` function, all players must call the function with the following parameters:
-
-*userId :*  is the user id of the next player, if the game has no current player but rather a timer for all players like a trivia game which gives everyone 10 seconds to answer the question then set `userId` as -1.
-
-*milliSecondsInTurn :* milliseconds in turn of the next player turn, 
-
-if the `milliSecondsInTurn` will be set as -1 the time for each turn length will be set from outside,
-
-for example a server can contain two instances of a Chess game one with a 1 minute turn length and the other with 10 minutes per turn.

@@ -361,9 +361,6 @@ package emulator {
 			btnSaveGame.addEventListener(MouseEvent.CLICK, btnSaveGameClick);
 			this.addChild(btnSaveGame);
 			
-			
-
-			
 			pnlLoad = new MovieClip();
 			pnlLoad.x = 150;
 			pnlLoad.y = 22;

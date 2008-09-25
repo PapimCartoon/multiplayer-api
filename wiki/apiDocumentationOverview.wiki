@@ -76,7 +76,7 @@ this issues represents a serious problem in case of a keyboard event, and theref
 created a special callback function you should use called [gotKeyboardEvent] to receive your keyboard input from.
 
 in the case of mouse events, the problem is less serious and you can rely on listening to game mouse Events directly.
-but in case you use the mouse’s absolute position in your calculations you should take your game position into account,
+but in case you use the mouse's absolute position in your calculations you should take your game position into account,
 This will be passed down to your game through the [gotCustomInfo] callback.
 
 
@@ -103,4 +103,4 @@ And after learning and understanding the API we offer a basic [http://multiplaye
 Coming soon (TODO): this section will contain tutorials on creating both turn-based and real-time games.
 
 
-[TicTacToe] explains about the implementation of TicTacToe using [ClientGameAPI].
+TicTacToe explains about the implementation of TicTacToe using [ClientGameAPI].

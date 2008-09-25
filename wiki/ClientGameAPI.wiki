@@ -68,20 +68,20 @@ i.e., there is a player that hasn't finished playing.
 || [doAllRequestRandomState] || Call to receive a random state ||
 || [doAllShuffleState] || Call to shuffle an array of ServerEntry ||
 || [doAllRequestStateCalculation] || Call to request calculations from a set of impartial calculators ||
-|| [doAllRequestStateCalculation doAllStoreStateCalculation] || Call to store calculations made by a calculator ||
+|| [doAllStoreStateCalculation] || Call to store calculations made by a calculator ||
 || [doAllRevealState] || Call to reveal a secret ServerEntry to a player ||
 || [doAllSetTurn] || Call to set next player's turn ||
 || [doAllStoreState] || Call it to store/update/delete your match state unanimously ||
 || [doAllEndMatch] || Call it to end the match ||
 || [doAllFoundHacker] || Call when one of the users has detected a hacker ||
 || [gotCustomInfo] || Called to pass custom info, e.g., URL of a logo for branding your game, seconds per turn, etc. ||
-|| [doStoreState gotStateChanged] || Called after the match state changed  ||
-|| [doAllRequestStateCalculation gotRequestStateCalculation] || Called on the calculators after all players requested `doAllRequestStateCalculation`||
+|| [gotStateChanged] || Called after the match state changed  ||
+|| [gotRequestStateCalculation] || Called on the calculators after all players requested `doAllRequestStateCalculation`||
 || [gotKeyboardEvent] || Called to pass keyboard events (see KeyboardEvent) ||
 || [gotMatchEnded] || Called when the match is over ||
 || [gotMatchStarted] || Called when a match starts ||
 || [gotMyUserId] || Called to pass your userId ||
-|| [gotUserInfo gotUserDisconnected] || Called to inform that a user disconnected ||
+|| [gotUserDisconnected] || Called to inform that a user disconnected ||
 || [gotUserInfo] || Called to pass user specific info, e.g., user name or avatar ||
 
 

@@ -98,7 +98,7 @@ use real flash commands to make the code easier to read and use.
 
 you will also find [FullGames full game source] code for you to learn and work on.
 
-And after learning and understanding the API we offer a basic [http://multiplayer-api.googlecode.com/files/Template.zip Template] to work on
+And after learning and understanding the API we offer a basic [http://multiplayer-api.googlecode.com/files/EmulatorAPI-Version1.0.4.zip Template] to work on
 
 Coming soon (TODO): this section will contain tutorials on creating both turn-based and real-time games.
 

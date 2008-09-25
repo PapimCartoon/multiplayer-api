@@ -2,14 +2,14 @@
 
 We give here examples of the pseudo code of the following games.
 Turn-based games:
- * Public state: [http://multiplayer-api.googlecode.com/files/PseeudoCode.zip TicTacToe], 
- * Public state + Randomness: [http://multiplayer-api.googlecode.com/files/PseeudoCode.zip Backgammon], Roulette
- * Deterministic + secrets: [http://multiplayer-api.googlecode.com/files/PseeudoCode.zip Battleships], Startego, Diplomacy
- * Shuffles + secrets: [http://multiplayer-api.googlecode.com/files/PseeudoCode.zip Dominoes], Black Jack, Poker, Bridge, Clue (has several shuffles)
+ * Public state: [http://multiplayer-api.googlecode.com/files/EmulatorAPI-Version1.0.4.zip TicTacToe], 
+ * Public state + Randomness: [http://multiplayer-api.googlecode.com/files/EmulatorAPI-Version1.0.4.zip Backgammon], Roulette
+ * Deterministic + secrets: [http://multiplayer-api.googlecode.com/files/EmulatorAPI-Version1.0.4.zip Battleships], Startego, Diplomacy
+ * Shuffles + secrets: [http://multiplayer-api.googlecode.com/files/EmulatorAPI-Version1.0.4.zip Dominoes], Black Jack, Poker, Bridge, Clue (has several shuffles)
  * Randomness + secrets: Risk, Tanks (the wind is random; the secrets are the angle & speed of each shot)
- * With calculators: [http://multiplayer-api.googlecode.com/files/PseeudoCode.zip  Mine Sweeper] (behaves also as real Time), Sudoku  .
+ * With calculators: [http://multiplayer-api.googlecode.com/files/EmulatorAPI-Version1.0.4.zip  Mine Sweeper] (behaves also as real Time), Sudoku  .
 Real-time games:
- * [http://multiplayer-api.googlecode.com/files/PseeudoCode.zip Trivia]: Series of questions, the player who answers correctly, first wins the question. Limit the time for all players (if no one answered, go to the next question. if you answered incorrectly, the remaining player wins the question)
+ * [http://multiplayer-api.googlecode.com/files/EmulatorAPI-Version1.0.4.zip Trivia]: Series of questions, the player who answers correctly, first wins the question. Limit the time for all players (if no one answered, go to the next question. if you answered incorrectly, the remaining player wins the question)
  * Snake
  
  

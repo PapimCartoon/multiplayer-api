@@ -20,4 +20,4 @@ Real-time games:
  * Trivia: Series of questions, the player who answers correctly, first wins the question. Limit the time for all players (if no one answered, go to the next question. if you answered incorrectly, the remaining player wins the question)
  * [http://multiplayer-api.googlecode.com/files/EmulatorAPI-Version1.0.4.zip Snake]
  
- To make your life easier we have compiled a project template which you can find [http://multiplayer-api.googlecode.com/files/Template.zip here]
+ To make your life easier we have compiled a project template which you can find [http://multiplayer-api.googlecode.com/files/EmulatorAPI-Version1.0.4.zip here]

@@ -1,8 +1,8 @@
 package come2play_as3.pseudoCode
 {
 	import come2play_as3.api.*;
-	import come2play_as3.api.auto_generated.*;
 	import come2play_as3.api.auto_copied.*;
+	import come2play_as3.api.auto_generated.*;
 	/*****************************************
 	 * The keys in the Match state:
 	 * The calculators store in secret memory:
@@ -22,7 +22,7 @@ package come2play_as3.pseudoCode
 		public static var boardSize:int=25;
 
 
-	override public function gotRequestStateCalculation(serverEntries:Array):void
+	override public function gotRequestStateCalculation(requestId:int,serverEntries:Array):void
 	{ 
 		var serverEntry:ServerEntry=serverEntries[0];
 		var newBoardEntries:Array/*ServerEntry*/=new Array();
@@ -33,7 +33,7 @@ package come2play_as3.pseudoCode
 		of mines it is touching each serverEntry key will be built from
 		row_column
 		*/
-		doAllStoreStateCalculation(newBoardEntries)
+		doAllStoreStateCalculation(requestId,newBoardEntries)
 	}
 	override public function gotMatchStarted2():void 
 	{

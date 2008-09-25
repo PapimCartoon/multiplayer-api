@@ -1,8 +1,8 @@
 package come2play_as3.pseudoCode
 {
 	import come2play_as3.api.*;
-	import come2play_as3.api.auto_generated.*;
 	import come2play_as3.api.auto_copied.*;
+	import come2play_as3.api.auto_generated.*;
 	/*****************************************
 	 * The keys in the Match state:
 	 * The calculators store in secret memory:
@@ -142,12 +142,12 @@ public class PseudoBattleships2 extends SimplifiedClientGameAPI {
     shipStatesCommited = 0;
     turnNumber = 0;
   }
-  override public function gotRequestStateCalculation(serverEntries:Array):void
+  override public function gotRequestStateCalculation(requestId:int,serverEntries:Array):void
   {
   	var newBoardEntries:Array;
   	//gets the secret array of ships, checks if its legal
   	//if so extrapolate a board and stores it
-  	doAllStoreStateCalculation(newBoardEntries);
+  	doAllStoreStateCalculation(requestId,newBoardEntries);
   }
   override public function gotStateChanged2(serverEntries:Array/*ServerEntry*/):void {
     require(serverEntries.length==1);

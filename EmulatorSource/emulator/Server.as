@@ -909,7 +909,7 @@ package emulator {
 			showUnverifiedQue();
 			processQueue(waitingQueue,false);	
 		}
-		
+		/*
 		private function isEquel(obj1:Object,obj2:Object):Boolean
 		{ 
 			if (! (typeof(obj1) == "object") )
@@ -921,6 +921,7 @@ package emulator {
 			}
 			return true;
 		}
+		*/
 		private function checkDoAlls(doAllArray:Array/*QueueEntry*/):Boolean
 		{
 
@@ -937,7 +938,8 @@ package emulator {
 					gameOver();
 					return false;
 				}
-				if(!isEquel(checkedMsg.getMethodParameters(),msg.getMethodParameters()))
+				
+				if(!ObjectDictionary.areEqual(checkedMsg.getMethodParameters(),msg.getMethodParameters()))
 				{
 					addMessageLog("Server","Error",checkedMsg.getMethodName()+" : "+checkedMsg.getMethodParameters()+" is diffrent then "+msg.getMethodName()+" : "+msg.getMethodParameters());
 					gameOver();
@@ -1008,7 +1010,7 @@ package emulator {
 					return;
 				}
 			}
-			broadcast(API_GotRequestStateCalculation.create(serverEntries));
+			broadcast(API_GotRequestStateCalculation.create(42,serverEntries));
 		}
 		private function doAllShuffleState(msg:API_DoAllShuffleState):Array/*ServerEntry*/
 		{

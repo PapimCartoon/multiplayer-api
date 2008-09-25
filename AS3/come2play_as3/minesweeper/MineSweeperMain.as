@@ -95,8 +95,7 @@ import flash.utils.*;
 
 			}	
 		}
-		
-		override public function gotRequestStateCalculation(serverEntries:Array):void
+		override public function gotRequestStateCalculation(requestId:int, serverEntries:Array):void
 		{
 			for each (var serverEntry:ServerEntry in serverEntries)
 			{
@@ -113,7 +112,7 @@ import flash.utils.*;
 			
 			
 			BOARD_WIDTHstr,BOARD_HEIGHTstr,MINE_AMOUNTstr
-			doAllStoreStateCalculation(MineSweeperCalculatorLogic.createMineBoard(calcRandomSeed,calcMineAmount,calcWidth,calcHeight));	
+			doAllStoreStateCalculation(requestId,MineSweeperCalculatorLogic.createMineBoard(calcRandomSeed,calcMineAmount,calcWidth,calcHeight));	
 		}
 		override public function gotMyUserId(myUserId:int):void
 		{

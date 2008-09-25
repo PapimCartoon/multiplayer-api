@@ -19,11 +19,12 @@ import come2play_as2.api.*;
 			setInterval(AS3_vs_AS2.delegate(this, this.checkAnimationInterval), MAX_ANIMATION_MILLISECONDS);
 		}
 		private var msgsInTransaction:Array/*API_Message*/ = null;
+		private var canSendDoAll:Boolean = false;
 		private var hackerUserId:Number = -1;
 		private var runningAnimationsNumber:Number = 0;
 		private var animationStartedOn:Number = -1; 
 
-		/*override*/ public function gotError(withObj:Object, err:Error):Void {
+		public function gotError(withObj:Object, err:Error):Void {
 			sendMessage( API_DoAllFoundHacker.create(hackerUserId, 
 				"Got error withObj="+JSON.stringify(withObj)+
 				" err="+AS3_vs_AS2.error2String(err)+
@@ -34,11 +35,17 @@ import come2play_as2.api.*;
 		}
         /*override*/ public function gotMessage(msg:API_Message):Void {
         	try {
-        		if (isInTransaction())
+        		if (isInTransaction()) {
+					if (msg instanceof API_GotKeyboardEvent) {
+						trace("We ignore a keyboard event. It is a bug in the emulator that will be fixed promptly. msg="+msg);
+						return;
+					}
         			throwError("The container sent an API message without waiting for DoFinishedCallback");
+				}
         		if (runningAnimationsNumber!=0)
         			throwError("Internal error! runningAnimationsNumber="+runningAnimationsNumber+" msgsInTransaction="+msgsInTransaction);
 				msgsInTransaction = []; // we start a transaction
+				canSendDoAll = msg instanceof API_GotMatchStarted || msg instanceof API_GotMatchEnded || msg instanceof API_GotStateChanged;
 				msgsInTransaction.push( API_DoFinishedCallback.create(msg.getMethodName()) );
 				
         		hackerUserId = -1;
@@ -54,6 +61,14 @@ import come2play_as2.api.*;
 	    		var func:Function = this[methodName] /*as Function*/;
 				if (func==null) return;
 				func.apply(this, msg.getMethodParameters());
+        	} catch (err:Error) {
+        		try{				
+        			trace(getErrorMessage(msg, err));
+					gotError(msg, err);
+				} catch (err2:Error) { 
+					// to avoid an infinite loop, I can't call passError again.
+					showError("Another error occurred when calling gotError. The new error is="+AS3_vs_AS2.error2String(err2));
+				}
     		} finally {       
         		// we end a transaction
     			sendFinishedCallback(); 			
@@ -105,9 +120,9 @@ import come2play_as2.api.*;
         	if (!isStore && !StaticFunctions.startsWith(msg.getMethodName(), "doAll"))
         		throwError("Illegal sendMessage="+msg);
         	
-        	if (!isInTransaction()) {
+        	if (!isInTransaction() || !canSendDoAll) {
         		if (!isStore)
-        			throwError("You can only call doStoreState in user events. Other 'doAll' functions may be called only when the server calls some 'got' function. You called function="+msg);
+        			throwError("You can only call a doAll* message when the server calls gotStateChanged, gotMatchStarted or gotMatchEnded. You called function="+msg);
         		super.sendMessage( API_Transaction.create([msg]) );
         		return;
         	}

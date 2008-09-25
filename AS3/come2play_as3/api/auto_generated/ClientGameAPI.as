@@ -66,8 +66,8 @@ package come2play_as3.api.auto_generated {
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
 		public function doAllRequestStateCalculation(keys:Array/*Object*/):void { sendMessage( API_DoAllRequestStateCalculation.create(keys) ); }
-		public function gotRequestStateCalculation(serverEntries:Array/*ServerEntry*/):void {}
-		public function doAllStoreStateCalculation(userEntries:Array/*UserEntry*/):void { sendMessage( API_DoAllStoreStateCalculation.create(userEntries) ); }
+		public function gotRequestStateCalculation(requestId:int, serverEntries:Array/*ServerEntry*/):void {}
+		public function doAllStoreStateCalculation(requestId:int, userEntries:Array/*UserEntry*/):void { sendMessage( API_DoAllStoreStateCalculation.create(requestId, userEntries) ); }
 		
 		
 		

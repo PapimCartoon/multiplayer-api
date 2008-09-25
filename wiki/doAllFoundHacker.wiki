@@ -33,7 +33,7 @@ override public function gotStateChanged(serverEntries:Array):void
 	}
 }
 
-}}
+}}}
 
 === Why should I use this? ===
 

@@ -54,7 +54,7 @@ based on the absolute stageX and StageY you should subtract these values
 
 === Example ===
 
-In a game of TïcTacToe, changing all the cell backgrounds into a specified logo
+In a game of TicTacToe, changing all the cell backgrounds into a specified logo
 
 {{{
 override gotCustomInfo(infoEntries:Array/*InfoEntry*/):void

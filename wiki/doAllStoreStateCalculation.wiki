@@ -24,7 +24,7 @@ via a [gotStateStateChange] callback.
 lets suppose this is a mine sweeper calculator.
 we expect a random number stored by the server via a [doAllRequestRandomState]
 
-
+{{{
 override public function gotRequestStateCalculation(serverEntries:Array):void
 {
 	/*
@@ -35,7 +35,7 @@ override public function gotRequestStateCalculation(serverEntries:Array):void
 	if (serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,"If the storedByUserId is different from -1,then this was not saved by the server and player which saved it there probably broke protocol");
 	doAllStoreStateCalculation(createdUserEntries);
 }
-
+}}}
 
 
 

@@ -1,16 +1,25 @@
-package come2play_as3.api.auto_copied
+﻿package come2play_as3.api.auto_copied
 {
 	import flash.display.MovieClip;
 	import flash.system.System;
+	import flash.utils.*;
 	
 // Only StaticFunctions and JSON are copied to flex_utils 
 public final class StaticFunctions
 {			
 	public static var SHOULD_SHOW_ERRORS:Boolean = true;
 	public static var someMovieClip:MovieClip; // so we can display error messages on the stage
-	
+	public static var allTraces:Array = [];
+	public static var MAX_TRACES_NUM:int = 50;
+	public static function storeTrace(obj:Object):void {
+		if (allTraces.length>=MAX_TRACES_NUM) allTraces.shift();
+		allTraces.push(["Time: ", getTimer(), " Trace: ", obj]);
+	}
 	public static function showError(msg:String):void {
-		var msg:String = "An ERRRRRRRRRRROR occurred:\n"+msg;
+		var msg:String = "An ERRRRRRRRRRROR occurred:\n"+msg+"\n"+
+			(allTraces.length==0 ? '' : 
+				(allTraces.length<MAX_TRACES_NUM ? "All":"The last "+MAX_TRACES_NUM)+" stored traces are:\n"+
+				allTraces.join("\n"));
 		System.setClipboard(msg);
 		if (SHOULD_SHOW_ERRORS) AS3_vs_AS2.showError(someMovieClip, msg);
 		trace("\n\n\n"+msg+"\n\n\n");

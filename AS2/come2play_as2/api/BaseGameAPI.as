@@ -51,6 +51,7 @@ import come2play_as2.api.*;
 		}
         /*override*/ public function gotMessage(msg:API_Message):Void {
         	try {
+				StaticFunctions.storeTrace(["gotMessage: ",msg]);
         		if (isInTransaction()) {					
         			throwError("The container sent an API message without waiting for DoFinishedCallback");
 				}
@@ -144,7 +145,8 @@ import come2play_as2.api.*;
 		}
         
 		private static var ERROR_DO_ALL:String = "You can only call a doAll* message when the server calls gotStateChanged, gotMatchStarted, gotMatchEnded, or gotRequestStateCalculation.";
-        /*override*/ public function sendMessage(msg:API_Message):Void {
+        /*override*/ public function sendMessage(msg:API_Message):Void {			
+			StaticFunctions.storeTrace(["sendMessage: ",msg]);
         	if (msg instanceof API_DoRegisterOnServer || msg instanceof API_DoTrace) {
         		super.sendMessage(msg);
         		return;

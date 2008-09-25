@@ -1,4 +1,4 @@
-﻿package come2play_as3.api {
+package come2play_as3.api {
 	import come2play_as3.api.auto_copied.*;
 	import come2play_as3.api.auto_generated.*;
 	
@@ -55,6 +55,7 @@
 		}
         override public function gotMessage(msg:API_Message):void {
         	try {
+				StaticFunctions.storeTrace(["gotMessage: ",msg]);
         		if (isInTransaction()) {					
         			throwError("The container sent an API message without waiting for DoFinishedCallback");
 				}
@@ -148,7 +149,8 @@
 		}
         
 		private static const ERROR_DO_ALL:String = "You can only call a doAll* message when the server calls gotStateChanged, gotMatchStarted, gotMatchEnded, or gotRequestStateCalculation.";
-        override public function sendMessage(msg:API_Message):void {
+        override public function sendMessage(msg:API_Message):void {			
+			StaticFunctions.storeTrace(["sendMessage: ",msg]);
         	if (msg is API_DoRegisterOnServer || msg is API_DoTrace) {
         		super.sendMessage(msg);
         		return;

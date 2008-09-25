@@ -5,25 +5,37 @@
 // and then run the java program that automatically copies and changes the as file.
 // We do not share the code because the flash goes crazy if it loads to SWFs files with classes of identical names and packages.
 // So we changed the package name when we copied the directory 'auto_copied'
-package emulator.auto_copied
+﻿package emulator.auto_copied
 {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
 	import flash.display.MovieClip;
 	import flash.system.System;
+	import flash.utils.*;
 	
 // Only StaticFunctions and JSON are copied to flex_utils 
 public final class StaticFunctions
 {			
 	public static var SHOULD_SHOW_ERRORS:Boolean = true;
 	public static var someMovieClip:MovieClip; // so we can display error messages on the stage
-	
-	public static function showError(msg:String):void {
+	public static var allTraces:Array = [];
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		var msg:String = "An ERRRRRRRRRRROR occurred:\n"+msg;
+	public static var MAX_TRACES_NUM:int = 50;
+	public static function storeTrace(obj:Object):void {
+		if (allTraces.length>=MAX_TRACES_NUM) allTraces.shift();
+		allTraces.push(["Time: ", getTimer(), " Trace: ", obj]);
+	}
+	public static function showError(msg:String):void {
+		var msg:String = "An ERRRRRRRRRRROR occurred:\n"+msg+"\n"+
+			(allTraces.length==0 ? '' : 
+				(allTraces.length<MAX_TRACES_NUM ? "All":"The last "+MAX_TRACES_NUM)+" stored traces are:\n"+
+				allTraces.join("\n"));
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		System.setClipboard(msg);
 		if (SHOULD_SHOW_ERRORS) AS3_vs_AS2.showError(someMovieClip, msg);
 		trace("\n\n\n"+msg+"\n\n\n");
@@ -33,10 +45,10 @@ public final class StaticFunctions
 		showError("Throwing the following error="+AS3_vs_AS2.error2String(err));
 		throw err;
 	}		
+	public static function assert(val:Boolean, args:Array):void {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	public static function assert(val:Boolean, args:Array):void {
 		if (!val) throwError("An assertion failed with the following arguments="+JSON.stringify(args));
 	}
 	
@@ -46,10 +58,10 @@ public final class StaticFunctions
 	public static function trim(str:String):String {
 	   var j:int, strlen:int, k:int;
 	   strlen = str.length
+	   j = 0;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	   j = 0;
 	   while (isEmptyChar(str.charAt(j))) {
 		  j++
 	   } 
@@ -59,10 +71,10 @@ public final class StaticFunctions
 	   }
 	   k = str.length - 1;
 	   while(isEmptyChar(str.charAt(k))) {
+		  k--;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		  k--;
 	   }
 	   return str.substring(0,k+1);
 	}
@@ -72,10 +84,10 @@ public final class StaticFunctions
 		var delta:int = toExclusive - fromInclusive;
 		return Math.floor( delta * Math.random() ) + fromInclusive;
 	}
+	public static function startsWith(str:String, start:String):Boolean {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	public static function startsWith(str:String, start:String):Boolean {
 		return str.substr(0, start.length)==start;
 	}
 	public static function endsWith(str:String, suffix:String):Boolean {
@@ -85,10 +97,10 @@ public final class StaticFunctions
 	private static const REFLECTION_PREFIX:String = "REFLECTION_";
 	public static function performReflectionFromFlashVars(_someMovieClip:MovieClip):void {		
 		var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(_someMovieClip);
+		trace("performReflectionFromFlashVars="+JSON.stringify(parameters));
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		trace("performReflectionFromFlashVars="+JSON.stringify(parameters));
 		for (var key:String in parameters) {
 			if (startsWith(key,REFLECTION_PREFIX)) {
 				var before:String = key.substr(REFLECTION_PREFIX.length);
@@ -98,10 +110,10 @@ public final class StaticFunctions
 			}			
 		}
 	}
+	public static function performReflection(reflStr:String):void {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	public static function performReflection(reflStr:String):void {
 		var eqIndex:int = AS3_vs_AS2.stringIndexOf(reflStr,"=");
 		assert(eqIndex>0, ["Missing '=' in the reflection string=",reflStr]);
 		var before:String = reflStr.substr(0, eqIndex);
@@ -111,10 +123,10 @@ public final class StaticFunctions
 	public static function performReflection2(before:String, after:String):void {
 		var val_obj:Object = JSON.parse(after);
 		var dotIndex:int = AS3_vs_AS2.stringLastIndexOf(before,".");
+		var clzName:String = trim(before.substr(0, dotIndex));
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		var clzName:String = trim(before.substr(0, dotIndex));
 		var fieldName:String = trim(before.substr(dotIndex+1));
 		var ClassReference:Object = AS3_vs_AS2.getClassByName(clzName);
 		//trace("Setting field "+fieldName+" in class "+clzName+" to val="+val_obj); 

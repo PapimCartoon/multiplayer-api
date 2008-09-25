@@ -1,16 +1,17 @@
-package come2play_as3.pseudoCode
+package come2play_as3.pseudoCode.domino
 {
 	import come2play_as3.api.*;
-	import come2play_as3.api.auto_generated.*;
 	import come2play_as3.api.auto_copied.*;
+	import come2play_as3.api.auto_generated.*;
+	import come2play_as3.pseudoCode.SimplifiedClientGameAPI;
 	/*********************************
 	 * The keys in the Match state:	
 	 *							
 	 * The shuffeled Dominoes
-	 * 	domino_<i>:DominoCube
+	 * 	{type:"domino",num:<i>}:DominoCube
 	 * 
 	 * The player moves
-	 * 	<i>:GameMove
+	 * 	{num:<i>}:GameMove
 	 ********************************/
 	public class PseudoDominoes extends SimplifiedClientGameAPI
     {
@@ -20,8 +21,8 @@ package come2play_as3.pseudoCode
 	  	private function getTurnOfId():int {
 	    	return allPlayerIds[turnNumber % allPlayerIds.length]; // round robin turns
 	 	}
-	  	private function getEntryKey():String {
-	    	return ""+turnNumber;
+	  	private function getEntryKey():Object {
+	    	return {num:turnNumber};
 	  	}
 	  	private function isMyTurn():Boolean {
 	    	return getTurnOfId()==myUserId;
@@ -37,7 +38,7 @@ package come2play_as3.pseudoCode
 	  	 	if(gameMove.isTakingCube)
 	  	 	{
 	  	 		if(cubesDrawn < cubeMax)
-	  	 			doAllRevealState([RevealEntry.create("domino_"+cubesDrawn,[getTurnOfId()])]);
+	  	 			doAllRevealState([RevealEntry.create({type:"domino",num:cubesDrawn},[getTurnOfId()])]);
 	  	 		else
 	  	 		{
 	  	 	  		turnNumber ++; // advance the turn
@@ -71,7 +72,7 @@ package come2play_as3.pseudoCode
 	    	} else {
 				var revealCubes:Array=new Array();
 				for(var i:int=0;i<cubeMax;i++)
-					revealCubes.push(RevealEntry.create("domino_"+i,allPlayerIds));	
+					revealCubes.push(RevealEntry.create({type:"domino",num:i},allPlayerIds));	
 				doAllRevealState(revealCubes);
 	    	}
 	  	}
@@ -115,7 +116,6 @@ package come2play_as3.pseudoCode
 	  	}
 	  	public function userMadeHisMove(gameMove:GameMove):void {
 	     	doStoreState([UserEntry.create(getEntryKey(), gameMove, false)]);
-	     	performMove(gameMove);
 	  	}
 	  	private function placeDominos():Array/*UserEnry*/
 	  	{
@@ -137,14 +137,12 @@ package come2play_as3.pseudoCode
 	  	}
 	  	override public function gotStateChanged2(serverEntries:Array/*ServerEntry*/):void {
 	    	//require(serverEntries.length==1);
-	    	var entry:ServerEntry = serverEntries[0];
-	    	var value:Object= SerializableClass.deserialize(entry.value);
-	    	if (entry.storedByUserId == myUserId) return; 
+	    	var serverEntry:ServerEntry = serverEntries[0];
 	    	if(serverEntries.length == cubeMax)
 	    	{
-	    		if(entry.storedByUserId == -1)
+	    		if(serverEntry.storedByUserId == -1)
 	    		{
-	    			if(entry.visibleToUserIds.length == 0)
+	    			if(serverEntry.visibleToUserIds.length == 0)
 	    			{
 	    			//ignore the shuffled keys return
 	    			}
@@ -152,10 +150,7 @@ package come2play_as3.pseudoCode
 	    			{
 						var allDominoCubes:Array=new Array();
 						for each(var tempServerEntry:ServerEntry in serverEntries)
-						{
-							value = SerializableClass.deserialize(tempServerEntry.value);
-							allDominoCubes.push(value as DominoCube);
-						}
+							allDominoCubes.push(serverEntry.value as DominoCube);
 						endGame(allDominoCubes);	
 	    			}
 	    		}
@@ -181,12 +176,12 @@ package come2play_as3.pseudoCode
 	    	}
 	    	else if(serverEntries.length == (allPlayerIds.length*7))
 			{
-	    		for each(var serverEntry:ServerEntry in serverEntries)
+	    		for each(serverEntry in serverEntries)
 	    		{
 	    	  		require(serverEntry.storedByUserId == -1);
 	    	  		if(serverEntry.visibleToUserIds[0]==myUserId)
 	    	  		{
-	    	  			value = SerializableClass.deserialize(serverEntry.value)
+	    	  			var value:DominoCube = serverEntry.value as DominoCube;
 	    	  			//add Domino to your board graphically
 	    	  		}
 	    	  		else
@@ -198,30 +193,22 @@ package come2play_as3.pseudoCode
 	    		//take the 7 dominoes 
 	    		startMove();	
 			}
-	    	else if(value is GameMove)
+	    	else if(serverEntry.value is GameMove)
 	    	{
-	    		var gameMove:GameMove = value as GameMove;
-	    		require(entry.visibleToUserIds == null);
-	    		require(entry.key == getEntryKey());
-	    		require(entry.storedByUserId == getTurnOfId());
+	    		var gameMove:GameMove = serverEntry.value as GameMove;
+	    		require(serverEntry.visibleToUserIds == null);
+	    		require(serverEntry.key == getEntryKey());
+	    		require(serverEntry.storedByUserId == getTurnOfId());
 	    		performMove(gameMove);
 	    	}
-	    	else if(value is DominoCube)
+	    	else if(serverEntry.value is DominoCube)
 	    	{
-	    		var dominoCube:DominoCube = value as DominoCube;
-	    		require(entry.storedByUserId == -1); 		
+	    		var dominoCube:DominoCube = serverEntry.value as DominoCube;
+	    		require(serverEntry.storedByUserId == -1); 		
 				drawCube(dominoCube);
 	    	}
 	  	} 
 	}
 }
-import come2play_as3.api.auto_copied.*;
-	
 
-class GameMove extends SerializableClass
-{
-	public var isTakingCube:Boolean,cube:DominoCube;
-}
-class DominoCube{
-	public var upperNumber:int,lowerNumber:int,dominoSide:Boolean;
-}
+

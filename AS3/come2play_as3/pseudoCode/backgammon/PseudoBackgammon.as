@@ -1,15 +1,16 @@
-package come2play_as3.pseudoCode
+package come2play_as3.pseudoCode.backgammon
 {
 	import come2play_as3.api.*;
-	import come2play_as3.api.auto_generated.*;
 	import come2play_as3.api.auto_copied.*;
+	import come2play_as3.api.auto_generated.*;
+	import come2play_as3.pseudoCode.SimplifiedClientGameAPI;
 	/*****************************************
 	 * The keys in the Match state:
 	 * 
 	 * the current positions on the board
 	 * <i> : GamePlace
 	 * 
-	 * "gameMove"_<i>: GameMove
+	 * {type = "gameMove" num=<i>} : GameMove
 	 * the last move committed 
 	 *****************************************/	
 	public class PseudoBackgammon extends SimplifiedClientGameAPI {
@@ -22,12 +23,13 @@ package come2play_as3.pseudoCode
 	  	private function isMyTurn():Boolean {
 	    	return getTurnOfId()==myUserId;
 	  	}
-	  	private function gameMove2UserEntry(gameMoves:GameMove):Array/*UserEntry*/
+	  	private function gameMove2UserEntry(gameMove:GameMove):Array/*userEntry*/
 	  	{
+	  		var userEntries:Array/*userEntry*/
 	  		//A function that takes a GameMove object and extrapolates the changes to the game state
 	  		//key will be the place on the Backgammon board.
 	  		//value will be a GamePlace object
-	  		return [];
+	  		return userEntries;
 	  	}
 	      	
 	  	private function startMove(randomSeed:int):void {
@@ -75,11 +77,11 @@ package come2play_as3.pseudoCode
 	    	for(var i:int=0;i<gameMoves.length;i++)
 	    	{
 	     		var gameMove:GameMove = gameMoves[i];
-	      		userEntries.concat(UserEntry.create("gameMove_"+i,gameMove,false) );
+	     		var keyObj:Object ={type:"gameMove",num:i}
+	      		userEntries.push(UserEntry.create(keyObj,gameMove,false) );
 	      		userEntries.concat(gameMove2UserEntry(gameMove));  
 	    	}
 	    	doStoreState(userEntries);
-	    	performMove(gameMoves);
 	  	}
 	  
 	  	override public function gotMatchStarted2():void {
@@ -89,25 +91,25 @@ package come2play_as3.pseudoCode
 	  	}
 	  	override public function gotStateChanged2(serverEntries:Array/*ServerEntry*/):void {
 	    	
-	    	var entry:ServerEntry = serverEntries[0];
-	    	if (entry.storedByUserId==myUserId) return; // already updated my move
-	    	var value:Object = SerializableClass.deserialize(entry.value);
-	    	var entry2:ServerEntry; 
+	    	var serverEntry:ServerEntry = serverEntries[0];
 	    	
-	    	if(entry.key == "randomSeed")
+	    	if(serverEntry.key == "randomSeed")
 	    	{
-	    		require(entry.storedByUserId == -1);
+	    		require(serverEntry.storedByUserId == -1);
 	    		isDicePhase=false;
-	    		startMove(entry.value as int);	
+	    		startMove(serverEntry.value);	
 	    	}
-	    	else if(value is GameMove)
+	    	else if(serverEntry.value is GameMove)
 	    	{
 	    		var gameMoves:Array=new Array();
 	    		for(var i:int=0;i<serverEntries.length;i+=3)
 	      		{
-	      			entry=serverEntries[i];
-	      			require(entry.key==("gameMove"+i));
-	      			var myGameMoveCalculation:Array=gameMove2UserEntry(serverEntries[i]);
+	      			serverEntry=serverEntries[i];
+	      			require(serverEntry.key.type=="gameMove");
+	      			require(serverEntry.key.num==i);
+	      			serverEntry = serverEntries[i]
+	      			var gameMove:GameMove = serverEntry.value as GameMove
+	      			var myGameMoveCalculation:Array=gameMove2UserEntry(gameMove);
 	        		var rivalGameMoveCalculation:Array=[serverEntries[i+1],serverEntries[i+2]];
 	      			
 	      			var compareStateChanges:Boolean;
@@ -115,8 +117,7 @@ package come2play_as3.pseudoCode
 	      			//to the changes the other player wants to do to the game state
 	        		require(compareStateChanges);
 	        		
-	        		value = SerializableClass.deserialize(entry.value)
-	        		gameMoves.push(value as GameMove);        		
+	        		gameMoves.push(gameMove);        		
 	      		}	
 	      		performMove(gameMoves);  
 	    	}
@@ -125,16 +126,7 @@ package come2play_as3.pseudoCode
 	  	
 	}
 }
-import come2play_as3.api.auto_copied.*;
-class GamePlace extends SerializableClass
-{
-	public var position:int,ownerPlayerId:int,gamePieces:int;
-}
-	
-class GameMove extends SerializableClass{
-  public var pieceCurrentLocation:int, pieceNewLocation:int;
-    
-}
+
 class Dice {
 	public var die1:int, die2:int;
 	function Dice(seed:Number)

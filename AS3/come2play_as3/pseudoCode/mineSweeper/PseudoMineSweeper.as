@@ -1,16 +1,17 @@
-package come2play_as3.pseudoCode
+package come2play_as3.pseudoCode.mineSweeper
 {
 	import come2play_as3.api.*;
 	import come2play_as3.api.auto_copied.*;
 	import come2play_as3.api.auto_generated.*;
+	import come2play_as3.pseudoCode.SimplifiedClientGameAPI;
 	/*****************************************
 	 * The keys in the Match state:
 	 * The calculators store in secret memory:
-	 * <row>_<column>:GameBrick
+	 * {row:<row>,column:<column>}:GameBrick
 	 * Each brick that is revealed by the players
 	 * runs over the GameBricks the calculator has stored
 	 * 
-	 * <playerId>_<row>_<column>: GameMove
+	 * {playerId:<playerId>,row:<row>,column:<column>}: GameMove
 	 * holds the moves each player has performed and were
 	 * not yet committed to the game state memory the
 	 * calculator has stored
@@ -52,24 +53,22 @@ package come2play_as3.pseudoCode
     if(isBrickFree)
     {
     	//mark the brick as occupied
-    	doAllRevealState([RevealEntry.create(gameMove.row+"_"+gameMove.column,null)])	
+    	doAllRevealState([RevealEntry.create(gameMove.getRevealKey(),null)])	
     }
   }
   public function verifyBrick(revealedBrick:RevealedBrick):Boolean
   {
-  	var value:Object;
   	var tempBrick:GameBrick;
   	for each(var serverEntry:ServerEntry in state)
   	{
-  		value = SerializableClass.deserialize(serverEntry.value);
-  		if(value is GameBrick)
+  		if(serverEntry.value is GameBrick)
   		{
-  			tempBrick=value as GameBrick;
+  			tempBrick=serverEntry.value as GameBrick;
   			if((tempBrick.col == revealedBrick.brick.col) &&
   			  (tempBrick.row == revealedBrick.brick.row)) 
   			  	{
   			  		return ((tempBrick.isMine == revealedBrick.brick.isMine) &&
-  			  				(serverEntry.storedByUserId == revealedBrick.player ));
+  			  				(serverEntry.storedByUserId == revealedBrick.playerId ));
   			  	}
   		}		
   	} 
@@ -78,13 +77,11 @@ package come2play_as3.pseudoCode
   public function findPlayer(gameBrick:GameBrick):GameMove
   {
   	var gameMove:GameMove
-  	var value:Object
   	for each(var serverEntry:ServerEntry in state)
   	{
-  		value = SerializableClass.deserialize(serverEntry.value);
-  		if(value is GameMove)
+  		if(serverEntry.value is GameMove)
   		{
-  			gameMove = value as GameMove;
+  			gameMove = serverEntry.value as GameMove;
   			if( (gameBrick.col == gameMove.column) && (gameBrick.row == gameMove.row))
   			{
   				return gameMove;
@@ -97,7 +94,7 @@ package come2play_as3.pseudoCode
    {
    	var revealedBrick:RevealedBrick=new RevealedBrick();
    	revealedBrick.brick = gameBrick;
-   	revealedBrick.player = gameMove.playerId;
+   	revealedBrick.playerId = gameMove.playerId;
    	//update graphics for mine
    	if(myUserId == gameMove.playerId)
    	{
@@ -122,61 +119,41 @@ package come2play_as3.pseudoCode
   
 
   override public function gotStateChanged2(serverEntries:Array/*ServerEntry*/):void {
-	var entry:ServerEntry = serverEntries[0];
-    if (entry.key == "randomSeed") return;//players don't need the secret mine position seed
+	var serverEntry:ServerEntry = serverEntries[0];
+    if (serverEntry.key == "randomSeed") return;//players don't need the secret mine position seed
     if(serverEntries.length == boardSize*boardSize)
     {
-    	if(entry.storedByUserId == -1)
+    	if(serverEntry.storedByUserId == -1)
     	{
     	//allow players to start playing
     	}
     	else
     	{
-    	doAllFoundHacker(entry.storedByUserId,"a user stored the game board instead of a calculator");
+    	doAllFoundHacker(serverEntry.storedByUserId,"a user stored the game board instead of a calculator");
     	}
     }
     	var gameMove:GameMove;
-    	var value:Object=SerializableClass.deserialize(entry.value);
-    	if(value is GameMove )
+    	if(serverEntry.value is GameMove )
     	{
-			gameMove=value as GameMove;
-			require(gameMove.playerId == entry.storedByUserId);
+			gameMove=serverEntry.value as GameMove;
+			require(gameMove.playerId == serverEntry.storedByUserId);
 			performMove(gameMove);
     	}
-    	else if(value is GameBrick )
+    	else if(serverEntry.value is GameBrick )
     	{
-    		var gameBrick:GameBrick=value as GameBrick;
-    		require(entry.storedByUserId == -1);
+    		var gameBrick:GameBrick=serverEntry.value as GameBrick;
+    		require(serverEntry.storedByUserId == -1);
     		gameMove=findPlayer(gameBrick);
     		updateBoard(gameBrick,gameMove)
     	}
-    	else if(value is RevealedBrick )
+    	else if(serverEntry.value is RevealedBrick )
     	{
-    		var revealedBrick:RevealedBrick = value as RevealedBrick;
-    		require(revealedBrick.player == entry.storedByUserId);
+    		var revealedBrick:RevealedBrick = serverEntry.value as RevealedBrick;
+    		require(revealedBrick.playerId == serverEntry.storedByUserId);
     		require(verifyBrick(revealedBrick));
     	}
 
     }
     
  }
-}
-import come2play_as3.api.auto_copied.*;
-	
-class GameMove extends SerializableClass {
-  public var row:int, column:int,playerId:int,className:String;
-
-  public function getKey():String
-  {
-  	return playerId+"_"+row+"_"+column;
-  }
-   
-}
-class RevealedBrick extends SerializableClass{
-	public var brick:GameBrick,player:int;
- 
-}
-class GameBrick extends SerializableClass{
-  public var isMine:Boolean, touchingMines:int,row:int,col:int;
-    
 }

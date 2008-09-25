@@ -4,6 +4,9 @@
 {{{
 class ServerEntry { var key:Object, var value:Object, var storedByUserId:int, var visibleToUserIds:Array/*int*/, var changedTimeInMilliSeconds:int; }
 }}}
+
+=== Parameters ===
+
 *key :*  an Object by which the `ServerEntry`  will be called.
 
 *value :*  the value of this `ServerEntry` .
@@ -19,3 +22,7 @@ then none of the users will receive the value.
 *changedTimeInMilliSeconds :*  how much time has passed since the beginning of the game 
 
 till this `ServerEntry` was stored.
+
+=== Creation ===
+
+*You should not create serverEntries*

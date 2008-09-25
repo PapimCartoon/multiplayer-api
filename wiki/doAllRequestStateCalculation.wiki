@@ -18,7 +18,8 @@ keys - an Array of Objects each representing a key to be sent to the calculating
 
 === Triggered gotStateChange on users ===
 
-an array of [ServerEntry] with the results of the state calculations made by the calculator flash
+an array of [ServerEntry] with the results of the state calculations made by the calculator flash,
+all the calculated [ServerEntry] elements will have a storedByUserId of -1
 
 
 

@@ -4,14 +4,18 @@
 class UserEntry{var key:Object, var value:Object, var isSecret:Boolean = false;}
 }}}
 
+=== Parameters ===
+
 *key :*  the key of the [ServerEntry] that will be created.
 
 *value :*  the value of the [ServerEntry] that will be created.
 
 *isSecret :*  will the data in the [ServerEntry]  be secret.
 
+=== Creation ===
+
 To create a `UserEntry` instance you must use it's create function and not a constructor:
 
 {{{
-RevealEntry.create(key, userIds, isSecret);
+UserEntry.create(key,value, isSecret);
  }}}

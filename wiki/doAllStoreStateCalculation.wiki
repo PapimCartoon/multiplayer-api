@@ -35,10 +35,7 @@ override public function gotRequestStateCalculation(serverEntries:Array):void
 
 
 
-
-
-
-
+=== Why should I use this? ===
 
 
 
@@ -48,7 +45,5 @@ Because he is not an active player/viewer in the game.
 
 Therefore the calculator will use a special function called `doAllStoreStateCalculation` which acts similarly to the [doAllStoreState] function,
 
-Only instead of saving the game data into the calculator server state, the calculator saves it into the game state of players which called the `doAllRequestStateCalculation`.
+Only instead of saving the game data into the calculator server state, the calculator saves it into the game state of the players which called the [doAllRequestStateCalculation].
 
-`doAllRequestStateCalculation` should be called with the following parameter:
-*userEntries :* an Array of [UserEntry]

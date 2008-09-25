@@ -2,13 +2,16 @@
 {{{
 class RevealEntry{var key:Object, var userIds:Array/*int*/  = null, var depth:int  = 0;}
 }}}
+
+=== Parameters ===
+
 *key :*  the key of the [ServerEntry] to reveal.
 
-*userIds :*  an array of user ids to reveal the [ServerEntry] to.
+*userIds :*  an array of user ids to reveal the [ServerEntry] to, if null the [ServerEntry] will be revealed to all the users.
 
 *depth :*  in case depth is greater than 0 the value of the revealed [ServerEntry] is counted as a pointer to the key of the next [ServerEntry].
 
-===For example:===
+=== Example: ===
 
 
 if you send doAllRevealState(RevealEntry.create("guess7", null , 1))
@@ -22,3 +25,10 @@ You will get a [ServerEntry] with the key "WrongGuess".
 The bigger the number in the depth the more times the value will be used as a pointer to the next [ServerEntry] key.
 
 
+=== Creation ===
+
+To create a `RevealEntry` instance you must use it's create function and not a constructor:
+
+{{{
+RevealEntry.create(key,userIdsToReveal,depth);
+ }}}

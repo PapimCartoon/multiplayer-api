@@ -105,58 +105,54 @@ package emulator.auto_copied
 			if (SHOULD_CALL_TRACE) trace(AS3_vs_AS2.getClassName(this)+": "+JSON.stringify(msg));
 		}
 		
+        protected function getErrorMessage(withObj:Object, err:Error):String {
+        	return "Error occurred when passing "+JSON.stringify(withObj)+", the error is="+AS3_vs_AS2.error2String(err);
+        }
         private function passError(withObj:Object, err:Error):void {
-        	try{
-				showError("Error occurred when passing "+JSON.stringify(withObj)+", the error is="+AS3_vs_AS2.error2String(err));
-				gotError(withObj, err);
-			} catch (err2:Error) { 
-				// to avoid an infinite loop, I can't call passError again.
+        	showError(getErrorMessage(withObj,err));        	
+        }
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-				showError("Another error occurred when calling gotError. The new error is="+AS3_vs_AS2.error2String(err2));
-			}
-        }
-		public function gotError(withObj:Object, err:Error):void {}
         
         public function gotMessage(msg:API_Message):void {}
         
         public function sendMessage(msg:API_Message):void {
         	myTrace(['sendMessage: ',msg]);
         	if (msg is API_DoRegisterOnServer)
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
         		AS3_vs_AS2.myTimeout(AS3_vs_AS2.delegate(this, this.reallySendMessage,msg),100);
         	else
         		reallySendMessage(msg);
         }
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
         private function reallySendMessage(msg:API_Message):void {        						  
 			try{
 				AS3_vs_AS2.checkObjectIsSerializable(msg);
 				lcUser.send(sSendChanel, "localconnection_callback", msg);  
 			}catch(err:Error) { 
 				passError(msg, err);
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 			}        	
         }
         
         public function localconnection_callback(msgObj:Object):void {
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
         	try{
         		var deserializedMsg:Object = SerializableClass.deserialize(msgObj);
         		var msg:API_Message = deserializedMsg as API_Message;
         		if (msg==null) throwError("msgObj="+JSON.stringify(msgObj)+" is not an API_Message");
         		
         		myTrace(['gotMessage: ',msg]);
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
         		gotMessage(msg);
 			} catch(err:Error) { 
 				passError(msgObj, err);
 			} 
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
         }
 	}
 }

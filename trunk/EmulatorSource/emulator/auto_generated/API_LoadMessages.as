@@ -44,6 +44,7 @@ package emulator.auto_generated {
 			new RevealEntry();
 			new UserEntry();
 			new ServerEntry();
+			new API_Transaction();
 		}
 	}
 }

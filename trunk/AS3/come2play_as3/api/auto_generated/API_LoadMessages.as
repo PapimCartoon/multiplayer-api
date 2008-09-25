@@ -44,6 +44,7 @@ package come2play_as3.api.auto_generated {
 			new RevealEntry();
 			new UserEntry();
 			new ServerEntry();
+			new API_Transaction();
 		}
 	}
 }

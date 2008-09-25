@@ -65,8 +65,8 @@ import come2play_as2.api.auto_generated.*;
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
 		public function doAllRequestStateCalculation(keys:Array/*Object*/):Void { sendMessage( API_DoAllRequestStateCalculation.create(keys) ); }
-		public function gotRequestStateCalculation(serverEntries:Array/*ServerEntry*/):Void {}
-		public function doAllStoreStateCalculation(userEntries:Array/*UserEntry*/):Void { sendMessage( API_DoAllStoreStateCalculation.create(userEntries) ); }
+		public function gotRequestStateCalculation(requestId:Number, serverEntries:Array/*ServerEntry*/):Void {}
+		public function doAllStoreStateCalculation(requestId:Number, userEntries:Array/*UserEntry*/):Void { sendMessage( API_DoAllStoreStateCalculation.create(requestId, userEntries) ); }
 		
 		
 		

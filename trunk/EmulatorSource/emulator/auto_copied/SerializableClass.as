@@ -13,7 +13,7 @@ package emulator.auto_copied
 
 public class SerializableClass
 {
-	public static var IS_THROWING_EXCEPTIONS:Boolean = true; // in the online version we set it to false
+	public static var IS_THROWING_EXCEPTIONS:Boolean = true; // in the online version we set it to false. (Consider the case that a hacker stores illegal values as secret data)
 	
 	public static const CLASS_NAME_FIELD:String = "__CLASS_NAME__";
 	
@@ -26,7 +26,7 @@ public class SerializableClass
 	public static const REPLACE_TO:String = "COME2PLAY_PACKAGE";
 	
 	// Only in the API we should deserialize user-defined classes
-	// (in the emulator and framework, we should deserialize only COME2PLAY_PACKAGE   
+	// (in the emulator and framework, we should deserialize only COME2PLAY_PACKAGE)  
 	public static const isInAPI:Boolean =  REPLACE_IN_NAME=="come2play_as3."+"api";// I replace 'come2play_as3 . api .', so don't remove the  ."+"
 	
 	public var __CLASS_NAME__:String;

@@ -356,7 +356,7 @@ public class TestClientGameAPI extends ClientGameAPI {
 		lastTime = 0;
 	}
 	private function doTransaction():void {
-		var funcDo:Function = funcDoArr.shift();
+		var funcDo:Object = funcDoArr.shift();
 		trace("doTransaction");
 		funcDo();		
 	}
@@ -368,8 +368,8 @@ public class TestClientGameAPI extends ClientGameAPI {
 		if (!bool) StaticFunctions.throwError("require failed!")
 	}
 	private function expect(funcDo:Function, funcRes:Function):void {
-		funcDoArr.push(funcDo);
-		funcResArr.push(funcRes);	
+		funcDoArr.push(AS3_vs_AS2.delegate(this,funcDo));
+		funcResArr.push(AS3_vs_AS2.delegate(this,funcRes));	
 	}
 	override public function gotStateChanged(serverEntries:Array/*ServerEntry*/):void {
 		var entry:ServerEntry = serverEntries[0];	
@@ -377,7 +377,7 @@ public class TestClientGameAPI extends ClientGameAPI {
 		lastTime = entry.changedTimeInMilliSeconds;
 		
 		require(funcResArr.length>0);  
-		var funcRes:Function = funcResArr.shift();
+		var funcRes:Object = funcResArr.shift();
 		funcRes(serverEntries);
 		if (funcResArr.length>0) doTransaction();
 	}		

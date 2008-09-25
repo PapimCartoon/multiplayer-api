@@ -71,16 +71,12 @@ import come2play_as2.api.auto_copied.*;
 			if (SHOULD_CALL_TRACE) trace(AS3_vs_AS2.getClassName(this)+": "+JSON.stringify(msg));
 		}
 		
-        private function passError(withObj:Object, err:Error):Void {
-        	try{
-				showError("Error occurred when passing "+JSON.stringify(withObj)+", the error is="+AS3_vs_AS2.error2String(err));
-				gotError(withObj, err);
-			} catch (err2:Error) { 
-				// to avoid an infinite loop, I can't call passError again.
-				showError("Another error occurred when calling gotError. The new error is="+AS3_vs_AS2.error2String(err2));
-			}
+        private function getErrorMessage(withObj:Object, err:Error):String {
+        	return "Error occurred when passing "+JSON.stringify(withObj)+", the error is="+AS3_vs_AS2.error2String(err);
         }
-		public function gotError(withObj:Object, err:Error):Void {}
+        private function passError(withObj:Object, err:Error):Void {
+        	showError(getErrorMessage(withObj,err));        	
+        }
         
         public function gotMessage(msg:API_Message):Void {}
         

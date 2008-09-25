@@ -94,7 +94,35 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 			require(entry.storedByUserId==allPlayerIds[0]);
 			if (myUserId==allPlayerIds[0]) require(ObjectDictionary.areEqual(entry.value, test_Arr));	
 		});
-
+		/*myCodeStart*/
+		expect(
+		function ():Void {
+			if (myUserId==allPlayerIds[0]) {
+				doStoreState([ UserEntry.create("a","b", true),UserEntry.create("b","c", true),UserEntry.create("c","d", true),UserEntry.create("d","e", true),UserEntry.create("e","f", true),UserEntry.create("f","g", true),UserEntry.create("g","h", true),UserEntry.create("h","i", true),UserEntry.create("i","j", true),UserEntry.create("j","k", true),UserEntry.create("k","x", true)]);							
+			}
+		},
+		function (entries:Array):Void {
+			var entry:ServerEntry = entries[0];	
+			require(entries.length == 11);
+			require(entry.visibleToUserIds != null);
+		});
+		expect(
+		function ():Void {
+			doAllRevealState([RevealEntry.create("a",null,3),RevealEntry.create("e",[2],0)]);
+		},
+		function (entries:Array):Void {
+			var entry0:ServerEntry = entries[0];
+			var entry1:ServerEntry = entries[1];
+			var entry2:ServerEntry = entries[2];
+			var entry3:ServerEntry = entries[3];
+			var entry4:ServerEntry = entries[4];
+			require(entry0.visibleToUserIds == null)
+			require(entry1.visibleToUserIds == null)
+			require(entry2.visibleToUserIds == null)
+			require(entry3.visibleToUserIds == null)
+			require(entry4.visibleToUserIds != null)
+		});
+		/*myCodeEnd*/
 		expect(
 		function ():Void {
 			// testing doAllStoreState with public and secret entries.
@@ -310,7 +338,7 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 				if (!didSendEndMatch) {
 					didSendEndMatch = true;
 					var finishedPlayers:Array = [];
-					for (var i314:Number=0; i314<allPlayerIds.length; i314++) { var id:Number = allPlayerIds[i314]; 
+					for (var i342:Number=0; i342<allPlayerIds.length; i342++) { var id:Number = allPlayerIds[i342]; 
 						finishedPlayers.push( PlayerMatchOver.create(id, id==winnerId ? 1000 : -1000, id==winnerId ? 100 : 0) );		
 					}
 					doAllEndMatch(finishedPlayers);
@@ -326,7 +354,7 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 		lastTime = 0;
 	}
 	private function doTransaction():Void {
-		var funcDo:Function = funcDoArr.shift();
+		var funcDo:Object = funcDoArr.shift();
 		trace("doTransaction");
 		funcDo();		
 	}
@@ -338,8 +366,8 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 		if (!bool) StaticFunctions.throwError("require failed!")
 	}
 	private function expect(funcDo:Function, funcRes:Function):Void {
-		funcDoArr.push(funcDo);
-		funcResArr.push(funcRes);	
+		funcDoArr.push(AS3_vs_AS2.delegate(this,funcDo));
+		funcResArr.push(AS3_vs_AS2.delegate(this,funcRes));	
 	}
 	/*override*/ public function gotStateChanged(serverEntries:Array/*ServerEntry*/):Void {
 		var entry:ServerEntry = serverEntries[0];	
@@ -347,7 +375,7 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 		lastTime = entry.changedTimeInMilliSeconds;
 		
 		require(funcResArr.length>0);  
-		var funcRes:Function = funcResArr.shift();
+		var funcRes:Object = funcResArr.shift();
 		funcRes(serverEntries);
 		if (funcResArr.length>0) doTransaction();
 	}		

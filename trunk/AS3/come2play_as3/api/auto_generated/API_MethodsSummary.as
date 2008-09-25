@@ -43,8 +43,8 @@ package come2play_as3.api.auto_generated {
 		, new API_MethodsSummary('doAllRequestRandomState', ['key', 'isSecret'], ['Object', 'Boolean'] )
 		, new API_MethodsSummary('doAllFoundHacker', ['userId', 'errorDescription'], ['int', 'String'] )
 		, new API_MethodsSummary('doAllRequestStateCalculation', ['keys'], ['Array/*Object*/'] )
-		, new API_MethodsSummary('gotRequestStateCalculation', ['serverEntries'], ['Array/*ServerEntry*/'] )
-		, new API_MethodsSummary('doAllStoreStateCalculation', ['userEntries'], ['Array/*UserEntry*/'] )
+		, new API_MethodsSummary('gotRequestStateCalculation', ['requestId', 'serverEntries'], ['int', 'Array/*ServerEntry*/'] )
+		, new API_MethodsSummary('doAllStoreStateCalculation', ['requestId', 'userEntries'], ['int', 'Array/*UserEntry*/'] )
 		, new API_MethodsSummary('doConnectedSetScore', ['score'], ['int'] )
 		, new API_MethodsSummary('doConnectedEndMatch', ['didWin'], ['Boolean'] )
 		];

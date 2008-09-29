@@ -34,11 +34,13 @@ package emulator.auto_generated {
 			this.changedTimeInMilliSeconds = parameters[pos++];
 		}
 		override public function getParametersAsString():String { return 'key=' + JSON.stringify(key)+', value=' + JSON.stringify(value)+', storedByUserId=' + JSON.stringify(storedByUserId)+', visibleToUserIds=' + JSON.stringify(visibleToUserIds)+', changedTimeInMilliSeconds=' + JSON.stringify(changedTimeInMilliSeconds); }
+		override public function getFunctionId():int { return -85; }
 		override public function toString():String { return '{ServerEntry:' +getParametersAsString() +'}'; }
-		override public function getMethodName():String { return 'ServerEntry'; }
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		override public function getMethodName():String { return 'serverEntry'; }
 		override public function getMethodParameters():Array { return [key, value, storedByUserId, visibleToUserIds, changedTimeInMilliSeconds]; }
+		override public function getMethodParametersNum():int { return 5; }
 	}
 }

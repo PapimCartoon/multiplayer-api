@@ -20,10 +20,12 @@ import come2play_as2.api.auto_generated.*;
 			this.userEntries = parameters[pos++];
 		}
 		/*override*/ public function getParametersAsString():String { return 'userEntries=' + JSON.stringify(userEntries); }
+		/*override*/ public function getFunctionId():Number { return -116; }
 		/*override*/ public function toString():String { return '{API_DoAllStoreState:' +getParametersAsString() +'}'; }
 		/*override*/ public function getMethodName():String { return 'doAllStoreState'; }
 		/*override*/ public function getMethodParameters():Array { return [userEntries]; }
-	}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		/*override*/ public function getMethodParametersNum():Number { return 1; }
+	}

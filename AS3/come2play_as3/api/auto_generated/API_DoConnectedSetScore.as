@@ -21,11 +21,13 @@ package come2play_as3.api.auto_generated {
 			this.score = parameters[pos++];
 		}
 		override public function getParametersAsString():String { return 'score=' + JSON.stringify(score); }
+		override public function getFunctionId():int { return -106; }
 		override public function toString():String { return '{API_DoConnectedSetScore:' +getParametersAsString() +'}'; }
 		override public function getMethodName():String { return 'doConnectedSetScore'; }
 		override public function getMethodParameters():Array { return [score]; }
-	}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		override public function getMethodParametersNum():int { return 1; }
+	}
 }

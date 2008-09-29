@@ -23,10 +23,12 @@ import come2play_as2.api.auto_generated.*;
 			this.errorDescription = parameters[pos++];
 		}
 		/*override*/ public function getParametersAsString():String { return 'userId=' + JSON.stringify(userId)+', errorDescription=' + JSON.stringify(errorDescription); }
-		/*override*/ public function toString():String { return '{API_DoAllFoundHacker:' +getParametersAsString() +'}'; }
+		/*override*/ public function getFunctionId():Number { return -110; }
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		/*override*/ public function toString():String { return '{API_DoAllFoundHacker:' +getParametersAsString() +'}'; }
 		/*override*/ public function getMethodName():String { return 'doAllFoundHacker'; }
 		/*override*/ public function getMethodParameters():Array { return [userId, errorDescription]; }
+		/*override*/ public function getMethodParametersNum():Number { return 2; }
 	}

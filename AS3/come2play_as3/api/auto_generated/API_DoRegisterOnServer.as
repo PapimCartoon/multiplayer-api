@@ -18,8 +18,10 @@ package come2play_as3.api.auto_generated {
 			var pos:int = 0;
 		}
 		override public function getParametersAsString():String { return ''; }
+		override public function getFunctionId():int { return -127; }
 		override public function toString():String { return '{API_DoRegisterOnServer}'; }
 		override public function getMethodName():String { return 'doRegisterOnServer'; }
 		override public function getMethodParameters():Array { return []; }
+		override public function getMethodParametersNum():int { return 0; }
 	}
 }

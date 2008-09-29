@@ -31,8 +31,10 @@ package come2play_as3.api.auto_generated {
 			this.depth = parameters[pos++];
 		}
 		override public function getParametersAsString():String { return 'key=' + JSON.stringify(key)+', userIds=' + JSON.stringify(userIds)+', depth=' + JSON.stringify(depth); }
+		override public function getFunctionId():int { return -87; }
 		override public function toString():String { return '{RevealEntry:' +getParametersAsString() +'}'; }
-		override public function getMethodName():String { return 'RevealEntry'; }
+		override public function getMethodName():String { return 'revealEntry'; }
 		override public function getMethodParameters():Array { return [key, userIds, depth]; }
+		override public function getMethodParametersNum():int { return 3; }
 	}
 }

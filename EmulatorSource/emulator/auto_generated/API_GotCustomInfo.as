@@ -19,11 +19,13 @@ package emulator.auto_generated {
 			this.infoEntries = parameters[pos++];
 		}
 		override public function getParametersAsString():String { return 'infoEntries=' + JSON.stringify(infoEntries); }
+		override public function getFunctionId():int { return -124; }
 		override public function toString():String { return '{API_GotCustomInfo:' +getParametersAsString() +'}'; }
 		override public function getMethodName():String { return 'gotCustomInfo'; }
 		override public function getMethodParameters():Array { return [infoEntries]; }
-	}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		override public function getMethodParametersNum():int { return 1; }
+	}
 }

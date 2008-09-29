@@ -22,11 +22,13 @@ package emulator.auto_generated {
 			this.message = parameters[pos++];
 		}
 		override public function getParametersAsString():String { return 'name=' + JSON.stringify(name)+', message=' + JSON.stringify(message); }
-		override public function toString():String { return '{API_DoTrace:' +getParametersAsString() +'}'; }
+		override public function getFunctionId():int { return -126; }
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		override public function toString():String { return '{API_DoTrace:' +getParametersAsString() +'}'; }
 		override public function getMethodName():String { return 'doTrace'; }
 		override public function getMethodParameters():Array { return [name, message]; }
+		override public function getMethodParametersNum():int { return 2; }
 	}
 }

@@ -20,10 +20,12 @@ import come2play_as2.api.auto_generated.*;
 			this.finishedPlayerIds = parameters[pos++];
 		}
 		/*override*/ public function getParametersAsString():String { return 'finishedPlayerIds=' + JSON.stringify(finishedPlayerIds); }
+		/*override*/ public function getFunctionId():Number { return -119; }
 		/*override*/ public function toString():String { return '{API_GotMatchEnded:' +getParametersAsString() +'}'; }
 		/*override*/ public function getMethodName():String { return 'gotMatchEnded'; }
 		/*override*/ public function getMethodParameters():Array { return [finishedPlayerIds]; }
-	}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		/*override*/ public function getMethodParametersNum():Number { return 1; }
+	}

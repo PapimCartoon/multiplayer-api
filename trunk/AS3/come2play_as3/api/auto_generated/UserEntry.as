@@ -31,8 +31,10 @@ package come2play_as3.api.auto_generated {
 			this.isSecret = parameters[pos++];
 		}
 		override public function getParametersAsString():String { return 'key=' + JSON.stringify(key)+', value=' + JSON.stringify(value)+', isSecret=' + JSON.stringify(isSecret); }
+		override public function getFunctionId():int { return -86; }
 		override public function toString():String { return '{UserEntry:' +getParametersAsString() +'}'; }
-		override public function getMethodName():String { return 'UserEntry'; }
+		override public function getMethodName():String { return 'userEntry'; }
 		override public function getMethodParameters():Array { return [key, value, isSecret]; }
+		override public function getMethodParametersNum():int { return 3; }
 	}
 }

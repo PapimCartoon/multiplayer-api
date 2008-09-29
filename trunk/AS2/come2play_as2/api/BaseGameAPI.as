@@ -152,7 +152,13 @@ import come2play_as2.api.*;
         		return;
         	}
         	var isStore:Boolean = msg instanceof API_DoStoreState;
-        	if (!isStore && !StaticFunctions.startsWith(msg.getMethodName(), "doAll"))
+        	var msgName:String = msg.getMethodName();
+        	if (StaticFunctions.startsWith(msgName, "do_")) {
+        		// an OldBoard operation
+        		super.sendMessage(msg);
+        		return;
+        	}
+        	if (!isStore && !StaticFunctions.startsWith(msgName, "doAll"))
         		throwError("Illegal sendMessage="+msg);
         	
 			if (isInTransaction()) {

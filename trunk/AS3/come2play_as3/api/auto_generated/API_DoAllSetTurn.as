@@ -28,8 +28,10 @@ package come2play_as3.api.auto_generated {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		override public function getFunctionId():int { return -114; }
 		override public function toString():String { return '{API_DoAllSetTurn:' +getParametersAsString() +'}'; }
 		override public function getMethodName():String { return 'doAllSetTurn'; }
 		override public function getMethodParameters():Array { return [userId, milliSecondsInTurn]; }
+		override public function getMethodParametersNum():int { return 2; }
 	}
 }

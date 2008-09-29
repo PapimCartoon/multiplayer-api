@@ -22,11 +22,13 @@ package emulator.auto_generated {
 			this.userEntries = parameters[pos++];
 		}
 		override public function getParametersAsString():String { return 'requestId=' + JSON.stringify(requestId)+', userEntries=' + JSON.stringify(userEntries); }
-		override public function toString():String { return '{API_DoAllStoreStateCalculation:' +getParametersAsString() +'}'; }
+		override public function getFunctionId():int { return -107; }
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		override public function toString():String { return '{API_DoAllStoreStateCalculation:' +getParametersAsString() +'}'; }
 		override public function getMethodName():String { return 'doAllStoreStateCalculation'; }
 		override public function getMethodParameters():Array { return [requestId, userEntries]; }
+		override public function getMethodParametersNum():int { return 2; }
 	}
 }

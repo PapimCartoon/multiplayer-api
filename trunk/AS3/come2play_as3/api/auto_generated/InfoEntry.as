@@ -24,11 +24,13 @@ package come2play_as3.api.auto_generated {
 			this.value = parameters[pos++];
 		}
 		override public function getParametersAsString():String { return 'key=' + JSON.stringify(key)+', value=' + JSON.stringify(value); }
-		override public function toString():String { return '{InfoEntry:' +getParametersAsString() +'}'; }
+		override public function getFunctionId():int { return -88; }
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		override public function getMethodName():String { return 'InfoEntry'; }
+		override public function toString():String { return '{InfoEntry:' +getParametersAsString() +'}'; }
+		override public function getMethodName():String { return 'infoEntry'; }
 		override public function getMethodParameters():Array { return [key, value]; }
+		override public function getMethodParametersNum():int { return 2; }
 	}
 }

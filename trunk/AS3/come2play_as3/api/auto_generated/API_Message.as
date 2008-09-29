@@ -8,13 +8,15 @@ package come2play_as3.api.auto_generated {
 
 	public  class API_Message extends SerializableClass {
 		public function getParametersAsString():String { throw new Error("You must subclass API_Message!"); return null; }
+		public function getFunctionId():int { throw new Error("You must subclass API_Message!"); return 0; }
 		public function toString():String { throw new Error("You must subclass API_Message!"); return null; }
 		public function getMethodName():String { throw new Error("You must subclass API_Message!"); return null; }
 		public function setMethodParameters(parameters:Array):void { throw new Error("You must subclass API_Message!"); }
-		public function getMethodParameters():Array { throw new Error("You must subclass API_Message!"); return null; }
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		public function getMethodParameters():Array { throw new Error("You must subclass API_Message!"); return null; }
+		public function getMethodParametersNum():int { throw new Error("You must subclass API_Message!"); return -1; }
 		public static const USER_INFO_KEY_name:String = "name";
 		public static const USER_INFO_KEY_avatar_url:String = "avatar_url";
 		public static const USER_INFO_KEY_supervisor:String = "supervisor";
@@ -23,11 +25,11 @@ package come2play_as3.api.auto_generated {
 		public static const CUSTOM_INFO_KEY_logoFullUrl:String = "CONTAINER_logoFullUrl";
 		public static const CUSTOM_INFO_KEY_secondsPerMatch:String = "CONTAINER_secondsPerMatch";
 		public static const CUSTOM_INFO_KEY_secondsPerMove:String = "CONTAINER_secondsPerMove";
-		public static const CUSTOM_INFO_KEY_gameStageX:String = "CONTAINER_gameStageX";
-		public static const CUSTOM_INFO_KEY_gameStageY:String = "CONTAINER_gameStageY";
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		public static const CUSTOM_INFO_KEY_gameStageX:String = "CONTAINER_gameStageX";
+		public static const CUSTOM_INFO_KEY_gameStageY:String = "CONTAINER_gameStageY";
 		public static const CUSTOM_INFO_KEY_gameHeight:String = "CONTAINER_gameHeight";
 		public static const CUSTOM_INFO_KEY_gameWidth:String = "CONTAINER_gameWidth";
 		public static const CUSTOM_INFO_KEY_gameFrameRate:String = "CONTAINER_gameFrameRate";

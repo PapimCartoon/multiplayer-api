@@ -28,8 +28,10 @@ package emulator.auto_generated {
 
 		}
 		override public function getParametersAsString():String { return 'playerId=' + JSON.stringify(playerId)+', score=' + JSON.stringify(score)+', potPercentage=' + JSON.stringify(potPercentage); }
+		override public function getFunctionId():int { return -89; }
 		override public function toString():String { return '{PlayerMatchOver:' +getParametersAsString() +'}'; }
-		override public function getMethodName():String { return 'PlayerMatchOver'; }
+		override public function getMethodName():String { return 'playerMatchOver'; }
 		override public function getMethodParameters():Array { return [playerId, score, potPercentage]; }
+		override public function getMethodParametersNum():int { return 3; }
 	}
 }

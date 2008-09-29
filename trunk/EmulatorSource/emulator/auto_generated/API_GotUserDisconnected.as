@@ -19,11 +19,13 @@ package emulator.auto_generated {
 			this.userId = parameters[pos++];
 		}
 		override public function getParametersAsString():String { return 'userId=' + JSON.stringify(userId); }
+		override public function getFunctionId():int { return -122; }
 		override public function toString():String { return '{API_GotUserDisconnected:' +getParametersAsString() +'}'; }
 		override public function getMethodName():String { return 'gotUserDisconnected'; }
 		override public function getMethodParameters():Array { return [userId]; }
-	}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		override public function getMethodParametersNum():int { return 1; }
+	}
 }

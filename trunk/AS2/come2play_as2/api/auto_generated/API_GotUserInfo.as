@@ -23,10 +23,12 @@ import come2play_as2.api.auto_generated.*;
 			this.infoEntries = parameters[pos++];
 		}
 		/*override*/ public function getParametersAsString():String { return 'userId=' + JSON.stringify(userId)+', infoEntries=' + JSON.stringify(infoEntries); }
-		/*override*/ public function toString():String { return '{API_GotUserInfo:' +getParametersAsString() +'}'; }
+		/*override*/ public function getFunctionId():Number { return -123; }
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		/*override*/ public function toString():String { return '{API_GotUserInfo:' +getParametersAsString() +'}'; }
 		/*override*/ public function getMethodName():String { return 'gotUserInfo'; }
 		/*override*/ public function getMethodParameters():Array { return [userId, infoEntries]; }
+		/*override*/ public function getMethodParametersNum():Number { return 2; }
 	}

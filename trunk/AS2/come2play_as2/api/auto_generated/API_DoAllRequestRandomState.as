@@ -27,7 +27,9 @@ import come2play_as2.api.auto_generated.*;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		/*override*/ public function getFunctionId():Number { return -111; }
 		/*override*/ public function toString():String { return '{API_DoAllRequestRandomState:' +getParametersAsString() +'}'; }
 		/*override*/ public function getMethodName():String { return 'doAllRequestRandomState'; }
 		/*override*/ public function getMethodParameters():Array { return [key, isSecret]; }
+		/*override*/ public function getMethodParametersNum():Number { return 2; }
 	}

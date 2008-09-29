@@ -21,11 +21,13 @@ package come2play_as3.api.auto_generated {
 			this.didWin = parameters[pos++];
 		}
 		override public function getParametersAsString():String { return 'didWin=' + JSON.stringify(didWin); }
+		override public function getFunctionId():int { return -105; }
 		override public function toString():String { return '{API_DoConnectedEndMatch:' +getParametersAsString() +'}'; }
 		override public function getMethodName():String { return 'doConnectedEndMatch'; }
 		override public function getMethodParameters():Array { return [didWin]; }
-	}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		override public function getMethodParametersNum():int { return 1; }
+	}
 }

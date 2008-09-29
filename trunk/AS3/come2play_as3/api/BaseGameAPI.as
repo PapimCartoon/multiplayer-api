@@ -155,26 +155,31 @@ package come2play_as3.api {
         		super.sendMessage(msg);
         		return;
         	}
-        	var isStore:Boolean = msg is API_DoStoreState;
-        	if (!isStore && !StaticFunctions.startsWith(msg.getMethodName(), "doAll"))
-        		throwError("Illegal sendMessage="+msg);
-        	
-			if (isInTransaction()) {
-				if (isStore) {
-					// ok
-				} else if (isInGotRequestStateCalculation()) {
-					if (!(msg is API_DoAllStoreStateCalculation))
-						throwError("When the server calls gotRequestStateCalculation you must respond with doAllStoreStateCalculation");
-				} else if (!canDoAnimations()) {
-					throwError(ERROR_DO_ALL);
-				}
-				msgsInTransaction.push(msg);
-				return;
+        	var msgName:String = msg.getMethodName();
+        	if (StaticFunctions.startsWith(msgName, "do_")) {
+        		// an OldBoard operation
+        		super.sendMessage(msg);
+        		return;
+        	}
+        	if (msg is API_DoStoreState) {
+        		if (isInTransaction())
+        			throwError("You can call doStoreState only when you are not inside a transaction! msg="+msg);
+        		super.sendMessage( msg );
+        		return;
+			}        	
+				
+        	if (!StaticFunctions.startsWith(msgName, "doAll"))
+        		throwError("Illegal sendMessage="+msg);        	
+			if (!isInTransaction()) 
+				throwError(ERROR_DO_ALL);	
+				
+			if (isInGotRequestStateCalculation()) {
+				if (!(msg is API_DoAllStoreStateCalculation))
+					throwError("When the server calls gotRequestStateCalculation you must respond with doAllStoreStateCalculation");
+			} else if (!canDoAnimations()) {
+				throwError(ERROR_DO_ALL);
 			}
-			// not in transaction, then you must send doStore
-       		if (!isStore)
-				throwError(ERROR_DO_ALL);				        			
-       		super.sendMessage( msg );
+			msgsInTransaction.push(msg);			
         }
 	}
 }

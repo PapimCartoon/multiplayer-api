@@ -15,8 +15,8 @@ This call can be made in any part of the game, and should be mainly triggered by
 
 === Example ===
 
-  *if a user made his snake turn right in a snake game the input should be sent through a [doStoreState] call.
-  *but if a user needs to store the entire set of cards for a game he should call [doAllStoreState] because, the call is not user specific
+  * if a user made his snake turn right in a snake game the input should be sent through a [doStoreState] call.
+  * but if a user needs to store the entire set of cards for a game he should call [doAllStoreState] because, the call is not user specific
 and represents a call that would have been usually made by the server.
 
 It is important that all data received by the other clients that was stored using [doStoreState] will be verified thoroughly by the receiving 

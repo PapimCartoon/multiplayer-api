@@ -6,12 +6,12 @@ doAllSetTurn(userId:int, milliSecondsInTurn:int)
 
 === Description ===
 
-Call this function to prevent hackers for stagnating your game
+Call this function to force a player to make his turn, prevents hackers for stagnating your game.
 
 
 === Parameters ===
 
-userId -  the user ID of the player you want  to make a move, -1 for all players
+userId -  the user ID of the player you want to make a move, -1 for all players.
 
 milliSecondsInTurn - the time the user has to make his turn before being declared as a hacker.
 

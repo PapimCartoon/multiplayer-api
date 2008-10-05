@@ -7,15 +7,15 @@ package come2play_as3.api.auto_generated {
 	import come2play_as3.api.auto_generated.*;
 
 	public  class ServerEntry extends API_Message {
-		public var key:*;
-		public var value:*;
+		public var key:Object;
+		public var value:Object;
 		public var storedByUserId:int;
 		public var visibleToUserIds:Array/*int*/;
 		public var changedTimeInMilliSeconds:int;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		public static function create(key:*, value:*, storedByUserId:int, visibleToUserIds:Array/*int*/, changedTimeInMilliSeconds:int):ServerEntry {
+		public static function create(key:Object, value:Object, storedByUserId:int, visibleToUserIds:Array/*int*/, changedTimeInMilliSeconds:int):ServerEntry {
 			var res:ServerEntry = new ServerEntry();
 			res.key = key;
 			res.value = value;

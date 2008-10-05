@@ -13,6 +13,10 @@ package come2play_as3.domino
 			upperNum = dominoCube.upperNum;
 			this.key = key;
 		}
+		public function toString():String
+		{
+			return "key : "+key+", lowerNum : "+lowerNum+", upperNum : "+upperNum;
+		}
 
 	}
 }

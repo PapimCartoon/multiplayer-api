@@ -35,7 +35,7 @@ package emulator
 			gameTurns.push(PlayerDelta.create(ongoingPlayerIds,serverEntries,null,changedTime));
 		}
 		public function addPlayerMatchOver(ongoingPlayerIds:Array/*int*/,finishHistory:FinishHistory,changedTime:int):void
-		{
+		{	
 			checkIfTop();
 			gameTurns.push(PlayerDelta.create(ongoingPlayerIds,[],finishHistory,changedTime));
 		}	

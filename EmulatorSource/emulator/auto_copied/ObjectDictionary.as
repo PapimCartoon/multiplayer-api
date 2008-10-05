@@ -7,6 +7,8 @@
 // So we changed the package name when we copied the directory 'auto_copied'
 package emulator.auto_copied
 {
+	import flash.utils.ByteArray;
+	
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
@@ -42,7 +44,14 @@ public final class ObjectDictionary extends SerializableClass
 		if (hashMap[hash]==null) return null;
 		var entries:Array = hashMap[hash];
 		for each (var entry:Array in entries) {
-			if (areEqual(entry[0],key)) return entry;
+			var entryKey:Object = entry[0];
+			if (areEqual(entryKey,key)) 
+				return entry;
+			// not equal, let's check if someone changed the keys
+			/*
+			if (hashObject(entryKey)!=hash)
+				throw new Error("You have mutated a key that was previously inserted to this ObjectDictionary! All keys must be immutable! mutated-key="+JSON.stringify(entryKey)+" looking-for-key="+JSON.stringify(key));
+		*/
 		}
 		return null;		
 	}
@@ -161,6 +170,7 @@ public final class ObjectDictionary extends SerializableClass
         for (var z:String in o) {
         	res += hashObject(z)*hashObject(o[z]);
 	    }
+        trace("o="+JSON.stringify(o)+" res="+res);
        	return res; 
 	}
 

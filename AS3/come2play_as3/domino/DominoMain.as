@@ -37,6 +37,7 @@ package come2play_as3.domino
 		
 		public function sendPlayerMove(playerMove:PlayerMove):void
 		{
+			doTrace("isOver?","gameOver : "+gameOver);
 			if(!gameOver)
 			{
 				doStoreState([UserEntry.create({playerId:myUserId,move:moveNum},playerMove,false)])
@@ -45,7 +46,9 @@ package come2play_as3.domino
 		}
 		public function endGame(playerMatchOverArr:Array):void
 		{
-			gameOver = true;
+			if(allPlayerIds.length < 2)
+				gameOver = true;
+			doTrace("Players",allPlayerIds.toString());
 			doAllEndMatch(playerMatchOverArr);
 		}
 		public function setPlayerTurn(playerId:int):void
@@ -72,7 +75,7 @@ package come2play_as3.domino
 		public function setNextTurn():void
 		{
 			currentTurn ++ ;
-			if (allPlayerIds.length == currentTurn )
+			if (allPlayerIds.length <= currentTurn )
 				currentTurn = 0;
 			doAllSetTurn(allPlayerIds[currentTurn],-1);
 			doAllStoreState([UserEntry.create("turnOfPlayerId",PlayerTurn.create(allPlayerIds[currentTurn]),false)]);

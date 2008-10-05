@@ -164,8 +164,8 @@ package come2play_as3.domino
 
 class GameBoard extends MovieClip
 {
-	private const MAXX:int = 280;
-	private const MINX:int = 80;
+	private const MAXX:int = 260;
+	private const MINX:int = 100;
 	private var leftX:int;
 	private var rightX:int;
 	private var leftDominos:Array;/*Domino*/
@@ -195,10 +195,10 @@ class GameBoard extends MovieClip
 		domino.y = 150;
 		if(partConnecting == PlayerMove.MIDDLE)
 		{	
-			rightX +=10;
 			removeCenter(PlayerMove.RIGHT);
+			rightX += 10;
 			domino.x = rightX;
-			rightX +=10;
+			rightX += 10;
 		}
 		else 
 		{
@@ -206,10 +206,10 @@ class GameBoard extends MovieClip
 				domino.rotation = -90;
 			else if(partConnecting == PlayerMove.DOWN)
 				domino.rotation = 90;
-			rightX +=20;
 			removeCenter(PlayerMove.RIGHT);
+			rightX += 20;
 			domino.x = rightX;
-			rightX +=20
+			rightX += 20
 		}
 
 		rightDominos.push(domino);
@@ -219,11 +219,10 @@ class GameBoard extends MovieClip
 		domino.y = 150;
 		if(partConnecting == PlayerMove.MIDDLE)
 		{	
-			rightX -=10;
 			removeCenter(PlayerMove.LEFT);
+			leftX -= 10;
 			domino.x = leftX;
-			domino.rotation = 90;
-			rightX -=10;
+			leftX -= 10;
 		}
 		else 
 		{
@@ -231,10 +230,10 @@ class GameBoard extends MovieClip
 				domino.rotation = 90;
 			else if(partConnecting == PlayerMove.DOWN)
 				domino.rotation = -90;
-			leftX -=20;
 			removeCenter(PlayerMove.LEFT);
+			leftX -= 20;
 			domino.x = leftX;
-			leftX -=20
+			leftX -= 20
 		}
 
 		leftDominos.push(domino);		
@@ -292,6 +291,8 @@ class GameBoard extends MovieClip
 				leftX +=cahngeXBy;
 			}	
 		}
+		
+		trace("***************** cahngeXBy : "+cahngeXBy)
 	}
 	
 }

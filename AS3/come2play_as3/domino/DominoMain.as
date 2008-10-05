@@ -97,10 +97,7 @@ package come2play_as3.domino
 			tieGame = revealEntries.length;
 			doAllRevealState(revealEntries);
 		}
-		public function myTracer(text:String):void
-		{
-			doTrace("MyUser :"+myUserId,text);
-		}
+
 		//override functions
 		
 		override public function gotCustomInfo(infoEntries:Array):void

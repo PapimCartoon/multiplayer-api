@@ -155,7 +155,6 @@ package come2play_as3.domino
 
 		public function checkWin(remainingCubes:int,playerId:int):void
 		{
-			dominoMainPointer.myTracer(myUserId+" says : "+playerId+"has "+remainingCubes+" cubes")
 			if(remainingCubes == 0)
 				playerWon(playerId);
 		}
@@ -164,7 +163,6 @@ package come2play_as3.domino
 		{
 			if(playerMove.dominoCube == null)
 			{
-				dominoMainPointer.doTrace("DrawCube","player : "+playerMove.playerId);
 				if(dominoAmount > currentDomino)
 				{
 					movesWithNoAction = 0;

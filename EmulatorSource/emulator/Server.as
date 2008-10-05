@@ -655,7 +655,6 @@ package emulator {
 			}
 			else if(msg is API_Transaction)
 			{
-				if(!isPlayer(user.ID)) 	return;
 				var transMsg:API_Transaction = 	msg as API_Transaction;	
 				var isCallback:Boolean = false;
 				var finishedCallbackMsg:API_DoFinishedCallback = transMsg.callback;
@@ -669,7 +668,7 @@ package emulator {
 						user.do_finished_callback(finishedCallbackMsg.callbackName)
 					}
 				}
-				if(playByPlayTimer.running)
+				if( (playByPlayTimer.running) || (!isPlayer(user.ID)) )
 					return;
 				if(transMsg.messages.length == 0) 
 				{
@@ -777,14 +776,15 @@ package emulator {
 						len = queuEntry.transaction.length;
 				if(len > 1)
 				{
-					var tempWaitingQueue:MessagQueue = new MessagQueue(aPlayers.length,getOngoingPlayerIds());
+					var ongoingPlayers:Array = getOngoingPlayerIds()
+					var tempWaitingQueue:MessagQueue = new MessagQueue(ongoingPlayers.length,ongoingPlayers);
 					for (var i:int = 0;i<doAll.length;i++)
 					{
 						queueEntry = doAll[i];
 						for each (msg in queueEntry.transaction.messageArray)
 						{
-							
 							tempWaitingQueue.push(new QueueEntry(queueEntry.user,new Transaction([msg]),queueEntry.timeRecived));
+							addMessageLog("Server","added Transaction message",msg.getMethodName());
 						}	
 					}
 					addMessageLog("Server","Transaction","tryed process");
@@ -792,7 +792,9 @@ package emulator {
 				}
 				else if(len == 1)
 				{
+					if(isTransaction) addMessageLog("Server","Transaction","doAll Start");
 					if(!checkDoAlls(doAll)) return [];
+					if(isTransaction) addMessageLog("Server","Transaction","doAll Process");
 					serverEntries =	processMessage(queuEntry.transaction.messageArray[0]);
 					if(!isTransaction)
 						addToQue(queuEntry);
@@ -2213,7 +2215,6 @@ package emulator {
 			for each (var usr:User in aUsers) {
 				if (aPlayers.indexOf(usr.ID) != -1 && !usr.Ended) {;
 					usr.Ended = true;
-					usr.clearQueue();
 				}
 			}
 			bGameEnded = true;
@@ -2312,8 +2313,9 @@ class User extends LocalConnectionUser {
 			entries[0]=tempEntery;
 			for (var i:int = 1; sServer.root.loaderInfo.parameters["col_" + i] != null;i++ ) {
 				tempEntery=new InfoEntry();
+				sServer.addMessageLog(Name,sServer.root.loaderInfo.parameters["col_" + i],sServer.root.loaderInfo.parameters["val_" + (iID - 1)+"_"+ i]);
 				tempEntery.key = sServer.root.loaderInfo.parameters["col_" + i];
-				tempEntery.value = sServer.root.loaderInfo.parameters["val_" + (iID - 1)+"_"+ i];	
+				tempEntery.value = JSON.parse(sServer.root.loaderInfo.parameters["val_" + (iID - 1)+"_"+ i]);	
 				entries.push(tempEntery);
 			}
 			
@@ -2338,12 +2340,7 @@ class User extends LocalConnectionUser {
 	public function do_finished_callback(methodName:String):void {
 		if(methodName=="gotKeyboardEvent") return;
 		if(actionQueue.length == 0)
-		{
-			if(sServer.playByPlayTimer.running)
 				return;
-			else
-				throw new Error("A Callback has been summoned with no corresponding doALLFunction");	
-		} 
 		var waitingFunction:WaitingFunction = actionQueue.shift();
 		var tempMsg:API_Message = waitingFunction.msg as API_Message;
 		if(methodName == tempMsg.getMethodName())

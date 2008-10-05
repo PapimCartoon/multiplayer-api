@@ -227,9 +227,10 @@ package come2play_as3.domino
 			if(allPlayerIds.length < 2)
 			{
 				playerMatchOverArr.push(PlayerMatchOver.create(allPlayerIds[0],allPlayerIds.length*10,30));
-				allPlayerIds.splice(0,1);
+				/*allPlayerIds.splice(0,1);
 				rivalPlayersDominoKeys.splice(0,1);
 				playerMatchOverArr.push(PlayerMatchOver.create(allPlayerIds[0],0,0));
+				*/
 			}
 			
 			dominoMainPointer.endGame(playerMatchOverArr);

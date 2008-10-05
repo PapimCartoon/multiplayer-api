@@ -49,6 +49,7 @@ package come2play_as3.domino
 			if(allPlayerIds.length < 2)
 				gameOver = true;
 			doTrace("Players",allPlayerIds.toString());
+			currentTurn --;
 			doAllEndMatch(playerMatchOverArr);
 		}
 		public function setPlayerTurn(playerId:int):void

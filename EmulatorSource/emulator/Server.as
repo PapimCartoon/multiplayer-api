@@ -28,7 +28,6 @@ package emulator {
 		private static const COL_name:String="Name";
 		private static const COL_numberOfPlayers:String="Number_Of_Players";
 		private static const COL_userIdThatAreStillPlaying:String="User_ids_that_are_still_playing";
-		private static const COL_nextTurnOfUserIds:String="Next_turn_of_user_ids";
 		private static const COL_matchState:String="Match_state";
 		private static const COL_serverEntries:String= "Server_Entries";
 		private static const COL_TimeSent:String = "Time_Sent";
@@ -1306,7 +1305,6 @@ package emulator {
 				case 6:
 					txtInfo.text = "name: " + evt.target.selectedItem[COL_name] + "\n" + 
 						"user_ids_that_are_still_playing: " + evt.target.selectedItem[COL_userIdThatAreStillPlaying] + "\n" + 
-						"next_turn_of_user_ids: " + evt.target.selectedItem[COL_nextTurnOfUserIds] + "\n" + 
 						"match_state: " + evt.target.selectedItem[COL_matchState];
 
 				break;
@@ -1545,7 +1543,7 @@ package emulator {
 			pnlInfo.visible=true;
 			if(iInfoMode!=6){
 				iInfoMode=6;	
-				tblInfo.columns=[COL_name,COL_numberOfPlayers, COL_userIdThatAreStillPlaying,COL_nextTurnOfUserIds,COL_matchState];
+				tblInfo.columns=[COL_name,COL_numberOfPlayers, COL_userIdThatAreStillPlaying,COL_matchState];
 				showSavedGames();
 			}
 		}
@@ -1592,6 +1590,7 @@ package emulator {
 				changedToDelta--; 
 			playByPlayTimer.stop();
 			playByPlay.label = "Replay";
+			goBackToHistory.enabled = true;
 		}
 		
 		
@@ -1629,9 +1628,12 @@ package emulator {
 		
 		private function changeTimerTime():void
 		{
-			var nextTime:int = deltaHistory.getNextTime() ;
+			var nextTime:int = deltaHistory.getDeltaTime(changedToDelta+1) ;
 			if(nextTime < 0)
+			{
 				stopPlayByPlayTimer();
+				return;
+			}
 			nextTime -= (getTimer()-matchStartTime);
 			if(nextTime > 0) 
 			{
@@ -1643,7 +1645,7 @@ package emulator {
 			else
 			{
 				playByPlayTimer.reset();
-				playByPlayTimer.delay = 15;
+				playByPlayTimer.delay = 25;
 				playByPlayTimer.start();
 			}
 
@@ -1657,15 +1659,18 @@ package emulator {
 				stopPlayByPlayTimer();
 			}
 			else
-			{				
+			{	 
+				goBackToHistory.enabled = false;			
 				playByPlay.label = "Pause";
 				if(!bGameEnded)
 					gameOver();
 				loadToDelta(changedToDelta);
 				startGame();
+				matchStartTime -= deltaHistory.getDeltaTime(changedToDelta);
+				changeTimerTime();
 				changedToDelta++;
 				playByPlayTimer.start();
-				changeTimerTime();
+				
 			}
 		}
 		

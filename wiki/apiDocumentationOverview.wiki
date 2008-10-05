@@ -14,7 +14,6 @@ The resulting game is a SWF file, written either in actionscript2 (AS2) or actio
 === Multiplayer APIs ===
 The Multiplayer API is composed of 2 APIs:
   * [ClientGameAPI] - for developing multiplayer games.
-  * [ConnectedGameAPI] - for converting single-player games to multiplayer.
 
 You should write a class that extends one of the above APIs, and when your SWF is loaded, it should create one instance of that class.
 
@@ -25,7 +24,6 @@ You may either test the games in the [Emulator], or submit your game online to a
 One such website is [http://www.come2play.com Come2Play].
 Another distribution channel is Skype GameXN - in the near future we will write a container that translates this Multiplayer API to Skype GameXN platform.
 
-The current version of the [Emulator] does not support [ConnectedGameAPI].
 
 
 === AS2 vs AS3 ===

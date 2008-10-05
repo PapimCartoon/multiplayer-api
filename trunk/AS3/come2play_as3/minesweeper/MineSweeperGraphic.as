@@ -19,18 +19,19 @@ package come2play_as3.minesweeper
 		public function foundMine(playerNum:int,xPos:int,yPos:int):void
 		{
 			var box:Box = boardBricks[xPos][yPos];
-			box.gotoAndStop(44+playerNum*11);
+			box.gotoAndStop(54+playerNum*11);
 		}
 		public function setOfMine(playerNum:int,xPos:int,yPos:int):void
 		{
 			var box:Box = boardBricks[xPos][yPos];
 			boardUnderPart.addChild(box);
-			box.gotoAndStop(20+playerNum*10);
+			box.gotoAndStop(30+playerNum*10);
 		}
-		public function revealBox(borderingMines:int,xPos:int,yPos:int):void
+		public function revealBox(playerNum:int,borderingMines:int,xPos:int,yPos:int):void
 		{
 			var box:Box = boardBricks[xPos][yPos];
-			box.gotoAndStop(10 + borderingMines);
+			trace("***************************fffffffff playerNum:"+playerNum)
+			box.gotoAndStop(10*(playerNum+1) + borderingMines);
 		}
 
 		public function updateLives(playerNum:int,livesCount:int):void

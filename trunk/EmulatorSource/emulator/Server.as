@@ -2316,8 +2316,8 @@ class User extends LocalConnectionUser {
 	public function sendOperation(msg:API_Message):void {
 		if (!wasRegistered) return;
 		try {
-    			sendMessage(msg);
-				sServer.addMessageLog(sName, msg.getMethodName(), msg.getParametersAsString());	
+    		sendMessage(msg);
+			sServer.addMessageLog(sName, msg.getMethodName(), msg.getParametersAsString());	
 		}catch(err:Error) { 
 			sServer.showMsg(err.getStackTrace(), "Error");
 		}  

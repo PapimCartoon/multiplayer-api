@@ -61,13 +61,6 @@ import flash.utils.*;
 			mineSweeperLogic.makeBoard(boardWidth,boardHeight,stageX,stageY,allPlayerIds,usersData,myUserId);
 			if(loadServerEntries != null)
 				mineSweeperLogic.loadBoard(loadServerEntries);
-			//todo : add load ability
-			/*
-			if(loadServerEntries == null)
-				
-			else
-				mineSweeperLogic.makeBoard(users,players,loadServerEntries)
-				*/
 		}
 		public function gameOver(playerMatchOverArr:Array/*PlayerMatchOver*/):void
 		{

@@ -128,7 +128,7 @@ function clientNumChanged(){
         row=tbl.insertRow(-1);
         for(var j=0;j<param_num;j++){
             cell=row.insertCell(j);
-            cell.innerHTML="<input id=\"val"+i+j+"\" name=\"val"+i+j+"\" size=\"50\" style=\"width: 150px;\" type=\"text\" value=\"\"/>";
+            cell.innerHTML="<input id=\"val_"+i+"_"+j+"\" name=\"val_"+i+"_"+j+"\" size=\"50\" style=\"width: 150px;\" type=\"text\" value=\"\"/>";
         }
     }
     for(var i=tbl.rows.length-1;i>num1+num2;i--){

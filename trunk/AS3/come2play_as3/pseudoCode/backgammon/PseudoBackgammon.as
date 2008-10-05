@@ -97,7 +97,7 @@ package come2play_as3.pseudoCode.backgammon
 	    	{
 	    		require(serverEntry.storedByUserId == -1);
 	    		isDicePhase=false;
-	    		startMove(serverEntry.value);	
+	    		startMove(serverEntry.value as int);	
 	    	}
 	    	else if(serverEntry.value is GameMove)
 	    	{

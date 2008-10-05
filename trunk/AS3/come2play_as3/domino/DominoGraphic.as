@@ -19,7 +19,6 @@ package come2play_as3.domino
 		private var stageY:int;
 		public function DominoGraphic(allPlayerIds:Array,myUserId:int,stageX:int,stageY:int,dominoLogicPointer:DominoLogic)
 		{
-			//todo : tst graphics
 			this.dominoLogicPointer = dominoLogicPointer;
 			this.allPlayerIds = allPlayerIds;
 			this.myUserId = myUserId;
@@ -165,8 +164,8 @@ package come2play_as3.domino
 
 class GameBoard extends MovieClip
 {
-	private const MAXX:int = 300;
-	private const MINX:int = 60;
+	private const MAXX:int = 280;
+	private const MINX:int = 80;
 	private var leftX:int;
 	private var rightX:int;
 	private var leftDominos:Array;/*Domino*/
@@ -305,7 +304,6 @@ import come2play_as3.domino.DominoCube;
 
 class RivalPlayerBoard extends MovieClip
 {
-	//todo : fix
 	private var dominoes:Array/*DominoBack*/;
 	private var playerNum:int;
 	private var playerCount:int;

@@ -174,14 +174,15 @@ class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 	}
 	public static function showError(graphics:MovieClip, msg:String):Void {
 		var container:MovieClip =_root.createEmptyMovieClip("___error_message"+Math.random(), _root.getNextHighestDepth());
-		container.beginFill(0x000000, 0);
+		container.beginFill(0x000000);
 		container.moveTo(0, 0);
-		container.lineTo(300, 0);
-		container.lineTo(300, 300);
-		container.lineTo(0, 300);
+		container.lineTo(500, 0);
+		container.lineTo(500, 500);
+		container.lineTo(0, 500);
 		container.lineTo(0, 0);
 		container.endFill();
-		var label:TextField = container.createTextField("label", 1, 0, 0, 300, 300);
+		var label:TextField = container.createTextField("label", 1, 0, 0, 500, 500);
+		label.selectable = true;
 		label.text = msg;
 		label.textColor = 0xFF0000;
 	}

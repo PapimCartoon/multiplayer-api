@@ -103,8 +103,10 @@ package come2play_as3.domino
 			var playerMove:PlayerMove;
 			removeArrows();
 			avaibleDominoMoves = new Array();
+			dominoMainPointer.doTrace("choise",choosenMove.toString());
 			if(choosenMove.dominoCube.upperNum == choosenMove.dominoCube.lowerNum)
 			{
+				dominoMainPointer.doTrace("made","Middle");
 				playerMove = PlayerMove.create(sideToPutOn,PlayerMove.MIDDLE,choosenMove.dominoCube,myUserId);
 			}
 			else if (sideToPutOn == PlayerMove.LEFT)
@@ -113,6 +115,7 @@ package come2play_as3.domino
 					playerMove = PlayerMove.create(sideToPutOn,PlayerMove.UP,choosenMove.dominoCube,myUserId);
 				else
 					playerMove = PlayerMove.create(sideToPutOn,PlayerMove.DOWN,choosenMove.dominoCube,myUserId);
+				dominoMainPointer.doTrace("made","Left");
 			}
 			else if (sideToPutOn == PlayerMove.RIGHT)
 			{
@@ -120,10 +123,9 @@ package come2play_as3.domino
 					playerMove = PlayerMove.create(sideToPutOn,PlayerMove.UP,choosenMove.dominoCube,myUserId);
 				else
 					playerMove = PlayerMove.create(sideToPutOn,PlayerMove.DOWN,choosenMove.dominoCube,myUserId);
+				dominoMainPointer.doTrace("made","Right");
 			}			
 
-			//todo : send right packet of player move
-			//var playerMove:PlayerMove = PlayerMove.create(sideToPutOn,
 			dominoMainPointer.sendPlayerMove(playerMove);
 		}
 		
@@ -132,6 +134,7 @@ package come2play_as3.domino
 		{
 			if (avaibleDominoMoves.length == 0) return;
 			var avaibleMove:AvaibleMove = avaibleDominoMoves[dominoNum];
+			dominoMainPointer.doTrace("chack",avaibleMove.isLeft+"/"+avaibleMove.isRight);
 			if((avaibleMove.isLeft == false )&& (avaibleMove.isRight==false))
 				return;
 			removeArrows();
@@ -161,6 +164,7 @@ package come2play_as3.domino
 		{
 			if(playerMove.dominoCube == null)
 			{
+				dominoMainPointer.doTrace("DrawCube","player : "+playerMove.playerId);
 				if(dominoAmount > currentDomino)
 				{
 					movesWithNoAction = 0;
@@ -206,27 +210,28 @@ package come2play_as3.domino
 					
 			dominoGraphic.makeMove(playerMove,splicePos);
 			checkWin(dominoGraphic.getDeckSize(playerMove.playerId),playerMove.playerId);
-			//todo: gets move made
 		}
 	
 		public function playerWon(winingUserId:int):void
 		{
 			var playerPos:int=allPlayerIds.indexOf(winingUserId);
 			var playerMatchOverArr:Array = new Array();
-			if(allPlayerIds.length > 2)
-			{	
-				playerMatchOverArr.push(PlayerMatchOver.create(winingUserId,allPlayerIds.length*10,70));
-				dominoGraphic.removePlayer(playerPos);
-				allPlayerIds.splice(playerPos,1);
-				rivalPlayersDominoKeys.splice(playerPos,1);
-			}
-			else
+			
+			
+			playerMatchOverArr.push(PlayerMatchOver.create(winingUserId,allPlayerIds.length*10,70));
+			dominoGraphic.removePlayer(playerPos);
+			allPlayerIds.splice(playerPos,1);
+			rivalPlayersDominoKeys.splice(playerPos,1);
+			
+			
+			if(allPlayerIds.length < 2)
 			{
-				playerMatchOverArr.push(PlayerMatchOver.create(winingUserId,allPlayerIds.length*10,100));
-				allPlayerIds.splice(playerPos,1);
-				rivalPlayersDominoKeys.splice(playerPos,1);
+				playerMatchOverArr.push(PlayerMatchOver.create(allPlayerIds[0],allPlayerIds.length*10,30));
+				allPlayerIds.splice(0,1);
+				rivalPlayersDominoKeys.splice(0,1);
 				playerMatchOverArr.push(PlayerMatchOver.create(allPlayerIds[0],0,0));
 			}
+			
 			dominoMainPointer.endGame(playerMatchOverArr);
 		}
 

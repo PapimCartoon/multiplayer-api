@@ -13,6 +13,10 @@ package come2play_as3.domino
 			this.isLeft = isLeft;
 			this.dominoCube = dominoCube;
 		}
+		public function toString():String
+		{
+			return partNum+" : Right = "+isRight+", Left = "+isLeft+", Domino : "+dominoCube.toString();
+		}
 
 	}
 }

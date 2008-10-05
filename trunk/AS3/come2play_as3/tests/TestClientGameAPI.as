@@ -313,7 +313,7 @@ public class TestClientGameAPI extends ClientGameAPI {
 				require(entry.storedByUserId==-1);			
 				// the values were shuffled, so I just check the sum of all values did not change.	
 				sum += j+1;
-				sum -= entry.value;
+				sum -= entry.value as int;
 			}		
 			require(sum==0);
 		});

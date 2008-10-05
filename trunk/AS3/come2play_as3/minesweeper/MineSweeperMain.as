@@ -101,13 +101,13 @@ import flash.utils.*;
 			{
 				if(serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" stored a random key");
 				if (serverEntry.key == BOARD_HEIGHTstr) 
-					var calcHeight:int = serverEntry.value;
+					var calcHeight:int = serverEntry.value as int;
 				else if (serverEntry.key == BOARD_WIDTHstr) 
-					var calcWidth:int = serverEntry.value;
+					var calcWidth:int = serverEntry.value as int;
 				else if (serverEntry.key == MINE_AMOUNTstr)
-					var calcMineAmount:int = serverEntry.value;
+					var calcMineAmount:int = serverEntry.value as int;
 				else if(serverEntry.key == "randomSeed")
-					var calcRandomSeed:int = serverEntry.value;
+					var calcRandomSeed:int = serverEntry.value as int;
 			}
 			
 			

@@ -655,6 +655,7 @@ package emulator {
 			}
 			else if(msg is API_Transaction)
 			{
+				if(!isPlayer(user.ID)) 	return;
 				var transMsg:API_Transaction = 	msg as API_Transaction;	
 				var isCallback:Boolean = false;
 				var finishedCallbackMsg:API_DoFinishedCallback = transMsg.callback;
@@ -685,7 +686,6 @@ package emulator {
 					addMessageLog("Server", msg.getMethodName(), "Error: game already end");
 					return;
 				}
-				if(!isPlayer(user.ID)) return;
 				
 				//addMessageLog("id : "+user.ID,"Transaction","length "+transMsg.messages.length);
 				
@@ -787,6 +787,7 @@ package emulator {
 							tempWaitingQueue.push(new QueueEntry(queueEntry.user,new Transaction([msg]),queueEntry.timeRecived));
 						}	
 					}
+					addMessageLog("Server","Transaction","tryed process");
 					serverEntries = processQueue(tempWaitingQueue,true);
 				}
 				else if(len == 1)
@@ -1033,14 +1034,7 @@ package emulator {
 				key=revealEntry.key
 				for(var i:int=0;i<=revealEntry.depth;i++)	
 				{			
-					if(!serverState.hasKey(key))	
-					{
-						addMessageLog("Server","Error","Can't reveal " + JSON.stringify(key) + " key does not exist");
-						showMsg("Can't reveal " + JSON.stringify(key) + " key does not exist","Error");
-						gameOver();
-						return [];		
-					}
-					else
+					if(serverState.hasKey(key))	
 					{
 						stateData = serverState.getValue(key) as ServerEntry;
 						if(revealEntry.depth > i)
@@ -1060,8 +1054,25 @@ package emulator {
 								serverEntries.push(tempServerEntry);
 						}
 					}
+					else
+					{
+						addMessageLog("Server","getKeys",JSON.stringify(serverState.getKeys()));
+						addMessageLog("Server","hashMap",JSON.stringify(serverState.hashMap));
+						addMessageLog("Server","hashObject1",""+ObjectDictionary.hashObject(key)+" stringify="+JSON.stringify(key));
+						addMessageLog("Server","hashObject2",""+ObjectDictionary.hashObject({"type":"domino","num":26}));
+						for (var z:String in key)
+							addMessageLog("Server","key="+z,JSON.stringify(key[z]));
+						
+						addMessageLog("Server","areEqual","areEqual :"+ObjectDictionary.areEqual({"type":"domino","num":26}, key));
+						
+						
+						addMessageLog("Server","Error","Can't reveal " + JSON.stringify(key) + " key does not exist");
+						showMsg("Can't reveal " + JSON.stringify(key) + " key does not exist","Error");
+						gameOver();
+						return [];		
+					}
 				}
-			}	
+			}				
 			return serverEntries;
 		}
 		private function doAllRequestRandomState(msg:API_DoAllRequestRandomState):Array/*ServerEntry*/
@@ -1576,7 +1587,7 @@ package emulator {
 			btnCancelGame.visible = true;
 			btnSaveGame.visible = true;
 			btnLoadGame.visible = false;
-			unverifiedQueue=new Array;
+			unverifiedQueue=new Array();
 			FinishHistory.totalFinishingPlayers=0;
 			FinishHistory.wholePot=100;
 			iCurTurn=-1;
@@ -1584,6 +1595,8 @@ package emulator {
 			for each (var usr:User in aUsers) {
 				send_got_match_started(usr);						
 			}	
+			
+			
 		}
 		private function stopPlayByPlayTimer():void
 		{
@@ -2061,9 +2074,9 @@ package emulator {
 		}
 		
 		private function btnNewGameClick(evt:MouseEvent):void {
-			if (aPlayers.length != User.PlayersNum) {
+			/*if (aPlayers.length > User.PlayersNum) {
 				return;
-			}
+			}*/
 			afinishedPlayers=new Array();
 			serverState= new ObjectDictionary();
 			deltaHistory = new DeltaHistory();
@@ -2200,6 +2213,7 @@ package emulator {
 			for each (var usr:User in aUsers) {
 				if (aPlayers.indexOf(usr.ID) != -1 && !usr.Ended) {;
 					usr.Ended = true;
+					usr.clearQueue();
 				}
 			}
 			bGameEnded = true;
@@ -2309,7 +2323,10 @@ class User extends LocalConnectionUser {
 			sServer.addMessageLog("Server", "User", "Error: " + err.getStackTrace());
 		}
 	}
-	
+	public function clearQueue():void
+	{
+		actionQueue = new Array();
+	}
 	public function sendOperation(msg:API_Message):void {
 			if (!wasRegistered) return;
 			actionQueue.push(new WaitingFunction(this,msg,sServer.getOngoingPlayerIds()));

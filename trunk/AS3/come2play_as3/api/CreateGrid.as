@@ -36,7 +36,7 @@ public final class CreateGrid
 	public var squareDeltaX:int;
 	public var squareDeltaY:int;
 		
-	public function gotCustomInfo(key:String, value:*):void {
+	public function gotCustomInfo(key:String, value:Object):void {
 		if (StaticFunctions.startsWith(key,GridPrefix)) {
 			this[ key.substr(GridPrefix.length) ] = value;
 		}		

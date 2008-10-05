@@ -26,7 +26,14 @@ public final class ObjectDictionary extends SerializableClass
 		if (hashMap[hash]==null) return null;
 		var entries:Array = hashMap[hash];
 		for each (var entry:Array in entries) {
-			if (areEqual(entry[0],key)) return entry;
+			var entryKey:Object = entry[0];
+			if (areEqual(entryKey,key)) 
+				return entry;
+			// not equal, let's check if someone changed the keys
+			
+			/*if (hashObject(entryKey)!=hash)
+				throw new Error("You have mutated a key that was previously inserted to this ObjectDictionary! All keys must be immutable! mutated-key="+JSON.stringify(entryKey)+" looking-for-key="+JSON.stringify(key));
+		*/
 		}
 		return null;		
 	}

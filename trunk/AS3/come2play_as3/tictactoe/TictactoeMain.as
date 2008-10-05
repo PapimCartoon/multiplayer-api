@@ -120,13 +120,13 @@ public final class TictactoeMain extends ClientGameAPI {
 	override public function gotCustomInfo(entries:Array/*InfoEntry*/):void {
 		for each (var entry:InfoEntry in entries) {
 			var key:String = entry.key;
-			var value:* = entry.value;
+			var value:Object = entry.value;
 			if (key==API_Message.CUSTOM_INFO_KEY_logoFullUrl) {
-				logoFullUrl = value;
+				logoFullUrl = value as String;
 			} else if (key==API_Message.CUSTOM_INFO_KEY_gameHeight) {
-				height = value;
+				height = value as int;
 			} else if (key==API_Message.CUSTOM_INFO_KEY_gameWidth) {
-				width = value;
+				width = value as int;
 			} else if (StaticFunctions.startsWith(key, TicTacToePrefix)) {
 				this[ key.substr(TicTacToePrefix.length) ] = value;									
 			} else {
@@ -198,7 +198,7 @@ public final class TictactoeMain extends ClientGameAPI {
 		logic = new TictactoeLogic(ROWS(),COLS(),winLength, playersNum);
 		for each (var serverEntry:ServerEntry in userStateEntries) {
 			if (!isSinglePlayer()) turnOfColor = getColor(serverEntry.storedByUserId);	// some users may have disconnected in the middle of the game	
-			performMove(serverEntry.value, true);	//we should not call doAllEndMatch when loading the match	
+			performMove(serverEntry.value as TictactoeSquare, true);	//we should not call doAllEndMatch when loading the match	
 		}
 		if (finishedPlayerIds.length>0)
 			matchOverForPlayers(finishedPlayerIds);
@@ -233,7 +233,7 @@ public final class TictactoeMain extends ClientGameAPI {
 			if (AS3_vs_AS2.IndexOf(ongoingColors, colorOfUser)==-1) return; // player already disconnected 
 			assert(turnOfColor==colorOfUser, ["Got an entry from player=",userId," of color=",colorOfUser," but expecting one from color=", turnOfColor]);
 		}
-		performMove(entry.value, false);
+		performMove(entry.value as TictactoeSquare, false);
 	}
 	
 	private function matchOverForPlayers(finishedPlayerIds:Array/*int*/):Boolean {

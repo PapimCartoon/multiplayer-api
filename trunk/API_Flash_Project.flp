@@ -7,5 +7,5 @@
     <project_file path="./EmulatorSource/Emulator.fla" filetype="fla" profile="" />
     <project_file path="./EmulatorSource/GetParams.fla" filetype="fla" profile="" />
     <project_file path="./AS3/MineSweeper_AS3.fla" filetype="fla" profile="" />
-    <project_file path="./AS3/Domino_AS3.fla" filetype="fla" profile="" />
+    <project_file path="./AS3/DominoAS3.fla" filetype="fla" profile="" />
 </flash_project>

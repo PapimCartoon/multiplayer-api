@@ -7,10 +7,10 @@ package come2play_as3.api.auto_generated {
 	import come2play_as3.api.auto_generated.*;
 
 	public  class UserEntry extends API_Message {
-		public var key:*;
-		public var value:*;
+		public var key:Object;
+		public var value:Object;
 		public var isSecret:Boolean;
-		public static function create(key:*, value:*, isSecret:Boolean/*<InAS3>*/ = false /*</InAS3>*/):UserEntry {
+		public static function create(key:Object, value:Object, isSecret:Boolean/*<InAS3>*/ = false /*</InAS3>*/):UserEntry {
 			var res:UserEntry = new UserEntry();
 
 // This is a AUTOMATICALLY GENERATED! Do not change!

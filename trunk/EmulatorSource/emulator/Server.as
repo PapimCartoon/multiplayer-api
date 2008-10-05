@@ -665,7 +665,7 @@ package emulator {
 					{
 						addMessageLog(user.Name, finishedCallbackMsg.getMethodName(), finishedCallbackMsg.toString());
 						verefyAction(user);
-						user.do_finished_callback(finishedCallbackMsg.callbackName)
+						//user.do_finished_callback(finishedCallbackMsg.callbackName)
 					}
 				}
 				if( (playByPlayTimer.running) || (!isPlayer(user.ID)) )
@@ -1054,16 +1054,6 @@ package emulator {
 					}
 					else
 					{
-						addMessageLog("Server","getKeys",JSON.stringify(serverState.getKeys()));
-						addMessageLog("Server","hashMap",JSON.stringify(serverState.hashMap));
-						addMessageLog("Server","hashObject1",""+ObjectDictionary.hashObject(key)+" stringify="+JSON.stringify(key));
-						addMessageLog("Server","hashObject2",""+ObjectDictionary.hashObject({"type":"domino","num":26}));
-						for (var z:String in key)
-							addMessageLog("Server","key="+z,JSON.stringify(key[z]));
-						
-						addMessageLog("Server","areEqual","areEqual :"+ObjectDictionary.areEqual({"type":"domino","num":26}, key));
-						
-						
 						addMessageLog("Server","Error","Can't reveal " + JSON.stringify(key) + " key does not exist");
 						showMsg("Can't reveal " + JSON.stringify(key) + " key does not exist","Error");
 						gameOver();
@@ -2242,7 +2232,7 @@ package emulator {
 			if(methodName !="gotKeyboardEvent")
 			{
 				verefyAction(user)
-				user.do_finished_callback(methodName);
+				//user.do_finished_callback(methodName);
 			}
 		}
 	}
@@ -2264,7 +2254,7 @@ class User extends LocalConnectionUser {
 	private var sServer:Server;
 	private var iID:int;
 	private var sName:String;
-	private var actionQueue:Array/*WaitingFunction*/;
+	//private var actionQueue:Array/*WaitingFunction*/;
 	public var entries:Array;/*enterys*/
 	public var Ended:Boolean = false;
 	public var wasRegistered:Boolean = false;
@@ -2303,7 +2293,6 @@ class User extends LocalConnectionUser {
 				}
 			}
 			
-			actionQueue = new Array();
 			var tempEntery:InfoEntry;
 			tempEntery=new InfoEntry();
 			tempEntery.key = "name";
@@ -2312,7 +2301,6 @@ class User extends LocalConnectionUser {
 			entries[0]=tempEntery;
 			for (var i:int = 1; sServer.root.loaderInfo.parameters["col_" + i] != null;i++ ) {
 				if(sServer.root.loaderInfo.parameters["val_" + (iID - 1)+"_"+ i] == "") continue;
-				sServer.addMessageLog("server",sServer.root.loaderInfo.parameters["col_" + i],sServer.root.loaderInfo.parameters["val_" + (iID - 1)+"_"+ i]);
 				tempEntery=new InfoEntry();
 				tempEntery.key = sServer.root.loaderInfo.parameters["col_" + i];
 				tempEntery.value = JSON.parse(sServer.root.loaderInfo.parameters["val_" + (iID - 1)+"_"+ i]);	
@@ -2326,44 +2314,14 @@ class User extends LocalConnectionUser {
 		}
 	}
 	public function sendOperation(msg:API_Message):void {
-			if (!wasRegistered) return;
-			actionQueue.push(new WaitingFunction(this,msg,sServer.getOngoingPlayerIds()));
-			if(actionQueue.length==1)
-			{
-				doSendOperation();	
-			}
-    }
-	public function do_finished_callback(methodName:String):void {
-		if(methodName=="gotKeyboardEvent") return;
-		if(actionQueue.length == 0)
-				return;
-		var waitingFunction:WaitingFunction = actionQueue.shift();
-		var tempMsg:API_Message = waitingFunction.msg as API_Message;
-		if(methodName == tempMsg.getMethodName())
-		{
-			doSendOperation();
-		}
-		else
-		{
-				sServer.showMsg("Expected "+tempMsg.getMethodName()+" to end,instead "+methodName+" ended", "Error");
-				sServer.gameOver();
-		}
-	}
-    private function doSendOperation(/*tempObj:Object*/):void
-    {
-    	try {
-    		if(actionQueue.length>0)
-    		{
-    			var waitingFunction:WaitingFunction = actionQueue[0];
-    			var tempMsg:API_Message = waitingFunction.msg as API_Message;
-    			sendMessage(tempMsg);
-				sServer.addMessageLog(sName, tempMsg.getMethodName(), tempMsg.getParametersAsString());	
-    		}
+		if (!wasRegistered) return;
+		try {
+    			sendMessage(msg);
+				sServer.addMessageLog(sName, msg.getMethodName(), msg.getParametersAsString());	
 		}catch(err:Error) { 
 			sServer.showMsg(err.getStackTrace(), "Error");
-		}  	
+		}  
     }
-	
     override public function gotMessage(msg:API_Message):void {
 		sServer.got_user_localconnection_callback(this, msg);
 	}

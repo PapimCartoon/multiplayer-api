@@ -45,6 +45,7 @@ package emulator {
 		private var ddsGotOperations:DelayDoSomething;
 		private var frameSprite:Sprite;	
 		
+		private var messageQueue:Array;
 		private var delayConstructor:Timer;
 	
 		public function InfoContainer()
@@ -53,7 +54,7 @@ package emulator {
 		}
 
 		public function constructInfoContainer():void{
-			
+			messageQueue = new Array();
 			stage.addEventListener(KeyboardEvent.KEY_UP, reportKeyUp);
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, reportKeyDown);
 			//stage.addEventListener(Mouse
@@ -285,12 +286,48 @@ package emulator {
 			var doTrace:API_DoTrace = msg as API_DoTrace;
 			sendDoOperation(doTrace);
 		}
+		public function nextMessage():void
+		{
+			if(messageQueue.length > 0)
+			{
+				var messageToSend:API_Message = messageQueue[0];
+				connectionToGame.sendMessage(messageToSend);
+				trace("message : "+messageToSend.getMethodName());
+			}
+		}
+		
 		
 		public function doSomething(msg:API_Message, isServer:Boolean):void {
+			if(isServer)
+			{
+				connectionToServer.sendMessage(msg);
+				if(msg is API_Transaction)
+				{
+					var apiTransaction:API_Transaction = msg as API_Transaction;
+					if(apiTransaction.callback != null)
+					{
+						trace("finished callback : "+apiTransaction.callback.callbackName);
+						messageQueue.shift();
+						nextMessage();
+					}
+
+				}
+				//send message to server 
+			}
+			else
+			{
+				messageQueue.push(msg);
+				if (messageQueue.length == 1)
+					nextMessage();
+			}
+				
+
+			/*				
 			if(isServer)
 				connectionToServer.sendMessage(msg);
 			else
 				connectionToGame.sendMessage(msg);
+			*/
 		}
 		public function onConnectionStatus(evt:StatusEvent):void {
 			switch(evt.level) {

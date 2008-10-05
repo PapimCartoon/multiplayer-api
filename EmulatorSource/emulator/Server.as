@@ -2307,9 +2307,12 @@ class User extends LocalConnectionUser {
 			var tempEntery:InfoEntry;
 			tempEntery=new InfoEntry();
 			tempEntery.key = "name";
-			tempEntery.value = JSON.parse(sName);
+			if(tempEntery.value !="")
+				tempEntery.value = JSON.parse(sName);
 			entries[0]=tempEntery;
 			for (var i:int = 1; sServer.root.loaderInfo.parameters["col_" + i] != null;i++ ) {
+				if(sServer.root.loaderInfo.parameters["val_" + (iID - 1)+"_"+ i] == "") continue;
+				sServer.addMessageLog("server",sServer.root.loaderInfo.parameters["col_" + i],sServer.root.loaderInfo.parameters["val_" + (iID - 1)+"_"+ i]);
 				tempEntery=new InfoEntry();
 				tempEntery.key = sServer.root.loaderInfo.parameters["col_" + i];
 				tempEntery.value = JSON.parse(sServer.root.loaderInfo.parameters["val_" + (iID - 1)+"_"+ i]);	
@@ -2321,10 +2324,6 @@ class User extends LocalConnectionUser {
 		}catch (err:Error) {
 			sServer.addMessageLog("Server", "User", "Error: " + err.getStackTrace());
 		}
-	}
-	public function clearQueue():void
-	{
-		actionQueue = new Array();
 	}
 	public function sendOperation(msg:API_Message):void {
 			if (!wasRegistered) return;

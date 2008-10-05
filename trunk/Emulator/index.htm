@@ -124,11 +124,23 @@ function clientNumChanged(){
     }
     var tbl=document.getElementById("tblClients");
     var row,cell;
+	for(var i=1;i<tbl.rows.length;i++)
+	{
+		if((i-1) < num1)
+			tbl.rows[i].cells[0].innerHTML="Player "+(i-1);
+		else
+			tbl.rows[i].cells[0].innerHTML="Viewer "+(i - (num1+1));
+	}
     for(var i=tbl.rows.length-1;i<num1+num2;i++){
         row=tbl.insertRow(-1);
-        for(var j=0;j<param_num;j++){
+		cell=row.insertCell(0);
+		if(i < num1)
+			cell.innerHTML="Player "+i;
+		else
+			cell.innerHTML="Viewer "+(i - num1);
+        for(var j=1;j<param_num+1;j++){
             cell=row.insertCell(j);
-            cell.innerHTML="<input id=\"val_"+i+"_"+j+"\" name=\"val_"+i+"_"+j+"\" size=\"50\" style=\"width: 150px;\" type=\"text\" value=\"\"/>";
+            cell.innerHTML="<input id=\"val_"+i+"_"+(j-1)+"\" name=\"val_"+i+"_"+(j-1)+"\" size=\"50\" style=\"width: 150px;\" type=\"text\" value=\"\"/>";
         }
     }
     for(var i=tbl.rows.length-1;i>num1+num2;i--){
@@ -339,8 +351,11 @@ function removeCustomParam(num){
                                     Client parameters:<!-- <a href="#"><img src="question.gif" style="border-width:0px;" /> </a>-->
                                 </td>
                                 <td>
-                                    <table cellpadding="0" cellspacing="0" style="border: solid 1px black; border-collapse: collapse;" id="tblClients">
+                                    <table cellpadding="0" border = "3" cellspacing="0" style="border: solid 1px black; border-collapse: collapse;" id="tblClients">
                                         <tr>
+                                            <th>
+                                                Client
+                                            </th>
                                             <th>
                                                 <input id="col_0" name="col_0" size="50" style="width: 150px;" type="text" value="name" readonly="readonly" />
                                             </th>
@@ -349,27 +364,36 @@ function removeCustomParam(num){
                                             </th>
                                         </tr>
                                         <tr>
-                                            <td>
-                                                <input id="val_0_0" name="val_0_0" size="50" style="width: 150px;" type="text" value="" />
+											<td>
+                                                Player 0
                                             </td>
                                             <td>
-                                                <input id="val_0_1" name="val_0_1" size="50" style="width: 150px;" type="text" value="" />
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <input id="val_1_0" name="val_1_0" size="50" style="width: 150px;" type="text" value="" />
+                                                <input id="val_0_0" name="val_0_0" size="50" style="width: 150px;" type="text" value="Jhon" />
                                             </td>
                                             <td>
-                                                <input id="val_1_1" name="val_1_1" size="50" style="width: 150px;" type="text" value="" />
+                                                <input id="val_0_1" name="val_0_1" size="50" style="width: 150px;" type="text" value="'X:/come2play/API_GoogleCodeSVN/Emulator/Avatar_1.gif'" />
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td>
-                                                <input id="val_2_0" name="val_2_0" size="50" style="width: 150px;" type="text" value="" />
+											<td>
+                                                Player 1
                                             </td>
                                             <td>
-                                                <input id="val_2_1" name="val_2_1" size="50" style="width: 150px;" type="text" value="" />
+                                                <input id="val_1_0" name="val_1_0" size="50" style="width: 150px;" type="text" value="Doh" />
+                                            </td>
+                                            <td>
+                                                <input id="val_1_1" name="val_1_1" size="50" style="width: 150px;" type="text" value="'X:/come2play/API_GoogleCodeSVN/Emulator/Avatar_2.gif'" />
+                                            </td>
+                                        </tr>
+                                        <tr>
+											<td>
+                                                Viewer 0
+                                            </td>
+                                            <td>
+                                                <input id="val_2_0" name="val_2_0" size="50" style="width: 150px;" type="text" value="Tom" />
+                                            </td>
+                                            <td>
+                                                <input id="val_2_1" name="val_2_1" size="50" style="width: 150px;" type="text" value="'X:/come2play/API_GoogleCodeSVN/Emulator/Avatar_3.gif'" />
                                             </td>
                                         </tr>
                                     </table>

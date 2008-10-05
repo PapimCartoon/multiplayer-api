@@ -151,15 +151,16 @@ public final class ObjectDictionary extends SerializableClass
 
 	    	res = 509;
 	    	for (var i:int = 0; i < len; i++) {
-                res = 31*res + str.charCodeAt(i);
+	       		res <<= 1;
+                res ^= str.charCodeAt(i);
             }
             return res;
 	    } 
         if (AS3_vs_AS2.isArray(o)) {
         	res = 503;        	
 	       	for (i = 0; i < o.length; i++) {
-	       		res = 31*res + hashObject(o[i]);
-
+	       		res <<= 1;
+	       		res ^= hashObject(o[i]);
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
 	       	}
@@ -168,7 +169,7 @@ public final class ObjectDictionary extends SerializableClass
         
         res = 499;        	
         for (var z:String in o) {
-        	res += hashObject(z)*hashObject(o[z]);
+        	res ^= hashObject(z)^hashObject(o[z]);
 	    }
         trace("o="+JSON.stringify(o)+" res="+res);
        	return res; 

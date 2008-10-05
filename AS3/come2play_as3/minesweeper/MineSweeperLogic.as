@@ -190,28 +190,29 @@ package come2play_as3.minesweeper
 			var currentData:PlayerData = playerGameData[playerNum]
 			if((playerMove.isMine) && (serverBox.isMine))//player found mine
 			{
-				mineSweeperGraphic.foundMine(allPlayerIds.indexOf(playerMove.playerId),serverBox.xPos,serverBox.yPos);
+				mineSweeperGraphic.foundMine(playerNum,serverBox.xPos,serverBox.yPos);
 				currentData.addLifePart();
 				currentData.playerScore += 10;
 			}
 			else if((playerMove.isMine) && (!serverBox.isMine))//player thought he found a mine,he was wrong!
 			{
-				mineSweeperGraphic.revealBox(serverBox.borderingMines,serverBox.xPos,serverBox.yPos);
+				mineSweeperGraphic.revealBox(playerNum,serverBox.borderingMines,serverBox.xPos,serverBox.yPos);
 				currentData.playerLives --;
 				currentData.playerScore -= 5;
 			}
 			else if((!playerMove.isMine) && (serverBox.isMine))//player thought he was safe,he was wrong!
 			{
-				mineSweeperGraphic.setOfMine(allPlayerIds.indexOf(playerMove.playerId),serverBox.xPos,serverBox.yPos);
+				mineSweeperGraphic.setOfMine(playerNum,serverBox.xPos,serverBox.yPos);
 				currentData.playerLives --;
 				currentData.playerScore -= 5;
 			}
 			else if((!playerMove.isMine) && (!serverBox.isMine))//player found a safe spot
 			{
-				mineSweeperGraphic.revealBox(serverBox.borderingMines,serverBox.xPos,serverBox.yPos);
+				mineSweeperGraphic.revealBox(playerNum,serverBox.borderingMines,serverBox.xPos,serverBox.yPos);
 				currentData.playerScore += 1;
 			}
 			mineSweeperGraphic.updateLives(playerNum,currentData.playerLives);
+			mineSweeperGraphic.updateScore(playerNum,currentData.playerScore);
 			boardLogic[serverBox.xPos][serverBox.yPos] = 3
 			madeMoves++;
 			if(madeMoves >= boardHeight * boardWidth)
@@ -270,20 +271,29 @@ package come2play_as3.minesweeper
 			for each (var serverBox:ServerBox in safeSquares)
 			{
 				if ((boardLogic[serverBox.xPos][serverBox.yPos] == 2) && (playerId == -1))
+				{
 					playerId = findPlayer(serverBox);
+					break;
+				}
+			}
+			
+			for each (serverBox in safeSquares)
+			{
 				if(boardLogic[serverBox.xPos][serverBox.yPos] != 3)
 				{
-					mineSweeperGraphic.revealBox(serverBox.borderingMines,serverBox.xPos,serverBox.yPos);
+					mineSweeperGraphic.revealBox(allPlayerIds.indexOf(playerId),serverBox.borderingMines,serverBox.xPos,serverBox.yPos);
 					score ++;
 					madeMoves ++ ;	
 				}
 				boardLogic[serverBox.xPos][serverBox.yPos] = 3
-
-			}
+			}			
+		
 			var playerNum:int = allPlayerIds.indexOf(playerId);
 			var currentData:PlayerData = playerGameData[playerNum]
 			currentData.playerScore += score;
 			mineSweeperGraphic.updateScore(playerNum,currentData.playerScore);
+			if(madeMoves >= boardHeight * boardWidth)
+				gameOver();
 		}
 	}
 }

@@ -784,17 +784,13 @@ package emulator {
 						for each (msg in queueEntry.transaction.messageArray)
 						{
 							tempWaitingQueue.push(new QueueEntry(queueEntry.user,new Transaction([msg]),queueEntry.timeRecived));
-							addMessageLog("Server","added Transaction message",msg.getMethodName());
 						}	
 					}
-					addMessageLog("Server","Transaction","tryed process");
 					serverEntries = processQueue(tempWaitingQueue,true);
 				}
 				else if(len == 1)
 				{
-					if(isTransaction) addMessageLog("Server","Transaction","doAll Start");
-					if(!checkDoAlls(doAll)) return [];
-					if(isTransaction) addMessageLog("Server","Transaction","doAll Process");
+					if((!checkDoAlls(doAll)) || bGameEnded) return [];
 					serverEntries =	processMessage(queuEntry.transaction.messageArray[0]);
 					if(!isTransaction)
 						addToQue(queuEntry);
@@ -2088,6 +2084,7 @@ package emulator {
 		}
 		//Do functions
 		private function broadcast(msg:API_Message):void {
+			if(bGameEnded) return;
 			for each (var user:User in aUsers) {
 				user.sendOperation(msg);
 			}
@@ -2202,8 +2199,8 @@ package emulator {
 			showMatchState();
 		}
 		public function doFoundHacker(user:User, msg:API_DoAllFoundHacker):void {
-			addMessageLog("Server","doAllFoundHacker",user.Name+" claimed he found a hacker:"+ msg.toString());
 			showMsg(user.Name+" claimed he found a hacker:"+ msg.toString());
+			addMessageLog("Server","doAllFoundHacker",user.Name+" claimed he found a hacker:"+ msg.toString());
 			gameOver()
 		}
 
@@ -2217,14 +2214,15 @@ package emulator {
 					usr.Ended = true;
 				}
 			}
+
+
+			if(tempPlayerIds.length > 0)
+				broadcast(API_GotMatchEnded.create(tempPlayerIds));
 			bGameEnded = true;
 			btnNewGame.visible = true;
 			btnCancelGame.visible = false;
 			btnLoadGame.visible = true;
 			btnSaveGame.visible = false;
-
-			if(tempPlayerIds.length > 0)
-				broadcast(API_GotMatchEnded.create(tempPlayerIds));
 		}
 		
 		private function getAllUserIds():Array {
@@ -2309,11 +2307,10 @@ class User extends LocalConnectionUser {
 			var tempEntery:InfoEntry;
 			tempEntery=new InfoEntry();
 			tempEntery.key = "name";
-			tempEntery.value = sName;
+			tempEntery.value = JSON.parse(sName);
 			entries[0]=tempEntery;
 			for (var i:int = 1; sServer.root.loaderInfo.parameters["col_" + i] != null;i++ ) {
 				tempEntery=new InfoEntry();
-				sServer.addMessageLog(Name,sServer.root.loaderInfo.parameters["col_" + i],sServer.root.loaderInfo.parameters["val_" + (iID - 1)+"_"+ i]);
 				tempEntery.key = sServer.root.loaderInfo.parameters["col_" + i];
 				tempEntery.value = JSON.parse(sServer.root.loaderInfo.parameters["val_" + (iID - 1)+"_"+ i]);	
 				entries.push(tempEntery);

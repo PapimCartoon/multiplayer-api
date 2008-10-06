@@ -28,8 +28,9 @@ package come2play_as3.api.auto_generated {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		override public function toString():String { return '{InfoEntry:' +getParametersAsString() +'}'; }
+		override public function getClassName():String { return 'InfoEntry'; }
 		override public function getMethodName():String { return 'infoEntry'; }
+		override public function getFieldNames():Array { return ['key', 'value']; }
 		override public function getMethodParameters():Array { return [key, value]; }
 		override public function getMethodParametersNum():int { return 2; }
 	}

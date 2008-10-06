@@ -21,11 +21,12 @@ import come2play_as2.api.auto_generated.*;
 		}
 		/*override*/ public function getParametersAsString():String { return 'callbackName=' + JSON.stringify(callbackName); }
 		/*override*/ public function getFunctionId():Number { return -128; }
-		/*override*/ public function toString():String { return '{API_DoFinishedCallback:' +getParametersAsString() +'}'; }
+		/*override*/ public function getClassName():String { return 'API_DoFinishedCallback'; }
 		/*override*/ public function getMethodName():String { return 'doFinishedCallback'; }
-		/*override*/ public function getMethodParameters():Array { return [callbackName]; }
+		/*override*/ public function getFieldNames():Array { return ['callbackName']; }
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		/*override*/ public function getMethodParameters():Array { return [callbackName]; }
 		/*override*/ public function getMethodParametersNum():Number { return 1; }
 	}

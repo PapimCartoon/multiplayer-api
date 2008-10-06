@@ -66,7 +66,6 @@ public final class TictactoeMain extends ClientGameAPI {
 	
 	public function TictactoeMain(graphics:MovieClip) {
 		super(graphics);
-		 
 		// It's best to hide the board until the game starts.
 		AS3_vs_AS2.setVisible(graphics,false);		 
 		this.graphics = graphics;	

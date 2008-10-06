@@ -20,12 +20,13 @@ package emulator.auto_generated {
 		}
 		override public function getParametersAsString():String { return 'myUserId=' + JSON.stringify(myUserId); }
 		override public function getFunctionId():int { return -121; }
-		override public function toString():String { return '{API_GotMyUserId:' +getParametersAsString() +'}'; }
+		override public function getClassName():String { return 'API_GotMyUserId'; }
 		override public function getMethodName():String { return 'gotMyUserId'; }
-		override public function getMethodParameters():Array { return [myUserId]; }
+		override public function getFieldNames():Array { return ['myUserId']; }
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		override public function getMethodParameters():Array { return [myUserId]; }
 		override public function getMethodParametersNum():int { return 1; }
 	}
 }

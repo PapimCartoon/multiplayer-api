@@ -36,11 +36,12 @@ import come2play_as2.api.auto_generated.*;
 		}
 		/*override*/ public function getParametersAsString():String { return 'key=' + JSON.stringify(key)+', value=' + JSON.stringify(value)+', storedByUserId=' + JSON.stringify(storedByUserId)+', visibleToUserIds=' + JSON.stringify(visibleToUserIds)+', changedTimeInMilliSeconds=' + JSON.stringify(changedTimeInMilliSeconds); }
 		/*override*/ public function getFunctionId():Number { return -85; }
-		/*override*/ public function toString():String { return '{ServerEntry:' +getParametersAsString() +'}'; }
+		/*override*/ public function getClassName():String { return 'ServerEntry'; }
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
 		/*override*/ public function getMethodName():String { return 'serverEntry'; }
+		/*override*/ public function getFieldNames():Array { return ['key', 'value', 'storedByUserId', 'visibleToUserIds', 'changedTimeInMilliSeconds']; }
 		/*override*/ public function getMethodParameters():Array { return [key, value, storedByUserId, visibleToUserIds, changedTimeInMilliSeconds]; }
 		/*override*/ public function getMethodParametersNum():Number { return 5; }
 	}

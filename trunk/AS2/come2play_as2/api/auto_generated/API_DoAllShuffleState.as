@@ -21,11 +21,12 @@ import come2play_as2.api.auto_generated.*;
 		}
 		/*override*/ public function getParametersAsString():String { return 'keys=' + JSON.stringify(keys); }
 		/*override*/ public function getFunctionId():Number { return -112; }
-		/*override*/ public function toString():String { return '{API_DoAllShuffleState:' +getParametersAsString() +'}'; }
+		/*override*/ public function getClassName():String { return 'API_DoAllShuffleState'; }
 		/*override*/ public function getMethodName():String { return 'doAllShuffleState'; }
-		/*override*/ public function getMethodParameters():Array { return [keys]; }
+		/*override*/ public function getFieldNames():Array { return ['keys']; }
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		/*override*/ public function getMethodParameters():Array { return [keys]; }
 		/*override*/ public function getMethodParametersNum():Number { return 1; }
 	}

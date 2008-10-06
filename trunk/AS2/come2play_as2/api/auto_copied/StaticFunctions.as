@@ -95,4 +95,9 @@ class come2play_as2.api.auto_copied.StaticFunctions
 		ClassReference[fieldName] = val_obj;		
 	}
 
+	public static function replaceLastOccurance(str:String, searchFor:String, replaceWith:String):String {
+		var lastIndex:Number = AS3_vs_AS2.stringLastIndexOf(str, searchFor);
+		if (lastIndex==-1) showError("Did not find searchFor="+searchFor+" in string="+str);
+		return str.substring(0,lastIndex) + replaceWith + str.substring(lastIndex+searchFor.length);
+	}
 }

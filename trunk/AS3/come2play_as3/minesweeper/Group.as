@@ -4,8 +4,8 @@ package come2play_as3.minesweeper
 	public class Group {
 		public var group:Group = null;
 		public var size:int = 1;
-		public static var groupId:int = 0;
-		public var id:int = groupId++;
+		private static var groupId:int = 0;
+		private var id:int = groupId++;
 		
 		public function findRoot():Group { // find
 			var p:Group = this;

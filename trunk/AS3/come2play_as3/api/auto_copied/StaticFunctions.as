@@ -15,7 +15,10 @@ public final class StaticFunctions
 		if (allTraces.length>=MAX_TRACES_NUM) allTraces.shift();
 		allTraces.push(["Time: ", getTimer(), " Trace: ", obj]);
 	}
+	private static var DID_SHOW_ERROR:Boolean = false;
 	public static function showError(msg:String):void {
+		if (DID_SHOW_ERROR) return;
+		DID_SHOW_ERROR = true;
 		var msg:String = "An ERRRRRRRRRRROR occurred:\n"+msg+"\n"+
 			(allTraces.length==0 ? '' : 
 				(allTraces.length<MAX_TRACES_NUM ? "All":"The last "+MAX_TRACES_NUM)+" stored traces are:\n"+

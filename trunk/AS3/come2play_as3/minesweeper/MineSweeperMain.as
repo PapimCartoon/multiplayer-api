@@ -104,7 +104,7 @@ import flash.utils.*;
 			}
 			
 			
-			BOARD_WIDTHstr,BOARD_HEIGHTstr,MINE_AMOUNTstr
+			//BOARD_WIDTHstr,BOARD_HEIGHTstr,MINE_AMOUNTstr
 			doAllStoreStateCalculation(requestId,MineSweeperCalculatorLogic.createMineBoard(calcRandomSeed,calcMineAmount,calcWidth,calcHeight));	
 		}
 		override public function gotMyUserId(myUserId:int):void

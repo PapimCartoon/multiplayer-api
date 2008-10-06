@@ -39,6 +39,7 @@ package emulator {
 		private var lcFramework:LocalConnection;
 		 
 		private var aUsers:Array;
+		private var aCalculators:Array;
 		private var serverState:ObjectDictionary;
 		private var deltaHistory:DeltaHistory;
 		private var serverInfoEnteries:Array;/*InfoEntry*/ //extra server information
@@ -52,8 +53,8 @@ package emulator {
 		private var unverifiedQueue:Array;
 		private var waitingQueue:MessagQueue;
 		private var queueTimer:Timer;
-		
 		private var changedToDelta:int;
+		private var calculatorQueue:Array;
 		
 		private var match_started_time:int;
 		private var sCurMessageType:String;
@@ -114,6 +115,7 @@ package emulator {
 		private var pnlInfo:MovieClip;
 		private var txtInfoDetails:TextField;
 		private var iInfoMode:int;
+		private var stateCalculationsID:int;
 		
 		private var constructorDelayer:Timer;
 		public function showMsg(msg:String, title:String = ""):void {
@@ -126,6 +128,7 @@ package emulator {
 
 		public function constructServer():void {
 			this.stop();
+			stateCalculationsID = -42;
 			afinishedPlayers=new Array();
 			serverState = new ObjectDictionary();
 			deltaHistory = new DeltaHistory();
@@ -485,7 +488,7 @@ package emulator {
 			sCurMessageType = "";
 			aMessages = new Array();			
 			aUsers = new Array();
-
+			
 			aPlayers = new Array();
 			//aMatchOvers = new Array();
 			iCurTurn = -1;
@@ -525,8 +528,18 @@ package emulator {
 						
 			var total_users:int = User.PlayersNum + User.ViewersNum;
 			for (var user_index:int=0; user_index<total_users; user_index++) {
-				var u:User = new User(sPrefix+user_index, this);			
+				var u:User = new User(sPrefix+user_index, this,true);			
 				aUsers.push(u);
+			}
+			
+			if(root.loaderInfo.parameters["calculatorsOn"] == "true")
+			{
+				aCalculators = new Array();
+				calculatorQueue = new Array();
+				for (user_index=total_users; user_index<(total_users+3); user_index++) {
+					u = new User(sPrefix+user_index, this,false);			
+					aCalculators.push(u);
+				}			
 			}
 			serverInfoEnteries=new Array();
 			if(root.loaderInfo.parameters["custom_param_num"]!=null)
@@ -626,6 +639,14 @@ package emulator {
 				return null;
 		}
 		private var isProcessingCallback:Boolean = false;
+		public function errorHandler(msg:String):void
+		{
+			if(MsgBox != null)
+				showMsg(msg,"Error");
+			if(tblLog != null)
+				addMessageLog("Server","Error",msg);
+			throw new Error(msg);
+		}
 		public function got_user_localconnection_callback(user:User, msg:API_Message):void {
 			if(msg is API_DoTrace)
 			{
@@ -667,21 +688,54 @@ package emulator {
 						//user.do_finished_callback(finishedCallbackMsg.callbackName)
 					}
 				}
-				if( (playByPlayTimer.running) || (!isPlayer(user.ID)) )
+				if(playByPlayTimer.running )
 					return;
+					
+					
+				if(!isPlayer(user.ID))
+				{
+					var storeStateMessage:API_Message = transMsg.messages[0]					
+					if(storeStateMessage is API_DoAllStoreStateCalculation) 
+					{
+						var storeStateCalculation:API_DoAllStoreStateCalculation=storeStateMessage as API_DoAllStoreStateCalculation;
+						var lastMessageIndex:int = -1;
+						var myMessageIndex:int = -1;
+						for (var i:int = 0;i<3;i++)
+						{
+						if(calculatorQueue[i] == storeStateCalculation.requestId)
+								myMessageIndex = i;
+							if(calculatorQueue[i] is API_DoAllStoreStateCalculation)
+								lastMessageIndex = i;
+						}
+						if(myMessageIndex == -1) errorHandler("calculator sent wrong requestId");
+						if(lastMessageIndex == -1)
+							calculatorQueue[myMessageIndex] = storeStateCalculation;
+						else
+						{
+							if(!ObjectDictionary.areEqual(calculatorQueue[lastMessageIndex],storeStateCalculation)) errorHandler("calculators gave diffrent values");
+							var serverEntries:Array/*ServerEntry*/ = doAllStoreStateCalculation(storeStateCalculation);
+							sendStateChanged(serverEntries);
+							storeServerEntries(serverEntries);
+							calculatorQueue = new Array();
+						}
+					}
+					
+					return
+				}				
+					
 				if(transMsg.messages.length == 0) 
 				{
 					if(isCallback)
 						return;
 					else
-						throw new Error("Transaction cannot be empty");
+						errorHandler("Transaction cannot be empty");
 				}
 				if (!bGameStarted) {
-					addMessageLog("Server", msg.getMethodName(), "Error: game not started");
+					errorHandler("can't do "+ msg.getMethodName()+" game not started");
 					return;
 				}
 				if (bGameEnded) {
-					addMessageLog("Server", msg.getMethodName(), "Error: game already end");
+					errorHandler("can't do "+ msg.getMethodName()+" game ended");
 					return;
 				}
 				
@@ -738,11 +792,6 @@ package emulator {
 			{
 				var requestStateCalculation:API_DoAllRequestStateCalculation=msg as API_DoAllRequestStateCalculation;	
 				doAllRequestStateCalculation(requestStateCalculation);
-			}
-			else if(msg is API_DoAllStoreStateCalculation) 
-			{
-				var storeStateCalculation:API_DoAllStoreStateCalculation=msg as API_DoAllStoreStateCalculation;	
-				serverEntries = doAllStoreStateCalculation(storeStateCalculation);
 			}
 			else if(msg is API_DoAllStoreState)
 			{
@@ -863,19 +912,6 @@ package emulator {
 			showUnverifiedQue();
 			processQueue(waitingQueue,false);	
 		}
-		/*
-		private function isEquel(obj1:Object,obj2:Object):Boolean
-		{ 
-			if (! (typeof(obj1) == "object") )
-				return (obj1 == obj2)
-			for(var prop:String in obj1)
-			{
-				if (!isEquel(obj1[prop],obj2[prop]))
-					return false
-			}
-			return true;
-		}
-		*/
 		private function checkDoAlls(doAllArray:Array/*QueueEntry*/):Boolean
 		{
 
@@ -888,14 +924,14 @@ package emulator {
 				checkedMsg = checkedQueueEntry.transaction.messageArray[0];
 				if(checkedMsg.getMethodName() != msg.getMethodName())		
 				{
-					addMessageLog("Server","Error",checkedQueueEntry.user.Name + " : called " + checkedMsg.getMethodName() + "\n while " + queueEntry.user.Name+" : called  "+ msg.getMethodName());
+					errorHandler(checkedQueueEntry.user.Name + " : called " + checkedMsg.getMethodName() + "\n while " + queueEntry.user.Name+" : called  "+ msg.getMethodName())
 					gameOver();
 					return false;
 				}
 				
 				if(!ObjectDictionary.areEqual(checkedMsg.getMethodParameters(),msg.getMethodParameters()))
 				{
-					addMessageLog("Server","Error",checkedMsg.getMethodName()+" : "+checkedMsg.getMethodParameters()+" is diffrent then "+msg.getMethodName()+" : "+msg.getMethodParameters());
+					errorHandler(checkedMsg.getMethodName()+" : "+checkedMsg.getMethodParameters()+" is diffrent then "+msg.getMethodName()+" : "+msg.getMethodParameters());
 					gameOver();
 					return false
 				}
@@ -914,8 +950,7 @@ package emulator {
 			var serverEntries:Array =/*ServerEntry*/ new Array();
 			if (msg.userEntries.length == 0)
 			{
-				showMsg("doAllStoreState must get at least 1 UserEntry","Error");
-				addMessageLog("Server","Error","doAllStoreState must get at least 1 UserEntry")
+				errorHandler("doAllStoreState must get at least 1 UserEntry");
 				gameOver();
 				return [];
 			}
@@ -933,8 +968,7 @@ package emulator {
 			var serverEntries:Array =/*ServerEntry*/ new Array();
 			if (msg.userEntries.length == 0)
 			{
-				showMsg("doAllStoreStateCalculation must get at least 1 UserEntry","Error");
-				addMessageLog("Server","Error","doAllStoreStateCalculation must get at least 1 UserEntry")
+				errorHandler("doAllStoreStateCalculation must get at least 1 UserEntry");
 				gameOver();
 				return [];
 			}
@@ -958,20 +992,31 @@ package emulator {
 					serverEntries.push(serverState.getValue(key));
 				else
 				{
-					showMsg("Key " + key + " does not exist","Error");
-					addMessageLog("Server","Error","Key " + key + " does not exist")
+					errorHandler("Key " + key + " does not exist");
 					gameOver();
 					return;
 				}
 			}
-			broadcast(API_GotRequestStateCalculation.create(42,serverEntries));
+			// todo : send only to calculators
+			if(calculatorQueue == null) errorHandler("To call doAllRequestStateCalculations you must enable calculators");
+			var execptCalculator:int = Math.random()*3
+			for(var i:int=0;i<3;i++)
+			{
+				if(i!=execptCalculator)
+				{
+					if ( calculatorQueue[i] != null) errorHandler("can't call a new calculation before finishing the first");
+					var user:User = aCalculators[i];
+					calculatorQueue[i] = stateCalculationsID;
+					user.sendMessage(API_GotRequestStateCalculation.create(stateCalculationsID++,serverEntries));
+				}
+			}
+			//broadcast(API_GotRequestStateCalculation.create(stateCalculationsID++,serverEntries));
 		}
 		private function doAllShuffleState(msg:API_DoAllShuffleState):Array/*ServerEntry*/
 		{
 			if (msg.keys.length < 2)
 			{
-				showMsg("doAllShuffleState must get at least 2 keys","Error");
-				addMessageLog("Server","Error","doAllShuffleState must get at least 2 keys")
+				errorHandler("doAllShuffleState must get at least 2 keys");
 				gameOver();
 				return [];
 			}
@@ -991,11 +1036,9 @@ package emulator {
 				}
 				else
 				{
-					addMessageLog("Server","Error","Can't shuffle " + JSON.stringify(key) + " key does not exist");
-					showMsg("Can't shuffle " + JSON.stringify(key) + " key does not exist","Error");
+					errorHandler("Can't shuffle " + JSON.stringify(key) + " key does not exist");
 					gameOver();
 					return [];		
-
 				}
 			}			
 
@@ -1015,8 +1058,7 @@ package emulator {
 		{
 			if (msg.revealEntries.length == 0)
 			{	
-				showMsg("doAllRevealState must get at least 1 RevealEntry","Error");
-				addMessageLog("Server","Error","doAllRevealState must get at least 1 RevealEntry")
+				errorHandler("doAllRevealState must get at least 1 RevealEntry");
 				gameOver();
 				return [];
 			}
@@ -1053,8 +1095,7 @@ package emulator {
 					}
 					else
 					{
-						addMessageLog("Server","Error","Can't reveal " + JSON.stringify(key) + " key does not exist");
-						showMsg("Can't reveal " + JSON.stringify(key) + " key does not exist","Error");
+						errorHandler("Can't reveal " + JSON.stringify(key) + " key does not exist");
 						gameOver();
 						return [];		
 					}
@@ -1077,8 +1118,7 @@ package emulator {
 			if (msg.finishedPlayers.length == 0)
 			{
 				
-				showMsg("doAllEndMatch must get at least 1 PlayerMatchOver","Error");
-				addMessageLog("Server","Error","doAllEndMatch must get at least 1 PlayerMatchOver")
+				errorHandler("doAllEndMatch must get at least 1 PlayerMatchOver");
 				gameOver();
 				return;
 			}		
@@ -1183,12 +1223,8 @@ package emulator {
 		private function onConnectionStatus(evt:StatusEvent):void {
 			switch(evt.level) {
 				case "error":
-					trace("There is a LocalConnection error. Please test your game only inside the Come2Play emulator.");
+					errorHandler("There is a LocalConnection error. Please test your game only inside the Come2Play emulator.");
 			}
-		}
-		
-		private function loaderError(evt:IOErrorEvent):void {
-			showMsg("Can't load XML file", "Error");
 		}
 		
 		private function resizeStage(evt:Event):void {
@@ -1315,7 +1351,8 @@ package emulator {
 							
 				break;
 				case 8:
-					changedToDelta = evt.target.selectedItem[COL_changeNum];
+					if(!playByPlayTimer.running)
+						changedToDelta = evt.target.selectedItem[COL_changeNum];
 					txtInfo.text = "num: " + evt.target.selectedItem[COL_changeNum] + "\n" +
 						"State Change time :"+ evt.target.selectedItem[COL_TimeSent] + "\n" +
 						"Player_ID's: " + evt.target.selectedItem[COL_player_ids] + "\n" + 
@@ -1580,8 +1617,12 @@ package emulator {
 			waitingQueue = new MessagQueue(aPlayers.length,getOngoingPlayerIds());
 			for each (var usr:User in aUsers) {
 				send_got_match_started(usr);						
+			}
+			/*for each(usr in aCalculators)
+			{
+				send_got_match_started(usr);
 			}	
-			
+			*/
 			
 		}
 		private function stopPlayByPlayTimer():void
@@ -1605,6 +1646,7 @@ package emulator {
 				if (playerDelta.serverEntries.length > 0)
 				{
 					var serverEntries:Array/*ServerEntry*/ = playerDelta.serverEntries;
+					storeServerEntries(serverEntries);
 					sendStateChanged(serverEntries);
 				}
 				else if (playerDelta.finishHistory != null)
@@ -1901,7 +1943,7 @@ package emulator {
 							tblInfo.verticalScrollPosition = tblInfo.maxVerticalScrollPosition+30;
 						}
 					}catch (err:Error) {
-						showMsg(err.getStackTrace(), "Error");
+						errorHandler(err.getStackTrace());
 					}
 				}
 				txtInfo.text="";
@@ -1916,7 +1958,7 @@ package emulator {
 			if(ExternalInterface.available){
 				ExternalInterface.call("toClipboard", str);
 			}else {
-				showMsg("ExternalInterface doesn't available. Please, check your security settings.", "Security Error");
+				errorHandler("Security Error ExternalInterface doesn't available. Please, check your security settings.");
 			}
 		}
 		
@@ -1983,7 +2025,7 @@ package emulator {
 			}
 			btnLoadGame.enabled = j>0;
 			}catch(err:Error) {
-				addMessageLog("Server","error","Contact come2Play")
+				errorHandler("Contact come2Play")
 				shrSavedGames.data.savedGames = [];	//this deletes all saved games
 			}
 		}
@@ -2085,7 +2127,7 @@ package emulator {
 			}
 		}	
 		public function doRegisterOnServer(u:User):void {
-			if (u.wasRegistered) throw new Error("User "+u.Name+" called do_register_on_server twice!");
+			if (u.wasRegistered) errorHandler("User "+u.Name+" called do_register_on_server twice!");
 			// send the info of "u" to all registered users (without user "u")
 			broadcast(API_GotUserInfo.create(u.ID,u.entries)); //note, this must be before you call u.wasRegistered = true 
 			u.wasRegistered = true;		
@@ -2106,14 +2148,23 @@ package emulator {
 			
 			if (bGameStarted) send_got_match_started(u);
 			
-			//if (aPlayers.length < User.PlayersNum) {
-			if(User.PlayersNum >= u.ID){
+			if(u.isPlayer)
 				aPlayers.push(u.ID);
-				if (aPlayers.length == User.PlayersNum) {
+			if (aPlayers.length != User.PlayersNum) return;
+		
+			if(aCalculators == null)
 					startGame();
-				}
+			else if(calculatorsConnected())
+					startGame();		
+		}
+		public function calculatorsConnected():Boolean
+		{
+			for each(var user:User in aCalculators)
+			{
+				if(!user.wasRegistered)
+					return false;
 			}
-			
+			return true;
 		}
 		public function storeServerEntries(serverEntries:Array/*ServerEntry*/):void
 		{
@@ -2156,8 +2207,7 @@ package emulator {
 		public function doStoreState(msg:API_DoStoreState,userId:int):Array/*ServerEntries*/{
 			if (msg.userEntries.length == 0)
 			{	
-				showMsg("doStoreState must get at least 1 UserEntry","Error");
-				addMessageLog("Server","Error","doStoreState must get at least 1 UserEntry")
+				errorHandler("doStoreState must get at least 1 UserEntry");
 				gameOver();
 				return null;
 			}
@@ -2176,13 +2226,11 @@ package emulator {
 		}
 		private function doStoreOneState(stateEntery:ServerEntry):void {		
 			if (stateEntery.key == null) {
-				addMessageLog("Server", "do_store_match_state", "Error: Can't store match state, key is empty");
-				showMsg("Error: Can't store match state, key is empty","Error");
+				errorHandler("Error: Can't store match state, key is empty");
 				return;
 			}
 			if (serverState.size()>=1000) {
-				addMessageLog("Server", "do_store_match_state", "Error: you stored more than a 1000 keys!");
-				showMsg("Error: you stored more than a 1000 keys!","Error");
+				errorHandler("Error: you stored more than a 1000 keys!");
 				return;
 			}
 			//if(serverState.hasKey(stateEntery.key))
@@ -2258,6 +2306,7 @@ class User extends LocalConnectionUser {
 	//Private variables
 	private var sServer:Server;
 	private var iID:int;
+	public var isPlayer:Boolean;
 	private var sName:String;
 	//private var actionQueue:Array/*WaitingFunction*/;
 	public var entries:Array;/*enterys*/
@@ -2277,24 +2326,31 @@ class User extends LocalConnectionUser {
 	}
 	
 	//Constructor
-	public function User(prefix:int, _server:Server) {
+	public function User(prefix:int, _server:Server,isUser:Boolean) {
 		try{
 			var someMovieClip:MovieClip = _server; 
+			sServer = _server;
 			super(someMovieClip, true, String(prefix) ); 
 			entries=new Array();
-			if (iNextId > PlayersNum + ViewersNum) {
-				throw new Error("Too many users");
+			if(!isUser)
+			{
+				sName = "Calculator"
+				return;
 			}
-			
-			iID = iNextId++;
-			sServer = _server;
-			sName = sServer.root.loaderInfo.parameters["val_" + (iID - 1)+"_" + "0"];
+		
+			if (iNextId > PlayersNum + ViewersNum) {
+				sServer.errorHandler("Too many users");
+			}
+			var tempMod:int = iNextId++;
+			iID = int(sServer.root.loaderInfo.parameters["val_" + (tempMod - 1)+"_0"]);		
+			isPlayer = (sServer.root.loaderInfo.parameters["player_" +(tempMod-1)] == "true"	)
+			sName = sServer.root.loaderInfo.parameters["val_" + (tempMod - 1)+"_1"];
 			sName = sName.replace( /^\s+|\s+$/g, "");
 			if (sName==null || sName == "") {
-				if(iID<=PlayersNum){
-					sName = "Player" + (iID - 1);
+				if(isPlayer){
+					sName = "Player" + (tempMod - 1);
 				}else {
-					sName = "Viewer" + (iID - PlayersNum - 1);
+					sName = "Viewer" + (tempMod - PlayersNum - 1);
 				}
 			}
 			
@@ -2304,18 +2360,22 @@ class User extends LocalConnectionUser {
 			if(tempEntery.value !="")
 				tempEntery.value = JSON.parse(sName);
 			entries[0]=tempEntery;
-			for (var i:int = 1; sServer.root.loaderInfo.parameters["col_" + i] != null;i++ ) {
-				if(sServer.root.loaderInfo.parameters["val_" + (iID - 1)+"_"+ i] == "") continue;
+			for (var i:int = 2; sServer.root.loaderInfo.parameters["col_" + i] != null;i++ ) {
+				if(sServer.root.loaderInfo.parameters["val_" + (tempMod - 1)+"_"+ i] == "") continue;
 				tempEntery=new InfoEntry();
 				tempEntery.key = sServer.root.loaderInfo.parameters["col_" + i];
-				tempEntery.value = JSON.parse(sServer.root.loaderInfo.parameters["val_" + (iID - 1)+"_"+ i]);	
+				tempEntery.value = JSON.parse(sServer.root.loaderInfo.parameters["val_" + (tempMod - 1)+"_"+ i]);	
 				entries.push(tempEntery);
 			}
 			
 
 			
 		}catch (err:Error) {
-			sServer.addMessageLog("Server", "User", "Error: " + err.getStackTrace());
+			var msg:String = "Error: " + err.getStackTrace();
+			if (sServer==null) 
+				StaticFunctions.showError(msg);
+			else
+				sServer.errorHandler( msg);
 		}
 	}
 	public function sendOperation(msg:API_Message):void {
@@ -2324,7 +2384,7 @@ class User extends LocalConnectionUser {
     		sendMessage(msg);
 			sServer.addMessageLog(sName, msg.getMethodName(), msg.getParametersAsString());	
 		}catch(err:Error) { 
-			sServer.showMsg(err.getStackTrace(), "Error");
+			sServer.errorHandler(err.getStackTrace());
 		}  
     }
     override public function gotMessage(msg:API_Message):void {
@@ -2334,7 +2394,7 @@ class User extends LocalConnectionUser {
 	private function onConnectionStatus(evt:StatusEvent):void {
 		switch(evt.level) {
 			case "error":
-				trace("There is a LocalConnection error. Please test your game only inside the Come2Play emulator.");
+				sServer.errorHandler("There is a LocalConnection error. Please test your game only inside the Come2Play emulator.");
 		}
 	}
 }

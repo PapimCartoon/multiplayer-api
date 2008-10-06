@@ -186,7 +186,6 @@ package emulator {
 			txt.autoSize = TextFieldAutoSize.LEFT;
 			txt.htmlText = "<b>|</b> Open Info";
 			txt.height = 22;
-			txt.x = -15;
 			txt.y = -3;
 			mov.addChild(txt);
 			var arr:MovieClip = new DownArrow();
@@ -239,6 +238,14 @@ package emulator {
 				MsgBox.Show("Parameter 'game' must be passed in the url.","Error");
 				return;
 			}
+			if(root.loaderInfo.parameters["calculatorsOn"] == "true" )
+			{
+				txtMyName.text = "Calculator";
+			}
+			
+			
+			
+			
 			
 			if (root.loaderInfo.parameters["prefix"] == null) {
 				MsgBox.Show("Parameter 'prefix' must be passed in the url.","Error");

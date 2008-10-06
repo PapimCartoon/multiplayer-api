@@ -174,7 +174,7 @@ package come2play_as3.api {
 				throwError(ERROR_DO_ALL);	
 				
 			if (isInGotRequestStateCalculation()) {
-				if (!(msg is API_DoAllStoreStateCalculation))
+				if (!((msg is API_DoAllStoreStateCalculation) || (msg is API_DoAllFoundHacker) ))
 					throwError("When the server calls gotRequestStateCalculation you must respond with doAllStoreStateCalculation");
 			} else if (!canDoAnimations()) {
 				throwError(ERROR_DO_ALL);

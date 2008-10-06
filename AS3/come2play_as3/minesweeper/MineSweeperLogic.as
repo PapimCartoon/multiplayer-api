@@ -228,6 +228,10 @@ package come2play_as3.minesweeper
 				if(playerData.playerLives == 0)
 					playerData.playerScore = 0;				
 			playerGameData.sortOn("playerScore", Array.NUMERIC | Array.DESCENDING);		
+			if(playerGameData.length ==1)
+			{
+				playerMatchOverArr.push(PlayerMatchOver.create(playerGameData[0].id,playerGameData[0].playerScore,100));
+			}
 			if(playerGameData.length ==2)
 			{
 				playerMatchOverArr.push(PlayerMatchOver.create(playerGameData[0].id,playerGameData[0].playerScore,100));

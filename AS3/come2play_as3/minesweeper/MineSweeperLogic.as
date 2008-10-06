@@ -118,7 +118,7 @@ package come2play_as3.minesweeper
 				{
 					boardLogic[i][j] = 0 ;
 				}
-			}	
+			}		
 			mineSweeperGraphic.makeBoard(boardWidth,boardHeight,usersData);
 
 		}

@@ -30,7 +30,6 @@ package come2play_as3.minesweeper
 		public function revealBox(playerNum:int,borderingMines:int,xPos:int,yPos:int):void
 		{
 			var box:Box = boardBricks[xPos][yPos];
-			trace("***************************fffffffff playerNum:"+playerNum)
 			box.gotoAndStop(10*(playerNum+1) + borderingMines);
 		}
 

@@ -30,7 +30,8 @@ import flash.utils.*;
 		private var startGraphic:Starter;
 		private var mineSweeperLogic:MineSweeperLogic;
 		private var myUserId:int; //my user id
-		private var usersData:Array; // information about all users
+		private var usersData:Array; // information about all playing users
+		private var allUsersData:Array; // information about all users
 		private var allPlayerIds:Array; //playing user ids
 	/** 
 	 * Written by: Ofir Vainshtein (ofirvins@yahoo.com)
@@ -46,7 +47,7 @@ import flash.utils.*;
 			graphicPlayed = false;
 			graphics.addChild(new Background);
 			mineSweeperLogic  = new MineSweeperLogic(this,graphics);	
-			usersData = new Array(); 
+			allUsersData = new Array(); 
 			startGraphic= new Starter()
 			startGraphic.x=170;
 			startGraphic.y=160;
@@ -113,13 +114,19 @@ import flash.utils.*;
 		}
 		override public function gotUserInfo(userId:int, entries:Array/*InfoEntry*/):void 
 		{
-			usersData.push({userId:userId,entries:entries});
+			allUsersData.push({userId:userId,entries:entries});
 		}
 		override public function gotMatchStarted(allPlayerIds:Array, finishedPlayerIds:Array, serverEntries:Array):void
 		{
 			this.allPlayerIds = allPlayerIds;
 			loadServerEntries = null;
 			graphicPlayed = false;
+			usersData = new Array();
+			for each (var obj:Object in allUsersData)
+			{
+				if(allPlayerIds.indexOf(obj.userId) != -1)
+					usersData.push(obj);
+			}
 			if(serverEntries.length == 0)
 			{
 				doAllRequestRandomState("randomSeed",true);

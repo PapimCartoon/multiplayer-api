@@ -3,9 +3,9 @@
     <project_file path="./AS2/TicTacToe_AS2.fla" filetype="fla" profile="" />
     <project_file path="./AS3/TestClientGameAPI_AS3.fla" filetype="fla" profile="" />
     <project_file path="./AS2/TestClientGameAPI_AS2.fla" filetype="fla" profile="" />
-    <project_file path="./AS3/Snake_AS3.fla" filetype="fla" profile="" />
+    <project_file path="./AS3/SnakeAS3.fla" filetype="fla" profile="" />
     <project_file path="./EmulatorSource/Emulator.fla" filetype="fla" profile="" />
     <project_file path="./EmulatorSource/GetParams.fla" filetype="fla" profile="" />
-    <project_file path="./AS3/MineSweeper_AS3.fla" filetype="fla" profile="" />
+    <project_file path="./AS3/MineSweeperAS3.fla" filetype="fla" profile="" />
     <project_file path="./AS3/DominoAS3.fla" filetype="fla" profile="" />
 </flash_project>

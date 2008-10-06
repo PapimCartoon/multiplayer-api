@@ -24,7 +24,7 @@ import come2play_as2.api.auto_copied.*;
 			return "GOT_CHANEL_"+sPrefix;
 		}
 		public static function getPrefixFromFlashVars(_someMovieClip:MovieClip):String {
-			var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(_someMovieClip);
+			var parameters/*:Object*/ = AS3_vs_AS2.getLoaderInfoParameters(_someMovieClip);
 			var sPrefix:String = parameters["prefix"];
 			if (sPrefix==null) sPrefix = parameters["?prefix"];
 			return getPrefixFromString(sPrefix);
@@ -32,7 +32,7 @@ import come2play_as2.api.auto_copied.*;
 		public static function getPrefixFromString(sPrefix:String):String {
 			if (sPrefix!=null && !(sPrefix.charAt(0)>='0' && sPrefix.charAt(0)<='9')) { //it is not necessarily a number 
 				trace("calling a javascript function that should return the random fixed id");
-				var jsResult:Object = ExternalInterface.call(sPrefix);
+				var jsResult/*:Object*/ = ExternalInterface.call(sPrefix);
 				sPrefix = ''+jsResult;
 			}
 			return sPrefix;
@@ -71,10 +71,10 @@ import come2play_as2.api.auto_copied.*;
 			if (SHOULD_CALL_TRACE) trace(AS3_vs_AS2.getClassName(this)+": "+JSON.stringify(msg));
 		}
 		
-        private function getErrorMessage(withObj:Object, err:Error):String {
+        private function getErrorMessage(withObj/*:Object*/, err:Error):String {
         	return "Error occurred when passing "+JSON.stringify(withObj)+", the error is="+AS3_vs_AS2.error2String(err);
         }
-        private function passError(withObj:Object, err:Error):Void {
+        private function passError(withObj/*:Object*/, err:Error):Void {
         	showError(getErrorMessage(withObj,err));        	
         }
         
@@ -96,9 +96,9 @@ import come2play_as2.api.auto_copied.*;
 			}        	
         }
         
-        public function localconnection_callback(msgObj:Object):Void {
+        public function localconnection_callback(msgObj/*:Object*/):Void {
         	try{
-        		var deserializedMsg:Object = SerializableClass.deserialize(msgObj);
+        		var deserializedMsg/*:Object*/ = SerializableClass.deserialize(msgObj);
         		var msg:API_Message = API_Message(deserializedMsg);
         		if (msg==null) throwError("msgObj="+JSON.stringify(msgObj)+" is not an API_Message");
         		

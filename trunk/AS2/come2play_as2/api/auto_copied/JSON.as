@@ -7,7 +7,7 @@ import come2play_as2.api.auto_copied.*;
         private var at:Number = 0;
         private var text:String;
 
-	    public static function stringify(arg:Object):String{
+	    public static function stringify(arg/*:Object*/):String{
 			if (arg==null) return 'null';
 			
 	        var c:String, i:Number, l:Number, res:Array, v:String;
@@ -212,8 +212,8 @@ import come2play_as2.api.auto_copied.*;
             return [];
         }
 
-        private function obj():Object {
-            var k:String, o:Object = {};
+        private function obj()/*:Object*/ {
+            var k:String, o/*:Object*/ = {};
 
             if (ch == '{') {
                 this.next();
@@ -285,7 +285,7 @@ import come2play_as2.api.auto_copied.*;
             return v;
         }
 
-        private function word():Object {
+        private function word()/*:Object*/ {
 			var oldAt:Number = at;
             switch (ch) {
                 case 't':
@@ -316,7 +316,7 @@ import come2play_as2.api.auto_copied.*;
             //throwError("Syntax error");
         }
 
-        private function value():Object {
+        private function value()/*:Object*/ {
             this.white();
             switch (ch) {
                 case '{':
@@ -333,16 +333,16 @@ import come2play_as2.api.auto_copied.*;
             }
             return {};
         }
-	    public function p_parse(_text:String):Object {
+	    public function p_parse(_text:String)/*:Object*/ {
 	        text = _text;
             at = 0;
 	        ch = ' ';
-	        var res:Object = value();
+	        var res/*:Object*/ = value();
 	        this.white();
 	        if (at!=_text.length+1) throwError("Could not parse the entire string, string length="+_text.length+" and the parsing reached position="+(at-1));
 	        return res;
 	    }
-	    public static function parse(_text:String):Object {
+	    public static function parse(_text:String)/*:Object*/ {
 	    	var json:JSON = new JSON();
 	    	return json.p_parse(_text);
 	    }

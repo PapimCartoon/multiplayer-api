@@ -10,7 +10,7 @@ import come2play_as2.api.auto_generated.*;
 			super(someMovieClip);
 		}
 		public function doRegisterOnServer():Void { sendMessage( API_DoRegisterOnServer.create() ); }
-		public function doTrace(name:String, message:Object):Void { sendMessage( API_DoTrace.create(name, message) ); }
+		public function doTrace(name:String, message/*:Object*/):Void { sendMessage( API_DoTrace.create(name, message) ); }
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 

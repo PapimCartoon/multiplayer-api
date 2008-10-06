@@ -37,7 +37,7 @@ public final class TictactoeMain extends ClientGameAPI {
 	// when a player finishes (wins/disconnects) we remove him from ongoingColors
 	private var ongoingColors:Array/*int*/;  
 	private var myUserId:int = -42;
-	private var turnOfColor:int; // a number between 0 and allPlayerIds.length
+	private var turnOfColor:int; // a number between 0 and allPlayerIds.length	
 	private var shouldSendMove:Boolean; // to prevent the user sending his move several times
 	private var myColor:int; // either VIEWER, or a number between 0 and allPlayerIds.length
 	// contains a mapping from userId to his avatar (see gotUserInfo)
@@ -68,14 +68,17 @@ public final class TictactoeMain extends ClientGameAPI {
 		super(graphics);
 		 
 		// It's best to hide the board until the game starts.
-		AS3_vs_AS2.setVisible(graphics,false);
-		 
-		grid = new CreateGrid(3,3,84,100,50);		
+		AS3_vs_AS2.setVisible(graphics,false);		 
+		this.graphics = graphics;	
 		graphics.stop();
-		this.graphics = graphics;
-		userId2Avatar = {};
 				
-		doRegisterOnServer();	
+		AS3_vs_AS2.waitForStage(graphics, AS3_vs_AS2.delegate(this,this.constructGame));
+	}
+	public function constructGame():void {
+		grid = new CreateGrid(3,3,84,100,50);	
+		userId2Avatar = {};
+		
+		doRegisterOnServer();
 	}
 	private function ROWS():int {
 		return grid.ROWS;
@@ -109,7 +112,7 @@ public final class TictactoeMain extends ClientGameAPI {
 		this.myUserId = myUserId;
 	}
 	override public function gotUserInfo(userId:int, entries:Array/*InfoEntry*/):void {
-		// we use only the user's avatars
+		// From the userInfo, we use only the user's avatars (so we do not keep all the info entries) 
 		for each (var entry:InfoEntry in entries) {
 			if (entry.key==API_Message.USER_INFO_KEY_avatar_url) {
 				userId2Avatar[userId] = entry.value.toString();
@@ -166,6 +169,7 @@ public final class TictactoeMain extends ClientGameAPI {
 				}
 			
 			// we scale the TicTacToe size according to the grid size	
+			trace("dimensions="+height+"x"+width+" gridDimesions="+grid.height()+"x"+grid.width());
 			AS3_vs_AS2.scaleMovieY(graphics, 100*height/grid.height());	
 			AS3_vs_AS2.scaleMovieX(graphics, 100*width/grid.width());	
 			AS3_vs_AS2.setVisible(graphics,true);
@@ -293,10 +297,15 @@ public final class TictactoeMain extends ClientGameAPI {
 		// update the graphics
 		var square:TictactoeSquareGraphic = getSquareGraphic(move);
 		square.setColor(turnOfColor);
+					
 		if (!isSavedGame) {
 			square.startMoveAnimation();
+		} else {
+			moveAnimationEnded(move, isSavedGame);
 		}	
-		
+	}
+	public function moveAnimationEnded(move:TictactoeSquare, isSavedGame:Boolean):void {
+		// to display the winning animation (after the move animation ends)
 		var winningCells:Array/*TictactoeSquare*/ = logic.getWinningCells(move);
 		var didWin:Boolean = winningCells!=null;
 		if (didWin) {
@@ -378,9 +387,12 @@ public final class TictactoeMain extends ClientGameAPI {
 		} else {
 			// game still in progress
 			turnOfColor = getNextTurnOfColor();
-		}		
+		}					
 		
-		if (!isSavedGame) startMove(true);
+		if (!isSavedGame) {
+			startMove(true);
+			animationEnded(); // must be after we call all the doAll functions (and in startMove we have doAllSetTurn) 
+		}
 	}
 	private function getEntryKey():int {
 		return logic.getMoveNumber();
@@ -392,7 +404,14 @@ public final class TictactoeMain extends ClientGameAPI {
 		if (!isMyTurn()) return; // not my turn
 		if (!logic.isSquareAvailable(move)) return; // already filled this square (e.g., if you press on the keyboard, you may choose a cell that is already full)
 
-		shouldSendMove = false;
+		shouldSendMove = false;		
+		for each (var square:TictactoeSquare in allCells) {				
+			if (!logic.isSquareAvailable(square)) continue;
+			if (move.areEqual(square)) continue; // otherwise, it causes a slight blink because we show the logo and then immediately the move animation
+			var squareGraphics:TictactoeSquareGraphic = getSquareGraphic(square);
+			squareGraphics.startMove(TictactoeSquareGraphic.BTN_NONE); // to cancel mouseOver and mouseOut
+		}
+		
 		doStoreState( [UserEntry.create(getEntryKey(), move, false)] );		
 		// We do not update the graphics here. We update the graphics only after the server called gotStateChanged
 		// Note that as a result, if the user presses quickly on the same button, there might be several identical calls to doStoreState.
@@ -408,17 +427,16 @@ public final class TictactoeMain extends ClientGameAPI {
 			doAllSetTurn(allPlayerIds[turnOfColor],-1);
 		}		
 		if (isMyTurn()) shouldSendMove = true;
-		for each (var move:TictactoeSquare in allCells) {				
-			if (logic.isSquareAvailable(move)) {
-				var square:TictactoeSquareGraphic = getSquareGraphic(move);
-				square.startMove(
-					!isInProgress ? TictactoeSquareGraphic.BTN_NONE : // the match was over
-					myColor==VIEWER ? TictactoeSquareGraphic.BTN_NONE : // a viewer never has the turn
-					isSinglePlayer() ? turnOfColor : // single player always has the turn
-					myColor==turnOfColor ?  
-						turnOfColor : // I have the turn
-						TictactoeSquareGraphic.BTN_NONE); // not my turn		
-			}					
+		for each (var square:TictactoeSquare in allCells) {				
+			if (!logic.isSquareAvailable(square)) continue;
+			var squareGraphics:TictactoeSquareGraphic = getSquareGraphic(square);
+			squareGraphics.startMove(
+				!isInProgress ? TictactoeSquareGraphic.BTN_NONE : // the match was over
+				myColor==VIEWER ? TictactoeSquareGraphic.BTN_NONE : // a viewer never has the turn
+				isSinglePlayer() ? turnOfColor : // single player always has the turn
+				myColor==turnOfColor ?  
+					turnOfColor : // I have the turn
+					TictactoeSquareGraphic.BTN_NONE); // not my turn
 		}
 	}
 }

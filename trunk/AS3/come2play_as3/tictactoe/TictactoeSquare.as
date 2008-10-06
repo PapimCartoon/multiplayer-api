@@ -11,6 +11,9 @@ package come2play_as3.tictactoe
 		    res.col = col;
 		    return res;
 		}
+		public function areEqual(s:TictactoeSquare):Boolean {
+			return row==s.row && col==s.col;
+		}
 		public function getParametersAsString():String { return 'row=' + row+', col=' + col; }
 		public function toString():String { return '{TictactoeSquare: ' + getParametersAsString() + '}'; }
 	}

@@ -47,12 +47,20 @@ public final class AS3_vs_AS2
 				return handler.apply(thisObj, otherArgs.concat(args) ); 
 			};
 	}
-	public static function addOnPress(movie:IEventDispatcher, func:Function):void {		
-		movie.addEventListener(MouseEvent.CLICK , function (event:MouseEvent):void { func(); });
+	public static function addOnPress(movie:IEventDispatcher, func:Function, isActive:Boolean):void {
+		//function (event:MouseEvent):void { 
+		movie.removeEventListener(MouseEvent.CLICK , func);
+		if (isActive)
+			movie.addEventListener(MouseEvent.CLICK , func);
 	}
-	public static function addOnMouseOver(movie:IEventDispatcher, mouseOverFunc:Function, mouseOutFunc:Function):void {		
-		movie.addEventListener(MouseEvent.MOUSE_OVER , function (event:MouseEvent):void { mouseOverFunc(); });		
-		movie.addEventListener(MouseEvent.MOUSE_OUT , function (event:MouseEvent):void { mouseOutFunc(); });
+	public static function addOnMouseOver(movie:IEventDispatcher, mouseOverFunc:Function, mouseOutFunc:Function, isActive:Boolean):void {
+		//function (event:MouseEvent):void { 		
+		movie.removeEventListener(MouseEvent.MOUSE_OVER , mouseOverFunc);		
+		movie.removeEventListener(MouseEvent.MOUSE_OUT , mouseOutFunc);
+		if (isActive) {
+			movie.addEventListener(MouseEvent.MOUSE_OVER , mouseOverFunc);		
+			movie.addEventListener(MouseEvent.MOUSE_OUT , mouseOutFunc);
+		}
 	}
 	public static function addStatusListener(conn:LocalConnection, client:Object, functions:Array):void {
 		conn.client = client;
@@ -92,12 +100,16 @@ public final class AS3_vs_AS2
 		var newMovie:DisplayObjectContainer = new Sprite();
 		var contentLoaderInfo:LoaderInfo = loader.contentLoaderInfo;
 		contentLoaderInfo.addEventListener(Event.COMPLETE, function (event:Event):void {
-				newMovie.addChild(loader.content);		        
+				trace("Done loading url="+url);
+				newMovie.addChild(loader.content);
+				//newMovie.visible = true;	        
 			}  );
 		contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, function (event:IOErrorEvent):void {
-		        trace("Error in loading movie from url="+url+" event="+event);
+		        StaticFunctions.showError("Error in loading movie from url="+url+" event="+event);
 		    }  );
+		//newMovie.visible = false;
 		graphics.addChild(newMovie);
+		trace("Loading url="+url+" into newMovie="+newMovie);
 		loader.load(new URLRequest(url));
 		return newMovie;
 	}

@@ -151,25 +151,22 @@ package come2play_as3.api {
 		private static const ERROR_DO_ALL:String = "You can only call a doAll* message when the server calls gotStateChanged, gotMatchStarted, gotMatchEnded, or gotRequestStateCalculation.";
         public function isNullKeyExistUserEntry(userEntries:Array/*UserEntry*/):void
         {
-        	for each (var userEntry:UserEntry in userEntries)
-        	{
-        		if(userEntry.key == null)
+        	for each (var userEntry:UserEntry in userEntries) {
+        		if (userEntry.key == null)
         			throwError("key cannot be null !");
         	}
         }
         public function isNullKeyExistRevealEntry(revealEntries:Array/*RevealEntry*/):void
         {
-        	for each (var revealEntry:RevealEntry in revealEntries)
-        	{
-        		if(revealEntry.key == null)
+        	for each (var revealEntry:RevealEntry in revealEntries) {
+        		if (revealEntry.key == null)
         			throwError("key cannot be null !");
         	}
         }
         public function isNullKeyExist(keys:Array/*Object*/):void
         {
-        	for each (var key:String in keys)
-        	{
-        		if(key == null)
+        	for each (var key:String in keys) {
+        		if (key == null)
         			throwError("key cannot be null !");
         	}
         }
@@ -187,7 +184,7 @@ package come2play_as3.api {
         	}
         	if (msg is API_DoStoreState) {
         		var doStoreStateMessage:API_DoStoreState = msg as API_DoStoreState;
-        		if(doStoreStateMessage.userEntries.length < 1 )
+        		if (doStoreStateMessage.userEntries.length < 1 )
         			throwError("You have to call doStoreState with at least 1 parameter !");
         		if (isInTransaction())
         			throwError("You can call doStoreState only when you are not inside a transaction! msg="+msg);
@@ -195,50 +192,50 @@ package come2play_as3.api {
         		super.sendMessage( msg );
         		return;
 			}  
-			else if(msg is API_DoAllStoreState)
+			else if (msg is API_DoAllStoreState)
 			{
 				var doAllStoreStateMessage:API_DoAllStoreState = msg as API_DoAllStoreState;
-        		if(doAllStoreStateMessage.userEntries.length < 1 )
+        		if (doAllStoreStateMessage.userEntries.length < 1 )
         			throwError("You have to call doAllStoreStateMessage with at least 1 UserEntry !");
 				isNullKeyExistUserEntry(doAllStoreStateMessage.userEntries);
 			}   
-			else if(msg is API_DoAllEndMatch)
+			else if (msg is API_DoAllEndMatch)
 			{
 				var doAllEndMatchMessage:API_DoAllEndMatch = msg as API_DoAllEndMatch;
-        		if(doAllEndMatchMessage.finishedPlayers.length < 1 )
+        		if (doAllEndMatchMessage.finishedPlayers.length < 1 )
         			throwError("You have to call doAllEndMatch with at least 1 PlayerMatchOver !");
 			} 
-			else if(msg is API_DoAllRevealState) 
+			else if (msg is API_DoAllRevealState) 
 			{
 				var doAllRevealState:API_DoAllRevealState = msg as API_DoAllRevealState;
-        		if(doAllRevealState.revealEntries.length < 1 )
+        		if (doAllRevealState.revealEntries.length < 1 )
         			throwError("You have to call doAllRevealState with at least 1 RevealEntry !");
         		isNullKeyExistRevealEntry(doAllRevealState.revealEntries);
 			} 
-			else if(msg is API_DoAllRequestStateCalculation) 
+			else if (msg is API_DoAllRequestStateCalculation) 
 			{
 				var doAllRequestStateCalculation:API_DoAllRequestStateCalculation = msg as API_DoAllRequestStateCalculation;
-        		if(doAllRequestStateCalculation.keys.length < 1 )
+        		if (doAllRequestStateCalculation.keys.length < 1 )
         			throwError("You have to call doAllRequestStateCalculation with at least 1 key !");
         		isNullKeyExist(doAllRequestStateCalculation.keys);
 			}	
-			else if(msg is API_DoAllSetTurn) 
+			else if (msg is API_DoAllSetTurn) 
 			{
 				var doAllSetTurn:API_DoAllSetTurn = msg as API_DoAllSetTurn;
-        		if(currentPlayerIds.indexOf(doAllSetTurn.userId) == -1 )
+        		if (AS3_vs_AS2.IndexOf(currentPlayerIds, doAllSetTurn.userId) == -1 )
         			throwError("You have to call doAllSetTurn with a player user ID !");
 			}
-			else if(msg is API_DoAllShuffleState) 
+			else if (msg is API_DoAllShuffleState) 
 			{
 				var doAllShuffleState:API_DoAllShuffleState = msg as API_DoAllShuffleState;
-        		if(doAllShuffleState.keys.length < 1 )
+        		if (doAllShuffleState.keys.length < 1 )
         			throwError("You have to call doAllShuffleState with at least 1 key !");
         		isNullKeyExist(doAllShuffleState.keys);
 			}
-			else if(msg is API_DoAllStoreStateCalculation) 
+			else if (msg is API_DoAllStoreStateCalculation) 
 			{
 				var doAllStoreStateCalculations:API_DoAllStoreStateCalculation = msg as API_DoAllStoreStateCalculation;
-        		if(doAllStoreStateCalculations.userEntries.length < 1 )
+        		if (doAllStoreStateCalculations.userEntries.length < 1 )
         			throwError("You have to call doAllStoreStateCalculations with at least 1 UserEntry !");
 				isNullKeyExistUserEntry(doAllStoreStateCalculations.userEntries);
 			}

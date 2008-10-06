@@ -51,7 +51,7 @@ package come2play_as3.minesweeper
 		}
 		
 		
-		public function makeBoard(width:int,height:int,players:Array):void
+		public function makeBoard(width:int,height:int,players:Array,isPlayer:Boolean):void
 		{
 			if(boardUnderPart != null)
 				removeChild(boardUnderPart);
@@ -68,6 +68,8 @@ package come2play_as3.minesweeper
 					tempBox.stop();
 					tempBox.x = i*16 + 9.5;
 					tempBox.y = j*16 + 7;
+					if(!isPlayer)
+						tempBox.frameBtn.enabled = false;
 					boardBricks[i][j]=tempBox;
 					boardUnderPart.addChild(boardBricks[i][j]);
 				}

@@ -23,7 +23,7 @@ package come2play_as3.minesweeper
 		private var boardLogic:Array;
 		/*
 		what places were pressed already
-		value 0 meant untouchde
+		value 0 meant unthoched
 		value 1 means pressed
 		value 2 means press callback on this square was recived
 		value 3 means the move is on the board
@@ -119,7 +119,7 @@ package come2play_as3.minesweeper
 					boardLogic[i][j] = 0 ;
 				}
 			}		
-			mineSweeperGraphic.makeBoard(boardWidth,boardHeight,usersData);
+			mineSweeperGraphic.makeBoard(boardWidth,boardHeight,usersData,allPlayerIds.indexOf(myUserId) != -1);
 
 		}
 		public function loadBoard(serverEntries:Array/*ServerEntry*/):void

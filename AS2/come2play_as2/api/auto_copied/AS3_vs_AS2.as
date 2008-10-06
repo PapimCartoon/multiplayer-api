@@ -40,13 +40,13 @@ class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 			return handler.apply(target, fullArgs);
 		};
 	}
-	public static function addOnPress(movie:MovieClip, func:Function):Void {
+	public static function addOnPress(movie:MovieClip, func:Function, isActive:Boolean):Void {
 		//trace("Adding onPress to movie="+movie+" func="+func);
-		movie.onPress = func; //function () {trace("Pressed on movie="+movie+" func="+func); func(); };
+		movie.onPress = isActive ? func : null; //function () {trace("Pressed on movie="+movie+" func="+func); func(); };
 	}	
-	public static function addOnMouseOver(movie:MovieClip, mouseOverFunc:Function, mouseOutFunc:Function):Void {		
-		movie.onRollOver = mouseOverFunc; 
-		movie.onRollOut = mouseOutFunc; 
+	public static function addOnMouseOver(movie:MovieClip, mouseOverFunc:Function, mouseOutFunc:Function, isActive:Boolean):Void {		
+		movie.onRollOver = isActive ? mouseOverFunc : null; 
+		movie.onRollOut = isActive ? mouseOutFunc : null; 
 	}
 	public static function addStatusListener(conn:LocalConnection, client:Object, functions:Array):Void {
 		for (var i:Number=0; i<functions.length; i++) {
@@ -214,4 +214,9 @@ class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 	public static function stringLastIndexOf(str:String, val:String):Number {
 		return str.lastIndexOf(val);
 	}	
+	
+	public static function waitForStage(graphics:MovieClip, gameConsructor:Function):Void {
+		// no stage in AS2...
+		gameConsructor();
+	}
 }

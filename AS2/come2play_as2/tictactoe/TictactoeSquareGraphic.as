@@ -15,7 +15,7 @@ class come2play_as2.tictactoe.TictactoeSquareGraphic
 	// symbolsContainer will contain a child for each symbol (0 .. MAX_SYMBOLS-1)
 	private var symbolsContainer:MovieClip;	
 	private var allSymbols:Array/*DisplayObject*/;
-	private var currentTurnForMouseOver:Number = BTN_NONE;
+	private var currentTurnForMouseOver:Number = BTN_NONE - 1; // so we will make the first assignment (to show the logo) 
 
 	private var move:TictactoeSquare;
 	private var logoContainer:MovieClip;
@@ -26,11 +26,11 @@ class come2play_as2.tictactoe.TictactoeSquareGraphic
 		this.logoContainer = AS3_vs_AS2.getMovieChild(square,"logoContainer");
 		this.symbolsContainer = AS3_vs_AS2.getMovieChild(square,"symbolsContainer");
 		this.soundMovieClip = AS3_vs_AS2.getMovieChild(square,"soundMovieClip");
-		soundMovieClip.stop(); // for some reason the sound started playing immediately		
+		// for some reason (CRAZY flash!) all the inner movieclips start playing immediately (important for the sound, and the button-container shows the mouse cursor as a hand)
+		buttonContainer.stop();
+		soundMovieClip.stop(); 
+				
 		this.move = move;
-		if (AS3_vs_AS2.isAS3) {
-			addButtonListeners(buttonContainer);
-		}
 			
 		allSymbols = [];
 		for (var i:Number=0; i<MAX_SYMBOLS; i++) {
@@ -40,9 +40,14 @@ class come2play_as2.tictactoe.TictactoeSquareGraphic
 					
 		showOrHideLogo(false);
 	}
-	private function addButtonListeners(btn:MovieClip):Void {
-		AS3_vs_AS2.addOnPress(btn,	AS3_vs_AS2.delegate(this, this.pressedOn));
-		AS3_vs_AS2.addOnMouseOver(btn,	AS3_vs_AS2.delegate(this, this.mouseOver),	AS3_vs_AS2.delegate(this, this.mouseOut));
+	private function setButtonListeners(isActive:Boolean):Void {	
+		buttonContainer.gotoAndStop(isActive ? "WithBtn" : "NoBtn");
+		// In AS2 we put onPress on the inner button, and in AS3 on the buttonContainer (because we need to remove those mouse-event-listeners
+		if (AS3_vs_AS2.isAS3 || isActive) {	
+			var btn:MovieClip = AS3_vs_AS2.isAS3 ? buttonContainer : AS3_vs_AS2.getChild(buttonContainer,"btn");	
+			AS3_vs_AS2.addOnPress(btn,	AS3_vs_AS2.delegate(this, this.pressedOn), isActive);
+			AS3_vs_AS2.addOnMouseOver(btn,	AS3_vs_AS2.delegate(this, this.mouseOver),	AS3_vs_AS2.delegate(this, this.mouseOut), isActive);
+		}
 	}
 	private function addSymbol(color:Number, newSymbol:MovieClip):Void {
 		AS3_vs_AS2.setVisible(newSymbol,false);
@@ -93,7 +98,7 @@ class come2play_as2.tictactoe.TictactoeSquareGraphic
     private var alphaPercentage:Number;
     private var moveAnimationIntervalId:Number = -1;
     public function startMoveAnimation():Void {
-    	if (moveAnimationIntervalId!=-1) return; // already in animation mode
+    	StaticFunctions.assert(moveAnimationIntervalId==-1, ["TictactoeSquareGraphic is already in animation mode! sqaure=", move]);
     	
 		graphic.animationStarted();
 		soundMovieClip.gotoAndPlay("MakeSound");
@@ -108,7 +113,7 @@ class come2play_as2.tictactoe.TictactoeSquareGraphic
 			alphaPercentage = 100;
 			clearInterval(moveAnimationIntervalId);
 			moveAnimationIntervalId = -1;
-			graphic.animationEnded();    				
+			graphic.moveAnimationEnded(move,false);    				
 		}   		
 		setAlpha(alphaPercentage);
 		alphaPercentage += MOVE_ANIMATION_ALPHA_DELTA;
@@ -121,41 +126,40 @@ class come2play_as2.tictactoe.TictactoeSquareGraphic
     }
     
 	public function setColor(color:Number):Void {	
+		trace("Changing square "+move+" to setColor="+color);
 		currentTurnForMouseOver = BTN_NONE;
 		AS3_vs_AS2.setAlpha(symbolsContainer, 100);
 		setSymbol(color);
-		buttonContainer.gotoAndStop("NoBtn");		
+		setButtonListeners(false);	
 		showOrHideLogo(false);
 	}
 	public static var BUTTON_SYMBOL_ALPHA:Number = 40;
 	public function startMove(currentTurn:Number):Void {
-		//trace("Changing square "+move+" to "+currentTurn);
+		trace("Changing square "+move+" to startMove="+currentTurn);
 		AS3_vs_AS2.setAlpha(symbolsContainer, BUTTON_SYMBOL_ALPHA);
 		currentTurnForMouseOver = currentTurn;
 		setSymbol(BTN_NONE);
-		buttonContainer.gotoAndStop(currentTurn==BTN_NONE ? "NoBtn" : "WithBtn");
+		
+		setButtonListeners(currentTurn!=BTN_NONE);
 		if (currentTurn!=BTN_NONE) {
 			if (currentTurn<0) throw Error("Internal error!");
-			if (!AS3_vs_AS2.isAS3)
-				addButtonListeners(AS3_vs_AS2.getChild(buttonContainer,"btn"));				
 			showOrHideLogo(false);
 		} else {		
 			showOrHideLogo(true);	
 		}
 	}
 	private function setSymbol(color:Number):Void {
-		var withSymbol:Boolean = color!=BTN_NONE;
 		for (var i:Number=0; i<MAX_SYMBOLS; i++)
 			AS3_vs_AS2.setVisible(allSymbols[i], i==color);
 	}
-	private function pressedOn():Void  {
+	private function pressedOn(/*event:MouseEvent*/):Void  {
 		graphic.userMadeHisMove(move);		
 	}
-	private function mouseOver():Void  {	
+	private function mouseOver(/*event:MouseEvent*/):Void  {	
 		if (currentTurnForMouseOver!=BTN_NONE)
 			setSymbol(currentTurnForMouseOver);
 	}
-	private function mouseOut():Void  {
+	private function mouseOut(/*event:MouseEvent*/):Void  {
 		if (currentTurnForMouseOver!=BTN_NONE)
 			setSymbol(BTN_NONE);
 	}

@@ -30,22 +30,22 @@ class come2play_as2.api.auto_copied.SerializableClass
 	public static function isToStringObject(str:String):Boolean {
 		return str=="[object Object]";
 	}
-	public static function isObject(o:Object):Boolean {
+	public static function isObject(o/*:Object*/):Boolean {
 		return isToStringObject(o.toString());	
 	}
-	public static function deserialize(object:Object):Object {
+	public static function deserialize(object/*:Object*/)/*:Object*/ {
 		try {
 			if (object==null) 
 				return object;
 			var isArray:Boolean = AS3_vs_AS2.isArray(object);
 			var isObj:Boolean = isObject(object);
-			var res:Object = object;
+			var res/*:Object*/ = object;
 			if (isArray || isObj) {				
 				var className:String = 
 					object.hasOwnProperty(CLASS_NAME_FIELD) ? object[CLASS_NAME_FIELD] : null;
 				res = isArray ? [] : {}; // we create a new copy
 		
-				var newObject:Object = null;
+				var newObject/*:Object*/ = null;
 				if (className!=null) {
 					var isAPI_Package:Boolean =
 						StaticFunctions.startsWith(className, REPLACE_TO);

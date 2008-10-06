@@ -7,11 +7,14 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	public static var someMovieClip:MovieClip; // so we can display error messages on the stage
 	public static var allTraces:Array = [];
 	public static var MAX_TRACES_NUM:Number = 50;
-	public static function storeTrace(obj:Object):Void {
+	public static function storeTrace(obj/*:Object*/):Void {
 		if (allTraces.length>=MAX_TRACES_NUM) allTraces.shift();
 		allTraces.push(["Time: ", getTimer(), " Trace: ", obj]);
 	}
+	private static var DID_SHOW_ERROR:Boolean = false;
 	public static function showError(msg:String):Void {
+		if (DID_SHOW_ERROR) return;
+		DID_SHOW_ERROR = true;
 		var msg:String = "An ERRRRRRRRRRROR occurred:\n"+msg+"\n"+
 			(allTraces.length==0 ? '' : 
 				(allTraces.length<MAX_TRACES_NUM ? "All":"The last "+MAX_TRACES_NUM)+" stored traces are:\n"+
@@ -64,7 +67,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	
 	private static var REFLECTION_PREFIX:String = "REFLECTION_";
 	public static function performReflectionFromFlashVars(_someMovieClip:MovieClip):Void {		
-		var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(_someMovieClip);
+		var parameters/*:Object*/ = AS3_vs_AS2.getLoaderInfoParameters(_someMovieClip);
 		trace("performReflectionFromFlashVars="+JSON.stringify(parameters));
 		for (var key:String in parameters) {
 			if (startsWith(key,REFLECTION_PREFIX)) {
@@ -83,11 +86,11 @@ class come2play_as2.api.auto_copied.StaticFunctions
 		performReflection2(before, after);
 	}
 	public static function performReflection2(before:String, after:String):Void {
-		var val_obj:Object = JSON.parse(after);
+		var val_obj/*:Object*/ = JSON.parse(after);
 		var dotIndex:Number = AS3_vs_AS2.stringLastIndexOf(before,".");
 		var clzName:String = trim(before.substr(0, dotIndex));
 		var fieldName:String = trim(before.substr(dotIndex+1));
-		var ClassReference:Object = AS3_vs_AS2.getClassByName(clzName);
+		var ClassReference/*:Object*/ = AS3_vs_AS2.getClassByName(clzName);
 		//trace("Setting field "+fieldName+" in class "+clzName+" to val="+val_obj); 
 		ClassReference[fieldName] = val_obj;		
 	}

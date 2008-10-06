@@ -34,7 +34,7 @@ class come2play_as2.api.CreateGrid
 	public var squareDeltaX:Number;
 	public var squareDeltaY:Number;
 		
-	public function gotCustomInfo(key:String, value/*any type*/):Void {
+	public function gotCustomInfo(key:String, value/*:Object*/):Void {
 		if (StaticFunctions.startsWith(key,GridPrefix)) {
 			this[ key.substr(GridPrefix.length) ] = value;
 		}		

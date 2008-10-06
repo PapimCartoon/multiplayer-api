@@ -59,7 +59,7 @@ public class TestClientGameAPI extends ClientGameAPI {
 			"\n"
 			);
 		exampleOperationsText.text = allOperationsWithParameters.join("\n");		
-		AS3_vs_AS2.addOnPress(my_graphics.sendOperation, AS3_vs_AS2.delegate(this, this.dispatchOperation) );
+		AS3_vs_AS2.addOnPress(my_graphics.sendOperation, AS3_vs_AS2.delegate(this, this.dispatchOperation), true );
 		doRegisterOnServer();			
 	}
 	
@@ -76,6 +76,14 @@ public class TestClientGameAPI extends ClientGameAPI {
 	}
 	
 	private var testDoubleNumbers:Boolean = false;
+	public function oldDoStoreState(userEntries:Array/*UserEntry*/):void {
+		super.doStoreState(userEntries);
+	}
+	override public function doStoreState(userEntries:Array/*UserEntry*/):void {
+		// we must delay sending doStoreState, because it cannot be inside a transaction
+		AS3_vs_AS2.myTimeout( AS3_vs_AS2.delegate(this, this.oldDoStoreState, userEntries), 100);
+	}
+		 
 	override public function gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, serverEntries:Array/*ServerEntry*/):void {
 		this.allPlayerIds = allPlayerIds;
 		if (!shouldTest) return;
@@ -357,7 +365,6 @@ public class TestClientGameAPI extends ClientGameAPI {
 	}
 	private function doTransaction():void {
 		var funcDo:Object = funcDoArr.shift();
-		trace("doTransaction");
 		funcDo();		
 	}
 		
@@ -402,7 +409,7 @@ public class TestClientGameAPI extends ClientGameAPI {
 	private function handleError(err:Error):void { 
 		storeTrace("ERROR", AS3_vs_AS2.error2String(err));
 	}
-	private function dispatchOperation():void {
+	private function dispatchOperation(event:MouseEvent):void {
 		try {
 			var inputStr:String = operationInput.text;
 			inputStr = StaticFunctions.trim(inputStr);			

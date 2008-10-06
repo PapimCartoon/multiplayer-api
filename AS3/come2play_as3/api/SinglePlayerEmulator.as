@@ -27,8 +27,8 @@ package come2play_as3.api
 		public static var DEFAULT_GENERAL_INFO:Array/*InfoEntry*/ =
 			[ 
 				InfoEntry.create(API_Message.CUSTOM_INFO_KEY_logoFullUrl,"../../Emulator/example_logo.jpg"), 
-				InfoEntry.create(API_Message.CUSTOM_INFO_KEY_gameHeight,"400"), 
-				InfoEntry.create(API_Message.CUSTOM_INFO_KEY_gameWidth,"400") 
+				InfoEntry.create(API_Message.CUSTOM_INFO_KEY_gameHeight,400), 
+				InfoEntry.create(API_Message.CUSTOM_INFO_KEY_gameWidth,400) 
 			];
 		public static var DEFAULT_USER_INFO:Array/*InfoEntry*/ =
 				[ 	InfoEntry.create(API_Message.USER_INFO_KEY_name, "User name"),

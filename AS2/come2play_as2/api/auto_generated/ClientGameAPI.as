@@ -10,7 +10,7 @@ import come2play_as2.api.auto_generated.*;
 			super(someMovieClip);
 		}
 		public function doRegisterOnServer():Void { sendMessage( API_DoRegisterOnServer.create() ); }
-		public function doTrace(name:String, message:Object):Void { sendMessage( API_DoTrace.create(name, message) ); }
+		public function doTrace(name:String, message/*:Object*/):Void { sendMessage( API_DoTrace.create(name, message) ); }
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
@@ -47,7 +47,7 @@ import come2play_as2.api.auto_generated.*;
 		
 		public function doAllShuffleState(keys:Array/*Object*/):Void { sendMessage( API_DoAllShuffleState.create(keys) ); }
 		
-		public function doAllRequestRandomState(key:Object, isSecret:Boolean/*<InAS3> = false </InAS3>*/):Void { sendMessage( API_DoAllRequestRandomState.create(key, isSecret) ); }
+		public function doAllRequestRandomState(key/*:Object*/, isSecret:Boolean/*<InAS3> = false </InAS3>*/):Void { sendMessage( API_DoAllRequestRandomState.create(key, isSecret) ); }
 		
 		// if userId=-1, then it is a bug of the game developer
 

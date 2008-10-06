@@ -1,4 +1,4 @@
-﻿package come2play_as3.api.auto_copied
+package come2play_as3.api.auto_copied
 {
 	import flash.display.MovieClip;
 	import flash.system.System;
@@ -99,5 +99,10 @@ public final class StaticFunctions
 		ClassReference[fieldName] = val_obj;		
 	}
 
+	public static function replaceLastOccurance(str:String, searchFor:String, replaceWith:String):String {
+		var lastIndex:int = AS3_vs_AS2.stringLastIndexOf(str, searchFor);
+		if (lastIndex==-1) showError("Did not find searchFor="+searchFor+" in string="+str);
+		return str.substring(0,lastIndex) + replaceWith + str.substring(lastIndex+searchFor.length);
+	}
 }
 }

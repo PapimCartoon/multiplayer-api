@@ -27,8 +27,9 @@ import come2play_as2.api.auto_generated.*;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		/*override*/ public function toString():String { return '{API_DoAllFoundHacker:' +getParametersAsString() +'}'; }
+		/*override*/ public function getClassName():String { return 'API_DoAllFoundHacker'; }
 		/*override*/ public function getMethodName():String { return 'doAllFoundHacker'; }
+		/*override*/ public function getFieldNames():Array { return ['userId', 'errorDescription']; }
 		/*override*/ public function getMethodParameters():Array { return [userId, errorDescription]; }
 		/*override*/ public function getMethodParametersNum():Number { return 2; }
 	}

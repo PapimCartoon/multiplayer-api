@@ -124,6 +124,10 @@ class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 		if (prot.hasOwnProperty(as2_class_name)) return prot[as2_class_name]; // shortcut optimization (so we won't lookup the class name for every object)
 		var res:String = p_getClassName(_global, prot);
 		if (res==null) return typeof o; 
+
+		// replace the last '.' with '::' (to use the same notation as in AS3)
+		res = StaticFunctions.replaceLastOccurance(res, '.', '::');
+
 		prot[as2_class_name] = res;
 		return res;
 	}
@@ -136,13 +140,18 @@ class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 		return null;
 	}
 	
+	// For Serialization, Reflection, and in TestClientGameAPI
+	// (we use AS3 notation, where class name is:  PACKAGE1.PACKAGE2.PACKAGE3::CLASSNAME
 	public static function getClassByName(className:String):Object {
+		className = StaticFunctions.replaceLastOccurance(className, '::', '.');
+
 		return eval(className);
 	}
 	public static function createInstanceOf(className:String):Object {
 		var classConstructor = getClassByName(className);
 		return new classConstructor();
 	}
+
 
 	public static function createMovieInstance(graphics:MovieClip, linkageName:String, name:String):MovieClip {
 		var depth:Number = graphics.getNextHighestDepth();

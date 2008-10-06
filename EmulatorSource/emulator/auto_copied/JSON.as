@@ -292,171 +292,192 @@ package emulator.auto_copied
             if (ch == '{') {
                 this.next();
                 this.white();
-                if (ch == '}') {
+                
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+				// E.g., trace( SerializableClass.deserialize( JSON.parse("{ $API_DoStoreState$ userEntries:[{ $UserEntry$ key:0 , value:{ row:0 , col:0} , isSecret:false}]}")) );
+                if (ch == '$') {
+                	// special syntax for our API classes (extending API_Message) to make toString more readable                	
+                    this.next();
+                    var className:Array = [];
+                    while (ch!='$') {
+                    	className.push(ch);
+                    	this.next();                    	
+                    }
+                    this.next();
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+                	this.white();
+                    o[SerializableClass.CLASS_NAME_FIELD] = 
+                    	SerializableClass.REPLACE_TO + ".auto_generated::"+className.join("");
+                }
+                if (ch == '}') {
                     this.next();
                     return o;
                 }
                 while (ch) {
                     k = this.str();
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                     this.white();
                     if (ch != ':') {
                         break;
                     }
                     this.next();
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
                     o[k] = this.value();
                     this.white();
                     if (ch == '}') {
                         this.next();
                         return o;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                     } else if (ch != ',') {
                         break;
                     }
                     this.next();
                     this.white();
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
                 }
             }
             throwError("Bad object");
             return {};
         }
 
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+
         private function num():Number {
             var n:String = '';
             var v:Number;
-
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
 
             if (ch == '-') {
                 n = '-';
                 this.next();
             }
             while (ch >= '0' && ch <= '9') {
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                 n += ch;
                 this.next();
             }
             if (ch == '.') {
                 n += '.';
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
                 this.next();
                 while (ch >= '0' && ch <= '9') {
                     n += ch;
                     this.next();
                 }
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
             }
             if (ch == 'e' || ch == 'E') {
                 n += ch;
                 this.next();
                 if (ch == '-' || ch == '+') {
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
                     n += ch;
                     this.next();
                 }
                 while (ch >= '0' && ch <= '9') {
                     n += ch;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                     this.next();
                 }
             }
             v = Number(n);
 			//trace("v="+v+" n="+n);
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
             if (!isFinite(v)) {
                 throwError("Bad number");
             }
             return v;
         }
 
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+
         private function word():Object {
 			var oldAt:int = at;
             switch (ch) {
                 case 't':
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
                     if (this.next() == 'r' && this.next() == 'u' &&
                             this.next() == 'e') {
                         this.next();
                         return true;
                     }
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                     break;
                 case 'f':
                     if (this.next() == 'a' && this.next() == 'l' &&
                             this.next() == 's' && this.next() == 'e') {
                         this.next();
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
                         return false;
                     }
                     break;
                 case 'n':
                     if (this.next() == 'u' && this.next() == 'l' &&
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                             this.next() == 'l') {
                         this.next();
                         return null;
                     }
                     break;
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
             }
 			// backtrack and parse as string
 			at = oldAt;
 			return str();
             //throwError("Syntax error");
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
         }
 
         private function value():Object {
             this.white();
             switch (ch) {
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
                 case '{':
                     return this.obj();
                 case '[':
                     return this.arr();
                 case '"':
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                 case "'":
                     return this.str();
                 case '-':
                     return this.num();
                 default:
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
                     return ch >= '0' && ch <= '9' ? this.num() : this.word();
             }
             return {};
         }
 	    public function p_parse(_text:String):Object {
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 	        text = _text;
             at = 0;
 	        ch = ' ';
 	        var res:Object = value();
 	        this.white();
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 	        if (at!=_text.length+1) throwError("Could not parse the entire string, string length="+_text.length+" and the parsing reached position="+(at-1));
 	        return res;
 	    }
 	    public static function parse(_text:String):Object {
 	    	var json:JSON = new JSON();
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 	    	return json.p_parse(_text);
 	    }
 

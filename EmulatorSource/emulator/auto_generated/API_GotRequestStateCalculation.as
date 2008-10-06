@@ -26,8 +26,9 @@ package emulator.auto_generated {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		override public function toString():String { return '{API_GotRequestStateCalculation:' +getParametersAsString() +'}'; }
+		override public function getClassName():String { return 'API_GotRequestStateCalculation'; }
 		override public function getMethodName():String { return 'gotRequestStateCalculation'; }
+		override public function getFieldNames():Array { return ['requestId', 'serverEntries']; }
 		override public function getMethodParameters():Array { return [requestId, serverEntries]; }
 		override public function getMethodParametersNum():int { return 2; }
 	}

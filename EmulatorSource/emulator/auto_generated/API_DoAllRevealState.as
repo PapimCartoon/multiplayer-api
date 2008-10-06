@@ -20,12 +20,13 @@ package emulator.auto_generated {
 		}
 		override public function getParametersAsString():String { return 'revealEntries=' + JSON.stringify(revealEntries); }
 		override public function getFunctionId():int { return -113; }
-		override public function toString():String { return '{API_DoAllRevealState:' +getParametersAsString() +'}'; }
+		override public function getClassName():String { return 'API_DoAllRevealState'; }
 		override public function getMethodName():String { return 'doAllRevealState'; }
-		override public function getMethodParameters():Array { return [revealEntries]; }
+		override public function getFieldNames():Array { return ['revealEntries']; }
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		override public function getMethodParameters():Array { return [revealEntries]; }
 		override public function getMethodParametersNum():int { return 1; }
 	}
 }

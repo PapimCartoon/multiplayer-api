@@ -26,8 +26,9 @@ package emulator.auto_generated {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		override public function toString():String { return '{API_Transaction:' +getParametersAsString() +'}'; }
+		override public function getClassName():String { return 'API_Transaction'; }
 		override public function getMethodName():String { return 'aPI_Transaction'; }
+		override public function getFieldNames():Array { return ['callback', 'messages']; }
 		override public function getMethodParameters():Array { return [callback, messages]; }
 		override public function getMethodParametersNum():int { return 2; }
 	}

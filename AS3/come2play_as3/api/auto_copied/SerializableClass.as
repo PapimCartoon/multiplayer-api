@@ -1,5 +1,7 @@
 package come2play_as3.api.auto_copied
 {
+	import come2play_as3.api.auto_generated.API_Message;
+	
 
 public class SerializableClass
 {
@@ -27,6 +29,15 @@ public class SerializableClass
 		if (StaticFunctions.startsWith(__CLASS_NAME__,REPLACE_IN_NAME)) {
 			__CLASS_NAME__ = REPLACE_TO + __CLASS_NAME__.substr(REPLACE_IN_NAME.length);			
 		}
+	}
+	
+	public static function message2String(msg:API_Message):String {
+		var fieldNames:Array = msg.getFieldNames();
+		var res:Array = [];
+		for each (var key:String in fieldNames) {
+			res.push( key + ":" + JSON.stringify(msg[key]) ); 
+		}
+		return "{ $"+msg.getClassName()+"$ " + res.join(" , ") + "}"; // see JSON.parse
 	}
 	public static function isToStringObject(str:String):Boolean {
 		return str=="[object Object]";

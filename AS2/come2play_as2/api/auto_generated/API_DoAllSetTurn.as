@@ -28,8 +28,9 @@ import come2play_as2.api.auto_generated.*;
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
 		/*override*/ public function getFunctionId():Number { return -114; }
-		/*override*/ public function toString():String { return '{API_DoAllSetTurn:' +getParametersAsString() +'}'; }
+		/*override*/ public function getClassName():String { return 'API_DoAllSetTurn'; }
 		/*override*/ public function getMethodName():String { return 'doAllSetTurn'; }
+		/*override*/ public function getFieldNames():Array { return ['userId', 'milliSecondsInTurn']; }
 		/*override*/ public function getMethodParameters():Array { return [userId, milliSecondsInTurn]; }
 		/*override*/ public function getMethodParametersNum():Number { return 2; }
 	}

@@ -10,6 +10,8 @@ package emulator.auto_copied
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	import emulator.auto_generated.API_Message;
+	
 
 public class SerializableClass
 {
@@ -18,11 +20,11 @@ public class SerializableClass
 	public static const CLASS_NAME_FIELD:String = "__CLASS_NAME__";
 	
 	// Because the shared classes have different package names, 
-	// I need to replace it before and after serialization
-	public static const REPLACE_IN_NAME:String = "emulator";
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	// I need to replace it before and after serialization
+	public static const REPLACE_IN_NAME:String = "emulator";
 	public static const REPLACE_TO:String = "COME2PLAY_PACKAGE";
 	
 	// Only in the API we should deserialize user-defined classes
@@ -31,11 +33,11 @@ public class SerializableClass
 	
 	public var __CLASS_NAME__:String;
 	public function SerializableClass() {
-		__CLASS_NAME__ = AS3_vs_AS2.getClassName(this);
-		if (__CLASS_NAME__==null || AS3_vs_AS2.stringIndexOf(__CLASS_NAME__,"$")!=-1) 
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		__CLASS_NAME__ = AS3_vs_AS2.getClassName(this);
+		if (__CLASS_NAME__==null || AS3_vs_AS2.stringIndexOf(__CLASS_NAME__,"$")!=-1) 
 			StaticFunctions.throwError("Illegal class name '"+__CLASS_NAME__+"' for a class that extends SerializableClass. You should only use PUBLIC classes with SerializableClass");
 		AS3_vs_AS2.checkConstructorHasNoArgs(this);
 		
@@ -44,11 +46,23 @@ public class SerializableClass
 			__CLASS_NAME__ = REPLACE_TO + __CLASS_NAME__.substr(REPLACE_IN_NAME.length);			
 		}
 	}
-	public static function isToStringObject(str:String):Boolean {
-		return str=="[object Object]";
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	
+	public static function message2String(msg:API_Message):String {
+		var fieldNames:Array = msg.getFieldNames();
+		var res:Array = [];
+		for each (var key:String in fieldNames) {
+			res.push( key + ":" + JSON.stringify(msg[key]) ); 
+		}
+		return "{ $"+msg.getClassName()+"$ " + res.join(" , ") + "}"; // see JSON.parse
+	}
+	public static function isToStringObject(str:String):Boolean {
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+		return str=="[object Object]";
 	}
 	public static function isObject(o:Object):Boolean {
 		return isToStringObject(o.toString());	
@@ -58,10 +72,10 @@ public class SerializableClass
 			if (object==null) 
 				return object;
 			var isArray:Boolean = AS3_vs_AS2.isArray(object);
-			var isObj:Boolean = isObject(object);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			var isObj:Boolean = isObject(object);
 			var res:Object = object;
 			if (isArray || isObj) {				
 				var className:String = 
@@ -71,10 +85,10 @@ public class SerializableClass
 				var newObject:Object = null;
 				if (className!=null) {
 					var isAPI_Package:Boolean =
-						StaticFunctions.startsWith(className, REPLACE_TO);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+						StaticFunctions.startsWith(className, REPLACE_TO);
 					if (isAPI_Package) {
 						className = REPLACE_IN_NAME + className.substr(REPLACE_TO.length);
 					}			 
@@ -84,10 +98,10 @@ public class SerializableClass
 					}
 				}
 				if (newObject!=null)
-					AS3_vs_AS2.checkAllFieldsDeserialized(object, newObject);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+					AS3_vs_AS2.checkAllFieldsDeserialized(object, newObject);
 					
 				for (var key:String in object)
 					res[key] = deserialize(object[key]); // might throw an illegal assignment (due to type mismatch)
@@ -97,10 +111,10 @@ public class SerializableClass
 		} catch (err:Error) {
 			// I can't throw an exception, because if a hacker stored illegal value in className, 
 			//	then it will cause an error (that may be discovered only in the reveal stage)
-			// instead the client should do a "is" check.
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			// instead the client should do a "is" check.
 			trace("Exception thrown in deserialize:"+AS3_vs_AS2.error2String(err));
 			if (IS_THROWING_EXCEPTIONS)
 				throw err;

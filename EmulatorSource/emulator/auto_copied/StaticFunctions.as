@@ -5,7 +5,7 @@
 // and then run the java program that automatically copies and changes the as file.
 // We do not share the code because the flash goes crazy if it loads to SWFs files with classes of identical names and packages.
 // So we changed the package name when we copied the directory 'auto_copied'
-﻿package emulator.auto_copied
+package emulator.auto_copied
 {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
@@ -136,8 +136,13 @@ public final class StaticFunctions
 		ClassReference[fieldName] = val_obj;		
 	}
 
-}
+	public static function replaceLastOccurance(str:String, searchFor:String, replaceWith:String):String {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		var lastIndex:int = AS3_vs_AS2.stringLastIndexOf(str, searchFor);
+		if (lastIndex==-1) showError("Did not find searchFor="+searchFor+" in string="+str);
+		return str.substring(0,lastIndex) + replaceWith + str.substring(lastIndex+searchFor.length);
+	}
+}
 }

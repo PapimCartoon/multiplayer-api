@@ -218,6 +218,21 @@ import come2play_as2.api.auto_copied.*;
             if (ch == '{') {
                 this.next();
                 this.white();
+                
+				// E.g., trace( SerializableClass.deserialize( JSON.parse("{ $API_DoStoreState$ userEntries:[{ $UserEntry$ key:0 , value:{ row:0 , col:0} , isSecret:false}]}")) );
+                if (ch == '$') {
+                	// special syntax for our API classes (extending API_Message) to make toString more readable                	
+                    this.next();
+                    var className:Array = [];
+                    while (ch!='$') {
+                    	className.push(ch);
+                    	this.next();                    	
+                    }
+                    this.next();
+                	this.white();
+                    o[SerializableClass.CLASS_NAME_FIELD] = 
+                    	SerializableClass.REPLACE_TO + ".auto_generated::"+className.join("");
+                }
                 if (ch == '}') {
                     this.next();
                     return o;

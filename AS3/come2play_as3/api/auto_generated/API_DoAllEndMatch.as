@@ -22,12 +22,13 @@ package come2play_as3.api.auto_generated {
 		}
 		override public function getParametersAsString():String { return 'finishedPlayers=' + JSON.stringify(finishedPlayers); }
 		override public function getFunctionId():int { return -115; }
-		override public function toString():String { return '{API_DoAllEndMatch:' +getParametersAsString() +'}'; }
+		override public function getClassName():String { return 'API_DoAllEndMatch'; }
 		override public function getMethodName():String { return 'doAllEndMatch'; }
-		override public function getMethodParameters():Array { return [finishedPlayers]; }
+		override public function getFieldNames():Array { return ['finishedPlayers']; }
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		override public function getMethodParameters():Array { return [finishedPlayers]; }
 		override public function getMethodParametersNum():int { return 1; }
 	}
 }

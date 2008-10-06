@@ -45,11 +45,12 @@ import come2play_as2.api.auto_generated.*;
 		}
 		/*override*/ public function getParametersAsString():String { return 'isKeyDown=' + JSON.stringify(isKeyDown)+', charCode=' + JSON.stringify(charCode)+', keyCode=' + JSON.stringify(keyCode)+', keyLocation=' + JSON.stringify(keyLocation)+', altKey=' + JSON.stringify(altKey)+', ctrlKey=' + JSON.stringify(ctrlKey)+', shiftKey=' + JSON.stringify(shiftKey); }
 		/*override*/ public function getFunctionId():Number { return -125; }
-		/*override*/ public function toString():String { return '{API_GotKeyboardEvent:' +getParametersAsString() +'}'; }
+		/*override*/ public function getClassName():String { return 'API_GotKeyboardEvent'; }
 		/*override*/ public function getMethodName():String { return 'gotKeyboardEvent'; }
+		/*override*/ public function getFieldNames():Array { return ['isKeyDown', 'charCode', 'keyCode', 'keyLocation', 'altKey', 'ctrlKey', 'shiftKey']; }
 		/*override*/ public function getMethodParameters():Array { return [isKeyDown, charCode, keyCode, keyLocation, altKey, ctrlKey, shiftKey]; }
 		/*override*/ public function getMethodParametersNum():Number { return 7; }
-	}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	}

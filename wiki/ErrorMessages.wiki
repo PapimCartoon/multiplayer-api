@@ -3,7 +3,7 @@
 While developing a game in the emulator toy might stumble upon a few of our custom made errors,
 most of them should be self explanatory but if you still find you are having to understand them, you might refer to this page
 
-== Error List ==
+== Error List : ==
 
 
 
@@ -19,9 +19,6 @@ Every [doStoreState] call should at least contain 1 UserEntry
 
 You can't use a null key's to either store, pass on reveal serverEntries(don't use null keys at all)
 
-=== There is a LocalConnection error. Please test your game only inside the Come2Play emulator. ===
-
-If this Error happens while using the emulator, contact ofir@come2play.com for additional help.
 
 === (Timed out Transaction) Timed out ===
 
@@ -31,11 +28,11 @@ Called when a doALL call is made by only part of the users, and to much time has
 
 Called when you pass a wrong requestId to the server after processing a [doAllrequestStateCalculations]
 
-=== can't do (MethodName) game not started ===
+=== can't do ( Method Name ) game not started ===
 
 The server can't process messaged before the game has started.
 
-=== (UserName)  called  (MethodName)  while (OtherUserName)  called  (OtherMethodName) ===
+=== ( User Name )  called  ( Method Name )  while ( Other User Name )  called  ( Other Method Name ) ===
 
 This is called when users called doAll's in different order
 
@@ -48,7 +45,6 @@ you'll get:
 
 (one)  called  (doAllSetTurn)  while (two)  called  (doAllRequestRandomState)
 
-
 === To call doAllRequestStateCalculations you must enable calculators ===
 
 If you use [doAllRequestStateCalculations] you must enable this in the emulator index page.
@@ -58,10 +54,13 @@ If you use [doAllRequestStateCalculations] you must enable this in the emulator 
 Means you tired to call a [doAllRequestStateCalculations] before getting the calls results
 
 
-
 === can't do (MethodName) game ended ===
 
 The server can't process messaged after the game has ended.
+
+=== There is a LocalConnection error. Please test your game only inside the Come2Play emulator. ===
+
+If this Error happens while using the emulator, contact ofir@come2play.com for additional help.
 
 === Contact come2Play  ===
 

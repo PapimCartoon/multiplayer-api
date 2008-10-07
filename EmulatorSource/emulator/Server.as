@@ -55,6 +55,8 @@ package emulator {
 		private var queueTimer:Timer;
 		private var changedToDelta:int;
 		private var calculatorQueue:Array;
+		private var loadedServerEntries:Array;
+		
 		
 		private var match_started_time:int;
 		private var sCurMessageType:String;
@@ -556,6 +558,9 @@ package emulator {
 				showMsg("Parameter 'game' must be passed in the url.","Error");
 				return;
 			}
+			if(root.loaderInfo.parameters["serverEntries"].length > 30)
+				loadedServerEntries = SerializableClass.deserialize(JSON.parse( root.loaderInfo.parameters["serverEntries"] ) ) as Array;
+			//trace(JSON.stringify())
 			loadSavedGames();
 
 			enableSavedGames();
@@ -1616,14 +1621,13 @@ package emulator {
 			FinishHistory.wholePot=100;
 			iCurTurn=-1;
 			waitingQueue = new MessagQueue(aPlayers.length,getOngoingPlayerIds());
+			if(loadedServerEntries != null)
+			{
+				storeServerEntries(loadedServerEntries);
+			}
 			for each (var usr:User in aUsers) {
 				send_got_match_started(usr);						
 			}
-			/*for each(usr in aCalculators)
-			{
-				send_got_match_started(usr);
-			}	
-			*/
 			
 		}
 		private function stopPlayByPlayTimer():void

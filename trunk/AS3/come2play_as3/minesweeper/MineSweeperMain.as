@@ -127,6 +127,8 @@ import flash.utils.*;
 				if(allPlayerIds.indexOf(obj.userId) != -1)
 					usersData.push(obj);
 			}
+			for(var i:int = usersData.length ;i<allPlayerIds.length;i++)
+				usersData.push({userId:allPlayerIds[i],entries:[]});
 			if(serverEntries.length == 0)
 			{
 				doAllRequestRandomState("randomSeed",true);

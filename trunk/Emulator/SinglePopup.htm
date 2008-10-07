@@ -133,7 +133,7 @@ if (param_arr['game'] !=null){
             cell.style.verticalAlign="top";
             if(i*2+j<(players_num+viewers_num)+1){
                 if(i==0 && j==0){
-                    writeFlash(cell,"../Emulator/Emulator.swf","570","470",flashvars+startPrefix+addparams+"&game="+param_arr["game"]+"&oldgame="+param_arr["oldgame"]+"&fps="+param_arr["CONTAINER_gameFrameRate"]+"&delay_from="+param_arr["delay_from"]+"&delay_to="+param_arr["delay_to"]+"&test_file_width="+param_arr["CONTAINER_gameWidth"]+"&test_file_height="+param_arr["CONTAINER_gameHeight"]+"&isServer=true&single_popup=1&calculatorsOn="+param_arr["calculatorsOn"],"server");
+                    writeFlash(cell,"../Emulator/Emulator.swf","570","470",flashvars+startPrefix+addparams+"&game="+param_arr["game"]+"&oldgame="+param_arr["oldgame"]+"&fps="+param_arr["CONTAINER_gameFrameRate"]+"&delay_from="+param_arr["delay_from"]+"&delay_to="+param_arr["delay_to"]+"&test_file_width="+param_arr["CONTAINER_gameWidth"]+"&test_file_height="+param_arr["CONTAINER_gameHeight"]+"&isServer=true&single_popup=1&calculatorsOn="+param_arr["calculatorsOn"]+"&serverEntries="+param_arr["serverEntries"],"server");
                 }else{
 					if((i*2+j) >= players_num){
 						writeFlash(cell,"../Emulator/Emulator.swf",(swf_width+65),(swf_height+70),flashvars+currentPrefix+"&game="+param_arr["game"]+"&oldgame="+param_arr["oldgame"]+"&delay_from="+param_arr["delay_from"]+"&delay_to="+param_arr["delay_to"]+"&fps="+param_arr["CONTAINER_gameFrameRate"]+"&old_container="+param_arr["old_container"]+"&width="+param_arr["CONTAINER_gameWidth"]+"&height="+param_arr["CONTAINER_gameHeight"]+"&isServer=false&isPlayer=false&clientNum="+((i*2+j)-players_num) ,"client"+(i*2+j));

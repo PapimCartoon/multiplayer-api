@@ -1,8 +1,5 @@
 package come2play_as3.api.auto_copied
 {
-	import come2play_as3.api.auto_generated.API_Message;
-	
-
 public class SerializableClass
 {
 	public static var IS_THROWING_EXCEPTIONS:Boolean = true; // in the online version we set it to false. (Consider the case that a hacker stores illegal values as secret data)
@@ -31,14 +28,6 @@ public class SerializableClass
 		}
 	}
 	
-	public static function message2String(msg:API_Message):String {
-		var fieldNames:Array = msg.getFieldNames();
-		var res:Array = [];
-		for each (var key:String in fieldNames) {
-			res.push( key + ":" + JSON.stringify(msg[key]) ); 
-		}
-		return "{ $"+msg.getClassName()+"$ " + res.join(" , ") + "}"; // see JSON.parse
-	}
 	public static function isToStringObject(str:String):Boolean {
 		return str=="[object Object]";
 	}

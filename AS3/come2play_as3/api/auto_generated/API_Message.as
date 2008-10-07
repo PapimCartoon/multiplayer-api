@@ -7,7 +7,14 @@ package come2play_as3.api.auto_generated {
 	import come2play_as3.api.auto_generated.*;
 
 	public  class API_Message extends SerializableClass {
-		public function toString():String { return SerializableClass.message2String(this); }
+		public function toString():String { 
+			var fieldNames:Array = getFieldNames();
+			var res:Array = [];
+			for each (var key:String in fieldNames) {
+				res.push( key + ":" + JSON.stringify(this[key]) ); 
+			}
+			return "{ $"+getClassName()+"$ " + res.join(" , ") + "}"; // see JSON.parse
+		}
 		public function getClassName():String { throw new Error("You must subclass API_Message!"); return null; }
 		public function getParametersAsString():String { throw new Error("You must subclass API_Message!"); return null; }
 		public function getFunctionId():int { throw new Error("You must subclass API_Message!"); return 0; }

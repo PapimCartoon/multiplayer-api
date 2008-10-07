@@ -1,6 +1,3 @@
-	import come2play_as2.api.auto_generated.API_Message;
-	
-
 import come2play_as2.api.auto_copied.*;
 class come2play_as2.api.auto_copied.SerializableClass
 {
@@ -30,14 +27,6 @@ class come2play_as2.api.auto_copied.SerializableClass
 		}
 	}
 	
-	public static function message2String(msg:API_Message):String {
-		var fieldNames:Array = msg.getFieldNames();
-		var res:Array = [];
-		for (var i35:Number=0; i35<fieldNames.length; i35++) { var key:String = fieldNames[i35]; 
-			res.push( key + ":" + JSON.stringify(msg[key]) ); 
-		}
-		return "{ $"+msg.getClassName()+"$ " + res.join(" , ") + "}"; // see JSON.parse
-	}
 	public static function isToStringObject(str:String):Boolean {
 		return str=="[object Object]";
 	}

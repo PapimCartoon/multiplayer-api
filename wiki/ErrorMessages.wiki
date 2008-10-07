@@ -3,7 +3,7 @@
 While developing a game in the emulator toy might stumble upon a few of our custom made errors,
 most of them should be self explanatory but if you still find you are having to understand them, you might refer to this page
 
-== Error List : ==
+= Error List : =
 
 
 
@@ -54,7 +54,7 @@ If you use [doAllRequestStateCalculations] you must enable this in the emulator 
 Means you tired to call a [doAllRequestStateCalculations] before getting the calls results
 
 
-=== can't do (MethodName) game ended ===
+=== can't do ( Method Name ) game ended ===
 
 The server can't process messaged after the game has ended.
 

@@ -161,7 +161,10 @@ package come2play_as3.domino
 						dominoLogic.drawCube(serverEntry.value as DominoCube,serverEntry.visibleToUserIds[0],serverEntry.key.num);
 					}
 				}
-				setPlayerTurn(playerTurn.playerId)
+				if(playerTurn != null)
+					setPlayerTurn(playerTurn.playerId)
+				else
+					setNextTurn();
 			}
 			//todo : make load
 

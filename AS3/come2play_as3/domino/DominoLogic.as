@@ -301,21 +301,21 @@ package come2play_as3.domino
 			var finishedPlayers:Array/*PlayerMatchOver*/ = new Array();
 			if(playerBadScore.length == 2)
 			{
-				finishedPlayers.push(PlayerMatchOver.create(playerBadScore[0].id,10,100));
-				finishedPlayers.push(PlayerMatchOver.create(playerBadScore[1].id,0,0));		
+				finishedPlayers.push(PlayerMatchOver.create(playerBadScore[1].id,10,100));
+				finishedPlayers.push(PlayerMatchOver.create(playerBadScore[0].id,0,0));		
 			}
 			else if(playerBadScore.length == 3)
 			{
-				finishedPlayers.push(PlayerMatchOver.create(playerBadScore[0].id,20,70));
+				finishedPlayers.push(PlayerMatchOver.create(playerBadScore[2].id,20,70));
 				finishedPlayers.push(PlayerMatchOver.create(playerBadScore[1].id,10,30));
-				finishedPlayers.push(PlayerMatchOver.create(playerBadScore[2].id,0,0));
+				finishedPlayers.push(PlayerMatchOver.create(playerBadScore[0].id,0,0));
 			}
 			else if(playerBadScore.length == 4)
 			{
-				finishedPlayers.push(PlayerMatchOver.create(playerBadScore[0].id,30,60));
-				finishedPlayers.push(PlayerMatchOver.create(playerBadScore[1].id,20,30));
-				finishedPlayers.push(PlayerMatchOver.create(playerBadScore[2].id,10,10));
-				finishedPlayers.push(PlayerMatchOver.create(playerBadScore[3].id,0,0));
+				finishedPlayers.push(PlayerMatchOver.create(playerBadScore[3].id,30,60));
+				finishedPlayers.push(PlayerMatchOver.create(playerBadScore[2].id,20,30));
+				finishedPlayers.push(PlayerMatchOver.create(playerBadScore[1].id,10,10));
+				finishedPlayers.push(PlayerMatchOver.create(playerBadScore[0].id,0,0));
 			}
 			return finishedPlayers;
 		}

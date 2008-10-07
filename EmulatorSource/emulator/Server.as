@@ -597,8 +597,7 @@ package emulator {
 			if (waitingQueue.length() > 1)
 			{
 				var queueEntry:QueueEntry = waitingQueue.getStuckMessage();
-				showMsg(queueEntry.transaction.toString()+" Timed out","Error")
-				addMessageLog("Server","Error",queueEntry.transaction.toString()+" Timed out");
+				errorHandler(queueEntry.transaction.toString()+" Timed out");
 				gameOver();
 			}		
 		}

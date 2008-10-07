@@ -1938,7 +1938,7 @@ package emulator {
 							for each(var key:Object in serverStateKeys)
 							{
 								var tempServerEntry:ServerEntry = savedGame.serverState.getValue(key) as ServerEntry;
-								serverEntryOutput.push("{user_id: "+tempServerEntry.storedByUserId+", key: "+tempServerEntry.key+", data: "+tempServerEntry.toString()+"}");
+								serverEntryOutput.push(tempServerEntry)
 							}
 							itemObj=new Object();
 							itemObj[COL_name]=savedGame.name;

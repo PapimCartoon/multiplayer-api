@@ -10,6 +10,9 @@ import flash.utils.*;
 public final class AS3_vs_AS2
 {
 	public static const isAS3:Boolean = true;
+	public static function isError(o:Object):Boolean {
+		return o is Error;
+	}
 	public static function isNumber(o:Object):Boolean {
 		return o is Number;
 	}
@@ -36,6 +39,9 @@ public final class AS3_vs_AS2
 	}
 	public static function asArray(o:Object):Array {
 		return o as Array;
+	}
+	public static function asError(o:Object):Error {
+		return o as Error;
 	}
 	public static function toString(o:Object):String {		
 		if (o is XML) return (o as XML).toXMLString();

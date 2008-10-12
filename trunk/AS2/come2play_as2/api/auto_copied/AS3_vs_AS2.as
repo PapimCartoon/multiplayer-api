@@ -2,8 +2,8 @@ import come2play_as2.api.auto_copied.*;
 
 class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 	public static var isAS3:Boolean = false;
-	public static function isError(o:Object):Boolean {
-		return o instanceof Error; 
+	public static function specialToString(o:Object):String {
+		return o.toString();
 	}
 	public static function isNumber(o:Object):Boolean {
 		return (typeof o)=="number";
@@ -32,12 +32,6 @@ class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 	public static function asArray(o):Array {
 		return o;
 	}	
-	public static function asError(o):Error {
-		return o;
-	}	
-	public static function toString(o:Object):String {	
-		return o.toString();
-	}
 	public static function delegate(target:Object, handler:Function):Function {
 		var extraArgs:Array = arguments.slice(2);
 		return function() {

@@ -12,9 +12,6 @@ import come2play_as2.api.auto_copied.*;
 			
 	        var c:String, i:Number, l:Number, res:Array, v:String;
 		    
-		    if (AS3_vs_AS2.isError(arg))
-		    	return AS3_vs_AS2.error2String(AS3_vs_AS2.asError(arg));
-		    	
 	        if (AS3_vs_AS2.isNumber(arg) || AS3_vs_AS2.isBoolean(arg))
 	        	return ''+arg; 	 
 	        if (AS3_vs_AS2.isArray(arg)) {
@@ -64,7 +61,7 @@ import come2play_as2.api.auto_copied.*;
 	        }
 	        var argToString:String = "";
 	        try {
-	        	argToString = arg.toString();
+	        	argToString = AS3_vs_AS2.specialToString(arg);
 	        } catch(e:Error) {
 	        	if (isDoingTesting) 
 					throw e;
@@ -78,7 +75,7 @@ import come2play_as2.api.auto_copied.*;
 	            }
 	            return '{' + res.join(",") + '}';
 	        }
-	        return argToString;                
+	        return stringify(argToString); // I want to always be able to do 'parse', so I must escape the string properly (e.g., a date will be "04:20:46 PM" and a stake will be "0:5000,2:20")                
 	    }
         private function white():Void {
             while (ch) {

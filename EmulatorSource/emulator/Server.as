@@ -558,7 +558,7 @@ package emulator {
 				showMsg("Parameter 'game' must be passed in the url.","Error");
 				return;
 			}
-			if(root.loaderInfo.parameters["serverEntries"].length > 30)
+			if(root.loaderInfo.parameters["serverEntries"].length > 50)
 				loadedServerEntries = SerializableClass.deserialize(JSON.parse( root.loaderInfo.parameters["serverEntries"] ) ) as Array;
 			//trace(JSON.stringify())
 			loadSavedGames();

@@ -8,6 +8,7 @@ function getParams(arr){
     var vals=new Array();
 	customVals = new Array();
 	customParam = new Array();
+	
     for(var i=0;i<arr.length;i++){
         switch(arr[i][0]){
             case "players_num":
@@ -77,6 +78,8 @@ function getParams(arr){
                     if(!document.getElementById(arr[i][0])){
                         addParam();
                     }
+					else
+						continue;
                 }
 				else if(arr[i][0].substring(0,9)=="paramNum_")
 				{
@@ -90,10 +93,10 @@ function getParams(arr){
 				{
 					customVals[arr[i][0]] = arr[i][1]
 				}
-                vals.push(arr[i]);
-                break;
+					vals.push(arr[i]);
         }
     }
+	
     for(var i=0;i<vals.length;i++){
 		if(customParam[vals[i][0]]==null)
 		{
@@ -115,6 +118,7 @@ function getParams(arr){
 var param_num=3;
 var custom_param_num=5;
 function clientNumChanged(){
+
     var num1=parseInt(document.getElementById("players_num").value);
     if(isNaN(num1) || num1<=0){
         num1=2;
@@ -152,8 +156,10 @@ function clientNumChanged(){
     for(var i=tbl.rows.length-1;i>num1+num2;i--){
         tbl.deleteRow(i);
     }
+
 }
 function addParam(){
+
     param_num++;
     var tbl=document.getElementById("tblClients");
     var row=tbl.rows[0];
@@ -164,8 +170,10 @@ function addParam(){
         cell=row.insertCell(param_num);
         cell.innerHTML="<input id=\"val_"+(i-1)+"_"+param_num+"\" name=\"val_"+(i-1)+"_"+param_num+"\" size=\"50\" style=\"width: 150px;\" type=\"text\" value=\"\"/>";
     }
+	
 }
 function removeParam(num,obj){
+
     var tbl=document.getElementById("tblClients");
     var row=tbl.rows[0];
     for(var i=0;i<tbl.rows.length;i++){
@@ -173,8 +181,10 @@ function removeParam(num,obj){
 		row.deleteCell(num);
     }
 	param_num--;
+	
 }
 function addCustomParam(){
+
 	var tbl=document.getElementById("tblCustomInfo");
 	tbl.insertRow(custom_param_num);
 	var row= tbl.rows[custom_param_num];
@@ -187,8 +197,10 @@ function addCustomParam(){
 		cell1.innerHTML="<input type=text size = 70 value = 'insert value here' name='paramValue_"+custom_param_num+"' id='paramValue_"+custom_param_num+"'>";
 	}
 	custom_param_num++;
+	
 }
 function removeCustomParam(num){
+
     var tbl=document.getElementById("tblCustomInfo");
 	tbl.deleteRow(num);
 	custom_param_num--;

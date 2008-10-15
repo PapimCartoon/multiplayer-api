@@ -13,10 +13,11 @@ the wide audience so that anyone can use, change or contribute to the API.
 === So what is the API? ===
 
 The Multiplayer API is a bridge between two parties:
-  * *Game developers*, that develop a _game_ as a SWF
+  * *Game developers*, that develop a _game_ as an SWF
   * *Websites that host games*, that develop a _container_ that includes the _game_ SWF.
 The _game_ and _container_ communicate using a LocalConnection, and thus each can use either AS2 or AS3.
 
+The API represents an easy yet effective way of developing multiplayer games, by extending your main game class with our own thus adding a list of functions which will allow your game multiplayer support.
 
 === How to use this project ===
 

@@ -25,7 +25,7 @@ The _game_ and _container_ communicate using a LocalConnection, and thus each ca
 
   * Start by reading the [codeConventions coding conventions]
   * Read the wiki pages, start in the [apiDocumentationOverview API Documentation Overview] 
-  * Checkout the latest version of the [Emulator] from the http://multiplayer-api.googlecode.com/svn/trunk/ : [http://multiplayer-api.googlecode.com/svn/trunk SVN]. If you are not familiar with SVN, you can also [http://code.google.com/p/multiplayer-api/downloads/list download] the emulator.
+  * Checkout the latest version of the [Emulator] from the http://multiplayer-api.googlecode.com/svn/trunk/ , [http://multiplayer-api.googlecode.com/svn/trunk SVN]. If you are not familiar with SVN, you can also [http://code.google.com/p/multiplayer-api/downloads/list download] the emulator.
   * Look at the [http://code.google.com/p/multiplayer-api/issues/list issue tracker] to check for future releases, bugs, and requested features.
   * Mailing list: If you join, you will receive emails from codesite-noreply@google.com
   

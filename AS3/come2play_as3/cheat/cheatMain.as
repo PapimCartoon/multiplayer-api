@@ -1,8 +1,9 @@
 package come2play_as3.cheat
 {
-	import flash.display.MovieClip;
+	import come2play_as3.api.auto_copied.JSON;
 	import come2play_as3.cards.CardsAPI;
-	import come2play_as3.api.auto_copied.AS3_vs_AS2;
+	
+	import flash.display.MovieClip;
 
 	public class cheatMain extends CardsAPI
 	{
@@ -13,12 +14,27 @@ package come2play_as3.cheat
 		}	
 		override public function gotCards(cards:Array/*Card*/):void
 		{
-			trace("**********"+cards)
+			doTrace("me :"+myUserId,JSON.stringify(cards))
 		}
-		override public function gotMatchStarted(allPlayerIds:Array, finishedPlayerIds:Array, serverEntries:Array):void
+		override public function rivalGotCards(rivalId:int, amountOfCards:int):void
 		{
-			storeDecks(2,false);
-			drawCards(3,allPlayerIds[0])
+			doTrace("Rival "+rivalId,amountOfCards);
+		}
+		override public function gotMatchStarted2(allPlayerIds:Array, finishedPlayerIds:Array, serverEntries:Array):void
+		{
+			storeDecks(2,true);
+			for each(var playerId:int in allPlayerIds)
+				drawCards(7,playerId)
+		}
+		override public function gotMatchLoaded(allPlayerIds:Array, finishedPlayerIds:Array, serverEntries:Array):void
+		{
+			doTrace("me","Load match");
+			//storeDecks(2,false);
+			//drawCards(3,allPlayerIds[0])
+		}
+		override public function gotStateChangedNoCards(serverEntries:Array):void
+		{
+
 		}
 	}
 }

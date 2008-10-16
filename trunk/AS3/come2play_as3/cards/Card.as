@@ -12,6 +12,10 @@ package come2play_as3.cards
 		public var value:int;
 		public var sign:String;
 		
+		public function equelTo(card:Card):Boolean
+		{
+			return ((value == card.value) && (sign == card.sign))
+		}
 		public function toString():String{return "{$Card$ value : "+value+",sign : "+sign+"}"}
 		public static function create(sign:String,value:int):Card
 		{

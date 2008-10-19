@@ -6,17 +6,18 @@ gotStateChanged(serverEntries:Array/*ServerEntry*/)
 
 === Description ===
 
-This callback is triggered by ever change in the [MatchState].
+This callback is triggered by any change in the [MatchState].
 
 === Parameters received===
 
-serverEntries - an Array of [ServerEntry] elements, containing the server entries changed by
-whatever function the users called
+serverEntries - an Array of [ServerEntry] elements, containing the server entries changed by the transaction the players made.
+
+A transaction can contain more then one call.
 
 
 === Example ===
 
-player 1 stores are secret number on user input
+player 1 stores a secret number on user input
 
 {{{
 

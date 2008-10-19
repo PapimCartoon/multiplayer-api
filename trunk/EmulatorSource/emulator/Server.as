@@ -2244,7 +2244,16 @@ package emulator {
 			//if(serverState.hasKey(stateEntery.key))
 			//	serverState.remove(stateEntery.key);
 			if((stateEntery.value == null) || (stateEntery.value == ""))
+			{
+				if( typeof(stateEntery.value) == "number" )
+					serverState.put(stateEntery.key,stateEntery);
+				else
+				{
+				showMsg("not good "+stateEntery.key+":"+stateEntery.value);
+				addMessageLog("Server","not good","not good");
 				serverState.remove(stateEntery.key);
+				}
+			}
 			else
 				serverState.put(stateEntery.key,stateEntery);
 			showMatchState();

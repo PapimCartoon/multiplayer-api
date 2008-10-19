@@ -1,6 +1,7 @@
 package come2play_as3.cheat
 {
 	import come2play_as3.api.auto_copied.JSON;
+	import come2play_as3.api.auto_generated.UserEntry;
 	import come2play_as3.cards.CardsAPI;
 	
 	import flash.display.MovieClip;
@@ -22,9 +23,14 @@ package come2play_as3.cheat
 		}
 		override public function gotMatchStarted2(allPlayerIds:Array, finishedPlayerIds:Array, serverEntries:Array):void
 		{
-			storeDecks(2,true);
+			storeDecks(1,true);
 			for each(var playerId:int in allPlayerIds)
 				drawCards(7,playerId)
+			var userEntries:Array = new Array();
+			for(var i:int=0;i<28;i++)
+				userEntries.push(UserEntry.create("domino"+i,i,false))
+			doAllStoreState(userEntries);
+				
 		}
 		override public function gotMatchLoaded(allPlayerIds:Array, finishedPlayerIds:Array, serverEntries:Array):void
 		{

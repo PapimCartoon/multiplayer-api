@@ -78,6 +78,10 @@ package come2play_as3.cards
 			for(var i:int = 0;i<serverEntries.length;i++)
 			{
 				serverEntry = serverEntries[i];
+				if(typeof(serverEntry.key) != "object")
+					continue;
+				if(serverEntry.key.type == null)
+					continue;	
 				if(serverEntry.key.type == "Card")
 				{
 					if(serverEntry.visibleToUserIds != null)
@@ -163,12 +167,15 @@ package come2play_as3.cards
 				var countedCards:int = 0;
 				for each(serverEntry in serverEntries)
 				{
+					if(typeof(serverEntry.key) != "object")
+						continue;
+					if(serverEntry.key.type == null)
+						continue;	
 					if(serverEntry.key.type == "Card")
 					{
 						if(serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,"this card was stored by a single player");
 						countedCards++;
-					}
-						
+					}			
 				}
 				if(countedCards != availableCards)
 					doAllFoundHacker(serverEntry.storedByUserId,"Wrong number of cards recived");

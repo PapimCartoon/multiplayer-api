@@ -32,7 +32,7 @@ package come2play_as3.cards
 				case 1: res.sign = Card.HEART; break;
 				case 2: res.sign = Card.DAIMOND; break;
 				case 3: res.sign = Card.CLUB; break;
-				case 4: res.sign = Card.HEART; break;
+				case 4: res.sign = Card.SPADE; break;
 				case 5: res.sign = Card.JOKER; break;
 			}
 			res.value = value;

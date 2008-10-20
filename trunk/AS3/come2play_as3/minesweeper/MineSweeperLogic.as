@@ -110,7 +110,6 @@ package come2play_as3.minesweeper
 			{
 				playerGameData[i] = new PlayerData(allPlayerIds[i]);
 			}
-			
 			for(i=0;i<boardWidth;i++)
 			{
 				boardLogic[i] = new Array();
@@ -149,7 +148,7 @@ package come2play_as3.minesweeper
 		{
 			var xPos:int = Math.floor((ev.stageX-(stageX+9.5))/16);
 			var yPos:int = Math.floor((ev.stageY-(stageY+7))/16);
-			if((xPos> -1)&&(xPos<(boardWidth+1))&&(yPos>-1)&&(yPos<(boardHeight+1)))
+			if((xPos> -1)&&(xPos<(boardWidth))&&(yPos>-1)&&(yPos<(boardHeight)))
 				if((boardLogic[xPos][yPos] == 0) && (isPlaying))
 				{
 					boardLogic[xPos][yPos] = 1;

@@ -5,6 +5,7 @@ package come2play_as3.pseudoCode.battleShips
 	public class GameData extends SerializableClass
 	{
 		public var row:int, column:int,playerIdAttacked:int,isHit:Boolean,playerAttacking:int;
+		public function GameData() { super("GameData"); }
 		public static function create(row:int, column:int,playerIdAttacked:int,isHit:Boolean,playerAttacking:int):GameData
 		{
 			var res:GameData = new GameData();

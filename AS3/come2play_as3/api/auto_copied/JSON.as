@@ -69,14 +69,24 @@ package come2play_as3.api.auto_copied
 				argToString = "ERROR in toString() method of "+AS3_vs_AS2.getClassName(arg)+" err="+AS3_vs_AS2.error2String(e);
 	        }
 	        
-	        if (SerializableClass.isToStringObject(argToString)) {
-	        	res = [];
-	        	for (var z:String in arg) {
-	                res.push( stringify(z) + ':' + stringify(arg[z]) );
-	            }
-	            return '{' + res.join(",") + '}';
+	        if (SerializableClass.isToStringObject(argToString)) {	        	
+	            return '{' + object2JSON(arg) + '}';
 	        }
-	        return stringify(argToString); // I want to always be able to do 'parse', so I must escape the string properly (e.g., a date will be "04:20:46 PM" and a stake will be "0:5000,2:20")                
+	        // I do not do stringify again, because Enum, Stake, User, UserInMatch, and other classes, create toString that is parsable.
+	        // E.g.,  { $Enum$ name:"NormalUser" , type:"come2play_as3.auto_generated::EnumSupervisor"}
+	        return argToString;                 
+	    }
+	    private static function object2JSON(arg:Object):String {
+	    	var res:Array = [];
+        	// I want deterministic output, so sort the keys
+        	var keys:Array = [];
+        	for (var key:String in arg) 
+        		keys.push(key);
+        	keys.sort();
+        	for each (var z:String in keys) {
+                res.push( stringify(z) + ':' + stringify(arg[z]) );
+            }
+            return res.join(" , ");	    	
 	    }
         private function white():void {
             while (ch) {
@@ -222,17 +232,17 @@ package come2play_as3.api.auto_copied
                 
 				// E.g., trace( SerializableClass.deserialize( JSON.parse("{ $API_DoStoreState$ userEntries:[{ $UserEntry$ key:0 , value:{ row:0 , col:0} , isSecret:false}]}")) );
                 if (ch == '$') {
-                	// special syntax for our API classes (extending API_Message) to make toString more readable                	
+                	// special syntax for SerializableClass to make toString more readable                	
                     this.next();
-                    var className:Array = [];
+                    var classNameArr:Array = [];
                     while (ch!='$') {
-                    	className.push(ch);
+                    	classNameArr.push(ch);
                     	this.next();                    	
                     }
+                    var className:String = classNameArr.join("");
                     this.next();
                 	this.white();
-                    o[SerializableClass.CLASS_NAME_FIELD] = 
-                    	SerializableClass.REPLACE_TO + ".auto_generated::"+className.join("");
+                    o[SerializableClass.CLASS_NAME_FIELD] = className;                    		
                 }
                 if (ch == '}') {
                     this.next();
@@ -362,6 +372,10 @@ package come2play_as3.api.auto_copied
 	    	var json:JSON = new JSON();
 	    	return json.p_parse(_text);
 	    }
+	    
 
+		public static function instanceToString(className:String, values:Object):String {			
+			return "{ $"+className+"$ " + object2JSON(values) + "}"; // see parse
+		}
 	}
 }

@@ -5,6 +5,7 @@ package come2play_as3.pseudoCode.mineSweeper
 	public class GameMove extends SerializableClass
 	{
 		public var row:int, column:int,playerId:int,className:String;
+		public function GameMove() { super("GameMove"); }
 		  
 		public static function create(row:int, column:int,playerId:int,className:String):GameMove
 		{

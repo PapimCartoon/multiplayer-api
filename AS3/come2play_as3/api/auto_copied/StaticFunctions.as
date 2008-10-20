@@ -8,12 +8,15 @@ package come2play_as3.api.auto_copied
 public final class StaticFunctions
 {			
 	public static var SHOULD_SHOW_ERRORS:Boolean = true;
+	public static var SHOULD_CALL_TRACE:Boolean = true; // in the online version we turn it off to save runtime
 	public static var someMovieClip:MovieClip; // so we can display error messages on the stage
 	public static var allTraces:Array = [];
 	public static var MAX_TRACES_NUM:int = 50;
 	public static function storeTrace(obj:Object):void {
 		if (allTraces.length>=MAX_TRACES_NUM) allTraces.shift();
-		allTraces.push(["Time: ", getTimer(), " Trace: ", obj]);
+		var arr:Array = ["Time: ", getTimer(), " Trace: ", obj];
+		if (SHOULD_CALL_TRACE) trace( arr.join("") );
+		allTraces.push(arr);
 	}
 	private static var DID_SHOW_ERROR:Boolean = false;
 	public static function showError(msg:String):void {
@@ -25,7 +28,7 @@ public final class StaticFunctions
 				allTraces.join("\n"));
 		System.setClipboard(msg);
 		if (SHOULD_SHOW_ERRORS) AS3_vs_AS2.showError(someMovieClip, msg);
-		trace("\n\n\n"+msg+"\n\n\n");
+		if (SHOULD_CALL_TRACE) trace("\n\n\n"+msg+"\n\n\n");
 	}
 	public static function throwError(msg:String):void {
 		var err:Error = new Error(msg);
@@ -72,12 +75,12 @@ public final class StaticFunctions
 	private static const REFLECTION_PREFIX:String = "REFLECTION_";
 	public static function performReflectionFromFlashVars(_someMovieClip:MovieClip):void {		
 		var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(_someMovieClip);
-		trace("performReflectionFromFlashVars="+JSON.stringify(parameters));
+		if (SHOULD_CALL_TRACE) trace("performReflectionFromFlashVars="+JSON.stringify(parameters));
 		for (var key:String in parameters) {
 			if (startsWith(key,REFLECTION_PREFIX)) {
 				var before:String = key.substr(REFLECTION_PREFIX.length);
 				var after:String = parameters[key];
-				trace("Perform reflection for: "+before+"="+after);
+				if (SHOULD_CALL_TRACE) trace("Perform reflection for: "+before+"="+after);
 				performReflection2(before, after);	
 			}			
 		}

@@ -10,102 +10,180 @@ package emulator.auto_copied
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	
+/**
+ * A class extends SerializableClass
+ * to get two features:
+ * - serialization on LocalConnection
+ * 	 by adding the field __CLASS_NAME__
+ * - serialization to String
+ *   by adding "toString()" method.
+ *   The serialized string has JSON-like syntax:
+ *   {$SHORT_CLASSNAME$ field1:value1 , field2:value2 , ... }
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+ *   For example: 
+ *   {$EnumSupervisor$ name:"MiniSupervisor"}
+ * 
+ * Restriction:
+ * - serialized fields must be public (non-static)
+ * - constructor without arguments
+ * - You must call 
+ *   register()
+ * 
+ * Other features:
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+ * - fields starting with "__" are not serialized to String 
+ *   (but they are serialized on LocalConnection)
+ * - Your class may override
+ *   public function postDeserialize():Object
+ *   that may do post processing and even return a different object.
+ *   This is useful in two cases:
+ *   1) if you have fields that are derived from other fields (such as "__" fields).
+ *   2) in Enum classes, postDeserialize may return a unique/interned object.   
+ */
 public class SerializableClass
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 {
 	public static var IS_THROWING_EXCEPTIONS:Boolean = true; // in the online version we set it to false. (Consider the case that a hacker stores illegal values as secret data)
 	
 	public static const CLASS_NAME_FIELD:String = "__CLASS_NAME__";
-	
-	// Because the shared classes have different package names, 
-	// I need to replace it before and after serialization
-	public static const REPLACE_IN_NAME:String = "emulator";
-	public static const REPLACE_TO:String = "COME2PLAY_PACKAGE";
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
-	
-	// Only in the API we should deserialize user-defined classes
-	// (in the emulator and framework, we should deserialize only COME2PLAY_PACKAGE)  
-	public static const isInAPI:Boolean =  REPLACE_IN_NAME=="come2play_as3."+"api";// I replace 'come2play_as3 . api .', so don't remove the  ."+"
-	
 	public var __CLASS_NAME__:String;
-	public function SerializableClass() {
-		__CLASS_NAME__ = AS3_vs_AS2.getClassName(this);
-		if (__CLASS_NAME__==null || AS3_vs_AS2.stringIndexOf(__CLASS_NAME__,"$")!=-1) 
-			StaticFunctions.throwError("Illegal class name '"+__CLASS_NAME__+"' for a class that extends SerializableClass. You should only use PUBLIC classes with SerializableClass");
+	public function SerializableClass(shortName:String) {
+		__CLASS_NAME__ = shortName;
+		register();
+	}
+	public function toString():String {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		AS3_vs_AS2.checkConstructorHasNoArgs(this);
-		
-		
-		if (StaticFunctions.startsWith(__CLASS_NAME__,REPLACE_IN_NAME)) {
-			__CLASS_NAME__ = REPLACE_TO + __CLASS_NAME__.substr(REPLACE_IN_NAME.length);			
+		var fieldNames:Array/*String*/ = AS3_vs_AS2.getFieldNames(this);
+		var values:Object = {};			
+		for each (var key:String in fieldNames) {
+			if (StaticFunctions.startsWith(key,"__")) continue;
+			values[key] = this[key]; 
 		}
+		return JSON.instanceToString(__CLASS_NAME__, values);
 	}
-	
-	public static function isToStringObject(str:String):Boolean {
-		return str=="[object Object]";
+	public function isEqual(other:SerializableClass):Boolean {
+		return ObjectDictionary.areEqual(this, other);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
 	}
-	public static function isObject(o:Object):Boolean {
-		return isToStringObject(o.toString());	
+	public function postDeserialize():SerializableClass {
+		return this;
 	}
+	public function register():void {
+    	var xlass:Class = getClassOfInstance(this); 
+    	var shortName:String = __CLASS_NAME__;
+    	var oldXlass:Class = SHORTNAME_TO_CLASS[shortName];
+    	if (oldXlass==xlass) return; // already entered this short name
+    	
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+    	StaticFunctions.assert(oldXlass==null, ["Previously added shortName=",shortName, " with oldXlass=",oldXlass," and now with xlass=",xlass]);
+    	SHORTNAME_TO_CLASS[shortName] = xlass; 
+    	
+    	AS3_vs_AS2.checkConstructorHasNoArgs(this);    	
+    	StaticFunctions.storeTrace(["Registered class with shortName=",shortName," with exampleInstance=",this]);
+    	// testing createInstance
+    	var exampleInstance:SerializableClass = createInstance(shortName);    	
+    }
+
+	/**
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+	 * Static methods and variables.
+	 */
+ 	private static var SHORTNAME_TO_CLASS:Object = {};
+ 	private static function getShortNameOfInstance(instance:SerializableClass):String {
+ 		var xlass:Class = getClassOfInstance(instance);
+		for (var shortName:String in SHORTNAME_TO_CLASS) {
+			if (SHORTNAME_TO_CLASS[shortName]==xlass)
+				return shortName;
+		}
+		return null; 		
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+ 	}
+ 	private static function getClassOfInstance(instance:SerializableClass):Class {
+ 		return AS3_vs_AS2.getClassOfInstance(instance);
+ 	}
+	private static function createInstance(shortName:String):SerializableClass {
+		var xlass:Class = SHORTNAME_TO_CLASS[shortName];		
+		return xlass==null ? null : new xlass();
+	}    
+ 	
 	public static function deserialize(object:Object):Object {
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		try {
 			if (object==null) 
 				return object;
 			var isArray:Boolean = AS3_vs_AS2.isArray(object);
 			var isObj:Boolean = isObject(object);
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 			var res:Object = object;
 			if (isArray || isObj) {				
-				var className:String = 
-					object.hasOwnProperty(CLASS_NAME_FIELD) ? object[CLASS_NAME_FIELD] : null;
+				var shortName:String = 
+					object.hasOwnProperty(CLASS_NAME_FIELD) ? 
+					object[CLASS_NAME_FIELD] : null;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 				res = isArray ? [] : {}; // we create a new copy
 		
-				var newObject:Object = null;
-				if (className!=null) {
-					var isAPI_Package:Boolean =
-						StaticFunctions.startsWith(className, REPLACE_TO);
+				for (var key:String in object)
+					res[key] = deserialize(object[key]); 
+					
+				if (shortName!=null) {					
+					var newObject:SerializableClass = createInstance(shortName);
+					if (newObject!=null) {
+						for (key in res)
+							newObject[key] = res[key]; // might throw an illegal assignment (due to type mismatch)
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-					if (isAPI_Package) {
-						className = REPLACE_IN_NAME + className.substr(REPLACE_TO.length);
-					}			 
-					if (isInAPI || isAPI_Package) {
-						newObject = AS3_vs_AS2.createInstanceOf(className);	
-						if (newObject!=null) res = newObject;
+
+						AS3_vs_AS2.checkAllFieldsDeserialized(res, newObject);
+
+						res = newObject.postDeserialize();
 					}
 				}
-				if (newObject!=null)
-					AS3_vs_AS2.checkAllFieldsDeserialized(object, newObject);
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
-					
-				for (var key:String in object)
-					res[key] = deserialize(object[key]); // might throw an illegal assignment (due to type mismatch)
+										
 			}
 			//trace(JSON.stringify(object)+" object="+object+" res="+res+" isArray="+isArray+" isObj="+isObj);
 			return res; 						
-		} catch (err:Error) {
-			// I can't throw an exception, because if a hacker stored illegal value in className, 
-			//	then it will cause an error (that may be discovered only in the reveal stage)
-			// instead the client should do a "is" check.
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			trace("Exception thrown in deserialize:"+AS3_vs_AS2.error2String(err));
+		} catch (err:Error) {
+			// I can't throw an exception, because if a hacker stored illegal value in shortName, 
+			//	then it will cause an error (that may be discovered only in the reveal stage)
+			// instead the client should call setMaybeHackerUserId before processing secret data.
+			StaticFunctions.storeTrace("Exception thrown in deserialize:"+AS3_vs_AS2.error2String(err));
 			if (IS_THROWING_EXCEPTIONS)
 				throw err;
 		}
 		return object;
 	}	
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+	public static function isToStringObject(str:String):Boolean {
+		return str=="[object Object]";
+	}
+	public static function isObject(o:Object):Boolean {
+		return isToStringObject(o.toString());	
+	}
 }
 }

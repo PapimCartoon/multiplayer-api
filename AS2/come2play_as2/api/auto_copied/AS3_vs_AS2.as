@@ -114,43 +114,6 @@ class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 		target._y = y;		
 	} 			
 	
-	// we use CLASS_NAME_FIELD (because when we add CLASS_NAME_FIELD to the prototype, it is serialized in LocalConnection, so no point in having two properties with the same content) 
-	public static function getClassName(o:Object):String {
-		//typeof is not good enough! for SerializableClass I want to know the class name
-		// when you create a class, it is stored in _global.PACKAGES...CLASS_NAME
-		// so I traverse _global, and lookup the __proto__, and when I find it, as an optimization I store it as CLASS_NAME_FIELD
-		var prot:Object = o.__proto__;
-		var as2_class_name:String = SerializableClass.CLASS_NAME_FIELD; // also, the AS3 can't create an additional property name (we don't use dynamic classes)
-		if (prot.hasOwnProperty(as2_class_name)) return prot[as2_class_name]; // shortcut optimization (so we won't lookup the class name for every object)
-		var res:String = p_getClassName(_global, prot);
-		if (res==null) return typeof o; 
-
-		// replace the last '.' with '::' (to use the same notation as in AS3)
-		res = StaticFunctions.replaceLastOccurance(res, '.', '::');
-
-		prot[as2_class_name] = res;
-		return res;
-	}
-	private static function p_getClassName(glob:Object, prot:Object):String {
-		if (glob.prototype==prot) return "";
-		for (var key in glob) {
-			var res = p_getClassName(glob[key],prot);
-			if (res!=null) return key+(res!="" ? "." : "")+res;
-		}
-		return null;
-	}
-	
-	// For Serialization, Reflection, and in TestClientGameAPI
-	// (we use AS3 notation, where class name is:  PACKAGE1.PACKAGE2.PACKAGE3::CLASSNAME
-	public static function getClassByName(className:String):Object {
-		className = StaticFunctions.replaceLastOccurance(className, '::', '.');
-
-		return eval(className);
-	}
-	public static function createInstanceOf(className:String):Object {
-		var classConstructor = getClassByName(className);
-		return new classConstructor();
-	}
 
 
 	public static function createMovieInstance(graphics:MovieClip, linkageName:String, name:String):MovieClip {
@@ -196,15 +159,6 @@ class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 		label.textColor = 0xFF0000;
 	}
 	
-	public static function checkConstructorHasNoArgs(obj:Object):Void {
-		// can only be done in AS3
-	}
-	public static function checkAllFieldsDeserialized(obj:Object, newInstance:Object):Void {
-		// can only be done in AS3
-	}
-	public static function checkObjectIsSerializable(obj:Object):Void {
-		// can only be done in AS3
-	}
 
 	public static function IndexOf(arr:Array, val:Object):Number {
 		for (var i:Number=0; i<arr.length; i++)
@@ -227,5 +181,65 @@ class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 	public static function waitForStage(graphics:MovieClip, gameConsructor:Function):Void {
 		// no stage in AS2...
 		gameConsructor();
+	}
+
+
+	
+	// we use CLASS_NAME_FIELD (because when we add CLASS_NAME_FIELD to the prototype, it is serialized in LocalConnection, so no point in having two properties with the same content) 
+	public static function getClassName(o:Object):String {
+		//typeof is not good enough! for SerializableClass I want to know the class name
+		// when you create a class, it is stored in _global.PACKAGES...CLASS_NAME
+		// so I traverse _global, and lookup the __proto__, and when I find it, as an optimization I store it as CLASS_NAME_FIELD
+		var prot:Object = o.__proto__;
+		var as2_class_name:String = SerializableClass.CLASS_NAME_FIELD; // also, the AS3 can't create an additional property name (we don't use dynamic classes)
+		if (prot.hasOwnProperty(as2_class_name)) return prot[as2_class_name]; // shortcut optimization (so we won't lookup the class name for every object)
+		var res:String = p_getClassName(_global, prot);
+		if (res==null || res=='') return typeof o; 
+
+		// replace the last '.' with '::' (to use the same notation as in AS3)
+		trace('getClassName for o='+o+' res='+res);
+		res = StaticFunctions.replaceLastOccurance(res, '.', '::');
+
+		prot[as2_class_name] = res;
+		return res;
+	}
+	private static function p_getClassName(glob:Object, prot:Object):String {
+		if (glob.prototype==prot) return "";
+		for (var key in glob) {
+			var res = p_getClassName(glob[key],prot);
+			if (res!=null) return key+(res!="" ? "." : "")+res;
+		}
+		return null;
+	}
+	
+	// For Serialization, Reflection, and in TestClientGameAPI
+	// (we use AS3 notation, where class name is:  PACKAGE1.PACKAGE2.PACKAGE3::CLASSNAME
+	public static function getClassByName(className:String):Object {
+		className = StaticFunctions.replaceLastOccurance(className, '::', '.');
+
+		return eval(className);
+	}
+
+	// for SerializableClass we only need getClassOfInstance and getFieldNames
+	public static function getClassOfInstance(instance:Object):Object {
+		//return instance.__proto__; // I couldn't create a new instance from the prototype
+		return getClassByName( getClassName(instance) );
+	}
+	public static function getFieldNames(instance:Object):Array {
+		// in AS3 we use  describeType(instance).variable 
+		var fieldNames:Array = [];
+		for (var key:String in instance)
+			fieldNames.push(key);
+		return fieldNames;			
+	}
+
+	public static function checkConstructorHasNoArgs(obj:Object):Void {
+		// can only be done in AS3
+	}
+	public static function checkAllFieldsDeserialized(obj:Object, newInstance:Object):Void {
+		// can only be done in AS3
+	}
+	public static function checkObjectIsSerializable(obj:Object):Void {
+		// can only be done in AS3
 	}
 }

@@ -12,6 +12,7 @@ class come2play_as2.api.auto_copied.ObjectDictionary extends SerializableClass
 
 	public function ObjectDictionary()
 	{
+		super("ObjectDictionary");
 		hashMap = new Object();
 		pSize = 0;	
 		allKeys = [];
@@ -24,7 +25,7 @@ class come2play_as2.api.auto_copied.ObjectDictionary extends SerializableClass
 	private function getEntry2(key/*:Object*/, hash:Number):Array {
 		if (hashMap[hash]==null) return null;
 		var entries:Array = hashMap[hash];
-		for (var i26:Number=0; i26<entries.length; i26++) { var entry:Array = entries[i26]; 
+		for (var i27:Number=0; i27<entries.length; i27++) { var entry:Array = entries[i27]; 
 			var entryKey/*:Object*/ = entry[0];
 			if (areEqual(entryKey,key)) 
 				return entry;
@@ -138,11 +139,30 @@ class come2play_as2.api.auto_copied.ObjectDictionary extends SerializableClass
 			return false;
 			
 		if (t=="object") {
-			var x:String;
-			for(x in o1)
-				if (!areEqual(o1[x], o2[x])) return false;
-			for(x in o2)
-				if (!areEqual(o1[x], o2[x])) return false;
+			var x:String;	
+			var allFields/*:Object*/ = {};
+			var c:Number = 0;	
+			for (x in o1) {
+				allFields[x] = true;
+				c++;
+			}			
+			for (x in o2) {
+				if (allFields[x]==null) return false;
+				c--;
+			}
+			if (c!=0) return false; // not the same number of dynamic properties
+			if (AS3_vs_AS2.isAS3) {
+				// for static properties we use describeType
+				// because o1 and o2 have the same type, it is enough to use the fields of o1.
+				var fieldsArr:Array = AS3_vs_AS2.getFieldNames(o1);
+				for (var i157:Number=0; i157<fieldsArr.length; i157++) { var field:String = fieldsArr[i157]; 
+					allFields[field] = true;
+				}
+			}
+			for (x in allFields) 	
+				if (!o1.hasOwnProperty(x) || 
+					!o2.hasOwnProperty(x) || 
+					!areEqual(o1[x], o2[x])) return false;
 			return true;
 		} else {
 			return o1==o2;

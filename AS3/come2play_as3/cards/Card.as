@@ -11,12 +11,12 @@ package come2play_as3.cards
 		public static const JOKER:String = "Joker";
 		public var value:int;
 		public var sign:String;
+		public function Card() { super("Card"); }
 		
 		public function equelTo(card:Card):Boolean
 		{
 			return ((value == card.value) && (sign == card.sign))
 		}
-		public function toString():String{return "{$Card$ value : "+value+",sign : "+sign+"}"}
 		public static function create(sign:String,value:int):Card
 		{
 			var res:Card = new Card();

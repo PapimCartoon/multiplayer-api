@@ -13,6 +13,7 @@ public final class ObjectDictionary extends SerializableClass
 
 	public function ObjectDictionary()
 	{
+		super("ObjectDictionary");
 		hashMap = new Object();
 		pSize = 0;	
 		allKeys = [];
@@ -139,11 +140,30 @@ public final class ObjectDictionary extends SerializableClass
 			return false;
 			
 		if (t=="object") {
-			var x:String;
-			for(x in o1)
-				if (!areEqual(o1[x], o2[x])) return false;
-			for(x in o2)
-				if (!areEqual(o1[x], o2[x])) return false;
+			var x:String;	
+			var allFields:Object = {};
+			var c:int = 0;	
+			for (x in o1) {
+				allFields[x] = true;
+				c++;
+			}			
+			for (x in o2) {
+				if (allFields[x]==null) return false;
+				c--;
+			}
+			if (c!=0) return false; // not the same number of dynamic properties
+			if (AS3_vs_AS2.isAS3) {
+				// for static properties we use describeType
+				// because o1 and o2 have the same type, it is enough to use the fields of o1.
+				var fieldsArr:Array = AS3_vs_AS2.getFieldNames(o1);
+				for each (var field:String in fieldsArr) {
+					allFields[field] = true;
+				}
+			}
+			for (x in allFields) 	
+				if (!o1.hasOwnProperty(x) || 
+					!o2.hasOwnProperty(x) || 
+					!areEqual(o1[x], o2[x])) return false;
 			return true;
 		} else {
 			return o1==o2;

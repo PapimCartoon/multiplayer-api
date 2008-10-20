@@ -10,6 +10,7 @@ package come2play_as3.snake
 		public var eating:Boolean;
 		public var userId:int
 		public var tick:int;
+		public function PlayerMove() { super("PlayerMove"); }
 		static public function createFromSnakePart(snakePart:SnakePart,vector:String,userId:int):PlayerMove
 		{
 			var res:PlayerMove = new PlayerMove();

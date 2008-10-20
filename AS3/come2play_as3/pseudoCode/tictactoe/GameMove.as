@@ -5,6 +5,7 @@ package come2play_as3.pseudoCode.tictactoe
 	public class GameMove extends SerializableClass
 	{
 		public var row:int, column:int;	
+		public function GameMove() { super("GameMove"); }
 		
 		public static function create(row:int, column:int):GameMove
 		{

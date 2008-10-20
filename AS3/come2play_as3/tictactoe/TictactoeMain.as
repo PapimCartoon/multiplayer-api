@@ -66,6 +66,7 @@ public final class TictactoeMain extends ClientGameAPI {
 	
 	public function TictactoeMain(graphics:MovieClip) {
 		super(graphics);
+		new TictactoeSquare().register();
 		// It's best to hide the board until the game starts.
 		AS3_vs_AS2.setVisible(graphics,false);		 
 		this.graphics = graphics;	
@@ -406,7 +407,7 @@ public final class TictactoeMain extends ClientGameAPI {
 		shouldSendMove = false;		
 		for each (var square:TictactoeSquare in allCells) {				
 			if (!logic.isSquareAvailable(square)) continue;
-			if (move.areEqual(square)) continue; // otherwise, it causes a slight blink because we show the logo and then immediately the move animation
+			if (move.isEqual(square)) continue; // otherwise, it causes a slight blink because we show the logo and then immediately the move animation
 			var squareGraphics:TictactoeSquareGraphic = getSquareGraphic(square);
 			squareGraphics.startMove(TictactoeSquareGraphic.BTN_NONE); // to cancel mouseOver and mouseOut
 		}

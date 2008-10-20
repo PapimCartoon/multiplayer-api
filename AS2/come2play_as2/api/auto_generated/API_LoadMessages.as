@@ -7,44 +7,44 @@
 import come2play_as2.api.auto_generated.*;
 	class come2play_as2.api.auto_generated.API_LoadMessages  {
 		public static function useAll():Void {
-			new API_DoFinishedCallback();
-			new API_DoRegisterOnServer();
-			new API_DoTrace();
-			new API_GotKeyboardEvent();
+			new API_DoFinishedCallback().register();
+			new API_DoRegisterOnServer().register();
+			new API_DoTrace().register();
+			new API_GotKeyboardEvent().register();
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			new API_GotCustomInfo();
-			new API_GotUserInfo();
-			new API_GotUserDisconnected();
-			new API_GotMyUserId();
-			new API_GotMatchStarted();
-			new API_GotMatchEnded();
-			new API_GotStateChanged();
-			new API_DoStoreState();
-			new API_DoAllStoreState();
-			new API_DoAllEndMatch();
+			new API_GotCustomInfo().register();
+			new API_GotUserInfo().register();
+			new API_GotUserDisconnected().register();
+			new API_GotMyUserId().register();
+			new API_GotMatchStarted().register();
+			new API_GotMatchEnded().register();
+			new API_GotStateChanged().register();
+			new API_DoStoreState().register();
+			new API_DoAllStoreState().register();
+			new API_DoAllEndMatch().register();
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			new API_DoAllSetTurn();
-			new API_DoAllRevealState();
-			new API_DoAllShuffleState();
-			new API_DoAllRequestRandomState();
-			new API_DoAllFoundHacker();
-			new API_DoAllRequestStateCalculation();
-			new API_GotRequestStateCalculation();
-			new API_DoAllStoreStateCalculation();
-			new API_DoConnectedSetScore();
-			new API_DoConnectedEndMatch();
+			new API_DoAllSetTurn().register();
+			new API_DoAllRevealState().register();
+			new API_DoAllShuffleState().register();
+			new API_DoAllRequestRandomState().register();
+			new API_DoAllFoundHacker().register();
+			new API_DoAllRequestStateCalculation().register();
+			new API_GotRequestStateCalculation().register();
+			new API_DoAllStoreStateCalculation().register();
+			new API_DoConnectedSetScore().register();
+			new API_DoConnectedEndMatch().register();
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			new PlayerMatchOver();
-			new InfoEntry();
-			new RevealEntry();
-			new UserEntry();
-			new ServerEntry();
-			new API_Transaction();
+			new PlayerMatchOver().register();
+			new InfoEntry().register();
+			new RevealEntry().register();
+			new UserEntry().register();
+			new ServerEntry().register();
+			new API_Transaction().register();
 		}
 	}

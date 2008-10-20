@@ -4,16 +4,13 @@ package come2play_as3.tictactoe
 	
 	public final class TictactoeSquare extends SerializableClass
 	{
+		public function TictactoeSquare() { super("TictactoeSquare"); }
 		public var row:int, col:int;
-		public static function create(row:int, col:int):TictactoeSquare {			
+		public static function create(row:int, col:int):TictactoeSquare {
 			var res:TictactoeSquare = new TictactoeSquare();
 		    res.row = row;
 		    res.col = col;
 		    return res;
 		}
-		public function areEqual(s:TictactoeSquare):Boolean {
-			return row==s.row && col==s.col;
-		}
-		public function toString():String { return '{ $TictactoeSquare$ row:' + row + ", col:" + col + '}'; }
 	}
 }

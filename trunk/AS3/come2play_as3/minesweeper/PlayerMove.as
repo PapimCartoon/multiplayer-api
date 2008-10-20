@@ -8,6 +8,7 @@ package come2play_as3.minesweeper
 		public var playerId:int;
 		public var xPos:int;
 		public var yPos:int;
+		public function PlayerMove() { super("PlayerMove"); }
 		static public function create(xPos:int,yPos:int,playerId:int,isMine:Boolean):PlayerMove
 		{
 			var res:PlayerMove = new PlayerMove();

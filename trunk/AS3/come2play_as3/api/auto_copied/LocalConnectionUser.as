@@ -9,7 +9,6 @@ package come2play_as3.api.auto_copied
 	public class LocalConnectionUser
 	{		
 		public static var DEFAULT_LOCALCONNECTION_PREFIX:String = ""+StaticFunctions.random(1,10000);
-		public static var SHOULD_CALL_TRACE:Boolean = true;
 		
 		public static function showError(msg:String):void {
 			StaticFunctions.showError(msg);
@@ -70,8 +69,8 @@ package come2play_as3.api.auto_copied
 				passError("Constructor",err);
 			}
 		}
-		public function myTrace(msg:Array):void {
-			if (SHOULD_CALL_TRACE) trace(AS3_vs_AS2.getClassName(this)+": "+JSON.stringify(msg));
+		public function myTrace(msg:Array):void {			
+			StaticFunctions.storeTrace([AS3_vs_AS2.getClassName(this),": ",msg]);
 		}
 		
         protected function getErrorMessage(withObj:Object, err:Error):String {

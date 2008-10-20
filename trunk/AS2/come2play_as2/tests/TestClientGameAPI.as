@@ -38,22 +38,19 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 		}
 		
 		// write about our classes that are used in do* operations: 
-		allOperationsWithParameters.push("");
-		var classPrefix:String = "{'"+
-			SerializableClass.CLASS_NAME_FIELD+"': '"+SerializableClass.REPLACE_TO+
-				".auto_generated"+(AS3_vs_AS2.isAS3 ? "::" : ".");
+		allOperationsWithParameters.push("");		
 		allOperationsWithParameters.push(
-			classPrefix+"PlayerMatchOver', 'playerId': int, 'score': int, 'potPercentage': int}");
+			"{$PlayerMatchOver$ 'playerId': int, 'score': int, 'potPercentage': int}");
 		allOperationsWithParameters.push(
-			classPrefix+"RevealEntry', 'key': String, 'userIds': int[], 'depth': int}");
+			"{$RevealEntry$ 'key': String, 'userIds': int[], 'depth': int}");
 		allOperationsWithParameters.push(
-			classPrefix+"UserEntry', 'key': String, 'value': *, 'isSecret': boolean}");
+			"{$UserEntry$ 'key': String, 'value': *, 'isSecret': boolean}");
 
 		allOperationsWithParameters.push("\nExamples:");
 		allOperationsWithParameters.push(
-			"\ndoStoreState([{'__CLASS_NAME__':'COME2PLAY_PACKAGE.auto_generated::UserEntry', 'key': 'String', 'value': 'value', 'isSecret': false}])"+
-			"\ndoAllSetTurn(42,10000)"+
-			"\ndoAllEndMatch([{'__CLASS_NAME__': 'COME2PLAY_PACKAGE.auto_generated::PlayerMatchOver', 'playerId': 41, 'score': 1000, 'potPercentage': 20}])"+
+			"\n{$API_DoStoreState$ userEntries : [{$UserEntry$ key:'String', value: 'value', isSecret: false}] }"+
+			"\n{$API_DoAllSetTurn$ userId:42, milliSecondsInTurn:10000}"+
+			"\n{$PlayerMatchOver$ playerId: 41, score: 1000, potPercentage: 20}"+
 			"\n"
 			);
 		exampleOperationsText.text = allOperationsWithParameters.join("\n");		
@@ -346,7 +343,7 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 				if (!didSendEndMatch) {
 					didSendEndMatch = true;
 					var finishedPlayers:Array = [];
-					for (var i350:Number=0; i350<allPlayerIds.length; i350++) { var id:Number = allPlayerIds[i350]; 
+					for (var i347:Number=0; i347<allPlayerIds.length; i347++) { var id:Number = allPlayerIds[i347]; 
 						finishedPlayers.push( PlayerMatchOver.create(id, id==winnerId ? 1000 : -1000, id==winnerId ? 100 : 0) );		
 					}
 					doAllEndMatch(finishedPlayers);
@@ -399,7 +396,7 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 	}
 	
 	private function storeTrace(func:String, args:String):Void {
-		trace("storeTrace: func="+func+" args="+args);
+		StaticFunctions.storeTrace("storeTrace: func="+func+" args="+args);
 		outTracesText.text +=
 			AS3_vs_AS2.getTimeString() + "\t" + func + "\t" + args + "\n";
 		//dp.addItem({Time:(new Date().toLocaleTimeString()), Dir: is_to_container ? "->" : "<-", Function:func, Arguments:args});
@@ -410,21 +407,9 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 	private function dispatchOperation(/*event:MouseEvent*/):Void {
 		try {
 			var inputStr:String = operationInput.text;
-			inputStr = StaticFunctions.trim(inputStr);			
-			if (inputStr=='') return;
-			var firstParen:Number = AS3_vs_AS2.stringIndexOf(inputStr,"(");
-			if (firstParen==-1) return;
-			var lastParen:Number = AS3_vs_AS2.stringLastIndexOf(inputStr, ")");
-			if (lastParen==-1) return;			
-			var methodName:String = inputStr.substr(0,firstParen);
-			var params:String = inputStr.substring(firstParen+1, lastParen);
-			// I must call the constructor directly
-			var className:String =
-				"come2play_as2.api.auto_generated::API_"+ 
-				methodName.substr(0,1).toUpperCase()+methodName.substr(1);
-			var instanceObj/*:Object*/ = AS3_vs_AS2.createInstanceOf(className);
-			var instance:API_Message = API_Message(instanceObj);
-			instance.setMethodParameters(AS3_vs_AS2.asArray(JSON.parse("["+params+"]")));
+			inputStr = StaticFunctions.trim(inputStr);
+			var instanceMsg/*:Object*/ = SerializableClass.deserialize(JSON.parse(inputStr));
+			var instance:API_Message = instanceMsg /*as API_Message*/;
 			sendMessage(instance);
 		} catch (err:Error) { 
 			handleError(err);			

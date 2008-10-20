@@ -6,6 +6,7 @@ package come2play_as3.domino
 	{
 		public var upperNum:Number;
 		public var lowerNum:Number;
+		public function DominoCube() { super("DominoCube"); }
 		public static function create(upperNum:Number,lowerNum:Number):DominoCube
 		{
 			var res:DominoCube = new DominoCube();

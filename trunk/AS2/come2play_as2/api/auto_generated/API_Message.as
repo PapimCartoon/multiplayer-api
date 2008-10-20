@@ -6,14 +6,7 @@
 
 import come2play_as2.api.auto_generated.*;
 	class come2play_as2.api.auto_generated.API_Message extends SerializableClass {
-		public function toString():String { 
-			var fieldNames:Array = getFieldNames();
-			var res:Array = [];
-			for (var i12:Number=0; i12<fieldNames.length; i12++) { var key:String = fieldNames[i12]; 
-				res.push( key + ":" + JSON.stringify(this[key]) ); 
-			}
-			return "{ $"+getClassName()+"$ " + res.join(" , ") + "}"; // see JSON.parse
-		}
+		public function API_Message() { super(getClassName()); }
 		public function getClassName():String { throw new Error("You must subclass API_Message!"); return null; }
 		public function getParametersAsString():String { throw new Error("You must subclass API_Message!"); return null; }
 		public function getFunctionId():Number { throw new Error("You must subclass API_Message!"); return 0; }

@@ -6,7 +6,6 @@ import come2play_as2.api.auto_copied.*;
 	class come2play_as2.api.auto_copied.LocalConnectionUser
 	{		
 		public static var DEFAULT_LOCALCONNECTION_PREFIX:String = ""+StaticFunctions.random(1,10000);
-		public static var SHOULD_CALL_TRACE:Boolean = true;
 		
 		public static function showError(msg:String):Void {
 			StaticFunctions.showError(msg);
@@ -67,8 +66,8 @@ import come2play_as2.api.auto_copied.*;
 				passError("Constructor",err);
 			}
 		}
-		public function myTrace(msg:Array):Void {
-			if (SHOULD_CALL_TRACE) trace(AS3_vs_AS2.getClassName(this)+": "+JSON.stringify(msg));
+		public function myTrace(msg:Array):Void {			
+			StaticFunctions.storeTrace([AS3_vs_AS2.getClassName(this),": ",msg]);
 		}
 		
         private function getErrorMessage(withObj/*:Object*/, err:Error):String {
@@ -99,7 +98,7 @@ import come2play_as2.api.auto_copied.*;
         public function localconnection_callback(msgObj/*:Object*/):Void {
         	try{
         		var deserializedMsg/*:Object*/ = SerializableClass.deserialize(msgObj);
-        		var msg:API_Message = API_Message(deserializedMsg);
+        		var msg:API_Message = deserializedMsg /*as API_Message*/;
         		if (msg==null) throwError("msgObj="+JSON.stringify(msgObj)+" is not an API_Message");
         		
         		myTrace(['gotMessage: ',msg]);

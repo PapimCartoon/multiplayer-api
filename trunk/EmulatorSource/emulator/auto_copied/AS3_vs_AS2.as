@@ -26,7 +26,7 @@ public final class AS3_vs_AS2
 	public static function specialToString(o:Object):String {
 		return  o is Error ? error2String(o as Error) :
 			o is XML ? (o as XML).toXMLString() :
-			o is Date ? (o as Date).toLocaleTimeString() :
+			o is Date ? '"'+(o as Date).toLocaleTimeString()+'"' :
 			o.toString();
 	}
 	public static function isNumber(o:Object):Boolean {
@@ -109,14 +109,11 @@ public final class AS3_vs_AS2
 	public static function error2String(e:Error):String {
 		return e.toString()+" stacktraces="+e.getStackTrace();
 	}
-	public static function getClassName(o:Object):String {
-		return getQualifiedClassName(o);
+	public static function getTimeString():String {
+		return new Date().toLocaleTimeString();
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	}
-	public static function getTimeString():String {
-		return new Date().toLocaleTimeString();
 	}
 	public static function getLoaderInfoParameters(someMovieClip:DisplayObject):Object {
 		return someMovieClip.loaderInfo.parameters;
@@ -124,12 +121,12 @@ public final class AS3_vs_AS2
 	public static function getMovieChild(graphics:MovieClip, childName:String):MovieClip {
 		return getChild(graphics, childName) as MovieClip;
 	}
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 	public static function getChild(graphics:MovieClip, childName:String):DisplayObject {
 		var res:DisplayObject = graphics.getChildByName(childName);
 		if (res==null) StaticFunctions.throwError("Missing child="+childName+" in movieclip="+graphics.name);
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		return res;
 	}	
 	private static var prevent_garbage_collection:Array = [];
@@ -137,12 +134,12 @@ public final class AS3_vs_AS2
 		var loader:Loader = new Loader();
 		prevent_garbage_collection.push(loader);
 		var newMovie:DisplayObjectContainer = new Sprite();
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 		var contentLoaderInfo:LoaderInfo = loader.contentLoaderInfo;
 		contentLoaderInfo.addEventListener(Event.COMPLETE, function (event:Event):void {
 				trace("Done loading url="+url);
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 				newMovie.addChild(loader.content);
 				//newMovie.visible = true;	        
 			}  );
@@ -150,12 +147,12 @@ public final class AS3_vs_AS2
 		        StaticFunctions.showError("Error in loading movie from url="+url+" event="+event);
 		    }  );
 		//newMovie.visible = false;
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 		graphics.addChild(newMovie);
 		trace("Loading url="+url+" into newMovie="+newMovie);
 		loader.load(new URLRequest(url));
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		return newMovie;
 	}
 	public static function scaleMovie(graphics:DisplayObject, x_percentage:int, y_percentage:int):void {
@@ -163,12 +160,12 @@ public final class AS3_vs_AS2
 		scaleMovieY(graphics,y_percentage);		
 	} 	
 	public static function scaleMovieX(graphics:DisplayObject, x_percentage:int):void {
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 		graphics.scaleX = Number(x_percentage)/100;		
 	} 	
 	public static function scaleMovieY(graphics:DisplayObject, y_percentage:int):void {
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		graphics.scaleY = Number(y_percentage)/100;		
 	} 	
 	public static function setVisible(graphics:DisplayObject, isVisible:Boolean):void {
@@ -176,37 +173,25 @@ public final class AS3_vs_AS2
 	} 	
 	public static function setAlpha(target:DisplayObject, alphaPercentage:int):void {
 		target.alpha = alphaPercentage/100;
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 	}
 	public static function setMovieXY(target:DisplayObject, x:int, y:int):void {
 		target.x = x;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		target.y = y;		
 	} 	
-	public static function getClassByName(className:String):Object {
-		try {
-			return getDefinitionByName(className);
-		} catch (err:Error) {
-			throw new Error("The class named '"+className+"' was not found!");
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
-		}	
-		return null;
-	}
-	public static function createInstanceOf(className:String):Object {
-		var _Class:Class = getClassByName(className) as Class;
-		return new _Class();
-	}
+	
+	
 	public static function createMovieInstance(graphics:MovieClip, linkageName:String, name:String):MovieClip {
-		var dup:MovieClip = createInstanceOf(linkageName) as MovieClip;
+		var _Class:Class = getClassByName(linkageName);
+		var dup:MovieClip = (new _Class()) as MovieClip;
 		dup.name = name;
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 		graphics.addChild(dup);
 		return dup;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 	}
 	public static function removeMovie(graphics:DisplayObject):void {
 		graphics.parent.removeChild( graphics );
@@ -215,11 +200,11 @@ public final class AS3_vs_AS2
 		var isStageReady:Boolean = graphics.stage!=null;
 		if (isStageReady)	
 			addKeyboardListenerStageReady(graphics, func);
+		else {
+			trace("Called addKeyboardListener, but stage is still null, so we set an interval until stage is ready");
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		else {
-			trace("Called addKeyboardListener, but stage is still null, so we set an interval until stage is ready");
 			var intervalId:int = setInterval( 
 				function ():void {
 					if (graphics.stage!=null) {
@@ -228,11 +213,11 @@ public final class AS3_vs_AS2
 						addKeyboardListenerStageReady(graphics, func);
 					}
 				}, 200);
+		}		
+	}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		}		
-	}
 	private static function addKeyboardListenerStageReady(graphics:MovieClip, func:Function):void {
 		addKeyboardListener2(true, graphics, func);
 		addKeyboardListener2(false, graphics, func);
@@ -241,11 +226,11 @@ public final class AS3_vs_AS2
 		graphics.stage.addEventListener(is_key_down ? KeyboardEvent.KEY_DOWN : KeyboardEvent.KEY_UP, 
 			function (event:KeyboardEvent):void {
 				var charCode:int = event.charCode;
+				var keyCode:int = event.keyCode;
+				var keyLocation:int = event.keyLocation;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-				var keyCode:int = event.keyCode;
-				var keyLocation:int = event.keyLocation;
 				var altKey:Boolean = event.altKey;
 				var ctrlKey:Boolean = event.ctrlKey;
 				var shiftKey:Boolean = event.shiftKey;
@@ -254,11 +239,11 @@ public final class AS3_vs_AS2
 	}
 	public static function showError(graphics:MovieClip, msg:String):void {
 		trace("Showing error: "+msg);
+		if (graphics==null) return;
+		var blackBox:Sprite=new Sprite();
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		if (graphics==null) return;
-		var blackBox:Sprite=new Sprite();
 		blackBox.graphics.beginFill(0x000000);
 		blackBox.graphics.drawRect(0,0,300,300);
 		blackBox.graphics.endFill();
@@ -267,11 +252,11 @@ public final class AS3_vs_AS2
 		child.width = 300;
 		child.height = 300;
 		
+		var buttonText:TextField = new TextField();
+		
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		var buttonText:TextField = new TextField();
-		
 		//buttonText.textColor = 0x000000;
 		buttonText.text = "close";
 		buttonText.setTextFormat(new TextFormat("Times New Roman",14,0x000000),0,5);
@@ -280,11 +265,11 @@ public final class AS3_vs_AS2
 		
 		var buttonBox:Sprite=new Sprite();
 		buttonBox.graphics.beginFill(0xffffff);
+		buttonBox.graphics.drawRect(0,0,40,20);
+		buttonBox.graphics.endFill();
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		buttonBox.graphics.drawRect(0,0,40,20);
-		buttonBox.graphics.endFill();
 		buttonBox.addChild(buttonText);
 		buttonBox.x = 240
 		buttonBox.y = 260;
@@ -293,11 +278,11 @@ public final class AS3_vs_AS2
 		blackBox.addChild(closeBtn);
 
 		//child.backgroundColor = 0xFF0000; // red
+		child.textColor = 0xFF0000; // red
+		
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		child.textColor = 0xFF0000; // red
-		
 		
 		graphics.addChild(blackBox);
 		closeBtn.addEventListener(MouseEvent.CLICK, 
@@ -306,102 +291,143 @@ public final class AS3_vs_AS2
 				graphics.removeChild(blackBox);
 				} 
 			);
+	}
+	
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	
+	
+	public static function IndexOf(arr:Array, val:Object):int {
+		return arr.indexOf(val);
+	}	
+	public static function LastIndexOf(arr:Array, val:Object):int {
+		return arr.lastIndexOf(val);
+	}	
+	public static function stringIndexOf(str:String, val:String):int {
+		return str.indexOf(val);
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+	}	
+	public static function stringLastIndexOf(str:String, val:String):int {
+		return str.lastIndexOf(val);
+	}	
+	public static function waitForStage(graphics:MovieClip, gameConsructor:Function):void
+	{
+		var stageTimer:Timer = new Timer(100,0);
+		stageTimer.start();	
+		stageTimer.addEventListener(TimerEvent.TIMER,function():void {
+				if(graphics.stage)
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+				{
+					stageTimer.stop();
+					gameConsructor();
+				}
+				} 
+			);
+	}		
+
+
+
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+	/**
+	 * Serialization and handling classes and classNames
+	 */
+	public static function getClassName(o:Object):String {
+		return getQualifiedClassName(o);
 	}
-	
-	
+	public static function getClassByName(className:String):Class {
+		try {
+			return getDefinitionByName(className) as Class;
+		} catch (err:Error) {
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+			throw new Error("The class named '"+className+"' was not found!");
+		}	
+		return null;
+	}
+	public static function getClassOfInstance(instance:Object):Class {
+		var res:Class = getClassByName(getClassName(instance));
+		StaticFunctions.assert(res!=null, ["Missing class for instance=",instance]);
+		return res;		
+	}
 	private static var checkedClasses:Object = {};
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 	public static function checkConstructorHasNoArgs(obj:SerializableClass):void {
 		var className:String = obj.__CLASS_NAME__;
 		if (checkedClasses[className]!=null) return;
 		checkedClasses[className] = true;
 		//trace("Checking ctor of "+className);
 		var descriptionXML:XML = describeType(obj);
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 		//trace("descriptionXML="+descriptionXML.toXMLString());
 		var constructorList:XMLList = descriptionXML.constructor;
 		if (constructorList.length()>0) {
 			var constructor:XML = constructorList[0];
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			if (constructor.children().length()!=0)
 				StaticFunctions.throwError("The constructor of class "+className+" that extends SerializableClass has arguments! These are the parameters of the constructor="+constructor.toXMLString()); 
 		}
 		// I want to check that all fields are non-static and public,
 		// but describeType only returns such fields in the first place.
 		//<variable name="col" type="int"/>
+	}	
+	private static var name2classFields:Object = {}; // mapping class names to an array of field names
+	public static function getFieldNames(instance:Object):Array {
+		var className:String = getClassName(instance);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	}	
-	private static var name2classFields:Object = {}; // mapping class names to an array of field names
-	public static function checkAllFieldsDeserialized(obj:Object, newInstance:Object):void {
-		var className:String = getClassName(newInstance);
 		var fieldNames:Array = name2classFields[className];
 		if (fieldNames==null) {
 			fieldNames = [];
-			var fieldsList:XMLList = describeType(newInstance).variable;
-			for each (var fieldInfo:XML in fieldsList)
-				fieldNames.push( fieldInfo.attribute("name") );			
+			// we could have also used ByteArray.writeObject,
+			// but I think this is more readable
+			// Sadly, a simple for loop doesn't go over the fields of a class (like it does in AS2)
+			// For loops do not work on classes in AS3 for classes (only for dynamic properties):
+			// Iterates over the dynamic properties of an object or elements in an array and executes statement for each property or element. Object properties are not kept in any particular order, so properties may appear in a seemingly random order. Fixed properties, such as variables and methods defined in a class, are not enumerated by the for..in statement. To get a list of fixed properties, use the describeType() function, which is in the flash.utils package. 
+
+			var fieldsList:XMLList = describeType(instance).variable;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			for each (var fieldInfo:XML in fieldsList)
+				fieldNames.push( fieldInfo.attribute("name") );			
 			name2classFields[className] = fieldNames;			
 		}
+		return fieldNames;
+	}
+	public static function checkAllFieldsDeserialized(obj:Object, newInstance:Object):void {
+		var fieldNames:Array = getFieldNames(newInstance);
 		for each (var fieldName:String in fieldNames)
 			if (!obj.hasOwnProperty(fieldName))
-				throw new Error("When deserializing className="+className+", we didn't find fieldName="+fieldName+" in object="+JSON.stringify(obj));	
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+				throw new Error("When deserializing, we didn't find fieldName="+fieldName+" in object="+JSON.stringify(obj));	
 	}
 	public static function checkObjectIsSerializable(obj:Object):void {
 		if (obj==null) return;
 		if (obj is Boolean || obj is String || obj is Number) return;
 		var className:String = getClassName(obj);
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 		if (className!="Array" && className!="Object")
 			if (!(obj is SerializableClass))
 				throw new Error("className="+className+" should extend SerializableClass because it was sent over a LocalConnection");
 		for each (var field:Object in obj)
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			checkObjectIsSerializable(field);
 	}
 	
-	public static function IndexOf(arr:Array, val:Object):int {
-		return arr.indexOf(val);
-	}	
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
-	public static function LastIndexOf(arr:Array, val:Object):int {
-		return arr.lastIndexOf(val);
-	}	
-	public static function stringIndexOf(str:String, val:String):int {
-		return str.indexOf(val);
-	}	
-	public static function stringLastIndexOf(str:String, val:String):int {
-		return str.lastIndexOf(val);
-	}	
-	public static function waitForStage(graphics:MovieClip, gameConsructor:Function):void
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
-	{
-		var stageTimer:Timer = new Timer(100,0);
-		stageTimer.start();	
-		stageTimer.addEventListener(TimerEvent.TIMER,function():void {
-				if(graphics.stage)
-				{
-					stageTimer.stop();
-					gameConsructor();
-				}
-				} 
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
-			);
-	}		
-
 }
 }

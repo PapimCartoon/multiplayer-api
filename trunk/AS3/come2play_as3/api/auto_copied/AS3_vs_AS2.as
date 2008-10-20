@@ -13,7 +13,7 @@ public final class AS3_vs_AS2
 	public static function specialToString(o:Object):String {
 		return  o is Error ? error2String(o as Error) :
 			o is XML ? (o as XML).toXMLString() :
-			o is Date ? (o as Date).toLocaleTimeString() :
+			o is Date ? '"'+(o as Date).toLocaleTimeString()+'"' :
 			o.toString();
 	}
 	public static function isNumber(o:Object):Boolean {
@@ -78,9 +78,6 @@ public final class AS3_vs_AS2
 	public static function error2String(e:Error):String {
 		return e.toString()+" stacktraces="+e.getStackTrace();
 	}
-	public static function getClassName(o:Object):String {
-		return getQualifiedClassName(o);
-	}
 	public static function getTimeString():String {
 		return new Date().toLocaleTimeString();
 	}
@@ -135,20 +132,11 @@ public final class AS3_vs_AS2
 		target.x = x;
 		target.y = y;		
 	} 	
-	public static function getClassByName(className:String):Object {
-		try {
-			return getDefinitionByName(className);
-		} catch (err:Error) {
-			throw new Error("The class named '"+className+"' was not found!");
-		}	
-		return null;
-	}
-	public static function createInstanceOf(className:String):Object {
-		var _Class:Class = getClassByName(className) as Class;
-		return new _Class();
-	}
+	
+	
 	public static function createMovieInstance(graphics:MovieClip, linkageName:String, name:String):MovieClip {
-		var dup:MovieClip = createInstanceOf(linkageName) as MovieClip;
+		var _Class:Class = getClassByName(linkageName);
+		var dup:MovieClip = (new _Class()) as MovieClip;
 		dup.name = name;
 		graphics.addChild(dup);
 		return dup;
@@ -233,49 +221,6 @@ public final class AS3_vs_AS2
 	}
 	
 	
-	private static var checkedClasses:Object = {};
-	public static function checkConstructorHasNoArgs(obj:SerializableClass):void {
-		var className:String = obj.__CLASS_NAME__;
-		if (checkedClasses[className]!=null) return;
-		checkedClasses[className] = true;
-		//trace("Checking ctor of "+className);
-		var descriptionXML:XML = describeType(obj);
-		//trace("descriptionXML="+descriptionXML.toXMLString());
-		var constructorList:XMLList = descriptionXML.constructor;
-		if (constructorList.length()>0) {
-			var constructor:XML = constructorList[0];
-			if (constructor.children().length()!=0)
-				StaticFunctions.throwError("The constructor of class "+className+" that extends SerializableClass has arguments! These are the parameters of the constructor="+constructor.toXMLString()); 
-		}
-		// I want to check that all fields are non-static and public,
-		// but describeType only returns such fields in the first place.
-		//<variable name="col" type="int"/>
-	}	
-	private static var name2classFields:Object = {}; // mapping class names to an array of field names
-	public static function checkAllFieldsDeserialized(obj:Object, newInstance:Object):void {
-		var className:String = getClassName(newInstance);
-		var fieldNames:Array = name2classFields[className];
-		if (fieldNames==null) {
-			fieldNames = [];
-			var fieldsList:XMLList = describeType(newInstance).variable;
-			for each (var fieldInfo:XML in fieldsList)
-				fieldNames.push( fieldInfo.attribute("name") );			
-			name2classFields[className] = fieldNames;			
-		}
-		for each (var fieldName:String in fieldNames)
-			if (!obj.hasOwnProperty(fieldName))
-				throw new Error("When deserializing className="+className+", we didn't find fieldName="+fieldName+" in object="+JSON.stringify(obj));	
-	}
-	public static function checkObjectIsSerializable(obj:Object):void {
-		if (obj==null) return;
-		if (obj is Boolean || obj is String || obj is Number) return;
-		var className:String = getClassName(obj);
-		if (className!="Array" && className!="Object")
-			if (!(obj is SerializableClass))
-				throw new Error("className="+className+" should extend SerializableClass because it was sent over a LocalConnection");
-		for each (var field:Object in obj)
-			checkObjectIsSerializable(field);
-	}
 	
 	public static function IndexOf(arr:Array, val:Object):int {
 		return arr.indexOf(val);
@@ -303,5 +248,81 @@ public final class AS3_vs_AS2
 			);
 	}		
 
+
+
+	/**
+	 * Serialization and handling classes and classNames
+	 */
+	public static function getClassName(o:Object):String {
+		return getQualifiedClassName(o);
+	}
+	public static function getClassByName(className:String):Class {
+		try {
+			return getDefinitionByName(className) as Class;
+		} catch (err:Error) {
+			throw new Error("The class named '"+className+"' was not found!");
+		}	
+		return null;
+	}
+	public static function getClassOfInstance(instance:Object):Class {
+		var className:String = getClassName(instance);
+		var res:Class = getClassByName(className);
+		StaticFunctions.assert(res!=null, ["Missing class for instance=",instance, " className=",className]);
+		return res;		
+	}
+	private static var checkedClasses:Object = {};
+	public static function checkConstructorHasNoArgs(obj:SerializableClass):void {
+		var className:String = obj.__CLASS_NAME__;
+		if (checkedClasses[className]!=null) return;
+		checkedClasses[className] = true;
+		//trace("Checking ctor of "+className);
+		var descriptionXML:XML = describeType(obj);
+		//trace("descriptionXML="+descriptionXML.toXMLString());
+		var constructorList:XMLList = descriptionXML.constructor;
+		if (constructorList.length()>0) {
+			var constructor:XML = constructorList[0];
+			if (constructor.children().length()!=0)
+				StaticFunctions.throwError("The constructor of class "+className+" that extends SerializableClass has arguments! These are the parameters of the constructor="+constructor.toXMLString()); 
+		}
+		// I want to check that all fields are non-static and public,
+		// but describeType only returns such fields in the first place.
+		//<variable name="col" type="int"/>
+	}	
+	private static var name2classFields:Object = {}; // mapping class names to an array of field names
+	public static function getFieldNames(instance:Object):Array {
+		var className:String = getClassName(instance);
+		var fieldNames:Array = name2classFields[className];
+		if (fieldNames==null) {
+			fieldNames = [];
+			// we could have also used ByteArray.writeObject,
+			// but I think this is more readable
+			// Sadly, a simple for loop doesn't go over the fields of a class (like it does in AS2)
+			// For loops do not work on classes in AS3 for classes (only for dynamic properties):
+			// Iterates over the dynamic properties of an object or elements in an array and executes statement for each property or element. Object properties are not kept in any particular order, so properties may appear in a seemingly random order. Fixed properties, such as variables and methods defined in a class, are not enumerated by the for..in statement. To get a list of fixed properties, use the describeType() function, which is in the flash.utils package. 
+
+			var fieldsList:XMLList = describeType(instance).variable;
+			for each (var fieldInfo:XML in fieldsList)
+				fieldNames.push( fieldInfo.attribute("name") );			
+			name2classFields[className] = fieldNames;			
+		}
+		return fieldNames;
+	}
+	public static function checkAllFieldsDeserialized(obj:Object, newInstance:Object):void {
+		var fieldNames:Array = getFieldNames(newInstance);
+		for each (var fieldName:String in fieldNames)
+			if (!obj.hasOwnProperty(fieldName))
+				throw new Error("When deserializing, we didn't find fieldName="+fieldName+" in object="+JSON.stringify(obj));	
+	}
+	public static function checkObjectIsSerializable(obj:Object):void {
+		if (obj==null) return;
+		if (obj is Boolean || obj is String || obj is Number) return;
+		var className:String = getClassName(obj);
+		if (className!="Array" && className!="Object")
+			if (!(obj is SerializableClass))
+				throw new Error("className="+className+" should extend SerializableClass because it was sent over a LocalConnection");
+		for each (var field:Object in obj)
+			checkObjectIsSerializable(field);
+	}
+	
 }
 }

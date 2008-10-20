@@ -13,7 +13,15 @@ package come2play_as3.api {
 	 */ 
 	public class BaseGameAPI extends LocalConnectionUser 
 	{        
+		public static var ERROR_DO_ALL:String = "You can only call a doAll* message when the server calls gotStateChanged, gotMatchStarted, gotMatchEnded, or gotRequestStateCalculation.";
 		public static var MAX_ANIMATION_MILLISECONDS:int = 10*1000; // max 10 seconds for animations
+		
+		private var msgsInTransaction:Array/*API_Message*/ = null;
+		private var currentCallback:API_Message = null;
+		private var hackerUserId:int = -1;
+		private var runningAnimationsNumber:int = 0;
+		private var animationStartedOn:int = -1; 
+		private var currentPlayerIds:Array/*int*/;
 		
 		public function BaseGameAPI(_someMovieClip:MovieClip) {
 			super(_someMovieClip, false, getPrefixFromFlashVars(_someMovieClip));
@@ -23,13 +31,22 @@ package come2play_as3.api {
 			setInterval(AS3_vs_AS2.delegate(this, this.checkAnimationInterval), MAX_ANIMATION_MILLISECONDS);
 			currentPlayerIds = [];
 		}
-		private var msgsInTransaction:Array/*API_Message*/ = null;
-		private var currentCallback:API_Message = null;
-		private var hackerUserId:int = -1;
-		private var runningAnimationsNumber:int = 0;
-		private var animationStartedOn:int = -1; 
-		private var currentPlayerIds:Array/*int*/;
 
+		/**
+		 * If your overriding 'got' methods will throw an Error,
+		 * 	then hackerUserId will be declared as a hacker.
+		 * We automatically set hackerUserId to storedByUserId 
+		 * 	whenever receiving gotStateChanged,
+		 * 	however, when the state changes after doAllReveal then
+		 * 	storedByUserId is -1, so your code should call setMaybeHackerUserId.
+		 */
+		public function setMaybeHackerUserId(hackerUserId:int):void {
+			this.hackerUserId = hackerUserId;			
+		}
+		/**
+		 * gotError is called whenever your overriding 'got' methods
+		 * 	throw an Error.
+		 */
 		public function gotError(withObj:Object, err:Error):void {
 			sendMessage( API_DoAllFoundHacker.create(hackerUserId, 
 				"Got error withObj="+JSON.stringify(withObj)+
@@ -41,6 +58,46 @@ package come2play_as3.api {
 				" currentCallback="+currentCallback+
 				" msgsInTransaction="+msgsInTransaction) );
 		}
+		/** 
+		 * A transaction starts when the server calls
+		 * 	a 'got' method (e.g., gotStateChanged).
+		 * The transaction normally ends when your overriding 'got' method returns.
+		 * However, if you start animations, 
+		 * 	then the transaction continues until all the animation will end.
+		 * 
+		 * You may call doAll methods if and only if you are inside a transaction,
+		 * and doStoreState if and only if you are not inside a transaction.
+		 * 
+		 * Animations may be displayed only inside a transaction
+		 * 	that is either gotMatchStarted or gotMatchEnded or gotStateChanged.
+		 */
+        public function animationStarted():void {
+        	checkInsideTransaction();
+			if (!canDoAnimations())
+				throwError("You can do animations only when the server calls gotMatchStarted, gotMatchEnded, or gotStateChanged");
+        	if (runningAnimationsNumber==0) 
+        		animationStartedOn = getTimer();
+        	runningAnimationsNumber++;        	
+        }
+        public function animationEnded():void {
+        	checkInsideTransaction();
+        	if (runningAnimationsNumber<=0)
+        		throwError("Called animationEnded too many times!");
+        	runningAnimationsNumber--;
+        	if (runningAnimationsNumber==0)
+        		animationStartedOn = -1;
+        	sendFinishedCallback();        	        	
+        }
+        public function canDoAnimations():Boolean {
+			return currentCallback is API_GotMatchStarted || 
+				currentCallback is API_GotMatchEnded || 
+				currentCallback is API_GotStateChanged;
+		}
+		
+		
+		/****************************
+		 * Below this line we only have private and overriding methods.
+		 */
 		private function checkContainer(val:Boolean):void {
 			if (!val) throwError("We have an error in the container!");
 		}
@@ -53,9 +110,58 @@ package come2play_as3.api {
 			}
 			return res;
 		}
+        private function isInTransaction():Boolean {
+        	return msgsInTransaction!=null
+        }
+        private function checkInsideTransaction():void {
+        	if (!isInTransaction()) 
+        		throwError("You can start/end an animation only when the server called some 'got' callback");
+        }
+        private function sendFinishedCallback():void {
+        	checkInsideTransaction();        	
+        	if (runningAnimationsNumber>0) return;
+			if (isInGotRequestStateCalculation() && msgsInTransaction.length==0) 
+				throwError("When the server calls gotRequestStateCalculation, you must call doAllStoreStateCalculation");
+       		super.sendMessage( API_Transaction.create(API_DoFinishedCallback.create(currentCallback.getMethodName()), msgsInTransaction) );
+    		msgsInTransaction = null;
+			currentCallback = null;
+        }
+        private function checkAnimationInterval():void {
+        	if (animationStartedOn==-1) return; // animation is not running
+        	var now:int = getTimer();
+        	if (now - animationStartedOn < MAX_ANIMATION_MILLISECONDS) return; // animation is running for a short time
+        	// animation is running for too long
+        	throwError("An animation is running for more than MAX_ANIMATION_MILLISECONDS="+MAX_ANIMATION_MILLISECONDS+". It started "+animationStartedOn+" milliseconds after the script started.");         	
+        }
+        private function isInGotRequestStateCalculation():Boolean {
+			return currentCallback is API_GotRequestStateCalculation;
+		}
+        
+        private function isNullKeyExistUserEntry(userEntries:Array/*UserEntry*/):void
+        {
+        	for each (var userEntry:UserEntry in userEntries) {
+        		if (userEntry.key == null)
+        			throwError("key cannot be null !");
+        	}
+        }
+        private function isNullKeyExistRevealEntry(revealEntries:Array/*RevealEntry*/):void
+        {
+        	for each (var revealEntry:RevealEntry in revealEntries) {
+        		if (revealEntry.key == null)
+        			throwError("key cannot be null !");
+        	}
+        }
+        private function isNullKeyExist(keys:Array/*Object*/):void
+        {
+        	for each (var key:String in keys) {
+        		if (key == null)
+        			throwError("key cannot be null !");
+        	}
+        }
+        
+        
         override public function gotMessage(msg:API_Message):void {
         	try {
-				StaticFunctions.storeTrace(["gotMessage: ",msg]);
         		if (isInTransaction()) {					
         			throwError("The container sent an API message without waiting for DoFinishedCallback");
 				}
@@ -88,7 +194,7 @@ package come2play_as3.api {
 				func.apply(this, msg.getMethodParameters());
         	} catch (err:Error) {
         		try{				
-        			trace(getErrorMessage(msg, err));
+        			showError(getErrorMessage(msg, err));
 					gotError(msg, err);
 				} catch (err2:Error) { 
 					// to avoid an infinite loop, I can't call passError again.
@@ -99,79 +205,7 @@ package come2play_as3.api {
     			sendFinishedCallback(); 			
     		}        		   	
         }
-        private function isInTransaction():Boolean {
-        	return msgsInTransaction!=null
-        }
-        private function checkInsideTransaction():void {
-        	if (!isInTransaction()) 
-        		throwError("You can start/end an animation only when the server called some 'got' callback");
-        }
-        private function sendFinishedCallback():void {
-        	checkInsideTransaction();        	
-        	if (runningAnimationsNumber>0) return;
-			if (isInGotRequestStateCalculation() && msgsInTransaction.length==0) 
-				throwError("When the server calls gotRequestStateCalculation, you must call doAllStoreStateCalculation");
-       		super.sendMessage( API_Transaction.create(API_DoFinishedCallback.create(currentCallback.getMethodName()), msgsInTransaction) );
-    		msgsInTransaction = null;
-			currentCallback = null;
-        }
-        public function animationStarted():void {
-        	checkInsideTransaction();
-			if (!canDoAnimations())
-				throwError("You can do animations only when the server calls gotMatchStarted, gotMatchEnded, or gotStateChanged");
-        	if (runningAnimationsNumber==0) 
-        		animationStartedOn = getTimer();
-        	runningAnimationsNumber++;        	
-        }
-        public function animationEnded():void {
-        	checkInsideTransaction();
-        	if (runningAnimationsNumber<=0)
-        		throwError("Called animationEnded too many times!");
-        	runningAnimationsNumber--;
-        	if (runningAnimationsNumber==0)
-        		animationStartedOn = -1;
-        	sendFinishedCallback();        	        	
-        }
-        private function checkAnimationInterval():void {
-        	if (animationStartedOn==-1) return; // animation is not running
-        	var now:int = getTimer();
-        	if (now - animationStartedOn < MAX_ANIMATION_MILLISECONDS) return; // animation is running for a short time
-        	// animation is running for too long
-        	throwError("An animation is running for more than MAX_ANIMATION_MILLISECONDS="+MAX_ANIMATION_MILLISECONDS+". It started "+animationStartedOn+" milliseconds after the script started.");         	
-        }
-        public function canDoAnimations():Boolean {
-			return currentCallback is API_GotMatchStarted || 
-				currentCallback is API_GotMatchEnded || 
-				currentCallback is API_GotStateChanged;
-		}
-        public function isInGotRequestStateCalculation():Boolean {
-			return currentCallback is API_GotRequestStateCalculation;
-		}
-        
-		private static const ERROR_DO_ALL:String = "You can only call a doAll* message when the server calls gotStateChanged, gotMatchStarted, gotMatchEnded, or gotRequestStateCalculation.";
-        public function isNullKeyExistUserEntry(userEntries:Array/*UserEntry*/):void
-        {
-        	for each (var userEntry:UserEntry in userEntries) {
-        		if (userEntry.key == null)
-        			throwError("key cannot be null !");
-        	}
-        }
-        public function isNullKeyExistRevealEntry(revealEntries:Array/*RevealEntry*/):void
-        {
-        	for each (var revealEntry:RevealEntry in revealEntries) {
-        		if (revealEntry.key == null)
-        			throwError("key cannot be null !");
-        	}
-        }
-        public function isNullKeyExist(keys:Array/*Object*/):void
-        {
-        	for each (var key:String in keys) {
-        		if (key == null)
-        			throwError("key cannot be null !");
-        	}
-        }
-        override public function sendMessage(msg:API_Message):void {			
-			StaticFunctions.storeTrace(["sendMessage: ",msg]);
+        override public function sendMessage(msg:API_Message):void {
         	if (msg is API_DoRegisterOnServer || msg is API_DoTrace) {
         		super.sendMessage(msg);
         		return;

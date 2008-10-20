@@ -5,6 +5,7 @@ package come2play_as3.pseudoCode.battleShips
 	public class GameBrick extends SerializableClass
 	{
 		public var row:int, column:int,isShip:Boolean;
+		public function GameBrick() { super("GameBrick"); }
 		public static function create(row:int, column:int,isShip:Boolean):GameBrick
 		{
 			var res:GameBrick = new GameBrick()

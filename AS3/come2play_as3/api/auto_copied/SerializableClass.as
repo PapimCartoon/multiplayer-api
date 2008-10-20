@@ -55,37 +55,46 @@ public class SerializableClass
 		return this;
 	}
 	public function register():void {
-    	var xlass:Class = getClassOfInstance(this); 
+    	// In Enum classes in $cinit(), we call register in the ctor, and the class have not yet loaded.
+    	// var xlass:Class = getClassOfInstance(this); 
     	var shortName:String = __CLASS_NAME__;
-    	var oldXlass:Class = SHORTNAME_TO_CLASS[shortName];
-    	if (oldXlass==xlass) return; // already entered this short name
-    	
-    	StaticFunctions.assert(oldXlass==null, ["Previously added shortName=",shortName, " with oldXlass=",oldXlass," and now with xlass=",xlass]);
-    	SHORTNAME_TO_CLASS[shortName] = xlass; 
+    	var oldInstance:Object = SHORTNAME_TO_INSTANCE[shortName];
+    	if (oldInstance!=null) {
+    		// already entered this short name  
+    		var newXlass:String = AS3_vs_AS2.getClassName(this);
+	    	var oldXlass:String = AS3_vs_AS2.getClassName(oldInstance);
+    		StaticFunctions.assert(oldXlass==newXlass, ["Previously added shortName=",shortName, " with oldXlass=",oldXlass," and now with newXlass=",newXlass]);
+    		return;
+    	}
+    	SHORTNAME_TO_INSTANCE[shortName] = this; 
     	
     	AS3_vs_AS2.checkConstructorHasNoArgs(this);    	
     	StaticFunctions.storeTrace(["Registered class with shortName=",shortName," with exampleInstance=",this]);
     	// testing createInstance
-    	var exampleInstance:SerializableClass = createInstance(shortName);    	
+    	//var exampleInstance:SerializableClass = createInstance(shortName);    	
     }
 
 	/**
 	 * Static methods and variables.
 	 */
- 	private static var SHORTNAME_TO_CLASS:Object = {};
+ 	private static var SHORTNAME_TO_INSTANCE:Object = {};
+ 	
+ 	private static function getClassOfInstance(instance:SerializableClass):Class {
+ 		return AS3_vs_AS2.getClassOfInstance(instance);
+ 	}
+ 	private static function getClassOfShortName(shortName:String):Class {
+ 		return getClassOfInstance(SHORTNAME_TO_INSTANCE[shortName]); 		
+ 	}
  	private static function getShortNameOfInstance(instance:SerializableClass):String {
  		var xlass:Class = getClassOfInstance(instance);
-		for (var shortName:String in SHORTNAME_TO_CLASS) {
-			if (SHORTNAME_TO_CLASS[shortName]==xlass)
+		for (var shortName:String in SHORTNAME_TO_INSTANCE) {
+			if (getClassOfShortName(shortName)==xlass)
 				return shortName;
 		}
 		return null; 		
  	}
- 	private static function getClassOfInstance(instance:SerializableClass):Class {
- 		return AS3_vs_AS2.getClassOfInstance(instance);
- 	}
 	private static function createInstance(shortName:String):SerializableClass {
-		var xlass:Class = SHORTNAME_TO_CLASS[shortName];		
+		var xlass:Class = getClassOfShortName(shortName);		
 		return xlass==null ? null : new xlass();
 	}    
  	

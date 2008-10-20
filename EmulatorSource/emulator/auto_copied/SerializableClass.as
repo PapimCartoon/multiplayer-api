@@ -80,54 +80,66 @@ public class SerializableClass
 		return this;
 	}
 	public function register():void {
-    	var xlass:Class = getClassOfInstance(this); 
+    	// In Enum classes in $cinit(), we call register in the ctor, and the class have not yet loaded.
+    	// var xlass:Class = getClassOfInstance(this); 
     	var shortName:String = __CLASS_NAME__;
-    	var oldXlass:Class = SHORTNAME_TO_CLASS[shortName];
-    	if (oldXlass==xlass) return; // already entered this short name
-    	
+    	var oldInstance:Object = SHORTNAME_TO_INSTANCE[shortName];
+    	if (oldInstance!=null) {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-    	StaticFunctions.assert(oldXlass==null, ["Previously added shortName=",shortName, " with oldXlass=",oldXlass," and now with xlass=",xlass]);
-    	SHORTNAME_TO_CLASS[shortName] = xlass; 
+    		// already entered this short name  
+    		var newXlass:String = AS3_vs_AS2.getClassName(this);
+	    	var oldXlass:String = AS3_vs_AS2.getClassName(oldInstance);
+    		StaticFunctions.assert(oldXlass==newXlass, ["Previously added shortName=",shortName, " with oldXlass=",oldXlass," and now with newXlass=",newXlass]);
+    		return;
+    	}
+    	SHORTNAME_TO_INSTANCE[shortName] = this; 
     	
     	AS3_vs_AS2.checkConstructorHasNoArgs(this);    	
     	StaticFunctions.storeTrace(["Registered class with shortName=",shortName," with exampleInstance=",this]);
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
     	// testing createInstance
-    	var exampleInstance:SerializableClass = createInstance(shortName);    	
+    	//var exampleInstance:SerializableClass = createInstance(shortName);    	
     }
 
 	/**
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 	 * Static methods and variables.
 	 */
- 	private static var SHORTNAME_TO_CLASS:Object = {};
- 	private static function getShortNameOfInstance(instance:SerializableClass):String {
- 		var xlass:Class = getClassOfInstance(instance);
-		for (var shortName:String in SHORTNAME_TO_CLASS) {
-			if (SHORTNAME_TO_CLASS[shortName]==xlass)
-				return shortName;
-		}
-		return null; 		
+ 	private static var SHORTNAME_TO_INSTANCE:Object = {};
+ 	
+ 	private static function getClassOfInstance(instance:SerializableClass):Class {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
- 	}
- 	private static function getClassOfInstance(instance:SerializableClass):Class {
  		return AS3_vs_AS2.getClassOfInstance(instance);
  	}
+ 	private static function getClassOfShortName(shortName:String):Class {
+ 		return getClassOfInstance(SHORTNAME_TO_INSTANCE[shortName]); 		
+ 	}
+ 	private static function getShortNameOfInstance(instance:SerializableClass):String {
+ 		var xlass:Class = getClassOfInstance(instance);
+		for (var shortName:String in SHORTNAME_TO_INSTANCE) {
+			if (getClassOfShortName(shortName)==xlass)
+				return shortName;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+		}
+		return null; 		
+ 	}
 	private static function createInstance(shortName:String):SerializableClass {
-		var xlass:Class = SHORTNAME_TO_CLASS[shortName];		
+		var xlass:Class = getClassOfShortName(shortName);		
 		return xlass==null ? null : new xlass();
 	}    
  	
 	public static function deserialize(object:Object):Object {
+		try {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		try {
 			if (object==null) 
 				return object;
 			var isArray:Boolean = AS3_vs_AS2.isArray(object);
@@ -137,10 +149,10 @@ public class SerializableClass
 				var shortName:String = 
 					object.hasOwnProperty(CLASS_NAME_FIELD) ? 
 					object[CLASS_NAME_FIELD] : null;
+				res = isArray ? [] : {}; // we create a new copy
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-				res = isArray ? [] : {}; // we create a new copy
 		
 				for (var key:String in object)
 					res[key] = deserialize(object[key]); 
@@ -151,8 +163,8 @@ public class SerializableClass
 						for (key in res)
 							newObject[key] = res[key]; // might throw an illegal assignment (due to type mismatch)
 
-// This is a AUTOMATICALLY GENERATED! Do not change!
 
+// This is a AUTOMATICALLY GENERATED! Do not change!
 
 						AS3_vs_AS2.checkAllFieldsDeserialized(res, newObject);
 
@@ -163,10 +175,10 @@ public class SerializableClass
 			}
 			//trace(JSON.stringify(object)+" object="+object+" res="+res+" isArray="+isArray+" isObj="+isObj);
 			return res; 						
+		} catch (err:Error) {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		} catch (err:Error) {
 			// I can't throw an exception, because if a hacker stored illegal value in shortName, 
 			//	then it will cause an error (that may be discovered only in the reveal stage)
 			// instead the client should call setMaybeHackerUserId before processing secret data.
@@ -176,10 +188,10 @@ public class SerializableClass
 		}
 		return object;
 	}	
+	public static function isToStringObject(str:String):Boolean {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	public static function isToStringObject(str:String):Boolean {
 		return str=="[object Object]";
 	}
 	public static function isObject(o:Object):Boolean {

@@ -1,4 +1,4 @@
-package come2play_as3.api.auto_copied
+﻿package come2play_as3.api.auto_copied
 {
 import flash.display.*;
 import flash.events.*;
@@ -281,8 +281,9 @@ public final class AS3_vs_AS2
 		var constructorList:XMLList = descriptionXML.constructor;
 		if (constructorList.length()>0) {
 			var constructor:XML = constructorList[0];
-			if (constructor.children().length()!=0)
-				StaticFunctions.throwError("The constructor of class "+className+" that extends SerializableClass has arguments! These are the parameters of the constructor="+constructor.toXMLString()); 
+			for each (var parameter:XML in constructor.children())
+				if (parameter.attribute("optional").toString()!="true")
+					StaticFunctions.throwError("The constructor of class "+className+" that extends SerializableClass has arguments that are not optional! These are the parameters of the constructor="+constructor.toXMLString()); 
 		}
 		// I want to check that all fields are non-static and public,
 		// but describeType only returns such fields in the first place.
@@ -309,9 +310,11 @@ public final class AS3_vs_AS2
 	}
 	public static function checkAllFieldsDeserialized(obj:Object, newInstance:Object):void {
 		var fieldNames:Array = getFieldNames(newInstance);
-		for each (var fieldName:String in fieldNames)
+		for each (var fieldName:String in fieldNames) {
+			if (StaticFunctions.startsWith(fieldName,"__")) continue;	
 			if (!obj.hasOwnProperty(fieldName))
-				throw new Error("When deserializing, we didn't find fieldName="+fieldName+" in object="+JSON.stringify(obj));	
+				throw new Error("When deserializing, we didn't find fieldName="+fieldName+" in object="+JSON.stringify(obj));
+		}	
 	}
 	public static function checkObjectIsSerializable(obj:Object):void {
 		if (obj==null) return;

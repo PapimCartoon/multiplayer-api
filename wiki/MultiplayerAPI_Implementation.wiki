@@ -28,13 +28,15 @@ package somePackage {
   public class PublicClass1 extends SerializableClass {
   
     public static var staticVar:int; // static vars will NOT be serialized
+    public var __dontSerialize:int;// vars starting with __ will not be serialized
     public var serializedField1:int;  
-    private var serializedField2:int; // private vars will be serialized
-    private var serializedField3:Array; // serialization is recursive, and goes into Arrays
-    private var serializedField4:PublicClass2; // again, serialization is recursive
+    private var serializedField2:int; // private vars will not be serialized
+    public var serializedField3:Array; // serialization is recursive, and goes into Arrays
+    public var serializedField4:PublicClass2; // again, serialization is recursive
   
     // you must have a constructor without any arguments!
     public function PublicClass1() { 
+    super("PublicClass1")
       ...
     }
 
@@ -47,7 +49,12 @@ package somePackage {
 
 package somePackage {
   public class PublicClass2 extends SerializableClass {
+
+  public function PublicClass2 ()
+  {
+    super("PublicClass2") 
       ...
+  }
   }
 }
 

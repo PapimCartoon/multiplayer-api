@@ -32,6 +32,9 @@ package come2play_as3.api.auto_copied
 public class SerializableClass
 {
 	public static var IS_THROWING_EXCEPTIONS:Boolean = true; // in the online version we set it to false. (Consider the case that a hacker stores illegal values as secret data)
+	public static var IS_TESTING_SAME_REGISTER:Boolean = true; // for efficiency the online version turns it off
+	public static var IS_TRACE_REGISTER:Boolean = false;
+	
 	public static var IS_IN_GAME:Boolean = "come2play_as3.api" == "come2play_as3" + ".api";
 	public static const CLASS_NAME_FIELD:String = "__CLASS_NAME__";
 	public var __CLASS_NAME__:String;
@@ -61,15 +64,18 @@ public class SerializableClass
     	var oldInstance:Object = SHORTNAME_TO_INSTANCE[shortName];
     	if (oldInstance!=null) {
     		// already entered this short name  
-    		var newXlass:String = AS3_vs_AS2.getClassName(this);
-	    	var oldXlass:String = AS3_vs_AS2.getClassName(oldInstance);
-    		StaticFunctions.assert(oldXlass==newXlass, ["Previously added shortName=",shortName, " with oldXlass=",oldXlass," and now with newXlass=",newXlass]);
+    		if (IS_TESTING_SAME_REGISTER) {
+	    		var newXlass:String = AS3_vs_AS2.getClassName(this);
+		    	var oldXlass:String = AS3_vs_AS2.getClassName(oldInstance);
+	    		StaticFunctions.assert(oldXlass==newXlass, ["Previously added shortName=",shortName, " with oldXlass=",oldXlass," and now with newXlass=",newXlass]);
+	    	}
     		return;
     	}
     	SHORTNAME_TO_INSTANCE[shortName] = this; 
     	
     	AS3_vs_AS2.checkConstructorHasNoArgs(this);    	
-    	StaticFunctions.storeTrace(["Registered class with shortName=",shortName," with exampleInstance=",this]);
+    	if (IS_TRACE_REGISTER) 
+    		StaticFunctions.storeTrace(["Registered class with shortName=",shortName," with exampleInstance=",this]);
     	// testing createInstance
     	//var exampleInstance:SerializableClass = createInstance(shortName);    	
     }

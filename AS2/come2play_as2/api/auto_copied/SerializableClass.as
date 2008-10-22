@@ -31,7 +31,10 @@ import come2play_as2.api.auto_copied.*;
 class come2play_as2.api.auto_copied.SerializableClass
 {
 	public static var IS_THROWING_EXCEPTIONS:Boolean = true; // in the online version we set it to false. (Consider the case that a hacker stores illegal values as secret data)
+	public static var IS_TESTING_SAME_REGISTER:Boolean = true; // for efficiency the online version turns it off
+	public static var IS_TRACE_REGISTER:Boolean = false;
 	
+	public static var IS_IN_GAME:Boolean = "come2play_as2.api" == "come2play_as2" + ".api";
 	public static var CLASS_NAME_FIELD:String = "__CLASS_NAME__";
 	public var __CLASS_NAME__:String;
 	public function SerializableClass(shortName:String) {
@@ -41,7 +44,7 @@ class come2play_as2.api.auto_copied.SerializableClass
 	public function toString():String {
 		var fieldNames:Array/*String*/ = AS3_vs_AS2.getFieldNames(this);
 		var values/*:Object*/ = {};			
-		for (var i43:Number=0; i43<fieldNames.length; i43++) { var key:String = fieldNames[i43]; 
+		for (var i46:Number=0; i46<fieldNames.length; i46++) { var key:String = fieldNames[i46]; 
 			if (StaticFunctions.startsWith(key,"__")) continue;
 			values[key] = this[key]; 
 		}
@@ -60,15 +63,18 @@ class come2play_as2.api.auto_copied.SerializableClass
     	var oldInstance/*:Object*/ = SHORTNAME_TO_INSTANCE[shortName];
     	if (oldInstance!=null) {
     		// already entered this short name  
-    		var newXlass:String = AS3_vs_AS2.getClassName(this);
-	    	var oldXlass:String = AS3_vs_AS2.getClassName(oldInstance);
-    		StaticFunctions.assert(oldXlass==newXlass, ["Previously added shortName=",shortName, " with oldXlass=",oldXlass," and now with newXlass=",newXlass]);
+    		if (IS_TESTING_SAME_REGISTER) {
+	    		var newXlass:String = AS3_vs_AS2.getClassName(this);
+		    	var oldXlass:String = AS3_vs_AS2.getClassName(oldInstance);
+	    		StaticFunctions.assert(oldXlass==newXlass, ["Previously added shortName=",shortName, " with oldXlass=",oldXlass," and now with newXlass=",newXlass]);
+	    	}
     		return;
     	}
     	SHORTNAME_TO_INSTANCE[shortName] = this; 
     	
     	AS3_vs_AS2.checkConstructorHasNoArgs(this);    	
-    	StaticFunctions.storeTrace(["Registered class with shortName=",shortName," with exampleInstance=",this]);
+    	if (IS_TRACE_REGISTER) 
+    		StaticFunctions.storeTrace(["Registered class with shortName=",shortName," with exampleInstance=",this]);
     	// testing createInstance
     	//var exampleInstance:SerializableClass = createInstance(shortName);    	
     }
@@ -82,15 +88,9 @@ class come2play_as2.api.auto_copied.SerializableClass
  		return AS3_vs_AS2.getClassOfInstance(instance);
  	}
  	private static function getClassOfShortName(shortName:String):Object/*Class*/ {
- 		return getClassOfInstance(SHORTNAME_TO_INSTANCE[shortName]); 		
- 	}
- 	private static function getShortNameOfInstance(instance:SerializableClass):String {
- 		var xlass:Object/*Class*/ = getClassOfInstance(instance);
-		for (var shortName:String in SHORTNAME_TO_INSTANCE) {
-			if (getClassOfShortName(shortName)==xlass)
-				return shortName;
-		}
-		return null; 		
+ 		var instance:SerializableClass = SHORTNAME_TO_INSTANCE[shortName];
+ 		StaticFunctions.assert(instance!=null, ["You forgot to call SerializableClass.register for shortName=",shortName]); 
+ 		return getClassOfInstance(instance); 		
  	}
 	private static function createInstance(shortName:String):SerializableClass {
 		var xlass:Object/*Class*/ = getClassOfShortName(shortName);		
@@ -113,7 +113,8 @@ class come2play_as2.api.auto_copied.SerializableClass
 				for (var key:String in object)
 					res[key] = deserialize(object[key]); 
 					
-				if (shortName!=null) {					
+				if (shortName!=null && 
+					(IS_IN_GAME || SHORTNAME_TO_INSTANCE[shortName]!=null)) {				
 					var newObject:SerializableClass = createInstance(shortName);
 					if (newObject!=null) {
 						for (key in res)

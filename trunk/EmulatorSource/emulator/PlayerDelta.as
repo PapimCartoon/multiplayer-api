@@ -10,6 +10,11 @@ package emulator
 		public var serverEntries:Array;/*ServerEntry*/
 		public var finishHistory:FinishHistory;
 		public var changedTime:int;
+		
+		public function PlayerDelta()
+		{
+			super("PlayerDelta");
+		}
 		static public function create(playerIds:Array/*int*/,serverEntries:Array/*ServerEntry*/,finishHistory:FinishHistory/*PlayerMatchOver*/,changedTime:int):PlayerDelta
 		{
 			var res:PlayerDelta = new PlayerDelta();
@@ -25,7 +30,7 @@ package emulator
 				res.serverEntries =[];
 			return res;
 		}
-		public function toString():String
+		public function toMeaningfulString():String
 		{
 			var str:String = "Player ids: "+playerIds+" \n ";
 			if(serverEntries.length > 0)

@@ -1,5 +1,7 @@
 package come2play_as3.pseudoCode.backgammon
 {
+	import come2play_as3.pseudoCode.backgammon.GamePlace;
+	
 	import come2play_as3.api.*;
 	import come2play_as3.api.auto_copied.*;
 	import come2play_as3.api.auto_generated.*;
@@ -16,6 +18,11 @@ package come2play_as3.pseudoCode.backgammon
 	public class PseudoBackgammon extends SimplifiedClientGameAPI {
 	  	public var turnNumber:int;
 	  	public var isDicePhase:Boolean;
+	  
+	  	public function PseudoBackgammon()
+	  	{
+	  		(new GamePlace).register();
+	  	}
 	  
 	  	private function getTurnOfId():int {
 			return allPlayerIds[turnNumber % allPlayerIds.length]; // round robin turns

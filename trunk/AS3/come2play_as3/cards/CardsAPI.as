@@ -18,6 +18,7 @@ package come2play_as3.cards
 		protected var myUserId:int;
 		public function CardsAPI(graphics:MovieClip)
 		{
+			(new Card).register();
 			super(graphics);
 		}
 		

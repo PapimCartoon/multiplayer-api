@@ -6,6 +6,11 @@ package emulator
 	{
 		public var gameTurns:Array = new Array();
 		public var currentTurn:int = 0;
+		
+		public function DeltaHistory()
+		{
+			super("DeltaHistory");
+		}
 		static public function create(gameTurns:Array/*Array*/,currentGameTurn:int):DeltaHistory
 		{
 			var res:DeltaHistory = new DeltaHistory();
@@ -74,15 +79,7 @@ package emulator
 			var playerDelta:PlayerDelta = gameTurns[tillTurn]
 			return playerDelta.playerIds;
 		}	
-		public function toString():String
-		{
-			var str:String ="";
-			for each(var playerDelta:PlayerDelta in gameTurns)
-			{
-				str+= playerDelta.toString()+" \n ";
-			}
-			return str;
-		}
+
 		
 	}
 }

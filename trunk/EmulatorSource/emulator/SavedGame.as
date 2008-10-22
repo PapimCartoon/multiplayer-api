@@ -13,6 +13,11 @@ package emulator
 		public var name:String;
 		public var gameName:String;
 		
+		public function SavedGame()
+		{
+			super("SavedGame");
+		}
+		
 		static public function create(serverState:ObjectDictionary,players:Array,finishedGames:Array,name:String,gameName:String,deltaHistory:DeltaHistory):SavedGame
 		{
 			var res:SavedGame = new SavedGame();

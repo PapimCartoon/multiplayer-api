@@ -18,6 +18,11 @@ package come2play_as3.pseudoCode.domino
 	  	public var turnNumber:int;
 	 	public var cubesDrawn:int;
 	  	public static var cubeMax:int = 28;
+	  	public function PseudoDominoes()
+	  	{
+	  		(new GameMove).register();
+	  		(new DominoCube).register();
+	  	}
 	  	private function getTurnOfId():int {
 	    	return allPlayerIds[turnNumber % allPlayerIds.length]; // round robin turns
 	 	}

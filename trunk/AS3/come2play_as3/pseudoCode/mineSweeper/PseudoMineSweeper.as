@@ -21,7 +21,12 @@ package come2play_as3.pseudoCode.mineSweeper
 	{
 		public static var mineAmount:int=20;
 		public static var boardSize:int=25;
-
+	public function PseudoMineSweeper()
+	{
+		(new RevealedBrick).register();
+		(new GameMove).register();
+		(new GameBrick).register();
+	}
 
 	override public function gotRequestStateCalculation(requestId:int,serverEntries:Array):void
 	{ 

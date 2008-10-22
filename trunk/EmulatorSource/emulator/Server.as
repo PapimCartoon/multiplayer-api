@@ -716,7 +716,8 @@ package emulator {
 							calculatorQueue[myMessageIndex] = storeStateCalculation;
 						else
 						{
-							if(!ObjectDictionary.areEqual(calculatorQueue[lastMessageIndex],storeStateCalculation)) errorHandler("calculators gave diffrent values");
+							var lastStateCalculation:API_DoAllStoreStateCalculation = calculatorQueue[lastMessageIndex];
+							if(!ObjectDictionary.areEqual(lastStateCalculation.userEntries,storeStateCalculation.userEntries)) errorHandler("calculators gave diffrent values");
 							var serverEntries:Array/*ServerEntry*/ = doAllStoreStateCalculation(storeStateCalculation);
 							deltaHistory.addDelta(getOngoingPlayerIds(),serverEntries,getTimer()-matchStartTime);
 							sendStateChanged(serverEntries);

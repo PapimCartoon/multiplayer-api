@@ -24,7 +24,7 @@ package come2play_as3.cheat
 			textField.autoSize = TextFieldAutoSize.LEFT;
 			for each(var card:Card in cards)
 			{
-				textField.text += card.value+" : "+card.sign+"\n"
+				textField.appendText(card.value+" : "+card.sign+"\n");
 			}
 			//doTrace("me :"+myUserId,JSON.stringify(cards))
 		}

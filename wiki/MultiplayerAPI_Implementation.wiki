@@ -14,9 +14,10 @@ There are two issues:
 
 The later question:
 Each class that we would like to pass over the LocalConnection must:
-# be a Subclasses of SerializableClass
-# have a constructor without arguments
-# be a public class
+  # Be a Subclasses of SerializableClass
+  # Have a constructor without arguments which calls a super with a string that will represent your shor class name(you may choose whatever name you want)
+  # Be a public class
+  # should create an instance of the class in your game constructor, and call its register function
 
 It is important that all of the above will be followed, or else the Class will not be transferred properly.
 

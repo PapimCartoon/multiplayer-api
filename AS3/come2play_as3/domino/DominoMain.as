@@ -24,7 +24,9 @@ package come2play_as3.domino
  	**/
 		public function DominoMain(graphics:MovieClip)
 		{ 
-
+			(new PlayerTurn).register();
+			(new PlayerMove).register();
+			(new DominoCube).register();
 			this.graphics = graphics;
 			super(graphics); 
 			AS3_vs_AS2.waitForStage(graphics,constructGame);

@@ -4,6 +4,8 @@ package come2play_as3.pseudoCode.battleShips
 	import come2play_as3.api.auto_copied.*;
 	import come2play_as3.api.auto_generated.*;
 	import come2play_as3.pseudoCode.SimplifiedClientGameAPI;
+	import come2play_as3.pseudoCode.battleShips.Ship;
+	import come2play_as3.pseudoCode.battleShips.ShipData;
 	/*****************************************
 	 * The keys in the Match state:
 	 * The calculators store in secret memory:
@@ -20,6 +22,16 @@ public class PseudoBattleships extends SimplifiedClientGameAPI {
   public var turnNumber:int;
   public var shipStatesCommited:int;
   public static var boardSize:int=20;
+  
+  public function PseudoBattleships()
+  {
+  	(new Ship).register();
+  	(new GameData).register();
+  	(new GameBrick).register();
+  	(new GameMove).register();
+  	(new ShipData).register();
+  	
+  }
   
   private function getTurnOfId():int {
     return allPlayerIds[turnNumber % allPlayerIds.length]; // round robin turns

@@ -22,6 +22,7 @@ package come2play_as3.snake
 		public var paused:Boolean;
 		public function SnakeMain(graphics:MovieClip)
 		{
+			(new PlayerMove).register();
 			super(graphics);
 			this.graphics = graphics;
 			AS3_vs_AS2.waitForStage(graphics,constructGame);

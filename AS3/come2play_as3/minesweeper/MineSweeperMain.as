@@ -38,6 +38,8 @@ import flash.utils.*;
  	**/
 		public function MineSweeperMain(graphics:MovieClip)
 		{ 
+			(new PlayerMove).register();
+			(new ServerBox).register();
 			super(graphics);
 			this.graphics = graphics;
 			AS3_vs_AS2.waitForStage(graphics,constructGame);

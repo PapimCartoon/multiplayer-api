@@ -17,7 +17,11 @@ public class PseudoTrivia extends SimplifiedClientGameAPI
 	{
 		public static var questionAmount:int=10;
 		public var currentQuestionNum:Number;
-		
+	public function PseudoTrivia()
+	{
+		(new Answer).register();
+		(new Question).register();
+	}	
 	override public function gotRequestStateCalculation(requestId:int,serverEntries:Array):void
 	{ 
 		var serverEntry:ServerEntry=serverEntries[0];

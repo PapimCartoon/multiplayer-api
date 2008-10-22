@@ -7,6 +7,11 @@ package come2play_as3.pseudoCode.tictactoe
 	
 
 public class PseudoTicTacToe extends SimplifiedClientGameAPI{
+	
+	public function PseudoTicTacToe()
+	{
+		(new GameMove).register();
+	}
   public var turnNumber:int;
   
   public function getTurnOfId():int {

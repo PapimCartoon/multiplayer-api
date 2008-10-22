@@ -1,13 +1,22 @@
 package emulator
 {
+	import emulator.auto_copied.ObjectDictionary;
+	import emulator.auto_generated.API_DoAllEndMatch;
+	import emulator.auto_generated.API_DoAllFoundHacker;
+	import emulator.auto_generated.API_DoAllRequestRandomState;
+	
 	import flash.display.MovieClip;
 
 	public class Emulator extends MovieClip
 	{
 		public function Emulator()
-		{
+		{	
 			if(root.loaderInfo.parameters["isServer"]=="true")
 			{
+			(new ObjectDictionary()).register();
+			(new DeltaHistory).register();
+			(new PlayerDelta).register();
+			(new SavedGame).register();
 			var server:Server = new Server(); 
 			addChild(server);
 			server.constructServer();

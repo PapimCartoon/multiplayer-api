@@ -32,7 +32,7 @@ package come2play_as3.api.auto_copied
 public class SerializableClass
 {
 	public static var IS_THROWING_EXCEPTIONS:Boolean = true; // in the online version we set it to false. (Consider the case that a hacker stores illegal values as secret data)
-	
+	public static var IS_IN_GAME:Boolean = "come2play_as3.api" == "come2play_as3" + ".api";
 	public static const CLASS_NAME_FIELD:String = "__CLASS_NAME__";
 	public var __CLASS_NAME__:String;
 	public function SerializableClass(shortName:String) {
@@ -83,15 +83,9 @@ public class SerializableClass
  		return AS3_vs_AS2.getClassOfInstance(instance);
  	}
  	private static function getClassOfShortName(shortName:String):Class {
- 		return getClassOfInstance(SHORTNAME_TO_INSTANCE[shortName]); 		
- 	}
- 	private static function getShortNameOfInstance(instance:SerializableClass):String {
- 		var xlass:Class = getClassOfInstance(instance);
-		for (var shortName:String in SHORTNAME_TO_INSTANCE) {
-			if (getClassOfShortName(shortName)==xlass)
-				return shortName;
-		}
-		return null; 		
+ 		var instance:SerializableClass = SHORTNAME_TO_INSTANCE[shortName];
+ 		StaticFunctions.assert(instance!=null, ["You forgot to call SerializableClass.register for shortName=",shortName]); 
+ 		return getClassOfInstance(instance); 		
  	}
 	private static function createInstance(shortName:String):SerializableClass {
 		var xlass:Class = getClassOfShortName(shortName);		
@@ -114,7 +108,8 @@ public class SerializableClass
 				for (var key:String in object)
 					res[key] = deserialize(object[key]); 
 					
-				if (shortName!=null) {					
+				if (shortName!=null && 
+					(IS_IN_GAME || SHORTNAME_TO_INSTANCE[shortName]!=null)) {				
 					var newObject:SerializableClass = createInstance(shortName);
 					if (newObject!=null) {
 						for (key in res)

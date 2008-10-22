@@ -1,11 +1,11 @@
-package come2play_as3.pseudoCode.battleShips2
+package come2play_as3.pseudoCode.battleShips
 {
 	import come2play_as3.api.auto_copied.SerializableClass;
 
 	public class ShipData extends SerializableClass
 	{
 		public var ships:Array/*Ship*/;
-		
+		public function ShipData(){super("ShipData");}
 		public static function create(ships:Array/*Ship*/):ShipData
 		{
 			var res:ShipData = new ShipData();

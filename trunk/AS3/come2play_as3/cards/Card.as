@@ -8,7 +8,6 @@ package come2play_as3.cards
 		public static const DAIMOND:String = "Daimond";
 		public static const CLUB:String = "Club";
 		public static const SPADE:String = "Spade";
-		public static const JOKER:String = "Joker";
 		public var value:int;
 		public var sign:String;
 		public function Card() { super("Card"); }
@@ -16,6 +15,17 @@ package come2play_as3.cards
 		public function equelTo(card:Card):Boolean
 		{
 			return ((value == card.value) && (sign == card.sign))
+		}
+		public function get intSign():int
+		{
+			switch(sign)
+			{
+				case Card.HEART : return 1; break;
+				case Card.DAIMOND : return 2; break;
+				case Card.CLUB : return 3; break;
+				case Card.SPADE : return 4 ; break;
+			}
+			return 0;
 		}
 		public static function create(sign:String,value:int):Card
 		{
@@ -33,7 +43,6 @@ package come2play_as3.cards
 				case 2: res.sign = Card.DAIMOND; break;
 				case 3: res.sign = Card.CLUB; break;
 				case 4: res.sign = Card.SPADE; break;
-				case 5: res.sign = Card.JOKER; break;
 			}
 			res.value = value;
 			return res;

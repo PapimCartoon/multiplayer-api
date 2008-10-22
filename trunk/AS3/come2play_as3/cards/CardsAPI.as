@@ -4,22 +4,24 @@ package come2play_as3.cards
 	import come2play_as3.api.auto_generated.RevealEntry;
 	import come2play_as3.api.auto_generated.ServerEntry;
 	import come2play_as3.api.auto_generated.UserEntry;
-	
-	import flash.display.MovieClip;
+	import come2play_as3.cards.graphic.CardGraphic;
 	
 	public class CardsAPI extends ClientGameAPI
 	{
 		private var currentCard:int;
 		private var availableCards:int;
 		private var storedDecks:Boolean;
-		private var allPlayerIdsCards:Array/*int*/;
-		private var allPlayerCardsKeys:Array/*Array*/;
-		private var allPlayerAvailableCards:Array/*Array*/;
+		private var allPlayerIdsForCardAPI:Array;/*int*/
+		private var finishedPlayerIdsForCardAPI:Array;/*int*/
+		private var allPlayerCardsKeys:Array;/*Array*/
+		private var allPlayerAvailableCards:Array;/*Array*/
+		private var cardGraphics:CardGraphic;
 		protected var myUserId:int;
-		public function CardsAPI(graphics:MovieClip)
+		public function CardsAPI(cardGraphics:CardGraphic)
 		{
 			(new Card).register();
-			super(graphics);
+			this.cardGraphics = cardGraphics
+			super(cardGraphics);
 		}
 		
 		public function drawCards(numberOfCards:int,playerId:int):void
@@ -60,9 +62,9 @@ package come2play_as3.cards
 				if(withJokers)
 				{
 					keys.push({type:"Card",num:count});
-					userEntries.push(UserEntry.create({type:"Card",num:count++},Card.createByNumber(5,100),true));
+					userEntries.push(UserEntry.create({type:"Card",num:count++},Card.createByNumber(1,100),true));
 					keys.push({type:"Card",num:count});
-					userEntries.push(UserEntry.create({type:"Card",num:count++},Card.createByNumber(5,100),true));		
+					userEntries.push(UserEntry.create({type:"Card",num:count++},Card.createByNumber(3,100),true));		
 				}
 			}
 			storedDecks = true;
@@ -122,14 +124,16 @@ package come2play_as3.cards
 				
 			}
 			
-			
+			if(isLoad)
+				gotMatchLoaded(allPlayerIdsForCardAPI.concat(), finishedPlayerIdsForCardAPI.concat(), serverEntries);	
 			if(drawnCards.length > 0)
-				gotCards(drawnCards);
-			for each(var userId:int in allPlayerIdsCards)
+				callGotCards(drawnCards);
+			for each(var userId:int in allPlayerIdsForCardAPI)
 			{
 				if((rivalDecks[userId]> 0) && (userId != myUserId))
-					rivalGotCards(userId,rivalDecks[userId]);
+					callRivalGotCards(userId,rivalDecks[userId]);
 			}	
+
 			return serverEntries;
 		}
 		override public function gotMyUserId(myUserId:int):void
@@ -139,10 +143,12 @@ package come2play_as3.cards
 		}
 		override public function gotMatchStarted(allPlayerIds:Array, finishedPlayerIds:Array, serverEntries:Array):void
 		{
-			this.allPlayerIdsCards = allPlayerIds.concat();
+			this.allPlayerIdsForCardAPI = allPlayerIds.concat();
+			this.finishedPlayerIdsForCardAPI = finishedPlayerIds.concat()
+			cardGraphics.init(myUserId,allPlayerIdsForCardAPI);
 			allPlayerCardsKeys = new Array();
 			allPlayerAvailableCards = new Array();
-			for each(var playerId:int in allPlayerIdsCards)
+			for each(var playerId:int in allPlayerIdsForCardAPI)
 			{
 				allPlayerCardsKeys[playerId]/*int*/ = new Array();
 				allPlayerAvailableCards[playerId]/*int*/ = new Array();
@@ -150,7 +156,6 @@ package come2play_as3.cards
 			if(serverEntries.length>0)
 			{
 				serverEntries = interpertServerEntries(serverEntries,true);
-				gotMatchLoaded(allPlayerIds, finishedPlayerIds, serverEntries);
 			}
 			else
 				gotMatchStarted2(allPlayerIds, finishedPlayerIds, serverEntries);
@@ -185,6 +190,16 @@ package come2play_as3.cards
 			}	
 			serverEntries = interpertServerEntries(serverEntries,false);	
 			gotStateChangedNoCards(serverEntries)
+		}
+		public function callRivalGotCards(rivalId:int,amountOfCards:int):void
+		{
+			cardGraphics.rivalAddCards(rivalId,amountOfCards);
+			rivalGotCards(rivalId,amountOfCards);
+		}
+		public function callGotCards(cards:Array/*Card*/):void
+		{
+			cardGraphics.addCards(cards);
+			gotCards(cards)
 		}
 		public function gotMatchLoaded(allPlayerIds:Array, finishedPlayerIds:Array, serverEntries:Array):void{}	
 		public function gotCards(cards:Array/*Card*/):void{}

@@ -107,5 +107,13 @@ public final class StaticFunctions
 		if (lastIndex==-1) showError("Did not find searchFor="+searchFor+" in string="+str);
 		return str.substring(0,lastIndex) + replaceWith + str.substring(lastIndex+searchFor.length);
 	}
+	public static function instance2Object(instance:Object, fields:Array/*String*/):Object {
+		var res:Object = {};
+		for each (var field:String in fields) {
+			res[field] = instance[field];
+		}
+		return res;
+	}
+			
 }
 }

@@ -1,8 +1,10 @@
 package come2play_as3.cards.graphic
 {
+	import come2play_as3.cards.CardDefenitins;
 	import come2play_as3.cards.events.CardRecievedEvent;
 	
 	import flash.display.MovieClip;
+	import flash.display.Sprite;
 	import flash.events.Event;
 	
 	public class CardGraphic extends MovieClip
@@ -12,13 +14,29 @@ package come2play_as3.cards.graphic
 		private var myUserId:int;
 		private var allPlayersIds:Array;
 		private var currentPlayer:int;
+		private var background:Sprite;
+		private var buttonBar:ButtonBarImp;
 		public function CardGraphic()
 		{
+			buttonBar= new ButtonBarImp();
+			buttonBar.addButton("Confirm")
+			//buttonBar.scaleX = CardDefenitins.cardSize //* 0.01;
+			//buttonBar.scaleY = CardDefenitins.cardSize * 0.01;
+			
 			addEventListener(CardRecievedEvent.CardRecieved,dealNextCard,true);
 			rivalHandsArray = new Array();
 		}
 		public function init(myUserId:int,allPlayersIds:Array):void
 		{
+			this.myUserId = myUserId;
+			background = new Sprite();
+			this.allPlayersIds = allPlayersIds;
+			buttonBar.y = CardDefenitins.CONTAINER_gameHeight + 10 - buttonBar.height;
+			buttonBar.x = CardDefenitins.CONTAINER_gameWidth - buttonBar.width;
+			background.graphics.beginFill(0x5A24A0);
+			background.graphics.drawRect(0,0,CardDefenitins.CONTAINER_gameWidth,CardDefenitins.CONTAINER_gameHeight);
+			background.graphics.endFill();
+			addChild(background)
 			if(yourCards!=null)
 				if(contains(yourCards))
 					removeChild(yourCards);
@@ -26,7 +44,6 @@ package come2play_as3.cards.graphic
 				if(contains(rivalHand))
 					removeChild(rivalHand);
 			yourCards = new PlayerHand();
-			addChild(yourCards);
 			currentPlayer = 0;
 			var mod:int = allPlayersIds.indexOf(myUserId);
 			var cahngedNum:int;
@@ -34,16 +51,16 @@ package come2play_as3.cards.graphic
 			{
 				cahngedNum = i - mod;
 				if(cahngedNum < 0)
-					cahngedNum = allPlayersIds.length + mod;
+					cahngedNum = allPlayersIds.length + cahngedNum;
 				rivalHandsArray[i] = new RivalHand(cahngedNum)
 				addChild(rivalHandsArray[i]);
-			}		
-					
-			this.myUserId = myUserId;
-			this.allPlayersIds = allPlayersIds;
+			}
+			addChild(yourCards);		
+			addChild(buttonBar);		
+
 
 		}
-		
+
 		public function addCards(cards:Array/*Card*/):void
 		{
 			yourCards.addCards(cards);
@@ -68,7 +85,11 @@ package come2play_as3.cards.graphic
 		
 		private function dealNextCard(ev:Event):void
 		{
+			if(currentPlayer == allPlayersIds.indexOf(myUserId))
+				yourCards.showCard();
 			currentPlayer++;
+			if(currentPlayer >= allPlayersIds.length)
+				currentPlayer = 0;
 			devideCards();
 		}
 		

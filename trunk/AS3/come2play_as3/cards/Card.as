@@ -10,13 +10,25 @@ package come2play_as3.cards
 		public static const SPADE:String = "Spade";
 		public var value:int;
 		public var sign:String;
-		public function Card() { super("Card"); }
+		public function Card(shortName:String = null) { super((shortName==null)?"Card":shortName); }
 		
 		public function equelTo(card:Card):Boolean
 		{
 			return ((value == card.value) && (sign == card.sign))
 		}
-		public function get intSign():int
+		public function isBlack():Boolean
+		{
+			if(sign == HEART)
+				return false;
+			if(sign == DAIMOND)
+				return false;
+			if(sign == CLUB)
+				return true;
+			if(sign == SPADE)
+				return true;
+			return false;
+		}
+		public function intSign():int
 		{
 			switch(sign)
 			{

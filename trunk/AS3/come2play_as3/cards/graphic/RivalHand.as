@@ -11,6 +11,7 @@ package come2play_as3.cards.graphic
 		public function RivalHand(rivalNum:int)
 		{
 			this.rivalNum = rivalNum;
+			cardsInHand = new Array();
 			cardsToDeal = 0;
 		}
 		public function addCards(cardsToAdd:int):void
@@ -19,7 +20,12 @@ package come2play_as3.cards.graphic
 		}
 		override public function dealCard():void
 		{
-			
+			if(cardsToDeal == 0)
+				return;
+			var tempCard:CardGraphicMovieClip = new CardGraphicMovieClip();
+			addChild(tempCard)
+			cardsInHand.push(tempCard);
+			tempCard.moveCard(rivalNum,cardsInHand.length);
 		}
 		
 	}

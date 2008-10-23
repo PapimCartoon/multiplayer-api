@@ -1,10 +1,14 @@
 package come2play_as3.cards
 {
 	import come2play_as3.api.auto_generated.ClientGameAPI;
+	import come2play_as3.api.auto_generated.InfoEntry;
 	import come2play_as3.api.auto_generated.RevealEntry;
 	import come2play_as3.api.auto_generated.ServerEntry;
 	import come2play_as3.api.auto_generated.UserEntry;
+	import come2play_as3.cards.events.CardPressedEvent;
+	import come2play_as3.cards.events.GraphicButtonClickEvent;
 	import come2play_as3.cards.graphic.CardGraphic;
+	import come2play_as3.cards.graphic.CardGraphicMovieClip;
 	
 	public class CardsAPI extends ClientGameAPI
 	{
@@ -16,12 +20,80 @@ package come2play_as3.cards
 		private var allPlayerCardsKeys:Array;/*Array*/
 		private var allPlayerAvailableCards:Array;/*Array*/
 		private var cardGraphics:CardGraphic;
+		private var minCards:int;
+		private var maxCards:int;
 		protected var myUserId:int;
+		
+		private var markedCards:Array;
 		public function CardsAPI(cardGraphics:CardGraphic)
 		{
+			markedCards = new Array();
 			(new Card).register();
+			(new CenterCard).register();
+			var tempCardGraphic:CardGraphicMovieClip= new CardGraphicMovieClip();
+			
+			CardDefenitins.cardWidth = tempCardGraphic.width;
+			CardDefenitins.cardHeight = tempCardGraphic.height;
+			
 			this.cardGraphics = cardGraphics
+			cardGraphics.addEventListener(CardPressedEvent.CardPressedEvent,cardMarked,true);
+			cardGraphics.addEventListener(GraphicButtonClickEvent.GraphicButtonClick,graphicButtonClick,true);
 			super(cardGraphics);
+		}
+		
+		private function graphicButtonClick(ev:GraphicButtonClickEvent):void
+		{
+			switch(ev.name)
+			{
+				case "Confirm" :
+					if (markedCards.length == 0) return;
+					if(markedCards.length >= minCards)
+					{
+						gotChoosenCards(markedCards);
+					}
+				break;
+			}
+		}
+		public function putInCenter(choosenCards:Array/*PlayerCard*/):void
+		{
+			var userEntries:Array/*UserEntry*/ = new Array();
+			for each(var playerCard:PlayerCard in choosenCards)
+			{
+				userEntries.push(UserEntry.create({type:"CenterCard",num:playerCard.num},CenterCard.create(myUserId,playerCard.num)))
+			}
+			doStoreState(userEntries);
+		}
+		
+		private function cardMarked(ev:CardPressedEvent):void
+		{
+			var playerCard:PlayerCard;
+			if(ev.isPressed)
+				markedCards.push(ev.playerCard)
+			else
+			{
+				for(var i:int = 0;i<markedCards.length;i++)
+				{
+					playerCard = markedCards[i];
+					if(ev.playerCard.card.sign == playerCard.card.sign)
+						if(ev.playerCard.card.value == playerCard.card.value)
+						{
+							markedCards.splice(i,1);
+							CardDefenitins.canCardsBeSelected = true;
+							return;
+						}
+				}
+			}
+			if(markedCards.length == maxCards)
+				CardDefenitins.canCardsBeSelected = false;
+				
+		}
+		
+		public function chooseCards(minCards:int,maxCards:int):void
+		{
+			markedCards = new Array();
+			this.minCards = minCards;
+			this.maxCards = maxCards;
+			CardDefenitins.canCardsBeSelected = true;
 		}
 		
 		public function drawCards(numberOfCards:int,playerId:int):void
@@ -47,7 +119,7 @@ package come2play_as3.cards
 			var keys:Array/*String*/ = new Array();
 			for(var i:int=0;i<numberOfDecs;i++)
 			{
-				for(var j:int = 0;j<13;j++)
+				for(var j:int = 1;j<14;j++)
 				{
 					keys.push({type:"Card",num:count});
 					userEntries.push(UserEntry.create({type:"Card",num:count++},Card.createByNumber(1,j),true));
@@ -101,7 +173,7 @@ package come2play_as3.cards
 					if(serverEntry.value is Card)
 					{
 						if(serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,"this card was stored by a single player");
-						drawnCards.push(serverEntry.value as Card);
+						drawnCards.push(new PlayerCard(serverEntry.value as Card,serverEntry.key.num));
 					}
 
 					if(serverEntry.visibleToUserIds != null)
@@ -136,6 +208,16 @@ package come2play_as3.cards
 
 			return serverEntries;
 		}
+		override public function gotCustomInfo(infoEntries:Array):void
+		{
+			for each(var infoEntry:InfoEntry in infoEntries)
+			{
+				if(infoEntry.key == "CONTAINER_gameWidth")
+					CardDefenitins.CONTAINER_gameWidth = infoEntry.value as int
+				else if(infoEntry.key == "CONTAINER_gameHeight")
+					CardDefenitins.CONTAINER_gameHeight = infoEntry.value as int
+			}
+		}
 		override public function gotMyUserId(myUserId:int):void
 		{
 			this.myUserId = myUserId;
@@ -146,6 +228,7 @@ package come2play_as3.cards
 			this.allPlayerIdsForCardAPI = allPlayerIds.concat();
 			this.finishedPlayerIdsForCardAPI = finishedPlayerIds.concat()
 			cardGraphics.init(myUserId,allPlayerIdsForCardAPI);
+			CardDefenitins.playerNumber = allPlayerIdsForCardAPI.length;
 			allPlayerCardsKeys = new Array();
 			allPlayerAvailableCards = new Array();
 			for each(var playerId:int in allPlayerIdsForCardAPI)
@@ -188,7 +271,8 @@ package come2play_as3.cards
 				else
 					storedDecks = false;
 			}	
-			serverEntries = interpertServerEntries(serverEntries,false);	
+			serverEntries = interpertServerEntries(serverEntries,false);
+			cardGraphics.devideCards();	
 			gotStateChangedNoCards(serverEntries)
 		}
 		public function callRivalGotCards(rivalId:int,amountOfCards:int):void
@@ -196,13 +280,14 @@ package come2play_as3.cards
 			cardGraphics.rivalAddCards(rivalId,amountOfCards);
 			rivalGotCards(rivalId,amountOfCards);
 		}
-		public function callGotCards(cards:Array/*Card*/):void
+		public function callGotCards(playerCards:Array/*PlayerCard*/):void
 		{
-			cardGraphics.addCards(cards);
-			gotCards(cards)
+			cardGraphics.addCards(playerCards);
+			gotCards(playerCards)
 		}
 		public function gotMatchLoaded(allPlayerIds:Array, finishedPlayerIds:Array, serverEntries:Array):void{}	
-		public function gotCards(cards:Array/*Card*/):void{}
+		public function gotChoosenCards(choosenCards:Array):void{}
+		public function gotCards(playerCards:Array/*Card*/):void{}
 		public function rivalGotCards(rivalId:int,amountOfCards:int):void{}
 		public function gotMatchStarted2(allPlayerIds:Array, finishedPlayerIds:Array, serverEntries:Array):void	{}
 		public function gotMyUserId2(myUserId:int):void	{}

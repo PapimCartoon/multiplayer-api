@@ -103,4 +103,12 @@ class come2play_as2.api.auto_copied.StaticFunctions
 		if (lastIndex==-1) showError("Did not find searchFor="+searchFor+" in string="+str);
 		return str.substring(0,lastIndex) + replaceWith + str.substring(lastIndex+searchFor.length);
 	}
+	public static function instance2Object(instance/*:Object*/, fields:Array/*String*/)/*:Object*/ {
+		var res/*:Object*/ = {};
+		for (var i110:Number=0; i110<fields.length; i110++) { var field:String = fields[i110]; 
+			res[field] = instance[field];
+		}
+		return res;
+	}
+			
 }

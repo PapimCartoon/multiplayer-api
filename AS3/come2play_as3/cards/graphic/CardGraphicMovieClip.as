@@ -28,6 +28,10 @@ package come2play_as3.cards.graphic
 			cardGraphic.Letter_MC.stop();
 			addChild(cardGraphic)
 		}
+		public function isKey(cardKey:int):Boolean
+		{
+			return playerCard.num == cardKey;
+		}
 		public function setCard(playerCard:PlayerCard):void
 		{
 			this.playerCard = playerCard;

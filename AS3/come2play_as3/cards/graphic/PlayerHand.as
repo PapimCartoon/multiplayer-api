@@ -17,12 +17,26 @@ package come2play_as3.cards.graphic
 		{
 			cardsInStock = cardsInStock.concat(playerCards);
 		}
+		public function removeCard(cardKey:int):void
+		{
+			for(var i:int = 0;i<cardsInHand.length;i++)
+			{
+				var cardGraphic:CardGraphicMovieClip = cardsInHand[i];
+				if(cardGraphic.isKey(cardKey))
+				{
+					removeChild(cardGraphic);
+					cardsInHand.splice(i,1);
+					respaceCards();
+					return;
+				}
+			} 
+		}
 		public function respaceCards():void
 		{
 			var cardGraphics:CardGraphicMovieClip;
 			var i:int;
 			var maxNeedeSpace:int = cardsInHand.length * CardDefenitins.cardWidth 
-			var availableSpace:int = CardDefenitins.playerXPositions[0] - 20;
+			var availableSpace:int = CardDefenitins.playerXPositions[0] - (CardDefenitins.cardHeight +10);
 			
 			if(availableSpace > maxNeedeSpace)
 			{

@@ -1,6 +1,8 @@
 package come2play_as3.cards.graphic
 {
 	import come2play_as3.cards.CardDefenitins;
+	import come2play_as3.cards.PlayerCard;
+	import come2play_as3.cards.caurina.transitions.Tweener;
 	import come2play_as3.cards.events.CardRecievedEvent;
 	
 	import flash.display.MovieClip;
@@ -15,24 +17,18 @@ package come2play_as3.cards.graphic
 		private var allPlayersIds:Array;
 		private var currentPlayer:int;
 		private var background:Sprite;
-		private var buttonBar:ButtonBarImp;
+		private var showCardsArr:Array;
 		public function CardGraphic()
 		{
-			buttonBar= new ButtonBarImp();
-			buttonBar.addButton("Confirm")
-			//buttonBar.scaleX = CardDefenitins.cardSize //* 0.01;
-			//buttonBar.scaleY = CardDefenitins.cardSize * 0.01;
-			
-			addEventListener(CardRecievedEvent.CardRecieved,dealNextCard,true);
 			rivalHandsArray = new Array();
+			addEventListener(CardRecievedEvent.CardRecieved,dealNextCard,true);
 		}
 		public function init(myUserId:int,allPlayersIds:Array):void
 		{
 			this.myUserId = myUserId;
 			background = new Sprite();
 			this.allPlayersIds = allPlayersIds;
-			buttonBar.y = CardDefenitins.CONTAINER_gameHeight + 10 - buttonBar.height;
-			buttonBar.x = CardDefenitins.CONTAINER_gameWidth - buttonBar.width;
+
 			background.graphics.beginFill(0x5A24A0);
 			background.graphics.drawRect(0,0,CardDefenitins.CONTAINER_gameWidth,CardDefenitins.CONTAINER_gameHeight);
 			background.graphics.endFill();
@@ -56,11 +52,48 @@ package come2play_as3.cards.graphic
 				addChild(rivalHandsArray[i]);
 			}
 			addChild(yourCards);		
-			addChild(buttonBar);		
+					
 
 
 		}
-
+		public function showCards(revealedCards:Array/*PlayerCard*/):void
+		{
+			var tempGraphicCard:CardGraphicMovieClip;
+			showCardsArr = new Array();
+			for each(var playerCard:PlayerCard in revealedCards)
+			{
+				tempGraphicCard = new CardGraphicMovieClip();
+				tempGraphicCard.setCard(playerCard);
+				tempGraphicCard.x = CardDefenitins.CONTAINER_gameWidth / 2;
+				tempGraphicCard.y = CardDefenitins.CONTAINER_gameHeight / 2;
+				addChild(tempGraphicCard);
+				Tweener.addTween(tempGraphicCard,{time:1,rotation:showCardsArr.length*30,x:tempGraphicCard.x - showCardsArr.length*20,y:tempGraphicCard.y - showCardsArr.length*20 , transition:"linear"})
+				showCardsArr.push(tempGraphicCard);
+			}
+			var i:int = showCardsArr.length -1;
+			var j:int = 0;
+			while(i > j)
+			{
+				tempGraphicCard = showCardsArr[j] ;
+				Tweener.addTween(tempGraphicCard,{time:1,rotation:(0 + j*10),/*x:tempGraphicCard.x - showCardsArr.length*20,y:tempGraphicCard.y - showCardsArr.length*20 ,*/ transition:"linear"})
+				tempGraphicCard = showCardsArr[i];
+				Tweener.addTween(tempGraphicCard,{time:1,rotation:(0 - i*10),/*x:tempGraphicCard.x - showCardsArr.length*20,y:tempGraphicCard.y - showCardsArr.length*20 ,*/ transition:"linear"})
+				j++;
+				i--;
+			}
+			
+		}
+		
+		public function removeCard(playerId:int,cardKey:int):void
+		{
+			if(playerId == myUserId)
+				yourCards.removeCard(cardKey);
+			else
+			{
+				var rivalHand:RivalHand = rivalHandsArray[allPlayersIds.indexOf(playerId)];
+				rivalHand.removeCard();
+			}
+		}
 		public function addCards(cards:Array/*Card*/):void
 		{
 			yourCards.addCards(cards);
@@ -92,6 +125,7 @@ package come2play_as3.cards.graphic
 				currentPlayer = 0;
 			devideCards();
 		}
+		
 		
 	}
 }

@@ -14,13 +14,19 @@ package come2play_as3.cards.graphic
 			cardsInHand = new Array();
 			cardsToDeal = 0;
 		}
+		public function removeCard():void
+		{
+			cardsToDeal--;
+			var cardGraphicMovieClip:CardGraphicMovieClip = cardsInHand.pop();
+			removeChild(cardGraphicMovieClip);
+		}
 		public function addCards(cardsToAdd:int):void
 		{
 			cardsToDeal += cardsToAdd;
 		}
 		override public function dealCard():void
 		{
-			if(cardsToDeal == 0)
+			if(cardsToDeal <= cardsInHand.length)
 				return;
 			var tempCard:CardGraphicMovieClip = new CardGraphicMovieClip();
 			addChild(tempCard)

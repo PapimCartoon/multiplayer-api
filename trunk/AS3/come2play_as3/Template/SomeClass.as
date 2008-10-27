@@ -16,10 +16,6 @@ package come2play_as3.Template
 		*/
 		public var name:String;
 		public var hp:int;
-		public function SomeClass()
-		{
-			super("SomeClass");
-		}
 		
 		static public function create(name:String,hp:int):SomeClass
 		{

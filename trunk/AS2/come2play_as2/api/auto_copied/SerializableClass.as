@@ -37,14 +37,15 @@ class come2play_as2.api.auto_copied.SerializableClass
 	public static var IS_IN_GAME:Boolean = "come2play_as2.api" == "come2play_as2" + ".api";
 	public static var CLASS_NAME_FIELD:String = "__CLASS_NAME__";
 	public var __CLASS_NAME__:String;
-	public function SerializableClass(shortName:String) {
-		__CLASS_NAME__ = shortName;
+	public function SerializableClass(shortName:String /*DEFAULT NULL*/) {
+		__CLASS_NAME__ = shortName==null ? StaticFunctions.getShortClassName(this) : shortName;
+		StaticFunctions.assert(AS3_vs_AS2.stringIndexOf(__CLASS_NAME__,"$")==-1,["Illegal shortName in SerializableClass! shortName=",shortName]);
 		register();
 	}
 	public function toString():String {
 		var fieldNames:Array/*String*/ = AS3_vs_AS2.getFieldNames(this);
 		var values/*:Object*/ = {};			
-		for (var i46:Number=0; i46<fieldNames.length; i46++) { var key:String = fieldNames[i46]; 
+		for (var i47:Number=0; i47<fieldNames.length; i47++) { var key:String = fieldNames[i47]; 
 			if (StaticFunctions.startsWith(key,"__")) continue;
 			values[key] = this[key]; 
 		}

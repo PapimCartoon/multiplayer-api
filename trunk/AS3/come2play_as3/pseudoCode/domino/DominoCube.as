@@ -5,7 +5,6 @@ package come2play_as3.pseudoCode.domino
 	public class DominoCube extends SerializableClass
 	{
 		public var upperNumber:int,lowerNumber:int,dominoSide:Boolean;
-		public function DominoCube() { super("DominoCube"); }
 		
 		public static function create(upperNumber:int,lowerNumber:int,dominoSide:Boolean):DominoCube
 		{

@@ -12,9 +12,17 @@ public final class AS3_vs_AS2
 	public static const isAS3:Boolean = true;
 	public static function specialToString(o:Object):String {
 		return  o is Error ? error2String(o as Error) :
+			o is ByteArray ? byteArr2Str(o as ByteArray) :
 			o is XML ? (o as XML).toXMLString() :
 			o is Date ? '"'+(o as Date).toLocaleTimeString()+'"' :
 			o.toString();
+	}
+	public static function byteArr2Str(byteArr:ByteArray):String {
+		var bytes:Array = [];
+		for (var i:int=0; i<byteArr.length; i++)
+			bytes.push(byteArr.readByte());
+		byteArr.position = 0;
+		return "["+bytes.join(", ")+"]";
 	}
 	public static function isNumber(o:Object):Boolean {
 		return o is Number;
@@ -228,11 +236,11 @@ public final class AS3_vs_AS2
 	public static function LastIndexOf(arr:Array, val:Object):int {
 		return arr.lastIndexOf(val);
 	}	
-	public static function stringIndexOf(str:String, val:String):int {
-		return str.indexOf(val);
+	public static function stringIndexOf(str:String, val:String, startIndex:int=0):int {
+		return str.indexOf(val,startIndex);
 	}	
-	public static function stringLastIndexOf(str:String, val:String):int {
-		return str.lastIndexOf(val);
+	public static function stringLastIndexOf(str:String, val:String, startIndex:int=0x7FFFFFFF):int {
+		return str.lastIndexOf(val,startIndex);
 	}	
 	public static function waitForStage(graphics:MovieClip, gameConsructor:Function):void
 	{

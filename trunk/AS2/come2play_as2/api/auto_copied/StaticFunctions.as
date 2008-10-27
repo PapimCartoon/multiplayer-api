@@ -98,6 +98,27 @@ class come2play_as2.api.auto_copied.StaticFunctions
 		ClassReference[fieldName] = val_obj;		
 	}
 
+
+	/**
+	 * Similar to:  str.replace(new RegExp(searchFor,"g"), replaceWith)
+	 * but we need to escape special characters from searchFor
+	 * e.g., 
+	 * 	StaticFunctions.replaceAll("$y'+knkjh$y'+$y'+uoiuoiu$y'+8y$y'+", "$y'+","REPLACED") ==
+	 * 							"REPLACEDknkjhREPLACEDREPLACEDuoiuoiuREPLACED8yREPLACED"		
+	 */
+	public static function replaceAll(str:String, searchFor:String, replaceWith:String):String {		
+		var index:Number = 0;
+		var lastIndex:Number = 0;
+		var res:Array = [];
+		while ( (index = AS3_vs_AS2.stringIndexOf(str, searchFor, index)) != -1) {
+			res.push( str.substring(lastIndex,index) );
+			res.push( replaceWith );
+			index += searchFor.length;
+			lastIndex = index;			
+		}
+		res.push( str.substring(lastIndex) );
+		return res.join("");
+	}
 	public static function replaceLastOccurance(str:String, searchFor:String, replaceWith:String):String {
 		var lastIndex:Number = AS3_vs_AS2.stringLastIndexOf(str, searchFor);
 		if (lastIndex==-1) showError("Did not find searchFor="+searchFor+" in string="+str);
@@ -105,10 +126,14 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	}
 	public static function instance2Object(instance/*:Object*/, fields:Array/*String*/)/*:Object*/ {
 		var res/*:Object*/ = {};
-		for (var i110:Number=0; i110<fields.length; i110++) { var field:String = fields[i110]; 
+		for (var i131:Number=0; i131<fields.length; i131++) { var field:String = fields[i131]; 
 			res[field] = instance[field];
 		}
 		return res;
+	}
+	public static function getShortClassName(obj/*:Object*/):String {
+		var className:String = AS3_vs_AS2.getClassName(obj);
+		return className.substr(AS3_vs_AS2.stringIndexOf(className,"::")+2);		
 	}
 			
 }

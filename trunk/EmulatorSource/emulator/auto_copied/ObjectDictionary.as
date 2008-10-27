@@ -26,17 +26,16 @@ public final class ObjectDictionary extends SerializableClass
 
 	public function ObjectDictionary()
 	{
-		super("ObjectDictionary");
 		hashMap = new Object();
 		pSize = 0;	
 		allKeys = [];
 		allValues = [];
 	}
 	
+	private function getEntry(key:Object):Array {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	private function getEntry(key:Object):Array {
 		return getEntry2(key, hashObject(key));
 	}
 	private function getEntry2(key:Object, hash:int):Array {
@@ -46,10 +45,10 @@ public final class ObjectDictionary extends SerializableClass
 			var entryKey:Object = entry[0];
 			if (areEqual(entryKey,key)) 
 				return entry;
+			// not equal, let's check if someone changed the keys
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			// not equal, let's check if someone changed the keys
 			
 			/*if (hashObject(entryKey)!=hash)
 				throw new Error("You have mutated a key that was previously inserted to this ObjectDictionary! All keys must be immutable! mutated-key="+JSON.stringify(entryKey)+" looking-for-key="+JSON.stringify(key));
@@ -59,10 +58,10 @@ public final class ObjectDictionary extends SerializableClass
 	}
 	public function size():int {
 		return pSize;
+	}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	}
 	public function getValues():Array {		
 		return allValues;		
 	}
@@ -72,10 +71,10 @@ public final class ObjectDictionary extends SerializableClass
 	public function hasKey(key:Object):Boolean {
 		return getEntry(key)!=null;
 	}
+	public function getValue(key:Object):Object {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	public function getValue(key:Object):Object {
 		var entry:Array = getEntry(key);
 		return entry==null ? null : entry[1];
 	}
@@ -85,10 +84,10 @@ public final class ObjectDictionary extends SerializableClass
 		var entries:Array = hashMap[hash];
 		for (var i:int=0; i<entries.length; i++) {
 			var entry:Array = entries[i];
+			var oldKey:Object = entry[0];
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			var oldKey:Object = entry[0];
 			if (areEqual(oldKey,key)) {
 				entries.splice(i,1);
 				pSize--;
@@ -98,10 +97,10 @@ public final class ObjectDictionary extends SerializableClass
 				allKeys.splice(indexInAll,1);
 				allValues.splice(indexInAll,1);
 				
+				return entry[1];					
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-				return entry[1];					
 			}				
 		}
 		return null;
@@ -111,10 +110,10 @@ public final class ObjectDictionary extends SerializableClass
 		var entry:Array = getEntry2(key, hash);
 		if (entry==null) {
 			if (hashMap[hash]==null) hashMap[hash] = [];
+			var entries:Object = hashMap[hash];
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			var entries:Object = hashMap[hash];
 			entries.push( [key, value] );
 			pSize++;
 			
@@ -124,10 +123,10 @@ public final class ObjectDictionary extends SerializableClass
 			// replace value
 			entry[1] = value;		
 						
+			var oldKey:Object = entry[0];
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			var oldKey:Object = entry[0];
 			var indexInAll:int = AS3_vs_AS2.IndexOf(allKeys,oldKey);
 			allValues[indexInAll] = value;
 		}
@@ -137,10 +136,10 @@ public final class ObjectDictionary extends SerializableClass
 	// 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139
 	public static function hashObject(o:Object):int {
 		if (o==null) return 541;		
+        if (AS3_vs_AS2.isBoolean(o))	
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-        if (AS3_vs_AS2.isBoolean(o))	
 			return o ? 523 : 521;		
         if (AS3_vs_AS2.isNumber(o))
         	return AS3_vs_AS2.convertToInt(o);  
@@ -150,10 +149,10 @@ public final class ObjectDictionary extends SerializableClass
 	    	var len:int = str.length;
 	    	res = 509;
 	    	for (var i:int = 0; i < len; i++) {
+	       		res <<= 1;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	       		res <<= 1;
                 res ^= str.charCodeAt(i);
             }
             return res;
@@ -163,10 +162,10 @@ public final class ObjectDictionary extends SerializableClass
 	       	for (i = 0; i < o.length; i++) {
 	       		res <<= 1;
 	       		res ^= hashObject(o[i]);
+	       	}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	       	}
 	       	return res;        	
         }
         
@@ -176,10 +175,10 @@ public final class ObjectDictionary extends SerializableClass
 	    }
        	return res; 
 	}
+	public static function areEqual(o1:Object, o2:Object):Boolean {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	public static function areEqual(o1:Object, o2:Object):Boolean {
 		if (o1===o2) return true; // because false==[] or {} was true!
 		if (o1==null || o2==null) return false;
 		var t:String = typeof(o1);
@@ -189,10 +188,10 @@ public final class ObjectDictionary extends SerializableClass
 			return false;
 			
 		if (t=="object") {
+			var x:String;	
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			var x:String;	
 			var allFields:Object = {};
 			var c:int = 0;	
 			for (x in o1) {
@@ -202,10 +201,10 @@ public final class ObjectDictionary extends SerializableClass
 			for (x in o2) {
 				if (allFields[x]==null) return false;
 				c--;
+			}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			}
 			if (c!=0) return false; // not the same number of dynamic properties
 			if (AS3_vs_AS2.isAS3) {
 				// for static properties we use describeType
@@ -215,10 +214,10 @@ public final class ObjectDictionary extends SerializableClass
 					allFields[field] = true;
 				}
 			}
+			for (x in allFields) 	
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			for (x in allFields) 	
 				if (!o1.hasOwnProperty(x) || 
 					!o2.hasOwnProperty(x) || 
 					!areEqual(o1[x], o2[x])) return false;
@@ -228,7 +227,4 @@ public final class ObjectDictionary extends SerializableClass
 		}
 	}
 }
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 }

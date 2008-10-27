@@ -3,7 +3,6 @@
 import come2play_as2.tictactoe.*;
 	class come2play_as2.tictactoe.TictactoeSquare extends SerializableClass
 	{
-		public function TictactoeSquare() { super("TictactoeSquare"); }
 		public var row:Number, col:Number;
 		public static function create(row:Number, col:Number):TictactoeSquare {
 			var res:TictactoeSquare = new TictactoeSquare();

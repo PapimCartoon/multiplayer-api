@@ -8,7 +8,6 @@ package come2play_as3.minesweeper
 		public var xPos:int;
 		public var yPos:int;
 		public var borderingMines:int;
-		public function ServerBox() { super("ServerBox"); }
 
 		public static function create(isMine:Boolean,borderingMines:int,xPos:int,yPos:int):ServerBox
 		{

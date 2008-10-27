@@ -10,7 +10,6 @@ package come2play_as3.cards
 		public static const SPADE:String = "Spade";
 		public var value:int;
 		public var sign:String;
-		public function Card(shortName:String = null) { super((shortName==null)?"Card":shortName); }
 		
 		public function equelTo(card:Card):Boolean
 		{

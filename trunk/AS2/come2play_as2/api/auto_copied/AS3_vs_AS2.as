@@ -171,11 +171,11 @@ class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 		return -1;
 	}
 	
-	public static function stringIndexOf(str:String, val:String):Number {
-		return str.indexOf(val);
+	public static function stringIndexOf(str:String, val:String, startIndex:Number):Number {
+		return startIndex!=null ? str.indexOf(val, startIndex) : str.indexOf(val);
 	}	
-	public static function stringLastIndexOf(str:String, val:String):Number {
-		return str.lastIndexOf(val);
+	public static function stringLastIndexOf(str:String, val:String, startIndex:Number):Number {
+		return startIndex!=null ? str.lastIndexOf(val, startIndex) : str.lastIndexOf(val);
 	}	
 	
 	public static function waitForStage(graphics:MovieClip, gameConsructor:Function):Void {

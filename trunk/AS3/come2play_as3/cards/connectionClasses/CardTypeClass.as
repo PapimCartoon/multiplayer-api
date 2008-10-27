@@ -8,10 +8,6 @@ package come2play_as3.cards.connectionClasses
 		static public const CENTERCARD:String = "CenterCard"
 		public var type:String;
 		public var value:int;
-		public function CardTypeClass()
-		{
-			super("CardTypeClass");
-		}
 		static public function create(type:String,value:int):CardTypeClass
 		{
 			var res:CardTypeClass = new CardTypeClass();

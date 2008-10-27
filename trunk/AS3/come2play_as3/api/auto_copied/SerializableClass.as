@@ -1,4 +1,4 @@
-package come2play_as3.api.auto_copied
+﻿package come2play_as3.api.auto_copied
 {
 	
 /**
@@ -38,8 +38,9 @@ public class SerializableClass
 	public static var IS_IN_GAME:Boolean = "come2play_as3.api" == "come2play_as3" + ".api";
 	public static const CLASS_NAME_FIELD:String = "__CLASS_NAME__";
 	public var __CLASS_NAME__:String;
-	public function SerializableClass(shortName:String) {
-		__CLASS_NAME__ = shortName;
+	public function SerializableClass(shortName:String /*DEFAULT NULL*/= null) {
+		__CLASS_NAME__ = shortName==null ? StaticFunctions.getShortClassName(this) : shortName;
+		StaticFunctions.assert(AS3_vs_AS2.stringIndexOf(__CLASS_NAME__,"$")==-1,["Illegal shortName in SerializableClass! shortName=",shortName]);
 		register();
 	}
 	public function toString():String {

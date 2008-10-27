@@ -5,7 +5,6 @@ package come2play_as3.pseudoCode.mineSweeper
 	public class GameBrick extends SerializableClass
 	{
   		public var isMine:Boolean, touchingMines:int,row:int,col:int;
-  		public function GameBrick() { super("GameBrick"); }
     	public static function create(isMine:Boolean, touchingMines:int,row:int,col:int):GameBrick
   		{
   	  		var res:GameBrick = new GameBrick();

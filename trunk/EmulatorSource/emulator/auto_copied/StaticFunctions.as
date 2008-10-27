@@ -142,6 +142,33 @@ public final class StaticFunctions
 
 	}
 
+
+	/**
+	 * Similar to:  str.replace(new RegExp(searchFor,"g"), replaceWith)
+	 * but we need to escape special characters from searchFor
+	 * e.g., 
+	 * 	StaticFunctions.replaceAll("$y'+knkjh$y'+$y'+uoiuoiu$y'+8y$y'+", "$y'+","REPLACED") ==
+	 * 							"REPLACEDknkjhREPLACEDREPLACEDuoiuoiuREPLACED8yREPLACED"		
+	 */
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+	public static function replaceAll(str:String, searchFor:String, replaceWith:String):String {		
+		var index:int = 0;
+		var lastIndex:int = 0;
+		var res:Array = [];
+		while ( (index = AS3_vs_AS2.stringIndexOf(str, searchFor, index)) != -1) {
+			res.push( str.substring(lastIndex,index) );
+			res.push( replaceWith );
+			index += searchFor.length;
+			lastIndex = index;			
+		}
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+		res.push( str.substring(lastIndex) );
+		return res.join("");
+	}
 	public static function replaceLastOccurance(str:String, searchFor:String, replaceWith:String):String {
 		var lastIndex:int = AS3_vs_AS2.stringLastIndexOf(str, searchFor);
 		if (lastIndex==-1) showError("Did not find searchFor="+searchFor+" in string="+str);
@@ -149,14 +176,21 @@ public final class StaticFunctions
 	}
 	public static function instance2Object(instance:Object, fields:Array/*String*/):Object {
 		var res:Object = {};
-		for each (var field:String in fields) {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		for each (var field:String in fields) {
 			res[field] = instance[field];
 		}
 		return res;
 	}
+	public static function getShortClassName(obj:Object):String {
+		var className:String = AS3_vs_AS2.getClassName(obj);
+		return className.substr(AS3_vs_AS2.stringIndexOf(className,"::")+2);		
+	}
 			
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 }
 }

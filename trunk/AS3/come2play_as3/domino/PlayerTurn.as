@@ -5,7 +5,6 @@ package come2play_as3.domino
 	public class PlayerTurn extends SerializableClass
 	{
 		public var playerId:int;
-		public function PlayerTurn() { super("PlayerTurn"); }
 		static public function create(playerId:int):PlayerTurn
 		{
 			var res:PlayerTurn = new PlayerTurn;

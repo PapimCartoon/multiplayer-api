@@ -5,8 +5,6 @@ package come2play_as3.pseudoCode.mineSweeper
 	public class RevealedBrick extends SerializableClass
 	{
 		public var brick:GameBrick,playerId:int;
-		public function RevealedBrick() { super("RevealedBrick"); }
-	
 	 	public static function create(brick:GameBrick,playerId:int):RevealedBrick
   		{
   	  		var res:RevealedBrick = new RevealedBrick();

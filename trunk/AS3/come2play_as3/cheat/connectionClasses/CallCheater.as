@@ -6,10 +6,6 @@ package come2play_as3.cheat.connectionClasses
 	{
 		public var callerId:int;
 		public var isCheater:Boolean;
-		public function CallCheater()
-		{
-			super("CallCheater");
-		}
 		static public function create(callerId:int,isCheater:Boolean):CallCheater
 		{
 			var res:CallCheater = new CallCheater();

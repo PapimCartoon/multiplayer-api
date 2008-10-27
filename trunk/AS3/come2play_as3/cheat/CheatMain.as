@@ -8,9 +8,11 @@ package come2play_as3.cheat
 	import come2play_as3.cards.CardsAPI;
 	import come2play_as3.cards.PlayerCard;
 	import come2play_as3.cards.connectionClasses.CardTypeClass;
+	import come2play_as3.cards.events.CardShownEvent;
 	import come2play_as3.cards.events.GraphicButtonClickEvent;
 	import come2play_as3.cheat.connectionClasses.CallCheater;
 	import come2play_as3.cheat.connectionClasses.CheatTypeClass;
+	import come2play_as3.cheat.connectionClasses.NextTurn;
 	import come2play_as3.cheat.connectionClasses.PlayerCall;
 	
 	import flash.display.MovieClip;
@@ -18,25 +20,26 @@ package come2play_as3.cheat
 	public class CheatMain extends CardsAPI
 	{
 		private var cheatGraphics:CheatGraphic;
-		private var cardsInMiddle:Array;/*CheatTypeClass*/
-		private var lastCardsPutInMiddle:Array;/*CheatTypeClass*/
+		private var cardsInMiddle:Array;/*CardTypeClass*/
+		private var lastCardsPutInMiddle:Array;/*CardTypeClass*/
 		private var allPlayerIds:Array;/*int*/
 		private var choosenCards:Array;
 		private var lastCall:int;
 		private var playerIdTurn:int;
 		private var turnReplays:int;
 		private var callCheater:CallCheater;
-		private var playerCall:PlayerCall;
+		private var allowPassingTurn:Boolean;
 		public function CheatMain(graphics:MovieClip)
 		{
 			(new PlayerCall).register();
 			(new CallCheater).register();
 			(new CheatTypeClass).register();
-			lastCall = 2;
-			cheatGraphics = new CheatGraphic(lastCall);
+			(new NextTurn).register();
+			cheatGraphics = new CheatGraphic();
 			graphics.addChild(cheatGraphics);
 			super(cheatGraphics);
 			cheatGraphics.addEventListener(GraphicButtonClickEvent.GraphicButtonClick,graphicButtonClick,true);
+			cheatGraphics.addEventListener(CardShownEvent.CardShown,cardsShown);
 			doRegisterOnServer();
 		}	
 		
@@ -62,6 +65,11 @@ package come2play_as3.cheat
 				cheatGraphics.clear();
 				doStoreState([UserEntry.create(CheatTypeClass.create(myUserId,CheatTypeClass.CALLCHEATER),CallCheater.create(myUserId,false))])
 				break;
+				case "ok":
+				cheatGraphics.clear();
+				cheatGraphics.clearShownCards();
+				doStoreState([UserEntry.create(CheatTypeClass.create(myUserId,CheatTypeClass.NEXTTURN),NextTurn.create())])
+				break;
 			}
 		}
 		private function setNextTurn():void
@@ -76,30 +84,34 @@ package come2play_as3.cheat
 		private function setTrun():void
 		{
 			turnReplays = 0;
+			callCheater = null;
+			cheatGraphics.clear();
 			doAllSetTurn(playerIdTurn,10000);
 			if(myUserId == playerIdTurn)
 			{
 				chooseCards(true);
-				cheatGraphics.setMyTrun();
+				cheatGraphics.setMyTrun(lastCall);
 			}
-			else
-			{
-				cheatGraphics.clear();
-			}
+		}
+		private function cardsShown(ev:CardShownEvent):void
+		{
+			cheatGraphics.clear();
+			cheatGraphics.okMessage();
+			allowPassingTurn = true;
 		}
 		override public function gotMiddleCards(revealdCards:Array/*PlayerCard*/):void
 		{
 			var foundCheater:Boolean = false;
 			for each(var playerCard:PlayerCard in revealdCards)
 			{
-				if( (playerCard.card.value !=100) && (playerCard.card.value != playerCall.callNum))
-				{
+				if( (playerCard.card.value !=100) && (playerCard.card.value != lastCall))
 					foundCheater = true;
-					doTrace("HA HA","You cheat you take pot");
-				}
 			}
 			if(!foundCheater)
-				doTrace("HA HA","No cheat you Be Bad");
+				takeCardsFromMiddle(callCheater.callerId,cardsInMiddle);
+			else
+				takeCardsFromMiddle(playerIdTurn,cardsInMiddle);
+			cardsInMiddle = new Array();	
 		}
 		override public function gotPlayerPutCardsSecret(keys:Array, playerId:int):void
 		{
@@ -135,6 +147,7 @@ package come2play_as3.cheat
 		override public function gotMatchStarted2(allPlayerIds:Array, finishedPlayerIds:Array, serverEntries:Array):void
 		{
 			cardsInMiddle = new Array();
+			allowPassingTurn = false;
 			this.allPlayerIds = allPlayerIds;
 			cheatGraphics.initCheat();
 			lastCall = 2;
@@ -148,6 +161,7 @@ package come2play_as3.cheat
 		override public function gotMatchLoaded(allPlayerIds:Array, finishedPlayerIds:Array, serverEntries:Array):void
 		{	
 			cardsInMiddle = new Array();
+			allowPassingTurn = false;
 			this.allPlayerIds = allPlayerIds;
 			cheatGraphics.initCheat();
 			doTrace("me","Load match");
@@ -160,7 +174,16 @@ package come2play_as3.cheat
 			{
 				if(serverEntry.value is PlayerCall)
 				{
-					playerCall = serverEntry.value as PlayerCall;
+					var playerCall:PlayerCall = serverEntry.value as PlayerCall;
+					if(( (playerCall.callNum == 13) && (playerCall.callNum == 1)) ||
+						( (playerCall.callNum == 1) && (playerCall.callNum == 13)) ||
+						(Math.abs(lastCall - playerCall.callNum) == 1) )
+						{
+							if(playerCall.playerId !=serverEntry.storedByUserId) doAllFoundHacker(serverEntry.storedByUserId,"tried to send a message on someone elses name");
+							lastCall = playerCall.callNum;
+						}
+						else
+							doAllFoundHacker(serverEntry.storedByUserId,"tryed to cheat with his call");
 				}
 				else if(serverEntry.value is CallCheater)
 				{
@@ -169,7 +192,7 @@ package come2play_as3.cheat
 							return
 					callCheater = serverEntry.value as CallCheater;
 					
-					if(callCheater.callerId !=serverEntry.storedByUserId) doAllFoundHacker(serverEntry.storedByUserId,"tryed to send a message on someone elses name");
+					if(callCheater.callerId !=serverEntry.storedByUserId) doAllFoundHacker(serverEntry.storedByUserId,"tried to send a message on someone elses name");
 						if(callCheater.isCheater)
 						{
 							var revealEntries:Array = new Array();
@@ -185,6 +208,15 @@ package come2play_as3.cheat
 								setNextTurn();
 						}
 
+				}
+				else if(serverEntry.value is NextTurn)
+				{
+					if(allowPassingTurn)
+					{
+						allowPassingTurn = false;
+						cheatGraphics.clearShownCards();
+						setNextTurn();
+					}
 				}
 			}
 		}

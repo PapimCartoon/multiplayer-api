@@ -15,12 +15,15 @@ package come2play_as3.cards.graphic
 		private var cardGraphic:Card_MC;
 		private var cardNum:int;
 		private var playerNum:int;
-		private var selected:Boolean;
-		public function CardGraphicMovieClip()
+		public var selected:Boolean;
+		public function CardGraphicMovieClip(movebale:Boolean = true)
 		{
-			addEventListener(MouseEvent.MOUSE_OVER,cardOver);
-			addEventListener(MouseEvent.MOUSE_OUT,cardOut);
-			addEventListener(MouseEvent.CLICK,cardSelect);
+			if(movebale)
+			{
+				//addEventListener(MouseEvent.MOUSE_OVER,cardOver);
+				//addEventListener(MouseEvent.MOUSE_OUT,cardOut);
+				addEventListener(MouseEvent.CLICK,cardSelect);
+			}
 			cardGraphic = new Card_MC();
 			cardGraphic.scaleX = CardDefenitins.cardSize *0.01
 			cardGraphic.scaleY = CardDefenitins.cardSize *0.01
@@ -28,9 +31,18 @@ package come2play_as3.cards.graphic
 			cardGraphic.Letter_MC.stop();
 			addChild(cardGraphic)
 		}
+		public function set yPos(yPos:int):void
+		{
+			if(!selected)
+				y = yPos;	
+		}
 		public function isKey(cardKey:int):Boolean
 		{
 			return playerCard.num == cardKey;
+		}
+		public function isEquel(playerCard:PlayerCard):Boolean
+		{
+			return this.playerCard.card.isEqual(playerCard.card);
 		}
 		public function setCard(playerCard:PlayerCard):void
 		{
@@ -82,6 +94,7 @@ package come2play_as3.cards.graphic
 					if(CardDefenitins.canCardsBeSelected)
 					{
 						selected = true;
+						y = CardDefenitins.playerYPositions[0] - 40;
 						dispatchEvent(new CardPressedEvent(playerCard,selected));
 					}
 				}

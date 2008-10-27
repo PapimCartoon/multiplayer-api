@@ -4,7 +4,8 @@ package come2play_as3.cheat.connectionClasses
 
 	public class CheatTypeClass extends SerializableClass
 	{
-		static public const CALLCHEATER:String="callCheater"
+		static public const CALLCHEATER:String="callCheater";
+		static public const NEXTTURN:String = "NextTurn";
 		public var type:String;
 		public var playerId:int;
 		static public function create(playerId:int,type:String):CheatTypeClass

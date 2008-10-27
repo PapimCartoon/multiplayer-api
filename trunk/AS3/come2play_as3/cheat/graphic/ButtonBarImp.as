@@ -15,6 +15,7 @@ package come2play_as3.cheat.graphic
 		private var downNumImp:ButtonBarButtonImp;
 		private var callCheaterButt:ButtonBarButtonImp;
 		private var trustButt:ButtonBarButtonImp;
+		private var okButt:ButtonBarButtonImp;
 		private var cheaterTimer:Timer;
 		private var textField:TextField;
 		private var timeLeft:int;
@@ -24,6 +25,9 @@ package come2play_as3.cheat.graphic
 			cheaterTimer.addEventListener(TimerEvent.TIMER,secondDone);
 			callCheaterButt = new ButtonBarButtonImp("callCheater","Call Cheater");
 			trustButt = new ButtonBarButtonImp("trust","Trust");
+			okButt = new ButtonBarButtonImp("ok","Ok");
+			okButt.x = 200;
+			okButt.y = 60;
 			trustButt.x = 50;
 			trustButt.y = 60;
 			callCheaterButt.x = 250
@@ -73,6 +77,10 @@ package come2play_as3.cheat.graphic
 			addChild(upNumImp);
 	
 		}
+		public function okMessage():void
+		{
+			addChild(okButt)
+		}
 		public function clear():void
 		{
 			cheaterTimer.reset();
@@ -86,7 +94,8 @@ package come2play_as3.cheat.graphic
 				removeChild(callCheaterButt);	
 			if(contains(trustButt))
 				removeChild(trustButt);	
-				
+			if(contains(okButt))
+				removeChild(okButt);		
 						
 			textField.text = "";
 		}

@@ -4,6 +4,7 @@ package come2play_as3.cards.graphic
 	import come2play_as3.cards.PlayerCard;
 	import come2play_as3.cards.caurina.transitions.Tweener;
 	import come2play_as3.cards.events.CardRecievedEvent;
+	import come2play_as3.cards.events.CardShownEvent;
 	
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
@@ -18,10 +19,12 @@ package come2play_as3.cards.graphic
 		private var currentPlayer:int;
 		private var background:Sprite;
 		private var showCardsArr:Array;
+		private var cardsShown:int;
 		public function CardGraphic()
 		{
 			rivalHandsArray = new Array();
 			addEventListener(CardRecievedEvent.CardRecieved,dealNextCard,true);
+			
 		}
 		public function init(myUserId:int,allPlayersIds:Array):void
 		{
@@ -56,34 +59,59 @@ package come2play_as3.cards.graphic
 
 
 		}
+		public function clearBounce():void
+		{
+			yourCards.clearBounce();
+		}
+		public function clearShownCards():void
+		{
+			for each(var tempGraphicCard:CardGraphicMovieClip in showCardsArr)
+			{
+				removeChild(tempGraphicCard);
+			}
+			showCardsArr = new Array();
+		}
 		public function showCards(revealedCards:Array/*PlayerCard*/):void
 		{
 			var tempGraphicCard:CardGraphicMovieClip;
+			cardsShown = 0;
 			showCardsArr = new Array();
 			for each(var playerCard:PlayerCard in revealedCards)
 			{
-				tempGraphicCard = new CardGraphicMovieClip();
+				tempGraphicCard = new CardGraphicMovieClip(false);
 				tempGraphicCard.setCard(playerCard);
 				tempGraphicCard.x = CardDefenitins.CONTAINER_gameWidth / 2;
 				tempGraphicCard.y = CardDefenitins.CONTAINER_gameHeight / 2;
 				addChild(tempGraphicCard);
-				Tweener.addTween(tempGraphicCard,{time:1,rotation:showCardsArr.length*30,x:tempGraphicCard.x - showCardsArr.length*20,y:tempGraphicCard.y - showCardsArr.length*20 , transition:"linear"})
 				showCardsArr.push(tempGraphicCard);
 			}
 			var i:int = showCardsArr.length -1;
 			var j:int = 0;
+			var yMove:int=1;
+			var xMove:int= Math.floor((showCardsArr.length-1) / 2)+1;
 			while(i > j)
 			{
-				tempGraphicCard = showCardsArr[j] ;
-				Tweener.addTween(tempGraphicCard,{time:1,rotation:(0 + j*10),/*x:tempGraphicCard.x - showCardsArr.length*20,y:tempGraphicCard.y - showCardsArr.length*20 ,*/ transition:"linear"})
-				tempGraphicCard = showCardsArr[i];
-				Tweener.addTween(tempGraphicCard,{time:1,rotation:(0 - i*10),/*x:tempGraphicCard.x - showCardsArr.length*20,y:tempGraphicCard.y - showCardsArr.length*20 ,*/ transition:"linear"})
+				tempGraphicCard = showCardsArr[i] ;
+				Tweener.addTween(tempGraphicCard,{time:0.3,rotation:(0 + xMove*15),x:(tempGraphicCard.x + xMove*20),y:(tempGraphicCard.y - yMove*10), transition:"linear",onComplete:cardDone})
+				tempGraphicCard = showCardsArr[j];
+				Tweener.addTween(tempGraphicCard,{time:0.3,rotation:(0 - xMove*15),x:(tempGraphicCard.x  - xMove*20),y:(tempGraphicCard.y - yMove*10),transition:"linear",onComplete:cardDone})
 				j++;
 				i--;
+				xMove --;
+				yMove ++;
 			}
-			
+			if(i == j)
+			{
+				tempGraphicCard = showCardsArr[j];
+				Tweener.addTween(tempGraphicCard,{time:0.3,y:(tempGraphicCard.y - yMove*10),transition:"linear",onComplete:cardDone})	
+			}
 		}
-		
+		public function cardDone():void
+		{
+			cardsShown++;
+			if(cardsShown == showCardsArr.length)
+				dispatchEvent(new CardShownEvent());
+		}
 		public function removeCard(playerId:int,cardKey:int):void
 		{
 			if(playerId == myUserId)
@@ -104,19 +132,33 @@ package come2play_as3.cards.graphic
 			var rivalHand:RivalHand = rivalHandsArray[allPlayersIds.indexOf(rivalId)];
 			rivalHand.addCards(amountOfCards);
 		}
-		
+		public function isNoCardsLeft():Boolean
+		{
+			if(yourCards.isNoCardsLeft()== false)
+				return false;
+			for each(var rivalHand:RivalHand in rivalHandsArray)
+			{
+			if(rivalHand.isNoCardsLeft()== false)
+				return false;
+			}
+			return true;
+		}
 		public function devideCards():void
 		{
+			if(isNoCardsLeft())
+				return;
 			var dealCardToHand:Hand;
 			if (allPlayersIds[currentPlayer] == myUserId)
 				dealCardToHand = yourCards;
 			else
 				dealCardToHand = rivalHandsArray[currentPlayer];
-			dealCardToHand.dealCard();
+			var cardAvaible:Boolean = dealCardToHand.dealCard();
+			if(!cardAvaible)
+				dealNextCard();
 
 		}
 		
-		private function dealNextCard(ev:Event):void
+		private function dealNextCard(ev:Event = null):void
 		{
 			if(currentPlayer == allPlayersIds.indexOf(myUserId))
 				yourCards.showCard();

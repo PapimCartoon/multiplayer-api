@@ -7,10 +7,8 @@ package come2play_as3.cheat
 	public class CheatGraphic extends CardGraphic
 	{
 		private var buttonBar:ButtonBarImp;
-		private var lastCall:int
-		public function CheatGraphic(lastCall:int)
+		public function CheatGraphic()
 		{
-			this.lastCall = lastCall;
 			
 		}
 		public function initCheat():void
@@ -25,7 +23,7 @@ package come2play_as3.cheat
 			buttonBar.x = CardDefenitins.CONTAINER_gameWidth - buttonBar.width;
 			addChild(buttonBar);
 		}
-		public function setMyTrun():void
+		public function setMyTrun(lastCall:int):void
 		{
 			buttonBar.addNumButtons(lastCall)
 		}
@@ -36,6 +34,10 @@ package come2play_as3.cheat
 		public function clear():void
 		{
 			buttonBar.clear();
+		}
+		public function okMessage():void
+		{
+			buttonBar.okMessage();
 		}
 		public function set enableButtons(enabled:Boolean):void
 		{

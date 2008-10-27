@@ -38,7 +38,7 @@ package come2play_as3.cards
 			cardGraphics.addEventListener(CardPressedEvent.CardPressedEvent,cardMarked,true);
 
 			super(cardGraphics);
-		}
+		}		
 		private function initCardDefenitins():void
 		{
 			var tempCardGraphic:CardGraphicMovieClip= new CardGraphicMovieClip();
@@ -49,17 +49,7 @@ package come2play_as3.cards
 		{
 			return allPlayerIdsForCardAPI.indexOf(playerId);
 		}
-		public function putInCenter(choosenCards:Array/*PlayerCard*/,isVisible:Boolean):void
-		{
-			var userEntries:Array/*UserEntry*/ = new Array();
-			for each(var playerCard:PlayerCard in choosenCards)
-			{
-				removeMarked(playerCard);
-				userEntries.push(UserEntry.create(CardTypeClass.create(CardTypeClass.CENTERCARD,playerCard.num),CenterCard.create(myUserId,playerCard.num,isVisible)))
-			}
-			doStoreState(userEntries);
-		}
-		
+
 		private function removeMarked(playerCard:PlayerCard):void
 		{
 			for(var i:int = 0;i<markedCards.length;i++)
@@ -71,8 +61,7 @@ package come2play_as3.cards
 					return;
 				}
 			}
-		}
-		
+		}	
 		private function cardMarked(ev:CardPressedEvent):void
 		{
 			var playerCard:PlayerCard;
@@ -96,7 +85,38 @@ package come2play_as3.cards
 			gotChoosenCards(markedCards.concat());
 			
 		}
-		
+		public function putInCenter(choosenCards:Array/*PlayerCard*/,isVisible:Boolean):void
+		{
+			var userEntries:Array/*UserEntry*/ = new Array();
+			for each(var playerCard:PlayerCard in choosenCards)
+			{
+				removeMarked(playerCard);
+				userEntries.push(UserEntry.create(CardTypeClass.create(CardTypeClass.CENTERCARD,playerCard.num),CenterCard.create(myUserId,playerCard.num,isVisible)))
+			}
+			doStoreState(userEntries);
+		}
+		public function takeCardsFromMiddle(playerId:int,cardsInMiddle:Array/*CardTypeClass*/):void
+		{
+			var id:int = getId(playerId);
+			var keysToScramble:Array = new Array()
+			
+			for each(var cardTypeClass:CardTypeClass in cardsInMiddle)
+				keysToScramble.push(cardTypeClass.value);
+			keysToScramble = keysToScramble.concat(allPlayerCardsKeys[id]);
+			allPlayerAvailableCards[id] = keysToScramble.concat(allPlayerAvailableCards[id]);
+			
+			var revealEntries:Array/*RevealEntry*/ = new Array();
+			var allKeys:Array/*CardTypeClass*/ = new Array();
+			for each(var key:int in keysToScramble)
+			{
+				cardTypeClass = CardTypeClass.create(CardTypeClass.CARD,key);
+				allKeys.push(cardTypeClass);
+				revealEntries.push(RevealEntry.create(cardTypeClass,[playerId]))
+			}
+			
+			doAllShuffleState(allKeys);
+			doAllRevealState(revealEntries);					
+		}
 		public function chooseCards(allowChoise:Boolean):void
 		{
 			markedCards = new Array();
@@ -304,7 +324,7 @@ package come2play_as3.cards
 			var isVisble:Boolean = centerCard.isVisible;
 			var playerId:int = centerCard.playerId;
 			var id:int = getId(playerId);
-			
+			cardGraphics.clearBounce();
 			for each(centerCard in cardsPutOnBoard)
 			{
 				var tempPlayerKeys:Array = allPlayerCardsKeys[id];

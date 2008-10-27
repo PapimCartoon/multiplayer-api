@@ -14,6 +14,10 @@ package come2play_as3.cards.graphic
 			cardsInHand = new Array();
 			cardsToDeal = 0;
 		}
+		override public function isNoCardsLeft():Boolean
+		{
+			return cardsToDeal <=cardsInHand.length;
+		}
 		public function removeCard():void
 		{
 			cardsToDeal--;
@@ -24,14 +28,15 @@ package come2play_as3.cards.graphic
 		{
 			cardsToDeal += cardsToAdd;
 		}
-		override public function dealCard():void
+		override public function dealCard():Boolean
 		{
 			if(cardsToDeal <= cardsInHand.length)
-				return;
+				return false;
 			var tempCard:CardGraphicMovieClip = new CardGraphicMovieClip();
 			addChild(tempCard)
 			cardsInHand.push(tempCard);
 			tempCard.moveCard(rivalNum,cardsInHand.length);
+			return true;
 		}
 		
 	}

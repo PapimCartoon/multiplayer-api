@@ -13,7 +13,6 @@ public final class ObjectDictionary extends SerializableClass
 
 	public function ObjectDictionary()
 	{
-		super("ObjectDictionary");
 		hashMap = new Object();
 		pSize = 0;	
 		allKeys = [];

@@ -12,7 +12,6 @@ class come2play_as2.api.auto_copied.ObjectDictionary extends SerializableClass
 
 	public function ObjectDictionary()
 	{
-		super("ObjectDictionary");
 		hashMap = new Object();
 		pSize = 0;	
 		allKeys = [];
@@ -25,7 +24,7 @@ class come2play_as2.api.auto_copied.ObjectDictionary extends SerializableClass
 	private function getEntry2(key/*:Object*/, hash:Number):Array {
 		if (hashMap[hash]==null) return null;
 		var entries:Array = hashMap[hash];
-		for (var i27:Number=0; i27<entries.length; i27++) { var entry:Array = entries[i27]; 
+		for (var i26:Number=0; i26<entries.length; i26++) { var entry:Array = entries[i26]; 
 			var entryKey/*:Object*/ = entry[0];
 			if (areEqual(entryKey,key)) 
 				return entry;
@@ -155,7 +154,7 @@ class come2play_as2.api.auto_copied.ObjectDictionary extends SerializableClass
 				// for static properties we use describeType
 				// because o1 and o2 have the same type, it is enough to use the fields of o1.
 				var fieldsArr:Array = AS3_vs_AS2.getFieldNames(o1);
-				for (var i157:Number=0; i157<fieldsArr.length; i157++) { var field:String = fieldsArr[i157]; 
+				for (var i156:Number=0; i156<fieldsArr.length; i156++) { var field:String = fieldsArr[i156]; 
 					allFields[field] = true;
 				}
 			}

@@ -4,7 +4,6 @@ package come2play_as3.tictactoe
 	
 	public final class TictactoeSquare extends SerializableClass
 	{
-		public function TictactoeSquare() { super("TictactoeSquare"); }
 		public var row:int, col:int;
 		public static function create(row:int, col:int):TictactoeSquare {
 			var res:TictactoeSquare = new TictactoeSquare();

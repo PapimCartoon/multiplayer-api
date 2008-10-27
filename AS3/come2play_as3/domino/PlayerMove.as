@@ -14,7 +14,6 @@ package come2play_as3.domino
 		public static const UP:String ="Up";
 		public static const DOWN:String ="Down";
 		public static const MIDDLE:String ="Middle";
-		public function PlayerMove() { super("PlayerMove"); }
 		public static function create(sideToPutOn:String,partConnecting:String,dominoCube:PlayerDominoCube,playerId:int):PlayerMove
 		{
 			var res:PlayerMove = new PlayerMove();

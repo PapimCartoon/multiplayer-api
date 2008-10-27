@@ -5,8 +5,6 @@ package come2play_as3.pseudoCode.domino
 	public class GameMove extends SerializableClass
 	{
 		public var isTakingCube:Boolean,cube:DominoCube;
-		public function GameMove() { super("GameMove"); }
-		
 		public static function create(isTakingCube:Boolean,cube:DominoCube):GameMove
 		{
 			var res:GameMove = new GameMove();

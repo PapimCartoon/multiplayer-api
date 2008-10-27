@@ -5,7 +5,6 @@ package come2play_as3.pseudoCode.battleShips
 	public class Ship extends SerializableClass
 	{
 		public var row:int, column:int,length:int,vertical:Boolean;
-		public function Ship(){super("Ship");}
 		public static function create(row:int, column:int,length:int,vertical:Boolean):Ship
 		{
 			var res:Ship = new Ship;

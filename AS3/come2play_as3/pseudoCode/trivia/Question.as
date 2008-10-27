@@ -5,7 +5,6 @@ package come2play_as3.pseudoCode.trivia
 	public class Question extends SerializableClass
 	{
 		public var text:String;
-		public function Question() { super("Question"); }
 		public static function create(text:String):Question
 		{
 			var res:Question = new Question();

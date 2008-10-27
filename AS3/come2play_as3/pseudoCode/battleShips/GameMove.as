@@ -5,7 +5,6 @@ package come2play_as3.pseudoCode.battleShips
 	public class GameMove extends SerializableClass
 	{
 		public var row:int, column:int,playerIdAttacked:int,playerAttacking:int;
-		public function GameMove() { super("GameMove"); }
 		public function objectKey():Object
 	 	{
 	  		return {playerIdAttacked:playerIdAttacked,row:row,column:column};

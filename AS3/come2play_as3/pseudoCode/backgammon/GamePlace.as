@@ -5,7 +5,6 @@ package come2play_as3.pseudoCode.backgammon
 	public class GamePlace extends SerializableClass
 	{
 		public var position:int,ownerPlayerId:int,gamePieces:int;
-		public function GamePlace(){super("GamePlace");}
 	  	public static function create(position:int,ownerPlayerId:int,gamePieces:int):GamePlace
 	 	{
 	  		var res:GamePlace = new GamePlace;

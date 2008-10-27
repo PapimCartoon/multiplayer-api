@@ -5,7 +5,7 @@
 // and then run the java program that automatically copies and changes the as file.
 // We do not share the code because the flash goes crazy if it loads to SWFs files with classes of identical names and packages.
 // So we changed the package name when we copied the directory 'auto_copied'
-package emulator.auto_copied
+﻿package emulator.auto_copied
 {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
@@ -57,11 +57,12 @@ public class SerializableClass
 	public static var IS_IN_GAME:Boolean = "emulator" == "come2play_as3" + ".api";
 	public static const CLASS_NAME_FIELD:String = "__CLASS_NAME__";
 	public var __CLASS_NAME__:String;
-	public function SerializableClass(shortName:String) {
-		__CLASS_NAME__ = shortName;
+	public function SerializableClass(shortName:String /*DEFAULT NULL*/= null) {
+		__CLASS_NAME__ = shortName==null ? StaticFunctions.getShortClassName(this) : shortName;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		StaticFunctions.assert(AS3_vs_AS2.stringIndexOf(__CLASS_NAME__,"$")==-1,["Illegal shortName in SerializableClass! shortName=",shortName]);
 		register();
 	}
 	public function toString():String {
@@ -71,10 +72,10 @@ public class SerializableClass
 			if (StaticFunctions.startsWith(key,"__")) continue;
 			values[key] = this[key]; 
 		}
-		return JSON.instanceToString(__CLASS_NAME__, values);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		return JSON.instanceToString(__CLASS_NAME__, values);
 	}
 	public function isEqual(other:SerializableClass):Boolean {
 		return ObjectDictionary.areEqual(this, other);
@@ -84,10 +85,10 @@ public class SerializableClass
 	}
 	public function register():void {
     	// In Enum classes in $cinit(), we call register in the ctor, and the class have not yet loaded.
-    	// var xlass:Class = getClassOfInstance(this); 
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+    	// var xlass:Class = getClassOfInstance(this); 
     	var shortName:String = __CLASS_NAME__;
     	var oldInstance:Object = SHORTNAME_TO_INSTANCE[shortName];
     	if (oldInstance!=null) {
@@ -97,10 +98,10 @@ public class SerializableClass
 		    	var oldXlass:String = AS3_vs_AS2.getClassName(oldInstance);
 	    		StaticFunctions.assert(oldXlass==newXlass, ["Previously added shortName=",shortName, " with oldXlass=",oldXlass," and now with newXlass=",newXlass]);
 	    	}
-    		return;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+    		return;
     	}
     	SHORTNAME_TO_INSTANCE[shortName] = this; 
     	
@@ -111,8 +112,8 @@ public class SerializableClass
     	//var exampleInstance:SerializableClass = createInstance(shortName);    	
     }
 
-
 // This is a AUTOMATICALLY GENERATED! Do not change!
+
 
 	/**
 	 * Static methods and variables.
@@ -123,10 +124,10 @@ public class SerializableClass
  		return AS3_vs_AS2.getClassOfInstance(instance);
  	}
  	private static function getClassOfShortName(shortName:String):Class {
- 		var instance:SerializableClass = SHORTNAME_TO_INSTANCE[shortName];
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+ 		var instance:SerializableClass = SHORTNAME_TO_INSTANCE[shortName];
  		StaticFunctions.assert(instance!=null, ["You forgot to call SerializableClass.register for shortName=",shortName]); 
  		return getClassOfInstance(instance); 		
  	}
@@ -136,10 +137,10 @@ public class SerializableClass
 	}    
  	
 	public static function deserialize(object:Object):Object {
-		try {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		try {
 			if (object==null) 
 				return object;
 			var isArray:Boolean = AS3_vs_AS2.isArray(object);
@@ -149,10 +150,10 @@ public class SerializableClass
 				var shortName:String = 
 					object.hasOwnProperty(CLASS_NAME_FIELD) ? 
 					object[CLASS_NAME_FIELD] : null;
-				res = isArray ? [] : {}; // we create a new copy
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+				res = isArray ? [] : {}; // we create a new copy
 		
 				for (var key:String in object)
 					res[key] = deserialize(object[key]); 
@@ -162,10 +163,10 @@ public class SerializableClass
 					var newObject:SerializableClass = createInstance(shortName);
 					if (newObject!=null) {
 						for (key in res)
-							newObject[key] = res[key]; // might throw an illegal assignment (due to type mismatch)
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+							newObject[key] = res[key]; // might throw an illegal assignment (due to type mismatch)
 
 						AS3_vs_AS2.checkAllFieldsDeserialized(res, newObject);
 
@@ -175,10 +176,10 @@ public class SerializableClass
 										
 			}
 			//trace(JSON.stringify(object)+" object="+object+" res="+res+" isArray="+isArray+" isObj="+isObj);
-			return res; 						
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			return res; 						
 		} catch (err:Error) {
 			// I can't throw an exception, because if a hacker stored illegal value in shortName, 
 			//	then it will cause an error (that may be discovered only in the reveal stage)
@@ -188,10 +189,10 @@ public class SerializableClass
 				throw err;
 		}
 		return object;
-	}	
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	}	
 	public static function isToStringObject(str:String):Boolean {
 		return str=="[object Object]";
 	}

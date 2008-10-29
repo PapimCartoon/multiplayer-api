@@ -62,13 +62,26 @@ package come2play_as3.cheat.graphic
 				dispatchEvent(new GraphicButtonClickEvent("trust"));
 			}
 		}
+		public function makeString(numToStr:int):String
+		{
+			if(numToStr == 0)	return "K";
+			if(numToStr == 1)	return "A";
+			if(numToStr == 11)	return "J";
+			if(numToStr == 12)	return "Q";
+			if(numToStr == 13)	return "K";
+			if(numToStr == 14)	return "A";
+			return String(numToStr)
+		}
+		
 		public function addNumButtons(currentNum:int):void
 		{
 			textField.x = 170;
 			textField.y = 50;
 			textField.text = "Call card\\s:"
-			upNumImp = new ButtonBarButtonImp("upNum",String(currentNum + 1));
-			downNumImp = new ButtonBarButtonImp("downNum",String(currentNum - 1));
+			
+			
+			upNumImp = new ButtonBarButtonImp("upNum",makeString(currentNum + 1));
+			downNumImp = new ButtonBarButtonImp("downNum",makeString(currentNum - 1));
 			downNumImp.y = upNumImp.y = 60;
 			downNumImp.x = 130;
 			upNumImp.x = 275;

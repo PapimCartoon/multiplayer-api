@@ -11,7 +11,7 @@ package come2play_as3.cards.graphic
 
 	public class CardGraphicMovieClip extends MovieClip
 	{
-		private var playerCard:PlayerCard;
+		public var playerCard:PlayerCard;
 		private var cardGraphic:Card_MC;
 		private var cardNum:int;
 		private var playerNum:int;
@@ -66,7 +66,7 @@ package come2play_as3.cards.graphic
 				cardGraphic.Symbole_MC.gotoAndStop(playerCard.card.sign);
 				if(playerCard.card.value > 10)
 				{
-					cardGraphic.Symbole_MC.gotoAndStop(cardGraphic.Symbole_MC.currentFrame+playerCard.card.value-10);
+					cardGraphic.Symbole_MC.gotoAndStop(cardGraphic.Symbole_MC.currentFrame+(((playerCard.card.value-11) < 1)?3:(playerCard.card.value-11)));
 				}
 				cardGraphic.Letter_MC.gotoAndStop(playerCard.card.value + (isBlack? 15 : 1))			
 			}	

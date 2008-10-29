@@ -8,6 +8,8 @@ package come2play_as3.cards
 		public static const DAIMOND:String = "Daimond";
 		public static const CLUB:String = "Club";
 		public static const SPADE:String = "Spade";
+		public static const BLACKJOKER:String = "BlackJoker";
+		public static const REDJOKER:String = "RedJoker";
 		public var value:int;
 		public var sign:String;
 		
@@ -25,6 +27,10 @@ package come2play_as3.cards
 				return true;
 			if(sign == SPADE)
 				return true;
+			if(sign == BLACKJOKER)
+				return true;
+			if(sign == REDJOKER)
+				return false;
 			return false;
 		}
 		public function intSign():int
@@ -54,6 +60,8 @@ package come2play_as3.cards
 				case 2: res.sign = Card.DAIMOND; break;
 				case 3: res.sign = Card.CLUB; break;
 				case 4: res.sign = Card.SPADE; break;
+				case 5: res.sign = Card.REDJOKER; break;
+				case 6: res.sign = Card.BLACKJOKER; break;
 			}
 			res.value = value;
 			return res;

@@ -5,6 +5,7 @@ package come2play_as3.cards.graphic
 	import come2play_as3.cards.caurina.transitions.Tweener;
 	import come2play_as3.cards.events.CardRecievedEvent;
 	import come2play_as3.cards.events.CardShownEvent;
+	import come2play_as3.cards.events.CardsDealtEvent;
 	
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
@@ -24,7 +25,7 @@ package come2play_as3.cards.graphic
 		{
 			rivalHandsArray = new Array();
 			addEventListener(CardRecievedEvent.CardRecieved,dealNextCard,true);
-			
+			addEventListener(CardsDealtEvent.CardsDealtEvent,cardsDealt,true)
 		}
 		public function init(myUserId:int,allPlayersIds:Array):void
 		{
@@ -58,6 +59,10 @@ package come2play_as3.cards.graphic
 					
 
 
+		}
+		public function cardsDealt(ev:CardsDealtEvent):void
+		{
+			yourCards.arrangeCards(false);
 		}
 		public function clearBounce():void
 		{
@@ -106,7 +111,7 @@ package come2play_as3.cards.graphic
 				Tweener.addTween(tempGraphicCard,{time:0.3,y:(tempGraphicCard.y - yMove*10),transition:"linear",onComplete:cardDone})	
 			}
 		}
-		public function cardDone():void
+		private function cardDone():void
 		{
 			cardsShown++;
 			if(cardsShown == showCardsArr.length)
@@ -121,6 +126,10 @@ package come2play_as3.cards.graphic
 				var rivalHand:RivalHand = rivalHandsArray[allPlayersIds.indexOf(playerId)];
 				rivalHand.removeCard();
 			}
+		}
+		public function arrangeCards(isByNum:Boolean):void
+		{
+			yourCards.arrangeCards(isByNum);
 		}
 		public function addCards(cards:Array/*Card*/):void
 		{

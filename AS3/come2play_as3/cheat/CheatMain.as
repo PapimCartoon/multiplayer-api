@@ -1,6 +1,7 @@
 package come2play_as3.cheat
 {
 	
+	import come2play_as3.api.auto_generated.PlayerMatchOver;
 	import come2play_as3.api.auto_generated.RevealEntry;
 	import come2play_as3.api.auto_generated.ServerEntry;
 	import come2play_as3.api.auto_generated.UserEntry;
@@ -29,6 +30,7 @@ package come2play_as3.cheat
 		private var turnReplays:int;
 		private var callCheater:CallCheater;
 		private var allowPassingTurn:Boolean;
+		private var playerCards:Array;
 		public function CheatMain(graphics:MovieClip)
 		{
 			(new PlayerCall).register();
@@ -72,13 +74,34 @@ package come2play_as3.cheat
 				break;
 			}
 		}
+		
+		private function isMatchOver(playerId:int):void
+		{
+			var turnPos:int = allPlayerIds.indexOf(playerId);
+			if (playerCards[turnPos] == 0)
+			{
+				allPlayerIds.splice(turnPos,1);
+				playerCards.splice(turnPos,1);
+				if(allPlayerIds.length == 1)
+				{
+					doAllEndMatch([PlayerMatchOver.create(playerId,30*allPlayerIds.length,100)]); 
+					doAllEndMatch([PlayerMatchOver.create(allPlayerIds[0],0,0)]); 
+				}
+				else
+					doAllEndMatch([PlayerMatchOver.create(playerId,30*allPlayerIds.length,70)]); 
+			}
+		}
+		
 		private function setNextTurn():void
 		{
+			
 			var turnPos:int = allPlayerIds.indexOf(playerIdTurn);
 			turnPos ++;
 			if(turnPos >= allPlayerIds.length)
 				turnPos = 0;
+			var lastId:int = playerIdTurn;
 			playerIdTurn = allPlayerIds[turnPos];
+			isMatchOver(lastId);
 			setTrun();	
 		}
 		private function setTrun():void
@@ -86,6 +109,7 @@ package come2play_as3.cheat
 			turnReplays = 0;
 			callCheater = null;
 			cheatGraphics.clear();
+			trace("playerCards : "+playerCards)					
 			doAllSetTurn(playerIdTurn,10000);
 			if(myUserId == playerIdTurn)
 			{
@@ -118,6 +142,7 @@ package come2play_as3.cheat
 			cardsInMiddle = cardsInMiddle.concat(keys);
 			lastCardsPutInMiddle = keys;
 			cheatGraphics.clear();
+			playerCards[allPlayerIds.indexOf(playerId)]-=keys.length;
 			if(myUserId != playerIdTurn)
 				cheatGraphics.callCheater();
 			//setNextTurn();		
@@ -125,6 +150,7 @@ package come2play_as3.cheat
 		
 		override public function gotCards(cards:Array/*Card*/):void
 		{
+			playerCards[allPlayerIds.indexOf(myUserId)]+=cards.length;
 			//doTrace("me :"+myUserId,JSON.stringify(cards))
 		}
 		override public function gotChoosenCards(choosenCards:Array):void
@@ -141,19 +167,25 @@ package come2play_as3.cheat
 		}
 		override public function rivalGotCards(rivalId:int, amountOfCards:int):void
 		{
-			
+			playerCards[allPlayerIds.indexOf(rivalId)]+=amountOfCards;
 			//doTrace("Rival "+rivalId,amountOfCards);
 		}
 		override public function gotMatchStarted2(allPlayerIds:Array, finishedPlayerIds:Array, serverEntries:Array):void
 		{
+			var cardsToDeal:int = 54/allPlayerIds.length;
 			cardsInMiddle = new Array();
+			playerCards = new Array();
 			allowPassingTurn = false;
 			this.allPlayerIds = allPlayerIds;
 			cheatGraphics.initCheat();
 			lastCall = 2;
 			storeDecks(1,true);
+			
 			for each(var playerId:int in allPlayerIds)
-				drawCards(int(54/allPlayerIds.length),playerId);
+			{
+				playerCards[allPlayerIds.indexOf(playerId)] = 0;
+				drawCards(cardsToDeal,playerId);
+			}
 			playerIdTurn = allPlayerIds[0];
 			setTrun();
 				
@@ -161,6 +193,7 @@ package come2play_as3.cheat
 		override public function gotMatchLoaded(allPlayerIds:Array, finishedPlayerIds:Array, serverEntries:Array):void
 		{	
 			cardsInMiddle = new Array();
+			playerCards = new Array();
 			allowPassingTurn = false;
 			this.allPlayerIds = allPlayerIds;
 			cheatGraphics.initCheat();
@@ -180,7 +213,12 @@ package come2play_as3.cheat
 						(Math.abs(lastCall - playerCall.callNum) == 1) )
 						{
 							if(playerCall.playerId !=serverEntry.storedByUserId) doAllFoundHacker(serverEntry.storedByUserId,"tried to send a message on someone elses name");
-							lastCall = playerCall.callNum;
+							if(playerCall.callNum > 13)
+								lastCall = 1
+							else if(playerCall.callNum < 1)
+								lastCall = 13
+							else
+								lastCall = playerCall.callNum;
 						}
 						else
 							doAllFoundHacker(serverEntry.storedByUserId,"tryed to cheat with his call");

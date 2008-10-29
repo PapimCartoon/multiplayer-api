@@ -2,6 +2,7 @@ package come2play_as3.cards.graphic
 {
 	import come2play_as3.cards.CardDefenitins;
 	import come2play_as3.cards.events.CardPressedEvent;
+	import come2play_as3.cards.events.CardsDealtEvent;
 	
 	import flash.events.MouseEvent;
 	import flash.events.TimerEvent;
@@ -11,25 +12,42 @@ package come2play_as3.cards.graphic
 	{
 		private var cardsInStock:Array/*PlayerCard*/;
 		private var cardsInHand:Array/*CardGraphicMovieClip*/;
+		private var cardDictonery:CardDictonery;
 		private var lastCard:CardGraphicMovieClip;
 		private var cardOverFlow:Boolean;
 		private var bouncingCards:Array;
 		private var bounceCards:Timer;
+		private var arrangeCardsTimer:Timer;
 		private var bouncePosition:int;
 		private var isBounceUp:Boolean;
+		
 		public function PlayerHand()
 		{
 			cardOverFlow = false;
 			isBounceUp = true;
 			bounceCards = new Timer(100,0);
+			arrangeCardsTimer = new Timer(400,0);
 			bounceCards.start();
 			cardsInStock = new Array();
 			cardsInHand = new Array();
 			bouncingCards = new Array();
 			bouncePosition = CardDefenitins.playerYPositions[0] - 20;
 			bounceCards.addEventListener(TimerEvent.TIMER,doBounce);
+			arrangeCardsTimer.addEventListener(TimerEvent.TIMER,moveCard);
 			addEventListener(MouseEvent.MOUSE_MOVE,repositionCards)
 			addEventListener(CardPressedEvent.CardPressedEvent,bounceCard,true);
+		}
+		
+		private function moveCard(ev:TimerEvent):void
+		{
+			var tempCard:CardGraphicMovieClip = cardDictonery.arangeNextCard();
+			var cardGraphicMovieClip:CardGraphicMovieClip;
+			if(tempCard == null)
+				arrangeCardsTimer.stop();
+			else
+			{
+				respaceCards();
+			}
 		}
 		
 		private function doBounce(ev:TimerEvent):void
@@ -57,6 +75,11 @@ package come2play_as3.cards.graphic
 				cardGraphicMovieClip.y = bouncePosition;
 			}
 			
+		}
+		public function arrangeCards(isByNum:Boolean):void
+		{
+			cardDictonery = new CardDictonery(cardsInHand,isByNum);
+			arrangeCardsTimer.start();
 		}
 		public function clearBounce():void
 		{
@@ -137,7 +160,13 @@ package come2play_as3.cards.graphic
 		
 		override public function isNoCardsLeft():Boolean
 		{
-			return cardsInStock.length == 0;
+			if(cardsInStock.length == 0)
+			{
+				dispatchEvent(new CardsDealtEvent);
+				return true;
+			}
+			else 
+				return false
 		}
 		public function addCards(playerCards:Array/*PlayerCard*/):void
 		{
@@ -202,7 +231,7 @@ package come2play_as3.cards.graphic
 				
 				
 				spacingMod-= ((CardDefenitins.cardWidth * 0.66 - spacingMod) * mod)/(cardsInHand.length - mod)
-				var currentSpace:int = 0;
+				var currentSpace:int = (-CardDefenitins.cardWidth * 0.66);
 				for(i = 0;i<cardsInHand.length;i++)
 				{
 					cardGraphics = cardsInHand[i];
@@ -210,15 +239,15 @@ package come2play_as3.cards.graphic
 					//{
 						if(Math.abs(cardId - i) < 2)
 						{
-							
-							cardGraphics.x = CardDefenitins.playerXPositions[0] - currentSpace	
 							currentSpace += CardDefenitins.cardWidth * 0.66
+							cardGraphics.x = CardDefenitins.playerXPositions[0] - currentSpace	
+							
 						}
 						else
 						{
-							
+							currentSpace += spacingMod
 							cardGraphics.x = CardDefenitins.playerXPositions[0] - currentSpace	
-							currentSpace += spacingMod	
+								
 						}
 				/*	}
 					else
@@ -238,26 +267,19 @@ package come2play_as3.cards.graphic
 			var i:int;
 			var maxNeedeSpace:int = cardsInHand.length * CardDefenitins.cardWidth 
 			var availableSpace:int = CardDefenitins.playerXPositions[0] - (CardDefenitins.cardHeight +10);
-			
+			var spacingMod:int;
 			if(availableSpace > maxNeedeSpace)
-			{
-				for(i = 0;i<cardsInHand.length;i++)
-				{
-					cardGraphics = cardsInHand[i];
-					cardGraphics.x = CardDefenitins.playerXPositions[0] - i * CardDefenitins.cardWidth 
-				}
-				CardDefenitins.playerCardSpacing = CardDefenitins.cardWidth ;
-			}
+				spacingMod = CardDefenitins.cardWidth ;
 			else
+				spacingMod =CardDefenitins.cardWidth -( (maxNeedeSpace -availableSpace )/cardsInHand.length+1);
+			for(i = 0;i<cardsInHand.length;i++)
 			{
-				var  spacingMod:int =CardDefenitins.cardWidth -( (maxNeedeSpace -availableSpace )/cardsInHand.length+1);
-				for(i = 0;i<cardsInHand.length;i++)
-				{
-					cardGraphics = cardsInHand[i];
-					cardGraphics.x = CardDefenitins.playerXPositions[0] - i * spacingMod 
-				}
-				CardDefenitins.playerCardSpacing = spacingMod ;
+				cardGraphics = cardsInHand[i];
+				addChildAt(cardGraphics,0);
+				cardGraphics.y = CardDefenitins.playerYPositions[0]
+				cardGraphics.x = CardDefenitins.playerXPositions[0] - i * spacingMod 
 			}
+			CardDefenitins.playerCardSpacing = spacingMod ;
 		}
 		public function showCard():void
 		{

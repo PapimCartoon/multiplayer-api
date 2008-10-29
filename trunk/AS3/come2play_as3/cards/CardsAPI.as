@@ -85,6 +85,14 @@ package come2play_as3.cards
 			gotChoosenCards(markedCards.concat());
 			
 		}
+		public function arrangeByNum():void
+		{
+			cardGraphics.arrangeCards(true);
+		}
+		public function arrangeByColor():void
+		{
+			cardGraphics.arrangeCards(false);
+		}
 		public function putInCenter(choosenCards:Array/*PlayerCard*/,isVisible:Boolean):void
 		{
 			var userEntries:Array/*UserEntry*/ = new Array();
@@ -155,15 +163,14 @@ package come2play_as3.cards
 					keys.push(CardTypeClass.create(CardTypeClass.CARD,(count)));
 					userEntries.push(UserEntry.create(CardTypeClass.create(CardTypeClass.CARD,(count++)),Card.createByNumber(3,j),true));
 					keys.push(CardTypeClass.create(CardTypeClass.CARD,(count)));
-					userEntries.push(UserEntry.create(CardTypeClass.create(CardTypeClass.CARD,(count++)),Card.createByNumber(4,j),true));
-					
+					userEntries.push(UserEntry.create(CardTypeClass.create(CardTypeClass.CARD,(count++)),Card.createByNumber(4,j),true));	
 				}
 				if(withJokers)
 				{
 					keys.push(CardTypeClass.create(CardTypeClass.CARD,(count)));
-					userEntries.push(UserEntry.create(CardTypeClass.create(CardTypeClass.CARD,(count++)),Card.createByNumber(1,100),true));
+					userEntries.push(UserEntry.create(CardTypeClass.create(CardTypeClass.CARD,(count++)),Card.createByNumber(5,100),true));
 					keys.push(CardTypeClass.create(CardTypeClass.CARD,(count)));
-					userEntries.push(UserEntry.create(CardTypeClass.create(CardTypeClass.CARD,(count++)),Card.createByNumber(3,100),true));		
+					userEntries.push(UserEntry.create(CardTypeClass.create(CardTypeClass.CARD,(count++)),Card.createByNumber(6,100),true));		
 				}
 			}
 			storedDecks = true;
@@ -232,7 +239,10 @@ package come2play_as3.cards
 			if(isLoad)
 				gotMatchLoaded(allPlayerIdsForCardAPI.concat(), finishedPlayerIdsForCardAPI.concat(), serverEntries);	
 			if(drawnCards.length > 0)
+			{	
 				callGotCards(drawnCards);
+				cardGraphics.devideCards();	
+			}
 			if(cardsPutOnBoard.length > 0)
 				callGotPlayerPutCards(cardsPutOnBoard,blameId);
 			if(revealedCards.length > 0)
@@ -242,7 +252,6 @@ package come2play_as3.cards
 				if((rivalDecks[getId(userId)]> 0) && (userId != myUserId))
 					callRivalGotCards(userId,rivalDecks[getId(userId)]);
 			}	
-
 			return serverEntries;
 		}
 		override public function gotCustomInfo(infoEntries:Array):void
@@ -314,7 +323,6 @@ package come2play_as3.cards
 					storedDecks = false;
 			}	
 			serverEntries = interpertServerEntries(serverEntries,false);
-			cardGraphics.devideCards();	
 			gotStateChangedNoCards(serverEntries)
 		}
 		private function callGotPlayerPutCards(cardsPutOnBoard:Array/*CenterCard*/,blameId:int):void

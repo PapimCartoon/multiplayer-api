@@ -1,15 +1,23 @@
 	
 /**
- * A class extends SerializableClass
- * to get two features:
+ * A class may extend SerializableClass
+ * 	to get the following features:
+ * - field __CLASS_NAME__ contains a unique name,
+ * 	 by default it is the class name (without the package name). *   
  * - serialization on LocalConnection
- * 	 by adding the field __CLASS_NAME__
+ * 	 using the method "toObject()".
  * - serialization to String
- *   by adding "toString()" method.
+ *   using the method "toString()".
  *   The serialized string has JSON-like syntax:
  *   {$SHORT_CLASSNAME$ field1:value1 , field2:value2 , ... }
  *   For example: 
  *   {$EnumSupervisor$ name:"MiniSupervisor"}
+ * - serialization to XML
+ *   by adding "toXML():XML" method.
+ * 
+ * Static functions to do deserialization:
+ * - deserializeXML
+ * - deserializeString
  * 
  * Restriction:
  * - serialized fields must be public (non-static)
@@ -25,10 +33,14 @@
  *   that may do post processing and even return a different object.
  *   This is useful in two cases:
  *   1) if you have fields that are derived from other fields (such as "__" fields).
- *   2) in Enum classes, postDeserialize may return a unique/interned object.   
+ *   2) in Enum classes, postDeserialize may return a unique/interned object.
+ * 
+ * Event fields: 
+ * 	type, bubbles, cancelable, currentTarget, eventPhase, target
+ *    
  */
 import come2play_as2.api.auto_copied.*;
-class come2play_as2.api.auto_copied.SerializableClass
+class come2play_as2.api.auto_copied.SerializableClass //todo: extends Event
 {
 	public static var IS_THROWING_EXCEPTIONS:Boolean = true; // in the online version we set it to false. (Consider the case that a hacker stores illegal values as secret data)
 	public static var IS_TESTING_SAME_REGISTER:Boolean = true; // for efficiency the online version turns it off
@@ -45,7 +57,7 @@ class come2play_as2.api.auto_copied.SerializableClass
 	public function toString():String {
 		var fieldNames:Array/*String*/ = AS3_vs_AS2.getFieldNames(this);
 		var values/*:Object*/ = {};			
-		for (var i47:Number=0; i47<fieldNames.length; i47++) { var key:String = fieldNames[i47]; 
+		for (var i60:Number=0; i60<fieldNames.length; i60++) { var key:String = fieldNames[i60]; 
 			if (StaticFunctions.startsWith(key,"__")) continue;
 			values[key] = this[key]; 
 		}
@@ -98,6 +110,12 @@ class come2play_as2.api.auto_copied.SerializableClass
 		return xlass==null ? null : new xlass();
 	}    
  	
+	//todo: public static function deserializeXML(xml:String)/*:Object*/ {
+	//	return deserialize( JSON.parse(str) );
+	//}
+	public static function deserializeString(str:String)/*:Object*/ {
+		return deserialize( JSON.parse(str) );
+	}
 	public static function deserialize(object/*:Object*/)/*:Object*/ {
 		try {
 			if (object==null) 

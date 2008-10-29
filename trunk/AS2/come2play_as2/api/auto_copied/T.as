@@ -12,13 +12,21 @@
 	 * finds all the above occurrences,
 	 * and extracts them to an XML that is used for translation.
 	 * 
+	 * Similarly, you can use this class for customization points:
+	 * 				T.custom("refresh room every X seconds", 30)
+	 * By default the above code will return 30, 
+	 * unless there is a different custom value.
+	 *   
+	 * 
 	 * Do NOT use the class like this:
 	 * 				var str:String = "bla bla";
 	 * 				T.i18n(str);  // BAD!
 	 * or like this:
 	 * 				T.i18n("bla "+i+" bla")  // BAD! use t.add to combine several strings
 	 * or like this:
-	 * 				T.i18n("bla $key$ foo", replacement)  // BAD! Because we check that the keys in replacement are identical to the $...$ in the string 
+	 * 				T.i18n("bla $key$ foo", replacement)  // BAD! Because we check that the keys in replacement are identical to the $...$ in the string
+	 * or like this:
+	 * 		 		T.custom(key, 30)
 	 * 
 	 * Handle left-to-right or right-to-left languages
 	 * while creating long messages, like this:
@@ -32,14 +40,26 @@
 import come2play_as2.api.auto_copied.*;
 	class come2play_as2.api.auto_copied.T
 	{
-		public static var dictionary/*:Object*/ = {};
-		// for internationalization and localization	
-		// i18n stands for "i"(nternationalizatio)"n"	
-		public static function i18n(str:String):String { //internationalization
-			var res:String = dictionary[str];
-			return res==null ? str : res;
+		private static var _dictionary/*:Object*/ = null;
+		private static var _custom/*:Object*/ = null;
+		public static function initI18n(dictionary/*:Object*/, custom/*:Object*/):Void {
+			StaticFunctions.assert(_dictionary==null, ["You called T.initI18n twice!"]);
+			_dictionary = dictionary;
+			_custom = custom;
 		}
 		
+		// for customization
+		public static function custom(key:String, defaultValue/*:Object*//*Type*/)/*:Object*//*Type*/ {
+			var res/*:Object*/ = _custom[key];
+			return res==null ? defaultValue : res;
+		}
+		
+		// for internationalization	
+		// i18n stands for "i"(nternationalizatio)"n"	
+		public static function i18n(str:String):String { //internationalization			
+			var res:String = _dictionary[str];
+			return res==null ? str : res;
+		}		
 		public static function i18nReplace(str:String, replacement/*:Object*/):String {
 			var res:String = i18n(str);
 			for (var key:String in replacement) {
@@ -47,6 +67,7 @@ import come2play_as2.api.auto_copied.*;
 			} 
 			return res;			
 		}
+		
 		
 		public static var isLeftToRight:Boolean = true;
 		

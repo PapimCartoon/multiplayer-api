@@ -18,16 +18,19 @@ package come2play_as3.cards.graphic
 		private var bouncingCards:Array;
 		private var bounceCards:Timer;
 		private var arrangeCardsTimer:Timer;
+		private var cardsBack:Timer;
 		private var bouncePosition:int;
 		private var isBounceUp:Boolean;
 		private var cardArranged:CardGraphicMovieClip;
 		private var wasMoved:Boolean;
 		private var middle:int;
+		private var cardsBackStarted:Boolean;
 		public function PlayerHand()
 		{
 			isBounceUp = true;
+			cardsBack = new Timer(1000,0);
 			bounceCards = new Timer(100,0);
-			arrangeCardsTimer = new Timer(400,0);
+			arrangeCardsTimer = new Timer(120,0);
 			bounceCards.start();
 			cardsInStock = new Array();
 			cardsInHand = new Array();
@@ -35,8 +38,10 @@ package come2play_as3.cards.graphic
 			bouncePosition = CardDefenitins.playerYPositions[0] - 20;
 			bounceCards.addEventListener(TimerEvent.TIMER,doBounce);
 			arrangeCardsTimer.addEventListener(TimerEvent.TIMER,moveCard);
+			cardsBack.addEventListener(TimerEvent.TIMER,cardsBackToPlace)
 			addEventListener(MouseEvent.MOUSE_MOVE,repositionCards)
 			addEventListener(CardPressedEvent.CardPressedEvent,bounceCard,true);
+			cardsBack.start();
 		}
 		
 		private function moveCard(ev:TimerEvent):void
@@ -47,7 +52,7 @@ package come2play_as3.cards.graphic
 				if(cardArranged == null)
 					arrangeCardsTimer.stop();
 				else
-					cardArranged.y = CardDefenitins.playerYPositions[0] -CardDefenitins.cardHeight*0.66;
+					cardArranged.y = CardDefenitins.playerYPositions[0] -CardDefenitins.cardHeight*0.25;
 
 			}
 			else if(wasMoved)
@@ -63,13 +68,38 @@ package come2play_as3.cards.graphic
 				wasMoved = true;
 			}
 		}
-		
+		private function cardsBackToPlace(ev:TimerEvent):void
+		{
+			cardsBack.delay = 60;
+			if(cardsBackStarted)
+			{
+				
+				var changed:Boolean;
+				for each(var card:CardGraphicMovieClip in cardsInHand)
+				{
+					if(card.selected) continue;
+					if(card.y < CardDefenitins.playerYPositions[0])
+					{
+						changed = true;
+						card.y +=3;
+					}
+					if(card.y > CardDefenitins.playerYPositions[0])
+						card.y = CardDefenitins.playerYPositions[0];
+				}
+				if(!changed)
+					cardsBack.stop();
+			}
+			else
+			{
+				cardsBackStarted = true;
+			}
+		}
 		private function doBounce(ev:TimerEvent):void
 		{
 			if(isBounceUp)
 			{
 				bouncePosition -=2;
-				if(bouncePosition < (CardDefenitins.playerYPositions[0] -50))
+				if(bouncePosition < (CardDefenitins.playerYPositions[0] -(CardDefenitins.cardHeight/3 +5)))
 				{
 					isBounceUp = false
 				}
@@ -77,7 +107,7 @@ package come2play_as3.cards.graphic
 			else
 			{
 				bouncePosition +=2;
-				if(bouncePosition > CardDefenitins.playerYPositions[0] -20 )
+				if(bouncePosition > CardDefenitins.playerYPositions[0] -CardDefenitins.cardHeight/3 )
 				{
 					isBounceUp = true
 				}
@@ -129,6 +159,10 @@ package come2play_as3.cards.graphic
 		
 		public function repositionCards(ev:MouseEvent):void
 		{
+			cardsBack.delay = 1000;
+			cardsBackStarted = true;
+			cardsBack.reset();
+			cardsBack.start();
 			var cardGraphic:CardGraphicMovieClip;
 			var distanceMap:Array = new Array();
 			var smallesDistance:int;

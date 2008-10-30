@@ -292,7 +292,6 @@ class GameBoard extends MovieClip
 			}	
 		}
 		
-		trace("***************** cahngeXBy : "+cahngeXBy)
 	}
 	
 }

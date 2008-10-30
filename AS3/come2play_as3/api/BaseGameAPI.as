@@ -17,6 +17,7 @@ package come2play_as3.api {
 		public static var MAX_ANIMATION_MILLISECONDS:int = 10*1000; // max 10 seconds for animations
 		
 		private var msgsInTransaction:Array/*API_Message*/ = null;
+		private var serverStateMiror:ObjectDictionary;
 		private var currentCallback:API_Message = null;
 		private var hackerUserId:int = -1;
 		private var runningAnimationsNumber:int = 0;
@@ -158,7 +159,25 @@ package come2play_as3.api {
         			throwError("key cannot be null !");
         	}
         }
-        
+        private function updateMirorServerState(serverEntries:Array/*ServerEntry*/):void
+        {
+        	for each(var serverEntry:ServerEntry in serverEntries)
+        	{
+        	    if((serverEntry.value == null) || (serverEntry.value == ""))
+				{
+					if( typeof(serverEntry.value) == "number" )
+						serverStateMiror.put(serverEntry.key,serverEntry);
+					else
+						serverStateMiror.remove(serverEntry.key);
+				}
+				else
+					serverStateMiror.put(serverEntry.key,serverEntry);	
+        	}     	
+        }
+        public function getServerEntry(key:Object):ServerEntry
+        {
+        	return serverStateMiror.getValue(key) as ServerEntry;
+        }
         
         override public function gotMessage(msg:API_Message):void {
         	try {
@@ -175,12 +194,15 @@ package come2play_as3.api {
 					checkContainer(currentPlayerIds.length>0);
 	    			var stateChanged:API_GotStateChanged = msg as API_GotStateChanged;
 	    			if (stateChanged.serverEntries.length >= 1) {
+	    				updateMirorServerState(stateChanged.serverEntries);
 		    			var serverEntry:ServerEntry = stateChanged.serverEntries[0];
 		    			hackerUserId = serverEntry.storedByUserId;
 		    		}
 	    		} else if (msg is API_GotMatchStarted) {
+	    			serverStateMiror = new ObjectDictionary();
 					checkContainer(currentPlayerIds.length==0);
 					var matchStarted:API_GotMatchStarted = msg as API_GotMatchStarted;
+					updateMirorServerState(matchStarted.serverEntries);
 					currentPlayerIds = subtractArray(matchStarted.allPlayerIds, matchStarted.finishedPlayerIds);
 	    		} else if (msg is API_GotMatchEnded) {
 					checkContainer(currentPlayerIds.length>0);

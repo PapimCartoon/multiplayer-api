@@ -18,6 +18,7 @@ package come2play_as3.cards.graphic
 			var currentArr:Array;
 			for each(var cardGraphic:CardGraphicMovieClip in cardsInHand)
 			{
+				if(!cardGraphic.isSet) continue;
 				currentArr = numberedArray[cardGraphic.playerCard.card.sign]	
 				if(currentArr[cardGraphic.playerCard.card.value] == null)
 					currentArr[cardGraphic.playerCard.card.value] = new Array();
@@ -53,7 +54,6 @@ package come2play_as3.cards.graphic
 				}
 
 			}
-			trace("arrangedCards : "+arrangedCards)
 			
 		}
 		public function arangeNextCard():CardGraphicMovieClip
@@ -64,8 +64,15 @@ package come2play_as3.cards.graphic
 			{
 				oldPositionCard = cardsInHand[i]
 				newPositionCard = arrangedCards[i]
+				if(oldPositionCard == null)
+					return null;
+				if(newPositionCard == null)
+					return null;
 				if(!oldPositionCard.isEquel(newPositionCard.playerCard))
+				{
+					index = i;
 					break;
+				}
 			}
 			
 			if(i<arrangedCards.length)

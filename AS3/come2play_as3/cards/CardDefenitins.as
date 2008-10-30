@@ -3,8 +3,8 @@ package come2play_as3.cards
 	public class CardDefenitins
 	{
 		static public var cardSize:int = 45;//precentage of actual card size\
-		static public var cardSpeed:Number = 0.05;//card dealing speed
-		static public var rivalCardSpacing:int = 10;//space between rival cards
+		static public var cardSpeed:Number = 0.2;//card dealing speed
+		static public var rivalCardSpacing:int = 15;//space between rival cards
 		
 
 

@@ -108,8 +108,7 @@ package come2play_as3.cheat
 		{
 			turnReplays = 0;
 			callCheater = null;
-			cheatGraphics.clear();
-			trace("playerCards : "+playerCards)					
+			cheatGraphics.clear();				
 			doAllSetTurn(playerIdTurn,10000);
 			if(myUserId == playerIdTurn)
 			{
@@ -192,12 +191,29 @@ package come2play_as3.cheat
 		}
 		override public function gotMatchLoaded(allPlayerIds:Array, finishedPlayerIds:Array, serverEntries:Array):void
 		{	
+			var playerCall:PlayerCall;
+			var time:int = 0;
+			for each(var serverEntry:ServerEntry in serverEntries)
+			{
+				if(serverEntry.value is PlayerCall)
+				{
+					if(time<serverEntry.changedTimeInMilliSeconds)
+					{
+						time = serverEntry.changedTimeInMilliSeconds
+						playerCall = serverEntry.value as PlayerCall;
+						lastCall = playerCall.callNum;
+						playerIdTurn = playerCall.playerId;
+					}
+				}
+			}
+			
 			cardsInMiddle = new Array();
 			playerCards = new Array();
 			allowPassingTurn = false;
 			this.allPlayerIds = allPlayerIds;
 			cheatGraphics.initCheat();
 			doTrace("me","Load match");
+			//setNextTurn();
 			//storeDecks(2,false);
 			//drawCards(3,allPlayerIds[0])
 		}

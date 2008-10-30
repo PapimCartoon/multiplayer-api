@@ -15,6 +15,7 @@ package come2play_as3.cards.graphic
 		private var cardGraphic:Card_MC;
 		private var cardNum:int;
 		private var playerNum:int;
+		public var isSet:Boolean;
 		public var selected:Boolean;
 		public function CardGraphicMovieClip(movebale:Boolean = true)
 		{
@@ -38,7 +39,7 @@ package come2play_as3.cards.graphic
 		}
 		public function isKey(cardKey:int):Boolean
 		{
-			return playerCard.num == cardKey;
+			return playerCard.cardKey == cardKey;
 		}
 		public function isEquel(playerCard:PlayerCard):Boolean
 		{
@@ -47,6 +48,7 @@ package come2play_as3.cards.graphic
 		public function setCard(playerCard:PlayerCard):void
 		{
 			this.playerCard = playerCard;
+			isSet = true;
 			var isBlack:Boolean = playerCard.card.isBlack();
 			if(playerCard.card.value == 100)
 			{

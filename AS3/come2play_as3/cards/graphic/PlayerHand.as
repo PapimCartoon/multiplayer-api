@@ -1,6 +1,7 @@
 package come2play_as3.cards.graphic
 {
 	import come2play_as3.cards.CardDefenitins;
+	import come2play_as3.cards.PlayerCard;
 	import come2play_as3.cards.events.CardPressedEvent;
 	import come2play_as3.cards.events.CardsDealtEvent;
 	
@@ -14,16 +15,16 @@ package come2play_as3.cards.graphic
 		private var cardsInHand:Array/*CardGraphicMovieClip*/;
 		private var cardDictonery:CardDictonery;
 		private var lastCard:CardGraphicMovieClip;
-		private var cardOverFlow:Boolean;
 		private var bouncingCards:Array;
 		private var bounceCards:Timer;
 		private var arrangeCardsTimer:Timer;
 		private var bouncePosition:int;
 		private var isBounceUp:Boolean;
-		
+		private var cardArranged:CardGraphicMovieClip;
+		private var wasMoved:Boolean;
+		private var middle:int;
 		public function PlayerHand()
 		{
-			cardOverFlow = false;
 			isBounceUp = true;
 			bounceCards = new Timer(100,0);
 			arrangeCardsTimer = new Timer(400,0);
@@ -40,13 +41,26 @@ package come2play_as3.cards.graphic
 		
 		private function moveCard(ev:TimerEvent):void
 		{
-			var tempCard:CardGraphicMovieClip = cardDictonery.arangeNextCard();
-			var cardGraphicMovieClip:CardGraphicMovieClip;
-			if(tempCard == null)
-				arrangeCardsTimer.stop();
+			if(cardArranged == null)
+			{
+				cardArranged = cardDictonery.arangeNextCard();
+				if(cardArranged == null)
+					arrangeCardsTimer.stop();
+				else
+					cardArranged.y = CardDefenitins.playerYPositions[0] -CardDefenitins.cardHeight*0.66;
+
+			}
+			else if(wasMoved)
+			{
+				cardArranged.y = CardDefenitins.playerYPositions[0];
+				wasMoved = false;
+				cardArranged = null;
+			}
 			else
 			{
-				respaceCards();
+				respaceCardsFor(middle);
+				//cardArranged
+				wasMoved = true;
 			}
 		}
 		
@@ -115,10 +129,10 @@ package come2play_as3.cards.graphic
 		
 		public function repositionCards(ev:MouseEvent):void
 		{
-			
 			var cardGraphic:CardGraphicMovieClip;
 			var distanceMap:Array = new Array();
-			var middle:int = -1,smallesDistance:int;
+			var smallesDistance:int;
+			middle = -1;
 			for(var i:int = 0;i<cardsInHand.length ;i++)
 			{
 				cardGraphic = cardsInHand[i];
@@ -142,19 +156,15 @@ package come2play_as3.cards.graphic
 					}
 					else if(Math.abs(i - middle) == 1)
 					{
-							if(cardOverFlow)
 								cardGraphic.yPos = CardDefenitins.playerYPositions[0] - (15 *(2.2-(distanceMap[i] /(CardDefenitins.cardWidth*0.66))));
-							else
-								cardGraphic.yPos = CardDefenitins.playerYPositions[0] - (15 *(2.2 -(distanceMap[i] /CardDefenitins.playerCardSpacing)));
 					}
 					else
 					{
 							cardGraphic.yPos = CardDefenitins.playerYPositions[0];
 					}
-					//addChildAt(cardGraphic,0)
 
 			}
-			
+			trace(middle)
 			respaceCardsFor(middle);
 		}
 		
@@ -186,107 +196,78 @@ package come2play_as3.cards.graphic
 		}
 		public function removeCard(cardKey:int):void
 		{
-			for(var i:int = 0;i<cardsInHand.length;i++)
+			var cardGraphic:CardGraphicMovieClip = cardsInHand[0];
+			var playerCard:PlayerCard;
+			var i:int;
+			if(!cardGraphic.isSet)
 			{
-				var cardGraphic:CardGraphicMovieClip = cardsInHand[i];
-				if(cardGraphic.isKey(cardKey))
+				for(i= 0;i<cardsInStock.length;i++)
 				{
-					removeChild(cardGraphic);
-					cardsInHand.splice(i,1);
-					respaceCards();
-					return;
-				}
-			} 
+					playerCard = cardsInStock[i];
+					if(playerCard.cardKey == cardKey)
+					{
+						cardsInStock.splice(i,1);
+						break;
+					}
+				}			
+			}
+			else
+			{
+				for(i = 0;i<cardsInHand.length;i++)
+				{
+					cardGraphic = cardsInHand[i];
+					if(cardGraphic.isKey(cardKey))
+					{
+						removeChild(cardGraphic);
+						cardsInHand.splice(i,1);
+						updateSpacing();
+						respaceCardsFor(middle);
+						return;
+					}
+				} 
+			}
+		}
+		private function updateSpacing():void
+		{
+			var availableSpace:int = CardDefenitins.playerXPositions[0] - (CardDefenitins.cardHeight + 50 + CardDefenitins.cardWidth * 2);
+			var devider:int = (cardsInHand.length -3);
+			if(devider < 1)
+				devider = 1
+			CardDefenitins.playerCardSpacing = availableSpace / devider
+			if(CardDefenitins.playerCardSpacing >  (CardDefenitins.cardWidth * 0.66))
+				CardDefenitins.playerCardSpacing =  (CardDefenitins.cardWidth * 0.66)
 		}
 		public function respaceCardsFor(cardId:int):void
 		{
+						
 			var cardGraphics:CardGraphicMovieClip;
-			var i:int;
-			var maxNeedeSpace:int = cardsInHand.length * CardDefenitins.cardWidth 
-			var availableSpace:int = CardDefenitins.playerXPositions[0] - (CardDefenitins.cardHeight +10);
-			
-			if(availableSpace > maxNeedeSpace)
-			{
-				cardOverFlow = false;
-				for(i = 0;i<cardsInHand.length;i++)
+			var currentSpace:int = (-CardDefenitins.playerCardSpacing);
+			trace("currentSpace : "+currentSpace+"CardDefenitins.playerCardSpacing : "+CardDefenitins.playerCardSpacing)
+				for(var i:int = 0;i<cardsInHand.length;i++)
 				{
 					cardGraphics = cardsInHand[i];
-					cardGraphics.x = CardDefenitins.playerXPositions[0] - i * CardDefenitins.cardWidth 
-				}
-				CardDefenitins.playerCardSpacing = CardDefenitins.cardWidth ;
-			}
-			else
-			{
-				cardOverFlow = true;
-				var  spacingMod:int =CardDefenitins.cardWidth -(maxNeedeSpace -availableSpace )/cardsInHand.length ;
-				var mod:int;
-				if(cardId == 0)
-					mod = 2;
-				else if((cardsInHand.length - cardId) == 1)
-					mod = 1;
-				else if((cardsInHand.length - cardId) == 2)
-					mod = 2;
-				else
-					mod = 3;
-				
-				
-				spacingMod-= ((CardDefenitins.cardWidth * 0.66 - spacingMod) * mod)/(cardsInHand.length - mod)
-				var currentSpace:int = (-CardDefenitins.cardWidth * 0.66);
-				for(i = 0;i<cardsInHand.length;i++)
-				{
-					cardGraphics = cardsInHand[i];
-					//if(!cardGraphics.selected)
-					//{
-						if(Math.abs(cardId - i) < 2)
-						{
-							currentSpace += CardDefenitins.cardWidth * 0.66
-							cardGraphics.x = CardDefenitins.playerXPositions[0] - currentSpace	
-							
-						}
-						else
-						{
-							currentSpace += spacingMod
-							cardGraphics.x = CardDefenitins.playerXPositions[0] - currentSpace	
-								
-						}
-				/*	}
+					if((Math.abs(cardId - i) < 2) && (cardId!= -1))
+					{
+						currentSpace += CardDefenitins.cardWidth * 0.66
+						cardGraphics.x = CardDefenitins.playerXPositions[0] - currentSpace	
+						
+					}
 					else
 					{
-						if(Math.abs(cardId - i) < 2)
-							currentSpace += CardDefenitins.cardWidth * 0.66
-						else
-							currentSpace += spacingMod	
-					}*/
+						currentSpace += CardDefenitins.playerCardSpacing
+						cardGraphics.x = CardDefenitins.playerXPositions[0] - currentSpace	
+						
+					}
+					addChildAt(cardGraphics,0);
 				}
-				CardDefenitins.playerCardSpacing = spacingMod ;
-			}
-		}
-		public function respaceCards():void
-		{
-			var cardGraphics:CardGraphicMovieClip;
-			var i:int;
-			var maxNeedeSpace:int = cardsInHand.length * CardDefenitins.cardWidth 
-			var availableSpace:int = CardDefenitins.playerXPositions[0] - (CardDefenitins.cardHeight +10);
-			var spacingMod:int;
-			if(availableSpace > maxNeedeSpace)
-				spacingMod = CardDefenitins.cardWidth ;
-			else
-				spacingMod =CardDefenitins.cardWidth -( (maxNeedeSpace -availableSpace )/cardsInHand.length+1);
-			for(i = 0;i<cardsInHand.length;i++)
-			{
-				cardGraphics = cardsInHand[i];
-				addChildAt(cardGraphics,0);
-				cardGraphics.y = CardDefenitins.playerYPositions[0]
-				cardGraphics.x = CardDefenitins.playerXPositions[0] - i * spacingMod 
-			}
-			CardDefenitins.playerCardSpacing = spacingMod ;
 		}
 		public function showCard():void
 		{
 			if(cardsInStock.length != 0)
 			{
 				lastCard.setCard(cardsInStock.pop());
-				respaceCards();
+				updateSpacing();
+				respaceCardsFor(middle);
 			}
 		}
 		override public function dealCard():Boolean
@@ -296,6 +277,7 @@ package come2play_as3.cards.graphic
 			lastCard = new CardGraphicMovieClip();
 			addChildAt(lastCard,0)
 			cardsInHand.push(lastCard);
+			updateSpacing();
 			lastCard.moveCard(0,cardsInHand.length);
 			return true;
 			

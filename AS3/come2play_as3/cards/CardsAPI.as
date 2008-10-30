@@ -39,6 +39,7 @@ package come2play_as3.cards
 
 			super(cardGraphics);
 		}		
+
 		private function initCardDefenitins():void
 		{
 			var tempCardGraphic:CardGraphicMovieClip= new CardGraphicMovieClip();
@@ -55,7 +56,7 @@ package come2play_as3.cards
 			for(var i:int = 0;i<markedCards.length;i++)
 			{
 				var tempPlayerCard:PlayerCard = markedCards[i];
-				if(playerCard.num == tempPlayerCard.num)
+				if(playerCard.cardKey == tempPlayerCard.cardKey)
 				{
 					markedCards.splice(i,1);
 					return;
@@ -99,7 +100,7 @@ package come2play_as3.cards
 			for each(var playerCard:PlayerCard in choosenCards)
 			{
 				removeMarked(playerCard);
-				userEntries.push(UserEntry.create(CardTypeClass.create(CardTypeClass.CENTERCARD,playerCard.num),CenterCard.create(myUserId,playerCard.num,isVisible)))
+				userEntries.push(UserEntry.create(CardTypeClass.create(CardTypeClass.CENTERCARD,playerCard.cardKey),CenterCard.create(myUserId,playerCard.cardKey,isVisible)))
 			}
 			doStoreState(userEntries);
 		}
@@ -120,8 +121,9 @@ package come2play_as3.cards
 				cardTypeClass = CardTypeClass.create(CardTypeClass.CARD,key);
 				allKeys.push(cardTypeClass);
 				revealEntries.push(RevealEntry.create(cardTypeClass,[playerId]))
+				
 			}
-			
+			cardGraphics.removeCardsFromMiddle(allKeys.length);
 			doAllShuffleState(allKeys);
 			doAllRevealState(revealEntries);					
 		}
@@ -236,22 +238,32 @@ package come2play_as3.cards
 				
 			}
 			
+			var isDevideCards:Boolean;
+			
 			if(isLoad)
 				gotMatchLoaded(allPlayerIdsForCardAPI.concat(), finishedPlayerIdsForCardAPI.concat(), serverEntries);	
 			if(drawnCards.length > 0)
 			{	
 				callGotCards(drawnCards);
-				cardGraphics.devideCards();	
+				isDevideCards = true;
 			}
-			if(cardsPutOnBoard.length > 0)
-				callGotPlayerPutCards(cardsPutOnBoard,blameId);
-			if(revealedCards.length > 0)
-				callGotMiddleCards(revealedCards)
 			for each(var userId:int in allPlayerIdsForCardAPI)
 			{
 				if((rivalDecks[getId(userId)]> 0) && (userId != myUserId))
+				{
+					isDevideCards = true;
 					callRivalGotCards(userId,rivalDecks[getId(userId)]);
+				}
+					
 			}	
+			
+			if(isDevideCards)
+				cardGraphics.devideCards();	
+			if(cardsPutOnBoard.length > 0)
+				callGotPlayerPutCards(cardsPutOnBoard,blameId,isLoad);
+			if(revealedCards.length > 0)
+				callGotMiddleCards(revealedCards)
+
 			return serverEntries;
 		}
 		override public function gotCustomInfo(infoEntries:Array):void
@@ -292,7 +304,9 @@ package come2play_as3.cards
 				serverEntries = interpertServerEntries(serverEntries,true);
 			}
 			else
+			{
 				gotMatchStarted2(allPlayerIds, finishedPlayerIds, serverEntries);
+			}
 			
 			
 			
@@ -325,7 +339,7 @@ package come2play_as3.cards
 			serverEntries = interpertServerEntries(serverEntries,false);
 			gotStateChangedNoCards(serverEntries)
 		}
-		private function callGotPlayerPutCards(cardsPutOnBoard:Array/*CenterCard*/,blameId:int):void
+		private function callGotPlayerPutCards(cardsPutOnBoard:Array/*CenterCard*/,blameId:int,isLoad:Boolean):void
 		{	
 			var keys:Array = new Array();
 			var centerCard:CenterCard = cardsPutOnBoard[0];
@@ -339,16 +353,24 @@ package come2play_as3.cards
 				var index:int = tempPlayerKeys.indexOf(centerCard.cardKey);
 				if(index == -1)
 				{
-					doAllFoundHacker(blameId,"user faked a centerCard class");
-					return;
+					if(!isLoad)
+					{
+						doAllFoundHacker(blameId,"user faked a centerCard class");
+						return;
+					}
 				}
 				else
+				{
+					if(!isLoad)
 					tempPlayerKeys.splice(index,1);
+				}
 				keys.push(CardTypeClass.create(CardTypeClass.CARD,centerCard.cardKey))
-				cardGraphics.removeCard(playerId,centerCard.cardKey);
+				if(!isLoad)
+					cardGraphics.removeCard(playerId,centerCard.cardKey);
 			}
 			if(!isVisble)
 			{
+				cardGraphics.addCardsToMiddle(keys.length);
 				gotPlayerPutCardsSecret(keys,playerId);
 				
 			}
@@ -364,7 +386,6 @@ package come2play_as3.cards
 		}
 		private function callGotMiddleCards(revealedCards:Array/*PlayerCard*/):void
 		{
-			//todo: graphic representation of cards
 			cardGraphics.showCards(revealedCards);
 			gotMiddleCards(revealedCards);
 		}

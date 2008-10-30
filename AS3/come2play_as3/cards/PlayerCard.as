@@ -5,10 +5,10 @@ package come2play_as3.cards
 	public class PlayerCard
 	{
 		public var card:Card;
-		public var num:int;
-		public function PlayerCard(card:Card,num:int)
+		public var cardKey:int;
+		public function PlayerCard(card:Card,cardKey:int)
 		{
-			this.num = num;
+			this.cardKey = cardKey;
 			this.card = card;
 		}
 

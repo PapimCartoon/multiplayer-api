@@ -44,6 +44,7 @@ package emulator {
 		private var ddsDoOperations:DelayDoSomething;
 		private var ddsGotOperations:DelayDoSomething;
 		private var frameSprite:Sprite;	
+		private var isPlaying:Boolean;
 		
 		private var messageQueue:Array;
 		private var delayConstructor:Timer;
@@ -277,6 +278,7 @@ package emulator {
 		}		
 		private function reportKey(is_key_down:Boolean,event:KeyboardEvent):void {
 			if (pnlInfo.visible) return;
+			if(!isPlaying) return;
 			var gotKeyboardEvent:API_GotKeyboardEvent = new API_GotKeyboardEvent();
 			gotKeyboardEvent.altKey = event.altKey;
 			gotKeyboardEvent.charCode = event.charCode;
@@ -567,6 +569,7 @@ package emulator {
 				iMyID = msg.myUserId;
 		}
 		public function gotMatchStarted(msg:API_GotMatchStarted):void { 
+				isPlaying =true;
 				txtTurn.text = "";
 				lblWait.visible = false;
 				txtUsers.htmlText = "<b>Users:</b><br>";
@@ -593,6 +596,7 @@ package emulator {
 		}
 		private function matchOverForIds(user_ids:Array):void { 
 			if(user_ids.indexOf(iMyID)!=-1){
+				isPlaying = false;
 				txtTurn.text = "Game over";
 			}
 			var u:UserInfo;

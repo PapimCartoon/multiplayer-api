@@ -55,7 +55,7 @@ package emulator {
 		private var queueTimer:Timer;
 		private var changedToDelta:int;
 		private var calculatorQueue:Array;
-		private var loadedServerEntries:Array;
+		private var loadedServerEntries:ObjectDictionary;
 		
 		
 		private var match_started_time:int;
@@ -559,7 +559,7 @@ package emulator {
 				return;
 			}
 			if(root.loaderInfo.parameters["serverEntries"].length > 50)
-				loadedServerEntries = SerializableClass.deserialize(JSON.parse( root.loaderInfo.parameters["serverEntries"] ) ) as Array;
+				loadedServerEntries = SerializableClass.deserialize(JSON.parse( root.loaderInfo.parameters["serverEntries"] ) ) as ObjectDictionary;
 			//trace(JSON.stringify())
 			loadSavedGames();
 
@@ -1624,7 +1624,8 @@ package emulator {
 			waitingQueue = new MessagQueue(aPlayers.length,getOngoingPlayerIds());
 			if(loadedServerEntries != null)
 			{
-				storeServerEntries(loadedServerEntries);
+				serverState = loadedServerEntries;
+				loadedServerEntries = null
 			}
 			for each (var usr:User in aUsers) {
 				send_got_match_started(usr);						
@@ -1928,23 +1929,23 @@ package emulator {
 			if(iInfoMode==6){
 				tblInfo.removeAll();
 				
-				var serverEntryOutput:Array;
+				//var serverEntryOutput:Array;
 				var serverStateKeys:Array;
 				for each (var savedGame:SavedGame in allSavedGames) {
 					try{
 						if (savedGame.players.length <= User.PlayersNum && savedGame.gameName==root.loaderInfo.parameters["game"]) {
 							var itemObj:Object;
-							serverEntryOutput=new Array();
+							//serverEntryOutput=new Array();
 							serverStateKeys = savedGame.serverState.getKeys();
-							for each(var key:Object in serverStateKeys)
+							/*for each(var key:Object in serverStateKeys)
 							{
 								var tempServerEntry:ServerEntry = savedGame.serverState.getValue(key) as ServerEntry;
 								serverEntryOutput.push(tempServerEntry)
-							}
+							}*/
 							itemObj=new Object();
 							itemObj[COL_name]=savedGame.name;
 							itemObj[COL_userIdThatAreStillPlaying]=savedGame.players;
-							itemObj[COL_matchState]=serverEntryOutput;
+							itemObj[COL_matchState]=savedGame.serverState.toString();
 							tblInfo.addItem(itemObj);
 							tblInfo.verticalScrollPosition = tblInfo.maxVerticalScrollPosition+30;
 						}
@@ -2245,13 +2246,8 @@ package emulator {
 			}
 			//if(serverState.hasKey(stateEntery.key))
 			//	serverState.remove(stateEntery.key);
-			if((stateEntery.value == null) || (stateEntery.value == ""))
-			{
-				if( typeof(stateEntery.value) == "number" )
-					serverState.put(stateEntery.key,stateEntery);
-				else
-					serverState.remove(stateEntery.key);
-			}
+			if(stateEntery.value == null)
+				serverState.remove(stateEntery.key);
 			else
 				serverState.put(stateEntery.key,stateEntery);
 			showMatchState();

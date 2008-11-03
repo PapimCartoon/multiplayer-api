@@ -1,6 +1,7 @@
 package come2play_as3.cheat
 {
 	
+	import come2play_as3.api.auto_copied.T;
 	import come2play_as3.api.auto_generated.PlayerMatchOver;
 	import come2play_as3.api.auto_generated.RevealEntry;
 	import come2play_as3.api.auto_generated.ServerEntry;
@@ -130,7 +131,7 @@ package come2play_as3.cheat
 			turnReplays = 0;
 			callCheater = null;
 			if(clearBox) cheatGraphics.clear();				
-			doAllSetTurn(playerIdTurn,10000);
+			doAllSetTurn(playerIdTurn,-1);
 			if((myUserId == playerIdTurn) && (clearBox || (!isShowingCards)))
 			{
 				chooseCards(true);

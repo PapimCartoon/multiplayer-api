@@ -20,5 +20,7 @@ package come2play_as3.cards
 		static public var playerYPositions:Array;
 		static public var CONTAINER_gameWidth:int
 		static public var CONTAINER_gameHeight:int
+		static public var CONTAINER_gameStageX:int
+		static public var CONTAINER_gameStageY:int
 	}
 }

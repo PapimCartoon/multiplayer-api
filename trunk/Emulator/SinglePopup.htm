@@ -81,12 +81,12 @@ if (param_arr['game'] !=null){
     var addparams="&players_num="+players_num+"&viewers_num="+viewers_num+"&logo="+param_arr["logo"];
     var swf_width=520,swf_height=442;
     try{
-        swf_width=parseInt(param_arr["CONTAINER_gameWidth"]);
+        swf_width=parseInt(param_arr["CONTAINER_gameWidth"])+120;
     }catch(err){
         swf_width=520;
     }
     try{
-        swf_height=parseInt(param_arr["CONTAINER_gameHeight"]);
+        swf_height=parseInt(param_arr["CONTAINER_gameHeight"])+120;
     }catch(err){
         swf_height=442;
     }
@@ -102,16 +102,16 @@ if (param_arr['game'] !=null){
             }
         }
     }
-	
+
 	for(i=0;i<(players_num+viewers_num);i++){
 		addparams+="&player_"+i+"="+param_arr["player_"+i];
     }
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
 	addparams+="&custom_param_num="+param_arr["custom_param_num"];
 	custom_param_num=parseInt(param_arr["custom_param_num"]);
 	for(i=1;i<custom_param_num;i++)
@@ -151,18 +151,18 @@ if (param_arr['game'] !=null){
 		for(j=i;j<(i+2);j++)
 		{
 			cell=row.insertCell(j-i);
-			cell.style.verticalAlign="top";	
+			cell.style.verticalAlign="top";
 			writeFlash(cell,"../Emulator/Emulator.swf",(swf_width+65),(swf_height+70),flashvars+currentPrefix+"&game="+param_arr["game"]+"&oldgame="+param_arr["oldgame"]+"&delay_from="+param_arr["delay_from"]+"&delay_to="+param_arr["delay_to"]+"&fps="+param_arr["CONTAINER_gameFrameRate"]+"&old_container="+param_arr["old_container"]+"&width="+param_arr["CONTAINER_gameWidth"]+"&height="+param_arr["CONTAINER_gameHeight"]+"&isServer=false&isPlayer=false&calculatorsOn=true&ClientNum="+j,"client"+j);
 			currentPrefix++;
 		}
 		row=tbl.insertRow(i+1);
 		cell=row.insertCell(0);
-		cell.style.verticalAlign="top";	
+		cell.style.verticalAlign="top";
 		writeFlash(cell,"../Emulator/Emulator.swf",(swf_width+65),(swf_height+70),flashvars+currentPrefix+"&game="+param_arr["game"]+"&oldgame="+param_arr["oldgame"]+"&delay_from="+param_arr["delay_from"]+"&delay_to="+param_arr["delay_to"]+"&fps="+param_arr["CONTAINER_gameFrameRate"]+"&old_container="+param_arr["old_container"]+"&width="+param_arr["CONTAINER_gameWidth"]+"&height="+param_arr["CONTAINER_gameHeight"]+"&isServer=false&isPlayer=false&calculatorsOn=true&ClientNum="+j,"client"+j);
 		currentPrefix++;
 	}
-	
-	
+
+
     document.getElementById("divTable").appendChild(tbl);
 }
     </script>

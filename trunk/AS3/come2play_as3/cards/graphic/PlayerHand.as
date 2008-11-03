@@ -155,6 +155,11 @@ package come2play_as3.cards.graphic
 			for(var i:int = 0;i<cardsInHand.length;i++)
 			{
 				cardGraphicMovieClip = cardsInHand[i];
+				if(cardGraphicMovieClip == null)
+					continue;
+				if(!cardGraphicMovieClip.isSet)
+					continue;
+					
 				if(cardGraphicMovieClip.isEquel(ev.playerCard))
 				{
 					if(ev.isPressed)
@@ -183,7 +188,7 @@ package come2play_as3.cards.graphic
 			{
 				cardGraphic = cardsInHand[i];
 				var actualMiddle:int = (cardGraphic.x + cardGraphic.width/2);
-				var distance:int = Math.abs(actualMiddle - ev.stageX);
+				var distance:int = Math.abs(actualMiddle - (ev.stageX- CardDefenitins.CONTAINER_gameStageX));
 				distanceMap[i] = distance;
 				if ((middle == -1) || (distance < smallesDistance))
 				{
@@ -210,7 +215,6 @@ package come2play_as3.cards.graphic
 					}
 
 			}
-			trace(middle)
 			respaceCardsFor(middle);
 		}
 		

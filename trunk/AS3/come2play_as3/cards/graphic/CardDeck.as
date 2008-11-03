@@ -5,24 +5,41 @@ package come2play_as3.cards.graphic
 	import come2play_as3.cards.events.AnimationEndedEvent;
 	import come2play_as3.cards.events.AnimationStartedEvent;
 	
+	import flash.display.MovieClip;
 	import flash.display.Sprite;
+	import flash.text.TextField;
+	import flash.text.TextFormat;
 
 	public class CardDeck extends Sprite
 	{
 		//private var cardsInDeck:int;
+		private var cardStackSize:TextField;
+		private var cardsStack:MovieClip;
 		private var cardsInDeck:Array;
 		private var cardsToRemove:int;
 		public function CardDeck()
 		{
 			cardsInDeck = new Array();
+			cardStackSize = new TextField()
+			cardStackSize.selectable = false;
+			cardStackSize.x = CardDefenitins.CONTAINER_gameWidth / 2 - 10;
+			cardStackSize.y = CardDefenitins.CONTAINER_gameHeight / 2 - 10;
+			cardsStack = new MovieClip();
+			addChild(cardsStack);
+			addChild(cardStackSize)
 			CardDefenitins.currentDeckRotation = 0;
 			cardsToRemove = 0;
-			//cardsInDeck = 0;
+		}
+		private function setText(text:String):void
+		{
+			cardStackSize.text = text;
+			cardStackSize.setTextFormat(new TextFormat(null,27,0x4097D0));
 		}
 		public function addCard(card:CardGraphicMovieClip):void
 		{
-			addChild(card);
+			cardsStack.addChild(card);
 			cardsInDeck.push(card);
+			setText(String(cardsInDeck.length));
 		}
 		private function removeCard():void
 		{
@@ -32,11 +49,15 @@ package come2play_as3.cards.graphic
 				var card:CardGraphicMovieClip = cardsInDeck.shift();
 				Tweener.addTween(card, {x:-100, y:-100, rotation:0, time:CardDefenitins.cardSpeed, transition:"linear",onComplete:removeCardFromDeck,onCompleteParams:[card]});
 				dispatchEvent(new AnimationStartedEvent);
+				if(cardsInDeck.length != 0)
+					setText(String(cardsInDeck.length));
+				else
+					setText("");
 			}
 		}
 		private function removeCardFromDeck(card:CardGraphicMovieClip):void
 		{
-			removeChild(card);
+			cardsStack.removeChild(card);
 			cardsToRemove --;
 			removeCard();
 			dispatchEvent(new AnimationEndedEvent);
@@ -44,6 +65,7 @@ package come2play_as3.cards.graphic
 		public function removeCards(moreCardsToRemove:int):void
 		{
 			cardsToRemove +=moreCardsToRemove;
+			trace("cardsToRemove : "+cardsToRemove)
 			if(cardsToRemove > cardsInDeck.length) cardsToRemove = cardsInDeck.length;
 			removeCard();
 		}

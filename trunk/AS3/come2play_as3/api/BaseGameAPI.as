@@ -221,9 +221,7 @@ package come2play_as3.api {
 					T.initI18n(i18nObj, customObj); // may be called several times because we may pass different 'secondsPerMatch' every time a game starts
 				} else if (msg is API_GotKeyboardEvent) {						    			
 	    			checkInProgress(true,msg);
-				} else if (msg is API_GotRequestStateCalculation) {						    			
-	    			checkInProgress(true,msg);					
-				}
+				} 
 	    		var methodName:String = msg.getMethodName();
 	    		if (AS3_vs_AS2.isAS3 && !this.hasOwnProperty(methodName)) return;
 				var func:Function = /*as*/this[methodName] as Function;

@@ -52,6 +52,17 @@ gotUserDisconnected(userId:int)
 gotUserInfo(userId:int, infoEntries:Array/*InfoEntry*/)
 }}}
 
+==Auxiliary functions==
+
+This are functions that are used to help the developer,this functions do not effect the server state in any way
+{{{
+animationStarted()
+animationEnded()
+getServerEntry(Key:Object)
+}}}
+
+
+
 Operations are functions that your _game_ may call,
 and callbacks are functions that the _container_ may call on your game.
 Your class may override some of the callbacks and respond appropriately to them; it is not mandatory to override _all_ the callbacks.
@@ -83,7 +94,9 @@ i.e., there is a player that hasn't finished playing.
 || [gotMyUserId] || Called to pass your userId ||
 || [gotUserDisconnected] || Called to inform that a user disconnected ||
 || [gotUserInfo] || Called to pass user specific info, e.g., user name or avatar ||
-
+|| [getServerEntry]|| Call it to get a specific [ServerEntry] by its key||
+|| [animationStarted] || Call this function when animation starts ||
+|| [animationEnded] || Call this function when animation ends ||
 
 
 === Initialization: order of the first callbacks === 

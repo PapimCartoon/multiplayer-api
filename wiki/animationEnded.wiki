@@ -1,0 +1,11 @@
+#summary Call when you want to end an animation
+
+{{{
+animationEnded()
+}}}
+
+=== Description ===
+
+Call this when you end an animation and want to start receiving server input once again.
+this function must be called after [animationStarted] was called, or else no new server input will be received
+

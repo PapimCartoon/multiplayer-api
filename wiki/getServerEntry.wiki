@@ -1,0 +1,20 @@
+#summary Call when you want to get a specific key
+
+
+{{{
+getServerEntry(key:Object)
+}}}
+
+=== Description ===
+
+Use this function when you want to access a specific [ServerEntry] without having to go through the server.
+
+
+=== Parameters ===
+
+key - the key of the requested [ServerEntry]
+
+
+=== Returns ===
+
+Returns  [ServerEntry] — A [ServerEntry] with the specified key requested.  

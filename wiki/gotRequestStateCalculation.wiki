@@ -2,7 +2,7 @@
 
 
 {{{
-gotRequestStateCalculation(serverEntries:Array/*ServerEntry*/)
+gotRequestStateCalculation(requestId:int,serverEntries:Array/*ServerEntry*/)
 }}}
 
 === Description ===
@@ -16,6 +16,8 @@ To save the calculations made by the calculator you should call [doAllStoreState
 
 serverEntries - an Array of [ServerEntry] elements, containing the server entries specified in the 
 [doAllRequestStateCalculation] call.
+
+requestId - a unique id specified by the server ,this id should not be used in any calculations and should be returned as is in a [doAllStoreStateCalculation] call.
 
 To save server entries using this callback function you should call [doAllStoreStateCalculation].
 

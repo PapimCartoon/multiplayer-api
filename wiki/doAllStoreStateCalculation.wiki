@@ -1,7 +1,7 @@
 #summary used to store data on calculators
 
 {{{
-doAllStoreStateCalculation(userEntries:Array/*UserEntry*/)
+doAllStoreStateCalculation(requestId:int,userEntries:Array/*UserEntry*/)
 }}}
 
 
@@ -14,10 +14,17 @@ This function will trigger a [gotStateChanged]
 
 For more information about storing information go to [MatchState].
 
-=== Triggered gotStateChange on users ===
+=== Parameters ===
+
+requestId - the requestId received from the [gotRequestStateCalculation] callback.
 
 userEntries - an Array of [UserEntry] elements, containing the data that will be sent to the users 
 via a [gotStateStateChange] callback.
+
+=== Triggered gotStateChange on users ===
+
+an array of [ServerEntry] with the results of the state calculations made by the calculator flash,
+all the calculated [ServerEntry] elements will have a storedByUserId of -1
 
 === Example ===
 

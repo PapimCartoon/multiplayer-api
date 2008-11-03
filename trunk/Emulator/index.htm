@@ -8,7 +8,7 @@ function getParams(arr){
     var vals=new Array();
 	customVals = new Array();
 	customParam = new Array();
-	
+
     for(var i=0;i<arr.length;i++){
         switch(arr[i][0]){
             case "players_num":
@@ -96,7 +96,7 @@ function getParams(arr){
 					vals.push(arr[i]);
         }
     }
-	
+
     for(var i=0;i<vals.length;i++){
 		if(customParam[vals[i][0]]==null)
 		{
@@ -145,7 +145,7 @@ function clientNumChanged(){
 			cell.innerHTML="Player "+i;
 		else
 			cell.innerHTML="Viewer "+(i - num1);
-			
+
 		cell=row.insertCell(1);
         cell.innerHTML="<input id='val_"+i+"_0"+"' name='val_"+i+"_0\" size=\"50\" style=\"width: 150px;\" type=\"text\" value=\""+(i+1)+"\"/>";
         for(var j=2;j<param_num+1;j++){
@@ -170,7 +170,7 @@ function addParam(){
         cell=row.insertCell(param_num);
         cell.innerHTML="<input id=\"val_"+(i-1)+"_"+param_num+"\" name=\"val_"+(i-1)+"_"+param_num+"\" size=\"50\" style=\"width: 150px;\" type=\"text\" value=\"\"/>";
     }
-	
+
 }
 function removeParam(num,obj){
 
@@ -181,7 +181,7 @@ function removeParam(num,obj){
 		row.deleteCell(num);
     }
 	param_num--;
-	
+
 }
 function addCustomParam(){
 
@@ -197,7 +197,7 @@ function addCustomParam(){
 		cell1.innerHTML="<input type=text size = 70 value = 'insert value here' name='paramValue_"+custom_param_num+"' id='paramValue_"+custom_param_num+"'>";
 	}
 	custom_param_num++;
-	
+
 }
 function removeCustomParam(num){
 
@@ -387,7 +387,7 @@ function removeCustomParam(num){
                                             </td>
                                             <td>
                                                 <input id="val_0_0" name="val_0_0" size="50" style="width: 150px;" type="text" value="1" />
-                                            </td>											
+                                            </td>
                                             <td>
                                                 <input id="val_0_1" name="val_0_1" size="50" style="width: 150px;" type="text" value="Jhon" />
                                             </td>
@@ -436,7 +436,7 @@ function removeCustomParam(num){
                                     How do you wish to test the game?
                                 </td>
                                 <td>
-                                    <input type="radio" name="windows" value="same" checked="checked" id="single_popup" /><label for="rdbSameWindow">In a single popup, using several frames</label><br />
+                                    <input type="radio" name="windows" value="same" checked="checked" id="single_popup" /><label for="rdbSameWindow">In a single popup</label><br />
                                     <input type="radio" name="windows" value="separate" id="multiple_popups" /><label for="rdbSeparateWindow">In multiple popups, one for the server and one for each player and viewer.</label>
                                 </td>
                             </tr>
@@ -700,7 +700,7 @@ function unloadServer(){
 	            }
 	        }catch(err){}
 		}
-	
+
 	}
     try{
         if(server!=null){

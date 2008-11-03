@@ -6,12 +6,12 @@ package come2play_as3.cards.connectionClasses
 	{
 		static public const CARD:String = "Card";
 		static public const CENTERCARD:String = "CenterCard"
-		public var type:String;
+		public var cardType:String;
 		public var value:int;
-		static public function create(type:String,value:int):CardTypeClass
+		static public function create(cardType:String,value:int):CardTypeClass
 		{
 			var res:CardTypeClass = new CardTypeClass();
-			res.type = type;
+			res.cardType = cardType;
 			res.value = value;
 			return res;
 		}

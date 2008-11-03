@@ -1,6 +1,7 @@
 package come2play_as3.snake
 {
 	import come2play_as3.api.auto_copied.AS3_vs_AS2;
+	import come2play_as3.api.auto_copied.T;
 	import come2play_as3.api.auto_generated.*;
 	
 	import flash.display.MovieClip;
@@ -99,18 +100,13 @@ package come2play_as3.snake
 				updateVector(keyCode);
 			}
 		}
-		override public function gotMyUserId(myUserId:int):void
-		{
-			this.myUserId = myUserId;
-		}
+
 		override public function gotCustomInfo(infoEntries:Array):void
 		{
-			for each(var infoEntry:InfoEntry in infoEntries)
-			{
-				if(infoEntry.key == "xMax") xMax =int(infoEntry.value);
-				if(infoEntry.key == "yMax") yMax =int(infoEntry.value);
-				if(infoEntry.key == "snakeSpeed") snakeSpeed =int(infoEntry.value);
-			}
+			myUserId = T.custom(CUSTOM_INFO_KEY_myUserId, null) as int;
+			xMax = T.custom("xMax", 24) as int;
+			yMax = T.custom("yMax", 24) as int;
+			snakeSpeed = T.custom("snakeSpeed", 10) as int;
 		}
 		override public function gotMatchEnded(finishedPlayerIds:Array):void
 		{

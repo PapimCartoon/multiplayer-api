@@ -6,10 +6,10 @@ package come2play_as3.cards.graphic
 	import come2play_as3.cards.events.CardPressedEvent;
 	import come2play_as3.cards.events.CardRecievedEvent;
 	
-	import flash.display.MovieClip;
+	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 
-	public class CardGraphicMovieClip extends MovieClip
+	public class CardGraphicMovieClip extends Sprite
 	{
 		public var playerCard:PlayerCard;
 		private var cardGraphic:Card_MC;
@@ -31,6 +31,11 @@ package come2play_as3.cards.graphic
 			cardGraphic.Symbole_MC.gotoAndStop("Back");
 			cardGraphic.Letter_MC.stop();
 			addChild(cardGraphic)
+		}
+		public function close():void
+		{
+			cardGraphic.Symbole_MC.gotoAndStop(1);
+			cardGraphic.Letter_MC.gotoAndStop(1);
 		}
 		public function set yPos(yPos:int):void
 		{

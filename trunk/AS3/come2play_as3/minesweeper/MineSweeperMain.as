@@ -79,17 +79,12 @@ import flash.utils.*;
 		
 		override public function gotCustomInfo(infoEntries:Array):void
 		{
-			for each (var infoEntry:InfoEntry in infoEntries)
-			{
-				switch (infoEntry.key)
-				{
-					case "CONTAINER_gameStageX" : stageX = int(infoEntry.value);break;
-					case "CONTAINER_gameStageY" : stageY = int(infoEntry.value); break;
-					case "boardSize" : boardWidth = boardHeight = int(infoEntry.value); break;
-					case MINE_AMOUNTstr : mineAmount = int(infoEntry.value); break;
-				}
+			myUserId = T.custom(CUSTOM_INFO_KEY_myUserId, null) as int;
+			stageX = T.custom(CUSTOM_INFO_KEY_gameStageX, null) as int;
+			stageY = T.custom(CUSTOM_INFO_KEY_gameStageY, null) as int;
+			mineAmount = T.custom(CUSTOM_INFO_KEY_gameStageY, 20) as int;
+			boardWidth = T.custom(MINE_AMOUNTstr, 12) as int;
 
-			}	
 		}
 		override public function gotRequestStateCalculation(requestId:int, serverEntries:Array):void
 		{
@@ -109,10 +104,6 @@ import flash.utils.*;
 			
 			//BOARD_WIDTHstr,BOARD_HEIGHTstr,MINE_AMOUNTstr
 			doAllStoreStateCalculation(requestId,MineSweeperCalculatorLogic.createMineBoard(calcRandomSeed,calcMineAmount,calcWidth,calcHeight));	
-		}
-		override public function gotMyUserId(myUserId:int):void
-		{
-			this.myUserId = myUserId;
 		}
 		override public function gotUserInfo(userId:int, entries:Array/*InfoEntry*/):void 
 		{

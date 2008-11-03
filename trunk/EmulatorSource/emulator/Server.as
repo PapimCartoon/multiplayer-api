@@ -2032,7 +2032,7 @@ package emulator {
 			}
 			btnLoadGame.enabled = j>0;
 			}catch(err:Error) {
-				errorHandler("Contact come2Play")
+				errorHandler(err.getStackTrace())
 				shrSavedGames.data.savedGames = [];	//this deletes all saved games
 			}
 		}
@@ -2138,7 +2138,7 @@ package emulator {
 			// send the info of "u" to all registered users (without user "u")
 			broadcast(API_GotUserInfo.create(u.ID,u.entries)); //note, this must be before you call u.wasRegistered = true 
 			u.wasRegistered = true;		
-			u.sendOperation(API_GotMyUserId.create(u.ID));
+			serverInfoEnteries.push(InfoEntry.create(API_Message.CUSTOM_INFO_KEY_myUserId,u.ID));
 			u.sendOperation(API_GotCustomInfo.create(serverInfoEnteries));
 				
 			// important: note that this is not a broadcast!

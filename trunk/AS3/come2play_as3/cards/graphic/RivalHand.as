@@ -2,10 +2,11 @@ package come2play_as3.cards.graphic
 {
 	import come2play_as3.cards.CardDefenitins;
 	import come2play_as3.cards.caurina.transitions.Tweener;
+	import come2play_as3.cards.events.CardToDeckEvent;
 
 	public class RivalHand extends Hand
 	{
-		private var rivalNum:int;
+		public var rivalNum:int;
 		private var cardsToDeal:int ;
 		private var waitingRemove:int;
 		private var removing:Boolean;
@@ -30,7 +31,8 @@ package come2play_as3.cards.graphic
 				removing = true
 				cardsToDeal--;
 				var cardGraphicMovieClip:CardGraphicMovieClip = cardsInHand.pop();
-				Tweener.addTween(cardGraphicMovieClip, {x:(CardDefenitins.CONTAINER_gameWidth/2), y:(CardDefenitins.CONTAINER_gameHeight/2) , rotation:0, time:CardDefenitins.cardSpeed, transition:"linear",onComplete:removeCardFromHand,onCompleteParams:[cardGraphicMovieClip]});	
+				Tweener.addTween(cardGraphicMovieClip, {x:(CardDefenitins.CONTAINER_gameWidth/2) + Math.random() * 5, y:(CardDefenitins.CONTAINER_gameHeight/2) + Math.random() * 5, rotation:(CardDefenitins.currentDeckRotation + Math.random()*5), time:CardDefenitins.cardSpeed, transition:"linear",onComplete:removeCardFromHand,onCompleteParams:[cardGraphicMovieClip]});	
+				CardDefenitins.currentDeckRotation+=10;
 				//removeChild(cardGraphicMovieClip);
 			}
 		}
@@ -43,6 +45,7 @@ package come2play_as3.cards.graphic
 				waitingRemove--;
 				removeCard();
 			}
+			dispatchEvent(new CardToDeckEvent(card));
 		}
 		public function addCards(cardsToAdd:int):void
 		{

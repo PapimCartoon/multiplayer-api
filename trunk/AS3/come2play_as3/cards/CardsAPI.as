@@ -1,14 +1,19 @@
 package come2play_as3.cards
 {
+	import come2play_as3.api.auto_copied.T;
 	import come2play_as3.api.auto_generated.ClientGameAPI;
 	import come2play_as3.api.auto_generated.InfoEntry;
 	import come2play_as3.api.auto_generated.RevealEntry;
 	import come2play_as3.api.auto_generated.ServerEntry;
 	import come2play_as3.api.auto_generated.UserEntry;
 	import come2play_as3.cards.connectionClasses.CardTypeClass;
+	import come2play_as3.cards.events.AnimationEndedEvent;
+	import come2play_as3.cards.events.AnimationStartedEvent;
 	import come2play_as3.cards.events.CardPressedEvent;
 	import come2play_as3.cards.graphic.CardGraphic;
 	import come2play_as3.cards.graphic.CardGraphicMovieClip;
+	
+	import flash.events.Event;
 	
 	public class CardsAPI extends ClientGameAPI
 	{
@@ -36,10 +41,18 @@ package come2play_as3.cards
 			initCardDefenitins();
 			this.cardGraphics = cardGraphics
 			cardGraphics.addEventListener(CardPressedEvent.CardPressedEvent,cardMarked,true);
-
+			cardGraphics.addEventListener(AnimationEndedEvent.AnimationEndedEvent,endAnimation);
+			cardGraphics.addEventListener(AnimationStartedEvent.AnimationStartedEvent,startAnimation);
 			super(cardGraphics);
 		}		
-
+		private function startAnimation(ev:Event):void
+		{
+			animationStarted();
+		}
+		private function endAnimation(ev:Event):void
+		{
+			animationEnded();
+		}
 		private function initCardDefenitins():void
 		{
 			var tempCardGraphic:CardGraphicMovieClip= new CardGraphicMovieClip();
@@ -214,7 +227,7 @@ package come2play_as3.cards
 					if(serverEntry.visibleToUserIds != null)
 					{
 						var drawingPlayer:Array/*int*/;
-						if(cardTypeClass.type != CardTypeClass.CARD) continue;
+						if(cardTypeClass.cardType != CardTypeClass.CARD) continue;
 						for each(var playerId:int in serverEntry.visibleToUserIds)
 						{		
 							var id:int = getId(playerId);			
@@ -268,21 +281,14 @@ package come2play_as3.cards
 		}
 		override public function gotCustomInfo(infoEntries:Array):void
 		{
-			for each(var infoEntry:InfoEntry in infoEntries)
-			{
-				if(infoEntry.key == "CONTAINER_gameWidth")
-					CardDefenitins.CONTAINER_gameWidth = infoEntry.value as int
-				else if(infoEntry.key == "CONTAINER_gameHeight")
-					CardDefenitins.CONTAINER_gameHeight = infoEntry.value as int
-			}
+			myUserId = T.custom(CUSTOM_INFO_KEY_myUserId, null) as int;
+			CardDefenitins.CONTAINER_gameWidth = T.custom(CUSTOM_INFO_KEY_gameWidth, 400) as int;
+			CardDefenitins.CONTAINER_gameHeight = T.custom(CUSTOM_INFO_KEY_gameHeight, 400) as int;
+			gotMyUserId2(myUserId);			
 			CardDefenitins.playerXPositions= [CardDefenitins.CONTAINER_gameWidth - 50,CardDefenitins.CONTAINER_gameWidth - 50,50,50] ;
 			CardDefenitins.playerYPositions= [CardDefenitins.CONTAINER_gameHeight- 50,50,50,CardDefenitins.CONTAINER_gameHeight - 50]; 
 		}
-		override public function gotMyUserId(myUserId:int):void
-		{
-			this.myUserId = myUserId;
-			gotMyUserId2(myUserId);
-		}
+
 		override public function gotMatchStarted(allPlayerIds:Array, finishedPlayerIds:Array, serverEntries:Array):void
 		{
 			hiddenDeck = new Array();
@@ -326,7 +332,7 @@ package come2play_as3.cards
 					if(serverEntry.key is CardTypeClass)
 					{
 						var cardTypeClass:CardTypeClass = serverEntry.key as CardTypeClass;
-						if(cardTypeClass.type != CardTypeClass.CARD) continue;
+						if(cardTypeClass.cardType != CardTypeClass.CARD) continue;
 						if(serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,"this card was stored by a single player");
 						countedCards++;
 					}			

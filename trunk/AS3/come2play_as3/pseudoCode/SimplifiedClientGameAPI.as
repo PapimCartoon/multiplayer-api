@@ -1,5 +1,6 @@
 package come2play_as3.pseudoCode
 {
+	import come2play_as3.api.auto_copied.T;
 	import come2play_as3.api.auto_generated.*;
 	import come2play_as3.pseudoCode.backgammon.PseudoBackgammon;
 	import come2play_as3.pseudoCode.battleShips.PseudoBattleships;
@@ -20,12 +21,14 @@ package come2play_as3.pseudoCode
 	  public function require(condition:Boolean):void {
 	    if (!condition) throw new Error();
 	  }
-	  override public function gotMyUserId(myUserId:int):void {
-	    this.myUserId = myUserId;
-	  }
+
 	  override public function gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, serverEntries:Array/*ServerEntry*/):void {
 	    this.allPlayerIds = allPlayerIds;
 	    gotMatchStarted2();
+	  }
+	  override public function gotCustomInfo(infoEntries:Array):void
+	  {
+	  	myUserId = T.custom(CUSTOM_INFO_KEY_myUserId, null) as int;
 	  }
 	  override public function gotStateChanged(serverEntries:Array/*ServerEntry*/):void {
 	  	// update state

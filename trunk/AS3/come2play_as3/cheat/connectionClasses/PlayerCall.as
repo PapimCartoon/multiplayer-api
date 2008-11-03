@@ -6,9 +6,11 @@ package come2play_as3.cheat.connectionClasses
 	{
 		public var callNum:int;
 		public var playerId:int;
-		static public function create(playerId:int,callNum:int):PlayerCall
+		public var cardAmount:int
+		static public function create(playerId:int,callNum:int,cardAmount:int):PlayerCall
 		{
 			var res:PlayerCall = new PlayerCall();
+			res.cardAmount = cardAmount;
 			res.playerId = playerId;
 			res.callNum =callNum;
 			return res;

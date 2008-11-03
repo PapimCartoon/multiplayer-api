@@ -24,7 +24,7 @@ import come2play_as2.api.auto_copied.*;
 		 */
 		private var seed:Number;
 		public function RandomGenerator(seed:Number) {
-			if (seed==0) throw new Error("Do not use 0 as a seed!");
+			if (seed==0) throw new Error("Do not use a seed of 0!");
 			this.seed = seed;
 		}
 		

@@ -34,7 +34,7 @@ package emulator.auto_generated {
 			this.changedTimeInMilliSeconds = parameters[pos++];
 		}
 		override public function getParametersAsString():String { return 'key=' + JSON.stringify(key)+', value=' + JSON.stringify(value)+', storedByUserId=' + JSON.stringify(storedByUserId)+', visibleToUserIds=' + JSON.stringify(visibleToUserIds)+', changedTimeInMilliSeconds=' + JSON.stringify(changedTimeInMilliSeconds); }
-		override public function getFunctionId():int { return -85; }
+		override public function getFunctionId():int { return -86; }
 		override public function getClassName():String { return 'ServerEntry'; }
 
 // This is a AUTOMATICALLY GENERATED! Do not change!

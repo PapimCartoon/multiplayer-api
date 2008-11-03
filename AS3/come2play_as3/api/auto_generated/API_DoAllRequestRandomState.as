@@ -28,7 +28,7 @@ package come2play_as3.api.auto_generated {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		override public function getFunctionId():int { return -111; }
+		override public function getFunctionId():int { return -112; }
 		override public function getClassName():String { return 'API_DoAllRequestRandomState'; }
 		override public function getMethodName():String { return 'doAllRequestRandomState'; }
 		override public function getFieldNames():Array { return ['key', 'isSecret']; }

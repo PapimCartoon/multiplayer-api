@@ -20,7 +20,7 @@ import come2play_as2.api.auto_generated.*;
 			this.didWin = parameters[pos++];
 		}
 		/*override*/ public function getParametersAsString():String { return 'didWin=' + JSON.stringify(didWin); }
-		/*override*/ public function getFunctionId():Number { return -105; }
+		/*override*/ public function getFunctionId():Number { return -106; }
 		/*override*/ public function getClassName():String { return 'API_DoConnectedEndMatch'; }
 		/*override*/ public function getMethodName():String { return 'doConnectedEndMatch'; }
 		/*override*/ public function getFieldNames():Array { return ['didWin']; }

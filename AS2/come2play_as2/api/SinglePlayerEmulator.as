@@ -21,8 +21,10 @@
 import come2play_as2.api.*;
 	class come2play_as2.api.SinglePlayerEmulator extends LocalConnectionUser
 	{
+		public static var DEFAULT_USER_ID:Number = 42; 
 		public static var DEFAULT_GENERAL_INFO:Array/*InfoEntry*/ =
-			[ 
+			[  
+				InfoEntry.create(API_Message.CUSTOM_INFO_KEY_myUserId,DEFAULT_USER_ID), 
 				InfoEntry.create(API_Message.CUSTOM_INFO_KEY_logoFullUrl,"../../Emulator/example_logo.jpg"), 
 				InfoEntry.create(API_Message.CUSTOM_INFO_KEY_gameHeight,400), 
 				InfoEntry.create(API_Message.CUSTOM_INFO_KEY_gameWidth,400) 
@@ -32,7 +34,6 @@ import come2play_as2.api.*;
 					InfoEntry.create(API_Message.USER_INFO_KEY_avatar_url, "../../Emulator/Avatar_1.gif")
 				];
 		public static var DEFAULT_MATCH_STATE:Array/*ServerEntry*/ = []; // you can change this and load a saved match
-		public static var DEFAULT_USER_ID:Number = 42; 
 						
 		private var customInfoEntries:Array/*InfoEntry*/;
 		private var userId:Number; 
@@ -56,7 +57,7 @@ import come2play_as2.api.*;
         /*override*/ public function gotMessage(msg:API_Message):Void {        	
 			if (msg instanceof API_Transaction) {
 				var transaction:API_Transaction = API_Transaction(msg);
-				for (var i60:Number=0; i60<transaction.messages.length; i60++) { var innerMsg:API_Message = transaction.messages[i60]; 
+				for (var i61:Number=0; i61<transaction.messages.length; i61++) { var innerMsg:API_Message = transaction.messages[i61]; 
 					gotMessage(innerMsg);
 				}
 				gotMessage(transaction.callback);
@@ -64,7 +65,7 @@ import come2play_as2.api.*;
 				var doStore:API_DoStoreState = API_DoStoreState(msg);				
 				var userEntries:Array/*UserEntry*/ = doStore.userEntries;
 				var serverEntries:Array/*ServerEntry*/ = [];
-				for (var i68:Number=0; i68<userEntries.length; i68++) { var userEntry:UserEntry = userEntries[i68]; 
+				for (var i69:Number=0; i69<userEntries.length; i69++) { var userEntry:UserEntry = userEntries[i69]; 
 					var serverEntry:ServerEntry = ServerEntry.create(userEntry.key, userEntry.value, userId,userEntry.isSecret ? [userId] : null, getTimer());
 					serverEntries.push(serverEntry); 
 				}
@@ -73,7 +74,7 @@ import come2play_as2.api.*;
 			} else if (msg instanceof API_DoAllEndMatch) {
 				var endMatch:API_DoAllEndMatch = API_DoAllEndMatch(msg);
 				var finishedPlayerIds:Array = [];
-				for (var i77:Number=0; i77<endMatch.finishedPlayers.length; i77++) { var matchOver:PlayerMatchOver = endMatch.finishedPlayers[i77]; 
+				for (var i78:Number=0; i78<endMatch.finishedPlayers.length; i78++) { var matchOver:PlayerMatchOver = endMatch.finishedPlayers[i78]; 
 					finishedPlayerIds.push( matchOver.playerId );
 				}
 				queueSendMessage( API_GotMatchEnded.create(finishedPlayerIds) );
@@ -87,7 +88,6 @@ import come2play_as2.api.*;
 			}				
   		}
   		private function doRegisterOnServer():Void {
-  			queueSendMessage(API_GotMyUserId.create(userId) );
   			queueSendMessage(API_GotCustomInfo.create(customInfoEntries) );
   			queueSendMessage(API_GotUserInfo.create(userId, userInfoEntries) );
 	 		sendNewMatch();

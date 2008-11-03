@@ -92,7 +92,7 @@ package come2play_as3.api.auto_copied
         private function reallySendMessage(msg:API_Message):void {        						  
 			try{
 				AS3_vs_AS2.checkObjectIsSerializable(msg);
-				lcUser.send(sSendChanel, "localconnection_callback", msg);  
+				lcUser.send(sSendChanel, "localconnection_callback", msg.toLocalConnectionObject());  
 			}catch(err:Error) { 
 				passError(msg, err);
 			}        	
@@ -101,7 +101,7 @@ package come2play_as3.api.auto_copied
         public function localconnection_callback(msgObj:Object):void {
         	try{
         		var deserializedMsg:Object = SerializableClass.deserialize(msgObj);
-        		var msg:API_Message = deserializedMsg as API_Message;
+        		var msg:API_Message = /*as*/deserializedMsg as API_Message;
         		if (msg==null) throwError("msgObj="+JSON.stringify(msgObj)+" is not an API_Message");
         		
         		myTrace(['gotMessage: ',msg]);

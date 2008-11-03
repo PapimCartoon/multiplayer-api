@@ -30,7 +30,7 @@ import come2play_as2.api.auto_generated.*;
 			this.depth = parameters[pos++];
 		}
 		/*override*/ public function getParametersAsString():String { return 'key=' + JSON.stringify(key)+', userIds=' + JSON.stringify(userIds)+', depth=' + JSON.stringify(depth); }
-		/*override*/ public function getFunctionId():Number { return -87; }
+		/*override*/ public function getFunctionId():Number { return -88; }
 		/*override*/ public function getClassName():String { return 'RevealEntry'; }
 		/*override*/ public function getMethodName():String { return 'revealEntry'; }
 		/*override*/ public function getFieldNames():Array { return ['key', 'userIds', 'depth']; }

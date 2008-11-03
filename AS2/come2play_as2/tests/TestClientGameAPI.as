@@ -8,9 +8,9 @@ import come2play_as2.tests.*;
 class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 	//public var dp:DataProvider = new DataProvider();
 	private var my_graphics:MovieClip;	
-	private var outTracesText/*:Object*/;
-	private var exampleOperationsText/*:Object*/;
-	private var operationInput/*:Object*/;
+	private var outTracesText:Object;
+	private var exampleOperationsText:Object;
+	private var operationInput:Object;
 	
 	private var myUserId:Number;
 	private var allPlayerIds:Array/*int*/;
@@ -19,14 +19,22 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 	public function TestClientGameAPI(rootGraphics:MovieClip) {
 		super(rootGraphics);
 		trace("Constructor of TestClientGameAPI version 2");
-		var parameters/*:Object*/ = AS3_vs_AS2.getLoaderInfoParameters(rootGraphics);		
+		var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(rootGraphics);		
 		my_graphics = AS3_vs_AS2.createMovieInstance(rootGraphics, "TestClientGameGraphics","client");
 		outTracesText = my_graphics.outTracesText;
 		exampleOperationsText = my_graphics.exampleOperationsText;
 		operationInput = my_graphics.operationInput;	
 		
 		var allOperationsWithParameters:Array = [];
-		for (var i30:Number=0; i30<API_MethodsSummary.SUMMARY_API.length; i30++) { var methodSummary:API_MethodsSummary = API_MethodsSummary.SUMMARY_API[i30]; 
+		
+		allOperationsWithParameters.push("Examples:"+
+			"\n{$API_DoStoreState$ userEntries : [{$UserEntry$ key:'String', value: 'value', isSecret: false}] }"+
+			"\n{$API_DoAllSetTurn$ userId:42, milliSecondsInTurn:10000}"+
+			"\n{$PlayerMatchOver$ playerId: 41, score: 1000, potPercentage: 20}"+
+			"\n\n"
+			);
+
+		for (var i38:Number=0; i38<API_MethodsSummary.SUMMARY_API.length; i38++) { var methodSummary:API_MethodsSummary = API_MethodsSummary.SUMMARY_API[i38]; 
 			var methodName:String = methodSummary.methodName; 
 			if (methodName.substring(0,2)!="do") continue;
 			if (methodName=="doRegisterOnServer") continue;
@@ -34,35 +42,25 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 			for (var i:Number=0; i<methodSummary.parameterNames.length; i++) {
 				args.push(methodSummary.parameterNames[i]+":"+methodSummary.parameterTypes[i]);
 			}
-			allOperationsWithParameters.push(methodName+"("+args.join(", ")+")");
+			allOperationsWithParameters.push("{$"+methodName+"$ "+args.join(", ")+"}");
 		}
 		
 		// write about our classes that are used in do* operations: 
 		allOperationsWithParameters.push("");		
 		allOperationsWithParameters.push(
-			"{$PlayerMatchOver$ 'playerId': int, 'score': int, 'potPercentage': int}");
+			"{$PlayerMatchOver$ playerId: int, score: int, potPercentage: int}");
 		allOperationsWithParameters.push(
-			"{$RevealEntry$ 'key': String, 'userIds': int[], 'depth': int}");
+			"{$RevealEntry$ key: String, userIds: int[], depth: int}");
 		allOperationsWithParameters.push(
-			"{$UserEntry$ 'key': String, 'value': *, 'isSecret': boolean}");
+			"{$UserEntry$ key: String, value: *, isSecret: boolean}");
 
-		allOperationsWithParameters.push("\nExamples:");
-		allOperationsWithParameters.push(
-			"\n{$API_DoStoreState$ userEntries : [{$UserEntry$ key:'String', value: 'value', isSecret: false}] }"+
-			"\n{$API_DoAllSetTurn$ userId:42, milliSecondsInTurn:10000}"+
-			"\n{$PlayerMatchOver$ playerId: 41, score: 1000, potPercentage: 20}"+
-			"\n"
-			);
 		exampleOperationsText.text = allOperationsWithParameters.join("\n");		
 		AS3_vs_AS2.addOnPress(my_graphics.sendOperation, AS3_vs_AS2.delegate(this, this.dispatchOperation), true );
 		doRegisterOnServer();			
 	}
 	
-	/*override*/ public function gotMyUserId(userId:Number):Void {	
-		myUserId = userId;	
-	}
-	private function generateKey()/*:Object*/ {
-		var obj/*:Object*/ = {};
+	private function generateKey():Object {
+		var obj:Object = {};
 		var order:Boolean = Math.random()>0.5;
 		obj[order ? "a" : "b"] = order ? 't' : 42;
 		obj[!order ? "a" : "b"] = !order ? 't' : 42;
@@ -80,6 +78,7 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 	}
 		 
 	/*override*/ public function gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, serverEntries:Array/*ServerEntry*/):Void {
+		myUserId = AS3_vs_AS2.as_int(T.custom(CUSTOM_INFO_KEY_myUserId,null));
 		this.allPlayerIds = allPlayerIds;
 		if (!shouldTest) return;
 		var test_Arr:Array = null;
@@ -93,6 +92,7 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 			}				
 		},
 		function (entries:Array):Void {
+			require(entries.length == 1);
 			var entry:ServerEntry = entries[0];	
 			require(entry.key=="testNumbers"+allPlayerIds[0]);
 			require(entry.visibleToUserIds==null);
@@ -107,8 +107,8 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 			}
 		},
 		function (entries:Array):Void {
-			var entry:ServerEntry = entries[0];	
 			require(entries.length == 11);
+			var entry:ServerEntry = entries[0];	
 			require(entry.visibleToUserIds != null);
 		});
 		expect(
@@ -116,6 +116,7 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 			doAllRevealState([RevealEntry.create("a",null,3),RevealEntry.create("e",[2],0)]);
 		},
 		function (entries:Array):Void {
+			require(entries.length == 5)
 			var entry0:ServerEntry = entries[0];
 			var entry1:ServerEntry = entries[1];
 			var entry2:ServerEntry = entries[2];
@@ -153,8 +154,8 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 		});
 		
 				
-		var key/*:Object*/ = generateKey();
-		var sameKey/*:Object*/ = generateKey();
+		var key:Object = generateKey();
+		var sameKey:Object = generateKey();
 		expect(
 		function ():Void {
 			// We test reveal	
@@ -162,6 +163,7 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 			
 		},
 		function (entries:Array):Void {	
+			require(entries.length==1);
 			var entry:ServerEntry = entries[0];		
 			require(ObjectDictionary.areEqual(entry.key, sameKey));
 			require(entry.visibleToUserIds==null);
@@ -176,6 +178,7 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 			
 		},
 		function (entries:Array):Void {
+			require(entries.length==1);
 			var entry:ServerEntry = entries[0];	
 			require(ObjectDictionary.areEqual(entry.key, sameKey));
 			require(entry.visibleToUserIds.length==0);
@@ -189,6 +192,7 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 			doAllRevealState([RevealEntry.create(key)]);			
 		},
 		function (entries:Array):Void {	
+			require(entries.length==1);
 			var entry:ServerEntry = entries[0];	
 			require(ObjectDictionary.areEqual(entry.key, sameKey));
 			require(entry.visibleToUserIds==null);
@@ -209,6 +213,7 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 			
 		},
 		function (entries:Array):Void {	
+			require(entries.length==11);
 			for (var j:Number=1; j<12; j++) {
 				var entry:ServerEntry = entries[j-1];
 				require(entry.key==j);
@@ -316,7 +321,7 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 				require(entry.storedByUserId==-1);			
 				// the values were shuffled, so I just check the sum of all values did not change.	
 				sum += j+1;
-				sum -= entry.value /*as int*/;
+				sum -= int(entry.value);
 			}		
 			require(sum==0);
 		});
@@ -343,7 +348,7 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 				if (!didSendEndMatch) {
 					didSendEndMatch = true;
 					var finishedPlayers:Array = [];
-					for (var i347:Number=0; i347<allPlayerIds.length; i347++) { var id:Number = allPlayerIds[i347]; 
+					for (var i352:Number=0; i352<allPlayerIds.length; i352++) { var id:Number = allPlayerIds[i352]; 
 						finishedPlayers.push( PlayerMatchOver.create(id, id==winnerId ? 1000 : -1000, id==winnerId ? 100 : 0) );		
 					}
 					doAllEndMatch(finishedPlayers);
@@ -359,7 +364,7 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 		lastTime = 0;
 	}
 	private function doTransaction():Void {
-		var funcDo/*:Object*/ = funcDoArr.shift();
+		var funcDo:Object = funcDoArr.shift();
 		funcDo();		
 	}
 		
@@ -374,12 +379,13 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 		funcResArr.push(AS3_vs_AS2.delegate(this,funcRes));	
 	}
 	/*override*/ public function gotStateChanged(serverEntries:Array/*ServerEntry*/):Void {
+		require(serverEntries.length>=1);
 		var entry:ServerEntry = serverEntries[0];	
 		require(lastTime<=entry.changedTimeInMilliSeconds);
 		lastTime = entry.changedTimeInMilliSeconds;
 		
 		require(funcResArr.length>0);  
-		var funcRes/*:Object*/ = funcResArr.shift();
+		var funcRes:Object = funcResArr.shift();
 		funcRes(serverEntries);
 		if (funcResArr.length>0) doTransaction();
 	}		
@@ -395,21 +401,21 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 		return res; 
 	}
 	
-	private function storeTrace(func:String, args:String):Void {
-		StaticFunctions.storeTrace("storeTrace: func="+func+" args="+args);
+	private function storeTrace(msg:API_Message):Void {
+		StaticFunctions.storeTrace(["storeTrace: msg=",msg]);
 		outTracesText.text +=
-			AS3_vs_AS2.getTimeString() + "\t" + func + "\t" + args + "\n";
+			AS3_vs_AS2.getTimeString() + " " + msg + "\n";
 		//dp.addItem({Time:(new Date().toLocaleTimeString()), Dir: is_to_container ? "->" : "<-", Function:func, Arguments:args});
 	}
 	private function handleError(err:Error):Void { 
-		storeTrace("ERROR", AS3_vs_AS2.error2String(err));
+		StaticFunctions.showError( AS3_vs_AS2.error2String(err) );
 	}
 	private function dispatchOperation(/*event:MouseEvent*/):Void {
 		try {
 			var inputStr:String = operationInput.text;
 			inputStr = StaticFunctions.trim(inputStr);
-			var instanceMsg/*:Object*/ = SerializableClass.deserialize(JSON.parse(inputStr));
-			var instance:API_Message = instanceMsg /*as API_Message*/;
+			var instanceMsg:Object = SerializableClass.deserialize(JSON.parse(inputStr));
+			var instance:API_Message = API_Message(instanceMsg);
 			sendMessage(instance);
 		} catch (err:Error) { 
 			handleError(err);			
@@ -417,12 +423,12 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 	}
     /*override*/ public function sendMessage(msg:API_Message):Void {
 		if (!(msg instanceof API_DoFinishedCallback)) 
-			storeTrace(msg.getMethodName(), msg.getParametersAsString());
+			storeTrace(msg);
 		super.sendMessage(msg);
 	}
 	/*override*/ public function gotMessage(msg:API_Message):Void {
 		if (!(msg instanceof API_GotKeyboardEvent)) 
-			storeTrace(msg.getMethodName(), msg.getParametersAsString());
+			storeTrace(msg);
 		super.gotMessage(msg);		
 	}
 }

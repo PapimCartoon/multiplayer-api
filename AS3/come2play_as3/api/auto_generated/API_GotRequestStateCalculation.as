@@ -24,7 +24,7 @@ package come2play_as3.api.auto_generated {
 			this.serverEntries = parameters[pos++];
 		}
 		override public function getParametersAsString():String { return 'requestId=' + JSON.stringify(requestId)+', serverEntries=' + JSON.stringify(serverEntries); }
-		override public function getFunctionId():int { return -108; }
+		override public function getFunctionId():int { return -109; }
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 

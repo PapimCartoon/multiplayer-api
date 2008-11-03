@@ -111,7 +111,7 @@ public final class StaticFunctions
 
 
 	/**
-	 * Similar to:  str.replace(new RegExp(searchFor,"g"), replaceWith)
+	 * Similar to replace with:  new RegExp(searchFor,"g")
 	 * but we need to escape special characters from searchFor
 	 * e.g., 
 	 * 	StaticFunctions.replaceAll("$y'+knkjh$y'+$y'+uoiuoiu$y'+8y$y'+", "$y'+","REPLACED") ==

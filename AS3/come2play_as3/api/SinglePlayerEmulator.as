@@ -24,8 +24,10 @@ package come2play_as3.api
 	 */
 	public final class SinglePlayerEmulator extends LocalConnectionUser
 	{
+		public static var DEFAULT_USER_ID:int = 42; 
 		public static var DEFAULT_GENERAL_INFO:Array/*InfoEntry*/ =
-			[ 
+			[  
+				InfoEntry.create(API_Message.CUSTOM_INFO_KEY_myUserId,DEFAULT_USER_ID), 
 				InfoEntry.create(API_Message.CUSTOM_INFO_KEY_logoFullUrl,"../../Emulator/example_logo.jpg"), 
 				InfoEntry.create(API_Message.CUSTOM_INFO_KEY_gameHeight,400), 
 				InfoEntry.create(API_Message.CUSTOM_INFO_KEY_gameWidth,400) 
@@ -35,7 +37,6 @@ package come2play_as3.api
 					InfoEntry.create(API_Message.USER_INFO_KEY_avatar_url, "../../Emulator/Avatar_1.gif")
 				];
 		public static var DEFAULT_MATCH_STATE:Array/*ServerEntry*/ = []; // you can change this and load a saved match
-		public static var DEFAULT_USER_ID:int = 42; 
 						
 		private var customInfoEntries:Array/*InfoEntry*/;
 		private var userId:int; 
@@ -58,13 +59,13 @@ package come2play_as3.api
 		
         override public function gotMessage(msg:API_Message):void {        	
 			if (msg is API_Transaction) {
-				var transaction:API_Transaction = msg as API_Transaction;
+				var transaction:API_Transaction = /*as*/msg as API_Transaction;
 				for each (var innerMsg:API_Message in transaction.messages) {
 					gotMessage(innerMsg);
 				}
 				gotMessage(transaction.callback);
 			} else if (msg is API_DoStoreState) {
-				var doStore:API_DoStoreState = msg as API_DoStoreState;				
+				var doStore:API_DoStoreState = /*as*/msg as API_DoStoreState;				
 				var userEntries:Array/*UserEntry*/ = doStore.userEntries;
 				var serverEntries:Array/*ServerEntry*/ = [];
 				for each (var userEntry:UserEntry in userEntries) {
@@ -74,7 +75,7 @@ package come2play_as3.api
 				queueSendMessage(API_GotStateChanged.create(serverEntries));
 				
 			} else if (msg is API_DoAllEndMatch) {
-				var endMatch:API_DoAllEndMatch = msg as API_DoAllEndMatch;
+				var endMatch:API_DoAllEndMatch = /*as*/msg as API_DoAllEndMatch;
 				var finishedPlayerIds:Array = [];
 				for each (var matchOver:PlayerMatchOver in endMatch.finishedPlayers) {
 					finishedPlayerIds.push( matchOver.playerId );
@@ -90,7 +91,6 @@ package come2play_as3.api
 			}				
   		}
   		private function doRegisterOnServer():void {
-  			queueSendMessage(API_GotMyUserId.create(userId) );
   			queueSendMessage(API_GotCustomInfo.create(customInfoEntries) );
   			queueSendMessage(API_GotUserInfo.create(userId, userInfoEntries) );
 	 		sendNewMatch();

@@ -20,7 +20,7 @@ import come2play_as2.api.auto_generated.*;
 			this.revealEntries = parameters[pos++];
 		}
 		/*override*/ public function getParametersAsString():String { return 'revealEntries=' + JSON.stringify(revealEntries); }
-		/*override*/ public function getFunctionId():Number { return -113; }
+		/*override*/ public function getFunctionId():Number { return -114; }
 		/*override*/ public function getClassName():String { return 'API_DoAllRevealState'; }
 		/*override*/ public function getMethodName():String { return 'doAllRevealState'; }
 		/*override*/ public function getFieldNames():Array { return ['revealEntries']; }

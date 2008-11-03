@@ -40,27 +40,27 @@
 import come2play_as2.api.auto_copied.*;
 	class come2play_as2.api.auto_copied.T
 	{
-		private static var _dictionary/*:Object*/ = null;
-		private static var _custom/*:Object*/ = null;
-		public static function initI18n(dictionary/*:Object*/, custom/*:Object*/):Void {
+		private static var _dictionary:Object = null;
+		private static var _custom:Object = null;
+		public static function initI18n(dictionary:Object, custom:Object):Void {
 			StaticFunctions.assert(_dictionary==null, ["You called T.initI18n twice!"]);
 			_dictionary = dictionary;
 			_custom = custom;
 		}
 		
-		// for customization
-		public static function custom(key:String, defaultValue/*:Object*//*Type*/)/*:Object*//*Type*/ {
-			var res/*:Object*/ = _custom[key];
+		// for customization, e.g., the frame-rate of the game.
+		public static function custom(key:String, defaultValue:Object/*Type*/):Object/*Type*/ {
+			var res:Object = _custom[key];
 			return res==null ? defaultValue : res;
 		}
 		
 		// for internationalization	
 		// i18n stands for "i"(nternationalizatio)"n"	
 		public static function i18n(str:String):String { //internationalization			
-			var res:String = _dictionary[str];
-			return res==null ? str : res;
+			var res:Object = _dictionary[str];
+			return res==null ? str : res.toString();
 		}		
-		public static function i18nReplace(str:String, replacement/*:Object*/):String {
+		public static function i18nReplace(str:String, replacement:Object):String {
 			var res:String = i18n(str);
 			for (var key:String in replacement) {
 				res = StaticFunctions.replaceAll(res, "$"+key+"$", ''+replacement[key]); 

@@ -21,7 +21,7 @@ package come2play_as3.api.auto_generated {
 			this.score = parameters[pos++];
 		}
 		override public function getParametersAsString():String { return 'score=' + JSON.stringify(score); }
-		override public function getFunctionId():int { return -106; }
+		override public function getFunctionId():int { return -107; }
 		override public function getClassName():String { return 'API_DoConnectedSetScore'; }
 		override public function getMethodName():String { return 'doConnectedSetScore'; }
 		override public function getFieldNames():Array { return ['score']; }

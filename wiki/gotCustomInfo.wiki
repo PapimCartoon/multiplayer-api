@@ -19,7 +19,11 @@ infoEntries -  an Array of [InfoEntry] elements, each containing a key and its c
 
 === Available keys===
 
-1. *`CONTAINER_logoFullUrl` :*  `logoFullUrl` is a full URL (starting with `http://`) 
+All keys provided have a static String representing them in the [ClientGameAPI], the available static string are:
+
+1. *CUSTOM_INFO_KEY_myUserId :* represents the unique user Id of the player.
+
+2. *CUSTOM_INFO_KEY_logoFullUrl :*  represents a full URL (starting with `http://`) 
 That points to a logo SWF or Jpg file of 70x70 pixels in diameter, preferably vector based.
 
 The game should place the logo in various places in the game
@@ -35,21 +39,21 @@ Then modify the logo movie clip (called `logoMovieClip`):
   logoMovieClip._yscale = 40;
   }}}
  
-2. * `CONTAINER_gameStageX` :* - represents the x value where the game is positioned in the container, because the container holds many features such as a chat,
+3. * CUSTOM_INFO_KEY_gameStageX :* - represents the x value where the game is positioned in the container, because the container holds many features such as a chat,
 turn time, playing users and more. therefore your game will not always be positioned at x = 0 and y = 0,and then in case you want to make calculations
 based on the absolute stageX and StageY you should subtract these values
 
-3.*`CONTAINER_gameStageY` :       * - represents the y value where the game is positioned in the container. see explanation above.
+4.*CUSTOM_INFO_KEY_gameStageY :       * - represents the y value where the game is positioned in the container. see explanation above.
 
-4.*`CONTAINER_gameHeight` :       * - represents the height at which the game will be shown( in case you game can be stretched and shrinked)
+5.*CUSTOM_INFO_KEY_gameHeight :       * - represents the height at which the game will be shown( in case you game can be stretched and shrinked)
 
-5.*`CONTAINER_gameWidth` :        * -represents the width at which the game will be shown( in case you game can be stretched and shrinked)
+6.*CUSTOM_INFO_KEY_gameWidth :        * -represents the width at which the game will be shown( in case you game can be stretched and shrinked)
 
-6.*`CONTAINER_gameFrameRate` :    * - represents the frame rate at which your game will run.
+7.*CUSTOM_INFO_KEY_gameFrameRate :    * - represents the frame rate at which your game will run.
  
-7.*`CONTAINER_seconds_per_move` :  * - `seconds_per_move` holds the amount of second's allotted to each move in the game in games where [doAllSetTurn] `milliSecondsInTurn` is set to -1  
+8.*CUSTOM_INFO_KEY_secondsPerMove :  * - represents the amount of second's allotted to each move in the game in games where [doAllSetTurn] `milliSecondsInTurn` is set to -1  
 
-8.*`CONTAINER_seconds_per_match` : * - `seconds_per_match` holds the amount of seconds allotted to the entire game
+9.*CUSTOM_INFO_KEY_secondsPerMatch : * - represents the amount of seconds allotted to the entire game
 
 
 === Example ===

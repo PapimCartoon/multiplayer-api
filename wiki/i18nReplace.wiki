@@ -1,0 +1,32 @@
+#summary Translate dynamic sentences			
+{{{
+T.i18nReplace(str:String,replacement:Object)
+}}}
+
+=== Description ===
+
+This function helps you to translate your game to different languages thus reaching a wider audience.
+this function should be used with dynamic sentences.
+
+=== Parameters ===
+
+str - a sentence in English to translate to different languages
+
+replacement - the replacement for the dynamic values in your sentences be named logically
+
+=== Returns ===
+
+A translated version of the dynamic sentence on the users language.
+
+
+=== Example ===
+
+You are creating a game of battleShips, and you want the sentence "Name you have lost X ship",where X is a dynamic number and Name is the name of the user,
+to be translated for each user to his language, what you should do is :
+{{{
+var userName:String = "something";
+var shipLost:int = 3;
+T.i18nReplace("$userName$ you have lost $shipLost$ ship",{userName: userName ,shipLost: shipLost });
+
+}}}
+			

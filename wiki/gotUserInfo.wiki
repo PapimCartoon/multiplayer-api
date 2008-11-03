@@ -10,7 +10,7 @@ gotUserInfo(userId:int, infoEntries:Array/*InfoEntry*/)
 and transferees a user specific data about him.
 it will be called for each user that connects (whether that user will be a player or viewer), and whenever the user info changes (e.g., if the user changed his nick name).
 
-see alson [gotUserDisconnected]
+see also [gotUserDisconnected]
 
 === Parameters received===
 
@@ -20,11 +20,13 @@ infoEntries -  an Array of [InfoEntry] elements, each containing a key and its c
 
 === Available keys===
 
-  #. *`name` :*  The nick name of the user.
-  #. *`avatar_url` :* Full URL of the avatar of the user.
-  #. *`supervisor` :* What is the supervisor status of this user (either! NormalUser, MiniSupervisor, Supervisor, or Admin).
-  #. *`credibility` :* The credibility of the user is a number between 0 and 100.
- 
+All keys provided have a static String representing them in the [ClientGameAPI], the available static string are:
+
+  #. *USER_INFO_KEY_name :*  The nick name of the user.
+  #. *USER_INFO_KEY_avatar_url :* Full URL of the avatar of the user.
+  #. *USER_INFO_KEY_supervisor :* What is the supervisor status of this user (either! NormalUser, MiniSupervisor, Supervisor, or Admin).
+  #. *USER_INFO_KEY_credibility :* The credibility of the user is a number between 0 and 100.
+  #. *USER_INFO_KEY_game_rating:* The skill of the user in the specific game, when 1500 means neutral
 
 ===Important note 1:===
 

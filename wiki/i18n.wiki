@@ -1,0 +1,29 @@
+#summary Translate static sentences
+{{{
+T.i18n(str:String)
+}}}
+
+=== Description ===
+
+This function helps you to translate your game to different languages thus reaching a wider audience.
+this function should only be used on static whole sentences.
+
+=== Parameters ===
+
+str - a sentence in English to translate to different languages
+
+=== Returns ===
+
+A translated version of the sentence on the users language.
+
+
+=== Example ===
+
+You are creating a game of battleShips, and you want the sentence "Sir you have lost a ship" to be translated for each user to his language,
+what you should do is :
+{{{
+
+T.i18n("Sir you have lost a ship")
+
+}}}
+			

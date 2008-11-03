@@ -47,10 +47,13 @@ gotRequestStateCalculation(serverEntries:Array/*ServerEntry*/)
 gotKeyboardEvent(isKeyDown:Boolean, charCode:int, keyCode:int, keyLocation:int, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean)
 gotMatchEnded(finishedPlayerIds:Array/*int*/)
 gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, extraMatchInfo:Object, matchStartedTime:int, serverEntries:Array/*ServerEntry*/)
-gotMyUserId(myUserId:int)
 gotUserDisconnected(userId:int)
 gotUserInfo(userId:int, infoEntries:Array/*InfoEntry*/)
 }}}
+
+Operations are functions that your _game_ may call,
+and callbacks are functions that the _container_ may call on your game.
+Your class may override some of the callbacks and respond appropriately to them; it is not mandatory to override _all_ the callbacks.
 
 ==Auxiliary functions==
 
@@ -61,11 +64,18 @@ animationEnded()
 getServerEntry(Key:Object)
 }}}
 
+==Auxiliary classes ==
+
+=== T ===
+
+A class devoted to translating your game automatically, and helping you transfer custom info to your game.
+{{{
+T.i18n(str:String)
+T.i18nReplace(str:String,replacement:Object)
+T.custom(key:String,defaultValue:Object)
+}}}
 
 
-Operations are functions that your _game_ may call,
-and callbacks are functions that the _container_ may call on your game.
-Your class may override some of the callbacks and respond appropriately to them; it is not mandatory to override _all_ the callbacks.
 
 You may call an operation (except [doRegisterOnServer],[doAllFoundHacker] and [doTrace]) only when the game is in progress,
 i.e., there is a player that hasn't finished playing.
@@ -91,18 +101,18 @@ i.e., there is a player that hasn't finished playing.
 || [gotKeyboardEvent] || Called to pass keyboard events (see KeyboardEvent) ||
 || [gotMatchEnded] || Called when the match is over ||
 || [gotMatchStarted] || Called when a match starts ||
-|| [gotMyUserId] || Called to pass your userId ||
 || [gotUserDisconnected] || Called to inform that a user disconnected ||
 || [gotUserInfo] || Called to pass user specific info, e.g., user name or avatar ||
 || [getServerEntry]|| Call it to get a specific [ServerEntry] by its key||
 || [animationStarted] || Call this function when animation starts ||
 || [animationEnded] || Call this function when animation ends ||
-
+|| [i18n] || call this function with a sentence in English the sentence will be translated according to the language of the playing user ||
+|| [i18nReplace] || call this function on a dynamic sentence in English the sentence will be translated according to the language of the playing user ||
+|| [custom] || call with the key of a custom info entry and you will get its value  ||
 
 === Initialization: order of the first callbacks === 
-The first callback is `gotMyUserId`,
-then you may get `gotCustomInfo` and `gotUserInfo`.
-Then, when a match starts you will get `gotMatchStarted`.
+The first callback is `gotCustomInfo`, then you get `gotUserInfo`.
+afterwards when a match starts you will get `gotMatchStarted`.
 
 === Viewers and players === 
 The set of connected users is partitioned into players and viewers.

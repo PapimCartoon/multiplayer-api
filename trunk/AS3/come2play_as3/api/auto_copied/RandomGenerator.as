@@ -25,7 +25,7 @@ package come2play_as3.api.auto_copied
 		 */
 		private var seed:uint;
 		public function RandomGenerator(seed:uint) {
-			if (seed==0) throw new Error("Do not use 0 as a seed!");
+			if (seed==0) throw new Error("Do not use a seed of 0!");
 			this.seed = seed;
 		}
 		

@@ -26,7 +26,7 @@ package emulator.auto_generated {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		override public function getFunctionId():int { return -114; }
+		override public function getFunctionId():int { return -115; }
 		override public function getClassName():String { return 'API_DoAllSetTurn'; }
 		override public function getMethodName():String { return 'doAllSetTurn'; }
 		override public function getFieldNames():Array { return ['userId', 'milliSecondsInTurn']; }

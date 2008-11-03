@@ -22,7 +22,7 @@ package emulator.auto_generated {
 			this.userEntries = parameters[pos++];
 		}
 		override public function getParametersAsString():String { return 'requestId=' + JSON.stringify(requestId)+', userEntries=' + JSON.stringify(userEntries); }
-		override public function getFunctionId():int { return -107; }
+		override public function getFunctionId():int { return -108; }
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 

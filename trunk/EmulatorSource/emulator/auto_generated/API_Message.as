@@ -33,5 +33,6 @@ package emulator.auto_generated {
 		public static const CUSTOM_INFO_KEY_gameHeight:String = "CONTAINER_gameHeight";
 		public static const CUSTOM_INFO_KEY_gameWidth:String = "CONTAINER_gameWidth";
 		public static const CUSTOM_INFO_KEY_gameFrameRate:String = "CONTAINER_gameFrameRate";
+		public static const CUSTOM_INFO_KEY_myUserId:String = "CONTAINER_myUserId";
 	}
 }

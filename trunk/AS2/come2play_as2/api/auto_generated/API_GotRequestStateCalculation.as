@@ -23,7 +23,7 @@ import come2play_as2.api.auto_generated.*;
 			this.serverEntries = parameters[pos++];
 		}
 		/*override*/ public function getParametersAsString():String { return 'requestId=' + JSON.stringify(requestId)+', serverEntries=' + JSON.stringify(serverEntries); }
-		/*override*/ public function getFunctionId():Number { return -108; }
+		/*override*/ public function getFunctionId():Number { return -109; }
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 

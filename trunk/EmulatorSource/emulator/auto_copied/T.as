@@ -71,7 +71,7 @@ package emulator.auto_copied
 			_custom = custom;
 		}
 		
-		// for customization
+		// for customization, e.g., the frame-rate of the game.
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
@@ -83,8 +83,8 @@ package emulator.auto_copied
 		// for internationalization	
 		// i18n stands for "i"(nternationalizatio)"n"	
 		public static function i18n(str:String):String { //internationalization			
-			var res:String = _dictionary[str];
-			return res==null ? str : res;
+			var res:Object = _dictionary[str];
+			return res==null ? str : res.toString();
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 

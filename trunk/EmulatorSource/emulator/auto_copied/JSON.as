@@ -107,351 +107,354 @@ package emulator.auto_copied
 	        // E.g.,  { $Enum$ name:"NormalUser" , type:"come2play_as3.auto_generated::EnumSupervisor"}
 	        return argToString;                 
 	    }
-	    private static function object2JSON(arg:Object):String {
-	    	var res:Array = [];
-        	// I want deterministic output, so sort the keys
-        	var keys:Array = [];
+	    public static function getSortedKeys(arg:Object):Array/*String*/ {
+	    	var keys:Array = [];
+        	for (var key:String in arg) 
+        		keys.push(key);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-        	for (var key:String in arg) 
-        		keys.push(key);
         	keys.sort();
+        	return keys;
+	    }
+	    private static function object2JSON(arg:Object):String {
+	    	var res:Array = [];
+        	// I want deterministic output, so sort the keys
+        	var keys:Array = getSortedKeys(arg);
         	for each (var z:String in keys) {
                 res.push( stringify(z) + ':' + stringify(arg[z]) );
             }
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
             return res.join(" , ");	    	
 	    }
         private function white():void {
             while (ch) {
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
                 if (ch <= ' ') {
                     this.next();
                 } else if (ch == '/') {
                     switch (this.next()) {
                         case '/':
                             while (this.next() && ch != '\n' && ch != '\r') {}
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                             break;
                         case '*':
                             this.next();
                             for (;;) {
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
                                 if (ch) {
                                     if (ch == '*') {
                                         if (this.next() == '/') {
                                             next();
                                             break;
                                         }
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                                     } else {
                                         this.next();
                                     }
                                 } else {
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
                                     throwError("Unterminated comment");
                                 }
                             }
                             break;
                         default:
                             throwError("Syntax error");
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                     }
                 } else {
                     break;
                 }
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
             }
         }
 
         private function throwError(m:String):void {
             StaticFunctions.throwError('Error converting a string to a flash object: '+m + "\nError in position="+(at-1)+" containing character=' "+text.charAt(at-1)+" '\nThe entire string:\n'"+text+"'\nThe successfully parsed string:\n'"+text.substring(0,at-1)+"'\n"+"The string should be in a format that is a legal ActionScript3 literal (including Boolean, String, Array, int, or Object). For example, the following are legal strings:\n"+ 	"'I\\'m a legal, string!\\n'\n"+"['an','array',42, null, true, false, -42, 'unicode=\\u05D0']\n"+"{ an : 'object field', 'foo bar' : 'other field' }\n"   	);
         }
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
         private function next():String {
             ch = text.charAt(at);
             at += 1;
             return ch;
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
         }
         private function str():String {
             var i:int, s:String = '', t:int, u:int;
             var outer:Boolean = false;
 
             if (ch == '"' || ch == "'") {
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 				var firstApos:String = ch;
                 while (this.next()) {
                     if (ch == firstApos) {
                         this.next();
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
                         return s;
                     } else if (ch == '\\') {
                         switch (this.next()) {
                         case 'b':
                             s += '\b';
                             break;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                         case 'f':
                             s += '\f';
                             break;
                         case 'n':
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
                             s += '\n';
                             break;
                         case 'r':
                             s += '\r';
                             break;
                         case 't':
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                             s += '\t';
                             break;
                         case 'u':
                             u = 0;
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
                             for (i = 0; i < 4; i += 1) {
                                 t = parseInt(this.next(), 16);
                                 if (!isFinite(t)) {
                                     outer = true;
                                     break;
                                 }
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                                 u = u * 16 + t;
                             }
                             if(outer) {
                                 outer = false;
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
                                 break;
                             }
                             s += String.fromCharCode(u);
                             break;
                         default:
                             s += ch;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                         }
                     } else {
                         s += ch;
                     }
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
                 }
             } else {
 				// if the user didn't use apostrophies ("...") , then the string goes until we find a special symbol: ' " , : [ ] {}   
 				do {
 					if (ch==',' || ch=='"' || ch=="'" || ch=='[' || ch=="]" || ch=='{' || ch=="}" || ch==':' || ch==' ' || ch=='\b' || ch=='\f' || ch=='\n' || ch=='\r' || ch=='\t') {
 						break;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 					} else
 						s += ch;
 				} while (this.next());
 				if (s=='') throwError("Bad string: a string without \"...\" must be only alpha-numeric");
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 				return s; 
 			}
             throwError("Bad string"); // cannot happen
             return "";
         }
 
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
         private function arr():Array {
             var a:Array = [];
 
             if (ch == '[') {
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
                 this.next();
                 this.white();
                 if (ch == ']') {
                     this.next();
                     return a;
                 }
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                 while (ch) {
                     a.push(this.value());
                     this.white();
                     if (ch == ']') {
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
                         this.next();
                         return a;
                     } else if (ch != ',') {
                         break;
                     }
                     this.next();
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                     this.white();
                 }
             }
             throwError("Bad array");
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
             return [];
         }
 
         private function obj():Object {
             var k:String, o:Object = {};
 
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
             if (ch == '{') {
                 this.next();
                 this.white();
                 
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 				// E.g., trace( SerializableClass.deserialize( JSON.parse("{ $API_DoStoreState$ userEntries:[{ $UserEntry$ key:0 , value:{ row:0 , col:0} , isSecret:false}]}")) );
                 if (ch == '$') {
                 	// special syntax for SerializableClass to make toString more readable                	
                     this.next();
                     var classNameArr:Array = [];
                     while (ch!='$') {
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                     	classNameArr.push(ch);
                     	this.next();                    	
                     }
                     var className:String = classNameArr.join("");
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
                     this.next();
                 	this.white();
                     o[SerializableClass.CLASS_NAME_FIELD] = className;                    		
                 }
                 if (ch == '}') {
                     this.next();
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                     return o;
                 }
                 while (ch) {
                     k = this.str();
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
                     this.white();
                     if (ch != ':') {
                         break;
                     }
                     this.next();
                     o[k] = this.value();
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                     this.white();
                     if (ch == '}') {
                         this.next();
                         return o;
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
                     } else if (ch != ',') {
                         break;
                     }
                     this.next();
                     this.white();
                 }
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
             }
             throwError("Bad object");
             return {};
         }
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 
         private function num():Number {
             var n:String = '';
             var v:Number;
 
             if (ch == '-') {
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                 n = '-';
                 this.next();
             }
             while (ch >= '0' && ch <= '9') {
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
                 n += ch;
                 this.next();
             }
             if (ch == '.') {
                 n += '.';
                 this.next();
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                 while (ch >= '0' && ch <= '9') {
                     n += ch;
                     this.next();
                 }
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
             }
             if (ch == 'e' || ch == 'E') {
                 n += ch;
                 this.next();
                 if (ch == '-' || ch == '+') {
                     n += ch;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                     this.next();
                 }
                 while (ch >= '0' && ch <= '9') {
                     n += ch;
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
                     this.next();
                 }
             }
             v = Number(n);
 			//trace("v="+v+" n="+n);
             if (!isFinite(v)) {
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                 throwError("Bad number");
             }
             return v;
         }
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 
         private function word():Object {
 			var oldAt:int = at;
             switch (ch) {
                 case 't':
                     if (this.next() == 'r' && this.next() == 'u' &&
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                             this.next() == 'e') {
                         this.next();
                         return true;
                     }
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
                     break;
                 case 'f':
                     if (this.next() == 'a' && this.next() == 'l' &&
                             this.next() == 's' && this.next() == 'e') {
                         this.next();
                         return false;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
                     }
                     break;
                 case 'n':
                     if (this.next() == 'u' && this.next() == 'l' &&
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
                             this.next() == 'l') {
                         this.next();
                         return null;
                     }
                     break;
             }
-			// backtrack and parse as string
-			at = oldAt;
-			return str();
-            //throwError("Syntax error");
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			at = oldAt;
+			return str();
+            //throwError("Syntax error");
         }
 
         private function value():Object {
@@ -459,12 +462,12 @@ package emulator.auto_copied
             switch (ch) {
                 case '{':
                     return this.obj();
-                case '[':
-                    return this.arr();
-                case '"':
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+                case '[':
+                    return this.arr();
+                case '"':
                 case "'":
                     return this.str();
                 case '-':
@@ -472,12 +475,12 @@ package emulator.auto_copied
                 default:
                     return ch >= '0' && ch <= '9' ? this.num() : this.word();
             }
-            return {};
-        }
-	    public function p_parse(_text:String):Object {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+            return {};
+        }
+	    public function p_parse(_text:String):Object {
 	        text = _text;
             at = 0;
 	        ch = ' ';
@@ -485,12 +488,12 @@ package emulator.auto_copied
 	        this.white();
 	        if (at!=_text.length+1) throwError("Could not parse the entire string, string length="+_text.length+" and the parsing reached position="+(at-1));
 	        return res;
-	    }
-	    public static function parse(_text:String):Object {
-	    	var json:JSON = new JSON();
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	    }
+	    public static function parse(_text:String):Object {
+	    	var json:JSON = new JSON();
 	    	return json.p_parse(_text);
 	    }
 	    
@@ -498,5 +501,8 @@ package emulator.auto_copied
 		public static function instanceToString(className:String, values:Object):String {			
 			return "{ $"+className+"$ " + object2JSON(values) + "}"; // see parse
 		}
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 	}
 }

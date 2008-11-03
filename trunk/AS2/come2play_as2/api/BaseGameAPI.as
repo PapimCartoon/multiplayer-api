@@ -13,6 +13,7 @@ import come2play_as2.api.*;
 		public static var MAX_ANIMATION_MILLISECONDS:Number = 10*1000; // max 10 seconds for animations
 		
 		private var msgsInTransaction:Array/*API_Message*/ = null;
+		private var serverStateMiror:ObjectDictionary;
 		private var currentCallback:API_Message = null;
 		private var hackerUserId:Number = -1;
 		private var runningAnimationsNumber:Number = 0;
@@ -43,7 +44,7 @@ import come2play_as2.api.*;
 		 * gotError is called whenever your overriding 'got' methods
 		 * 	throw an Error.
 		 */
-		public function gotError(withObj/*:Object*/, err:Error):Void {
+		public function gotError(withObj:Object, err:Error):Void {
 			sendMessage( API_DoAllFoundHacker.create(hackerUserId, 
 				"Got error withObj="+JSON.stringify(withObj)+
 				" err="+AS3_vs_AS2.error2String(err)+
@@ -94,14 +95,17 @@ import come2play_as2.api.*;
 		/****************************
 		 * Below this line we only have private and overriding methods.
 		 */
-		private function checkContainer(val:Boolean):Void {
-			if (!val) throwError("We have an error in the container!");
+		private function checkInProgress(inProgress:Boolean, msg:API_Message):Void {
+			checkContainer(inProgress == (currentPlayerIds.length>0), ["The game must ",inProgress?"" : "not"," be in progress when passing msg=",msg]); 
+		}
+		private function checkContainer(val:Boolean, msg:Object):Void {
+			if (!val) throwError("We have an error in the container! msg="+msg);
 		}
 		private function subtractArray(arr:Array, minus:Array):Array {
 			var res:Array = arr.concat();
-			for (var i105:Number=0; i105<minus.length; i105++) { var o/*:Object*/ = minus[i105]; 
+			for (var i109:Number=0; i109<minus.length; i109++) { var o:Object = minus[i109]; 
 				var indexOf:Number = AS3_vs_AS2.IndexOf(res, o);
-				checkContainer(indexOf!=-1);
+				checkContainer(indexOf!=-1, ["Missing element ",o," in arr ",arr]);				
 				res.splice(indexOf, 1);
 			}
 			return res;
@@ -135,26 +139,38 @@ import come2play_as2.api.*;
         
         private function isNullKeyExistUserEntry(userEntries:Array/*UserEntry*/):Void
         {
-        	for (var i141:Number=0; i141<userEntries.length; i141++) { var userEntry:UserEntry = userEntries[i141]; 
+        	for (var i145:Number=0; i145<userEntries.length; i145++) { var userEntry:UserEntry = userEntries[i145]; 
         		if (userEntry.key == null)
         			throwError("key cannot be null !");
         	}
         }
         private function isNullKeyExistRevealEntry(revealEntries:Array/*RevealEntry*/):Void
         {
-        	for (var i148:Number=0; i148<revealEntries.length; i148++) { var revealEntry:RevealEntry = revealEntries[i148]; 
+        	for (var i152:Number=0; i152<revealEntries.length; i152++) { var revealEntry:RevealEntry = revealEntries[i152]; 
         		if (revealEntry.key == null)
         			throwError("key cannot be null !");
         	}
         }
         private function isNullKeyExist(keys:Array/*Object*/):Void
         {
-        	for (var i155:Number=0; i155<keys.length; i155++) { var key:String = keys[i155]; 
+        	for (var i159:Number=0; i159<keys.length; i159++) { var key:String = keys[i159]; 
         		if (key == null)
         			throwError("key cannot be null !");
         	}
         }
-        
+        private function updateMirorServerState(serverEntries:Array/*ServerEntry*/):Void
+        {
+        	for (var i166:Number=0; i166<serverEntries.length; i166++) { var serverEntry:ServerEntry = serverEntries[i166]; 
+        	    if (serverEntry.value == null)
+					serverStateMiror.remove(serverEntry.key);
+				else 
+					serverStateMiror.put(serverEntry.key,serverEntry);	
+        	}     	
+        }
+        public function getServerEntry(key:Object):ServerEntry
+        {
+        	return ServerEntry(serverStateMiror.getValue(key));
+        }
         
         /*override*/ public function gotMessage(msg:API_Message):Void {
         	try {
@@ -168,24 +184,45 @@ import come2play_as2.api.*;
 				
         		hackerUserId = -1;
 	    		if (msg instanceof API_GotStateChanged) {
-					checkContainer(currentPlayerIds.length>0);
+	    			checkInProgress(true,msg);
 	    			var stateChanged:API_GotStateChanged = API_GotStateChanged(msg);
 	    			if (stateChanged.serverEntries.length >= 1) {
+	    				updateMirorServerState(stateChanged.serverEntries);
 		    			var serverEntry:ServerEntry = stateChanged.serverEntries[0];
 		    			hackerUserId = serverEntry.storedByUserId;
 		    		}
 	    		} else if (msg instanceof API_GotMatchStarted) {
-					checkContainer(currentPlayerIds.length==0);
+	    			checkInProgress(false,msg);
+	    			serverStateMiror = new ObjectDictionary();
 					var matchStarted:API_GotMatchStarted = API_GotMatchStarted(msg);
+					updateMirorServerState(matchStarted.serverEntries);
 					currentPlayerIds = subtractArray(matchStarted.allPlayerIds, matchStarted.finishedPlayerIds);
-	    		} else if (msg instanceof API_GotMatchEnded) {
-					checkContainer(currentPlayerIds.length>0);
+	    		} else if (msg instanceof API_GotMatchEnded) {	    			
+	    			checkInProgress(true,msg);
 					var matchEnded:API_GotMatchEnded = API_GotMatchEnded(msg);
 					currentPlayerIds = subtractArray(currentPlayerIds, matchEnded.finishedPlayerIds);
+				} else if (msg instanceof API_GotCustomInfo) {	 					    			
+	    			checkInProgress(false,msg);
+					var customInfo:API_GotCustomInfo = API_GotCustomInfo(msg);
+					var i18nObj:Object = {};
+					var customObj:Object = {};
+					for (var i212:Number=0; i212<customInfo.infoEntries.length; i212++) { var entry:InfoEntry = customInfo.infoEntries[i212]; 
+						var key:String = entry.key;
+						var value:Object = entry.value;	
+						if (key=="i18n")
+							i18nObj = value;
+						else
+							customObj[key] = value;
+					}		
+					T.initI18n(i18nObj, customObj); // can only be called once
+				} else if (msg instanceof API_GotKeyboardEvent) {						    			
+	    			checkInProgress(true,msg);
+				} else if (msg instanceof API_GotRequestStateCalculation) {						    			
+	    			checkInProgress(true,msg);					
 				}
 	    		var methodName:String = msg.getMethodName();
 	    		if (AS3_vs_AS2.isAS3 && !this.hasOwnProperty(methodName)) return;
-	    		var func:Function = this[methodName] /*as Function*/;
+				var func:Function = Function(this[methodName]);
 				if (func==null) return;
 				func.apply(this, msg.getMethodParameters());
         	} catch (err:Error) {

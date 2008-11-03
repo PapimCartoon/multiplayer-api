@@ -20,15 +20,14 @@ package come2play_as3.api.auto_generated {
 		public function gotCustomInfo(infoEntries:Array/*InfoEntry*/):void {}
 		public function gotUserInfo(userId:int, infoEntries:Array/*InfoEntry*/):void {}
 		public function gotUserDisconnected(userId:int):void {}
-		public function gotMyUserId(myUserId:int):void {}
 		public function gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, serverEntries:Array/*ServerEntry*/):void {}
 		public function gotMatchEnded(finishedPlayerIds:Array/*int*/):void {}
 		
 		public function doStoreState(userEntries:Array/*UserEntry*/):void { sendMessage( API_DoStoreState.create(userEntries) ); }
+		public function gotStateChanged(serverEntries:Array/*ServerEntry*/):void {}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		public function gotStateChanged(serverEntries:Array/*ServerEntry*/):void {}
 		
 		public function doConnectedSetScore(score:int):void { sendMessage( API_DoConnectedSetScore.create(score) ); }
 		public function doConnectedEndMatch(didWin:Boolean):void { sendMessage( API_DoConnectedEndMatch.create(didWin) ); }
@@ -38,7 +37,4 @@ package come2play_as3.api.auto_generated {
 		
 		
 	}
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 }

@@ -19,7 +19,7 @@ package emulator.auto_generated {
 			this.userEntries = parameters[pos++];
 		}
 		override public function getParametersAsString():String { return 'userEntries=' + JSON.stringify(userEntries); }
-		override public function getFunctionId():int { return -117; }
+		override public function getFunctionId():int { return -118; }
 		override public function getClassName():String { return 'API_DoStoreState'; }
 		override public function getMethodName():String { return 'doStoreState'; }
 		override public function getFieldNames():Array { return ['userEntries']; }

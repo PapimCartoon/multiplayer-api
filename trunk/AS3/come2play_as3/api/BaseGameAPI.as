@@ -99,14 +99,17 @@ package come2play_as3.api {
 		/****************************
 		 * Below this line we only have private and overriding methods.
 		 */
-		private function checkContainer(val:Boolean):void {
-			if (!val) throwError("We have an error in the container!");
+		private function checkInProgress(inProgress:Boolean, msg:API_Message):void {
+			checkContainer(inProgress == (currentPlayerIds.length>0), ["The game must ",inProgress?"" : "not"," be in progress when passing msg=",msg]); 
+		}
+		private function checkContainer(val:Boolean, msg:Object):void {
+			if (!val) throwError("We have an error in the container! msg="+msg);
 		}
 		private function subtractArray(arr:Array, minus:Array):Array {
 			var res:Array = arr.concat();
 			for each (var o:Object in minus) {
 				var indexOf:int = AS3_vs_AS2.IndexOf(res, o);
-				checkContainer(indexOf!=-1);
+				checkContainer(indexOf!=-1, ["Missing element ",o," in arr ",arr]);				
 				res.splice(indexOf, 1);
 			}
 			return res;
@@ -161,17 +164,16 @@ package come2play_as3.api {
         }
         private function updateMirorServerState(serverEntries:Array/*ServerEntry*/):void
         {
-        	for each(var serverEntry:ServerEntry in serverEntries)
-        	{
-        	    if(serverEntry.value == null)
-						serverStateMiror.remove(serverEntry.key);
-				else
+        	for each (var serverEntry:ServerEntry in serverEntries) {
+        	    if (serverEntry.value == null)
+					serverStateMiror.remove(serverEntry.key);
+				else 
 					serverStateMiror.put(serverEntry.key,serverEntry);	
         	}     	
         }
         public function getServerEntry(key:Object):ServerEntry
         {
-        	return serverStateMiror.getValue(key) as ServerEntry;
+        	return /*as*/serverStateMiror.getValue(key) as ServerEntry;
         }
         
         override public function gotMessage(msg:API_Message):void {
@@ -186,27 +188,45 @@ package come2play_as3.api {
 				
         		hackerUserId = -1;
 	    		if (msg is API_GotStateChanged) {
-					checkContainer(currentPlayerIds.length>0);
-	    			var stateChanged:API_GotStateChanged = msg as API_GotStateChanged;
+	    			checkInProgress(true,msg);
+	    			var stateChanged:API_GotStateChanged = /*as*/msg as API_GotStateChanged;
 	    			if (stateChanged.serverEntries.length >= 1) {
 	    				updateMirorServerState(stateChanged.serverEntries);
 		    			var serverEntry:ServerEntry = stateChanged.serverEntries[0];
 		    			hackerUserId = serverEntry.storedByUserId;
 		    		}
 	    		} else if (msg is API_GotMatchStarted) {
+	    			checkInProgress(false,msg);
 	    			serverStateMiror = new ObjectDictionary();
-					checkContainer(currentPlayerIds.length==0);
-					var matchStarted:API_GotMatchStarted = msg as API_GotMatchStarted;
+					var matchStarted:API_GotMatchStarted = /*as*/msg as API_GotMatchStarted;
 					updateMirorServerState(matchStarted.serverEntries);
 					currentPlayerIds = subtractArray(matchStarted.allPlayerIds, matchStarted.finishedPlayerIds);
-	    		} else if (msg is API_GotMatchEnded) {
-					checkContainer(currentPlayerIds.length>0);
-					var matchEnded:API_GotMatchEnded = msg as API_GotMatchEnded;
+	    		} else if (msg is API_GotMatchEnded) {	    			
+	    			checkInProgress(true,msg);
+					var matchEnded:API_GotMatchEnded = /*as*/msg as API_GotMatchEnded;
 					currentPlayerIds = subtractArray(currentPlayerIds, matchEnded.finishedPlayerIds);
+				} else if (msg is API_GotCustomInfo) {	 					    			
+	    			checkInProgress(false,msg);
+					var customInfo:API_GotCustomInfo = /*as*/msg as API_GotCustomInfo;
+					var i18nObj:Object = {};
+					var customObj:Object = {};
+					for each (var entry:InfoEntry in customInfo.infoEntries) {
+						var key:String = entry.key;
+						var value:Object = entry.value;	
+						if (key=="i18n")
+							i18nObj = value;
+						else
+							customObj[key] = value;
+					}		
+					T.initI18n(i18nObj, customObj); // may be called several times because we may pass different 'secondsPerMatch' every time a game starts
+				} else if (msg is API_GotKeyboardEvent) {						    			
+	    			checkInProgress(true,msg);
+				} else if (msg is API_GotRequestStateCalculation) {						    			
+	    			checkInProgress(true,msg);					
 				}
 	    		var methodName:String = msg.getMethodName();
 	    		if (AS3_vs_AS2.isAS3 && !this.hasOwnProperty(methodName)) return;
-	    		var func:Function = this[methodName] as Function;
+				var func:Function = /*as*/this[methodName] as Function;
 				if (func==null) return;
 				func.apply(this, msg.getMethodParameters());
         	} catch (err:Error) {
@@ -234,7 +254,7 @@ package come2play_as3.api {
         		return;
         	}
         	if (msg is API_DoStoreState) {
-        		var doStoreStateMessage:API_DoStoreState = msg as API_DoStoreState;
+        		var doStoreStateMessage:API_DoStoreState = /*as*/msg as API_DoStoreState;
         		if (doStoreStateMessage.userEntries.length < 1 )
         			throwError("You have to call doStoreState with at least 1 parameter !");
         		if (isInTransaction())
@@ -245,47 +265,47 @@ package come2play_as3.api {
 			}  
 			else if (msg is API_DoAllStoreState)
 			{
-				var doAllStoreStateMessage:API_DoAllStoreState = msg as API_DoAllStoreState;
+				var doAllStoreStateMessage:API_DoAllStoreState = /*as*/msg as API_DoAllStoreState;
         		if (doAllStoreStateMessage.userEntries.length < 1 )
         			throwError("You have to call doAllStoreStateMessage with at least 1 UserEntry !");
 				isNullKeyExistUserEntry(doAllStoreStateMessage.userEntries);
 			}   
 			else if (msg is API_DoAllEndMatch)
 			{
-				var doAllEndMatchMessage:API_DoAllEndMatch = msg as API_DoAllEndMatch;
+				var doAllEndMatchMessage:API_DoAllEndMatch = /*as*/msg as API_DoAllEndMatch;
         		if (doAllEndMatchMessage.finishedPlayers.length < 1 )
         			throwError("You have to call doAllEndMatch with at least 1 PlayerMatchOver !");
 			} 
 			else if (msg is API_DoAllRevealState) 
 			{
-				var doAllRevealState:API_DoAllRevealState = msg as API_DoAllRevealState;
+				var doAllRevealState:API_DoAllRevealState = /*as*/msg as API_DoAllRevealState;
         		if (doAllRevealState.revealEntries.length < 1 )
         			throwError("You have to call doAllRevealState with at least 1 RevealEntry !");
         		isNullKeyExistRevealEntry(doAllRevealState.revealEntries);
 			} 
 			else if (msg is API_DoAllRequestStateCalculation) 
 			{
-				var doAllRequestStateCalculation:API_DoAllRequestStateCalculation = msg as API_DoAllRequestStateCalculation;
+				var doAllRequestStateCalculation:API_DoAllRequestStateCalculation = /*as*/msg as API_DoAllRequestStateCalculation;
         		if (doAllRequestStateCalculation.keys.length < 1 )
         			throwError("You have to call doAllRequestStateCalculation with at least 1 key !");
         		isNullKeyExist(doAllRequestStateCalculation.keys);
 			}	
 			else if (msg is API_DoAllSetTurn) 
 			{
-				var doAllSetTurn:API_DoAllSetTurn = msg as API_DoAllSetTurn;
+				var doAllSetTurn:API_DoAllSetTurn = /*as*/msg as API_DoAllSetTurn;
         		if (AS3_vs_AS2.IndexOf(currentPlayerIds, doAllSetTurn.userId) == -1 )
         			throwError("You have to call doAllSetTurn with a player user ID !");
 			}
 			else if (msg is API_DoAllShuffleState) 
 			{
-				var doAllShuffleState:API_DoAllShuffleState = msg as API_DoAllShuffleState;
+				var doAllShuffleState:API_DoAllShuffleState = /*as*/msg as API_DoAllShuffleState;
         		if (doAllShuffleState.keys.length < 1 )
         			throwError("You have to call doAllShuffleState with at least 1 key !");
         		isNullKeyExist(doAllShuffleState.keys);
 			}
 			else if (msg is API_DoAllStoreStateCalculation) 
 			{
-				var doAllStoreStateCalculations:API_DoAllStoreStateCalculation = msg as API_DoAllStoreStateCalculation;
+				var doAllStoreStateCalculations:API_DoAllStoreStateCalculation = /*as*/msg as API_DoAllStoreStateCalculation;
         		if (doAllStoreStateCalculations.userEntries.length < 1 )
         			throwError("You have to call doAllStoreStateCalculations with at least 1 UserEntry !");
 				isNullKeyExistUserEntry(doAllStoreStateCalculations.userEntries);

@@ -16,20 +16,26 @@ class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 	}
 	public static function isArray(o:Object):Boolean {
 		return (typeof o)=="object" && o.length!=null;
+	}	
+	public static function isSerializableClass(o:Object):Boolean {
+		return o instanceof SerializableClass;
 	}
 	public static function convertToInt(o):Number {
 		return o==null ? 0 : Math.round(o);
 	}
 	public static function asBoolean(o):Boolean {
-		return Boolean(o);
+		return o;
 	}
 	public static function asString(o):String {
-		return String(o);
+		return o;
 	}
 	public static function as_int(o):Number {
-		return Math.round(o);
+		return o;
 	}
 	public static function asArray(o):Array {
+		return o;
+	}	
+	public static function asSerializableClass(o):SerializableClass {
 		return o;
 	}	
 	public static function delegate(target:Object, handler:Function):Function {
@@ -85,10 +91,12 @@ class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 		return res;
 	}	
 	public static function loadMovieIntoNewChild(graphics:MovieClip, url:String):MovieClip {
+		
 		// create a new child, and load the url into that new child
 		var depth:Number = graphics.getNextHighestDepth();
 		var res:MovieClip = graphics.createEmptyMovieClip("LOADMOVIE"+depth,depth);
 		var inner:MovieClip = res.createEmptyMovieClip("INNER",0); // I need another inner clip, because if we immediately call setVisible(res, false), then when the movie is later loaded then the visible turns back to true.
+		trace("Loading url="+url+" into newMovie="+inner);
 		inner.loadMovie(url);
 		return res;
 	}
@@ -184,7 +192,36 @@ class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 	}
 
 
-	
+	/**
+	 * XML differences between AS2 and AS3.
+	 * In AS2 I use XMLNode.
+	 */	 
+	public static function xml_create(str:String):XMLNode {
+		return (new XML(str)).firstChild;
+	}
+	public static function xml_getName(xml:XMLNode):String {
+		return xml.nodeName;
+	}
+	public static function xml_getSimpleContent(xml:XMLNode):String {
+		var res:String = xml.nodeValue;
+		if (res!=null) return res;
+		res = xml.firstChild.nodeValue;
+		return res==null ? '' : res;
+	}
+	public static function xml_getChildren(xml:XMLNode):Array/*XMLNode*/ {
+		var res:Array = [];
+		for (var i:Number =0 ; i<xml.childNodes.length; i++) {
+			var child:XMLNode = xml.childNodes[i];
+			if (child.nodeName==null) continue;
+			res.push(child);
+		}
+		return res;			
+	}
+		
+
+	/**
+	 * Serialization and handling classes and classNames
+	 */	
 	// we use CLASS_NAME_FIELD (because when we add CLASS_NAME_FIELD to the prototype, it is serialized in LocalConnection, so no point in having two properties with the same content) 
 	public static function getClassName(o:Object):String {
 		//typeof is not good enough! for SerializableClass I want to know the class name
@@ -197,7 +234,7 @@ class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 		if (res==null || res=='') return typeof o; 
 
 		// replace the last '.' with '::' (to use the same notation as in AS3)
-		trace('getClassName for o='+o+' res='+res);
+		//trace('getClassName for o='+o+' res='+res);
 		res = StaticFunctions.replaceLastOccurance(res, '.', '::');
 
 		prot[as2_class_name] = res;
@@ -213,14 +250,12 @@ class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 	}
 	
 	// For Serialization, Reflection, and in TestClientGameAPI
-	// (we use AS3 notation, where class name is:  PACKAGE1.PACKAGE2.PACKAGE3::CLASSNAME
+	// We use AS3 notation, where class name is:  PACKAGE1.PACKAGE2.PACKAGE3::CLASSNAME
 	public static function getClassByName(className:String):Object {
 		className = StaticFunctions.replaceLastOccurance(className, '::', '.');
 
 		return eval(className);
 	}
-
-	// for SerializableClass we only need getClassOfInstance and getFieldNames
 	public static function getClassOfInstance(instance:Object):Object {
 		//return instance.__proto__; // I couldn't create a new instance from the prototype
 		return getClassByName( getClassName(instance) );

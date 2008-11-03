@@ -26,7 +26,6 @@ package emulator.auto_generated {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		, new API_MethodsSummary('gotMyUserId', ['myUserId'], ['int'] )
 		, new API_MethodsSummary('gotMatchStarted', ['allPlayerIds', 'finishedPlayerIds', 'serverEntries'], ['Array/*int*/', 'Array/*int*/', 'Array/*ServerEntry*/'] )
 		, new API_MethodsSummary('gotMatchEnded', ['finishedPlayerIds'], ['Array/*int*/'] )
 		, new API_MethodsSummary('gotStateChanged', ['serverEntries'], ['Array/*ServerEntry*/'] )
@@ -36,10 +35,10 @@ package emulator.auto_generated {
 		, new API_MethodsSummary('doAllSetTurn', ['userId', 'milliSecondsInTurn'], ['int', 'int'] )
 		, new API_MethodsSummary('doAllRevealState', ['revealEntries'], ['Array/*RevealEntry*/'] )
 		, new API_MethodsSummary('doAllShuffleState', ['keys'], ['Array/*Object*/'] )
+		, new API_MethodsSummary('doAllRequestRandomState', ['key', 'isSecret'], ['Object', 'Boolean'] )
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		, new API_MethodsSummary('doAllRequestRandomState', ['key', 'isSecret'], ['Object', 'Boolean'] )
 		, new API_MethodsSummary('doAllFoundHacker', ['userId', 'errorDescription'], ['int', 'String'] )
 		, new API_MethodsSummary('doAllRequestStateCalculation', ['keys'], ['Array/*Object*/'] )
 		, new API_MethodsSummary('gotRequestStateCalculation', ['requestId', 'serverEntries'], ['int', 'Array/*ServerEntry*/'] )

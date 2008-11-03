@@ -24,7 +24,7 @@ package come2play_as3.api.auto_generated {
 			this.messages = parameters[pos++];
 		}
 		override public function getParametersAsString():String { return 'callback=' + JSON.stringify(callback)+', messages=' + JSON.stringify(messages); }
-		override public function getFunctionId():int { return -84; }
+		override public function getFunctionId():int { return -85; }
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 

@@ -36,6 +36,9 @@ public final class AS3_vs_AS2
 	public static function isArray(o:Object):Boolean {
 		return o is Array;
 	}
+	public static function isSerializableClass(o:Object):Boolean {
+		return o is SerializableClass;
+	}
 	public static function as_int(o:Object):int {
 		return o as int;
 	}
@@ -50,6 +53,9 @@ public final class AS3_vs_AS2
 	}
 	public static function asArray(o:Object):Array {
 		return o as Array;
+	}
+	public static function asSerializableClass(o:Object):SerializableClass {
+		return o as SerializableClass;
 	}
 	
 	public static function delegate(thisObj:Object, handler:Function, ... args):Function {
@@ -254,9 +260,29 @@ public final class AS3_vs_AS2
 				}
 				} 
 			);
-	}		
+	}
 
-
+	/**
+	 * XML differences between AS2 and AS3.
+	 * In AS2 I use XMLNode.
+	 */
+	public static function xml_create(str:String):XML {
+		return new XML(str);
+	}
+	public static function xml_getName(xml:XML):String {
+		return xml.name().toString();
+	}
+	public static function xml_getSimpleContent(xml:XML):String {
+		return xml.toString();
+	}
+	public static function xml_getChildren(xml:XML):Array/*XML*/ {
+		var list:XMLList = xml.children();
+		var res:Array/*XML*/ = [];
+		for each (var child:XML in list)
+			res.push(child);
+		return res;			
+	}
+		
 
 	/**
 	 * Serialization and handling classes and classNames

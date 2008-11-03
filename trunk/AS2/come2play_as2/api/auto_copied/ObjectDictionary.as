@@ -4,7 +4,7 @@ class come2play_as2.api.auto_copied.ObjectDictionary extends SerializableClass
 	// maps a hash of an object to an array of entries
 	// each entry is: [key,value]
 	//all the variables of this class are public because it extends SerializableClass
-	public var hashMap/*:Object*/;
+	public var hashMap:Object;
 	public var pSize:Number;
 	// the order of inserted keys and values is important in the API for server entries
 	public var allKeys:Array;
@@ -18,14 +18,14 @@ class come2play_as2.api.auto_copied.ObjectDictionary extends SerializableClass
 		allValues = [];
 	}
 	
-	private function getEntry(key/*:Object*/):Array {
+	private function getEntry(key:Object):Array {
 		return getEntry2(key, hashObject(key));
 	}
-	private function getEntry2(key/*:Object*/, hash:Number):Array {
+	private function getEntry2(key:Object, hash:Number):Array {
 		if (hashMap[hash]==null) return null;
 		var entries:Array = hashMap[hash];
 		for (var i26:Number=0; i26<entries.length; i26++) { var entry:Array = entries[i26]; 
-			var entryKey/*:Object*/ = entry[0];
+			var entryKey:Object = entry[0];
 			if (areEqual(entryKey,key)) 
 				return entry;
 			// not equal, let's check if someone changed the keys
@@ -45,20 +45,20 @@ class come2play_as2.api.auto_copied.ObjectDictionary extends SerializableClass
 	public function getKeys():Array {		
 		return allKeys;		
 	}
-	public function hasKey(key/*:Object*/):Boolean {
+	public function hasKey(key:Object):Boolean {
 		return getEntry(key)!=null;
 	}
-	public function getValue(key/*:Object*/)/*:Object*/ {
+	public function getValue(key:Object):Object {
 		var entry:Array = getEntry(key);
 		return entry==null ? null : entry[1];
 	}
-	public function remove(key/*:Object*/)/*:Object*/ {
+	public function remove(key:Object):Object {
 		var hash:Number = hashObject(key);
 		if (hashMap[hash]==null) return null;
 		var entries:Array = hashMap[hash];
 		for (var i:Number=0; i<entries.length; i++) {
 			var entry:Array = entries[i];
-			var oldKey/*:Object*/ = entry[0];
+			var oldKey:Object = entry[0];
 			if (areEqual(oldKey,key)) {
 				entries.splice(i,1);
 				pSize--;
@@ -73,12 +73,12 @@ class come2play_as2.api.auto_copied.ObjectDictionary extends SerializableClass
 		}
 		return null;
 	}
-	public function put(key/*:Object*/, value/*:Object*/):Void {
+	public function put(key:Object, value:Object):Void {
 		var hash:Number = hashObject(key);		
 		var entry:Array = getEntry2(key, hash);
 		if (entry==null) {
 			if (hashMap[hash]==null) hashMap[hash] = [];
-			var entries/*:Object*/ = hashMap[hash];
+			var entries:Object = hashMap[hash];
 			entries.push( [key, value] );
 			pSize++;
 			
@@ -88,7 +88,7 @@ class come2play_as2.api.auto_copied.ObjectDictionary extends SerializableClass
 			// replace value
 			entry[1] = value;		
 						
-			var oldKey/*:Object*/ = entry[0];
+			var oldKey:Object = entry[0];
 			var indexInAll:Number = AS3_vs_AS2.IndexOf(allKeys,oldKey);
 			allValues[indexInAll] = value;
 		}
@@ -96,7 +96,7 @@ class come2play_as2.api.auto_copied.ObjectDictionary extends SerializableClass
 	
 	// Some primes: Do I want to use them to hash an array?
 	// 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139
-	public static function hashObject(o/*:Object*/):Number {
+	public static function hashObject(o:Object):Number {
 		if (o==null) return 541;		
         if (AS3_vs_AS2.isBoolean(o))	
 			return o ? 523 : 521;		
@@ -128,7 +128,7 @@ class come2play_as2.api.auto_copied.ObjectDictionary extends SerializableClass
 	    }
        	return res; 
 	}
-	public static function areEqual(o1/*:Object*/, o2/*:Object*/):Boolean {
+	public static function areEqual(o1:Object, o2:Object):Boolean {
 		if (o1===o2) return true; // because false==[] or {} was true!
 		if (o1==null || o2==null) return false;
 		var t:String = typeof(o1);
@@ -139,7 +139,7 @@ class come2play_as2.api.auto_copied.ObjectDictionary extends SerializableClass
 			
 		if (t=="object") {
 			var x:String;	
-			var allFields/*:Object*/ = {};
+			var allFields:Object = {};
 			var c:Number = 0;	
 			for (x in o1) {
 				allFields[x] = true;

@@ -22,7 +22,7 @@ package emulator.auto_generated {
 			this.errorDescription = parameters[pos++];
 		}
 		override public function getParametersAsString():String { return 'userId=' + JSON.stringify(userId)+', errorDescription=' + JSON.stringify(errorDescription); }
-		override public function getFunctionId():int { return -110; }
+		override public function getFunctionId():int { return -111; }
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 

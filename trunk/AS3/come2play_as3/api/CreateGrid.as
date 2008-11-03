@@ -26,7 +26,6 @@ public final class CreateGrid
 	 * And the initial position of the first square is: 
 	 * squareStartX and squareStartY
 	 */
-	public static var GridPrefix:String = "Grid_";
 	public var ROWS:int;
 	public var COLS:int;
 	public var squareScaleX:int;
@@ -36,23 +35,17 @@ public final class CreateGrid
 	public var squareDeltaX:int;
 	public var squareDeltaY:int;
 		
-	public function gotCustomInfo(key:String, value:Object):void {
-		if (StaticFunctions.startsWith(key,GridPrefix)) {
-			this[ key.substr(GridPrefix.length) ] = value;
-		}		
-	}
-	public function CreateGrid( 
-		defaultRows:int, defaultCols:int, defaultSize:int, 
-		defaultScale:int, defaultStartPos:int) {
-		
-		ROWS = defaultRows; 
-		COLS = defaultCols;
-		squareScaleX = defaultScale; 
-		squareScaleY = defaultScale; 
-		squareDeltaX = defaultSize; 
-		squareDeltaY = defaultSize; 
-		squareStartX = defaultStartPos; 
-		squareStartY = defaultStartPos; 
+	public function CreateGrid(defaultRows:int, defaultCols:int, 
+			defaultSize:int, 
+			defaultScale:int, defaultStartPos:int) {
+		ROWS = AS3_vs_AS2.as_int(T.custom("ROWS",defaultRows)); 
+		COLS = AS3_vs_AS2.as_int(T.custom("COLS",defaultCols));
+		squareScaleX = AS3_vs_AS2.as_int(T.custom("squareScaleX",defaultScale)); 
+		squareScaleY = AS3_vs_AS2.as_int(T.custom("squareScaleY",defaultScale)); 
+		squareDeltaX = AS3_vs_AS2.as_int(T.custom("squareDeltaX",defaultSize)); 
+		squareDeltaY = AS3_vs_AS2.as_int(T.custom("squareDeltaY",defaultSize)); 
+		squareStartX = AS3_vs_AS2.as_int(T.custom("squareStartX",defaultStartPos)); 
+		squareStartY = AS3_vs_AS2.as_int(T.custom("squareStartY",defaultStartPos));
 	}
 	public function createMovieClips(graphics:MovieClip, squareLinkageName:String):void {
 		for (var row:int=0; row<ROWS; row++)

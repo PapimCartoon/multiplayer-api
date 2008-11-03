@@ -19,7 +19,7 @@ package emulator.auto_generated {
 			this.didWin = parameters[pos++];
 		}
 		override public function getParametersAsString():String { return 'didWin=' + JSON.stringify(didWin); }
-		override public function getFunctionId():int { return -105; }
+		override public function getFunctionId():int { return -106; }
 		override public function getClassName():String { return 'API_DoConnectedEndMatch'; }
 		override public function getMethodName():String { return 'doConnectedEndMatch'; }
 		override public function getFieldNames():Array { return ['didWin']; }

@@ -21,7 +21,7 @@ package come2play_as3.api.auto_generated {
 			this.keys = parameters[pos++];
 		}
 		override public function getParametersAsString():String { return 'keys=' + JSON.stringify(keys); }
-		override public function getFunctionId():int { return -109; }
+		override public function getFunctionId():int { return -110; }
 		override public function getClassName():String { return 'API_DoAllRequestStateCalculation'; }
 		override public function getMethodName():String { return 'doAllRequestStateCalculation'; }
 		override public function getFieldNames():Array { return ['keys']; }

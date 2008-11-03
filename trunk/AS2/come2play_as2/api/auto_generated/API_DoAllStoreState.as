@@ -20,7 +20,7 @@ import come2play_as2.api.auto_generated.*;
 			this.userEntries = parameters[pos++];
 		}
 		/*override*/ public function getParametersAsString():String { return 'userEntries=' + JSON.stringify(userEntries); }
-		/*override*/ public function getFunctionId():Number { return -116; }
+		/*override*/ public function getFunctionId():Number { return -117; }
 		/*override*/ public function getClassName():String { return 'API_DoAllStoreState'; }
 		/*override*/ public function getMethodName():String { return 'doAllStoreState'; }
 		/*override*/ public function getFieldNames():Array { return ['userEntries']; }

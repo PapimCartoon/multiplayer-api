@@ -1,4 +1,4 @@
-﻿package come2play_as3.tests {
+package come2play_as3.tests {
 import come2play_as3.api.*;
 import come2play_as3.api.auto_copied.*;
 import come2play_as3.api.auto_generated.*;
@@ -28,6 +28,14 @@ public class TestClientGameAPI extends ClientGameAPI {
 		operationInput = my_graphics.operationInput;	
 		
 		var allOperationsWithParameters:Array = [];
+		
+		allOperationsWithParameters.push("Examples:"+
+			"\n{$API_DoStoreState$ userEntries : [{$UserEntry$ key:'String', value: 'value', isSecret: false}] }"+
+			"\n{$API_DoAllSetTurn$ userId:42, milliSecondsInTurn:10000}"+
+			"\n{$PlayerMatchOver$ playerId: 41, score: 1000, potPercentage: 20}"+
+			"\n\n"
+			);
+
 		for each (var methodSummary:API_MethodsSummary in API_MethodsSummary.SUMMARY_API) {
 			var methodName:String = methodSummary.methodName; 
 			if (methodName.substring(0,2)!="do") continue;
@@ -36,33 +44,23 @@ public class TestClientGameAPI extends ClientGameAPI {
 			for (var i:int=0; i<methodSummary.parameterNames.length; i++) {
 				args.push(methodSummary.parameterNames[i]+":"+methodSummary.parameterTypes[i]);
 			}
-			allOperationsWithParameters.push(methodName+"("+args.join(", ")+")");
+			allOperationsWithParameters.push("{$"+methodName+"$ "+args.join(", ")+"}");
 		}
 		
 		// write about our classes that are used in do* operations: 
 		allOperationsWithParameters.push("");		
 		allOperationsWithParameters.push(
-			"{$PlayerMatchOver$ 'playerId': int, 'score': int, 'potPercentage': int}");
+			"{$PlayerMatchOver$ playerId: int, score: int, potPercentage: int}");
 		allOperationsWithParameters.push(
-			"{$RevealEntry$ 'key': String, 'userIds': int[], 'depth': int}");
+			"{$RevealEntry$ key: String, userIds: int[], depth: int}");
 		allOperationsWithParameters.push(
-			"{$UserEntry$ 'key': String, 'value': *, 'isSecret': boolean}");
+			"{$UserEntry$ key: String, value: *, isSecret: boolean}");
 
-		allOperationsWithParameters.push("\nExamples:");
-		allOperationsWithParameters.push(
-			"\n{$API_DoStoreState$ userEntries : [{$UserEntry$ key:'String', value: 'value', isSecret: false}] }"+
-			"\n{$API_DoAllSetTurn$ userId:42, milliSecondsInTurn:10000}"+
-			"\n{$PlayerMatchOver$ playerId: 41, score: 1000, potPercentage: 20}"+
-			"\n"
-			);
 		exampleOperationsText.text = allOperationsWithParameters.join("\n");		
 		AS3_vs_AS2.addOnPress(my_graphics.sendOperation, AS3_vs_AS2.delegate(this, this.dispatchOperation), true );
 		doRegisterOnServer();			
 	}
 	
-	override public function gotMyUserId(userId:int):void {	
-		myUserId = userId;	
-	}
 	private function generateKey():Object {
 		var obj:Object = {};
 		var order:Boolean = Math.random()>0.5;
@@ -82,6 +80,7 @@ public class TestClientGameAPI extends ClientGameAPI {
 	}
 		 
 	override public function gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, serverEntries:Array/*ServerEntry*/):void {
+		myUserId = AS3_vs_AS2.as_int(T.custom(CUSTOM_INFO_KEY_myUserId,null));
 		this.allPlayerIds = allPlayerIds;
 		if (!shouldTest) return;
 		var test_Arr:Array = null;
@@ -95,6 +94,7 @@ public class TestClientGameAPI extends ClientGameAPI {
 			}				
 		},
 		function (entries:Array):void {
+			require(entries.length == 1);
 			var entry:ServerEntry = entries[0];	
 			require(entry.key=="testNumbers"+allPlayerIds[0]);
 			require(entry.visibleToUserIds==null);
@@ -109,8 +109,8 @@ public class TestClientGameAPI extends ClientGameAPI {
 			}
 		},
 		function (entries:Array):void {
-			var entry:ServerEntry = entries[0];	
 			require(entries.length == 11);
+			var entry:ServerEntry = entries[0];	
 			require(entry.visibleToUserIds != null);
 		});
 		expect(
@@ -118,6 +118,7 @@ public class TestClientGameAPI extends ClientGameAPI {
 			doAllRevealState([RevealEntry.create("a",null,3),RevealEntry.create("e",[2],0)]);
 		},
 		function (entries:Array):void {
+			require(entries.length == 5)
 			var entry0:ServerEntry = entries[0];
 			var entry1:ServerEntry = entries[1];
 			var entry2:ServerEntry = entries[2];
@@ -164,6 +165,7 @@ public class TestClientGameAPI extends ClientGameAPI {
 			
 		},
 		function (entries:Array):void {	
+			require(entries.length==1);
 			var entry:ServerEntry = entries[0];		
 			require(ObjectDictionary.areEqual(entry.key, sameKey));
 			require(entry.visibleToUserIds==null);
@@ -178,6 +180,7 @@ public class TestClientGameAPI extends ClientGameAPI {
 			
 		},
 		function (entries:Array):void {
+			require(entries.length==1);
 			var entry:ServerEntry = entries[0];	
 			require(ObjectDictionary.areEqual(entry.key, sameKey));
 			require(entry.visibleToUserIds.length==0);
@@ -191,6 +194,7 @@ public class TestClientGameAPI extends ClientGameAPI {
 			doAllRevealState([RevealEntry.create(key)]);			
 		},
 		function (entries:Array):void {	
+			require(entries.length==1);
 			var entry:ServerEntry = entries[0];	
 			require(ObjectDictionary.areEqual(entry.key, sameKey));
 			require(entry.visibleToUserIds==null);
@@ -211,6 +215,7 @@ public class TestClientGameAPI extends ClientGameAPI {
 			
 		},
 		function (entries:Array):void {	
+			require(entries.length==11);
 			for (var j:int=1; j<12; j++) {
 				var entry:ServerEntry = entries[j-1];
 				require(entry.key==j);
@@ -318,7 +323,7 @@ public class TestClientGameAPI extends ClientGameAPI {
 				require(entry.storedByUserId==-1);			
 				// the values were shuffled, so I just check the sum of all values did not change.	
 				sum += j+1;
-				sum -= entry.value as int;
+				sum -= /*as*/entry.value as int;
 			}		
 			require(sum==0);
 		});
@@ -376,6 +381,7 @@ public class TestClientGameAPI extends ClientGameAPI {
 		funcResArr.push(AS3_vs_AS2.delegate(this,funcRes));	
 	}
 	override public function gotStateChanged(serverEntries:Array/*ServerEntry*/):void {
+		require(serverEntries.length>=1);
 		var entry:ServerEntry = serverEntries[0];	
 		require(lastTime<=entry.changedTimeInMilliSeconds);
 		lastTime = entry.changedTimeInMilliSeconds;
@@ -397,21 +403,21 @@ public class TestClientGameAPI extends ClientGameAPI {
 		return res; 
 	}
 	
-	private function storeTrace(func:String, args:String):void {
-		StaticFunctions.storeTrace("storeTrace: func="+func+" args="+args);
+	private function storeTrace(msg:API_Message):void {
+		StaticFunctions.storeTrace(["storeTrace: msg=",msg]);
 		outTracesText.text +=
-			AS3_vs_AS2.getTimeString() + "\t" + func + "\t" + args + "\n";
+			AS3_vs_AS2.getTimeString() + " " + msg + "\n";
 		//dp.addItem({Time:(new Date().toLocaleTimeString()), Dir: is_to_container ? "->" : "<-", Function:func, Arguments:args});
 	}
 	private function handleError(err:Error):void { 
-		storeTrace("ERROR", AS3_vs_AS2.error2String(err));
+		StaticFunctions.showError( AS3_vs_AS2.error2String(err) );
 	}
 	private function dispatchOperation(event:MouseEvent):void {
 		try {
 			var inputStr:String = operationInput.text;
 			inputStr = StaticFunctions.trim(inputStr);
 			var instanceMsg:Object = SerializableClass.deserialize(JSON.parse(inputStr));
-			var instance:API_Message = instanceMsg as API_Message;
+			var instance:API_Message = /*as*/instanceMsg as API_Message;
 			sendMessage(instance);
 		} catch (err:Error) { 
 			handleError(err);			
@@ -419,12 +425,12 @@ public class TestClientGameAPI extends ClientGameAPI {
 	}
     override public function sendMessage(msg:API_Message):void {
 		if (!(msg is API_DoFinishedCallback)) 
-			storeTrace(msg.getMethodName(), msg.getParametersAsString());
+			storeTrace(msg);
 		super.sendMessage(msg);
 	}
 	override public function gotMessage(msg:API_Message):void {
 		if (!(msg is API_GotKeyboardEvent)) 
-			storeTrace(msg.getMethodName(), msg.getParametersAsString());
+			storeTrace(msg);
 		super.gotMessage(msg);		
 	}
 }

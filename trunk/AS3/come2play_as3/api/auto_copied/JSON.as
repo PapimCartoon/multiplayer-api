@@ -76,13 +76,17 @@ package come2play_as3.api.auto_copied
 	        // E.g.,  { $Enum$ name:"NormalUser" , type:"come2play_as3.auto_generated::EnumSupervisor"}
 	        return argToString;                 
 	    }
-	    private static function object2JSON(arg:Object):String {
-	    	var res:Array = [];
-        	// I want deterministic output, so sort the keys
-        	var keys:Array = [];
+	    public static function getSortedKeys(arg:Object):Array/*String*/ {
+	    	var keys:Array = [];
         	for (var key:String in arg) 
         		keys.push(key);
         	keys.sort();
+        	return keys;
+	    }
+	    private static function object2JSON(arg:Object):String {
+	    	var res:Array = [];
+        	// I want deterministic output, so sort the keys
+        	var keys:Array = getSortedKeys(arg);
         	for each (var z:String in keys) {
                 res.push( stringify(z) + ':' + stringify(arg[z]) );
             }
@@ -336,7 +340,6 @@ package come2play_as3.api.auto_copied
                     }
                     break;
             }
-			// backtrack and parse as string
 			at = oldAt;
 			return str();
             //throwError("Syntax error");

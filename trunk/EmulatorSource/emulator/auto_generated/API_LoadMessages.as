@@ -16,17 +16,16 @@ package emulator.auto_generated {
 			new API_GotCustomInfo().register();
 			new API_GotUserInfo().register();
 			new API_GotUserDisconnected().register();
-			new API_GotMyUserId().register();
 			new API_GotMatchStarted().register();
 			new API_GotMatchEnded().register();
 			new API_GotStateChanged().register();
 			new API_DoStoreState().register();
 			new API_DoAllStoreState().register();
 			new API_DoAllEndMatch().register();
+			new API_DoAllSetTurn().register();
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			new API_DoAllSetTurn().register();
 			new API_DoAllRevealState().register();
 			new API_DoAllShuffleState().register();
 			new API_DoAllRequestRandomState().register();
@@ -36,10 +35,10 @@ package emulator.auto_generated {
 			new API_DoAllStoreStateCalculation().register();
 			new API_DoConnectedSetScore().register();
 			new API_DoConnectedEndMatch().register();
+			new PlayerMatchOver().register();
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			new PlayerMatchOver().register();
 			new InfoEntry().register();
 			new RevealEntry().register();
 			new UserEntry().register();

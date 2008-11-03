@@ -1,4 +1,4 @@
-﻿package come2play_as3.api.auto_copied
+package come2play_as3.api.auto_copied
 {
 	import flash.events.Event;
 	
@@ -6,7 +6,7 @@
  * A class may extend SerializableClass
  * 	to get the following features:
  * - field __CLASS_NAME__ contains a unique name,
- * 	 by default it is the class name (without the package name). *   
+ * 	 by default it is the class name (without the package name).  
  * - serialization on LocalConnection
  * 	 using the method "toObject()".
  * - serialization to String
@@ -31,39 +31,54 @@
  * Other features:
  * - fields starting with "__" are not serialized to String 
  *   (but they are serialized on LocalConnection)
- * - Your class may override
- *   public function postDeserialize():Object
- *   that may do post processing and even return a different object.
+ * - Your class may override postDeserialize
+ *   to do post processing and even return a different object.
  *   This is useful in two cases:
  *   1) if you have fields that are derived from other fields (such as "__" fields).
  *   2) in Enum classes, postDeserialize may return a unique/interned object.
  * 
  * Event fields: 
- * 	type, bubbles, cancelable, currentTarget, eventPhase, target
+ * 	
  *    
  */
-public class SerializableClass //todo: extends Event
+public class SerializableClass /*<InAS3>*/extends Event/*</InAS3>*/
 {
-	public static var IS_THROWING_EXCEPTIONS:Boolean = true; // in the online version we set it to false. (Consider the case that a hacker stores illegal values as secret data)
+	public static var EVENT_FIELDS:Array
+		/*<InAS3>*/ = ["type", "bubbles", "cancelable", "currentTarget", "eventPhase", "target"]/*</InAS3>*/;
+	public static var IS_THROWING_EXCEPTIONS:Boolean = true; // in the online version we set it to false. (Consider the case that a hacker stores secret data which is illegal values)
 	public static var IS_TESTING_SAME_REGISTER:Boolean = true; // for efficiency the online version turns it off
 	public static var IS_TRACE_REGISTER:Boolean = false;
 	
 	public static var IS_IN_GAME:Boolean = "come2play_as3.api" == "come2play_as3" + ".api";
 	public static const CLASS_NAME_FIELD:String = "__CLASS_NAME__";
 	public var __CLASS_NAME__:String;
-	public function SerializableClass(shortName:String /*DEFAULT NULL*/= null) {
+	public function SerializableClass(shortName:String /*<InAS3>*/= null/*</InAS3>*/
+			/*<InAS3>*/, bubbles:Boolean = false, cancelable:Boolean = false/*</InAS3>*/
+			) {
 		__CLASS_NAME__ = shortName==null ? StaticFunctions.getShortClassName(this) : shortName;
+		/*<InAS3>*/super(__CLASS_NAME__,bubbles, cancelable);/*</InAS3>*/
+		StaticFunctions.assert(!XMLSerializer.isReserved(__CLASS_NAME__),["The shortName=",__CLASS_NAME__," is a reserved word, please use another shortName."]); 
 		StaticFunctions.assert(AS3_vs_AS2.stringIndexOf(__CLASS_NAME__,"$")==-1,["Illegal shortName in SerializableClass! shortName=",shortName]);
 		register();
+	}	
+	public function toLocalConnectionObject():Object {
+		var res:Object = toObject();
+		res[CLASS_NAME_FIELD] = __CLASS_NAME__;
+		return res;
 	}
-	public function toString():String {
+	public function toObject():Object {
 		var fieldNames:Array/*String*/ = AS3_vs_AS2.getFieldNames(this);
 		var values:Object = {};			
 		for each (var key:String in fieldNames) {
 			if (StaticFunctions.startsWith(key,"__")) continue;
+			if (EVENT_FIELDS!=null && AS3_vs_AS2.IndexOf(EVENT_FIELDS,key)!=-1) continue;
 			values[key] = this[key]; 
 		}
-		return JSON.instanceToString(__CLASS_NAME__, values);
+		return values;		
+	}
+	/*<InAS3>*/public function eventToString():String { return super.toString(); }/*</InAS3>*/
+	override public function toString():String {		
+		return JSON.instanceToString(__CLASS_NAME__, toObject());
 	}
 	public function isEqual(other:SerializableClass):Boolean {
 		return ObjectDictionary.areEqual(this, other);

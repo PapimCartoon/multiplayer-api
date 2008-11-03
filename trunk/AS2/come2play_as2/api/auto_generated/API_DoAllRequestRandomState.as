@@ -6,9 +6,9 @@
 
 import come2play_as2.api.auto_generated.*;
 	class come2play_as2.api.auto_generated.API_DoAllRequestRandomState extends API_Message {
-		public var key/*:Object*/;
+		public var key:Object;
 		public var isSecret:Boolean;
-		public static function create(key/*:Object*/, isSecret:Boolean/*<InAS3> = false </InAS3>*/):API_DoAllRequestRandomState {
+		public static function create(key:Object, isSecret:Boolean/*<InAS3> = false </InAS3>*/):API_DoAllRequestRandomState {
 			var res:API_DoAllRequestRandomState = new API_DoAllRequestRandomState();
 			res.key = key;
 
@@ -27,7 +27,7 @@ import come2play_as2.api.auto_generated.*;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		/*override*/ public function getFunctionId():Number { return -111; }
+		/*override*/ public function getFunctionId():Number { return -112; }
 		/*override*/ public function getClassName():String { return 'API_DoAllRequestRandomState'; }
 		/*override*/ public function getMethodName():String { return 'doAllRequestRandomState'; }
 		/*override*/ public function getFieldNames():Array { return ['key', 'isSecret']; }

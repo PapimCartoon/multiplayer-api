@@ -8,7 +8,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	public static var someMovieClip:MovieClip; // so we can display error messages on the stage
 	public static var allTraces:Array = [];
 	public static var MAX_TRACES_NUM:Number = 50;
-	public static function storeTrace(obj/*:Object*/):Void {
+	public static function storeTrace(obj:Object):Void {
 		if (allTraces.length>=MAX_TRACES_NUM) allTraces.shift();
 		var arr:Array = ["Time: ", getTimer(), " Trace: ", obj];
 		if (SHOULD_CALL_TRACE) trace( arr.join("") );
@@ -70,7 +70,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	
 	private static var REFLECTION_PREFIX:String = "REFLECTION_";
 	public static function performReflectionFromFlashVars(_someMovieClip:MovieClip):Void {		
-		var parameters/*:Object*/ = AS3_vs_AS2.getLoaderInfoParameters(_someMovieClip);
+		var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(_someMovieClip);
 		if (SHOULD_CALL_TRACE) trace("performReflectionFromFlashVars="+JSON.stringify(parameters));
 		for (var key:String in parameters) {
 			if (startsWith(key,REFLECTION_PREFIX)) {
@@ -86,14 +86,14 @@ class come2play_as2.api.auto_copied.StaticFunctions
 		performReflection2(two[0], two[1]);
 	}
 	public static function performReflection2(before:String, after:String):Void {
-		var val_obj/*:Object*/ = SerializableClass.deserializeString(after);
+		var val_obj:Object = SerializableClass.deserializeString(after);
 		//before = come2play_as2.util::EnumMessage.CouldNotConnect.__minDelayMilli = 
 		//after = 2000	
 		var package2:Array = splitInTwo(before, "::", false);
 		var fields2:Array = splitInTwo(package2[1], ".", false);
 		var clzName:String = trim(package2[0]) + "::" + trim(fields2[0]);
 		var fieldsName:String = trim(fields2[1]);
-		var classReference/*:Object*/ = AS3_vs_AS2.getClassByName(clzName);
+		var classReference:Object = AS3_vs_AS2.getClassByName(clzName);
 		storeTrace("Setting field "+fieldsName+" in class "+clzName+" to val="+val_obj);
 		var fieldsArr:Array = fieldsName.split(".");
 		for (var i:Number=0; i<fieldsArr.length; i++) {
@@ -107,7 +107,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 
 
 	/**
-	 * Similar to:  str.replace(new RegExp(searchFor,"g"), replaceWith)
+	 * Similar to replace with:  new RegExp(searchFor,"g")
 	 * but we need to escape special characters from searchFor
 	 * e.g., 
 	 * 	StaticFunctions.replaceAll("$y'+knkjh$y'+$y'+uoiuoiu$y'+8y$y'+", "$y'+","REPLACED") ==
@@ -135,14 +135,14 @@ class come2play_as2.api.auto_copied.StaticFunctions
 		var two:Array = splitInTwo(str, searchFor, true);
 		return two[0] + replaceWith + two[1];
 	}
-	public static function instance2Object(instance/*:Object*/, fields:Array/*String*/)/*:Object*/ {
-		var res/*:Object*/ = {};
+	public static function instance2Object(instance:Object, fields:Array/*String*/):Object {
+		var res:Object = {};
 		for (var i142:Number=0; i142<fields.length; i142++) { var field:String = fields[i142]; 
 			res[field] = instance[field];
 		}
 		return res;
 	}
-	public static function getShortClassName(obj/*:Object*/):String {
+	public static function getShortClassName(obj:Object):String {
 		var className:String = AS3_vs_AS2.getClassName(obj);
 		return className.substr(AS3_vs_AS2.stringIndexOf(className,"::")+2);		
 	}

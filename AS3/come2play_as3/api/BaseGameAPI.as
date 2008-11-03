@@ -163,13 +163,8 @@ package come2play_as3.api {
         {
         	for each(var serverEntry:ServerEntry in serverEntries)
         	{
-        	    if((serverEntry.value == null) || (serverEntry.value == ""))
-				{
-					if( typeof(serverEntry.value) == "number" )
-						serverStateMiror.put(serverEntry.key,serverEntry);
-					else
+        	    if(serverEntry.value == null)
 						serverStateMiror.remove(serverEntry.key);
-				}
 				else
 					serverStateMiror.put(serverEntry.key,serverEntry);	
         	}     	

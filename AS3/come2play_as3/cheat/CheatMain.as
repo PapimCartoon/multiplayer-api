@@ -179,7 +179,6 @@ package come2play_as3.cheat
 			cheatGraphics.initCheat();
 			lastCall = 2;
 			storeDecks(1,true);
-			
 			for each(var playerId:int in allPlayerIds)
 			{
 				playerCards[allPlayerIds.indexOf(playerId)] = 0;

@@ -86,7 +86,7 @@ package emulator {
 				height =Number(root.loaderInfo.parameters["height"])
 			}
 			frameSprite = new Sprite();
-			var tempMod:int = Math.round(Math.random() *12);
+			var tempMod:int = Math.round(Math.random() *120);
 			frameSprite.graphics.lineStyle(2,0x0000ff);
 			frameSprite.graphics.drawRect(0,0,width,height);
 			frameSprite.x = 36 + tempMod;

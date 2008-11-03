@@ -284,6 +284,8 @@ package come2play_as3.cards
 			myUserId = T.custom(CUSTOM_INFO_KEY_myUserId, null) as int;
 			CardDefenitins.CONTAINER_gameWidth = T.custom(CUSTOM_INFO_KEY_gameWidth, 400) as int;
 			CardDefenitins.CONTAINER_gameHeight = T.custom(CUSTOM_INFO_KEY_gameHeight, 400) as int;
+			CardDefenitins.CONTAINER_gameStageX = T.custom(CUSTOM_INFO_KEY_gameStageX, 0) as int;
+			CardDefenitins.CONTAINER_gameStageY = T.custom(CUSTOM_INFO_KEY_gameStageY, 0) as int;
 			gotMyUserId2(myUserId);			
 			CardDefenitins.playerXPositions= [CardDefenitins.CONTAINER_gameWidth - 50,CardDefenitins.CONTAINER_gameWidth - 50,50,50] ;
 			CardDefenitins.playerYPositions= [CardDefenitins.CONTAINER_gameHeight- 50,50,50,CardDefenitins.CONTAINER_gameHeight - 50]; 

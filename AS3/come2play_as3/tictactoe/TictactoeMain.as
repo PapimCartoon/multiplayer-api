@@ -111,8 +111,9 @@ public final class TictactoeMain extends ClientGameAPI {
 	}
 
 	override public function gotCustomInfo(entries:Array/*InfoEntry*/):void {
-		myUserId = AS3_vs_AS2.as_int(T.custom(CUSTOM_INFO_KEY_myUserId,null));					
+		if (grid!=null) return; //gotCustomInfo may be called several times  					
 		grid = new CreateGrid(3,3,84,100,50);
+		myUserId = AS3_vs_AS2.as_int(T.custom(CUSTOM_INFO_KEY_myUserId,null));
 		shouldUseAvatars = AS3_vs_AS2.asBoolean(T.custom("shouldUseAvatars",true)); 
 		winLength = AS3_vs_AS2.as_int(T.custom("winLength",3));
 		playersNumInSinglePlayer = AS3_vs_AS2.as_int(T.custom("playersNumInSinglePlayer",3));

@@ -104,19 +104,10 @@ package come2play_as3.domino
 		
 		override public function gotCustomInfo(infoEntries:Array):void
 		{
-			for each (var infoEntry:InfoEntry in infoEntries)
-			{
-				switch(infoEntry.key)
-				{
-					case "CONTAINER_gameStageX" : stageX = int(infoEntry.value);break;
-					case "CONTAINER_gameStageY" : stageY = int(infoEntry.value); break;
-					case "cubeMaxValue" : cubeMaxValue =int(infoEntry.value); break;
-				}
-			}
-		}
-		override public function gotMyUserId(myUserId:int):void
-		{
-			this.myUserId = myUserId;
+			myUserId = T.custom(CUSTOM_INFO_KEY_myUserId, null) as int;
+			stageX = T.custom(CUSTOM_INFO_KEY_gameStageX, null) as int;
+			stageY = T.custom(CUSTOM_INFO_KEY_gameStageY, null) as int;
+			cubeMaxValue = T.custom("cubeMaxValue", 7) as int;
 		}
 		override public function gotUserInfo(userId:int, entries:Array/*InfoEntry*/):void 
 		{

@@ -5,6 +5,7 @@ package come2play_as3.cards.graphic
 	import come2play_as3.cards.caurina.transitions.Tweener;
 	import come2play_as3.cards.events.CardRecievedEvent;
 	import come2play_as3.cards.events.CardShownEvent;
+	import come2play_as3.cards.events.CardToDeckEvent;
 	import come2play_as3.cards.events.CardsDealtEvent;
 	
 	import flash.display.MovieClip;
@@ -15,8 +16,7 @@ package come2play_as3.cards.graphic
 	{
 		protected var yourCards:PlayerHand;
 		protected var rivalHandsArray:Array/*RivalHand*/;
-		protected var cardDeck:Deck_MC;
-		protected var cardsInDeck:int;
+		protected var cardDeck:CardDeck;
 		private var myUserId:int;
 		private var allPlayersIds:Array;
 		private var currentPlayer:int;
@@ -28,27 +28,33 @@ package come2play_as3.cards.graphic
 			rivalHandsArray = new Array();
 			addEventListener(CardRecievedEvent.CardRecieved,dealNextCard,true);
 			addEventListener(CardsDealtEvent.CardsDealtEvent,cardsDealt,true)
+			addEventListener(CardToDeckEvent.CardToDeckEvent,addCardToDeck,true);
 		}
+		public function addCardToDeck(ev:CardToDeckEvent):void
+		{
+			cardDeck.addCard(ev.card)
+		}
+		
 		public function addCardsToMiddle(cardsToAdd:int):void
 		{
-			if(cardsInDeck < 0) cardsInDeck=0;
+			/*if(cardsInDeck < 0) cardsInDeck=0;
 			cardsInDeck+=cardsToAdd;
 			cardDeck.cardNum_txt.text = String(cardsInDeck);
 			if(cardsInDeck > 0 )
-				addChild(cardDeck);
+				addChild(cardDeck);*/
 		}
 		public function removeCardsFromMiddle(cardsToRemove:int):void
 		{
-			cardsInDeck-=cardsToRemove;
+			cardDeck.removeCards(cardsToRemove);
+			/*cardsInDeck-=cardsToRemove;
 			cardDeck.cardNum_txt.text = String(cardsInDeck);
 			if(cardsInDeck < 1 )
 				if(contains(cardDeck))
-					removeChild(cardDeck);
+					removeChild(cardDeck);*/
 		}
 		public function init(myUserId:int,allPlayersIds:Array):void
 		{
 			this.myUserId = myUserId;
-			cardsInDeck = 0;
 			background = new Sprite();
 			this.allPlayersIds = allPlayersIds;
 
@@ -56,12 +62,11 @@ package come2play_as3.cards.graphic
 			background.graphics.drawRect(0,0,CardDefenitins.CONTAINER_gameWidth,CardDefenitins.CONTAINER_gameHeight);
 			background.graphics.endFill();
 			addChild(background)
-			cardDeck = new Deck_MC();
-			cardDeck.Deck.Symbole_MC.stop();
-			cardDeck.Deck.Letter_MC.stop();
-			cardDeck.scaleX = cardDeck.scaleY = 0.01 * CardDefenitins.cardSize;
-			cardDeck.x = CardDefenitins.CONTAINER_gameWidth / 2;
-			cardDeck.y = CardDefenitins.CONTAINER_gameHeight / 2;
+			cardDeck = new CardDeck();
+			addChild(cardDeck);
+			//cardDeck.scaleX = cardDeck.scaleY = 0.01 * CardDefenitins.cardSize;
+			//cardDeck.x = CardDefenitins.CONTAINER_gameWidth / 2;
+			//cardDeck.y = CardDefenitins.CONTAINER_gameHeight / 2;
 			if(yourCards!=null)
 				if(contains(yourCards))
 					removeChild(yourCards);

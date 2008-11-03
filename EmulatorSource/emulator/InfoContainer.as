@@ -502,15 +502,23 @@ package emulator {
         		if(msg is API_GotCustomInfo)
 				{
 					var CustomMessage:API_GotCustomInfo = msg as API_GotCustomInfo
-					CustomMessage.infoEntries.push(InfoEntry.create("CONTAINER_gameStageX",frameSprite.x))
-					CustomMessage.infoEntries.push(InfoEntry.create("CONTAINER_gameStageY",frameSprite.y))
+					for each(var infoEntry:InfoEntry in CustomMessage.infoEntries)
+					{
+						if(infoEntry.key == API_Message.CUSTOM_INFO_KEY_myUserId)
+						{
+							bStarted = true;
+							iMyID = infoEntry.value as int;
+							break;
+						}
+					}	
+					CustomMessage.infoEntries.push(InfoEntry.create(API_Message.CUSTOM_INFO_KEY_gameStageX,frameSprite.x))
+					CustomMessage.infoEntries.push(InfoEntry.create(API_Message.CUSTOM_INFO_KEY_gameStageY,frameSprite.y))
+					
 					sendGotOperation(msg);
 					return;
 				}
         		
-				if (msg is API_GotMyUserId)
-					gotMyUserId(msg as API_GotMyUserId );
-				else if (msg is API_GotMatchStarted)
+				if (msg is API_GotMatchStarted)
 					gotMatchStarted(msg as API_GotMatchStarted);		
 				else if(msg is API_GotUserInfo)
 					gotUserInfo(msg as API_GotUserInfo);
@@ -563,10 +571,6 @@ package emulator {
 				txtUsers.htmlText+=str + "<br>";
 				cmbCommands.y = txtUsers.height + txtUsers.y + 5;
 				pnlParams.y = cmbCommands.y + cmbCommands.height + 5;
-		}
-		public function gotMyUserId(msg:API_GotMyUserId):void { 
-				bStarted = true;
-				iMyID = msg.myUserId;
 		}
 		public function gotMatchStarted(msg:API_GotMatchStarted):void { 
 				isPlaying =true;

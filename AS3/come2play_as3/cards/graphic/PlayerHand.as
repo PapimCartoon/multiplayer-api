@@ -2,7 +2,9 @@ package come2play_as3.cards.graphic
 {
 	import come2play_as3.cards.CardDefenitins;
 	import come2play_as3.cards.PlayerCard;
+	import come2play_as3.cards.caurina.transitions.Tweener;
 	import come2play_as3.cards.events.CardPressedEvent;
+	import come2play_as3.cards.events.CardToDeckEvent;
 	import come2play_as3.cards.events.CardsDealtEvent;
 	
 	import flash.events.MouseEvent;
@@ -13,18 +15,27 @@ package come2play_as3.cards.graphic
 	{
 		private var cardsInStock:Array/*PlayerCard*/;
 		private var cardsInHand:Array/*CardGraphicMovieClip*/;
-		private var cardDictonery:CardDictonery;
+		private var cardsToRemove:Array;
+		private var removingCard:Boolean
 		private var lastCard:CardGraphicMovieClip;
+		private var middle:int;
+		
+		//bounce related
 		private var bouncingCards:Array;
 		private var bounceCards:Timer;
-		private var arrangeCardsTimer:Timer;
-		private var cardsBack:Timer;
 		private var bouncePosition:int;
 		private var isBounceUp:Boolean;
+		
+		//card arranging related
+		private var cardDictonery:CardDictonery;
+		private var arrangeCardsTimer:Timer;
+		private var cardsBack:Timer;
 		private var cardArranged:CardGraphicMovieClip;
-		private var wasMoved:Boolean;
-		private var middle:int;
 		private var cardsBackStarted:Boolean;
+		private var wasMoved:Boolean;
+		
+		
+		
 		public function PlayerHand()
 		{
 			isBounceUp = true;
@@ -35,6 +46,7 @@ package come2play_as3.cards.graphic
 			cardsInStock = new Array();
 			cardsInHand = new Array();
 			bouncingCards = new Array();
+			cardsToRemove = new Array();
 			bouncePosition = CardDefenitins.playerYPositions[0] - 20;
 			bounceCards.addEventListener(TimerEvent.TIMER,doBounce);
 			arrangeCardsTimer.addEventListener(TimerEvent.TIMER,moveCard);
@@ -245,6 +257,10 @@ package come2play_as3.cards.graphic
 					}
 				}			
 			}
+			else if(removingCard)
+			{
+				cardsToRemove.push(cardKey);
+			}
 			else
 			{
 				for(i = 0;i<cardsInHand.length;i++)
@@ -252,7 +268,12 @@ package come2play_as3.cards.graphic
 					cardGraphic = cardsInHand[i];
 					if(cardGraphic.isKey(cardKey))
 					{
-						removeChild(cardGraphic);
+						removingCard = true;
+						//removeChild(cardGraphic);
+						cardGraphic.close();
+						Tweener.addTween(cardGraphic, {x:(CardDefenitins.CONTAINER_gameWidth/2) + Math.random() * 5, y:(CardDefenitins.CONTAINER_gameHeight/2) + Math.random() * 5, rotation:(CardDefenitins.currentDeckRotation + Math.random()*5), time:CardDefenitins.cardSpeed, transition:"linear",onComplete:removeCardFromHand,onCompleteParams:[cardGraphic]});
+						CardDefenitins.currentDeckRotation+=10;
+						//dispatchEvent(new CardToDeckEvent(cardGraphic));
 						cardsInHand.splice(i,1);
 						updateSpacing();
 						respaceCardsFor(middle);
@@ -261,9 +282,27 @@ package come2play_as3.cards.graphic
 				} 
 			}
 		}
+		private function removeCardFromHand(card:CardGraphicMovieClip):void
+		{
+			removeChild(card);
+			/*if(waitingRemove > 0)
+			{
+				waitingRemove--;
+				removeCard();
+			}*/
+			removingCard = false;
+			dispatchEvent(new CardToDeckEvent(card));
+			if(cardsToRemove.length > 0)
+				removeCard(cardsToRemove.pop())
+		}
+		
+		
+		
 		private function updateSpacing():void
 		{
-			var availableSpace:int = CardDefenitins.playerXPositions[0] - (CardDefenitins.cardHeight + 50 + CardDefenitins.cardWidth * 2);
+			var availableSpace:int = CardDefenitins.playerXPositions[0] - (25 + CardDefenitins.cardWidth * 2)
+			if(CardDefenitins.playerNumber == 4)
+			availableSpace -=  (CardDefenitins.cardHeight );
 			var devider:int = (cardsInHand.length -3);
 			if(devider < 1)
 				devider = 1

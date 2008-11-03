@@ -10,6 +10,7 @@ package come2play_as3.cards
 
 
 		//this defenitions should not be touched
+		static public var currentDeckRotation:int;
 		static public var playerCardSpacing:int;
 		static public var playerNumber:int;  //Number of players
 		static public var canCardsBeSelected:Boolean;

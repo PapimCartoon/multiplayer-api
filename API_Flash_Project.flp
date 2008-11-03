@@ -8,4 +8,5 @@
     <project_file path="./EmulatorSource/GetParams.fla" filetype="fla" profile="" />
     <project_file path="./AS3/MineSweeperAS3.fla" filetype="fla" profile="" />
     <project_file path="./AS3/DominoAS3.fla" filetype="fla" profile="" />
+    <project_file path="./AS3/CardsDeck.fla" filetype="fla" profile="" />
 </flash_project>

@@ -69,11 +69,8 @@ package emulator {
 				stage.frameRate = parseInt(root.loaderInfo.parameters["fps"]);
 			}
 			
-			btnStart = new Button();
-			btnStart.label = "Start";
-			btnStart.textField.selectable = false;
-			btnStart.addEventListener(MouseEvent.CLICK, btnStartClick);
-			this.addChild(btnStart);
+			
+
 			
 			lblWait = new TextField();
 			lblWait.selectable = false;
@@ -201,6 +198,10 @@ package emulator {
 			btnDown.addEventListener(MouseEvent.CLICK, btnDownClick);
 			lblClient.addChild(btnDown);
 			
+			btnStart = new Button();
+			btnStart.label = "Start";
+			btnStart.textField.selectable = false;
+			
 			mov = new MovieClip();
 			txt = new TextField();
 			txt.textColor = 0x000000;
@@ -238,15 +239,7 @@ package emulator {
 			if (root.loaderInfo.parameters["game"] == null) {
 				MsgBox.Show("Parameter 'game' must be passed in the url.","Error");
 				return;
-			}
-			if(root.loaderInfo.parameters["calculatorsOn"] == "true" )
-			{
-				txtMyName.text = "Calculator";
-			}
-			
-			
-			
-			
+			}		
 			
 			if (root.loaderInfo.parameters["prefix"] == null) {
 				MsgBox.Show("Parameter 'prefix' must be passed in the url.","Error");
@@ -268,6 +261,29 @@ package emulator {
 			ddsGotOperations = new DelayDoSomething(function (msg:API_Message):void { doSomething(msg, false) }, fromDelay, toDelay);
 			
 			resizeStage(null);
+			if(root.loaderInfo.parameters["calculatorsOn"] == "true" )
+			{
+				txtMyName.text = "Calculator";
+				if(root.loaderInfo.parameters["oldgame"]=="0"){
+					// useful code
+					var rqst:URLRequest = new URLRequest(root.loaderInfo.parameters["game"] + "?prefix=" + sInnerPrefix);
+				}else {
+					if(root.loaderInfo.parameters["old_container"] == null){
+						rqst = new URLRequest("OldContainer_board.swf?prefix=" + sInnerPrefix + "&oldgame=" + root.loaderInfo.parameters["game"]);
+					}else {
+						var url:String = root.loaderInfo.parameters["old_container"];
+						rqst = new URLRequest(url+(url.indexOf('?')!=-1 ? '&' : '?')+"prefix=" + sInnerPrefix + "&oldgame=" + root.loaderInfo.parameters["game"]);
+					}
+				}
+				ldr.contentLoaderInfo.addEventListener(Event.COMPLETE, onLoadComplete);
+				ldr.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, onLoadError);
+				ldr.load(rqst);
+			}
+			else
+			{
+			btnStart.addEventListener(MouseEvent.CLICK, btnStartClick);
+			this.addChild(btnStart);
+			}
 			
 		}
 		private function reportKeyUp(event:KeyboardEvent):void {

@@ -82,8 +82,9 @@ import flash.utils.*;
 			myUserId = T.custom(CUSTOM_INFO_KEY_myUserId, null) as int;
 			stageX = T.custom(CUSTOM_INFO_KEY_gameStageX, null) as int;
 			stageY = T.custom(CUSTOM_INFO_KEY_gameStageY, null) as int;
-			mineAmount = T.custom(CUSTOM_INFO_KEY_gameStageY, 20) as int;
-			boardWidth = T.custom(MINE_AMOUNTstr, 12) as int;
+			boardWidth = T.custom(BOARD_WIDTHstr, 12) as int;
+			boardHeight =  T.custom(BOARD_HEIGHTstr, 12) as int;
+			mineAmount = T.custom(MINE_AMOUNTstr, 20) as int;
 
 		}
 		override public function gotRequestStateCalculation(requestId:int, serverEntries:Array):void

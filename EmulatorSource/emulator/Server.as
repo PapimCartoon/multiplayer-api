@@ -1262,6 +1262,7 @@ package emulator {
 			_y = stage.stageHeight - 20;
 			back.width = _x-tbsPanel.x-1;
 			back.height = _y - tbsPanel.y - 1;
+
 			
 			this.graphics.clear();
 			this.graphics.lineStyle(1, 0xb9baba);
@@ -1289,7 +1290,8 @@ package emulator {
 			btnSearch.x = (back.width/531)*520-btnSearch.width;
 			btnFullLog.x = (back.width/531)*520-btnFullLog.width;
 			btnClear.x = (back.width / 531) * 520 - btnClear.width * 2 - 3;
-			
+			if(logingCheckBox!= null)
+				logingCheckBox.y =back.height + 30 ;
 			setTimeout(resizeTable, 100);
 		}
 		

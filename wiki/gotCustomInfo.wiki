@@ -50,6 +50,7 @@ based on the absolute stageX and StageY you should subtract these values
 6.*CUSTOM_INFO_KEY_gameWidth :        * -represents the width at which the game will be shown( in case you game can be stretched and shrinked)
 
 7.*CUSTOM_INFO_KEY_gameFrameRate :    * - represents the frame rate at which your game will run.
+
  
 8.*CUSTOM_INFO_KEY_secondsPerMove :  * - represents the amount of second's allotted to each move in the game in games where [doAllSetTurn] `milliSecondsInTurn` is set to -1  
 

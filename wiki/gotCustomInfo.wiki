@@ -64,5 +64,8 @@ In a game of TicTacToe, changing all the cell backgrounds into a specified logo
 override gotCustomInfo(infoEntries:Array/*InfoEntry*/):void
 {
   var logoURL:String = T.custom(CUSTOM_INFO_KEY_logoFullUrl,"");
+  /*
+    and then loading the logoURL into all the game squares
+  */
 }
 }}}

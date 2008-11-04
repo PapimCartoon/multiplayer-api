@@ -63,15 +63,6 @@ In a game of TicTacToe, changing all the cell backgrounds into a specified logo
 {{{
 override gotCustomInfo(infoEntries:Array/*InfoEntry*/):void
 {
-	for each(var infoEntry:InfoEntry in infoEntries)
-	{
-		if(infoEntry.key == "CONTAINER_logoFullUrl")
-		{
-			/*
-			load then logo into your cell backgrounds
-			*/
-		}
-		
-	}
+  var logoURL:String = T.custom(CUSTOM_INFO_KEY_logoFullUrl,"");
 }
 }}}

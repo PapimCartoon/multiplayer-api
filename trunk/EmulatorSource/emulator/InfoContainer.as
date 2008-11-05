@@ -12,8 +12,10 @@ package emulator {
 	public class InfoContainer extends MovieClip {
  
 		private var ldr:Loader;
+		private var gameWidth:int
+		private var gameHeight:int
+		private var randomMod:int
 		private var pnlInfo:MovieClip;
-		private var cmbCommands:ComboBox;
 		private var txtTooltip:TextField;
 		private var sInnerPrefix:String;
 		private var sOuterPrefix:String;
@@ -27,9 +29,7 @@ package emulator {
 		private var txtUsers:TextField;
 		private var txtTurn:TextField;
 		private var txtSize:TextField;
-		private var aParams:Array;
 		private var pnlParams:MovieClip;
-		private var btnSend:Button;
 		private var loaded:Boolean = false;
 		private var bStarted:Boolean = false;
 		private var btnStart:Button;
@@ -58,9 +58,6 @@ package emulator {
 			messageQueue = new Array();
 			stage.addEventListener(KeyboardEvent.KEY_UP, reportKeyUp);
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, reportKeyDown);
-			//stage.addEventListener(Mouse
-			
-			
 			stage.scaleMode = StageScaleMode.NO_SCALE;
             stage.align = StageAlign.TOP_LEFT;
             stage.addEventListener(Event.RESIZE, resizeStage);
@@ -68,38 +65,34 @@ package emulator {
 			if (!isNaN(parseInt(root.loaderInfo.parameters["fps"]))) {
 				stage.frameRate = parseInt(root.loaderInfo.parameters["fps"]);
 			}
-			
-			
 
-			
 			lblWait = new TextField();
 			lblWait.selectable = false;
 			lblWait.text = "Waiting for oponent\s and Calculators...";
 			lblWait.visible = false;
 			lblWait.autoSize = TextFieldAutoSize.LEFT;
 			this.addChild(lblWait);
-			var width:int
-			var height:int
 			if((root.loaderInfo.parameters["width"] != null) &&  (root.loaderInfo.parameters["height"] != null))
 			{
-				width = Number(root.loaderInfo.parameters["width"])
-				height =Number(root.loaderInfo.parameters["height"])
+				gameWidth = Number(root.loaderInfo.parameters["width"])
+				gameHeight =Number(root.loaderInfo.parameters["height"])
 			}
 			frameSprite = new Sprite();
-			var tempMod:int = Math.round(Math.random() *120);
+			randomMod = Math.round(Math.random() *120);
 			frameSprite.graphics.lineStyle(2,0x0000ff);
-			frameSprite.graphics.drawRect(0,0,width,height);
-			frameSprite.x = 36 + tempMod;
-			frameSprite.y = 30 + tempMod;
+			frameSprite.graphics.drawRect(0,0,gameWidth,gameHeight);
+			frameSprite.x = 36 + randomMod;
+			frameSprite.y = 30 + randomMod;
 			this.addChild(frameSprite);
 			ldr = new Loader();
-			ldr.x = 36 + tempMod;
-			ldr.y = 30 + tempMod;	
+			ldr.x = 36 + randomMod;
+			ldr.y = 30 + randomMod;	
 			this.addChild(ldr);
 			pnlBackground = new MovieClip();
 			this.addChild(pnlBackground);
 			
 			txtTurn = new TextField();
+			txtTurn.selectable = false;
 			txtTurn.autoSize = TextFieldAutoSize.LEFT;
 			txtTurn.width = 150;
 			txtTurn.height = 22;
@@ -129,16 +122,6 @@ package emulator {
 			txtUsers.multiline = true;
 			pnlInfo.addChild(txtUsers);
 			
-			cmbCommands = new ComboBox();
-			cmbCommands.setSize(150, 20);
-			cmbCommands.x = 5;
-			cmbCommands.prompt = "Send command";
-			//for each (var command_name:String in Commands.getCommandNames(false)) {
-			//	cmbCommands.addItem( { label:command_name, data:command_name } );
-			//}
-			cmbCommands.addEventListener(Event.CHANGE, onCommandSelect);
-			pnlInfo.addChild(cmbCommands);
-			
 			pnlParams = new MovieClip();
 			pnlParams.x = 5;
 			pnlInfo.addChild(pnlParams);
@@ -148,26 +131,7 @@ package emulator {
 			pnlParams.addChild(txtTooltip);
 			
 			MsgBox = new MessageBox();
-			
-			aParams = new Array(8);
-			var prm:Param;
-			for (var i:int = 0; i < aParams.length; i++) {
-				prm = new Param(MsgBox,true);
-				prm.visible = false;
-				prm.y = i * 50+10;
-				pnlParams.addChild(prm);
-				aParams[i] = prm;
-			}
-			
-			
-			/*
-			btnSend = new Button();
-			btnSend.label = "Send";
-			btnSend.visible = false;
-			btnSend.addEventListener(MouseEvent.CLICK, btnSendClick);
-			pnlParams.addChild(btnSend);
-			*/
-			
+
 			lblClient = new Label();
 			lblClient.x = 8;
 			lblClient.y = 1;
@@ -260,7 +224,7 @@ package emulator {
 			ddsDoOperations = new DelayDoSomething(function (msg:API_Message):void { doSomething(msg, true) }, fromDelay, toDelay);
 			ddsGotOperations = new DelayDoSomething(function (msg:API_Message):void { doSomething(msg, false) }, fromDelay, toDelay);
 			
-			resizeStage(null);
+			
 			if(root.loaderInfo.parameters["calculatorsOn"] == "true" )
 			{
 				txtMyName.text = "Calculator";
@@ -284,6 +248,7 @@ package emulator {
 			btnStart.addEventListener(MouseEvent.CLICK, btnStartClick);
 			this.addChild(btnStart);
 			}
+			resizeStage(null);
 			
 		}
 		private function reportKeyUp(event:KeyboardEvent):void {
@@ -345,14 +310,6 @@ package emulator {
 				if (messageQueue.length == 1)
 					nextMessage();
 			}
-				
-
-			/*				
-			if(isServer)
-				connectionToServer.sendMessage(msg);
-			else
-				connectionToGame.sendMessage(msg);
-			*/
 		}
 		public function onConnectionStatus(evt:StatusEvent):void {
 			switch(evt.level) {
@@ -407,60 +364,13 @@ package emulator {
 			loaded = true;			
 		}
 		
-		private function onCommandSelect(evt:Event):void {
-			btnSend.visible = false;
-			txtTooltip.text = "";
-			var prm:Param;
-			for (var i:int = 0; i < aParams.length; i++) {
-				prm = aParams[i];
-				prm.Value = "";
-				prm.y = i * 50+10;
-				prm.visible = false;
-				prm.Tooltip = "";
-			}
-			if(!loaded) {
-				return;
-			}
-
-			var command_name:String = cmbCommands.selectedItem.data;
-			var parameters:Array = []//Commands.findCommand(command_name);
-			for (i=0; i<parameters.length; i++) {
-				var param_name:String = parameters[i][0];
-				var param_type:String = parameters[i][1];
-				prm = aParams[i];
-				prm.Label = param_name+":"+param_type;
-				prm.visible = true;
-			}
-			btnSend.y = 50 * parameters.length + 10;
-			btnSend.visible = true;
-
-			/*
-			tooltip code:
-			var j:int;
-			for (i = 0; i < xmlFunctions["func"].length(); i++) {
-				if (xmlFunctions.func[i].name == cmbCommands.selectedItem.data) {
-					txtTooltip.text = xmlFunctions.func[i].description;
-					if(txtTooltip.text!=""){
-						for (j = 0; j < aParams.length; j++) {
-							prm = aParams[j];
-							prm.y += txtTooltip.height+10;
-						}
-						btnSend.y += txtTooltip.height+10;
-					}
-					for (j = 0; j < xmlFunctions.func[i].param.length(); j++) {
-						prm = aParams[j];
-						prm.Label = xmlFunctions.func[i].param[j].name + ":" + xmlFunctions.func[i].param[j].type;
-						prm.Value = xmlFunctions.func[i].param[j].defaultvalue;
-						prm.Tooltip = xmlFunctions.func[i].param[j].description;
-					}
-					break;
-				}
-			}
-			*/
+		private function centerGraphic(graphic:DisplayObject):void
+		{
+			graphic.x =(gameWidth -graphic.width)/2 + ldr.x ;
+			graphic.y = (gameHeight- graphic.height)/2 + ldr.y ;
 		}
-		
 		private function resizeStage(evt:Event):void {
-			var _x:int, _y:int;
+			/*var _x:int, _y:int;
 			_x = stage.stageWidth - 20+2;
 			_y = stage.stageHeight - 42+2;
 			
@@ -476,41 +386,13 @@ package emulator {
 			pnlInfo.graphics.beginFill(0x80BE40);
 			pnlInfo.graphics.drawRect(2, 22,175,_y);
 			pnlInfo.graphics.endFill();
-			
-			btnStart.x =(_x-btnStart.width)/2;
-			btnStart.y = ((_y - 20) - btnStart.height) / 2 + 20;
-            
-			lblWait.x =(_x-lblWait.width)/2;
-			lblWait.y = ((_y - 20) - lblWait.height) / 2 + 20;
-			
+			*/
+			centerGraphic(btnStart);
+			centerGraphic(lblWait);
 			txtSize.text = "Game Size: " + Math.round(stage.stageWidth) + "x" + Math.round(stage.stageHeight);
 			txtSize.x = stage.stageWidth - txtSize.width - 13;
 		}
 		
-		//todo: fix this
-		/*
-		private function btnSendClick(evt:MouseEvent):void {
-			try{
-				var prm:Param;
-				var arr:Array,i:int;
-
-				var methodName:String = cmbCommands.selectedItem.data;
-				//var args:Array = Commands.findCommand(methodName);
-				var parameters:Array = [];
-			//	for (i=0; i< args.length; i++) {
-					//var param:String = aParams[i].Value;
-				//	var param_type:String = args[i][1];
-					//parameters.push( Commands.convertToType(param, param_type) );
-				//}
-				sendDoOperation(API_Message.createMessage(methodName, parameters));
-
-				MsgBox.Show("The command was send", "Message");
-			}catch (err:Error) {
-				MsgBox.Show(err.message, "Error");
-				doTrace(new API_DoTrace("btnSendClick", "Error: " + err.getStackTrace()));
-			}
-		}
-		*/
 		
         public function gotMessage(msg:API_Message,isServer:Boolean):void
         {
@@ -540,6 +422,16 @@ package emulator {
 					gotUserInfo(msg as API_GotUserInfo);
 				else if(msg is API_GotMatchEnded)
 					gotMatchEnded(msg as API_GotMatchEnded);
+				else if(msg is API_Transaction)
+				{
+					var msg_transaction:API_Transaction = msg as API_Transaction;
+					for each(var apiMsg:API_Message in msg_transaction.messages)
+					{
+						if(apiMsg is API_DoAllSetTurn)
+							doAllSetTurn(apiMsg as API_DoAllSetTurn)
+					}
+					
+				}
 
 				if (isServer)
 					sendDoOperation(msg);
@@ -585,8 +477,6 @@ package emulator {
 					txtMyName.text = info.userName;
 				}
 				txtUsers.htmlText+=str + "<br>";
-				cmbCommands.y = txtUsers.height + txtUsers.y + 5;
-				pnlParams.y = cmbCommands.y + cmbCommands.height + 5;
 		}
 		public function gotMatchStarted(msg:API_GotMatchStarted):void { 
 				isPlaying =true;
@@ -609,9 +499,6 @@ package emulator {
 					str += ")";
 					txtUsers.htmlText+=str + "<br>";
 				}
-				cmbCommands.y=txtUsers.height + txtUsers.y + 5;
-				pnlParams.y = cmbCommands.y + cmbCommands.height + 5;
-				
 				matchOverForIds(msg.finishedPlayerIds);
 		}
 		private function matchOverForIds(user_ids:Array):void { 
@@ -633,6 +520,19 @@ package emulator {
 			if (inGame == 0) {
 				txtTurn.text = "Game over";
 			}
+		}
+		public function doAllSetTurn(msg:API_DoAllSetTurn):void
+		{
+			trace("set turn to:")
+			for each(var user:UserInfo in aUsers)
+			{
+				if(user.userID ==msg.userId)
+				{
+					txtTurn.text =user.userName+"'s Turn";	
+				}
+			}
+			
+		
 		}
 		public function gotMatchEnded(msg:API_GotMatchEnded):void { 
 			matchOverForIds(msg.finishedPlayerIds);

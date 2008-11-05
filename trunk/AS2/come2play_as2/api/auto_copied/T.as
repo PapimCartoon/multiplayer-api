@@ -43,9 +43,10 @@ import come2play_as2.api.auto_copied.*;
 		private static var _dictionary:Object = null;
 		private static var _custom:Object = null;
 		public static function initI18n(dictionary:Object, custom:Object):Void {
-			StaticFunctions.assert(_dictionary==null, ["You called T.initI18n twice!"]);
-			_dictionary = dictionary;
-			_custom = custom;
+			if (_dictionary==null) { _dictionary = {}; _custom = {}; }
+			var key:String;
+			for (key in dictionary)	_dictionary[key] = dictionary[key];			
+			for (key in custom)	_custom[key] = custom[key];
 		}
 		
 		// for customization, e.g., the frame-rate of the game.

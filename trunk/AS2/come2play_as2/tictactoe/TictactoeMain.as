@@ -107,8 +107,9 @@ class come2play_as2.tictactoe.TictactoeMain extends ClientGameAPI {
 	}
 
 	/*override*/ public function gotCustomInfo(entries:Array/*InfoEntry*/):Void {
-		myUserId = AS3_vs_AS2.as_int(T.custom(CUSTOM_INFO_KEY_myUserId,null));					
+		if (grid!=null) return; //gotCustomInfo may be called several times  					
 		grid = new CreateGrid(3,3,84,100,50);
+		myUserId = AS3_vs_AS2.as_int(T.custom(CUSTOM_INFO_KEY_myUserId,null));
 		shouldUseAvatars = AS3_vs_AS2.asBoolean(T.custom("shouldUseAvatars",true)); 
 		winLength = AS3_vs_AS2.as_int(T.custom("winLength",3));
 		playersNumInSinglePlayer = AS3_vs_AS2.as_int(T.custom("playersNumInSinglePlayer",3));
@@ -129,15 +130,20 @@ class come2play_as2.tictactoe.TictactoeMain extends ClientGameAPI {
 		}		
 		if (customSymbolsStringArray!=null)
 			for (var i:Number=0; i<customSymbolsStringArray.length; i++) {
-				var customSymbol:String = customSymbolsStringArray[i];
-				if (customSymbol!=null) replaceSymbol(i,customSymbol);
+				var symbolUrl:String = customSymbolsStringArray[i];
+				if (symbolUrl!=null) 
+					replaceSymbol(i,symbolUrl);
 			}	
 			
 		var logoFullUrl:String = AS3_vs_AS2.asString(T.custom(CUSTOM_INFO_KEY_logoFullUrl, null));
-		if (logoFullUrl!=null)
-			for (var i140:Number=0; i140<allCells.length; i140++) { var square:TictactoeSquare = allCells[i140]; 
-				getSquareGraphic(square).gotLogo(logoFullUrl);
-			}
+		if (logoFullUrl!=null) {
+			var thisObj:TictactoeMain = this; // for AS2
+			cacheImage(logoFullUrl, graphics,
+				function (isSucc:Boolean):Void { 
+					if (isSucc) thisObj.loadLogo(logoFullUrl); 
+				});
+		}
+			
 		
 		// we scale the TicTacToe size according to the grid size
 		var height:Number = AS3_vs_AS2.as_int(T.custom(CUSTOM_INFO_KEY_gameHeight, 400));
@@ -145,12 +151,25 @@ class come2play_as2.tictactoe.TictactoeMain extends ClientGameAPI {
 		StaticFunctions.storeTrace(["dimensions=",height,"x",width," gridDimesions=",grid.height(),"x",grid.width()]);
 		AS3_vs_AS2.scaleMovieY(graphics, 100*height/grid.height());	
 		AS3_vs_AS2.scaleMovieX(graphics, 100*width/grid.width());	
-		AS3_vs_AS2.setVisible(graphics,true);	
+		AS3_vs_AS2.setVisible(graphics, true);	
 	}
-	private function replaceSymbol(color:Number, symbolUrl:String):Void {
-		for (var i153:Number=0; i153<allCells.length; i153++) { var cell:TictactoeSquare = allCells[i153]; 
+	private function loadLogo(logoFullUrl:String):Void {
+		for (var i159:Number=0; i159<allCells.length; i159++) { var square:TictactoeSquare = allCells[i159]; 
+			getSquareGraphic(square).gotLogo(logoFullUrl);
+		}	
+	}
+	
+	private function replaceSymbol(color:Number, symbolUrl:String):Void {		
+		var thisObj:TictactoeMain = this; // for AS2
+		cacheImage(symbolUrl, graphics,
+			function (isSucc:Boolean):Void {
+				if (isSucc) thisObj.replaceCachedSymbol(color, symbolUrl);
+			});
+	}
+	private function replaceCachedSymbol(color:Number, symbolUrl:String):Void {
+		for (var i172:Number=0; i172<allCells.length; i172++) { var cell:TictactoeSquare = allCells[i172]; 
 			getSquareGraphic(cell).gotSymbol(color,symbolUrl);
-		}
+		}		
 	}
 	/*override*/ public function gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, userStateEntries:Array/*ServerEntry*/):Void {
 		this.allPlayerIds = allPlayerIds;
@@ -179,14 +198,14 @@ class come2play_as2.tictactoe.TictactoeMain extends ClientGameAPI {
 		for (var color:Number=0; color<playersNum; color++)
 			ongoingColors.push(color);
 		logic = new TictactoeLogic(ROWS(),COLS(),winLength, playersNum);
-		for (var i184:Number=0; i184<userStateEntries.length; i184++) { var serverEntry:ServerEntry = userStateEntries[i184]; 
+		for (var i203:Number=0; i203<userStateEntries.length; i203++) { var serverEntry:ServerEntry = userStateEntries[i203]; 
 			if (!isSinglePlayer()) turnOfColor = getColor(serverEntry.storedByUserId);	// some users may have disconnected in the middle of the game	
 			performMove(TictactoeSquare(serverEntry.value), true);	//we should not call doAllEndMatch when loading the match	
 		}
 		if (finishedPlayerIds.length>0)
 			matchOverForPlayers(finishedPlayerIds);
 		
-		for (var i191:Number=0; i191<allCells.length; i191++) { var move:TictactoeSquare = allCells[i191]; 
+		for (var i210:Number=0; i210<allCells.length; i210++) { var move:TictactoeSquare = allCells[i210]; 
 			getSquareGraphic(move).clearWinAnimation();
 		}
 		startMove(true);
@@ -222,7 +241,7 @@ class come2play_as2.tictactoe.TictactoeMain extends ClientGameAPI {
 	private function matchOverForPlayers(finishedPlayerIds:Array/*int*/):Boolean {
 		if (logic==null) return false; // match already ended
 		var colors:Array/*int*/ = [];
-		for (var i227:Number=0; i227<finishedPlayerIds.length; i227++) { var playerId:Number = finishedPlayerIds[i227]; 
+		for (var i246:Number=0; i246<finishedPlayerIds.length; i246++) { var playerId:Number = finishedPlayerIds[i246]; 
 			var colorOfPlayerId:Number = getColor(playerId);
 			assert(colorOfPlayerId!=-1, ["Didn't find playerId=",playerId]); 
 			colors.push(colorOfPlayerId);
@@ -231,7 +250,7 @@ class come2play_as2.tictactoe.TictactoeMain extends ClientGameAPI {
 	}
 	private function matchOverForColors(colors:Array/*int*/):Boolean {	
 		var shouldChangeTurnOfColor:Boolean = false;
-		for (var i236:Number=0; i236<colors.length; i236++) { var color:Number = colors[i236]; 
+		for (var i255:Number=0; i255<colors.length; i255++) { var color:Number = colors[i255]; 
 			var ongoingIndex:Number = AS3_vs_AS2.IndexOf(ongoingColors, color);
 			if (ongoingIndex==-1) continue; // already finished (when the game ends normally, I immediately call matchOverForColors. see performMove) 
 			ongoingColors.splice(ongoingIndex, 1);
@@ -266,7 +285,7 @@ class come2play_as2.tictactoe.TictactoeMain extends ClientGameAPI {
 	}
 	private static function arrayCopy(arr:Array):Array {
 		var res:Array = [];
-		for (var i271:Number=0; i271<arr.length; i271++) { var x:Object = arr[i271]; 
+		for (var i290:Number=0; i290<arr.length; i290++) { var x:Object = arr[i290]; 
 			res.push(x);
 		}
 		return res;			
@@ -288,7 +307,7 @@ class come2play_as2.tictactoe.TictactoeMain extends ClientGameAPI {
 		var winningCells:Array/*TictactoeSquare*/ = logic.getWinningCells(move);
 		var didWin:Boolean = winningCells!=null;
 		if (didWin) {
-			for (var i293:Number=0; i293<winningCells.length; i293++) { var winCell:TictactoeSquare = winningCells[i293]; 
+			for (var i312:Number=0; i312<winningCells.length; i312++) { var winCell:TictactoeSquare = winningCells[i312]; 
 				getSquareGraphic(winCell).startWinAnimation();
 			}
 		}
@@ -330,10 +349,10 @@ class come2play_as2.tictactoe.TictactoeMain extends ClientGameAPI {
 				}		
 				if (isBoardFull) { // Important: it can happen that someone won and the board has just filled up!				
 					var finishedPlayersIds:Array/*int*/ = [];
-					for (var i335:Number=0; i335<finishedPlayers.length; i335++) { var playerMatchOver:PlayerMatchOver = finishedPlayers[i335]; 
+					for (var i354:Number=0; i354<finishedPlayers.length; i354++) { var playerMatchOver:PlayerMatchOver = finishedPlayers[i354]; 
 						finishedPlayersIds.push(playerMatchOver.playerId);
 					}					
-					for (var i338:Number=0; i338<ongoingColors.length; i338++) { var ongoingColor:Number = ongoingColors[i338]; 
+					for (var i357:Number=0; i357<ongoingColors.length; i357++) { var ongoingColor:Number = ongoingColors[i357]; 
 						var ongoingPlayerId:Number = allPlayerIds[ongoingColor];
 						if (AS3_vs_AS2.IndexOf(finishedPlayersIds, ongoingPlayerId)==-1) {
 							if (didWin) {
@@ -384,7 +403,7 @@ class come2play_as2.tictactoe.TictactoeMain extends ClientGameAPI {
 		if (!logic.isSquareAvailable(move)) return; // already filled this square (e.g., if you press on the keyboard, you may choose a cell that is already full)
 
 		shouldSendMove = false;		
-		for (var i389:Number=0; i389<allCells.length; i389++) { var square:TictactoeSquare = allCells[i389]; 
+		for (var i408:Number=0; i408<allCells.length; i408++) { var square:TictactoeSquare = allCells[i408]; 
 			if (!logic.isSquareAvailable(square)) continue;
 			if (move.isEqual(square)) continue; // otherwise, it causes a slight blink because we show the logo and then immediately the move animation
 			var squareGraphics:TictactoeSquareGraphic = getSquareGraphic(square);
@@ -406,7 +425,7 @@ class come2play_as2.tictactoe.TictactoeMain extends ClientGameAPI {
 			doAllSetTurn(allPlayerIds[turnOfColor],-1);
 		}		
 		if (isMyTurn()) shouldSendMove = true;
-		for (var i411:Number=0; i411<allCells.length; i411++) { var square:TictactoeSquare = allCells[i411]; 
+		for (var i430:Number=0; i430<allCells.length; i430++) { var square:TictactoeSquare = allCells[i430]; 
 			if (!logic.isSquareAvailable(square)) continue;
 			var squareGraphics:TictactoeSquareGraphic = getSquareGraphic(square);
 			squareGraphics.startMove(

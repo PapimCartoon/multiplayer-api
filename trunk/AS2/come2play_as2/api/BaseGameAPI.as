@@ -67,7 +67,25 @@ import come2play_as2.api.*;
 		 * 
 		 * Animations may be displayed only inside a transaction
 		 * 	that is either gotMatchStarted or gotMatchEnded or gotStateChanged.
-		 */
+		 * 
+		 * About loading images:
+		 * Flash caches loaded images, but only after loading is completed.
+		 * So, if you want to use the same image in many places
+		 * (e.g., place some custom image on all the pieces)
+		 * then you should first call cacheImage,
+		 * and only in the  onLoaded  function load the image to all the pieces.
+		 * Function cacheImage starts an animation, and when the image is loaded 
+		 * (or failed to load) then the animation is ended.
+		 * The image will be stored in some 
+		 * newly created invisible child in someMovieClip. 
+		 * E.g.,
+		 * cacheImage( imageUrl, someMovieClip, 
+		 * 		function (isSuccess:Boolean):Void {
+		 * 			if (isSuccess) {
+		 * 				// load the image in all the pieces
+		 * 			}
+		 * 		});
+		 */		 
         public function animationStarted():Void {
         	checkInsideTransaction();
 			if (!canDoAnimations())
@@ -86,9 +104,22 @@ import come2play_as2.api.*;
         	sendFinishedCallback();        	        	
         }
         public function canDoAnimations():Boolean {
-			return currentCallback instanceof API_GotMatchStarted || 
+			return currentCallback instanceof API_GotCustomInfo || 
+				currentCallback instanceof API_GotMatchStarted ||
 				currentCallback instanceof API_GotMatchEnded || 
 				currentCallback instanceof API_GotStateChanged;
+		}
+		public function cacheImage(imageUrl:String, someMovieClip:MovieClip,
+					onLoaded:Function):Void {		
+			animationStarted();
+			var thisObj:BaseGameAPI = this; // for AS2
+			var forCaching:MovieClip =
+				AS3_vs_AS2.loadMovieIntoNewChild(someMovieClip, imageUrl, 
+					function (isSucc:Boolean):Void {
+						onLoaded(isSucc);
+						thisObj.animationEnded();				
+					});	
+			AS3_vs_AS2.setVisible(forCaching, false);		
 		}
 		
 		
@@ -103,7 +134,7 @@ import come2play_as2.api.*;
 		}
 		private function subtractArray(arr:Array, minus:Array):Array {
 			var res:Array = arr.concat();
-			for (var i109:Number=0; i109<minus.length; i109++) { var o:Object = minus[i109]; 
+			for (var i140:Number=0; i140<minus.length; i140++) { var o:Object = minus[i140]; 
 				var indexOf:Number = AS3_vs_AS2.IndexOf(res, o);
 				checkContainer(indexOf!=-1, ["Missing element ",o," in arr ",arr]);				
 				res.splice(indexOf, 1);
@@ -139,28 +170,28 @@ import come2play_as2.api.*;
         
         private function isNullKeyExistUserEntry(userEntries:Array/*UserEntry*/):Void
         {
-        	for (var i145:Number=0; i145<userEntries.length; i145++) { var userEntry:UserEntry = userEntries[i145]; 
+        	for (var i176:Number=0; i176<userEntries.length; i176++) { var userEntry:UserEntry = userEntries[i176]; 
         		if (userEntry.key == null)
         			throwError("key cannot be null !");
         	}
         }
         private function isNullKeyExistRevealEntry(revealEntries:Array/*RevealEntry*/):Void
         {
-        	for (var i152:Number=0; i152<revealEntries.length; i152++) { var revealEntry:RevealEntry = revealEntries[i152]; 
+        	for (var i183:Number=0; i183<revealEntries.length; i183++) { var revealEntry:RevealEntry = revealEntries[i183]; 
         		if (revealEntry.key == null)
         			throwError("key cannot be null !");
         	}
         }
         private function isNullKeyExist(keys:Array/*Object*/):Void
         {
-        	for (var i159:Number=0; i159<keys.length; i159++) { var key:String = keys[i159]; 
+        	for (var i190:Number=0; i190<keys.length; i190++) { var key:String = keys[i190]; 
         		if (key == null)
         			throwError("key cannot be null !");
         	}
         }
         private function updateMirorServerState(serverEntries:Array/*ServerEntry*/):Void
         {
-        	for (var i166:Number=0; i166<serverEntries.length; i166++) { var serverEntry:ServerEntry = serverEntries[i166]; 
+        	for (var i197:Number=0; i197<serverEntries.length; i197++) { var serverEntry:ServerEntry = serverEntries[i197]; 
         	    if (serverEntry.value == null)
 					serverStateMiror.remove(serverEntry.key);
 				else 
@@ -206,7 +237,7 @@ import come2play_as2.api.*;
 					var customInfo:API_GotCustomInfo = API_GotCustomInfo(msg);
 					var i18nObj:Object = {};
 					var customObj:Object = {};
-					for (var i212:Number=0; i212<customInfo.infoEntries.length; i212++) { var entry:InfoEntry = customInfo.infoEntries[i212]; 
+					for (var i243:Number=0; i243<customInfo.infoEntries.length; i243++) { var entry:InfoEntry = customInfo.infoEntries[i243]; 
 						var key:String = entry.key;
 						var value:Object = entry.value;	
 						if (key=="i18n")
@@ -214,12 +245,10 @@ import come2play_as2.api.*;
 						else
 							customObj[key] = value;
 					}		
-					T.initI18n(i18nObj, customObj); // can only be called once
+					T.initI18n(i18nObj, customObj); // may be called several times because we may pass different 'secondsPerMatch' every time a game starts
 				} else if (msg instanceof API_GotKeyboardEvent) {						    			
 	    			checkInProgress(true,msg);
-				} else if (msg instanceof API_GotRequestStateCalculation) {						    			
-	    			checkInProgress(true,msg);					
-				}
+				} 
 	    		var methodName:String = msg.getMethodName();
 	    		if (AS3_vs_AS2.isAS3 && !this.hasOwnProperty(methodName)) return;
 				var func:Function = Function(this[methodName]);

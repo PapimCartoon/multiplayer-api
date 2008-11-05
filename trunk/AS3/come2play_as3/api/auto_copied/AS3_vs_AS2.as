@@ -107,22 +107,31 @@ public final class AS3_vs_AS2
 		return res;
 	}	
 	private static var prevent_garbage_collection:Array = [];
-	public static function loadMovieIntoNewChild(graphics:MovieClip, url:String):DisplayObject {
+	public static function loadMovieIntoNewChild(graphics:MovieClip, 
+			url:String, onLoaded:Function):DisplayObject {
 		var loader:Loader = new Loader();
 		prevent_garbage_collection.push(loader);
 		var newMovie:DisplayObjectContainer = new Sprite();
 		var contentLoaderInfo:LoaderInfo = loader.contentLoaderInfo;
+		// Possible events for contentLoaderInfo:
+		//Event.COMPLETE
+        //IOErrorEvent.IO_ERROR
+        //HTTPStatusEvent.HTTP_STATUS
+        //Event.INIT
+        //Event.OPEN
+        //ProgressEvent.PROGRESS
+        //Event.UNLOAD
 		contentLoaderInfo.addEventListener(Event.COMPLETE, function (event:Event):void {
-				trace("Done loading url="+url);
+				StaticFunctions.storeTrace(["Done loading url=",url]);
 				newMovie.addChild(loader.content);
-				//newMovie.visible = true;	        
+				if (onLoaded!=null) onLoaded(true);
 			}  );
 		contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, function (event:IOErrorEvent):void {
-		        StaticFunctions.showError("Error in loading movie from url="+url+" event="+event);
+		        StaticFunctions.storeTrace(["Error in loading movie from url=",url," event=",event]);
+		        if (onLoaded!=null) onLoaded(false);
 		    }  );
-		//newMovie.visible = false;
 		graphics.addChild(newMovie);
-		trace("Loading url="+url+" into newMovie="+newMovie);
+		StaticFunctions.storeTrace(["Loading url=",url," into a newly created child of=",graphics.name]);
 		loader.load(new URLRequest(url));
 		return newMovie;
 	}

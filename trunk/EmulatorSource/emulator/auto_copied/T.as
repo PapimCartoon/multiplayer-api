@@ -66,15 +66,16 @@ package emulator.auto_copied
 		private static var _dictionary:Object = null;
 		private static var _custom:Object = null;
 		public static function initI18n(dictionary:Object, custom:Object):void {
-			StaticFunctions.assert(_dictionary==null, ["You called T.initI18n twice!"]);
-			_dictionary = dictionary;
-			_custom = custom;
+			if (_dictionary==null) { _dictionary = {}; _custom = {}; }
+			var key:String;
+			for (key in dictionary)	_dictionary[key] = dictionary[key];			
+			for (key in custom)	_custom[key] = custom[key];
 		}
 		
-		// for customization, e.g., the frame-rate of the game.
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		// for customization, e.g., the frame-rate of the game.
 		public static function custom(key:String, defaultValue:Object/*Type*/):Object/*Type*/ {
 			var res:Object = _custom[key];
 			return res==null ? defaultValue : res;
@@ -84,10 +85,10 @@ package emulator.auto_copied
 		// i18n stands for "i"(nternationalizatio)"n"	
 		public static function i18n(str:String):String { //internationalization			
 			var res:Object = _dictionary[str];
-			return res==null ? str : res.toString();
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			return res==null ? str : res.toString();
 		}		
 		public static function i18nReplace(str:String, replacement:Object):String {
 			var res:String = i18n(str);
@@ -97,10 +98,10 @@ package emulator.auto_copied
 			return res;			
 		}
 		
-		
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		
 		public static var isLeftToRight:Boolean = true;
 		
 		private var arr:Array;
@@ -110,10 +111,10 @@ package emulator.auto_copied
 		public function add(str:String):void {
 			if (isLeftToRight) 
 				arr.push(str);
-			else
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			else
 				arr.unshift(str);
 		}
 		public function join():String {

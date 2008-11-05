@@ -71,7 +71,25 @@ package come2play_as3.api {
 		 * 
 		 * Animations may be displayed only inside a transaction
 		 * 	that is either gotMatchStarted or gotMatchEnded or gotStateChanged.
-		 */
+		 * 
+		 * About loading images:
+		 * Flash caches loaded images, but only after loading is completed.
+		 * So, if you want to use the same image in many places
+		 * (e.g., place some custom image on all the pieces)
+		 * then you should first call cacheImage,
+		 * and only in the  onLoaded  function load the image to all the pieces.
+		 * Function cacheImage starts an animation, and when the image is loaded 
+		 * (or failed to load) then the animation is ended.
+		 * The image will be stored in some 
+		 * newly created invisible child in someMovieClip. 
+		 * E.g.,
+		 * cacheImage( imageUrl, someMovieClip, 
+		 * 		function (isSuccess:Boolean):void {
+		 * 			if (isSuccess) {
+		 * 				// load the image in all the pieces
+		 * 			}
+		 * 		});
+		 */		 
         public function animationStarted():void {
         	checkInsideTransaction();
 			if (!canDoAnimations())
@@ -90,9 +108,22 @@ package come2play_as3.api {
         	sendFinishedCallback();        	        	
         }
         public function canDoAnimations():Boolean {
-			return currentCallback is API_GotMatchStarted || 
+			return currentCallback is API_GotCustomInfo || 
+				currentCallback is API_GotMatchStarted ||
 				currentCallback is API_GotMatchEnded || 
 				currentCallback is API_GotStateChanged;
+		}
+		public function cacheImage(imageUrl:String, someMovieClip:MovieClip,
+					onLoaded:Function):void {		
+			animationStarted();
+			var thisObj:BaseGameAPI = this; // for AS2
+			var forCaching:DisplayObject =
+				AS3_vs_AS2.loadMovieIntoNewChild(someMovieClip, imageUrl, 
+					function (isSucc:Boolean):void {
+						onLoaded(isSucc);
+						thisObj.animationEnded();				
+					});	
+			AS3_vs_AS2.setVisible(forCaching, false);		
 		}
 		
 		

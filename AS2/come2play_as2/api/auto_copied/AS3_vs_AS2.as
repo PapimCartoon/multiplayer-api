@@ -90,14 +90,33 @@ class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 		if (res==null) StaticFunctions.throwError("Missing child='"+childName+"' in movieclip="+graphics);
 		return res;
 	}	
-	public static function loadMovieIntoNewChild(graphics:MovieClip, url:String):MovieClip {
+	public static function loadMovieIntoNewChild(graphics:MovieClip, url:String, onLoaded:Function):MovieClip {
 		
 		// create a new child, and load the url into that new child
 		var depth:Number = graphics.getNextHighestDepth();
 		var res:MovieClip = graphics.createEmptyMovieClip("LOADMOVIE"+depth,depth);
 		var inner:MovieClip = res.createEmptyMovieClip("INNER",0); // I need another inner clip, because if we immediately call setVisible(res, false), then when the movie is later loaded then the visible turns back to true.
-		trace("Loading url="+url+" into newMovie="+inner);
-		inner.loadMovie(url);
+		StaticFunctions.storeTrace(["Loading url=",url," into newMovie=",inner]);
+		
+		if (false) {
+			inner.loadMovie(url);
+		} else {
+			var loadListener:Object = new Object();
+			//onLoadComplete
+			loadListener.onLoadInit = function ():Void { 
+				StaticFunctions.storeTrace(["Done loading url=",url]);
+				if (onLoaded!=null) onLoaded(true); 
+			} 
+			loadListener.onLoadError = function ():Void { 
+				StaticFunctions.storeTrace(["Error in loading movie from url=",url]);
+				if (onLoaded!=null) onLoaded(false); 
+			}
+
+			var mcl:MovieClipLoader = new MovieClipLoader();
+			mcl.addListener(loadListener);
+			mcl.loadClip(url, inner);
+		}
+
 		return res;
 	}
 	public static function scaleMovie(graphics:MovieClip, x_percentage:Number, y_percentage:Number):Void {

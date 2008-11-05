@@ -134,15 +134,20 @@ public final class TictactoeMain extends ClientGameAPI {
 		}		
 		if (customSymbolsStringArray!=null)
 			for (var i:int=0; i<customSymbolsStringArray.length; i++) {
-				var customSymbol:String = customSymbolsStringArray[i];
-				if (customSymbol!=null) replaceSymbol(i,customSymbol);
+				var symbolUrl:String = customSymbolsStringArray[i];
+				if (symbolUrl!=null) 
+					replaceSymbol(i,symbolUrl);
 			}	
 			
 		var logoFullUrl:String = AS3_vs_AS2.asString(T.custom(CUSTOM_INFO_KEY_logoFullUrl, null));
-		if (logoFullUrl!=null)
-			for each (var square:TictactoeSquare in allCells) {
-				getSquareGraphic(square).gotLogo(logoFullUrl);
-			}
+		if (logoFullUrl!=null) {
+			var thisObj:TictactoeMain = this; // for AS2
+			cacheImage(logoFullUrl, graphics,
+				function (isSucc:Boolean):void { 
+					if (isSucc) thisObj.loadLogo(logoFullUrl); 
+				});
+		}
+			
 		
 		// we scale the TicTacToe size according to the grid size
 		var height:int = AS3_vs_AS2.as_int(T.custom(CUSTOM_INFO_KEY_gameHeight, 400));
@@ -150,12 +155,25 @@ public final class TictactoeMain extends ClientGameAPI {
 		StaticFunctions.storeTrace(["dimensions=",height,"x",width," gridDimesions=",grid.height(),"x",grid.width()]);
 		AS3_vs_AS2.scaleMovieY(graphics, 100*height/grid.height());	
 		AS3_vs_AS2.scaleMovieX(graphics, 100*width/grid.width());	
-		AS3_vs_AS2.setVisible(graphics,true);	
+		AS3_vs_AS2.setVisible(graphics, true);	
 	}
-	private function replaceSymbol(color:int, symbolUrl:String):void {
+	private function loadLogo(logoFullUrl:String):void {
+		for each (var square:TictactoeSquare in allCells) {
+			getSquareGraphic(square).gotLogo(logoFullUrl);
+		}	
+	}
+	
+	private function replaceSymbol(color:int, symbolUrl:String):void {		
+		var thisObj:TictactoeMain = this; // for AS2
+		cacheImage(symbolUrl, graphics,
+			function (isSucc:Boolean):void {
+				if (isSucc) thisObj.replaceCachedSymbol(color, symbolUrl);
+			});
+	}
+	private function replaceCachedSymbol(color:int, symbolUrl:String):void {
 		for each (var cell:TictactoeSquare in allCells) {
 			getSquareGraphic(cell).gotSymbol(color,symbolUrl);
-		}
+		}		
 	}
 	override public function gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, userStateEntries:Array/*ServerEntry*/):void {
 		this.allPlayerIds = allPlayerIds;

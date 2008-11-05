@@ -61,12 +61,15 @@ public final class TictactoeSquareGraphic
 	public function gotSymbol(color:int, symbolUrl:String):void {
 		if (color<0 || color>=MAX_SYMBOLS) throw new Error("Illegal color="+color);
 		AS3_vs_AS2.removeMovie(allSymbols[color]);
+		var thisObj:TictactoeSquareGraphic = this; // for AS2
 		var newSymbol:DisplayObject =
-			AS3_vs_AS2.loadMovieIntoNewChild(symbolsContainer, symbolUrl);
-		addSymbol(color, newSymbol);
+			AS3_vs_AS2.loadMovieIntoNewChild(symbolsContainer, symbolUrl,
+				function(isSuccess:Boolean):void { 
+					if (isSuccess) thisObj.addSymbol(color, newSymbol); 
+				} );		
 	}
 	public function gotLogo(logo:String):void {
-		AS3_vs_AS2.loadMovieIntoNewChild(logoContainer, logo);		
+		AS3_vs_AS2.loadMovieIntoNewChild(logoContainer, logo, null);		
 	}	
     private function showOrHideLogo(shouldAdd:Boolean):void {
     	AS3_vs_AS2.setVisible(logoContainer,shouldAdd);

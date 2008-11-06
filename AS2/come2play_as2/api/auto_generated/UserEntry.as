@@ -29,14 +29,8 @@ import come2play_as2.api.auto_generated.*;
 
 			this.isSecret = parameters[pos++];
 		}
-		/*override*/ public function getParametersAsString():String { return 'key=' + JSON.stringify(key)+', value=' + JSON.stringify(value)+', isSecret=' + JSON.stringify(isSecret); }
 		/*override*/ public function getFunctionId():Number { return -87; }
-		/*override*/ public function getClassName():String { return 'UserEntry'; }
 		/*override*/ public function getMethodName():String { return 'userEntry'; }
-		/*override*/ public function getFieldNames():Array { return ['key', 'value', 'isSecret']; }
 		/*override*/ public function getMethodParameters():Array { return [key, value, isSecret]; }
 		/*override*/ public function getMethodParametersNum():Number { return 3; }
 	}
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-

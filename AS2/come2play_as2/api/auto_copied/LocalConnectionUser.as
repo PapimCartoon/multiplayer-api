@@ -89,7 +89,7 @@ import come2play_as2.api.auto_copied.*;
         private function reallySendMessage(msg:API_Message):Void {        						  
 			try{
 				AS3_vs_AS2.checkObjectIsSerializable(msg);
-				lcUser.send(sSendChanel, "localconnection_callback", msg.toLocalConnectionObject());  
+				lcUser.send(sSendChanel, "localconnection_callback", msg.toObject());  
 			}catch(err:Error) { 
 				passError(msg, err);
 			}        	

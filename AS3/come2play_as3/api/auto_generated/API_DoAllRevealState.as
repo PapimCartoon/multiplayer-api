@@ -20,15 +20,12 @@ package come2play_as3.api.auto_generated {
 			var pos:int = 0;
 			this.revealEntries = parameters[pos++];
 		}
-		override public function getParametersAsString():String { return 'revealEntries=' + JSON.stringify(revealEntries); }
 		override public function getFunctionId():int { return -114; }
-		override public function getClassName():String { return 'API_DoAllRevealState'; }
 		override public function getMethodName():String { return 'doAllRevealState'; }
-		override public function getFieldNames():Array { return ['revealEntries']; }
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 		override public function getMethodParameters():Array { return [revealEntries]; }
 		override public function getMethodParametersNum():int { return 1; }
 	}
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 }

@@ -19,14 +19,11 @@ import come2play_as2.api.auto_generated.*;
 			var pos:Number = 0;
 			this.serverEntries = parameters[pos++];
 		}
-		/*override*/ public function getParametersAsString():String { return 'serverEntries=' + JSON.stringify(serverEntries); }
 		/*override*/ public function getFunctionId():Number { return -119; }
-		/*override*/ public function getClassName():String { return 'API_GotStateChanged'; }
 		/*override*/ public function getMethodName():String { return 'gotStateChanged'; }
-		/*override*/ public function getFieldNames():Array { return ['serverEntries']; }
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 		/*override*/ public function getMethodParameters():Array { return [serverEntries]; }
 		/*override*/ public function getMethodParametersNum():Number { return 1; }
 	}
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+

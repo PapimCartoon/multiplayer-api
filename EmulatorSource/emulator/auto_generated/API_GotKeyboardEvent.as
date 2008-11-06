@@ -42,15 +42,9 @@ package emulator.auto_generated {
 			this.ctrlKey = parameters[pos++];
 			this.shiftKey = parameters[pos++];
 		}
-		override public function getParametersAsString():String { return 'isKeyDown=' + JSON.stringify(isKeyDown)+', charCode=' + JSON.stringify(charCode)+', keyCode=' + JSON.stringify(keyCode)+', keyLocation=' + JSON.stringify(keyLocation)+', altKey=' + JSON.stringify(altKey)+', ctrlKey=' + JSON.stringify(ctrlKey)+', shiftKey=' + JSON.stringify(shiftKey); }
 		override public function getFunctionId():int { return -125; }
-		override public function getClassName():String { return 'API_GotKeyboardEvent'; }
 		override public function getMethodName():String { return 'gotKeyboardEvent'; }
-		override public function getFieldNames():Array { return ['isKeyDown', 'charCode', 'keyCode', 'keyLocation', 'altKey', 'ctrlKey', 'shiftKey']; }
 		override public function getMethodParameters():Array { return [isKeyDown, charCode, keyCode, keyLocation, altKey, ctrlKey, shiftKey]; }
 		override public function getMethodParametersNum():int { return 7; }
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 	}
 }

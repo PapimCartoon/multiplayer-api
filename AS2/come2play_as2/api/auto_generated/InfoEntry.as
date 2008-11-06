@@ -22,14 +22,11 @@ import come2play_as2.api.auto_generated.*;
 			this.key = parameters[pos++];
 			this.value = parameters[pos++];
 		}
-		/*override*/ public function getParametersAsString():String { return 'key=' + JSON.stringify(key)+', value=' + JSON.stringify(value); }
 		/*override*/ public function getFunctionId():Number { return -89; }
+		/*override*/ public function getMethodName():String { return 'infoEntry'; }
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		/*override*/ public function getClassName():String { return 'InfoEntry'; }
-		/*override*/ public function getMethodName():String { return 'infoEntry'; }
-		/*override*/ public function getFieldNames():Array { return ['key', 'value']; }
 		/*override*/ public function getMethodParameters():Array { return [key, value]; }
 		/*override*/ public function getMethodParametersNum():Number { return 2; }
 	}

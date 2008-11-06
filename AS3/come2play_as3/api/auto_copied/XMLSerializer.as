@@ -97,8 +97,8 @@ public final class XMLSerializer
     					AS3_vs_AS2.asSerializableClass(arg) : null;
     			elementType = serObj==null ? 
     				RESERVED_NAMES.obj : serObj.__CLASS_NAME__;
-    			var fields:Object = serObj!=null ? serObj.toObject() : arg;
-    			childrenKeys = JSON.getSortedKeys(fields);	
+    			childrenKeys = serObj!=null ? serObj.getFieldNames() : JSON.getSortedKeys(arg);
+    			if (serObj!=null) childrenKeys.sort();	
     		}
     	}
     	StaticFunctions.assert(elementType!=null, ["Internal error! missing elementType"]);

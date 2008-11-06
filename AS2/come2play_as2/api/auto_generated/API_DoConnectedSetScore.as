@@ -19,14 +19,11 @@ import come2play_as2.api.auto_generated.*;
 			var pos:Number = 0;
 			this.score = parameters[pos++];
 		}
-		/*override*/ public function getParametersAsString():String { return 'score=' + JSON.stringify(score); }
 		/*override*/ public function getFunctionId():Number { return -107; }
-		/*override*/ public function getClassName():String { return 'API_DoConnectedSetScore'; }
 		/*override*/ public function getMethodName():String { return 'doConnectedSetScore'; }
-		/*override*/ public function getFieldNames():Array { return ['score']; }
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 		/*override*/ public function getMethodParameters():Array { return [score]; }
 		/*override*/ public function getMethodParametersNum():Number { return 1; }
 	}
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+

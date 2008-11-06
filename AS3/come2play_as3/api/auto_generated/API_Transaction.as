@@ -23,14 +23,11 @@ package come2play_as3.api.auto_generated {
 			this.callback = parameters[pos++];
 			this.messages = parameters[pos++];
 		}
-		override public function getParametersAsString():String { return 'callback=' + JSON.stringify(callback)+', messages=' + JSON.stringify(messages); }
 		override public function getFunctionId():int { return -85; }
+		override public function getMethodName():String { return 'aPI_Transaction'; }
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		override public function getClassName():String { return 'API_Transaction'; }
-		override public function getMethodName():String { return 'aPI_Transaction'; }
-		override public function getFieldNames():Array { return ['callback', 'messages']; }
 		override public function getMethodParameters():Array { return [callback, messages]; }
 		override public function getMethodParametersNum():int { return 2; }
 	}

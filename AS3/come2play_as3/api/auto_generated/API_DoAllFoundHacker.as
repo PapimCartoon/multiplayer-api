@@ -23,14 +23,11 @@ package come2play_as3.api.auto_generated {
 			this.userId = parameters[pos++];
 			this.errorDescription = parameters[pos++];
 		}
-		override public function getParametersAsString():String { return 'userId=' + JSON.stringify(userId)+', errorDescription=' + JSON.stringify(errorDescription); }
 		override public function getFunctionId():int { return -111; }
+		override public function getMethodName():String { return 'doAllFoundHacker'; }
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		override public function getClassName():String { return 'API_DoAllFoundHacker'; }
-		override public function getMethodName():String { return 'doAllFoundHacker'; }
-		override public function getFieldNames():Array { return ['userId', 'errorDescription']; }
 		override public function getMethodParameters():Array { return [userId, errorDescription]; }
 		override public function getMethodParametersNum():int { return 2; }
 	}

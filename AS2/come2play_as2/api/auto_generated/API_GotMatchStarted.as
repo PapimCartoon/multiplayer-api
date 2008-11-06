@@ -28,11 +28,8 @@ import come2play_as2.api.auto_generated.*;
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
 		}
-		/*override*/ public function getParametersAsString():String { return 'allPlayerIds=' + JSON.stringify(allPlayerIds)+', finishedPlayerIds=' + JSON.stringify(finishedPlayerIds)+', serverEntries=' + JSON.stringify(serverEntries); }
 		/*override*/ public function getFunctionId():Number { return -121; }
-		/*override*/ public function getClassName():String { return 'API_GotMatchStarted'; }
 		/*override*/ public function getMethodName():String { return 'gotMatchStarted'; }
-		/*override*/ public function getFieldNames():Array { return ['allPlayerIds', 'finishedPlayerIds', 'serverEntries']; }
 		/*override*/ public function getMethodParameters():Array { return [allPlayerIds, finishedPlayerIds, serverEntries]; }
 		/*override*/ public function getMethodParametersNum():Number { return 3; }
 	}

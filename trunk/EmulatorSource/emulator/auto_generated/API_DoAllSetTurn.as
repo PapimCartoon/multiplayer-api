@@ -22,14 +22,11 @@ package emulator.auto_generated {
 			this.userId = parameters[pos++];
 			this.milliSecondsInTurn = parameters[pos++];
 		}
-		override public function getParametersAsString():String { return 'userId=' + JSON.stringify(userId)+', milliSecondsInTurn=' + JSON.stringify(milliSecondsInTurn); }
+		override public function getFunctionId():int { return -115; }
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		override public function getFunctionId():int { return -115; }
-		override public function getClassName():String { return 'API_DoAllSetTurn'; }
 		override public function getMethodName():String { return 'doAllSetTurn'; }
-		override public function getFieldNames():Array { return ['userId', 'milliSecondsInTurn']; }
 		override public function getMethodParameters():Array { return [userId, milliSecondsInTurn]; }
 		override public function getMethodParametersNum():int { return 2; }
 	}

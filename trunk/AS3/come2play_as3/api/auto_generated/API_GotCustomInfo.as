@@ -20,15 +20,12 @@ package come2play_as3.api.auto_generated {
 			var pos:int = 0;
 			this.infoEntries = parameters[pos++];
 		}
-		override public function getParametersAsString():String { return 'infoEntries=' + JSON.stringify(infoEntries); }
 		override public function getFunctionId():int { return -124; }
-		override public function getClassName():String { return 'API_GotCustomInfo'; }
 		override public function getMethodName():String { return 'gotCustomInfo'; }
-		override public function getFieldNames():Array { return ['infoEntries']; }
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 		override public function getMethodParameters():Array { return [infoEntries]; }
 		override public function getMethodParametersNum():int { return 1; }
 	}
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 }

@@ -21,14 +21,11 @@ package emulator.auto_generated {
 			this.userId = parameters[pos++];
 			this.infoEntries = parameters[pos++];
 		}
-		override public function getParametersAsString():String { return 'userId=' + JSON.stringify(userId)+', infoEntries=' + JSON.stringify(infoEntries); }
 		override public function getFunctionId():int { return -123; }
+		override public function getMethodName():String { return 'gotUserInfo'; }
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		override public function getClassName():String { return 'API_GotUserInfo'; }
-		override public function getMethodName():String { return 'gotUserInfo'; }
-		override public function getFieldNames():Array { return ['userId', 'infoEntries']; }
 		override public function getMethodParameters():Array { return [userId, infoEntries]; }
 		override public function getMethodParametersNum():int { return 2; }
 	}

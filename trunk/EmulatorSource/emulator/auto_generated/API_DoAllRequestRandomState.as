@@ -22,14 +22,11 @@ package emulator.auto_generated {
 			this.key = parameters[pos++];
 			this.isSecret = parameters[pos++];
 		}
-		override public function getParametersAsString():String { return 'key=' + JSON.stringify(key)+', isSecret=' + JSON.stringify(isSecret); }
+		override public function getFunctionId():int { return -112; }
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		override public function getFunctionId():int { return -112; }
-		override public function getClassName():String { return 'API_DoAllRequestRandomState'; }
 		override public function getMethodName():String { return 'doAllRequestRandomState'; }
-		override public function getFieldNames():Array { return ['key', 'isSecret']; }
 		override public function getMethodParameters():Array { return [key, isSecret]; }
 		override public function getMethodParametersNum():int { return 2; }
 	}

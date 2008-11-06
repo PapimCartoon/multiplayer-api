@@ -129,7 +129,7 @@ package emulator.auto_copied
 
 			try{
 				AS3_vs_AS2.checkObjectIsSerializable(msg);
-				lcUser.send(sSendChanel, "localconnection_callback", msg.toLocalConnectionObject());  
+				lcUser.send(sSendChanel, "localconnection_callback", msg.toObject());  
 			}catch(err:Error) { 
 				passError(msg, err);
 			}        	

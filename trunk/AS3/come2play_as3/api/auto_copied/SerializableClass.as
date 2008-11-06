@@ -61,24 +61,32 @@ public class SerializableClass /*<InAS3>*/extends Event/*</InAS3>*/
 		StaticFunctions.assert(AS3_vs_AS2.stringIndexOf(__CLASS_NAME__,"$")==-1,["Illegal shortName in SerializableClass! shortName=",shortName]);
 		register();
 	}	
-	public function toLocalConnectionObject():Object {
-		var res:Object = toObject();
-		res[CLASS_NAME_FIELD] = __CLASS_NAME__;
-		return res;
-	}
-	public function toObject():Object {
-		var fieldNames:Array/*String*/ = AS3_vs_AS2.getFieldNames(this);
-		var values:Object = {};			
+	public function getFieldNames():Array/*String*/ {
+		var res:Array/*String*/ = [];
+		var fieldNames:Array/*String*/ = AS3_vs_AS2.getFieldNames(this);	
 		for each (var key:String in fieldNames) {
 			if (StaticFunctions.startsWith(key,"__")) continue;
 			if (EVENT_FIELDS!=null && AS3_vs_AS2.IndexOf(EVENT_FIELDS,key)!=-1) continue;
-			values[key] = this[key]; 
+			res.push(key);
+		}
+		return res;
+	}
+		
+	public function toObject():Object {
+		var values:Object = {};		
+		values[CLASS_NAME_FIELD] = __CLASS_NAME__;	
+		for each (var key:String in getFieldNames()) {
+			values[key] = serializable2Object(this[key]); 
 		}
 		return values;		
 	}
 	/*<InAS3>*/public function eventToString():String { return super.toString(); }/*</InAS3>*/
-	override public function toString():String {		
-		return JSON.instanceToString(__CLASS_NAME__, toObject());
+	override public function toString():String {
+		var values:Object = {}; // shallow object - we do not change the inner serializables to Object		
+		for each (var key:String in getFieldNames()) {
+			values[key] = this[key]; 
+		}	
+		return JSON.instanceToString(__CLASS_NAME__, values);
 	}
 	public function isEqual(other:SerializableClass):Boolean {
 		return ObjectDictionary.areEqual(this, other);
@@ -133,35 +141,53 @@ public class SerializableClass /*<InAS3>*/extends Event/*</InAS3>*/
 	public static function deserializeString(str:String):Object {
 		return deserialize( JSON.parse(str) );
 	}
+	
+	public static function serializable2Object(object:Object):Object {	
+		if (object==null) return null;	
+		if (AS3_vs_AS2.isSerializableClass(object)) 
+			return AS3_vs_AS2.asSerializableClass(object).toObject();
+		var isArray:Boolean = AS3_vs_AS2.isArray(object);
+		var isObj:Boolean = isObject(object);
+		var res:Object = object;
+		if (isArray || isObj) {
+			res = isArray ? [] : {}; // we create a new copy	
+			for (var key:String in object)
+				res[key] = serializable2Object(object[key]);
+		}
+		return res;
+	}
+	public static function shallowDeserialize(object:Object):Object {
+		var shortName:String = 
+					object.hasOwnProperty(CLASS_NAME_FIELD) ? 
+					object[CLASS_NAME_FIELD] : null;
+		if (shortName!=null && 
+			(IS_IN_GAME || SHORTNAME_TO_INSTANCE[shortName]!=null)) {				
+			var newObject:SerializableClass = createInstance(shortName);
+			if (newObject!=null) {
+				for (var key:String in object)
+					newObject[key] = object[key]; // might throw an illegal assignment (due to type mismatch)
+
+				AS3_vs_AS2.checkAllFieldsDeserialized(object, newObject);
+
+				object = newObject.postDeserialize();
+			}
+		}
+		return object;
+	}
 	public static function deserialize(object:Object):Object {
 		try {
-			if (object==null) 
-				return object;
+			if (object==null) return null;
 			var isArray:Boolean = AS3_vs_AS2.isArray(object);
 			var isObj:Boolean = isObject(object);
 			var res:Object = object;
 			if (isArray || isObj) {				
-				var shortName:String = 
-					object.hasOwnProperty(CLASS_NAME_FIELD) ? 
-					object[CLASS_NAME_FIELD] : null;
+				
 				res = isArray ? [] : {}; // we create a new copy
 		
 				for (var key:String in object)
 					res[key] = deserialize(object[key]); 
-					
-				if (shortName!=null && 
-					(IS_IN_GAME || SHORTNAME_TO_INSTANCE[shortName]!=null)) {				
-					var newObject:SerializableClass = createInstance(shortName);
-					if (newObject!=null) {
-						for (key in res)
-							newObject[key] = res[key]; // might throw an illegal assignment (due to type mismatch)
-
-						AS3_vs_AS2.checkAllFieldsDeserialized(res, newObject);
-
-						res = newObject.postDeserialize();
-					}
-				}
-										
+				
+				res = shallowDeserialize(res);						
 			}
 			//trace(JSON.stringify(object)+" object="+object+" res="+res+" isArray="+isArray+" isObj="+isObj);
 			return res; 						

@@ -18,15 +18,12 @@ package emulator.auto_generated {
 			var pos:int = 0;
 			this.didWin = parameters[pos++];
 		}
-		override public function getParametersAsString():String { return 'didWin=' + JSON.stringify(didWin); }
 		override public function getFunctionId():int { return -106; }
-		override public function getClassName():String { return 'API_DoConnectedEndMatch'; }
 		override public function getMethodName():String { return 'doConnectedEndMatch'; }
-		override public function getFieldNames():Array { return ['didWin']; }
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 		override public function getMethodParameters():Array { return [didWin]; }
 		override public function getMethodParametersNum():int { return 1; }
 	}
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 }

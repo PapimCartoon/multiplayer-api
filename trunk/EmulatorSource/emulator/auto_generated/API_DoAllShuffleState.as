@@ -18,15 +18,12 @@ package emulator.auto_generated {
 			var pos:int = 0;
 			this.keys = parameters[pos++];
 		}
-		override public function getParametersAsString():String { return 'keys=' + JSON.stringify(keys); }
 		override public function getFunctionId():int { return -113; }
-		override public function getClassName():String { return 'API_DoAllShuffleState'; }
 		override public function getMethodName():String { return 'doAllShuffleState'; }
-		override public function getFieldNames():Array { return ['keys']; }
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 		override public function getMethodParameters():Array { return [keys]; }
 		override public function getMethodParametersNum():int { return 1; }
 	}
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 }

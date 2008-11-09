@@ -64,12 +64,14 @@ public final class AS3_vs_AS2
 			};
 	}
 	public static function addOnPress(movie:IEventDispatcher, func:Function, isActive:Boolean):void {
+		assertNotFramework();
 		//function (event:MouseEvent):void { 
 		movie.removeEventListener(MouseEvent.CLICK , func);
 		if (isActive)
 			movie.addEventListener(MouseEvent.CLICK , func);
 	}
-	public static function addOnMouseOver(movie:IEventDispatcher, mouseOverFunc:Function, mouseOutFunc:Function, isActive:Boolean):void {
+	public static function addOnMouseOver(movie:IEventDispatcher, mouseOverFunc:Function, mouseOutFunc:Function, isActive:Boolean):void {		
+		assertNotFramework();
 		//function (event:MouseEvent):void { 		
 		movie.removeEventListener(MouseEvent.MOUSE_OVER , mouseOverFunc);		
 		movie.removeEventListener(MouseEvent.MOUSE_OUT , mouseOutFunc);
@@ -77,16 +79,33 @@ public final class AS3_vs_AS2
 			movie.addEventListener(MouseEvent.MOUSE_OVER , mouseOverFunc);		
 			movie.addEventListener(MouseEvent.MOUSE_OUT , mouseOutFunc);
 		}
+	}	
+	
+	
+	public static var myAddEventListenerFunc:Function = null; // because in our framework we wrap the event listener with try&catch
+	private static function assertNotFramework():void {
+		StaticFunctions.assert(myAddEventListenerFunc==null,["You cannot call this method in framework"]);
 	}
+	private static function myAddEventListener(dispatcher:IEventDispatcher, type:String, listener:Function):void {
+		if (SerializableClass.IS_IN_FRAMEWORK) {
+			StaticFunctions.assert(myAddEventListenerFunc!=null,["Come2play forgot to set myAddEventListenerFunc"]);
+			myAddEventListenerFunc(dispatcher, type, listener);
+		} else {
+			dispatcher.addEventListener(type,listener);
+		}
+	}
+	
+	
 	public static function addStatusListener(conn:LocalConnection, client:Object, functions:Array):void {
 		conn.client = client;
-		conn.addEventListener(StatusEvent.STATUS, 
+		myAddEventListener(conn, StatusEvent.STATUS, 
 			function (event:StatusEvent):void {
         		if (event.level=='error')
         			StaticFunctions.showError("LocalConnection.onStatus error="+event+" client="+client+" client's class="+getClassName(client)+". Are you sure you are running this game inside the emulator?)"); 
   			});		
 	}
-	public static function myTimeout(func:Function, in_milliseconds:int):void {
+	public static function myTimeout(func:Function, in_milliseconds:int):void {		
+		assertNotFramework();
 		setTimeout(func,in_milliseconds);
 	}
 	public static function error2String(e:Error):String {
@@ -121,12 +140,12 @@ public final class AS3_vs_AS2
         //Event.OPEN
         //ProgressEvent.PROGRESS
         //Event.UNLOAD
-		contentLoaderInfo.addEventListener(Event.COMPLETE, function (event:Event):void {
+        myAddEventListener(contentLoaderInfo, Event.COMPLETE, function (event:Event):void {
 				StaticFunctions.storeTrace(["Done loading url=",url]);
 				newMovie.addChild(loader.content);
 				if (onLoaded!=null) onLoaded(true);
 			}  );
-		contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, function (event:IOErrorEvent):void {
+		myAddEventListener(contentLoaderInfo, IOErrorEvent.IO_ERROR, function (event:IOErrorEvent):void {
 		        StaticFunctions.storeTrace(["Error in loading movie from url=",url," event=",event]);
 		        if (onLoaded!=null) onLoaded(false);
 		    }  );
@@ -173,6 +192,7 @@ public final class AS3_vs_AS2
 			addKeyboardListenerStageReady(graphics, func);
 		else {
 			trace("Called addKeyboardListener, but stage is still null, so we set an interval until stage is ready");
+			assertNotFramework();
 			var intervalId:int = setInterval( 
 				function ():void {
 					if (graphics.stage!=null) {
@@ -188,7 +208,8 @@ public final class AS3_vs_AS2
 		addKeyboardListener2(false, graphics, func);
 	}
 	private static function addKeyboardListener2(is_key_down:Boolean, graphics:MovieClip, func:Function):void {
-		graphics.stage.addEventListener(is_key_down ? KeyboardEvent.KEY_DOWN : KeyboardEvent.KEY_UP, 
+		myAddEventListener(graphics.stage, 
+			is_key_down ? KeyboardEvent.KEY_DOWN : KeyboardEvent.KEY_UP, 
 			function (event:KeyboardEvent):void {
 				var charCode:int = event.charCode;
 				var keyCode:int = event.keyCode;
@@ -235,7 +256,7 @@ public final class AS3_vs_AS2
 		
 		
 		graphics.addChild(blackBox);
-		closeBtn.addEventListener(MouseEvent.CLICK, 
+		myAddEventListener(closeBtn, MouseEvent.CLICK, 
 			function():void {
 				trace("close")
 				graphics.removeChild(blackBox);
@@ -261,14 +282,13 @@ public final class AS3_vs_AS2
 	{
 		var stageTimer:Timer = new Timer(100,0);
 		stageTimer.start();	
-		stageTimer.addEventListener(TimerEvent.TIMER,function():void {
-				if(graphics.stage)
-				{
-					stageTimer.stop();
-					gameConsructor();
-				}
-				} 
-			);
+		myAddEventListener(stageTimer,
+			TimerEvent.TIMER, function():void {
+					if(graphics.stage) {
+						stageTimer.stop();
+						gameConsructor();
+					}
+				});
 	}
 
 	/**

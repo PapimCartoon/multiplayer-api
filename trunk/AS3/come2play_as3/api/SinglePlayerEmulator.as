@@ -34,7 +34,7 @@ package come2play_as3.api
 			];
 		public static var DEFAULT_USER_INFO:Array/*InfoEntry*/ =
 				[ 	InfoEntry.create(API_Message.USER_INFO_KEY_name, "User name"),
-					InfoEntry.create(API_Message.USER_INFO_KEY_avatar_url, "../../Emulator/Avatar_1.swf")
+					InfoEntry.create(API_Message.USER_INFO_KEY_avatar_url, "../../Emulator/Avatar_1.gif")
 				];
 		public static var DEFAULT_MATCH_STATE:Array/*ServerEntry*/ = []; // you can change this and load a saved match
 						

@@ -49,7 +49,10 @@ public class SerializableClass /*<InAS3>*/extends Event/*</InAS3>*/
 	public static var IS_TESTING_SAME_REGISTER:Boolean = true; // for efficiency the online version turns it off
 	public static var IS_TRACE_REGISTER:Boolean = false;
 	
+	// this code changes when the java auto-copies the code (we replace come2play_as3.api with the new package name, which is either come2play_as3 or emulator)
 	public static var IS_IN_GAME:Boolean = "come2play_as3.api" == "come2play_as3" + ".api";
+	public static var IS_IN_FRAMEWORK:Boolean = "come2play_as3.api" == "come2play_as3"; 
+	
 	public static const CLASS_NAME_FIELD:String = "__CLASS_NAME__";
 	public var __CLASS_NAME__:String;
 	public function SerializableClass(shortName:String /*<InAS3>*/= null/*</InAS3>*/

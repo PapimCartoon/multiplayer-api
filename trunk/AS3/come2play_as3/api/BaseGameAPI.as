@@ -111,6 +111,7 @@ package come2play_as3.api {
 			return currentCallback is API_GotCustomInfo || 
 				currentCallback is API_GotMatchStarted ||
 				currentCallback is API_GotMatchEnded || 
+				currentCallback is API_GotUserInfo ||
 				currentCallback is API_GotStateChanged;
 		}
 		public function cacheImage(imageUrl:String, someMovieClip:MovieClip,

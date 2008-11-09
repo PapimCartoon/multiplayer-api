@@ -1,8 +1,5 @@
 package come2play_as3.Template
 {
-	import AS3.come2play_as3.Template.TemplateCalculatorLogic;
-	import AS3.come2play_as3.Template.TemplateLogic;
-	
 	import come2play_as3.api.auto_generated.*;
 	
 	import flash.display.MovieClip;
@@ -21,6 +18,7 @@ package come2play_as3.Template
 			/*
 			Your main game constructor should be empty besides the foloowing lines of code
 			*/
+			
 			(new SomeClass).register();
 			this.graphics = graphics;
 			super(graphics); //sends the stage to the ClientGameAPI

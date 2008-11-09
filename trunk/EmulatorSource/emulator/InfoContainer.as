@@ -405,7 +405,10 @@ package emulator {
 						if(infoEntry.key == API_Message.CUSTOM_INFO_KEY_myUserId)
 						{
 							bStarted = true;
+							
 							iMyID = infoEntry.value as int;
+							trace("iMyID :"+infoEntry.value)
+							trace(iMyID)
 							break;
 						}
 					}	

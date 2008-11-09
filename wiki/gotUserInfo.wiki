@@ -6,8 +6,7 @@ gotUserInfo(userId:int, infoEntries:Array/*InfoEntry*/)
 
 === Description ===
 
-`gotUserInfo` is the third callback called, this callback is called for each user in the game
-and transferees a user specific data about him.
+`gotUserInfo` is called for each user connecting to the game, and transferees the user's specific data, such as: name, avatar, credibility etc.
 it will be called for each user that connects (whether that user will be a player or viewer), and whenever the user info changes (e.g., if the user changed his nick name).
 
 see also [gotUserDisconnected]

@@ -1,4 +1,4 @@
-package AS3.come2play_as3.Template
+package come2play_as3.Template
 {
 	public class TemplateGraphic
 	{

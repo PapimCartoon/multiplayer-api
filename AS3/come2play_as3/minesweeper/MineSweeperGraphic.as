@@ -79,13 +79,7 @@ package come2play_as3.minesweeper
 			for(i=0;i<players.length;i++)
 			{
 				var playerObj:Object = players[i];
-				for each(var infoEntry:InfoEntry in playerObj.entries)
-					if(infoEntry.key == "name")
-					{
-						var tempName:String = String(infoEntry.value);
-						break;
-					}
-				playerGraphicDataArr[i]=new PlayerGraphicData(i,tempName);
+				playerGraphicDataArr[i]=new PlayerGraphicData(i,playerObj.name);
 				boardUnderPart.addChild(playerGraphicDataArr[i]);	
 				updateLives(i,3);
 			}

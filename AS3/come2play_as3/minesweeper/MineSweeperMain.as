@@ -108,7 +108,15 @@ import flash.utils.*;
 		}
 		override public function gotUserInfo(userId:int, entries:Array/*InfoEntry*/):void 
 		{
-			allUsersData.push({userId:userId,entries:entries});
+			for each(var infoEntry:InfoEntry in entries)
+			{
+				if(infoEntry.key == "name")
+				{
+					for each(var previousPlayer:Object in allUsersData)
+						if(previousPlayer.userId == userId) return;
+					allUsersData.push({userId:userId,name:infoEntry.value});
+				}
+			}
 		}
 		override public function gotMatchStarted(allPlayerIds:Array, finishedPlayerIds:Array, serverEntries:Array):void
 		{
@@ -121,8 +129,9 @@ import flash.utils.*;
 				if(allPlayerIds.indexOf(obj.userId) != -1)
 					usersData.push(obj);
 			}
+			
 			for(var i:int = usersData.length ;i<allPlayerIds.length;i++)
-				usersData.push({userId:allPlayerIds[i],entries:[]});
+				usersData.push({userId:allPlayerIds[i],name:"player "+allPlayerIds[i]});
 			if(serverEntries.length == 0)
 			{
 				doAllRequestRandomState("randomSeed",true);

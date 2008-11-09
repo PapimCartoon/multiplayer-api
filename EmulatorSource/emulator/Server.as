@@ -642,6 +642,10 @@ package emulator {
 			else
 				return null;
 		}
+		public function getParametersAsString(msg:API_Message):String
+		{
+			return msg.toString(); //todo change
+		}
 		private var isProcessingCallback:Boolean = false;
 		public function errorHandler(msg:String):void
 		{
@@ -655,8 +659,8 @@ package emulator {
 			if(msg is API_DoTrace)
 			{
 				var traceMsg:API_DoTrace=msg as API_DoTrace;
-				addMessageLog(String(user.ID),"doTrace",traceMsg.getParametersAsString());
-				trace("***** doTrace on: "+traceMsg.getParametersAsString())
+				addMessageLog(String(user.ID),"doTrace",getParametersAsString(traceMsg));
+				trace("***** doTrace on: "+getParametersAsString(traceMsg))
 			}
 			else if(msg is API_DoRegisterOnServer)
 			{
@@ -1805,7 +1809,7 @@ package emulator {
 					itemObj=new Object();
 					itemObj[COL_User]=unverifiedFunction.user.ID;
 					itemObj[COL_MethodName]=unverifiedFunction.msg.getMethodName();
-					itemObj[COL_Parameters]=unverifiedFunction.msg.getParametersAsString();
+					itemObj[COL_Parameters]=getParametersAsString(unverifiedFunction.msg);
 					tblInfo.addItem(itemObj);
 					tblInfo.verticalScrollPosition = tblInfo.maxVerticalScrollPosition+30;
 				}
@@ -1838,7 +1842,7 @@ package emulator {
 					itemObj=new Object();
 					itemObj[COL_player_ids]=tempServerEntry.storedByUserId;
 					itemObj[COL_key]=JSON.stringify(tempServerEntry.key);
-					itemObj[COL_data]=tempServerEntry.getParametersAsString();
+					itemObj[COL_data]=getParametersAsString(tempServerEntry);
 					tblInfo.addItem(itemObj);
 					tblInfo.verticalScrollPosition = tblInfo.maxVerticalScrollPosition+30;	
 				}
@@ -2034,8 +2038,9 @@ package emulator {
 			}
 			btnLoadGame.enabled = j>0;
 			}catch(err:Error) {
-				errorHandler(err.getStackTrace())
 				shrSavedGames.data.savedGames = [];	//this deletes all saved games
+				errorHandler(err.getStackTrace())
+
 			}
 		}
 		private function loadDeleteClick(evt:MouseEvent):void {
@@ -2140,8 +2145,7 @@ package emulator {
 			// send the info of "u" to all registered users (without user "u")
 			broadcast(API_GotUserInfo.create(u.ID,u.entries)); //note, this must be before you call u.wasRegistered = true 
 			u.wasRegistered = true;		
-			serverInfoEnteries.push(InfoEntry.create(API_Message.CUSTOM_INFO_KEY_myUserId,u.ID));
-			u.sendOperation(API_GotCustomInfo.create(serverInfoEnteries));
+			u.sendOperation(API_GotCustomInfo.create(serverInfoEnteries.concat(InfoEntry.create(API_Message.CUSTOM_INFO_KEY_myUserId,u.ID))));
 				
 			// important: note that this is not a broadcast!
 			// send to "u" the info of all the registered users
@@ -2395,7 +2399,7 @@ class User extends LocalConnectionUser {
 		if (!wasRegistered) return;
 		try {
     		sendMessage(msg);
-			sServer.addMessageLog(sName, msg.getMethodName(), msg.getParametersAsString());	
+			sServer.addMessageLog(sName, msg.getMethodName(), sServer.getParametersAsString(msg));	
 		}catch(err:Error) { 
 			sServer.errorHandler(err.getStackTrace());
 		}  

@@ -47,7 +47,10 @@ class come2play_as2.api.auto_copied.SerializableClass /*<InAS3>extends Event</In
 	public static var IS_TESTING_SAME_REGISTER:Boolean = true; // for efficiency the online version turns it off
 	public static var IS_TRACE_REGISTER:Boolean = false;
 	
+	// this code changes when the java auto-copies the code (we replace come2play_as2.api with the new package name, which is either come2play_as2 or emulator)
 	public static var IS_IN_GAME:Boolean = "come2play_as2.api" == "come2play_as2" + ".api";
+	public static var IS_IN_FRAMEWORK:Boolean = "come2play_as2.api" == "come2play_as2"; 
+	
 	public static var CLASS_NAME_FIELD:String = "__CLASS_NAME__";
 	public var __CLASS_NAME__:String;
 	public function SerializableClass(shortName:String /*<InAS3>= null</InAS3>*/
@@ -62,7 +65,7 @@ class come2play_as2.api.auto_copied.SerializableClass /*<InAS3>extends Event</In
 	public function getFieldNames():Array/*String*/ {
 		var res:Array/*String*/ = [];
 		var fieldNames:Array/*String*/ = AS3_vs_AS2.getFieldNames(this);	
-		for (var i65:Number=0; i65<fieldNames.length; i65++) { var key:String = fieldNames[i65]; 
+		for (var i68:Number=0; i68<fieldNames.length; i68++) { var key:String = fieldNames[i68]; 
 			if (StaticFunctions.startsWith(key,"__")) continue;
 			if (EVENT_FIELDS!=null && AS3_vs_AS2.IndexOf(EVENT_FIELDS,key)!=-1) continue;
 			res.push(key);
@@ -73,7 +76,7 @@ class come2play_as2.api.auto_copied.SerializableClass /*<InAS3>extends Event</In
 	public function toObject():Object {
 		var values:Object = {};		
 		values[CLASS_NAME_FIELD] = __CLASS_NAME__;	
-		for (var i76:Number=0; i76<getFieldNames().length; i76++) { var key:String = getFieldNames()[i76]; 
+		for (var i79:Number=0; i79<getFieldNames().length; i79++) { var key:String = getFieldNames()[i79]; 
 			values[key] = serializable2Object(this[key]); 
 		}
 		return values;		
@@ -81,7 +84,7 @@ class come2play_as2.api.auto_copied.SerializableClass /*<InAS3>extends Event</In
 	/*<InAS3>public function eventToString():String { return super.toString(); }</InAS3>*/
 	/*override*/ public function toString():String {
 		var values:Object = {}; // shallow object - we do not change the inner serializables to Object		
-		for (var i84:Number=0; i84<getFieldNames().length; i84++) { var key:String = getFieldNames()[i84]; 
+		for (var i87:Number=0; i87<getFieldNames().length; i87++) { var key:String = getFieldNames()[i87]; 
 			values[key] = this[key]; 
 		}	
 		return JSON.instanceToString(__CLASS_NAME__, values);

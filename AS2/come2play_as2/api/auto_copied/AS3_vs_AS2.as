@@ -254,7 +254,8 @@ class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 
 		// replace the last '.' with '::' (to use the same notation as in AS3)
 		//trace('getClassName for o='+o+' res='+res);
-		res = StaticFunctions.replaceLastOccurance(res, '.', '::');
+		if (stringIndexOf(res,'.')!=-1) // maybe the class doesn't have a package, like 'GraphicCommand'
+			res = StaticFunctions.replaceLastOccurance(res, '.', '::');
 
 		prot[as2_class_name] = res;
 		return res;

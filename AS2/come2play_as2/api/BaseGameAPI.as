@@ -107,6 +107,7 @@ import come2play_as2.api.*;
 			return currentCallback instanceof API_GotCustomInfo || 
 				currentCallback instanceof API_GotMatchStarted ||
 				currentCallback instanceof API_GotMatchEnded || 
+				currentCallback instanceof API_GotUserInfo ||
 				currentCallback instanceof API_GotStateChanged;
 		}
 		public function cacheImage(imageUrl:String, someMovieClip:MovieClip,
@@ -134,7 +135,7 @@ import come2play_as2.api.*;
 		}
 		private function subtractArray(arr:Array, minus:Array):Array {
 			var res:Array = arr.concat();
-			for (var i140:Number=0; i140<minus.length; i140++) { var o:Object = minus[i140]; 
+			for (var i141:Number=0; i141<minus.length; i141++) { var o:Object = minus[i141]; 
 				var indexOf:Number = AS3_vs_AS2.IndexOf(res, o);
 				checkContainer(indexOf!=-1, ["Missing element ",o," in arr ",arr]);				
 				res.splice(indexOf, 1);
@@ -170,28 +171,28 @@ import come2play_as2.api.*;
         
         private function isNullKeyExistUserEntry(userEntries:Array/*UserEntry*/):Void
         {
-        	for (var i176:Number=0; i176<userEntries.length; i176++) { var userEntry:UserEntry = userEntries[i176]; 
+        	for (var i177:Number=0; i177<userEntries.length; i177++) { var userEntry:UserEntry = userEntries[i177]; 
         		if (userEntry.key == null)
         			throwError("key cannot be null !");
         	}
         }
         private function isNullKeyExistRevealEntry(revealEntries:Array/*RevealEntry*/):Void
         {
-        	for (var i183:Number=0; i183<revealEntries.length; i183++) { var revealEntry:RevealEntry = revealEntries[i183]; 
+        	for (var i184:Number=0; i184<revealEntries.length; i184++) { var revealEntry:RevealEntry = revealEntries[i184]; 
         		if (revealEntry.key == null)
         			throwError("key cannot be null !");
         	}
         }
         private function isNullKeyExist(keys:Array/*Object*/):Void
         {
-        	for (var i190:Number=0; i190<keys.length; i190++) { var key:String = keys[i190]; 
+        	for (var i191:Number=0; i191<keys.length; i191++) { var key:String = keys[i191]; 
         		if (key == null)
         			throwError("key cannot be null !");
         	}
         }
         private function updateMirorServerState(serverEntries:Array/*ServerEntry*/):Void
         {
-        	for (var i197:Number=0; i197<serverEntries.length; i197++) { var serverEntry:ServerEntry = serverEntries[i197]; 
+        	for (var i198:Number=0; i198<serverEntries.length; i198++) { var serverEntry:ServerEntry = serverEntries[i198]; 
         	    if (serverEntry.value == null)
 					serverStateMiror.remove(serverEntry.key);
 				else 
@@ -237,7 +238,7 @@ import come2play_as2.api.*;
 					var customInfo:API_GotCustomInfo = API_GotCustomInfo(msg);
 					var i18nObj:Object = {};
 					var customObj:Object = {};
-					for (var i243:Number=0; i243<customInfo.infoEntries.length; i243++) { var entry:InfoEntry = customInfo.infoEntries[i243]; 
+					for (var i244:Number=0; i244<customInfo.infoEntries.length; i244++) { var entry:InfoEntry = customInfo.infoEntries[i244]; 
 						var key:String = entry.key;
 						var value:Object = entry.value;	
 						if (key=="i18n")

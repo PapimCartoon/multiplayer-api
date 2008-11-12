@@ -35,13 +35,10 @@ package come2play_as3.cards.graphic
 			cardDeck.addCard(ev.card)
 		}
 		
-		public function addCardsToMiddle(cardsToAdd:int):void
+		public function addCardsToMiddle(cardsToAdd:int,isLoad:Boolean):void
 		{
-			/*if(cardsInDeck < 0) cardsInDeck=0;
-			cardsInDeck+=cardsToAdd;
-			cardDeck.cardNum_txt.text = String(cardsInDeck);
-			if(cardsInDeck > 0 )
-				addChild(cardDeck);*/
+			if(isLoad)
+				cardDeck.addNumberOfCards(cardsToAdd)
 		}
 		public function removeCardsFromMiddle(cardsToRemove:int):void
 		{

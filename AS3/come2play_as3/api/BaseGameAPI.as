@@ -254,11 +254,8 @@ package come2play_as3.api {
 				} else if (msg is API_GotKeyboardEvent) {						    			
 	    			checkInProgress(true,msg);
 				} 
-	    		var methodName:String = msg.getMethodName();
-	    		if (AS3_vs_AS2.isAS3 && !this.hasOwnProperty(methodName)) return;
-				var func:Function = /*as*/this[methodName] as Function;
-				if (func==null) return;
-				func.apply(this, msg.getMethodParameters());
+				dispatchMessage(msg)
+
         	} catch (err:Error) {
         		try{				
         			showError(getErrorMessage(msg, err));
@@ -271,6 +268,10 @@ package come2play_as3.api {
         		// we end a transaction
     			sendFinishedCallback(); 			
     		}        		   	
+        }
+        public function dispatchMessage(msg:API_Message):void
+        {
+
         }
         override public function sendMessage(msg:API_Message):void {
         	if (msg is API_DoRegisterOnServer || msg is API_DoTrace) {

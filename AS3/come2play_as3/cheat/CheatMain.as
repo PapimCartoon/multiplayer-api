@@ -1,7 +1,6 @@
 package come2play_as3.cheat
 {
 	
-	import come2play_as3.api.auto_copied.T;
 	import come2play_as3.api.auto_generated.PlayerMatchOver;
 	import come2play_as3.api.auto_generated.RevealEntry;
 	import come2play_as3.api.auto_generated.ServerEntry;
@@ -33,6 +32,7 @@ package come2play_as3.cheat
 		private var allowPassingTurn:Boolean;
 		private var isShowingCards:Boolean;
 		private var playerCards:Array;
+		private var loading:Boolean;
 		public function CheatMain(graphics:MovieClip)
 		{
 			(new PlayerCall).register();
@@ -145,7 +145,7 @@ package come2play_as3.cheat
 			isShowingCards = true;
 			allowPassingTurn = true;
 		}
-		override public function gotMiddleCards(revealdCards:Array/*PlayerCard*/):void
+		override public function revealMiddleCards(revealdCards:Array/*PlayerCard*/):void
 		{
 			var foundCheater:Boolean = false;
 			for each(var playerCard:PlayerCard in revealdCards)
@@ -159,14 +159,22 @@ package come2play_as3.cheat
 				takeCardsFromMiddle(playerIdTurn,cardsInMiddle);
 			cardsInMiddle = new Array();	
 		}
-		override public function gotPlayerPutCardsSecret(keys:Array, playerId:int):void
+		override public function gotPlayerPutCardsInMiddleHidden(keys:Array, playerId:int):void
 		{
 			cardsInMiddle = cardsInMiddle.concat(keys);
 			lastCardsPutInMiddle = keys;
 			cheatGraphics.clear();
 			playerCards[allPlayerIds.indexOf(playerId)]-=keys.length;
+			if(loading)
+			{
+				loading = false;
+				setNextTurn(true);
+				return;
+			}
 			if(myUserId != playerIdTurn)
+			{
 				cheatGraphics.callCheater();
+			}
 			//setNextTurn();		
 		}
 		
@@ -215,6 +223,7 @@ package come2play_as3.cheat
 		{	
 			var playerCall:PlayerCall;
 			var time:int = 0;
+			loading = true;
 			for each(var serverEntry:ServerEntry in serverEntries)
 			{
 				if(serverEntry.value is PlayerCall)
@@ -235,9 +244,7 @@ package come2play_as3.cheat
 			this.allPlayerIds = allPlayerIds;
 			cheatGraphics.initCheat();
 			doTrace("me","Load match");
-			//setNextTurn();
-			//storeDecks(2,false);
-			//drawCards(3,allPlayerIds[0])
+			
 		}
 		override public function gotStateChangedNoCards(serverEntries:Array):void
 		{

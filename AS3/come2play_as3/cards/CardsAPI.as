@@ -26,11 +26,9 @@ package come2play_as3.cards
 		private var allPlayerAvailableCards:Array;/*Array*/
 		
 		private var cardGraphics:CardGraphic;
-		private var hiddenDeck:Array;
-		private var visibleDeck:Array;
 		protected var myUserId:int;
 		
-		private var markedCards:Array;
+		private var markedCards:Array/*int*/;
 		public function CardsAPI(cardGraphics:CardGraphic)
 		{
 			markedCards = new Array();
@@ -149,7 +147,7 @@ package come2play_as3.cards
 		public function drawCards(numberOfCards:int,playerId:int):void
 		{
 			var revealEntries:Array/*RevealEntry*/ = new Array();
-			var drawingPlayer:Array = allPlayerAvailableCards[getId(playerId)];
+			var drawingPlayer:Array/*int*/ = allPlayerAvailableCards[getId(playerId)];
 			for(var i:int = 0;i<numberOfCards;i++)
 			{
 				revealEntries.push(RevealEntry.create(CardTypeClass.create(CardTypeClass.CARD,(currentCard+i)),[playerId]))
@@ -193,7 +191,7 @@ package come2play_as3.cards
 			doAllStoreState(userEntries);
 			doAllShuffleState(keys);
 		}
-		private function interpertServerEntries(serverEntries:Array,isLoad:Boolean):Array/*ServerEntry*/
+		private function interpertServerEntries(serverEntries:Array/*serverEntry*/,isLoad:Boolean):Array/*ServerEntry*/
 		{
 			var serverEntry:ServerEntry;
 			var drawnCards:Array/*Card*/ = new Array();
@@ -206,8 +204,6 @@ package come2play_as3.cards
 			for(var i:int = 0;i<serverEntries.length;i++)
 			{
 				serverEntry = serverEntries[i];
-				if(typeof(serverEntry.key) != "object")
-					continue;
 				if(serverEntry.key is CardTypeClass)
 				{
 					cardTypeClass= serverEntry.key as CardTypeClass;
@@ -279,22 +275,19 @@ package come2play_as3.cards
 
 			return serverEntries;
 		}
-		override public function gotCustomInfo(infoEntries:Array):void
+		override public function gotCustomInfo(infoEntries:Array/*InfoEntry*/):void
 		{
 			myUserId = T.custom(CUSTOM_INFO_KEY_myUserId, null) as int;
 			CardDefenitins.CONTAINER_gameWidth = T.custom(CUSTOM_INFO_KEY_gameWidth, 400) as int;
 			CardDefenitins.CONTAINER_gameHeight = T.custom(CUSTOM_INFO_KEY_gameHeight, 400) as int;
 			CardDefenitins.CONTAINER_gameStageX = T.custom(CUSTOM_INFO_KEY_gameStageX, 0) as int;
 			CardDefenitins.CONTAINER_gameStageY = T.custom(CUSTOM_INFO_KEY_gameStageY, 0) as int;
-			gotMyUserId2(myUserId);			
 			CardDefenitins.playerXPositions= [CardDefenitins.CONTAINER_gameWidth - 50,CardDefenitins.CONTAINER_gameWidth - 50,50,50] ;
 			CardDefenitins.playerYPositions= [CardDefenitins.CONTAINER_gameHeight- 50,50,50,CardDefenitins.CONTAINER_gameHeight - 50]; 
 		}
 
 		override public function gotMatchStarted(allPlayerIds:Array, finishedPlayerIds:Array, serverEntries:Array):void
 		{
-			hiddenDeck = new Array();
-			visibleDeck = new Array();
 			this.allPlayerIdsForCardAPI = allPlayerIds.concat();
 			this.finishedPlayerIdsForCardAPI = finishedPlayerIds.concat()
 			cardGraphics.init(myUserId,allPlayerIdsForCardAPI);
@@ -349,7 +342,7 @@ package come2play_as3.cards
 		}
 		private function callGotPlayerPutCards(cardsPutOnBoard:Array/*CenterCard*/,blameId:int,isLoad:Boolean):void
 		{	
-			var keys:Array = new Array();
+			var keys:Array/*CardTypeClass*/ = new Array();
 			var centerCard:CenterCard = cardsPutOnBoard[0];
 			var isVisble:Boolean = centerCard.isVisible;
 			var playerId:int = centerCard.playerId;
@@ -357,7 +350,7 @@ package come2play_as3.cards
 			cardGraphics.clearBounce();
 			for each(centerCard in cardsPutOnBoard)
 			{
-				var tempPlayerKeys:Array = allPlayerCardsKeys[id];
+				var tempPlayerKeys:Array/*int*/ = allPlayerCardsKeys[id];
 				var index:int = tempPlayerKeys.indexOf(centerCard.cardKey);
 				if(index == -1)
 				{
@@ -378,13 +371,13 @@ package come2play_as3.cards
 			}
 			if(!isVisble)
 			{
-				cardGraphics.addCardsToMiddle(keys.length);
-				gotPlayerPutCardsSecret(keys,playerId);
+				cardGraphics.addCardsToMiddle(keys.length,isLoad);
+				gotPlayerPutCardsInMiddleHidden(keys,playerId);
 				
 			}
 			else
 			{
-				var revealEntries:Array = new Array();
+				var revealEntries:Array/*RevealEntry*/ = new Array();
 				for each(var key:CardTypeClass in keys)
 				{
 					revealEntries.push(RevealEntry.create(key,null));
@@ -395,7 +388,7 @@ package come2play_as3.cards
 		private function callGotMiddleCards(revealedCards:Array/*PlayerCard*/):void
 		{
 			cardGraphics.showCards(revealedCards);
-			gotMiddleCards(revealedCards);
+			revealMiddleCards(revealedCards);
 		}
 		private function callRivalGotCards(rivalId:int,amountOfCards:int):void
 		{
@@ -407,16 +400,15 @@ package come2play_as3.cards
 			cardGraphics.addCards(playerCards);
 			gotCards(playerCards)
 		}
-		public function gotMiddleCards(revealedCards:Array/*PlayerCard*/):void{}
-		public function gotPlayerPutCardsSecret(keys:Array,playerId:int):void{}
-		public function gotPlayerPutCards(playerCards:Array/*PlayerCard*/,playerId:int):void{}
-		public function gotMatchLoaded(allPlayerIds:Array, finishedPlayerIds:Array, serverEntries:Array):void{}	
-		public function gotChoosenCards(choosenCards:Array):void{}
-		public function gotCards(playerCards:Array/*PlayerCard*/):void{}
-		public function rivalGotCards(rivalId:int,amountOfCards:int):void{}
-		public function gotMatchStarted2(allPlayerIds:Array, finishedPlayerIds:Array, serverEntries:Array):void	{}
-		public function gotMyUserId2(myUserId:int):void	{}
-		public function gotStateChangedNoCards(serverEntries:Array):void{}
+		public function revealMiddleCards(revealedCards:Array/*PlayerCard*/):void{} //cards that were revealed from the middle
+		public function gotPlayerPutCardsInMiddleHidden(keys:Array/*CardTypeClass*/,playerId:int):void{}//player put cards in a hidden state in the middle
+		public function gotPlayerPutCardsInMiddle(playerCards:Array/*PlayerCard*/,playerId:int):void{}//player put cards in a revealed state in the middle
+		public function gotMatchLoaded(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, serverEntries:Array/*ServerEntry*/):void{}	//loaded mach
+		public function gotChoosenCards(choosenCards:Array/*PlayerCard*/):void{}//cards the player has marked in his hand
+		public function gotCards(playerCards:Array/*PlayerCard*/):void{}// recived cards into hand
+		public function rivalGotCards(rivalId:int,amountOfCards:int):void{}//rival recived cards into hand
+		public function gotMatchStarted2(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, serverEntries:Array/*ServerEntry*/):void	{}// the match started you should override
+		public function gotStateChangedNoCards(serverEntries:Array/*ServerEntry*/):void{}
 		
 	}
 }

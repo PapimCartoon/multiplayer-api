@@ -52,12 +52,12 @@ package come2play_as3.api {
 			sendMessage( API_DoAllFoundHacker.create(hackerUserId, 
 				"Got error withObj="+JSON.stringify(withObj)+
 				" err="+AS3_vs_AS2.error2String(err)+
-				" runningAnimationsNumber="+runningAnimationsNumber+
 				" animationStartedOn="+animationStartedOn+
 				" runningAnimationsNumber="+runningAnimationsNumber+
 				" currentPlayerIds="+currentPlayerIds+
 				" currentCallback="+currentCallback+
-				" msgsInTransaction="+msgsInTransaction) );
+				" msgsInTransaction="+JSON.stringify(msgsInTransaction)+
+				" traces="+StaticFunctions.getTraces() ) );
 		}
 		/** 
 		 * A transaction starts when the server calls
@@ -132,19 +132,7 @@ package come2play_as3.api {
 		 * Below this line we only have private and overriding methods.
 		 */
 		private function checkInProgress(inProgress:Boolean, msg:API_Message):void {
-			checkContainer(inProgress == (currentPlayerIds.length>0), ["The game must ",inProgress?"" : "not"," be in progress when passing msg=",msg]); 
-		}
-		private function checkContainer(val:Boolean, msg:Object):void {
-			if (!val) throwError("We have an error in the container! msg="+msg);
-		}
-		private function subtractArray(arr:Array, minus:Array):Array {
-			var res:Array = arr.concat();
-			for each (var o:Object in minus) {
-				var indexOf:int = AS3_vs_AS2.IndexOf(res, o);
-				checkContainer(indexOf!=-1, ["Missing element ",o," in arr ",arr]);				
-				res.splice(indexOf, 1);
-			}
-			return res;
+			StaticFunctions.assert(inProgress == (currentPlayerIds.length>0), ["The game must ",inProgress?"" : "not"," be in progress when passing msg=",msg]); 
 		}
         private function isInTransaction():Boolean {
         	return msgsInTransaction!=null
@@ -232,11 +220,11 @@ package come2play_as3.api {
 	    			serverStateMiror = new ObjectDictionary();
 					var matchStarted:API_GotMatchStarted = /*as*/msg as API_GotMatchStarted;
 					updateMirorServerState(matchStarted.serverEntries);
-					currentPlayerIds = subtractArray(matchStarted.allPlayerIds, matchStarted.finishedPlayerIds);
+					currentPlayerIds = StaticFunctions.subtractArray(matchStarted.allPlayerIds, matchStarted.finishedPlayerIds);
 	    		} else if (msg is API_GotMatchEnded) {	    			
 	    			checkInProgress(true,msg);
 					var matchEnded:API_GotMatchEnded = /*as*/msg as API_GotMatchEnded;
-					currentPlayerIds = subtractArray(currentPlayerIds, matchEnded.finishedPlayerIds);
+					currentPlayerIds = StaticFunctions.subtractArray(currentPlayerIds, matchEnded.finishedPlayerIds);
 				} else if (msg is API_GotCustomInfo) {	 					    			
 	    			checkInProgress(false,msg);
 					var customInfo:API_GotCustomInfo = /*as*/msg as API_GotCustomInfo;

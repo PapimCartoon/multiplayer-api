@@ -143,6 +143,11 @@ class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 	
 
 
+	public static function createEmptyMovieClip(graphics:MovieClip, name:String):MovieClip {
+		var depth:Number = graphics.getNextHighestDepth();
+		var newInstance:MovieClip = graphics.createEmptyMovieClip(name,  depth);
+		return newInstance;
+	}
 	public static function createMovieInstance(graphics:MovieClip, linkageName:String, name:String):MovieClip {
 		var depth:Number = graphics.getNextHighestDepth();
 		var newInstance:MovieClip = graphics.attachMovie(linkageName, name,  depth);

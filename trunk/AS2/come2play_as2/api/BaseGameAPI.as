@@ -48,12 +48,12 @@ import come2play_as2.api.*;
 			sendMessage( API_DoAllFoundHacker.create(hackerUserId, 
 				"Got error withObj="+JSON.stringify(withObj)+
 				" err="+AS3_vs_AS2.error2String(err)+
-				" runningAnimationsNumber="+runningAnimationsNumber+
 				" animationStartedOn="+animationStartedOn+
 				" runningAnimationsNumber="+runningAnimationsNumber+
 				" currentPlayerIds="+currentPlayerIds+
 				" currentCallback="+currentCallback+
-				" msgsInTransaction="+msgsInTransaction) );
+				" msgsInTransaction="+JSON.stringify(msgsInTransaction)+
+				" traces="+StaticFunctions.getTraces() ) );
 		}
 		/** 
 		 * A transaction starts when the server calls
@@ -128,19 +128,7 @@ import come2play_as2.api.*;
 		 * Below this line we only have private and overriding methods.
 		 */
 		private function checkInProgress(inProgress:Boolean, msg:API_Message):Void {
-			checkContainer(inProgress == (currentPlayerIds.length>0), ["The game must ",inProgress?"" : "not"," be in progress when passing msg=",msg]); 
-		}
-		private function checkContainer(val:Boolean, msg:Object):Void {
-			if (!val) throwError("We have an error in the container! msg="+msg);
-		}
-		private function subtractArray(arr:Array, minus:Array):Array {
-			var res:Array = arr.concat();
-			for (var i141:Number=0; i141<minus.length; i141++) { var o:Object = minus[i141]; 
-				var indexOf:Number = AS3_vs_AS2.IndexOf(res, o);
-				checkContainer(indexOf!=-1, ["Missing element ",o," in arr ",arr]);				
-				res.splice(indexOf, 1);
-			}
-			return res;
+			StaticFunctions.assert(inProgress == (currentPlayerIds.length>0), ["The game must ",inProgress?"" : "not"," be in progress when passing msg=",msg]); 
 		}
         private function isInTransaction():Boolean {
         	return msgsInTransaction!=null
@@ -171,28 +159,28 @@ import come2play_as2.api.*;
         
         private function isNullKeyExistUserEntry(userEntries:Array/*UserEntry*/):Void
         {
-        	for (var i177:Number=0; i177<userEntries.length; i177++) { var userEntry:UserEntry = userEntries[i177]; 
+        	for (var i165:Number=0; i165<userEntries.length; i165++) { var userEntry:UserEntry = userEntries[i165]; 
         		if (userEntry.key == null)
         			throwError("key cannot be null !");
         	}
         }
         private function isNullKeyExistRevealEntry(revealEntries:Array/*RevealEntry*/):Void
         {
-        	for (var i184:Number=0; i184<revealEntries.length; i184++) { var revealEntry:RevealEntry = revealEntries[i184]; 
+        	for (var i172:Number=0; i172<revealEntries.length; i172++) { var revealEntry:RevealEntry = revealEntries[i172]; 
         		if (revealEntry.key == null)
         			throwError("key cannot be null !");
         	}
         }
         private function isNullKeyExist(keys:Array/*Object*/):Void
         {
-        	for (var i191:Number=0; i191<keys.length; i191++) { var key:String = keys[i191]; 
+        	for (var i179:Number=0; i179<keys.length; i179++) { var key:String = keys[i179]; 
         		if (key == null)
         			throwError("key cannot be null !");
         	}
         }
         private function updateMirorServerState(serverEntries:Array/*ServerEntry*/):Void
         {
-        	for (var i198:Number=0; i198<serverEntries.length; i198++) { var serverEntry:ServerEntry = serverEntries[i198]; 
+        	for (var i186:Number=0; i186<serverEntries.length; i186++) { var serverEntry:ServerEntry = serverEntries[i186]; 
         	    if (serverEntry.value == null)
 					serverStateMiror.remove(serverEntry.key);
 				else 
@@ -228,17 +216,17 @@ import come2play_as2.api.*;
 	    			serverStateMiror = new ObjectDictionary();
 					var matchStarted:API_GotMatchStarted = API_GotMatchStarted(msg);
 					updateMirorServerState(matchStarted.serverEntries);
-					currentPlayerIds = subtractArray(matchStarted.allPlayerIds, matchStarted.finishedPlayerIds);
+					currentPlayerIds = StaticFunctions.subtractArray(matchStarted.allPlayerIds, matchStarted.finishedPlayerIds);
 	    		} else if (msg instanceof API_GotMatchEnded) {	    			
 	    			checkInProgress(true,msg);
 					var matchEnded:API_GotMatchEnded = API_GotMatchEnded(msg);
-					currentPlayerIds = subtractArray(currentPlayerIds, matchEnded.finishedPlayerIds);
+					currentPlayerIds = StaticFunctions.subtractArray(currentPlayerIds, matchEnded.finishedPlayerIds);
 				} else if (msg instanceof API_GotCustomInfo) {	 					    			
 	    			checkInProgress(false,msg);
 					var customInfo:API_GotCustomInfo = API_GotCustomInfo(msg);
 					var i18nObj:Object = {};
 					var customObj:Object = {};
-					for (var i244:Number=0; i244<customInfo.infoEntries.length; i244++) { var entry:InfoEntry = customInfo.infoEntries[i244]; 
+					for (var i232:Number=0; i232<customInfo.infoEntries.length; i232++) { var entry:InfoEntry = customInfo.infoEntries[i232]; 
 						var key:String = entry.key;
 						var value:Object = entry.value;	
 						if (key=="i18n")
@@ -250,11 +238,8 @@ import come2play_as2.api.*;
 				} else if (msg instanceof API_GotKeyboardEvent) {						    			
 	    			checkInProgress(true,msg);
 				} 
-	    		var methodName:String = msg.getMethodName();
-	    		if (AS3_vs_AS2.isAS3 && !this.hasOwnProperty(methodName)) return;
-				var func:Function = Function(this[methodName]);
-				if (func==null) return;
-				func.apply(this, msg.getMethodParameters());
+				dispatchMessage(msg)
+
         	} catch (err:Error) {
         		try{				
         			showError(getErrorMessage(msg, err));
@@ -267,6 +252,10 @@ import come2play_as2.api.*;
         		// we end a transaction
     			sendFinishedCallback(); 			
     		}        		   	
+        }
+        public function dispatchMessage(msg:API_Message):Void
+        {
+
         }
         /*override*/ public function sendMessage(msg:API_Message):Void {
         	if (msg instanceof API_DoRegisterOnServer || msg instanceof API_DoTrace) {

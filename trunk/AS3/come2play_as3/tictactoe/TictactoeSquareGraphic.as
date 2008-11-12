@@ -19,7 +19,8 @@ public final class TictactoeSquareGraphic
 	
 	// symbolsContainer will contain a child for each symbol (0 .. MAX_SYMBOLS-1)
 	private var symbolsContainer:MovieClip;	
-	private var allSymbols:Array/*DisplayObject*/;
+	private var allSymbols:Array/*DisplayObject*/; // symbolsContainer contains an array of symbols
+	private var allSymbolGraphics:Array/*DisplayObject*/; // each symbol contains a single child that is the graphics of the symbol
 	private var currentTurnForMouseOver:int = BTN_NONE - 1; // so we will make the first assignment (to show the logo) 
 
 	private var move:TictactoeSquare;
@@ -38,9 +39,14 @@ public final class TictactoeSquareGraphic
 		this.move = move;
 			
 		allSymbols = [];
+		allSymbolGraphics = [];
 		for (var i:int=0; i<MAX_SYMBOLS; i++) {
-			var newSymbol:MovieClip = AS3_vs_AS2.createMovieInstance(symbolsContainer,"Symbol_"+i,"symbol"+i);
-			addSymbol(i, newSymbol);
+			
+			var newSymbol:MovieClip = AS3_vs_AS2.createEmptyMovieClip(symbolsContainer,"symbol"+i);
+			AS3_vs_AS2.setVisible(newSymbol,false);
+			allSymbols[i] = newSymbol;
+			var symbolGraphics:MovieClip = AS3_vs_AS2.createMovieInstance(newSymbol,"Symbol_"+i,"symbolGraphics");
+			addSymbol(i, symbolGraphics);
 		}
 					
 		showOrHideLogo(false);
@@ -55,17 +61,18 @@ public final class TictactoeSquareGraphic
 		}
 	}
 	private function addSymbol(color:int, newSymbol:DisplayObject):void {
-		AS3_vs_AS2.setVisible(newSymbol,false);
-		allSymbols[color] = newSymbol;
+		allSymbolGraphics[color] = newSymbol;
 	} 
 	public function gotSymbol(color:int, symbolUrl:String):void {
 		if (color<0 || color>=MAX_SYMBOLS) throw new Error("Illegal color="+color);
-		AS3_vs_AS2.removeMovie(allSymbols[color]);
 		var thisObj:TictactoeSquareGraphic = this; // for AS2
 		var newSymbol:DisplayObject =
-			AS3_vs_AS2.loadMovieIntoNewChild(symbolsContainer, symbolUrl,
+			AS3_vs_AS2.loadMovieIntoNewChild(allSymbols[color], symbolUrl,
 				function(isSuccess:Boolean):void { 
-					if (isSuccess) thisObj.addSymbol(color, newSymbol); 
+					if (isSuccess) {
+						AS3_vs_AS2.removeMovie(thisObj.allSymbolGraphics[color]);						
+						thisObj.addSymbol(color, newSymbol);
+					} 
 				} );		
 	}
 	public function gotLogo(logo:String):void {

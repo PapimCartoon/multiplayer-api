@@ -1,23 +1,14 @@
 package come2play_as3.api.auto_generated {
 //Do not change the code below because this class was generated automatically!
 
+	import flash.display.*;	import flash.utils.*;
 	import come2play_as3.api.*;
 	import come2play_as3.api.auto_copied.*;
-	
-	import flash.display.*;
-	import flash.utils.*;
+	import come2play_as3.api.auto_generated.*;
 
 	public  class ClientGameAPI extends BaseGameAPI {
 		public function ClientGameAPI(someMovieClip:MovieClip) {
 			super(someMovieClip);
-		}
-		override public function dispatchMessage(msg:API_Message):void
-		{
-			var methodName:String = msg.getMethodName();
-	    	if (AS3_vs_AS2.isAS3 && !this.hasOwnProperty(methodName)) return;
-			var func:Function = /*as*/this[methodName] as Function;
-			if (func==null) return;
-			func.apply(this, msg.getMethodParameters());
 		}
 		public function doRegisterOnServer():void { sendMessage( API_DoRegisterOnServer.create() ); }
 		public function doTrace(name:String, message:Object):void { sendMessage( API_DoTrace.create(name, message) ); }

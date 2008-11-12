@@ -11,6 +11,7 @@ function getParams(arr){
 
     for(var i=0;i<arr.length;i++){
         switch(arr[i][0]){
+
             case "players_num":
                 document.getElementById("players_num").value=arr[i][1];
                 clientNumChanged();
@@ -35,33 +36,25 @@ function getParams(arr){
             case "delay_to":
                 document.getElementById("delay_to").value=arr[i][1];
                 break;
-            case "paramNum_1":
-				if(arr[i][1]!="CONTAINER_logoFullUrl")
-				{
-					customParam[ arr[i][0] ] = arr[i][1];
-					vals.push(arr[i]);
-				}
-            	break;
-            case "paramNum_2":
-            	if(arr[i][1]!="CONTAINER_gameWidth")
-				{
-					customParam[ arr[i][0] ] = arr[i][1];
-					vals.push(arr[i]);
-				}
+            case "CONTAINER_logoFullUrl":
+				customParam[ arr[i][0] ] = arr[i][1];
+				vals.push(arr[i]);
+				document.getElementById("paramValue_1").value=arr[i][1];
             break;
-            case "paramNum_3":
-            	if(arr[i][1]!="CONTAINER_gameHeight")
-				{
-					customParam[ arr[i][0] ] = arr[i][1];
-					vals.push(arr[i]);
-				}
+            case "CONTAINER_gameWidth":
+				customParam[ arr[i][0] ] = arr[i][1];
+				vals.push(arr[i]);
+				document.getElementById("paramValue_2").value=arr[i][1];
             break;
-            case "paramNum_4":
-            	if(arr[i][1]!="CONTAINER_gameFrameRate")
-				{
-					customParam[ arr[i][0] ] = arr[i][1];
-					vals.push(arr[i]);
-				}
+            case "CONTAINER_gameHeight":
+				customParam[ arr[i][0] ] = arr[i][1];
+				vals.push(arr[i]);
+				document.getElementById("paramValue_3").value=arr[i][1];
+            break;
+            case "CONTAINER_gameFrameRate":
+				customParam[ arr[i][0] ] = arr[i][1];
+				vals.push(arr[i]);
+				document.getElementById("paramValue_4").value=arr[i][1];
             break;
             case "single_popup":
                 if(arr[i][1]=="1"){

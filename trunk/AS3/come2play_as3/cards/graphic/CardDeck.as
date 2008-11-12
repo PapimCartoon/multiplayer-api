@@ -35,6 +35,20 @@ package come2play_as3.cards.graphic
 			cardStackSize.text = text;
 			cardStackSize.setTextFormat(new TextFormat(null,27,0x4097D0));
 		}
+		public function addNumberOfCards(cardsAmount:int):void
+		{
+			for(var i:int=0;i<cardsAmount;i++)
+			{
+				var card:CardGraphicMovieClip = new CardGraphicMovieClip()
+				card.x = CardDefenitins.CONTAINER_gameWidth/2 + Math.random() * 5;
+				card.y = CardDefenitins.CONTAINER_gameHeight/2 + Math.random() * 5;
+				card.rotation = CardDefenitins.currentDeckRotation + Math.random()*5;
+				CardDefenitins.currentDeckRotation +=10;
+				cardsStack.addChild(card);
+				cardsInDeck.push(card);
+				setText(String(cardsInDeck.length));
+			}
+		}
 		public function addCard(card:CardGraphicMovieClip):void
 		{
 			cardsStack.addChild(card);

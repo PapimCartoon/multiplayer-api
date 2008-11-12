@@ -1,9 +1,6 @@
-package emulator
-{
+﻿package emulator
+{	
 	import emulator.auto_copied.ObjectDictionary;
-	import emulator.auto_generated.API_DoAllEndMatch;
-	import emulator.auto_generated.API_DoAllFoundHacker;
-	import emulator.auto_generated.API_DoAllRequestRandomState;
 	
 	import flash.display.MovieClip;
 
@@ -11,6 +8,7 @@ package emulator
 	{
 		public function Emulator()
 		{	
+			
 			if(root.loaderInfo.parameters["isServer"]=="true")
 			{
 			(new ObjectDictionary()).register();

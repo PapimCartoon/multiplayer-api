@@ -15,13 +15,15 @@ class come2play_as2.api.auto_copied.StaticFunctions
 		allTraces.push(arr);
 	}
 	private static var DID_SHOW_ERROR:Boolean = false;
+	public static function getTraces():String {
+		return (allTraces.length==0 ? '' : 
+				(allTraces.length<MAX_TRACES_NUM ? "All":"The last "+MAX_TRACES_NUM)+" stored traces are:\n"+
+				allTraces.join("\n"));
+	}
 	public static function showError(msg:String):Void {
 		if (DID_SHOW_ERROR) return;
 		DID_SHOW_ERROR = true;
-		var msg:String = "An ERRRRRRRRRRROR occurred:\n"+msg+"\n"+
-			(allTraces.length==0 ? '' : 
-				(allTraces.length<MAX_TRACES_NUM ? "All":"The last "+MAX_TRACES_NUM)+" stored traces are:\n"+
-				allTraces.join("\n"));
+		var msg:String = "An ERRRRRRRRRRROR occurred:\n"+msg+"\n"+ getTraces();
 		System.setClipboard(msg);
 		if (SHOULD_SHOW_ERRORS) AS3_vs_AS2.showError(someMovieClip, msg);
 		if (SHOULD_CALL_TRACE) trace("\n\n\n"+msg+"\n\n\n");
@@ -54,6 +56,16 @@ class come2play_as2.api.auto_copied.StaticFunctions
 		  k--;
 	   }
 	   return str.substring(0,k+1);
+	}
+	
+	public static function subtractArray(arr:Array, minus:Array):Array {
+		var res:Array = arr.concat();
+		for (var i65:Number=0; i65<minus.length; i65++) { var o:Object = minus[i65]; 
+			var indexOf:Number = AS3_vs_AS2.IndexOf(res, o);
+			StaticFunctions.assert(indexOf!=-1, ["When subtracting minus=",minus," from array=", arr, " we did not find element ",o]);				
+			res.splice(indexOf, 1);
+		}
+		return res;
 	}
 	
 	// e.g., random(0,2) returns either 0 or 1
@@ -137,7 +149,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	}
 	public static function instance2Object(instance:Object, fields:Array/*String*/):Object {
 		var res:Object = {};
-		for (var i142:Number=0; i142<fields.length; i142++) { var field:String = fields[i142]; 
+		for (var i154:Number=0; i154<fields.length; i154++) { var field:String = fields[i154]; 
 			res[field] = instance[field];
 		}
 		return res;

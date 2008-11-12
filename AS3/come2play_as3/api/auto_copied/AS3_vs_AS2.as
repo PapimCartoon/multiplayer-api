@@ -175,7 +175,12 @@ public final class AS3_vs_AS2
 		target.y = y;		
 	} 	
 	
-	
+	public static function createEmptyMovieClip(graphics:MovieClip, name:String):MovieClip {
+		var child:MovieClip = new MovieClip();
+		child.name = name;
+		graphics.addChild(child);
+		return child;
+	}
 	public static function createMovieInstance(graphics:MovieClip, linkageName:String, name:String):MovieClip {
 		var _Class:Class = getClassByName(linkageName);
 		var dup:MovieClip = (new _Class()) as MovieClip;

@@ -19,13 +19,15 @@ public final class StaticFunctions
 		allTraces.push(arr);
 	}
 	private static var DID_SHOW_ERROR:Boolean = false;
+	public static function getTraces():String {
+		return (allTraces.length==0 ? '' : 
+				(allTraces.length<MAX_TRACES_NUM ? "All":"The last "+MAX_TRACES_NUM)+" stored traces are:\n"+
+				allTraces.join("\n"));
+	}
 	public static function showError(msg:String):void {
 		if (DID_SHOW_ERROR) return;
 		DID_SHOW_ERROR = true;
-		var msg:String = "An ERRRRRRRRRRROR occurred:\n"+msg+"\n"+
-			(allTraces.length==0 ? '' : 
-				(allTraces.length<MAX_TRACES_NUM ? "All":"The last "+MAX_TRACES_NUM)+" stored traces are:\n"+
-				allTraces.join("\n"));
+		var msg:String = "An ERRRRRRRRRRROR occurred:\n"+msg+"\n"+ getTraces();
 		System.setClipboard(msg);
 		if (SHOULD_SHOW_ERRORS) AS3_vs_AS2.showError(someMovieClip, msg);
 		if (SHOULD_CALL_TRACE) trace("\n\n\n"+msg+"\n\n\n");
@@ -58,6 +60,16 @@ public final class StaticFunctions
 		  k--;
 	   }
 	   return str.substring(0,k+1);
+	}
+	
+	public static function subtractArray(arr:Array, minus:Array):Array {
+		var res:Array = arr.concat();
+		for each (var o:Object in minus) {
+			var indexOf:int = AS3_vs_AS2.IndexOf(res, o);
+			StaticFunctions.assert(indexOf!=-1, ["When subtracting minus=",minus," from array=", arr, " we did not find element ",o]);				
+			res.splice(indexOf, 1);
+		}
+		return res;
 	}
 	
 	// e.g., random(0,2) returns either 0 or 1

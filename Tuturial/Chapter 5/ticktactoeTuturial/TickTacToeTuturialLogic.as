@@ -8,19 +8,27 @@
 	{
 		private var gameGraphic:TickTacToeTuturialGraphic
 		private var gameBoard:Array;
-		private var playerTurn:int;
-		private var playerAmount:int;
-		private var closedSquares:int
-		private var myTurn:Boolean;
-		private var xMod:int;
-		private var yMod:int;
-		private var logoUrl:String;
+		private var playerTurn:int; // who's player turn it is
+		private var playerAmount:int;// how many players are playing the game
+		private var closedSquares:int;// how many squres were captured
+		private var xMod:int;//the game's x position on the stage
+		private var yMod:int;//the game's y position on the stage
+		private var myTurn:Boolean;//is player's turn
+		private var logoUrl:String;//url of logo
+		/**
+		*The game's constructor
+		*
+		*@param graphic A pointer to a graphical object on which the game will be displayed
+		*/
 		public function TickTacToeTuturialLogic(graphic:MovieClip)
 		{
 			gameGraphic=new TickTacToeTuturialGraphic();
 			graphic.addChild(gameGraphic);
 			gameGraphic.addEventListener(MouseEvent.CLICK,clickSquare);
 		}
+		/**
+		*Translates a click on the graphics into a TickTacToeMove and send it to the main class
+		*/
 		private function clickSquare(ev:MouseEvent):void
 		{
 			if(!myTurn)
@@ -35,11 +43,20 @@
 			if(gameBoard[xPos][yPos] == 0)
 				dispatchEvent(TickTacToeMove.create(playerTurn,xPos,yPos));
 		}
+		/**
+		*Traces who won,and send the main class that a certin player has won
+		*
+		*@winingPlayer wining Player Id
+		*/
 		private function gameOver(winingPlayer:int):void
 		{
 			dispatchEvent(new GameOverEvent(winingPlayer));
 			trace("player : "+winingPlayer+" Won" )
 		}
+		/**
+		*Checks if the game is over,if so calls the gameOver function
+		*
+		*/
 		private function checkGameOver():void
 		{
 			for(var i:int = 1;i<=3;i++)
@@ -70,6 +87,11 @@
 				gameOver(0);
 				
 		}
+		/**
+		*Allows the player to make a move if its his turn
+		*
+		*@param nextPlayerTurn The Id of the player allowed to make a move
+		*/
 		public function allowMoves(nextPlayerTurn:int):void
 		{
 			if(playerTurn == nextPlayerTurn)
@@ -82,6 +104,11 @@
 			}
 			dispatchEvent(new SetNextTurnEvent(playerTurn));
 		}
+		/**
+		*Commits a player turn to the board
+		*
+		*@param gameMove A TickTacToeMove class representing the next player move
+		*/
 		public function makeTurn(gameMove:TickTacToeMove):void
 		{
 			if(playerTurn == gameMove.playerTurn)
@@ -93,6 +120,11 @@
 				checkGameOver();
 			}
 		}
+		/**
+		*Starts a new game
+		*
+		*@param playerAmount How many players will be playing the game
+		*/
 		public function startNewGame(playerAmount:int,userAvatars:Array/*String*/):void
 		{
 			this.playerAmount = playerAmount;
@@ -109,12 +141,26 @@
 			}
 			gameGraphic.createNewBoard(logoUrl,userAvatars);
 		}
-
+		/**
+		*Set's the game board's logo
+		*
+		*@param LogoUrl logo to load
+		*/
 		public function set LogoUrl(LogoUrl:String):void{logoUrl = LogoUrl;}
+		/**
+		*Set's the modefier for the x position
+		*
+		*@param gameX the game's x position on the stage
+		*/
 		public function set stageX(gameX:int):void
 		{
 			xMod = gameX;	
 		}
+		/**
+		*Set's the modefier for the y position
+		*
+		*@param gameY the game's y position on the stage
+		*/
 		public function set stageY(gameY:int):void
 		{
 			yMod = gameY;

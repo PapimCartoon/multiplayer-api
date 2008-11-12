@@ -1,4 +1,4 @@
-package ticktactoeTuturial
+﻿package ticktactoeTuturial
 {
 	import flash.display.MovieClip;
 
@@ -10,6 +10,10 @@ package ticktactoeTuturial
 		{
 			
 		}
+		/**
+		*Refreshes the board for a new game
+		*
+		*/
 		private function refreshBoard():void
 		{
 			if(BoardMc !=null)
@@ -17,6 +21,11 @@ package ticktactoeTuturial
 					removeChild(BoardMc);
 			BoardMc = new MovieClip();
 		}
+		/**
+		*Commits a game move graphicly
+		*
+		*@param gameMove a TickTacToeMove class representing a player move
+		*/
 		public function makeTurn(gameMove:TickTacToeMove):void
 		{
 			var tempSquare:TickTacToeTuturialSquare = board[gameMove.xPos][gameMove.yPos];
@@ -27,6 +36,10 @@ package ticktactoeTuturial
 			else if(gameMove.playerTurn == 3)
 				tempSquare.gotoAndStop("Toe");
 		}
+		/**
+		*Creates a new board
+		*
+		*/
 		public function createNewBoard():void
 		{
 			refreshBoard()

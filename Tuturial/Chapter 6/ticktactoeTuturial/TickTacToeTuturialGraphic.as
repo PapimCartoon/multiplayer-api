@@ -14,13 +14,17 @@
 		private var logoUrl:String;
 		private var loadedBackgrounds:int;
 		private var userAvatarsArray:Array;/*Array*/
-		private var _gameWidth:int;
-		private var _gameHeight:int;
+		private var _gameWidth:int; //the width of the stage
+		private var _gameHeight:int; //the height of the stage
 		private var mainPointer:TickTacToeTuturialMain;
 		public function TickTacToeTuturialGraphic(mainPointer:TickTacToeTuturialMain)
 		{
 			this.mainPointer = mainPointer;
 		}
+		/**
+		*Refreshes the board for a new game
+		*
+		*/
 		private function refreshBoard():void
 		{
 			if(BoardMc !=null)
@@ -28,11 +32,24 @@
 					removeChild(BoardMc);
 			BoardMc = new MovieClip();
 		}
+		/**
+		*Loads an image to a specific loader
+		*
+		*@param url the url of the image to load
+		*@param loader were to load the image to
+		*@param callbackFunction the function to call after loading the image
+		*/
 		private function loadBackImage(url:String,loader:Loader,callbackFunction:Function):void
 		{
 			loader.contentLoaderInfo.addEventListener(Event.COMPLETE,callbackFunction);
 			loader.load(new URLRequest(url));
 		}
+		/**
+		*Loads an avatar for each game square
+		*
+		*@param avatarUrl the url of the avatar
+		*@param userIdex the index of the user the avatar is associated with
+		*/
 		private function loadAvatarBoard(avatarUrl:String,userIdex:int):void
 		{
 			for(var i:int = 2;i<=9;i++)
@@ -43,6 +60,12 @@
 			}
 			
 		}	
+		/**
+		*Loads the logo for all the game squares as a background
+		*
+		*@param avatarUrl the url of the avatar
+		*@param userIdex the index of the user the avatar is associated with
+		*/
 		private function doneLoadingLogo(ev:Event):void
 		{
 			var tempLoader:Loader = logoBackGrounds[loadedBackgrounds];	
@@ -58,6 +81,11 @@
 				loadBackImage(logoUrl,logoBackGrounds[loadedBackgrounds],doneLoadingLogo);
 			}
 		}
+		/**
+		*Commits a game move graphicly
+		*
+		*@param gameMove a TickTacToeMove class representing a player move
+		*/
 		public function makeTurn(gameMove:TickTacToeMove):void
 		{
 			var tempSquare:TickTacToeTuturialSquare = board[gameMove.xPos][gameMove.yPos];
@@ -79,12 +107,24 @@
 					tempSquare.gotoAndStop("Toe");
 			}
 		}
+		/**
+		*Loads an avatar for a specific user
+		*
+		*@param avatarUrl the url of the avatar
+		*@param userIndex the index of the user the avatar is associated with
+		*/
 		private function loadAvatarForUser(avatarUrl:String,userIndex:int):void
 		{
 				userAvatarsArray[userIndex] =new Array()
 				userAvatarsArray[userIndex][1] = new Loader();		
 				loadBackImage(avatarUrl,userAvatarsArray[userIndex][1], function ():void {loadAvatarBoard(avatarUrl,userIndex);} );	
 		}
+		/**
+		*Creates a new board with logos and avatars
+		*
+		*@param logoUrl url of game logo
+		*@param userAvatars an array of urls of user avatars
+		*/
 		public function createNewBoard(logoUrl:String,userAvatars:Array/*String*/):void
 		{
 			var i:int;

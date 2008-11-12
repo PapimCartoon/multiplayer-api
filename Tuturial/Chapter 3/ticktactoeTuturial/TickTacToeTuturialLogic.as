@@ -8,17 +8,25 @@
 	{
 		private var gameGraphic:TickTacToeTuturialGraphic
 		private var gameBoard:Array;
-		private var playerTurn:int;
-		private var playerAmount:int;
-		private var closedSquares:int
-		private var xMod:int;
-		private var yMod:int;
+		private var playerTurn:int; // who's player turn it is
+		private var playerAmount:int;// how many players are playing the game
+		private var closedSquares:int;// how many squres were captured
+		private var xMod:int;//the game's x position on the stage
+		private var yMod:int;//the game's y position on the stage
+		/**
+		*The game's constructor
+		*
+		*@param graphic A pointer to a graphical object on which the game will be displayed
+		*/
 		public function TickTacToeTuturialLogic(graphic:MovieClip)
 		{
 			gameGraphic=new TickTacToeTuturialGraphic();
 			graphic.addChild(gameGraphic);
 			gameGraphic.addEventListener(MouseEvent.CLICK,clickSquare);
 		}
+		/**
+		*Translates a click on the graphics into a TickTacToeMove and send it to the main class
+		*/
 		private function clickSquare(ev:MouseEvent):void
 		{
 			var xPos:int = ((ev.stageX-xMod) / 100)+1;
@@ -31,10 +39,19 @@
 			if(gameBoard[xPos][yPos] == 0)
 				dispatchEvent(TickTacToeMove.create(playerTurn,xPos,yPos));
 		}
+		/**
+		*Traces who won
+		*
+		*@winingPlayer wining Player Id
+		*/
 		private function gameOver(winingPlayer:int):void
 		{
 			trace("player : "+winingPlayer+" Won" )
 		}
+		/**
+		*Checks if the game is over,if so calls the gameOver function
+		*
+		*/
 		private function checkGameOver():void
 		{
 			for(var i:int = 1;i<=3;i++)
@@ -65,6 +82,11 @@
 				gameOver(0);
 				
 		}
+		/**
+		*Commits a player turn to the board
+		*
+		*@param gameMove A TickTacToeMove class representing the next player move
+		*/
 		public function makeTurn(gameMove:TickTacToeMove):void
 		{
 			if(playerTurn == gameMove.playerTurn)
@@ -76,6 +98,11 @@
 				checkGameOver();
 			}
 		}
+		/**
+		*Starts a new game
+		*
+		*@param playerAmount How many players will be playing the game
+		*/
 		public function startNewGame(playerAmount:int):void
 		{
 			this.playerAmount = playerAmount;
@@ -92,10 +119,20 @@
 			}
 			gameGraphic.createNewBoard();
 		}
+		/**
+		*Set's the modefier for the x position
+		*
+		*@param gameX the game's x position on the stage
+		*/
 		public function set stageX(gameX:int):void
 		{
 			xMod = gameX;	
 		}
+		/**
+		*Set's the modefier for the y position
+		*
+		*@param gameY the game's y position on the stage
+		*/
 		public function set stageY(gameY:int):void
 		{
 			yMod = gameY;

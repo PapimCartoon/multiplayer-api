@@ -11,36 +11,51 @@
 
 	public class TickTacToeTuturialMain extends ClientGameAPI
 	{
-		private var gameLogic:TickTacToeTuturialLogic;
-		private var allPlayerIds:Array;
-		private var myUserId:int;
-		private var userDataArray:Array;
-		private var isGameOver:Boolean;
+		private var gameLogic:TickTacToeTuturialLogic; // An instance of the game's Logic class
+		private var allPlayerIds:Array/*int*/; // An array containing all the user Ids
+		private var myUserId:int;//the id of the current user
+		private var isGameOver:Boolean;//is the game in progress
+		private var userDataArray:Array/*UserData*/;//an array of user data
 		public function TickTacToeTuturialMain(stageMovieClip:MovieClip)
 		{
-			(new TickTacToeMove).register();
+			super(stageMovieClip);
+			(new TickTacToeMove).register();// registers a serializable class
 			gameLogic = new TickTacToeTuturialLogic(stageMovieClip);
 			gameLogic.addEventListener(TickTacToeMove.TickTacToeMoveEvent,gotUserMove);
 			gameLogic.addEventListener(SetNextTurnEvent.SetNextTurnEvent,nextTurn);
 			gameLogic.addEventListener(GameOverEvent.GameOverEvent,gameOver);
 			userDataArray = new Array();
-			super(stageMovieClip);
-			doRegisterOnServer()
+			doRegisterOnServer()//registers your game on the server
 		}
+		/**
+		*Sets the next playe'r turn on the server
+		*/
 		private function nextTurn(ev:SetNextTurnEvent):void
 		{
-			doAllSetTurn(allPlayerIds[ev.nextPlayerId-1],-1);
+			doAllSetTurn(allPlayerIds[ev.nextPlayerId-1],-1);//Sets a player turn on the server
 		}
+		/**
+		*Sets a palyer's turn
+		*/
 		private function setTurn():void
 		{
 			gameLogic.allowMoves(allPlayerIds.indexOf(myUserId) + 1);
 		}
+		/**
+		*Gets a TickTacToeMove from the game's logic
+		*
+		*@param infoEntries an Array of InfoEntry elements
+		*/
 		private function gotUserMove(ev:TickTacToeMove):void
 		{
 			if(!isGameOver)
 				doStoreState([UserEntry.create({xPos:ev.xPos,yPos:ev.yPos},ev)])
 		}
-		
+		/**
+		*Gets a GameOverEvent from the game's logic
+		*
+		*@param ev a GameOverEvent instance
+		*/
 		private function gameOver(ev:GameOverEvent):void
 		{
 			isGameOver = true;
@@ -57,6 +72,11 @@
 			
 			doAllEndMatch(finishedPlayers);
 		}
+		/**
+		*A function triggered by a server message passing custom info to the game
+		*
+		*@param infoEntries an Array of InfoEntry elements
+		*/
 		override public function gotUserInfo(userId:int, infoEntries:Array):void
 		{
 			for each(var infoEntry:InfoEntry in infoEntries)
@@ -67,6 +87,11 @@
 				}
 			}
 		}
+		/**
+		*A function triggered by a server message passing custom info to the game
+		*
+		*@param infoEntries an Array of InfoEntry elements
+		*/
 		override public function gotCustomInfo(infoEntries:Array):void
 		{
 			gameLogic.stageX = T.custom(CUSTOM_INFO_KEY_gameStageX,0) as int;
@@ -74,6 +99,13 @@
 			gameLogic.LogoUrl = T.custom(CUSTOM_INFO_KEY_logoFullUrl,"") as String;
 			myUserId = T.custom(CUSTOM_INFO_KEY_myUserId,null) as int;
 		}
+		/**
+		*A function triggered by a server message calling a begining of a game
+		*
+		*@param allPlayerIds an Array of all the player ids
+		*@param finishedPlayerIds an Array of all the finished player ids
+		*@param serverEntries an Array of ServerEntry elements in case of a load
+		*/
 		override public function gotMatchStarted(allPlayerIds:Array, finishedPlayerIds:Array, serverEntries:Array):void
 		{
 			isGameOver = false;
@@ -86,6 +118,11 @@
 			gameLogic.startNewGame(allPlayerIds.length,userAvatars);
 			setTurn()
 		}
+		/**
+		*A function triggered by a server message called by a doStoreState function 
+		*
+		*@param serverEntries an Array of ServerEntry elements recived
+		*/
 		override public function gotStateChanged(serverEntries:Array):void
 		{
 			var serverEntry:ServerEntry = serverEntries[0];

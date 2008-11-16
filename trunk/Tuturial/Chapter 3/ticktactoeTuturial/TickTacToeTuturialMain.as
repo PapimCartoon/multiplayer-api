@@ -61,9 +61,13 @@
 		override public function gotStateChanged(serverEntries:Array/*ServerEntry*/):void
 		{
 			var serverEntry:ServerEntry = serverEntries[0];
+			var gameMove:TickTacToeMove;
 			if(serverEntry.value is TickTacToeMove)
 			{
-				gameLogic.makeTurn(serverEntry.value as TickTacToeMove);	
+				gameMove = serverEntry.value as TickTacToeMove;
+				if ((gameMove.xPos !=serverEntry.key.xPos) || (gameMove.yPos !=serverEntry.key.yPos))
+					throw new Error("Key does not match the value");
+				gameLogic.makeTurn(gameMove);	
 			}
 		}
 	}

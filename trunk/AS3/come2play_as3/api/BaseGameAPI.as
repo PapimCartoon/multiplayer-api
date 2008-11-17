@@ -1,4 +1,4 @@
-package come2play_as3.api {
+﻿package come2play_as3.api {
 	import come2play_as3.api.auto_copied.*;
 	import come2play_as3.api.auto_generated.*;
 	
@@ -259,6 +259,11 @@ package come2play_as3.api {
         }
         public function dispatchMessage(msg:API_Message):void
         {
+			var methodName:String = msg.getMethodName();
+      		if (AS3_vs_AS2.isAS3 && !this.hasOwnProperty(methodName)) return;
+    			var func:Function = /*as*/this[methodName] as Function;
+    		if (func==null) return;
+    			func.apply(this, msg.getMethodParameters());
 
         }
         override public function sendMessage(msg:API_Message):void {

@@ -69,6 +69,8 @@
 					throw new Error("Key does not match the value");
 				gameLogic.makeTurn(gameMove);	
 			}
+			else
+				throw new Error("only TickTacToeMove is a legal value in this game");
 		}
 	}
 }

@@ -1,7 +1,7 @@
 #summary Starting point to reading the wiki
 #labels Featured
 
-[http://www.come2play.com/Developer.asp http://www.come2play.com/flash/menu_2.swf]
+[http://www.come2play.com/Developer.asp http://www.come2play.com/Shared/Products/C2P_Multi_API_Logo_Small.gif]
 
 Welcome to the Multiplayer API project!
 

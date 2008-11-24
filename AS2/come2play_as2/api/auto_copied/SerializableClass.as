@@ -39,10 +39,10 @@
  *    
  */
 import come2play_as2.api.auto_copied.*;
-class come2play_as2.api.auto_copied.SerializableClass /*<InAS3>extends Event</InAS3>*/
+class come2play_as2.api.auto_copied.SerializableClass /*<InAPI>extends Event</InAPI>*/
 {
 	public static var EVENT_FIELDS:Array
-		/*<InAS3> = ["type", "bubbles", "cancelable", "currentTarget", "eventPhase", "target"]</InAS3>*/;
+		/*<InAPI> = ["type", "bubbles", "cancelable", "currentTarget", "eventPhase", "target"]</InAPI>*/;
 	public static var IS_THROWING_EXCEPTIONS:Boolean = true; // in the online version we set it to false. (Consider the case that a hacker stores secret data which is illegal values)
 	public static var IS_TESTING_SAME_REGISTER:Boolean = true; // for efficiency the online version turns it off
 	public static var IS_TRACE_REGISTER:Boolean = false;
@@ -54,10 +54,10 @@ class come2play_as2.api.auto_copied.SerializableClass /*<InAS3>extends Event</In
 	public static var CLASS_NAME_FIELD:String = "__CLASS_NAME__";
 	public var __CLASS_NAME__:String;
 	public function SerializableClass(shortName:String /*<InAS3>= null</InAS3>*/
-			/*<InAS3>, bubbles:Boolean = false, cancelable:Boolean = false</InAS3>*/
+			/*<InAPI>, bubbles:Boolean = false, cancelable:Boolean = false</InAPI>*/
 			) {
 		__CLASS_NAME__ = shortName==null ? StaticFunctions.getShortClassName(this) : shortName;
-		/*<InAS3>super(__CLASS_NAME__,bubbles, cancelable);</InAS3>*/
+		/*<InAPI>super(__CLASS_NAME__,bubbles, cancelable);</InAPI>*/
 		StaticFunctions.assert(!XMLSerializer.isReserved(__CLASS_NAME__),["The shortName=",__CLASS_NAME__," is a reserved word, please use another shortName."]); 
 		StaticFunctions.assert(AS3_vs_AS2.stringIndexOf(__CLASS_NAME__,"$")==-1,["Illegal shortName in SerializableClass! shortName=",shortName]);
 		register();
@@ -81,8 +81,8 @@ class come2play_as2.api.auto_copied.SerializableClass /*<InAS3>extends Event</In
 		}
 		return values;		
 	}
-	/*<InAS3>public function eventToString():String { return super.toString(); }</InAS3>*/
-	/*override*/ public function toString():String {
+	/*<InAPI>public function eventToString():String { return super.toString(); }</InAPI>*/
+	/*<InAPI>override</InAPI>*/ public function toString():String {
 		var values:Object = {}; // shallow object - we do not change the inner serializables to Object		
 		for (var i87:Number=0; i87<getFieldNames().length; i87++) { var key:String = getFieldNames()[i87]; 
 			values[key] = this[key]; 

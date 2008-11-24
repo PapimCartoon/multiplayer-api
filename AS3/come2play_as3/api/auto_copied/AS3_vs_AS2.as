@@ -82,7 +82,10 @@ public final class AS3_vs_AS2
 	}	
 	
 	
-	public static var myAddEventListenerFunc:Function = null; // because in our framework we wrap the event listener with try&catch
+	// because in our framework we wrap the event listener with try&catch
+	// similary, our framework have a better error report mechanism (than an error window)
+	public static var myAddEventListenerFunc:Function = null; 
+	public static var myShowError:Function = null;
 	private static function assertNotFramework():void {
 		StaticFunctions.assert(myAddEventListenerFunc==null,["You cannot call this method in framework"]);
 	}
@@ -126,6 +129,7 @@ public final class AS3_vs_AS2
 		return res;
 	}	
 	private static var prevent_garbage_collection:Array = [];
+	public static var TRACE_LOADING:Boolean = false;
 	public static function loadMovieIntoNewChild(graphics:MovieClip, 
 			url:String, onLoaded:Function):DisplayObject {
 		var loader:Loader = new Loader();
@@ -141,16 +145,16 @@ public final class AS3_vs_AS2
         //ProgressEvent.PROGRESS
         //Event.UNLOAD
         myAddEventListener(contentLoaderInfo, Event.COMPLETE, function (event:Event):void {
-				StaticFunctions.storeTrace(["Done loading url=",url]);
+				if (TRACE_LOADING) StaticFunctions.storeTrace(["Done loading url=",url]);
 				newMovie.addChild(loader.content);
 				if (onLoaded!=null) onLoaded(true);
 			}  );
 		myAddEventListener(contentLoaderInfo, IOErrorEvent.IO_ERROR, function (event:IOErrorEvent):void {
-		        StaticFunctions.storeTrace(["Error in loading movie from url=",url," event=",event]);
+		        if (TRACE_LOADING) StaticFunctions.storeTrace(["Error in loading movie from url=",url," event=",event]);
 		        if (onLoaded!=null) onLoaded(false);
 		    }  );
 		graphics.addChild(newMovie);
-		StaticFunctions.storeTrace(["Loading url=",url," into a newly created child of=",graphics.name]);
+		if (TRACE_LOADING) StaticFunctions.storeTrace(["Loading url=",url," into a newly created child of=",graphics.name]);
 		loader.load(new URLRequest(url));
 		return newMovie;
 	}
@@ -225,8 +229,12 @@ public final class AS3_vs_AS2
 				func(is_key_down, charCode, keyCode, keyLocation, altKey, ctrlKey, shiftKey);
 			});	
 	}
-	public static function showError(graphics:MovieClip, msg:String):void {
+	public static function showError(graphics:DisplayObjectContainer, msg:String):void {
 		trace("Showing error: "+msg);
+		if (myShowError!=null) {
+			myShowError(msg);
+			return;
+		}
 		if (graphics==null) return;
 		var blackBox:Sprite=new Sprite();
 		blackBox.graphics.beginFill(0x000000);

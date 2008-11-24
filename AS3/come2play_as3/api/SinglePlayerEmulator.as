@@ -30,7 +30,10 @@ package come2play_as3.api
 				InfoEntry.create(API_Message.CUSTOM_INFO_KEY_myUserId,DEFAULT_USER_ID), 
 				InfoEntry.create(API_Message.CUSTOM_INFO_KEY_logoFullUrl,"../../Emulator/example_logo.jpg"), 
 				InfoEntry.create(API_Message.CUSTOM_INFO_KEY_gameHeight,400), 
-				InfoEntry.create(API_Message.CUSTOM_INFO_KEY_gameWidth,400) 
+				InfoEntry.create(API_Message.CUSTOM_INFO_KEY_gameWidth,400),
+				// game specific info
+				// I replaced the second default symbol with a camel image
+				InfoEntry.create("customSymbolsStringArray",[null, "../../Emulator/camel70x70.PNG"])  
 			];
 		public static var DEFAULT_USER_INFO:Array/*InfoEntry*/ =
 				[ 	InfoEntry.create(API_Message.USER_INFO_KEY_name, "User name"),

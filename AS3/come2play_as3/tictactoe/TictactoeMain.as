@@ -56,8 +56,7 @@ public final class TictactoeMain extends ClientGameAPI {
 	private var winLength:int;
 	private var playersNumInSinglePlayer:int;
 	private var winnerPercentage:int;
-	// use customSymbolsStringArray to change the symbols of TicTacToe from the default ones (which are "X" and "O")
-	private var customSymbolsStringArray:Array/*String*/;
+	
 	
 	public function TictactoeMain(graphics:MovieClip) {
 		super(graphics);		
@@ -110,28 +109,42 @@ public final class TictactoeMain extends ClientGameAPI {
 		}
 	}
 
-	override public function gotCustomInfo(entries:Array/*InfoEntry*/):void {
-		if (grid!=null) return; //gotCustomInfo may be called several times  					
-		grid = new CreateGrid(3,3,84,100,50);
+	private function hasEntry(key:String,entries:Array/*InfoEntry*/):Boolean {
+		for each (var info:InfoEntry in entries) {
+			if (info.key==key) return true;
+		}
+		return false;
+	}
+	override public function gotCustomInfo(entries:Array/*InfoEntry*/):void {	
+		// your userId may change if your game as the back&forward option
 		myUserId = AS3_vs_AS2.as_int(T.custom(CUSTOM_INFO_KEY_myUserId,null));
-		shouldUseAvatars = AS3_vs_AS2.asBoolean(T.custom("shouldUseAvatars",true)); 
+		 
+		shouldUseAvatars = AS3_vs_AS2.asBoolean(T.custom("shouldUseAvatars",true));			 
 		winLength = AS3_vs_AS2.as_int(T.custom("winLength",3));
 		playersNumInSinglePlayer = AS3_vs_AS2.as_int(T.custom("playersNumInSinglePlayer",3));
 		winnerPercentage = AS3_vs_AS2.as_int(T.custom("winnerPercentage",70));
-		customSymbolsStringArray = AS3_vs_AS2.asArray(T.custom("customSymbolsStringArray",[null, "../../Emulator/camel70x70.PNG"])); // I replaced the second default symbol with a camel image
 		
-		grid.createMovieClips(graphics, "TicTacToeSquare");
+		//gotCustomInfo may be called several times, but the number of rows&cols cannot be changed
+		if (grid==null) {  					
+			grid = new CreateGrid(3,3,84,100,50);
+			grid.createMovieClips(graphics, "TicTacToeSquare");
 		
-		allCells = [];
-		squares = new Array(ROWS());
-		for(var row:int=0; row<ROWS(); row++) {
-			squares[row] = new Array(COLS());
-			for(var col:int=0; col<COLS(); col++) {
-				var cell:TictactoeSquare = TictactoeSquare.create(row, col);
-				setSquareGraphic(cell, new TictactoeSquareGraphic(this, AS3_vs_AS2.getMovieChild(graphics,"Square_"+row+"_"+col), cell) ); 
-				allCells.push(cell);
-			}
-		}		
+			allCells = [];
+			squares = new Array(ROWS());
+			for(var row:int=0; row<ROWS(); row++) {
+				squares[row] = new Array(COLS());
+				for(var col:int=0; col<COLS(); col++) {
+					var cell:TictactoeSquare = TictactoeSquare.create(row, col);
+					setSquareGraphic(cell, new TictactoeSquareGraphic(this, AS3_vs_AS2.getMovieChild(graphics,"Square_"+row+"_"+col), cell) ); 
+					allCells.push(cell);
+				}
+			}		
+		}
+		
+		// use customSymbolsStringArray to change the symbols of TicTacToe from the default ones (which are "X" and "O")
+		var customSymbolsStringArray:Array/*String*/ = 
+			!hasEntry("customSymbolsStringArray",entries) ? null :
+			AS3_vs_AS2.asArray(T.custom("customSymbolsStringArray",null));
 		if (customSymbolsStringArray!=null)
 			for (var i:int=0; i<customSymbolsStringArray.length; i++) {
 				var symbolUrl:String = customSymbolsStringArray[i];
@@ -139,7 +152,9 @@ public final class TictactoeMain extends ClientGameAPI {
 					replaceSymbol(i,symbolUrl);
 			}	
 			
-		var logoFullUrl:String = AS3_vs_AS2.asString(T.custom(CUSTOM_INFO_KEY_logoFullUrl, null));
+		var logoFullUrl:String = 
+			!hasEntry(CUSTOM_INFO_KEY_logoFullUrl,entries) ? null :
+			AS3_vs_AS2.asString(T.custom(CUSTOM_INFO_KEY_logoFullUrl, null));
 		if (logoFullUrl!=null) {
 			var thisObj:TictactoeMain = this; // for AS2
 			cacheImage(logoFullUrl, graphics,
@@ -150,11 +165,14 @@ public final class TictactoeMain extends ClientGameAPI {
 			
 		
 		// we scale the TicTacToe size according to the grid size
-		var height:int = AS3_vs_AS2.as_int(T.custom(CUSTOM_INFO_KEY_gameHeight, 400));
-		var width:int = AS3_vs_AS2.as_int(T.custom(CUSTOM_INFO_KEY_gameWidth, 400));				
-		StaticFunctions.storeTrace(["dimensions=",height,"x",width," gridDimesions=",grid.height(),"x",grid.width()]);
-		AS3_vs_AS2.scaleMovieY(graphics, 100*height/grid.height());	
-		AS3_vs_AS2.scaleMovieX(graphics, 100*width/grid.width());	
+		if (hasEntry(CUSTOM_INFO_KEY_gameHeight,entries) ||
+			hasEntry(CUSTOM_INFO_KEY_gameWidth,entries)) {
+			var height:int = AS3_vs_AS2.as_int(T.custom(CUSTOM_INFO_KEY_gameHeight, 400));
+			var width:int = AS3_vs_AS2.as_int(T.custom(CUSTOM_INFO_KEY_gameWidth, 400));				
+			StaticFunctions.storeTrace(["dimensions=",height,"x",width," gridDimesions=",grid.height(),"x",grid.width()]);
+			AS3_vs_AS2.scaleMovieY(graphics, 100*height/grid.height());	
+			AS3_vs_AS2.scaleMovieX(graphics, 100*width/grid.width());
+		}			
 		AS3_vs_AS2.setVisible(graphics, true);	
 	}
 	private function loadLogo(logoFullUrl:String):void {
@@ -197,6 +215,7 @@ public final class TictactoeMain extends ClientGameAPI {
 		var indexOfMyUserId:int = AS3_vs_AS2.IndexOf(allPlayerIds,myUserId);
 		myColor = indexOfMyUserId==-1 ? VIEWER : 
 				indexOfMyUserId;
+		StaticFunctions.storeTrace(["myUserId=",myUserId," myColor=",myColor]);
 		var playersNum:int = playersNumber();
 		ongoingColors = [];
 		for (var color:int=0; color<playersNum; color++)

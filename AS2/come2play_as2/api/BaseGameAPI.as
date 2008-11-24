@@ -10,23 +10,18 @@ import come2play_as2.api.*;
 	class come2play_as2.api.BaseGameAPI extends LocalConnectionUser 
 	{        
 		public static var ERROR_DO_ALL:String = "You can only call a doAll* message when the server calls gotStateChanged, gotMatchStarted, gotMatchEnded, or gotRequestStateCalculation.";
-		public static var MAX_ANIMATION_MILLISECONDS:Number = 10*1000; // max 10 seconds for animations
 		
 		private var msgsInTransaction:Array/*API_Message*/ = null;
 		private var serverStateMiror:ObjectDictionary;
 		private var currentCallback:API_Message = null;
 		private var hackerUserId:Number = -1;
 		private var runningAnimationsNumber:Number = 0;
-		private var animationStartedOn:Number = -1; 
-		private var currentPlayerIds:Array/*int*/;
 		
 		public function BaseGameAPI(_someMovieClip:MovieClip) {
 			super(_someMovieClip, false, getPrefixFromFlashVars(_someMovieClip));
 			if (getPrefixFromFlashVars(_someMovieClip)==null) 
 				new SinglePlayerEmulator(_someMovieClip);
 			StaticFunctions.performReflectionFromFlashVars(_someMovieClip);	
-			setInterval(AS3_vs_AS2.delegate(this, this.checkAnimationInterval), MAX_ANIMATION_MILLISECONDS);
-			currentPlayerIds = [];
 		}
 
 		/**
@@ -48,9 +43,7 @@ import come2play_as2.api.*;
 			sendMessage( API_DoAllFoundHacker.create(hackerUserId, 
 				"Got error withObj="+JSON.stringify(withObj)+
 				" err="+AS3_vs_AS2.error2String(err)+
-				" animationStartedOn="+animationStartedOn+
 				" runningAnimationsNumber="+runningAnimationsNumber+
-				" currentPlayerIds="+currentPlayerIds+
 				" currentCallback="+currentCallback+
 				" msgsInTransaction="+JSON.stringify(msgsInTransaction)+
 				" traces="+StaticFunctions.getTraces() ) );
@@ -61,6 +54,8 @@ import come2play_as2.api.*;
 		 * The transaction normally ends when your overriding 'got' method returns.
 		 * However, if you start animations, 
 		 * 	then the transaction continues until all the animation will end.
+		 * A transaction must be ended after 10 seconds (see ProtocolVerifier.MAX_ANIMATION_MILLISECONDS),
+		 * so make sure your animations are short (less than 5 seconds).
 		 * 
 		 * You may call doAll methods if and only if you are inside a transaction,
 		 * and doStoreState if and only if you are not inside a transaction.
@@ -90,8 +85,6 @@ import come2play_as2.api.*;
         	checkInsideTransaction();
 			if (!canDoAnimations())
 				throwError("You can do animations only when the server calls gotMatchStarted, gotMatchEnded, or gotStateChanged");
-        	if (runningAnimationsNumber==0) 
-        		animationStartedOn = getTimer();
         	runningAnimationsNumber++;        	
         }
         public function animationEnded():Void {
@@ -99,8 +92,6 @@ import come2play_as2.api.*;
         	if (runningAnimationsNumber<=0)
         		throwError("Called animationEnded too many times!");
         	runningAnimationsNumber--;
-        	if (runningAnimationsNumber==0)
-        		animationStartedOn = -1;
         	sendFinishedCallback();        	        	
         }
         public function canDoAnimations():Boolean {
@@ -127,9 +118,6 @@ import come2play_as2.api.*;
 		/****************************
 		 * Below this line we only have private and overriding methods.
 		 */
-		private function checkInProgress(inProgress:Boolean, msg:API_Message):Void {
-			StaticFunctions.assert(inProgress == (currentPlayerIds.length>0), ["The game must ",inProgress?"" : "not"," be in progress when passing msg=",msg]); 
-		}
         private function isInTransaction():Boolean {
         	return msgsInTransaction!=null
         }
@@ -140,47 +128,14 @@ import come2play_as2.api.*;
         private function sendFinishedCallback():Void {
         	checkInsideTransaction();        	
         	if (runningAnimationsNumber>0) return;
-			if (isInGotRequestStateCalculation() && msgsInTransaction.length==0) 
-				throwError("When the server calls gotRequestStateCalculation, you must call doAllStoreStateCalculation");
        		super.sendMessage( API_Transaction.create(API_DoFinishedCallback.create(currentCallback.getMethodName()), msgsInTransaction) );
     		msgsInTransaction = null;
 			currentCallback = null;
         }
-        private function checkAnimationInterval():Void {
-        	if (animationStartedOn==-1) return; // animation is not running
-        	var now:Number = getTimer();
-        	if (now - animationStartedOn < MAX_ANIMATION_MILLISECONDS) return; // animation is running for a short time
-        	// animation is running for too long
-        	throwError("An animation is running for more than MAX_ANIMATION_MILLISECONDS="+MAX_ANIMATION_MILLISECONDS+". It started "+animationStartedOn+" milliseconds after the script started.");         	
-        }
-        private function isInGotRequestStateCalculation():Boolean {
-			return currentCallback instanceof API_GotRequestStateCalculation;
-		}
         
-        private function isNullKeyExistUserEntry(userEntries:Array/*UserEntry*/):Void
-        {
-        	for (var i165:Number=0; i165<userEntries.length; i165++) { var userEntry:UserEntry = userEntries[i165]; 
-        		if (userEntry.key == null)
-        			throwError("key cannot be null !");
-        	}
-        }
-        private function isNullKeyExistRevealEntry(revealEntries:Array/*RevealEntry*/):Void
-        {
-        	for (var i172:Number=0; i172<revealEntries.length; i172++) { var revealEntry:RevealEntry = revealEntries[i172]; 
-        		if (revealEntry.key == null)
-        			throwError("key cannot be null !");
-        	}
-        }
-        private function isNullKeyExist(keys:Array/*Object*/):Void
-        {
-        	for (var i179:Number=0; i179<keys.length; i179++) { var key:String = keys[i179]; 
-        		if (key == null)
-        			throwError("key cannot be null !");
-        	}
-        }
         private function updateMirorServerState(serverEntries:Array/*ServerEntry*/):Void
         {
-        	for (var i186:Number=0; i186<serverEntries.length; i186++) { var serverEntry:ServerEntry = serverEntries[i186]; 
+        	for (var i141:Number=0; i141<serverEntries.length; i141++) { var serverEntry:ServerEntry = serverEntries[i141]; 
         	    if (serverEntry.value == null)
 					serverStateMiror.remove(serverEntry.key);
 				else 
@@ -204,7 +159,6 @@ import come2play_as2.api.*;
 				
         		hackerUserId = -1;
 	    		if (msg instanceof API_GotStateChanged) {
-	    			checkInProgress(true,msg);
 	    			var stateChanged:API_GotStateChanged = API_GotStateChanged(msg);
 	    			if (stateChanged.serverEntries.length >= 1) {
 	    				updateMirorServerState(stateChanged.serverEntries);
@@ -212,21 +166,14 @@ import come2play_as2.api.*;
 		    			hackerUserId = serverEntry.storedByUserId;
 		    		}
 	    		} else if (msg instanceof API_GotMatchStarted) {
-	    			checkInProgress(false,msg);
 	    			serverStateMiror = new ObjectDictionary();
 					var matchStarted:API_GotMatchStarted = API_GotMatchStarted(msg);
 					updateMirorServerState(matchStarted.serverEntries);
-					currentPlayerIds = StaticFunctions.subtractArray(matchStarted.allPlayerIds, matchStarted.finishedPlayerIds);
-	    		} else if (msg instanceof API_GotMatchEnded) {	    			
-	    			checkInProgress(true,msg);
-					var matchEnded:API_GotMatchEnded = API_GotMatchEnded(msg);
-					currentPlayerIds = StaticFunctions.subtractArray(currentPlayerIds, matchEnded.finishedPlayerIds);
-				} else if (msg instanceof API_GotCustomInfo) {	 					    			
-	    			checkInProgress(false,msg);
+	    		} else if (msg instanceof API_GotCustomInfo) {	 					    			
 					var customInfo:API_GotCustomInfo = API_GotCustomInfo(msg);
 					var i18nObj:Object = {};
 					var customObj:Object = {};
-					for (var i232:Number=0; i232<customInfo.infoEntries.length; i232++) { var entry:InfoEntry = customInfo.infoEntries[i232]; 
+					for (var i179:Number=0; i179<customInfo.infoEntries.length; i179++) { var entry:InfoEntry = customInfo.infoEntries[i179]; 
 						var key:String = entry.key;
 						var value:Object = entry.value;	
 						if (key=="i18n")
@@ -235,9 +182,7 @@ import come2play_as2.api.*;
 							customObj[key] = value;
 					}		
 					T.initI18n(i18nObj, customObj); // may be called several times because we may pass different 'secondsPerMatch' every time a game starts
-				} else if (msg instanceof API_GotKeyboardEvent) {						    			
-	    			checkInProgress(true,msg);
-				} 
+				}
 				dispatchMessage(msg)
 
         	} catch (err:Error) {
@@ -253,89 +198,28 @@ import come2play_as2.api.*;
     			sendFinishedCallback(); 			
     		}        		   	
         }
-        public function dispatchMessage(msg:API_Message):Void
-        {
-
+        public function dispatchMessage(msg:API_Message):Void {
+        	var methodName:String = msg.getMethodName();
+			if (AS3_vs_AS2.isAS3 && !this.hasOwnProperty(methodName)) return;
+			var func:Function = Function(this[methodName]);
+			if (func==null) return;
+			func.apply(this, msg.getMethodParameters());
         }
-        /*override*/ public function sendMessage(msg:API_Message):Void {
-        	if (msg instanceof API_DoRegisterOnServer || msg instanceof API_DoTrace) {
-        		super.sendMessage(msg);
+        /*override*/ public function sendMessage(doMsg:API_Message):Void {
+        	if (ProtocolVerifier.isPassThrough(doMsg)) {
+        		super.sendMessage(doMsg);
         		return;
         	}
-        	var msgName:String = msg.getMethodName();
-        	if (StaticFunctions.startsWith(msgName, "do_")) {
-        		// an OldBoard operation
-        		super.sendMessage(msg);
-        		return;
-        	}
-        	if (msg instanceof API_DoStoreState) {
-        		var doStoreStateMessage:API_DoStoreState = API_DoStoreState(msg);
-        		if (doStoreStateMessage.userEntries.length < 1 )
-        			throwError("You have to call doStoreState with at least 1 parameter !");
+        	if (doMsg instanceof API_DoStoreState) {
         		if (isInTransaction())
-        			throwError("You can call doStoreState only when you are not inside a transaction! msg="+msg);
-        		isNullKeyExistUserEntry(doStoreStateMessage.userEntries)
-        		super.sendMessage( msg );
+        			throwError("You can call doStoreState only when you are not inside a transaction! doMsg="+doMsg);        			
+        		super.sendMessage(doMsg);
         		return;
-			}  
-			else if (msg instanceof API_DoAllStoreState)
-			{
-				var doAllStoreStateMessage:API_DoAllStoreState = API_DoAllStoreState(msg);
-        		if (doAllStoreStateMessage.userEntries.length < 1 )
-        			throwError("You have to call doAllStoreStateMessage with at least 1 UserEntry !");
-				isNullKeyExistUserEntry(doAllStoreStateMessage.userEntries);
-			}   
-			else if (msg instanceof API_DoAllEndMatch)
-			{
-				var doAllEndMatchMessage:API_DoAllEndMatch = API_DoAllEndMatch(msg);
-        		if (doAllEndMatchMessage.finishedPlayers.length < 1 )
-        			throwError("You have to call doAllEndMatch with at least 1 PlayerMatchOver !");
-			} 
-			else if (msg instanceof API_DoAllRevealState) 
-			{
-				var doAllRevealState:API_DoAllRevealState = API_DoAllRevealState(msg);
-        		if (doAllRevealState.revealEntries.length < 1 )
-        			throwError("You have to call doAllRevealState with at least 1 RevealEntry !");
-        		isNullKeyExistRevealEntry(doAllRevealState.revealEntries);
-			} 
-			else if (msg instanceof API_DoAllRequestStateCalculation) 
-			{
-				var doAllRequestStateCalculation:API_DoAllRequestStateCalculation = API_DoAllRequestStateCalculation(msg);
-        		if (doAllRequestStateCalculation.keys.length < 1 )
-        			throwError("You have to call doAllRequestStateCalculation with at least 1 key !");
-        		isNullKeyExist(doAllRequestStateCalculation.keys);
-			}	
-			else if (msg instanceof API_DoAllSetTurn) 
-			{
-				var doAllSetTurn:API_DoAllSetTurn = API_DoAllSetTurn(msg);
-        		if (AS3_vs_AS2.IndexOf(currentPlayerIds, doAllSetTurn.userId) == -1 )
-        			throwError("You have to call doAllSetTurn with a player user ID !");
-			}
-			else if (msg instanceof API_DoAllShuffleState) 
-			{
-				var doAllShuffleState:API_DoAllShuffleState = API_DoAllShuffleState(msg);
-        		if (doAllShuffleState.keys.length < 1 )
-        			throwError("You have to call doAllShuffleState with at least 1 key !");
-        		isNullKeyExist(doAllShuffleState.keys);
-			}
-			else if (msg instanceof API_DoAllStoreStateCalculation) 
-			{
-				var doAllStoreStateCalculations:API_DoAllStoreStateCalculation = API_DoAllStoreStateCalculation(msg);
-        		if (doAllStoreStateCalculations.userEntries.length < 1 )
-        			throwError("You have to call doAllStoreStateCalculations with at least 1 UserEntry !");
-				isNullKeyExistUserEntry(doAllStoreStateCalculations.userEntries);
-			}
-        	if (!StaticFunctions.startsWith(msgName, "doAll"))
-        		throwError("Illegal sendMessage="+msg);        	
+        	}        	
+			      	
 			if (!isInTransaction()) 
 				throwError(ERROR_DO_ALL);	
-				
-			if (isInGotRequestStateCalculation()) {
-				if (!((msg instanceof API_DoAllStoreStateCalculation) || (msg instanceof API_DoAllFoundHacker) ))
-					throwError("When the server calls gotRequestStateCalculation you must respond with doAllStoreStateCalculation");
-			} else if (!canDoAnimations()) {
-				throwError(ERROR_DO_ALL);
-			}
-			msgsInTransaction.push(msg);			
+			
+			msgsInTransaction.push(doMsg);			
         }
 	}

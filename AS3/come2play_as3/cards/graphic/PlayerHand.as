@@ -319,7 +319,6 @@ package come2play_as3.cards.graphic
 						
 			var cardGraphics:CardGraphicMovieClip;
 			var currentSpace:int = (-CardDefenitins.playerCardSpacing);
-			trace("currentSpace : "+currentSpace+"CardDefenitins.playerCardSpacing : "+CardDefenitins.playerCardSpacing)
 				for(var i:int = 0;i<cardsInHand.length;i++)
 				{
 					cardGraphics = cardsInHand[i];

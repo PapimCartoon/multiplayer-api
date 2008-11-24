@@ -306,7 +306,7 @@ package come2play_as3.cards
 			}
 			else
 			{
-				gotMatchStarted2(allPlayerIds, finishedPlayerIds, serverEntries);
+				gotNewMatchStarted(allPlayerIds, finishedPlayerIds, serverEntries);
 			}
 			
 			
@@ -407,7 +407,7 @@ package come2play_as3.cards
 		public function gotChoosenCards(choosenCards:Array/*PlayerCard*/):void{}//cards the player has marked in his hand
 		public function gotCards(playerCards:Array/*PlayerCard*/):void{}// recived cards into hand
 		public function rivalGotCards(rivalId:int,amountOfCards:int):void{}//rival recived cards into hand
-		public function gotMatchStarted2(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, serverEntries:Array/*ServerEntry*/):void	{}// the match started you should override
+		public function gotNewMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, serverEntries:Array/*ServerEntry*/):void	{}// the match started you should override
 		public function gotStateChangedNoCards(serverEntries:Array/*ServerEntry*/):void{}
 		
 	}

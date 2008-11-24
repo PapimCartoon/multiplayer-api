@@ -17,12 +17,13 @@ package emulator.auto_copied
 	import flash.net.*;
 	 
 	public class LocalConnectionUser
-	{		
+	{
+		public static var REVIEW_USER_ID:int = -1; // special userId that is used for reviewing games		
 		public static var DEFAULT_LOCALCONNECTION_PREFIX:String = ""+StaticFunctions.random(1,10000);
-		
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		
 		public static function showError(msg:String):void {
 			StaticFunctions.showError(msg);
 		}
@@ -32,10 +33,10 @@ package emulator.auto_copied
 		public static function assert(val:Boolean, args:Array):void {
 			if (!val) StaticFunctions.assert(false, args);
 		}
-		public static function getDoChanelString(sPrefix:String):String {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		public static function getDoChanelString(sPrefix:String):String {
 			return "DO_CHANEL_"+sPrefix;
 		}
 		public static function getGotChanelString(sPrefix:String):String {
@@ -45,10 +46,10 @@ package emulator.auto_copied
 			var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(_someMovieClip);
 			var sPrefix:String = parameters["prefix"];
 			if (sPrefix==null) sPrefix = parameters["?prefix"];
-			return getPrefixFromString(sPrefix);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			return getPrefixFromString(sPrefix);
 		}		
 		public static function getPrefixFromString(sPrefix:String):String {
 			if (sPrefix!=null && !(sPrefix.charAt(0)>='0' && sPrefix.charAt(0)<='9')) { //it is not necessarily a number 
@@ -58,100 +59,117 @@ package emulator.auto_copied
 			}
 			return sPrefix;
 		}
-				
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+				
 		
 		// we use a LocalConnection to communicate with the container
 		private var lcUser:LocalConnection; 
 		private var sSendChanel:String;
+		private var isServer:Boolean;
+		public var verifier:ProtocolVerifier;
 		
 		//Constructor
-		public function LocalConnectionUser(_someMovieClip:MovieClip, isServer:Boolean, sPrefix:String) {
-			try{
-				API_LoadMessages.useAll();	
-				StaticFunctions.someMovieClip = _someMovieClip;
+		public function LocalConnectionUser(_someMovieClip:DisplayObjectContainer, isServer:Boolean, sPrefix:String) {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			try{
+				API_LoadMessages.useAll();	
+				verifier = new ProtocolVerifier();
+				this.isServer = isServer;
+				StaticFunctions.storeTrace(["ProtocolVerifier=",verifier]);
+				StaticFunctions.someMovieClip = _someMovieClip;
 				if (sPrefix==null) {
 					myTrace(["WARNING: didn't find 'prefix' in the loader info parameters. Probably because you are doing testing locally."]);
 					sPrefix = DEFAULT_LOCALCONNECTION_PREFIX;
 				}				
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 				lcUser = new LocalConnection();
 				AS3_vs_AS2.addStatusListener(lcUser, this, ["localconnection_callback"]);
 				
 				var sDoChanel:String = getDoChanelString(sPrefix);
 				var sGotChanel:String = getGotChanelString(sPrefix);
 				var sListenChannel:String = 
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 					isServer ? sDoChanel : sGotChanel;
 				sSendChanel = 
 					!isServer ? sDoChanel : sGotChanel;				
 				myTrace(["LocalConnection listens on channel=",sListenChannel," and sends on ",sSendChanel]);
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 				lcUser.connect(sListenChannel);
 			}catch (err:Error) { 
 				passError("Constructor",err);
 			}
 		}
 		public function myTrace(msg:Array):void {			
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 			StaticFunctions.storeTrace([AS3_vs_AS2.getClassName(this),": ",msg]);
 		}
 		
         protected function getErrorMessage(withObj:Object, err:Error):String {
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
         	return "Error occurred when passing "+JSON.stringify(withObj)+", the error is="+AS3_vs_AS2.error2String(err);
         }
         private function passError(withObj:Object, err:Error):void {
         	showError(getErrorMessage(withObj,err));        	
         }
         
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
         public function gotMessage(msg:API_Message):void {}
         
         public function sendMessage(msg:API_Message):void {
         	myTrace(['sendMessage: ',msg]);
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
         	if (msg is API_DoRegisterOnServer)
         		AS3_vs_AS2.myTimeout(AS3_vs_AS2.delegate(this, this.reallySendMessage,msg),100);
         	else
         		reallySendMessage(msg);
         }
         private function reallySendMessage(msg:API_Message):void {        						  
+			try{
+				AS3_vs_AS2.checkObjectIsSerializable(msg);
+        		verify(msg, true);
+				lcUser.send(sSendChanel, "localconnection_callback", msg.toObject());  
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			try{
-				AS3_vs_AS2.checkObjectIsSerializable(msg);
-				lcUser.send(sSendChanel, "localconnection_callback", msg.toObject());  
 			}catch(err:Error) { 
 				passError(msg, err);
 			}        	
         }
-        
-        public function localconnection_callback(msgObj:Object):void {
-        	try{
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
-        		var deserializedMsg:Object = SerializableClass.deserialize(msgObj);
-        		var msg:API_Message = /*as*/deserializedMsg as API_Message;
-        		if (msg==null) throwError("msgObj="+JSON.stringify(msgObj)+" is not an API_Message");
-        		
-        		myTrace(['gotMessage: ',msg]);
-        		gotMessage(msg);
-			} catch(err:Error) { 
-				passError(msgObj, err);
-			} 
+        private function verify(msg:API_Message, isSend:Boolean):void {
+        	if (isServer!=isSend)
+    			verifier.msgFromGame(msg);
+    		else
+    			verifier.msgToGame(msg);        	
         }
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+        
+        public function localconnection_callback(msgObj:Object):void {
+        	var msg:API_Message = null;
+        	try{
+        		var deserializedMsg:Object = SerializableClass.deserialize(msgObj);
+        		msg = /*as*/deserializedMsg as API_Message;
+        		if (msg==null) throwError("msgObj="+JSON.stringify(msgObj)+" is not an API_Message");
+        		
+        		myTrace(['gotMessage: ',msg]);
+        		verify(msg, false);
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+        		gotMessage(msg);
+			} catch(err:Error) { 
+				passError(msg==null ? msgObj : msg, err);
+			} 
+        }
 	}
 }

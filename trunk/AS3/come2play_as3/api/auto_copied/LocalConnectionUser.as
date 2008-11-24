@@ -7,7 +7,8 @@ package come2play_as3.api.auto_copied
 	import flash.net.*;
 	 
 	public class LocalConnectionUser
-	{		
+	{
+		public static var REVIEW_USER_ID:int = -1; // special userId that is used for reviewing games		
 		public static var DEFAULT_LOCALCONNECTION_PREFIX:String = ""+StaticFunctions.random(1,10000);
 		
 		public static function showError(msg:String):void {
@@ -44,11 +45,16 @@ package come2play_as3.api.auto_copied
 		// we use a LocalConnection to communicate with the container
 		private var lcUser:LocalConnection; 
 		private var sSendChanel:String;
+		private var isServer:Boolean;
+		public var verifier:ProtocolVerifier;
 		
 		//Constructor
-		public function LocalConnectionUser(_someMovieClip:MovieClip, isServer:Boolean, sPrefix:String) {
+		public function LocalConnectionUser(_someMovieClip:DisplayObjectContainer, isServer:Boolean, sPrefix:String) {
 			try{
 				API_LoadMessages.useAll();	
+				verifier = new ProtocolVerifier();
+				this.isServer = isServer;
+				StaticFunctions.storeTrace(["ProtocolVerifier=",verifier]);
 				StaticFunctions.someMovieClip = _someMovieClip;
 				if (sPrefix==null) {
 					myTrace(["WARNING: didn't find 'prefix' in the loader info parameters. Probably because you are doing testing locally."]);
@@ -92,22 +98,31 @@ package come2play_as3.api.auto_copied
         private function reallySendMessage(msg:API_Message):void {        						  
 			try{
 				AS3_vs_AS2.checkObjectIsSerializable(msg);
+        		verify(msg, true);
 				lcUser.send(sSendChanel, "localconnection_callback", msg.toObject());  
 			}catch(err:Error) { 
 				passError(msg, err);
 			}        	
         }
+        private function verify(msg:API_Message, isSend:Boolean):void {
+        	if (isServer!=isSend)
+    			verifier.msgFromGame(msg);
+    		else
+    			verifier.msgToGame(msg);        	
+        }
         
         public function localconnection_callback(msgObj:Object):void {
+        	var msg:API_Message = null;
         	try{
         		var deserializedMsg:Object = SerializableClass.deserialize(msgObj);
-        		var msg:API_Message = /*as*/deserializedMsg as API_Message;
+        		msg = /*as*/deserializedMsg as API_Message;
         		if (msg==null) throwError("msgObj="+JSON.stringify(msgObj)+" is not an API_Message");
         		
         		myTrace(['gotMessage: ',msg]);
+        		verify(msg, false);
         		gotMessage(msg);
 			} catch(err:Error) { 
-				passError(msgObj, err);
+				passError(msg==null ? msgObj : msg, err);
 			} 
         }
 	}

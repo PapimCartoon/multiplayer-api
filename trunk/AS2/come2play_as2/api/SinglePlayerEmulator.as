@@ -27,7 +27,10 @@ import come2play_as2.api.*;
 				InfoEntry.create(API_Message.CUSTOM_INFO_KEY_myUserId,DEFAULT_USER_ID), 
 				InfoEntry.create(API_Message.CUSTOM_INFO_KEY_logoFullUrl,"../../Emulator/example_logo.jpg"), 
 				InfoEntry.create(API_Message.CUSTOM_INFO_KEY_gameHeight,400), 
-				InfoEntry.create(API_Message.CUSTOM_INFO_KEY_gameWidth,400) 
+				InfoEntry.create(API_Message.CUSTOM_INFO_KEY_gameWidth,400),
+				// game specific info
+				// I replaced the second default symbol with a camel image
+				InfoEntry.create("customSymbolsStringArray",[null, "../../Emulator/camel70x70.PNG"])  
 			];
 		public static var DEFAULT_USER_INFO:Array/*InfoEntry*/ =
 				[ 	InfoEntry.create(API_Message.USER_INFO_KEY_name, "User name"),
@@ -57,7 +60,7 @@ import come2play_as2.api.*;
         /*override*/ public function gotMessage(msg:API_Message):Void {        	
 			if (msg instanceof API_Transaction) {
 				var transaction:API_Transaction = API_Transaction(msg);
-				for (var i61:Number=0; i61<transaction.messages.length; i61++) { var innerMsg:API_Message = transaction.messages[i61]; 
+				for (var i64:Number=0; i64<transaction.messages.length; i64++) { var innerMsg:API_Message = transaction.messages[i64]; 
 					gotMessage(innerMsg);
 				}
 				gotMessage(transaction.callback);
@@ -65,7 +68,7 @@ import come2play_as2.api.*;
 				var doStore:API_DoStoreState = API_DoStoreState(msg);				
 				var userEntries:Array/*UserEntry*/ = doStore.userEntries;
 				var serverEntries:Array/*ServerEntry*/ = [];
-				for (var i69:Number=0; i69<userEntries.length; i69++) { var userEntry:UserEntry = userEntries[i69]; 
+				for (var i72:Number=0; i72<userEntries.length; i72++) { var userEntry:UserEntry = userEntries[i72]; 
 					var serverEntry:ServerEntry = ServerEntry.create(userEntry.key, userEntry.value, userId,userEntry.isSecret ? [userId] : null, getTimer());
 					serverEntries.push(serverEntry); 
 				}
@@ -74,7 +77,7 @@ import come2play_as2.api.*;
 			} else if (msg instanceof API_DoAllEndMatch) {
 				var endMatch:API_DoAllEndMatch = API_DoAllEndMatch(msg);
 				var finishedPlayerIds:Array = [];
-				for (var i78:Number=0; i78<endMatch.finishedPlayers.length; i78++) { var matchOver:PlayerMatchOver = endMatch.finishedPlayers[i78]; 
+				for (var i81:Number=0; i81<endMatch.finishedPlayers.length; i81++) { var matchOver:PlayerMatchOver = endMatch.finishedPlayers[i81]; 
 					finishedPlayerIds.push( matchOver.playerId );
 				}
 				queueSendMessage( API_GotMatchEnded.create(finishedPlayerIds) );

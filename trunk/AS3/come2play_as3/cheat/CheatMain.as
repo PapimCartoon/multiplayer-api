@@ -200,7 +200,7 @@ package come2play_as3.cheat
 			playerCards[allPlayerIds.indexOf(rivalId)]+=amountOfCards;
 			//doTrace("Rival "+rivalId,amountOfCards);
 		}
-		override public function gotMatchStarted2(allPlayerIds:Array, finishedPlayerIds:Array, serverEntries:Array):void
+		override public function gotNewMatchStarted(allPlayerIds:Array, finishedPlayerIds:Array, serverEntries:Array):void
 		{
 			var cardsToDeal:int = 54/allPlayerIds.length;
 			cardsInMiddle = new Array();

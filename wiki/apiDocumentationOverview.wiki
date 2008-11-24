@@ -100,7 +100,4 @@ you will also find [FullGames full game source] code for you to learn and work o
 
 And after learning and understanding the API we offer a basic [http://code.google.com/p/multiplayer-api/downloads/list Template] to work on
 
-Coming soon (TODO): this section will contain tutorials on creating both turn-based and real-time games.
-
-
 TicTacToe explains about the implementation of TicTacToe using [ClientGameAPI].

@@ -21,7 +21,7 @@ package come2play_as3.api {
 		private var hackerUserId:int = -1;
 		private var runningAnimationsNumber:int = 0;
 		
-		public function BaseGameAPI(_someMovieClip:MovieClip) {
+		public function BaseGameAPI(_someMovieClip:DisplayObjectContainer) {
 			super(_someMovieClip, false, getPrefixFromFlashVars(_someMovieClip));
 			if (getPrefixFromFlashVars(_someMovieClip)==null) 
 				new SinglePlayerEmulator(_someMovieClip);

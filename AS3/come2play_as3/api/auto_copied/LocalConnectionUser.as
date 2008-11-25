@@ -26,7 +26,7 @@ package come2play_as3.api.auto_copied
 		public static function getGotChanelString(sPrefix:String):String {
 			return "GOT_CHANEL_"+sPrefix;
 		}
-		public static function getPrefixFromFlashVars(_someMovieClip:MovieClip):String {
+		public static function getPrefixFromFlashVars(_someMovieClip:DisplayObjectContainer):String {
 			var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(_someMovieClip);
 			var sPrefix:String = parameters["prefix"];
 			if (sPrefix==null) sPrefix = parameters["?prefix"];

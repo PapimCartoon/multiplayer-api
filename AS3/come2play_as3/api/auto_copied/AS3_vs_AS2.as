@@ -195,7 +195,7 @@ public final class AS3_vs_AS2
 	public static function removeMovie(graphics:DisplayObject):void {
 		graphics.parent.removeChild( graphics );
 	}
-	public static function addKeyboardListener(graphics:MovieClip, func:Function):void {
+	public static function addKeyboardListener(graphics:DisplayObjectContainer, func:Function):void {
 		var isStageReady:Boolean = graphics.stage!=null;
 		if (isStageReady)	
 			addKeyboardListenerStageReady(graphics, func);
@@ -212,11 +212,11 @@ public final class AS3_vs_AS2
 				}, 200);
 		}		
 	}
-	private static function addKeyboardListenerStageReady(graphics:MovieClip, func:Function):void {
+	private static function addKeyboardListenerStageReady(graphics:DisplayObjectContainer, func:Function):void {
 		addKeyboardListener2(true, graphics, func);
 		addKeyboardListener2(false, graphics, func);
 	}
-	private static function addKeyboardListener2(is_key_down:Boolean, graphics:MovieClip, func:Function):void {
+	private static function addKeyboardListener2(is_key_down:Boolean, graphics:DisplayObjectContainer, func:Function):void {
 		myAddEventListener(graphics.stage, 
 			is_key_down ? KeyboardEvent.KEY_DOWN : KeyboardEvent.KEY_UP, 
 			function (event:KeyboardEvent):void {

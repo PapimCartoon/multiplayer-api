@@ -40,7 +40,7 @@ package come2play_as3.api.auto_copied
         	var now:int = getTimer();
         	if (now - transactionStartedOn < MAX_ANIMATION_MILLISECONDS) return; // animation is running for a short time
         	// animation is running for too long
-        	StaticFunctions.throwError("An animation is running for more than MAX_ANIMATION_MILLISECONDS="+MAX_ANIMATION_MILLISECONDS+". It started "+transactionStartedOn+" milliseconds after the script started.");         	
+        	StaticFunctions.throwError("An transaction is running for more than MAX_ANIMATION_MILLISECONDS="+MAX_ANIMATION_MILLISECONDS+". It started "+transactionStartedOn+" milliseconds after the script started.");         	
         }
         public function isPlayer():Boolean {
         	// I can't use T.custom(API_Message.CUSTOM_INFO_KEY_myUserId,0), because ProtocolVerifier is used in emulator that runs multiple clients (thus static memory will cause a conflict)
@@ -184,6 +184,12 @@ package come2play_as3.api.auto_copied
         		if (doAllRequestStateCalculation.keys.length < 1 )
         			StaticFunctions.throwError("You have to call doAllRequestStateCalculation with at least 1 key !");
         		isNullKeyExist(doAllRequestStateCalculation.keys);
+			}
+			else if	(msg is API_DoAllRequestRandomState)
+			{
+				var doAllRequestRandomState:API_DoAllRequestRandomState = /*as*/msg as API_DoAllRequestRandomState;	
+				if (doAllRequestRandomState.key == null)
+					StaticFunctions.throwError("You have to call doAllRequestRandomState with a non null key !");
 			}	
 			else if (msg is API_DoAllSetTurn) 
 			{

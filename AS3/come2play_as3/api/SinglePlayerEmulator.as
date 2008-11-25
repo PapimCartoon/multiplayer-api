@@ -3,7 +3,7 @@ package come2play_as3.api
 	import come2play_as3.api.auto_copied.*;
 	import come2play_as3.api.auto_generated.*;
 	
-	import flash.display.MovieClip;
+	import flash.display.DisplayObjectContainer;
 	import flash.utils.getTimer;
 	
 	/**
@@ -47,7 +47,7 @@ package come2play_as3.api
 		private var userStateEntries:Array/*ServerEntry*/;
 		private var apiMsgsQueue:Array/*API_Message*/ = [];
 		
-		public function SinglePlayerEmulator(graphics:MovieClip) {
+		public function SinglePlayerEmulator(graphics:DisplayObjectContainer) {
 			super(graphics,true, DEFAULT_LOCALCONNECTION_PREFIX);
 			this.customInfoEntries = DEFAULT_GENERAL_INFO;
 			this.userId = DEFAULT_USER_ID;

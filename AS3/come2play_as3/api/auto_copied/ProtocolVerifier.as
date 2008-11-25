@@ -90,7 +90,10 @@ package come2play_as3.api.auto_copied
 				// can be sent whether the game is in progress or not
 			} else if (gotMsg is API_GotUserInfo) { 
 			} else if (gotMsg is API_GotUserDisconnected) {
-			} else {
+			} else if (gotMsg is API_GotRequestStateCalculation){
+				
+			}
+			else {
 				check(false, ["Illegal gotMsg=",gotMsg]);
 			}
 		}

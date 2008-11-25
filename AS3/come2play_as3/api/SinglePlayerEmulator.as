@@ -48,7 +48,7 @@ package come2play_as3.api
 		private var apiMsgsQueue:Array/*API_Message*/ = [];
 		
 		public function SinglePlayerEmulator(graphics:DisplayObjectContainer) {
-			super(graphics,true, DEFAULT_LOCALCONNECTION_PREFIX);
+			super(graphics,true, DEFAULT_LOCALCONNECTION_PREFIX,true);
 			this.customInfoEntries = DEFAULT_GENERAL_INFO;
 			this.userId = DEFAULT_USER_ID;
 			this.userInfoEntries = DEFAULT_USER_INFO;

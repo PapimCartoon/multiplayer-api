@@ -22,7 +22,7 @@ package emulator.auto_copied
 	{
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
-
+		
 		public static var MAX_ANIMATION_MILLISECONDS:int = 10*1000; // max 10 seconds for animations
 
 		private var transactionStartedOn:int = -1; 
@@ -123,7 +123,9 @@ package emulator.auto_copied
     			
 				// can be sent whether the game is in progress or not
 			} else if (gotMsg is API_GotUserInfo) { 
-			} else if (gotMsg is API_GotUserDisconnected) {
+			} else if (gotMsg is API_GotRequestStateCalculation){	
+			}
+			else if (gotMsg is API_GotUserDisconnected) {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 

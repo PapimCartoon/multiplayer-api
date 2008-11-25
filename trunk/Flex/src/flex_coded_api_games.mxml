@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" 
+	xmlns:MyComp="*" 
+	layout="absolute"
+	applicationComplete="applicationComplete()" 
+	width="564" height="410"
+	>     
+    <mx:Script>
+	<![CDATA[
+		import come2play_as3.api.auto_generated.PlayerMatchOver;
+	import come2play_as3.api.auto_copied.JSON;
+	import come2play_as3.api.auto_generated.RevealEntry;
+	import come2play_as3.api.auto_copied.T;
+	import come2play_as3.api.auto_generated.API_GotCustomInfo;
+	import come2play_as3.api.auto_generated.UserEntry;
+	import come2play_as3.api.auto_generated.API_GotStateChanged;
+	import come2play_as3.api.auto_generated.ServerEntry;
+	import come2play_as3.api.auto_generated.API_GotMatchStarted;
+	import come2play_as3.api.auto_generated.API_Message;
+	import come2play_as3.api.EventClientGameAPI;
+	import mx.controls.Alert;
+	import come2play_as3.api.auto_generated.ClientGameAPI;	
+	
+	private var stagnationTimer:Timer;
+	private var stagnationSecondCounter:int;
+	private var stagnationLoopStarted:Boolean
+		
+	private var allPlayerIds:Array;
+	private var unGuessedPlayers:Array;
+	private var guesses:Array;
+	private var clientGameAPI:EventClientGameAPI;
+	private var numStored:Boolean;
+	private var myUserId:int;
+	private var madeGuess:Boolean;
+	private var randomNum:int;
+
+	private function applicationComplete():void
+	{
+		stagnationTimer = new Timer(1000,0);
+		clientGameAPI = new EventClientGameAPI(this);
+		(new Guess).register();
+		(new GuessKey).register();
+		stagnationTimer.addEventListener(TimerEvent.TIMER,stagnationTimerCall);
+		clientGameAPI.addEventListener(EventClientGameAPI.API_GotMatchStarted,gotMatchStarted);
+		clientGameAPI.addEventListener(EventClientGameAPI.API_GotStateChanged,gotStateChanged);
+		clientGameAPI.addEventListener(EventClientGameAPI.API_GotCustomInfo,gotCustomInfo);
+		clientGameAPI.doRegisterOnServer();	
+	} 
+	//private function
+	private function stagnationTimerCall(ev:TimerEvent):void
+	{
+		stagnationSecondCounter--;
+		if	(stagnationSecondCounter <= 0)
+		{
+			stagnationTimer.stop();
+			if(!stagnationLoopStarted)
+				clientGameAPI.doStoreState([UserEntry.create("timesUp","timesUp",false)]);
+		}
+		else
+		{
+			timerTime.text = String(stagnationSecondCounter)
+		}
+		
+
+	}
+	private function checkStagnation(timePassed:int):void
+	{
+		timePassed = timePassed / 1000;
+		if(timePassed > 5)
+		{
+			if(!stagnationLoopStarted)
+			{
+				stagnationLoopStarted = true;
+				checkWin();
+			}
+		}	
+		else
+		{
+			stagnationSecondCounter = 5 -timePassed;
+			timerTime.text = String(stagnationSecondCounter)
+			stagnationTimer.start();
+		}
+	}
+	private function gotCustomInfo(ev:API_GotCustomInfo):void
+	{
+		myUserId = T.custom(ClientGameAPI.CUSTOM_INFO_KEY_myUserId,-1) as int;
+	}
+	private function gotMatchStarted(ev:API_GotMatchStarted):void
+	{
+		stagnationSecondCounter = 10;
+		timerTime.text = String(stagnationSecondCounter)
+		stagnationTimer.start();
+		randomNum = 0;
+		guesses = new Array();
+		madeGuess = false;
+		allPlayerIds = ev.allPlayerIds;
+		unGuessedPlayers = ev.allPlayerIds.concat();
+		if(ev.serverEntries.length > 0)
+			loadGame(ev.serverEntries);
+		
+	}
+	private function loadGame(serverEntries:Array/*ServerEntry*/):void
+	{
+		var changed:Boolean;
+		var serverEntry:ServerEntry;
+		for(var i:int = 0;i<serverEntries.length;i++)
+		{
+			changed = false;
+			serverEntry = serverEntries[i]
+			if(serverEntry.value == null)
+			{
+				changed = true;
+				addRivalGuess(serverEntry,true);
+			}
+			else if((serverEntry.value is Guess) && (serverEntry.storedByUserId ==myUserId))
+			{
+				changed = true;
+				madeGuess = true;
+				guesses.push(serverEntry);
+				unGuessedPlayers.splice(unGuessedPlayers.indexOf(myUserId),1);
+			}
+			if(changed)
+			{
+				serverEntries.splice(i,1);
+				i--;
+			}
+		}
+		for(i = 0;i<serverEntries.length;i++)
+		{
+			changed = false;
+			serverEntry = serverEntries[i]
+			if(serverEntry.value is Guess)
+			{
+				changed = true;
+				guesses.push(serverEntry);
+				tryDecalreWinneres();
+			}
+			else if(serverEntry.key == "RandomNum")
+			{
+				if(serverEntry.storedByUserId != -1) clientGameAPI.doAllFoundHacker(serverEntry.storedByUserId,"player tried to fake a random Number");
+				randomNum = (serverEntry.value as int) % 10 +1;
+				tryDecalreWinneres();
+			}
+			if(changed)
+			{
+				serverEntries.splice(i,1);
+				i--;
+			}
+		}
+	}
+	private function addRivalGuess(serverEntry:ServerEntry,load:Boolean):void
+	{
+		var guessKey:GuessKey = serverEntry.key as GuessKey;
+		if (guessKey.userId != serverEntry.storedByUserId) clientGameAPI.doAllFoundHacker(serverEntry.storedByUserId,"player tried to save a number in other player's name");
+		var playerPos:int = unGuessedPlayers.indexOf(guessKey.userId);
+		if(playerPos == -1)
+			clientGameAPI.doAllFoundHacker(serverEntry.storedByUserId,"player tried to rewrite data");
+		else
+		{
+			unGuessedPlayers.splice(playerPos,1);
+			if((unGuessedPlayers.length == 0) &&(!load))
+				checkWin();
+		}
+	}
+	
+	
+	private function gotStateChanged(ev:API_GotStateChanged):void
+	{
+		
+		for each(var serverEntry:ServerEntry in ev.serverEntries)
+		{
+			if(serverEntry.key is GuessKey)
+			{
+				if(serverEntry.value == null)
+				{
+					addRivalGuess(serverEntry,false);
+				}	
+				else if((serverEntry.value is Guess) && (serverEntry.storedByUserId !=myUserId))
+				{
+					if(serverEntry.storedByUserId != -1 ) clientGameAPI.doAllFoundHacker(serverEntry.storedByUserId,"player tried to rewrite data");
+					guesses.push(serverEntry);
+					tryDecalreWinneres();
+				}
+				else if(serverEntry.storedByUserId == myUserId)
+				{
+					if(unGuessedPlayers.length == 0)
+						checkWin();
+				}
+			}
+			else if(serverEntry.key == "RandomNum")
+			{
+				if(serverEntry.storedByUserId != -1) clientGameAPI.doAllFoundHacker(serverEntry.storedByUserId,"player tried to fake a random Number");
+				randomNum = (serverEntry.value as int) % 10 +1;
+				tryDecalreWinneres();
+			}
+			else if(serverEntry.key == "timesUp")
+			{
+				checkStagnation(serverEntry.changedTimeInMilliSeconds);
+			}
+		}
+	}
+	private function tryDecalreWinneres():void
+	{
+		var winnerIds:Array;
+		var closestPos:int = 12;
+		var closestNumber:int;
+		if((guesses.length == (allPlayerIds.length - unGuessedPlayers.length) ) && (randomNum !=0))
+		{
+			for each(var serverEntry:ServerEntry in guesses)
+			{
+				var guess:Guess = serverEntry.value as Guess;
+				var guessKey:GuessKey = serverEntry.key as GuessKey;
+				var guessDistance:int = Math.abs(guess.guessNumber - randomNum);
+				if(guessDistance == closestPos)
+					winnerIds.push(guessKey.userId)
+				else(guessDistance < closestPos)
+				{
+					closestNumber = guess.guessNumber;
+					closestPos = guessDistance;
+					winnerIds = [guessKey.userId]
+				}
+			}
+			
+			
+			decalreWinners(winnerIds);
+			if(winnerIds == null)
+				Alert.show("Random number was "+randomNum+", And no one won","Losers");
+			else if(winnerIds.length == 1)
+				Alert.show("Random number was "+randomNum+", Winner is player : "+winnerIds[0]+", with "+closestNumber,"Winner");
+			else
+				Alert.show("Random number was "+randomNum+", Winners are players : "+winnerIds+", with "+closestNumber,"Winners");
+		}
+	}
+	private function decalreWinners(winners:Array):void
+	{
+		var finishedPlayersIds:Array = new Array();
+		var winnerPrize:int = 0;
+		if(winners !=null)
+			winnerPrize = 100 / winners.length;
+		for each(var playerId:int in allPlayerIds)
+		{
+			if(winnerPrize == 0)
+				finishedPlayersIds.push(PlayerMatchOver.create(playerId,0,0))
+			else if(winners.indexOf(playerId) == -1)
+				finishedPlayersIds.push(PlayerMatchOver.create(playerId,0,0))
+			else
+				finishedPlayersIds.push(PlayerMatchOver.create(playerId,100,winnerPrize))	
+		}
+		clientGameAPI.doAllEndMatch(finishedPlayersIds)
+	}
+	private function checkWin():void
+	{
+		stagnationTimer.stop();
+		var revelaEntries:Array = new Array();
+		for each(var palyerId:int in allPlayerIds)
+		{
+			if(unGuessedPlayers.indexOf(palyerId) == -1)
+				revelaEntries.push(RevealEntry.create(GuessKey.create(palyerId),null));
+		}
+		clientGameAPI.doAllRequestRandomState("RandomNum",false);
+		if(revelaEntries.length > 0)
+		clientGameAPI.doAllRevealState(revelaEntries);
+	}
+	private function sendRandomNumber():void
+	{
+		var choosenNumberInt:int = int(choosenNumber.text);
+		if(choosenNumberInt > 10)
+		{
+			Alert.show("Number must be under or equel to 10","Wrong Number");
+			choosenNumber.text ="";
+		}
+		else if(choosenNumberInt < 1)
+		{
+			Alert.show("Number must be over 0","Wrong Number");
+			choosenNumber.text ="";
+		}
+		else
+		{
+			if(!madeGuess)
+			{
+				madeGuess = true;
+				unGuessedPlayers.splice(unGuessedPlayers.indexOf(myUserId),1);
+				clientGameAPI.doStoreState([UserEntry.create(GuessKey.create(myUserId),Guess.create(choosenNumberInt),true)]);
+				guesses.push(ServerEntry.create(GuessKey.create(myUserId),Guess.create(choosenNumberInt),-1,null,0))
+			}
+		}	
+	}
+	
+	]]>
+    </mx:Script>
+    <mx:Label x="10" y="21" text="Number guessing game." width="463" height="38" fontSize="28"/>
+    <mx:Label x="10" y="103" width="306" height="38" fontSize="18" text="Choose a Number between 1-10"/>
+    <mx:Button x="318" y="280" label="Send" click="sendRandomNumber()"/>
+    <mx:TextInput x="140" y="280" id="choosenNumber" restrict="0-9" maxChars="2"/>
+    <mx:Text x="190" y="198" id="timerTime"/>
+    <mx:Label x="125" y="198" text="Time left:"/>
+</mx:Application>

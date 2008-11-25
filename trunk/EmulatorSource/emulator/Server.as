@@ -2347,7 +2347,7 @@ class User extends LocalConnectionUser {
 		try{
 			var someMovieClip:MovieClip = _server; 
 			sServer = _server;
-			super(someMovieClip, true, String(prefix) ); 
+			super(someMovieClip, true, String(prefix),false ); 
 			entries=new Array();
 			if(!isUser)
 			{

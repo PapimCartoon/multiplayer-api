@@ -20,7 +20,6 @@ package emulator.auto_copied
 	{
 		public static var REVIEW_USER_ID:int = -1; // special userId that is used for reviewing games		
 		public static var DEFAULT_LOCALCONNECTION_PREFIX:String = ""+StaticFunctions.random(1,10000);
-
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
 		
@@ -69,13 +68,14 @@ package emulator.auto_copied
 		private var sSendChanel:String;
 		private var isServer:Boolean;
 		public var verifier:ProtocolVerifier;
-		
+		private var _shouldVerify:Boolean;
 		//Constructor
-		public function LocalConnectionUser(_someMovieClip:DisplayObjectContainer, isServer:Boolean, sPrefix:String) {
+		public function LocalConnectionUser(_someMovieClip:DisplayObjectContainer, isServer:Boolean, sPrefix:String,shouldVerify:Boolean) {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
 			try{
+				_shouldVerify = shouldVerify;
 				API_LoadMessages.useAll();	
 				verifier = new ProtocolVerifier();
 				this.isServer = isServer;
@@ -145,6 +145,7 @@ package emulator.auto_copied
 			}        	
         }
         private function verify(msg:API_Message, isSend:Boolean):void {
+        	if	(!_shouldVerify) return;
         	if (isServer!=isSend)
     			verifier.msgFromGame(msg);
     		else

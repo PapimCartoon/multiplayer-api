@@ -564,7 +564,7 @@ class LocalConnectionImplementation extends LocalConnectionUser
 		this.isServer = isServer;
 		this.prefix = prefix;
 		this.infoContainer = infoContainer;
-		super(infoContainer,isServer,prefix);		
+		super(infoContainer,isServer,prefix,false);		
 	}
 	override public function gotMessage(msg:API_Message):void{
 		infoContainer.gotMessage(msg, isServer);

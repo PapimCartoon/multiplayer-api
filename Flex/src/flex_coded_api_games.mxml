@@ -175,7 +175,7 @@
 				{
 					addRivalGuess(serverEntry,false);
 				}	
-				else if((serverEntry.value is Guess) && (serverEntry.storedByUserId !=myUserId))
+				else if((serverEntry.value is Guess) && (serverEntry.storedByUserId ==-1))
 				{
 					if(serverEntry.storedByUserId != -1 ) clientGameAPI.doAllFoundHacker(serverEntry.storedByUserId,"player tried to rewrite data");
 					guesses.push(serverEntry);
@@ -213,7 +213,7 @@
 				var guessDistance:int = Math.abs(guess.guessNumber - randomNum);
 				if(guessDistance == closestPos)
 					winnerIds.push(guessKey.userId)
-				else(guessDistance < closestPos)
+				else if(guessDistance < closestPos)
 				{
 					closestNumber = guess.guessNumber;
 					closestPos = guessDistance;
@@ -281,7 +281,6 @@
 				madeGuess = true;
 				unGuessedPlayers.splice(unGuessedPlayers.indexOf(myUserId),1);
 				clientGameAPI.doStoreState([UserEntry.create(GuessKey.create(myUserId),Guess.create(choosenNumberInt),true)]);
-				guesses.push(ServerEntry.create(GuessKey.create(myUserId),Guess.create(choosenNumberInt),-1,null,0))
 			}
 		}	
 	}

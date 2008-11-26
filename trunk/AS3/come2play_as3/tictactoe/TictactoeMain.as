@@ -194,7 +194,7 @@ public final class TictactoeMain extends ClientGameAPI {
 		
 		
 		this.allPlayerIds = allPlayerIds;
-		assert(allPlayerIds.length<=TictactoeSquareGraphic.MAX_SYMBOLS, ["The graphics of TicTacToe can handle at most ",TictactoeSquareGraphic.MAX_SYMBOLS," players. allPlayerIds=", allPlayerIds]);
+		assert(allPlayerIds.length>=0 && allPlayerIds.length<=TictactoeSquareGraphic.MAX_SYMBOLS, ["The graphics of TicTacToe can handle at most ",TictactoeSquareGraphic.MAX_SYMBOLS," players. allPlayerIds=", allPlayerIds]);
 		
 		if (shouldUseAvatars) {
 			// set the player's avatars instead of the default TicTacToe symbols
@@ -214,8 +214,8 @@ public final class TictactoeMain extends ClientGameAPI {
 		var indexOfMyUserId:int = AS3_vs_AS2.IndexOf(allPlayerIds,myUserId);
 		myColor = indexOfMyUserId==-1 ? VIEWER : 
 				indexOfMyUserId;
-		StaticFunctions.storeTrace(["myUserId=",myUserId," myColor=",myColor]);
 		var playersNum:int = playersNumber();
+		StaticFunctions.storeTrace(["myUserId=",myUserId," myColor=",myColor, " playersNum=",playersNum]);
 		ongoingColors = [];
 		for (var color:int=0; color<playersNum; color++)
 			ongoingColors.push(color);

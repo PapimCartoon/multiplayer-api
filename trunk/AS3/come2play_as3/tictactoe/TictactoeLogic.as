@@ -67,7 +67,7 @@ public final class TictactoeLogic {
 	// Makes a move in TicTacToe by placing either X or O in square <row,col>
 	public function makeMove(color:int, move:TictactoeSquare):void {
 		if (!isSquareAvailable(move)) LocalConnectionUser.throwError("Square "+move+" is not available");
-		if (color<0 || color>=PLAYERS_NUM) LocalConnectionUser.throwError("Illegal color="+color);
+		if (color<0 || color>=PLAYERS_NUM) LocalConnectionUser.throwError("Illegal color="+color+" PLAYERS_NUM="+PLAYERS_NUM);
 		setOwner(move, color);
 		filledNum++;
 	}

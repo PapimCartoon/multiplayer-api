@@ -178,8 +178,8 @@ import come2play_as2.api.*;
 						var value:Object = entry.value;
 						if (key=="i18n") {
 							i18nObj = value;
-						} else if (key=="checkThrowingAnError" && value==true) {
-							throw new Error("checkThrowingAnError");
+						} else if (key=="CONTAINER_checkThrowingAnError" && value==true) {
+							throw new Error("CONTAINER_checkThrowingAnError");
 						} else {
 							customObj[key] = value;
 						}

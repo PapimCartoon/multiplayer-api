@@ -156,16 +156,17 @@ package emulator.auto_copied
         }
         
         public function localconnection_callback(msgObj:Object):void {
+        	if (StaticFunctions.DID_SHOW_ERROR) return;
         	var msg:API_Message = null;
         	try{
         		var deserializedMsg:Object = SerializableClass.deserialize(msgObj);
         		msg = /*as*/deserializedMsg as API_Message;
         		if (msg==null) throwError("msgObj="+JSON.stringify(msgObj)+" is not an API_Message");
         		
-        		myTrace(['gotMessage: ',msg]);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+        		myTrace(['gotMessage: ',msg]);
         		verify(msg, false);
         		gotMessage(msg);
 			} catch(err:Error) { 

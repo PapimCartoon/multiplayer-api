@@ -31,7 +31,7 @@ public final class StaticFunctions
 		if (SHOULD_CALL_TRACE) trace( arr.join("") );
 		allTraces.push(arr);
 	}
-	private static var DID_SHOW_ERROR:Boolean = false;
+	public static var DID_SHOW_ERROR:Boolean = false;
 	public static function getTraces():String {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!

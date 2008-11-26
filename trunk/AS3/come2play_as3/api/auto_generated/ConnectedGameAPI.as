@@ -7,7 +7,7 @@ package come2play_as3.api.auto_generated {
 	import come2play_as3.api.auto_generated.*;
 
 	public  class ConnectedGameAPI extends BaseGameAPI {
-		public function ConnectedGameAPI(someMovieClip:MovieClip) {
+		public function ConnectedGameAPI(someMovieClip:DisplayObjectContainer) {
 			super(someMovieClip);
 		}
 		public function doRegisterOnServer():void { sendMessage( API_DoRegisterOnServer.create() ); }

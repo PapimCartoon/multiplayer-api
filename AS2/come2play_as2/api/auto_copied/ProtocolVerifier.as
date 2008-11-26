@@ -35,7 +35,7 @@ import come2play_as2.api.auto_copied.*;
         	var now:Number = getTimer();
         	if (now - transactionStartedOn < MAX_ANIMATION_MILLISECONDS) return; // animation is running for a short time
         	// animation is running for too long
-        	StaticFunctions.throwError("An animation is running for more than MAX_ANIMATION_MILLISECONDS="+MAX_ANIMATION_MILLISECONDS+". It started "+transactionStartedOn+" milliseconds after the script started.");         	
+        	StaticFunctions.throwError("An transaction is running for more than MAX_ANIMATION_MILLISECONDS="+MAX_ANIMATION_MILLISECONDS+". It started "+transactionStartedOn+" milliseconds after the script started.");         	
         }
         public function isPlayer():Boolean {
         	// I can't use T.custom(API_Message.CUSTOM_INFO_KEY_myUserId,0), because ProtocolVerifier is used in emulator that runs multiple clients (thus static memory will cause a conflict)
@@ -73,9 +73,10 @@ import come2play_as2.api.auto_copied.*;
 				var matchEnded:API_GotMatchEnded = API_GotMatchEnded(gotMsg);
 				nextPlayerIds = StaticFunctions.subtractArray(currentPlayerIds, matchEnded.finishedPlayerIds);
 			} else if (gotMsg instanceof API_GotCustomInfo) {	 					    			
-    			checkInProgress(false,gotMsg);
+    			// isPause is called when the game is in progress,
+    			// and other info is passed before the game starts.
     			var customInfo:API_GotCustomInfo = API_GotCustomInfo(gotMsg);
-    			for (var i81:Number=0; i81<customInfo.infoEntries.length; i81++) { var infoEntry:InfoEntry = customInfo.infoEntries[i81]; 
+    			for (var i82:Number=0; i82<customInfo.infoEntries.length; i82++) { var infoEntry:InfoEntry = customInfo.infoEntries[i82]; 
     				if (infoEntry.key==API_Message.CUSTOM_INFO_KEY_myUserId)
     					myUserId = AS3_vs_AS2.as_int(infoEntry.value);
     			}
@@ -85,7 +86,10 @@ import come2play_as2.api.auto_copied.*;
 				// can be sent whether the game is in progress or not
 			} else if (gotMsg instanceof API_GotUserInfo) { 
 			} else if (gotMsg instanceof API_GotUserDisconnected) {
-			} else {
+			} else if (gotMsg instanceof API_GotRequestStateCalculation){
+				
+			}
+			else {
 				check(false, ["Illegal gotMsg=",gotMsg]);
 			}
 		}
@@ -124,7 +128,7 @@ import come2play_as2.api.auto_copied.*;
 				
 				var wasStoreStateCalculation:Boolean = false;
 				var isRequestStateCalculation:Boolean = currentCallback instanceof API_GotRequestStateCalculation;
-				for (var i130:Number=0; i130<transaction.messages.length; i130++) { var doAllMsg:API_Message = transaction.messages[i130]; 
+				for (var i134:Number=0; i134<transaction.messages.length; i134++) { var doAllMsg:API_Message = transaction.messages[i134]; 
 					checkDoAll(doAllMsg);
 					if (isRequestStateCalculation) {
 						if (doAllMsg instanceof API_DoAllStoreStateCalculation)	
@@ -179,6 +183,12 @@ import come2play_as2.api.auto_copied.*;
         		if (doAllRequestStateCalculation.keys.length < 1 )
         			StaticFunctions.throwError("You have to call doAllRequestStateCalculation with at least 1 key !");
         		isNullKeyExist(doAllRequestStateCalculation.keys);
+			}
+			else if	(msg instanceof API_DoAllRequestRandomState)
+			{
+				var doAllRequestRandomState:API_DoAllRequestRandomState = API_DoAllRequestRandomState(msg);	
+				if (doAllRequestRandomState.key == null)
+					StaticFunctions.throwError("You have to call doAllRequestRandomState with a non null key !");
 			}	
 			else if (msg instanceof API_DoAllSetTurn) 
 			{
@@ -201,21 +211,21 @@ import come2play_as2.api.auto_copied.*;
 		
         private function isNullKeyExistUserEntry(userEntries:Array/*UserEntry*/):Void
         {
-        	for (var i207:Number=0; i207<userEntries.length; i207++) { var userEntry:UserEntry = userEntries[i207]; 
+        	for (var i217:Number=0; i217<userEntries.length; i217++) { var userEntry:UserEntry = userEntries[i217]; 
         		if (userEntry.key == null)
         			StaticFunctions.throwError("key cannot be null !");
         	}
         }
         private function isNullKeyExistRevealEntry(revealEntries:Array/*RevealEntry*/):Void
         {
-        	for (var i214:Number=0; i214<revealEntries.length; i214++) { var revealEntry:RevealEntry = revealEntries[i214]; 
+        	for (var i224:Number=0; i224<revealEntries.length; i224++) { var revealEntry:RevealEntry = revealEntries[i224]; 
         		if (revealEntry.key == null)
         			StaticFunctions.throwError("key cannot be null !");
         	}
         }
         private function isNullKeyExist(keys:Array/*Object*/):Void
         {
-        	for (var i221:Number=0; i221<keys.length; i221++) { var key:String = keys[i221]; 
+        	for (var i231:Number=0; i231<keys.length; i231++) { var key:String = keys[i231]; 
         		if (key == null)
         			StaticFunctions.throwError("key cannot be null !");
         	}

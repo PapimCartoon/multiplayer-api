@@ -78,7 +78,8 @@ package come2play_as3.api.auto_copied
 				var matchEnded:API_GotMatchEnded = /*as*/gotMsg as API_GotMatchEnded;
 				nextPlayerIds = StaticFunctions.subtractArray(currentPlayerIds, matchEnded.finishedPlayerIds);
 			} else if (gotMsg is API_GotCustomInfo) {	 					    			
-    			checkInProgress(false,gotMsg);
+    			// isPause is called when the game is in progress,
+    			// and other info is passed before the game starts.
     			var customInfo:API_GotCustomInfo = /*as*/gotMsg as API_GotCustomInfo;
     			for each (var infoEntry:InfoEntry in customInfo.infoEntries) {
     				if (infoEntry.key==API_Message.CUSTOM_INFO_KEY_myUserId)

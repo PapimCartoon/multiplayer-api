@@ -20,9 +20,9 @@ package emulator.auto_copied
 	{
 		public static var REVIEW_USER_ID:int = -1; // special userId that is used for reviewing games		
 		public static var DEFAULT_LOCALCONNECTION_PREFIX:String = ""+StaticFunctions.random(1,10000);
+
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		
 		public static function showError(msg:String):void {
 			StaticFunctions.showError(msg);
 		}
@@ -32,23 +32,23 @@ package emulator.auto_copied
 		public static function assert(val:Boolean, args:Array):void {
 			if (!val) StaticFunctions.assert(false, args);
 		}
+		public static function getDoChanelString(sPrefix:String):String {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		public static function getDoChanelString(sPrefix:String):String {
 			return "DO_CHANEL_"+sPrefix;
 		}
 		public static function getGotChanelString(sPrefix:String):String {
 			return "GOT_CHANEL_"+sPrefix;
 		}
-		public static function getPrefixFromFlashVars(_someMovieClip:MovieClip):String {
+		public static function getPrefixFromFlashVars(_someMovieClip:DisplayObjectContainer):String {
 			var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(_someMovieClip);
 			var sPrefix:String = parameters["prefix"];
 			if (sPrefix==null) sPrefix = parameters["?prefix"];
+			return getPrefixFromString(sPrefix);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			return getPrefixFromString(sPrefix);
 		}		
 		public static function getPrefixFromString(sPrefix:String):String {
 			if (sPrefix!=null && !(sPrefix.charAt(0)>='0' && sPrefix.charAt(0)<='9')) { //it is not necessarily a number 
@@ -58,24 +58,24 @@ package emulator.auto_copied
 			}
 			return sPrefix;
 		}
+				
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-				
 		
 		// we use a LocalConnection to communicate with the container
 		private var lcUser:LocalConnection; 
 		private var sSendChanel:String;
 		private var isServer:Boolean;
 		public var verifier:ProtocolVerifier;
-		private var _shouldVerify:Boolean;
+		public var _shouldVerify:Boolean;
 		//Constructor
 		public function LocalConnectionUser(_someMovieClip:DisplayObjectContainer, isServer:Boolean, sPrefix:String,shouldVerify:Boolean) {
+			try{
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			try{
-				_shouldVerify = shouldVerify;
+				_shouldVerify=shouldVerify;
 				API_LoadMessages.useAll();	
 				verifier = new ProtocolVerifier();
 				this.isServer = isServer;
@@ -150,10 +150,10 @@ package emulator.auto_copied
     			verifier.msgFromGame(msg);
     		else
     			verifier.msgToGame(msg);        	
-        }
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+        }
         
         public function localconnection_callback(msgObj:Object):void {
         	var msg:API_Message = null;
@@ -163,10 +163,10 @@ package emulator.auto_copied
         		if (msg==null) throwError("msgObj="+JSON.stringify(msgObj)+" is not an API_Message");
         		
         		myTrace(['gotMessage: ',msg]);
-        		verify(msg, false);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+        		verify(msg, false);
         		gotMessage(msg);
 			} catch(err:Error) { 
 				passError(msg==null ? msgObj : msg, err);

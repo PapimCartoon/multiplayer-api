@@ -5,7 +5,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 {			
 	public static var SHOULD_SHOW_ERRORS:Boolean = true;
 	public static var SHOULD_CALL_TRACE:Boolean = true; // in the online version we turn it off to save runtime
-	public static var someMovieClip:MovieClipContainer; // so we can display error messages on the stage
+	public static var someMovieClip:MovieClip; // so we can display error messages on the stage
 	public static var allTraces:Array = [];
 	public static var MAX_TRACES_NUM:Number = 50;
 	public static function storeTrace(obj:Object):Void {

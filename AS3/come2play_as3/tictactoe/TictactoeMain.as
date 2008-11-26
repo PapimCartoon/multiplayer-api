@@ -41,8 +41,6 @@ public final class TictactoeMain extends ClientGameAPI {
 	private var myColor:int; // either VIEWER, or a number between 0 and allPlayerIds.length
 	// contains a mapping from userId to his avatar (see gotUserInfo)
 	private var userId2Avatar:Object;
-	private var height:int;
-	private var width:int;
 	
 	////////////////////////////////////////////////////
 	// Customizable fields (see gotCustomInfo)
@@ -55,7 +53,11 @@ public final class TictactoeMain extends ClientGameAPI {
 	// for example, you can have a board of size 5x5, with winLength=4
 	private var winLength:int;
 	private var playersNumInSinglePlayer:int;
-	private var winnerPercentage:int;
+	private var winnerPercentage:int;	
+	private var logoFullUrl:String;
+	private var customSymbolsStringArray:Array/*String*/;
+	private var gameHeight:int;
+	private var gameWidth:int;
 	
 	
 	public function TictactoeMain(graphics:MovieClip) {
@@ -109,13 +111,24 @@ public final class TictactoeMain extends ClientGameAPI {
 		}
 	}
 
-	private function hasEntry(key:String,entries:Array/*InfoEntry*/):Boolean {
-		for each (var info:InfoEntry in entries) {
-			if (info.key==key) return true;
-		}
-		return false;
+	private function loadLogo():void {
+		for each (var square:TictactoeSquare in allCells) {
+			getSquareGraphic(square).gotLogo(logoFullUrl);
+		}	
+	}	
+	private function replaceSymbol(color:int, symbolUrl:String):void {		
+		var thisObj:TictactoeMain = this; // for AS2
+		cacheImage(symbolUrl, graphics,
+			function (isSucc:Boolean):void {
+				if (isSucc) thisObj.replaceCachedSymbol(color, symbolUrl);
+			});
 	}
-	override public function gotCustomInfo(entries:Array/*InfoEntry*/):void {	
+	private function replaceCachedSymbol(color:int, symbolUrl:String):void {
+		for each (var cell:TictactoeSquare in allCells) {
+			getSquareGraphic(cell).gotSymbol(color,symbolUrl);
+		}		
+	}
+	override public function gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, userStateEntries:Array/*ServerEntry*/):void {
 		// your userId may change if your game as the back&forward option
 		myUserId = AS3_vs_AS2.as_int(T.custom(CUSTOM_INFO_KEY_myUserId,null));
 		 
@@ -124,7 +137,7 @@ public final class TictactoeMain extends ClientGameAPI {
 		playersNumInSinglePlayer = AS3_vs_AS2.as_int(T.custom("playersNumInSinglePlayer",3));
 		winnerPercentage = AS3_vs_AS2.as_int(T.custom("winnerPercentage",70));
 		
-		//gotCustomInfo may be called several times, but the number of rows&cols cannot be changed
+		// the number of rows&cols cannot be changed
 		if (grid==null) {  					
 			grid = new CreateGrid(3,3,84,100,50);
 			grid.createMovieClips(graphics, "TicTacToeSquare");
@@ -141,59 +154,45 @@ public final class TictactoeMain extends ClientGameAPI {
 			}		
 		}
 		
+		
+		
 		// use customSymbolsStringArray to change the symbols of TicTacToe from the default ones (which are "X" and "O")
-		var customSymbolsStringArray:Array/*String*/ = 
-			!hasEntry("customSymbolsStringArray",entries) ? null :
+		var newCustomSymbolsStringArray:Array/*String*/ = 
 			AS3_vs_AS2.asArray(T.custom("customSymbolsStringArray",null));
-		if (customSymbolsStringArray!=null)
+		if (customSymbolsStringArray!=newCustomSymbolsStringArray) {
+			customSymbolsStringArray = newCustomSymbolsStringArray;
 			for (var i:int=0; i<customSymbolsStringArray.length; i++) {
 				var symbolUrl:String = customSymbolsStringArray[i];
 				if (symbolUrl!=null) 
 					replaceSymbol(i,symbolUrl);
 			}	
+		}
 			
-		var logoFullUrl:String = 
-			!hasEntry(CUSTOM_INFO_KEY_logoFullUrl,entries) ? null :
+		var newLogoFullUrl:String = 
 			AS3_vs_AS2.asString(T.custom(CUSTOM_INFO_KEY_logoFullUrl, null));
-		if (logoFullUrl!=null) {
+		if (logoFullUrl!=newLogoFullUrl) {
+			logoFullUrl = newLogoFullUrl;
 			var thisObj:TictactoeMain = this; // for AS2
 			cacheImage(logoFullUrl, graphics,
 				function (isSucc:Boolean):void { 
-					if (isSucc) thisObj.loadLogo(logoFullUrl); 
+					if (isSucc) thisObj.loadLogo(); 
 				});
 		}
 			
 		
 		// we scale the TicTacToe size according to the grid size
-		if (hasEntry(CUSTOM_INFO_KEY_gameHeight,entries) ||
-			hasEntry(CUSTOM_INFO_KEY_gameWidth,entries)) {
-			var height:int = AS3_vs_AS2.as_int(T.custom(CUSTOM_INFO_KEY_gameHeight, 400));
-			var width:int = AS3_vs_AS2.as_int(T.custom(CUSTOM_INFO_KEY_gameWidth, 400));				
-			StaticFunctions.storeTrace(["dimensions=",height,"x",width," gridDimesions=",grid.height(),"x",grid.width()]);
-			AS3_vs_AS2.scaleMovieY(graphics, 100*height/grid.height());	
-			AS3_vs_AS2.scaleMovieX(graphics, 100*width/grid.width());
+		var newHeight:int = AS3_vs_AS2.as_int(T.custom(CUSTOM_INFO_KEY_gameHeight, 400));
+		var newWidth:int = AS3_vs_AS2.as_int(T.custom(CUSTOM_INFO_KEY_gameWidth, 400));	
+		if (gameWidth!=newWidth || gameHeight!=newHeight) {
+			gameWidth = newWidth;
+			gameHeight = newHeight;			
+			StaticFunctions.storeTrace(["dimensions=",gameHeight,"x",gameWidth," gridDimesions=",grid.height(),"x",grid.width()]);
+			AS3_vs_AS2.scaleMovieY(graphics, 100*gameHeight/grid.height());	
+			AS3_vs_AS2.scaleMovieX(graphics, 100*gameWidth/grid.width());
 		}			
 		AS3_vs_AS2.setVisible(graphics, true);	
-	}
-	private function loadLogo(logoFullUrl:String):void {
-		for each (var square:TictactoeSquare in allCells) {
-			getSquareGraphic(square).gotLogo(logoFullUrl);
-		}	
-	}
-	
-	private function replaceSymbol(color:int, symbolUrl:String):void {		
-		var thisObj:TictactoeMain = this; // for AS2
-		cacheImage(symbolUrl, graphics,
-			function (isSucc:Boolean):void {
-				if (isSucc) thisObj.replaceCachedSymbol(color, symbolUrl);
-			});
-	}
-	private function replaceCachedSymbol(color:int, symbolUrl:String):void {
-		for each (var cell:TictactoeSquare in allCells) {
-			getSquareGraphic(cell).gotSymbol(color,symbolUrl);
-		}		
-	}
-	override public function gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, userStateEntries:Array/*ServerEntry*/):void {
+		
+		
 		this.allPlayerIds = allPlayerIds;
 		assert(allPlayerIds.length<=TictactoeSquareGraphic.MAX_SYMBOLS, ["The graphics of TicTacToe can handle at most ",TictactoeSquareGraphic.MAX_SYMBOLS," players. allPlayerIds=", allPlayerIds]);
 		

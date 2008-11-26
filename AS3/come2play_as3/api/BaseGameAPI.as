@@ -179,11 +179,14 @@ package come2play_as3.api {
 					var customObj:Object = {};
 					for each (var entry:InfoEntry in customInfo.infoEntries) {
 						var key:String = entry.key;
-						var value:Object = entry.value;	
-						if (key=="i18n")
+						var value:Object = entry.value;
+						if (key=="i18n") {
 							i18nObj = value;
-						else
+						} else if (key=="checkThrowingAnError" && value==true) {
+							throw new Error("checkThrowingAnError");
+						} else {
 							customObj[key] = value;
+						}
 					}		
 					T.initI18n(i18nObj, customObj); // may be called several times because we may pass different 'secondsPerMatch' every time a game starts
 				}

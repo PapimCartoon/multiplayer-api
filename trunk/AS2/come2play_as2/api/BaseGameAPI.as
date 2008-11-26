@@ -1,4 +1,4 @@
-	import come2play_as2.api.auto_copied.*;
+﻿	import come2play_as2.api.auto_copied.*;
 	import come2play_as2.api.auto_generated.*;
 	
 	import flash.external.*;
@@ -18,7 +18,7 @@ import come2play_as2.api.*;
 		private var runningAnimationsNumber:Number = 0;
 		
 		public function BaseGameAPI(_someMovieClip:MovieClip) {
-			super(_someMovieClip, false, getPrefixFromFlashVars(_someMovieClip));
+			super(_someMovieClip, false, getPrefixFromFlashVars(_someMovieClip),true);
 			if (getPrefixFromFlashVars(_someMovieClip)==null) 
 				new SinglePlayerEmulator(_someMovieClip);
 			StaticFunctions.performReflectionFromFlashVars(_someMovieClip);	
@@ -176,10 +176,13 @@ import come2play_as2.api.*;
 					for (var i179:Number=0; i179<customInfo.infoEntries.length; i179++) { var entry:InfoEntry = customInfo.infoEntries[i179]; 
 						var key:String = entry.key;
 						var value:Object = entry.value;	
-						if (key=="i18n")
+						if (key=="i18n") {
 							i18nObj = value;
-						else
+						} else if (key=="checkThrowingAnError" && value==true) {
+							throw new Error("checkThrowingAnError");
+						} else {
 							customObj[key] = value;
+						}
 					}		
 					T.initI18n(i18nObj, customObj); // may be called several times because we may pass different 'secondsPerMatch' every time a game starts
 				}

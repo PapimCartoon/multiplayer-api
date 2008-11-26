@@ -22,7 +22,7 @@ package emulator.auto_copied
 	{
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
-		
+
 		public static var MAX_ANIMATION_MILLISECONDS:int = 10*1000; // max 10 seconds for animations
 
 		private var transactionStartedOn:int = -1; 
@@ -62,7 +62,7 @@ package emulator.auto_copied
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-        	StaticFunctions.throwError("An animation is running for more than MAX_ANIMATION_MILLISECONDS="+MAX_ANIMATION_MILLISECONDS+". It started "+transactionStartedOn+" milliseconds after the script started.");         	
+        	StaticFunctions.throwError("An transaction is running for more than MAX_ANIMATION_MILLISECONDS="+MAX_ANIMATION_MILLISECONDS+". It started "+transactionStartedOn+" milliseconds after the script started.");         	
         }
         public function isPlayer():Boolean {
         	// I can't use T.custom(API_Message.CUSTOM_INFO_KEY_myUserId,0), because ProtocolVerifier is used in emulator that runs multiple clients (thus static memory will cause a conflict)
@@ -109,11 +109,12 @@ package emulator.auto_copied
 				var matchEnded:API_GotMatchEnded = /*as*/gotMsg as API_GotMatchEnded;
 				nextPlayerIds = StaticFunctions.subtractArray(currentPlayerIds, matchEnded.finishedPlayerIds);
 			} else if (gotMsg is API_GotCustomInfo) {	 					    			
-    			checkInProgress(false,gotMsg);
-    			var customInfo:API_GotCustomInfo = /*as*/gotMsg as API_GotCustomInfo;
+    			// isPause is called when the game is in progress,
+    			// and other info is passed before the game starts.
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+    			var customInfo:API_GotCustomInfo = /*as*/gotMsg as API_GotCustomInfo;
     			for each (var infoEntry:InfoEntry in customInfo.infoEntries) {
     				if (infoEntry.key==API_Message.CUSTOM_INFO_KEY_myUserId)
     					myUserId = AS3_vs_AS2.as_int(infoEntry.value);
@@ -123,133 +124,143 @@ package emulator.auto_copied
     			
 				// can be sent whether the game is in progress or not
 			} else if (gotMsg is API_GotUserInfo) { 
-			} else if (gotMsg is API_GotRequestStateCalculation){	
-			}
-			else if (gotMsg is API_GotUserDisconnected) {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			} else {
+			} else if (gotMsg is API_GotUserDisconnected) {
+			} else if (gotMsg is API_GotRequestStateCalculation){
+				
+			}
+			else {
 				check(false, ["Illegal gotMsg=",gotMsg]);
 			}
 		}
 		public static function isOldBoard(msg:API_Message):Boolean {
 			var name:String = msg.getMethodName();
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			return StaticFunctions.startsWith(name, "do_") || StaticFunctions.startsWith(name, "got_");
 		}
 		public static function isPassThrough(doMsg:API_Message):Boolean {
 			return doMsg is API_DoAllFoundHacker || 
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 				doMsg is API_DoRegisterOnServer || doMsg is API_DoTrace ||
         		isOldBoard(doMsg);
 		}
 		public function isDoAll(doMsg:API_Message):Boolean {
 			return StaticFunctions.startsWith(doMsg.getMethodName(), "doAll");
 		}
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		
 		public function msgFromGame(doMsg:API_Message):void {
 			if (doMsg is API_DoRegisterOnServer) {
 				check(!didRegisterOnServer, ["Call DoRegisterOnServer only once!"]);
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 				didRegisterOnServer = true;
 			} else if (isPassThrough(doMsg)) {
         	} else if (doMsg is API_DoStoreState) {
         		check(isPlayer(), ["Only a player can send DoStoreState"]);
         		var doStoreStateMessage:API_DoStoreState = /*as*/doMsg as API_DoStoreState;
         		if (doStoreStateMessage.userEntries.length < 1 )
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
         			StaticFunctions.throwError("You have to call doStoreState with at least 1 parameter !");
         		
         		isNullKeyExistUserEntry(doStoreStateMessage.userEntries);
 			} else if (doMsg is API_Transaction) {
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 				var transaction:API_Transaction = /*as*/doMsg as API_Transaction;
 				check(currentCallback.getMethodName()==transaction.callback.callbackName, ["Illegal callbackName!"]);
 				if (nextPlayerIds!=null) {
 					currentPlayerIds = nextPlayerIds; // we do this before calling checkDoAll
 					nextPlayerIds = null;
 				}
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 				
 				var wasStoreStateCalculation:Boolean = false;
 				var isRequestStateCalculation:Boolean = currentCallback is API_GotRequestStateCalculation;
 				for each (var doAllMsg:API_Message in transaction.messages) {
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 					checkDoAll(doAllMsg);
 					if (isRequestStateCalculation) {
 						if (doAllMsg is API_DoAllStoreStateCalculation)	
 							wasStoreStateCalculation = true;
 						else
 							check(doAllMsg is API_DoAllFoundHacker, ["Illegal msg=",doAllMsg," when processing ",currentCallback]);
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 					}						
 				}
 				if (isRequestStateCalculation)
 					check(wasStoreStateCalculation, ["When the server calls gotRequestStateCalculation, you must call doAllStoreStateCalculation"]);
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 				
 				currentCallback = null;
         		transactionStartedOn = -1;
 			}
 			
 		}
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		    		
 
         private function checkDoAll(msg:API_Message):void {
         	if (msg is API_DoAllFoundHacker) {        		
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 			}
 			else if (msg is API_DoAllStoreStateCalculation) 
 			{
 				var doAllStoreStateCalculations:API_DoAllStoreStateCalculation = /*as*/msg as API_DoAllStoreStateCalculation;
         		if (doAllStoreStateCalculations.userEntries.length < 1 )
         			StaticFunctions.throwError("You have to call doAllStoreStateCalculations with at least 1 UserEntry !");
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 				isNullKeyExistUserEntry(doAllStoreStateCalculations.userEntries);
         	}
         	else if (msg is API_DoAllStoreState)
 			{
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 				var doAllStoreStateMessage:API_DoAllStoreState = /*as*/msg as API_DoAllStoreState;
         		if (doAllStoreStateMessage.userEntries.length < 1 )
         			StaticFunctions.throwError("You have to call doAllStoreStateMessage with at least 1 UserEntry !");
 				isNullKeyExistUserEntry(doAllStoreStateMessage.userEntries);
 			}   
 			else if (msg is API_DoAllEndMatch)
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			{
 				var doAllEndMatchMessage:API_DoAllEndMatch = /*as*/msg as API_DoAllEndMatch;
         		if (doAllEndMatchMessage.finishedPlayers.length < 1 )
         			StaticFunctions.throwError("You have to call doAllEndMatch with at least 1 PlayerMatchOver !");
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 			} 
 			else if (msg is API_DoAllRevealState) 
 			{
 				var doAllRevealState:API_DoAllRevealState = /*as*/msg as API_DoAllRevealState;
         		if (doAllRevealState.revealEntries.length < 1 )
         			StaticFunctions.throwError("You have to call doAllRevealState with at least 1 RevealEntry !");
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
         		isNullKeyExistRevealEntry(doAllRevealState.revealEntries);
 			} 
 			else if (msg is API_DoAllRequestStateCalculation) 
 			{
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 				var doAllRequestStateCalculation:API_DoAllRequestStateCalculation = /*as*/msg as API_DoAllRequestStateCalculation;
         		if (doAllRequestStateCalculation.keys.length < 1 )
         			StaticFunctions.throwError("You have to call doAllRequestStateCalculation with at least 1 key !");
         		isNullKeyExist(doAllRequestStateCalculation.keys);
+			}
+			else if	(msg is API_DoAllRequestRandomState)
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+			{
+				var doAllRequestRandomState:API_DoAllRequestRandomState = /*as*/msg as API_DoAllRequestRandomState;	
+				if (doAllRequestRandomState.key == null)
+					StaticFunctions.throwError("You have to call doAllRequestRandomState with a non null key !");
 			}	
 			else if (msg is API_DoAllSetTurn) 
 			{

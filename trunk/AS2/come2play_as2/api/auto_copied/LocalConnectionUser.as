@@ -7,7 +7,6 @@ import come2play_as2.api.auto_copied.*;
 	{
 		public static var REVIEW_USER_ID:Number = -1; // special userId that is used for reviewing games		
 		public static var DEFAULT_LOCALCONNECTION_PREFIX:String = ""+StaticFunctions.random(1,10000);
-		
 		public static function showError(msg:String):Void {
 			StaticFunctions.showError(msg);
 		}
@@ -44,10 +43,11 @@ import come2play_as2.api.auto_copied.*;
 		private var sSendChanel:String;
 		private var isServer:Boolean;
 		public var verifier:ProtocolVerifier;
-		
+		public var _shouldVerify:Boolean;
 		//Constructor
-		public function LocalConnectionUser(_someMovieClip:MovieClipContainer, isServer:Boolean, sPrefix:String) {
+		public function LocalConnectionUser(_someMovieClip:MovieClip, isServer:Boolean, sPrefix:String,shouldVerify:Boolean) {
 			try{
+				_shouldVerify=shouldVerify;
 				API_LoadMessages.useAll();	
 				verifier = new ProtocolVerifier();
 				this.isServer = isServer;
@@ -102,6 +102,7 @@ import come2play_as2.api.auto_copied.*;
 			}        	
         }
         private function verify(msg:API_Message, isSend:Boolean):Void {
+        	if	(!_shouldVerify) return;
         	if (isServer!=isSend)
     			verifier.msgFromGame(msg);
     		else

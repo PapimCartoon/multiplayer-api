@@ -1,4 +1,4 @@
-	import come2play_as2.api.auto_generated.*;
+﻿	import come2play_as2.api.auto_generated.*;
 	
 	import flash.external.*;
 	 
@@ -110,7 +110,8 @@ import come2play_as2.api.auto_copied.*;
         }
         
         public function localconnection_callback(msgObj:Object):Void {
-        	var msg:API_Message = null;
+        	if (StaticFunctions.DID_SHOW_ERROR) return;
+			var msg:API_Message = null;
         	try{
         		var deserializedMsg:Object = SerializableClass.deserialize(msgObj);
         		msg = API_Message(deserializedMsg);

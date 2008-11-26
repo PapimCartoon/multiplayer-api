@@ -14,7 +14,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 		if (SHOULD_CALL_TRACE) trace( arr.join("") );
 		allTraces.push(arr);
 	}
-	private static var DID_SHOW_ERROR:Boolean = false;
+	public static var DID_SHOW_ERROR:Boolean = false;
 	public static function getTraces():String {
 		return (allTraces.length==0 ? '' : 
 				(allTraces.length<MAX_TRACES_NUM ? "All":"The last "+MAX_TRACES_NUM)+" stored traces are:\n"+

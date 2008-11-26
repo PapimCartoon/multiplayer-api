@@ -113,6 +113,7 @@ package come2play_as3.api.auto_copied
         }
         
         public function localconnection_callback(msgObj:Object):void {
+        	if (StaticFunctions.DID_SHOW_ERROR) return;
         	var msg:API_Message = null;
         	try{
         		var deserializedMsg:Object = SerializableClass.deserialize(msgObj);

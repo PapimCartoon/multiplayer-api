@@ -36,6 +36,7 @@
 
 	private function applicationComplete():void
 	{
+		
 		stagnationTimer = new Timer(1000,0);
 		clientGameAPI = new EventClientGameAPI(this);
 		(new Guess).register();

@@ -1,7 +1,8 @@
-import come2play_as2.api.auto_copied.*;
+﻿import come2play_as2.api.auto_copied.*;
 
 class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 	public static var isAS3:Boolean = false;
+	public static var isInterval:Boolean = false
 	public static function specialToString(o:Object):String {
 		return o.toString();
 	}
@@ -179,7 +180,15 @@ class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 		}
 	}
 	public static function showError(graphics:MovieClip, msg:String):Void {
-		var container:MovieClip =_root.createEmptyMovieClip("___error_message"+Math.random(), _root.getNextHighestDepth());
+		trace("I started printing an error :"+_root.getNextHighestDepth())
+		if (!isInterval)
+		{
+			isInterval = true;
+			var abc:Number = setInterval(showError,4000,graphics,msg);
+		}
+		_root._visible = true;
+		_root._alpha = 100;
+		var container:MovieClip =_root.createEmptyMovieClip("___error_message"+Math.random(),_root.getNextHighestDepth());
 		container.beginFill(0x000000);
 		container.moveTo(0, 0);
 		container.lineTo(500, 0);
@@ -191,6 +200,7 @@ class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 		label.selectable = true;
 		label.text = msg;
 		label.textColor = 0xFF0000;
+		trace("I finished printing an error")
 	}
 	
 

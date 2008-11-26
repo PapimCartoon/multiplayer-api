@@ -1,4 +1,4 @@
-	import come2play_as2.api.auto_copied.*;
+﻿	import come2play_as2.api.auto_copied.*;
 	import come2play_as2.api.auto_generated.*;
 	
 	import flash.external.*;
@@ -185,6 +185,8 @@ import come2play_as2.api.*;
 						}
 					}		
 					T.initI18n(i18nObj, customObj); // may be called several times because we may pass different 'secondsPerMatch' every time a game starts
+					if (T.custom("CONTAINER_checkThrowingAnError",true))
+					throw new Error("CONTAINER_checkThrowingAnError");
 				}
 				dispatchMessage(msg)
 

@@ -230,12 +230,18 @@ public final class AS3_vs_AS2
 			});	
 	}
 	public static function showError(graphics:DisplayObjectContainer, msg:String):void {
-		trace("Showing error: "+msg);
+		trace("Showing error: myShowError="+myShowError+
+			" graphics="+graphics+
+			" graphics.stage="+ (graphics==null ? "null" : graphics.stage) +
+			" msg="+msg);
 		if (myShowError!=null) {
 			myShowError(msg);
 			return;
 		}
 		if (graphics==null) return;
+		graphics = graphics.stage;
+		if (graphics==null) return;
+		
 		var blackBox:Sprite=new Sprite();
 		blackBox.graphics.beginFill(0x000000);
 		blackBox.graphics.drawRect(0,0,300,300);
@@ -275,6 +281,7 @@ public final class AS3_vs_AS2
 				graphics.removeChild(blackBox);
 				} 
 			);
+		trace("Finished showing error message");
 	}
 	
 	

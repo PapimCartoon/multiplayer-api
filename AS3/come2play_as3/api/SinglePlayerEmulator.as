@@ -31,6 +31,7 @@ package come2play_as3.api
 				InfoEntry.create(API_Message.CUSTOM_INFO_KEY_logoFullUrl,"../../Emulator/example_logo.jpg"), 
 				InfoEntry.create(API_Message.CUSTOM_INFO_KEY_gameHeight,400), 
 				InfoEntry.create(API_Message.CUSTOM_INFO_KEY_gameWidth,400),
+				InfoEntry.create("checkThrowingAnError",false), // testing the red error window
 				// game specific info
 				// I replaced the second default symbol with a camel image
 				InfoEntry.create("customSymbolsStringArray",[null, "../../Emulator/camel70x70.PNG"])  

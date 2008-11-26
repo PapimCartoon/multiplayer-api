@@ -1,4 +1,4 @@
-﻿	import come2play_as2.api.auto_copied.*;
+	import come2play_as2.api.auto_copied.*;
 	import come2play_as2.api.auto_generated.*;
 	
 	import flash.external.*;
@@ -175,7 +175,7 @@ import come2play_as2.api.*;
 					var customObj:Object = {};
 					for (var i179:Number=0; i179<customInfo.infoEntries.length; i179++) { var entry:InfoEntry = customInfo.infoEntries[i179]; 
 						var key:String = entry.key;
-						var value:Object = entry.value;	
+						var value:Object = entry.value;
 						if (key=="i18n") {
 							i18nObj = value;
 						} else if (key=="checkThrowingAnError" && value==true) {

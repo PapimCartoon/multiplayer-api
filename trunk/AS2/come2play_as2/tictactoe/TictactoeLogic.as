@@ -12,7 +12,7 @@ import come2play_as2.api.auto_copied.*;
  * Written by: Yoav Zibin (yoav@zibin.net)
  */
 import come2play_as2.tictactoe.*;
-class come2play_as2.tictactoe.TictactoeLogic { 	
+class come2play_as2.tictactoe.TictactoeLogic extends SerializableClass { 	
 	public static var SQUARE_AVAILABLE:Number = -1;
 	
 	// for example, you can have a board of size 5x5, with WIN_LENGTH=4
@@ -23,11 +23,11 @@ class come2play_as2.tictactoe.TictactoeLogic {
 	
 	//gameState[row][col] - who owns the square <row,col>
 	// SQUARE_AVAILABLE means nobody owns it, otherwise it is a number between 0 and PLAYERS_NUM-1
-	private var gameState:Array;
+	public var gameState:Array;
 	// The number of squares which are not SQUARE_AVAILABLE
-	private var filledNum:Number; 
+	public var filledNum:Number; 
 	
-	public function TictactoeLogic(ROWS:Number, COLS:Number, WIN_LENGTH:Number, PLAYERS_NUM:Number) {
+	public function TictactoeLogic(ROWS:Number/*<InAS3>=0</InAS3>*/, COLS:Number/*<InAS3>=0</InAS3>*/, WIN_LENGTH:Number/*<InAS3>=0</InAS3>*/, PLAYERS_NUM:Number/*<InAS3>=0</InAS3>*/) {
 		this.ROWS = ROWS;
 		this.COLS = COLS;
 		this.WIN_LENGTH = WIN_LENGTH;
@@ -62,8 +62,8 @@ class come2play_as2.tictactoe.TictactoeLogic {
 	
 	// Makes a move in TicTacToe by placing either X or O in square <row,col>
 	public function makeMove(color:Number, move:TictactoeSquare):Void {
-		if (!isSquareAvailable(move)) LocalConnectionUser.throwError("Square "+move+" is not available");
-		if (color<0 || color>=PLAYERS_NUM) LocalConnectionUser.throwError("Illegal color="+color);
+		if (!isSquareAvailable(move)) LocalConnectionUser.throwError("Square "+move+" is not available! Logic="+this);
+		if (color<0 || color>=PLAYERS_NUM) LocalConnectionUser.throwError("Illegal color="+color+" PLAYERS_NUM="+PLAYERS_NUM+" Logic="+this);
 		setOwner(move, color);
 		filledNum++;
 	}

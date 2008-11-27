@@ -38,6 +38,8 @@ class come2play_as2.api.CreateGrid
 			defaultScale:Number, defaultStartPos:Number) {
 		ROWS = AS3_vs_AS2.as_int(T.custom("ROWS",defaultRows)); 
 		COLS = AS3_vs_AS2.as_int(T.custom("COLS",defaultCols));
+		StaticFunctions.assert(ROWS>1 && ROWS<=10, ["Illegal ROWS=",ROWS]);
+		StaticFunctions.assert(COLS>1 && COLS<=10, ["Illegal COLS=",COLS]);
 		squareScaleX = AS3_vs_AS2.as_int(T.custom("squareScaleX",defaultScale)); 
 		squareScaleY = AS3_vs_AS2.as_int(T.custom("squareScaleY",defaultScale)); 
 		squareDeltaX = AS3_vs_AS2.as_int(T.custom("squareDeltaX",defaultSize)); 

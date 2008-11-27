@@ -16,7 +16,7 @@ import flash.utils.*;
  *
  * Written by: Yoav Zibin (yoav@zibin.net)
  */
-public final class TictactoeLogic { 	
+public final class TictactoeLogic extends SerializableClass { 	
 	public static const SQUARE_AVAILABLE:int = -1;
 	
 	// for example, you can have a board of size 5x5, with WIN_LENGTH=4
@@ -27,11 +27,11 @@ public final class TictactoeLogic {
 	
 	//gameState[row][col] - who owns the square <row,col>
 	// SQUARE_AVAILABLE means nobody owns it, otherwise it is a number between 0 and PLAYERS_NUM-1
-	private var gameState:Array;
+	public var gameState:Array;
 	// The number of squares which are not SQUARE_AVAILABLE
-	private var filledNum:int; 
+	public var filledNum:int; 
 	
-	public function TictactoeLogic(ROWS:int, COLS:int, WIN_LENGTH:int, PLAYERS_NUM:int) {
+	public function TictactoeLogic(ROWS:int/*<InAS3>*/=0/*</InAS3>*/, COLS:int/*<InAS3>*/=0/*</InAS3>*/, WIN_LENGTH:int/*<InAS3>*/=0/*</InAS3>*/, PLAYERS_NUM:int/*<InAS3>*/=0/*</InAS3>*/) {
 		this.ROWS = ROWS;
 		this.COLS = COLS;
 		this.WIN_LENGTH = WIN_LENGTH;
@@ -66,8 +66,8 @@ public final class TictactoeLogic {
 	
 	// Makes a move in TicTacToe by placing either X or O in square <row,col>
 	public function makeMove(color:int, move:TictactoeSquare):void {
-		if (!isSquareAvailable(move)) LocalConnectionUser.throwError("Square "+move+" is not available");
-		if (color<0 || color>=PLAYERS_NUM) LocalConnectionUser.throwError("Illegal color="+color+" PLAYERS_NUM="+PLAYERS_NUM);
+		if (!isSquareAvailable(move)) LocalConnectionUser.throwError("Square "+move+" is not available! Logic="+this);
+		if (color<0 || color>=PLAYERS_NUM) LocalConnectionUser.throwError("Illegal color="+color+" PLAYERS_NUM="+PLAYERS_NUM+" Logic="+this);
 		setOwner(move, color);
 		filledNum++;
 	}

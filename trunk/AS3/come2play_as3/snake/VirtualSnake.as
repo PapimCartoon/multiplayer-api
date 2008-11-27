@@ -63,7 +63,6 @@ package come2play_as3.snake
 						confirmedSnakeParts.unshift(oldestGuessedMove);
 					}
 				}
-			//todo: confirm move from real snake
 		}
 		public function moveForward(isEating:Boolean):PlayerMove
 		{

@@ -51,9 +51,18 @@ package come2play_as3.api.auto_copied
 		}
 		
 		// for customization, e.g., the frame-rate of the game.
+		// If defaultValue is not null, then we require that the **type** of the return value
+		// will be identical to the **type** of the defaultValue.
 		public static function custom(key:String, defaultValue:Object/*Type*/):Object/*Type*/ {
 			var res:Object = _custom[key];
-			return res==null ? defaultValue : res;
+			if (res==null) return defaultValue;
+			if (defaultValue!=null) {
+				// the type of defaultValue must be identical to res
+				var typeD:String = AS3_vs_AS2.getClassName(defaultValue);
+				var typeR:String = AS3_vs_AS2.getClassName(res);
+				StaticFunctions.assert(typeD==typeR, ["In T.custom the type of defaultValue and the return value must be identical! DefaultValue=",defaultValue," type of DefaultValue=",typeD," result=",res," type of result=",typeR]); 
+			} 
+			return res; 
 		}
 		
 		// for internationalization	

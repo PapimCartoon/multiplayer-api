@@ -76,19 +76,31 @@ package emulator.auto_copied
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
 		// for customization, e.g., the frame-rate of the game.
+		// If defaultValue is not null, then we require that the **type** of the return value
+		// will be identical to the **type** of the defaultValue.
 		public static function custom(key:String, defaultValue:Object/*Type*/):Object/*Type*/ {
 			var res:Object = _custom[key];
-			return res==null ? defaultValue : res;
+			if (res==null) return defaultValue;
+			if (defaultValue!=null) {
+				// the type of defaultValue must be identical to res
+				var typeD:String = AS3_vs_AS2.getClassName(defaultValue);
+				var typeR:String = AS3_vs_AS2.getClassName(res);
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+				StaticFunctions.assert(typeD==typeR, ["In T.custom the type of defaultValue and the return value must be identical! DefaultValue=",defaultValue," type of DefaultValue=",typeD," result=",res," type of result=",typeR]); 
+			} 
+			return res; 
 		}
 		
 		// for internationalization	
 		// i18n stands for "i"(nternationalizatio)"n"	
 		public static function i18n(str:String):String { //internationalization			
 			var res:Object = _dictionary[str];
+			return res==null ? str : res.toString();
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			return res==null ? str : res.toString();
 		}		
 		public static function i18nReplace(str:String, replacement:Object):String {
 			var res:String = i18n(str);
@@ -98,10 +110,10 @@ package emulator.auto_copied
 			return res;			
 		}
 		
+		
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		
 		public static var isLeftToRight:Boolean = true;
 		
 		private var arr:Array;
@@ -111,10 +123,10 @@ package emulator.auto_copied
 		public function add(str:String):void {
 			if (isLeftToRight) 
 				arr.push(str);
+			else
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			else
 				arr.unshift(str);
 		}
 		public function join():String {

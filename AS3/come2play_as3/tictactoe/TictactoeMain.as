@@ -61,7 +61,8 @@ public final class TictactoeMain extends ClientGameAPI {
 	
 	
 	public function TictactoeMain(graphics:MovieClip) {
-		super(graphics);		
+		super(graphics);	
+			
 		new TictactoeSquare().register();	 
 		this.graphics = graphics;	
 		// It's best to hide the board until the game starts.
@@ -134,8 +135,11 @@ public final class TictactoeMain extends ClientGameAPI {
 		 
 		shouldUseAvatars = AS3_vs_AS2.asBoolean(T.custom("shouldUseAvatars",true));			 
 		winLength = AS3_vs_AS2.as_int(T.custom("winLength",3));
+		assert(winLength>1 && winLength<=5, ["Illegal winLength=",winLength]);
 		playersNumInSinglePlayer = AS3_vs_AS2.as_int(T.custom("playersNumInSinglePlayer",3));
+		assert(playersNumInSinglePlayer>0 && playersNumInSinglePlayer<=5, ["Illegal playersNumInSinglePlayer=",playersNumInSinglePlayer]);
 		winnerPercentage = AS3_vs_AS2.as_int(T.custom("winnerPercentage",70));
+		assert(winnerPercentage>0 && winnerPercentage<=100, ["Illegal winnerPercentage=",winnerPercentage]);
 		
 		// the number of rows&cols cannot be changed
 		if (grid==null) {  					
@@ -182,7 +186,8 @@ public final class TictactoeMain extends ClientGameAPI {
 		
 		// we scale the TicTacToe size according to the grid size
 		var newHeight:int = AS3_vs_AS2.as_int(T.custom(CUSTOM_INFO_KEY_gameHeight, 400));
-		var newWidth:int = AS3_vs_AS2.as_int(T.custom(CUSTOM_INFO_KEY_gameWidth, 400));	
+		var newWidth:int = AS3_vs_AS2.as_int(T.custom(CUSTOM_INFO_KEY_gameWidth, 400));
+		assert(newHeight>10 && newWidth>10, ["Illegal gameHeight or gameWidth"]);	
 		if (gameWidth!=newWidth || gameHeight!=newHeight) {
 			gameWidth = newWidth;
 			gameHeight = newHeight;			

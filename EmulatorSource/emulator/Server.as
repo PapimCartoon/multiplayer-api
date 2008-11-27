@@ -37,7 +37,7 @@ package emulator {
 		private var bGameEnded:Boolean = false;
 		
 		private var lcFramework:LocalConnection;
-		 
+		
 		private var aUsers:Array;
 		private var aCalculators:Array;
 		private var serverState:ObjectDictionary;
@@ -55,7 +55,7 @@ package emulator {
 		private var queueTimer:Timer;
 		private var changedToDelta:int;
 		private var calculatorQueue:Array;
-		private var loadedServerEntries:ObjectDictionary;
+		private var loadedServerEntries:Array;
 		
 		
 		private var match_started_time:int;
@@ -559,7 +559,7 @@ package emulator {
 				return;
 			}
 			if(root.loaderInfo.parameters["serverEntries"].length > 50)
-				loadedServerEntries = SerializableClass.deserialize(JSON.parse( root.loaderInfo.parameters["serverEntries"] ) ) as ObjectDictionary;
+				loadedServerEntries = SerializableClass.deserialize(JSON.parse( root.loaderInfo.parameters["serverEntries"] ) ) as Array;
 			//trace(JSON.stringify())
 			loadSavedGames();
 
@@ -1630,7 +1630,8 @@ package emulator {
 			waitingQueue = new MessagQueue(aPlayers.length,getOngoingPlayerIds());
 			if(loadedServerEntries != null)
 			{
-				serverState = loadedServerEntries;
+				storeServerEntries(loadedServerEntries)
+				//serverState = loadedServerEntries;
 				loadedServerEntries = null
 			}
 			for each (var usr:User in aUsers) {

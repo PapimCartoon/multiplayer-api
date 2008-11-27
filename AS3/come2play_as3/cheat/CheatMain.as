@@ -224,6 +224,10 @@ package come2play_as3.cheat
 			var playerCall:PlayerCall;
 			var time:int = 0;
 			loading = true;
+			cardsInMiddle = new Array();
+			playerCards = new Array();
+			allowPassingTurn = false;
+			this.allPlayerIds = allPlayerIds;
 			for each(var serverEntry:ServerEntry in serverEntries)
 			{
 				if(serverEntry.value is PlayerCall)
@@ -237,13 +241,14 @@ package come2play_as3.cheat
 					}
 				}
 			}
-			
-			cardsInMiddle = new Array();
-			playerCards = new Array();
-			allowPassingTurn = false;
-			this.allPlayerIds = allPlayerIds;
 			cheatGraphics.initCheat();
-			doTrace("me","Load match");
+			if(serverEntries.length == 0)
+			{
+				lastCall = 2;
+				playerIdTurn = allPlayerIds[0];
+				setTrun(true);
+			}
+			
 			
 		}
 		override public function gotStateChangedNoCards(serverEntries:Array):void

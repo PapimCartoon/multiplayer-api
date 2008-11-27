@@ -329,6 +329,10 @@ class RivalPlayerBoard extends MovieClip
 	public function removeDomino():void
 	{
 		var tempDominoBack:DominoBack= dominoes.pop();
+		if(tempDominoBack == null)
+			return;
+		if(!contains(tempDominoBack))
+			return;
 		removeChild(tempDominoBack);
 		reDrawDominoes()
 	}

@@ -72,7 +72,7 @@ package come2play_as3.api.auto_copied
 	        if (SerializableClass.isToStringObject(argToString)) {	        	
 	            return '{' + object2JSON(arg) + '}';
 	        }
-	        // I do not do stringify again, because Enum, Stake, User, UserInMatch, and other classes, create toString that is parsable.
+	        // I do not do stringify again, because Enum, Stake, User, and other classes, create toString that is parsable.
 	        // E.g.,  { $Enum$ name:"NormalUser" , type:"come2play_as3.auto_generated::EnumSupervisor"}
 	        return argToString;                 
 	    }

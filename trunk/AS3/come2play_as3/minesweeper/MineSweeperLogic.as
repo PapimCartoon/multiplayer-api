@@ -206,7 +206,7 @@ package come2play_as3.minesweeper
 			}
 			else if((playerMove.isMine) && (!serverBox.isMine))//player thought he found a mine,he was wrong!
 			{
-				mineSweeperGraphic.revealBox(playerNum,serverBox.borderingMines,serverBox.xPos,serverBox.yPos);
+				mineSweeperGraphic.revealBox(playerNum,serverBox.borderingMines,serverBox.xPos,serverBox.yPos,false);
 				currentData.playerLives --;
 				currentData.playerScore -= 5;
 			}
@@ -218,7 +218,7 @@ package come2play_as3.minesweeper
 			}
 			else if((!playerMove.isMine) && (!serverBox.isMine))//player found a safe spot
 			{
-				mineSweeperGraphic.revealBox(playerNum,serverBox.borderingMines,serverBox.xPos,serverBox.yPos);
+				mineSweeperGraphic.revealBox(playerNum,serverBox.borderingMines,serverBox.xPos,serverBox.yPos,true);
 				currentData.playerScore += 1;
 			}
 			mineSweeperGraphic.updateLives(playerNum,currentData.playerLives);
@@ -295,7 +295,7 @@ package come2play_as3.minesweeper
 			{
 				if(boardLogic[serverBox.xPos][serverBox.yPos] != 3)
 				{
-					mineSweeperGraphic.revealBox(allPlayerIds.indexOf(playerId),serverBox.borderingMines,serverBox.xPos,serverBox.yPos);
+					mineSweeperGraphic.revealBox(allPlayerIds.indexOf(playerId),serverBox.borderingMines,serverBox.xPos,serverBox.yPos,true);
 					score ++;
 					madeMoves ++ ;	
 				}

@@ -120,9 +120,9 @@ package come2play_as3.api.auto_copied
         		check(isPlayer(), ["Only a player can send DoStoreState"]);
         		var doStoreStateMessage:API_DoStoreState = /*as*/doMsg as API_DoStoreState;
         		if (doStoreStateMessage.userEntries.length < 1 )
-        			StaticFunctions.throwError("You have to call doStoreState with at least 1 parameter !");
-        		
+        			StaticFunctions.throwError("You have to call doStoreState with at least 1 parameter !");	
         		isNullKeyExistUserEntry(doStoreStateMessage.userEntries);
+        		isDeleteLegal(doStoreStateMessage.userEntries)
 			} else if (doMsg is API_Transaction) {
 				var transaction:API_Transaction = /*as*/doMsg as API_Transaction;
 				check(currentCallback.getMethodName()==transaction.callback.callbackName, ["Illegal callbackName!"]);
@@ -150,7 +150,15 @@ package come2play_as3.api.auto_copied
 			}
 			
 		}
-		    		
+		private function isDeleteLegal(userEntries:Array/*UserEntry*/):void
+		{
+			for each(var userEntry:UserEntry in userEntries)
+			{
+				if(userEntry.value == null)
+					if(userEntry.isSecret)
+						StaticFunctions.throwError("key deletion must be public");
+			}
+		}		    		
 
         private function checkDoAll(msg:API_Message):void {
         	if (msg is API_DoAllFoundHacker) {        		
@@ -161,6 +169,7 @@ package come2play_as3.api.auto_copied
         		if (doAllStoreStateCalculations.userEntries.length < 1 )
         			StaticFunctions.throwError("You have to call doAllStoreStateCalculations with at least 1 UserEntry !");
 				isNullKeyExistUserEntry(doAllStoreStateCalculations.userEntries);
+				isDeleteLegal(doAllStoreStateCalculations.userEntries)
         	}
         	else if (msg is API_DoAllStoreState)
 			{
@@ -168,6 +177,7 @@ package come2play_as3.api.auto_copied
         		if (doAllStoreStateMessage.userEntries.length < 1 )
         			StaticFunctions.throwError("You have to call doAllStoreStateMessage with at least 1 UserEntry !");
 				isNullKeyExistUserEntry(doAllStoreStateMessage.userEntries);
+				isDeleteLegal(doAllStoreStateMessage.userEntries)
 			}   
 			else if (msg is API_DoAllEndMatch)
 			{

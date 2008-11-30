@@ -1,9 +1,9 @@
 package come2play_as3.minesweeper
 {
-	import come2play_as3.api.auto_generated.InfoEntry;
-	
 	import flash.display.MovieClip;
+	import flash.events.Event;
 	import flash.text.TextField;
+	import flash.utils.setTimeout;
 	
 	public class MineSweeperGraphic extends MovieClip
 	{
@@ -27,12 +27,17 @@ package come2play_as3.minesweeper
 			boardUnderPart.addChild(box);
 			box.gotoAndStop(30+playerNum*10);
 		}
-		public function revealBox(playerNum:int,borderingMines:int,xPos:int,yPos:int):void
+		public function revealBox(playerNum:int,borderingMines:int,xPos:int,yPos:int,isCorrect:Boolean):void
 		{
 			var box:Box = boardBricks[xPos][yPos];
 			box.gotoAndStop(10*(playerNum+1) + borderingMines);
+			setTimeout(function():void{isCorrectChange(isCorrect,box)},100);
+			
 		}
-
+		private function isCorrectChange(isCorrect:Boolean,box:Box):void
+		{
+			box.isWrong.alpha = isCorrect?0:100;
+		}
 		public function updateLives(playerNum:int,livesCount:int):void
 		{
 			var player:PlayerGraphicData = playerGraphicDataArr[playerNum];

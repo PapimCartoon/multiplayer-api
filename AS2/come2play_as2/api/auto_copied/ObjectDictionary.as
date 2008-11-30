@@ -1,3 +1,5 @@
+import come2play_as2.api.auto_generated.ServerEntry;
+	
 import come2play_as2.api.auto_copied.*;
 class come2play_as2.api.auto_copied.ObjectDictionary extends SerializableClass
 {
@@ -22,7 +24,7 @@ class come2play_as2.api.auto_copied.ObjectDictionary extends SerializableClass
 		var hash:Number = hashObject(key);
 		if (hashMap[hash]==null) return null;
 		var entries:Array = hashMap[hash];
-		for (var i24:Number=0; i24<entries.length; i24++) { var entry:Array = entries[i24]; 
+		for (var i26:Number=0; i26<entries.length; i26++) { var entry:Array = entries[i26]; 
 			var entryKey:Object = entry[0];
 			if (areEqual(entryKey,key)) 
 				return entry;
@@ -87,6 +89,13 @@ class come2play_as2.api.auto_copied.ObjectDictionary extends SerializableClass
 		allKeys.push(key);
 		allValues.push(value);
 	}
+	public function addEntry(entry:ServerEntry):Void {
+		if (entry.visibleToUserIds==null && entry.value==null) { // deletions are always public (visible to everyone)
+			remove(entry.key);
+		} else {
+			put(entry.key, entry);			
+		}
+	}
 	
 	// Some primes: Do I want to use them to hash an array?
 	// 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139
@@ -148,7 +157,7 @@ class come2play_as2.api.auto_copied.ObjectDictionary extends SerializableClass
 				// for static properties we use describeType
 				// because o1 and o2 have the same type, it is enough to use the fields of o1.
 				var fieldsArr:Array = AS3_vs_AS2.getFieldNames(o1);
-				for (var i150:Number=0; i150<fieldsArr.length; i150++) { var field:String = fieldsArr[i150]; 
+				for (var i159:Number=0; i159<fieldsArr.length; i159++) { var field:String = fieldsArr[i159]; 
 					allFields[field] = true;
 				}
 			}

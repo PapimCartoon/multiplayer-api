@@ -1,5 +1,7 @@
 package come2play_as3.api.auto_copied
 {
+import come2play_as3.api.auto_generated.ServerEntry;
+	
 public final class ObjectDictionary extends SerializableClass
 {
 	// maps a hash of an object to an array of entries
@@ -87,6 +89,13 @@ public final class ObjectDictionary extends SerializableClass
 		
 		allKeys.push(key);
 		allValues.push(value);
+	}
+	public function addEntry(entry:ServerEntry):void {
+		if (entry.visibleToUserIds==null && entry.value==null) { // deletions are always public (visible to everyone)
+			remove(entry.key);
+		} else {
+			put(entry.key, entry);			
+		}
 	}
 	
 	// Some primes: Do I want to use them to hash an array?

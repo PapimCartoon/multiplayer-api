@@ -82,6 +82,11 @@ import flash.utils.*;
 			myUserId = T.custom(CUSTOM_INFO_KEY_myUserId, null) as int;
 			stageX = T.custom(CUSTOM_INFO_KEY_gameStageX, null) as int;
 			stageY = T.custom(CUSTOM_INFO_KEY_gameStageY, null) as int;
+			
+			graphics.width = T.custom(CUSTOM_INFO_KEY_gameWidth,graphics.width) as int;
+			graphics.height = T.custom(CUSTOM_INFO_KEY_gameHeight,graphics.height) as int;
+			trace("trace this:"+graphics.scaleX+"/"+graphics.scaleY)
+			mineSweeperLogic.setNewGraphicScale(graphics.scaleX,graphics.scaleY);
 			boardWidth = T.custom(BOARD_WIDTHstr, 12) as int;
 			boardHeight =  T.custom(BOARD_HEIGHTstr, 12) as int;
 			mineAmount = T.custom(MINE_AMOUNTstr, 20) as int;

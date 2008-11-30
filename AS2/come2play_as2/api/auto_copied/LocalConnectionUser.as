@@ -77,7 +77,7 @@ import come2play_as2.api.auto_copied.*;
 		}
 		
         private function getErrorMessage(withObj:Object, err:Error):String {
-        	return "Error occurred when passing "+JSON.stringify(withObj)+", the error is="+AS3_vs_AS2.error2String(err);
+        	return "Error occurred when passing "+JSON.stringify(withObj)+", the error is=\n\t\t"+AS3_vs_AS2.error2String(err);
         }
         private function passError(withObj:Object, err:Error):Void {
         	showError(getErrorMessage(withObj,err));        	

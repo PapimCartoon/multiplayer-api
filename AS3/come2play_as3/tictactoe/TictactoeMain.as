@@ -456,6 +456,7 @@ public final class TictactoeMain extends ClientGameAPI {
 			if (!logic.isSquareAvailable(square)) continue;
 			var squareGraphics:TictactoeSquareGraphic = getSquareGraphic(square);
 			squareGraphics.startMove(
+				T.custom(CUSTOM_INFO_KEY_isBack,false) ? TictactoeSquareGraphic.BTN_NONE : // the user pressed on back
 				!isInProgress ? TictactoeSquareGraphic.BTN_NONE : // the match was over
 				myColor==VIEWER ? TictactoeSquareGraphic.BTN_NONE : // a viewer never has the turn
 				isSinglePlayer() ? turnOfColor : // single player always has the turn

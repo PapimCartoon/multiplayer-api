@@ -1,5 +1,6 @@
 package come2play_as3.minesweeper
 {
+	import come2play_as3.api.auto_copied.JSON;
 	import come2play_as3.api.auto_generated.PlayerMatchOver;
 	import come2play_as3.api.auto_generated.ServerEntry;
 	
@@ -18,6 +19,9 @@ package come2play_as3.minesweeper
 		private var allPlayerIds:Array;
 		public var myUserId:int;
 		public var isPlaying:Boolean;
+		
+		private var scaleX:Number;
+		private var scaleY:Number;
 		
 		private var mineSweeperMainPointer:MineSweeperMain;/*Pointer to minesweeper main*/
 		private var boardLogic:Array;
@@ -68,6 +72,11 @@ package come2play_as3.minesweeper
 				isMine=true;
 				shift.gotoAndStop(14);
 			}
+		}
+		public function setNewGraphicScale(scaleX:Number,scaleY:Number):void
+		{
+			this.scaleX = scaleX;
+			this.scaleY = scaleY;
 		}
 		private function overShift(ev:MouseEvent):void
 		{
@@ -127,6 +136,7 @@ package come2play_as3.minesweeper
 			var safeZones:Array = new Array /*Array*//*ServerBox*/
 			for each (var serverEntry:ServerEntry in serverEntries)
 			{
+				trace("serverEntry :"+JSON.stringify(serverEntry.value))
 				if(serverEntry.value is PlayerMove)
 					addPlayerMove(serverEntry.value as PlayerMove)
 				else if(serverEntry.value is ServerBox)
@@ -146,8 +156,9 @@ package come2play_as3.minesweeper
 		}
 		private function selectMine(ev:MouseEvent):void
 		{
-			var xPos:int = Math.floor((ev.stageX-(stageX+9.5))/16);
-			var yPos:int = Math.floor((ev.stageY-(stageY+7))/16);
+			var xPos:int = Math.floor((ev.stageX-(stageX+9.5))/(16*scaleX));
+			var yPos:int = Math.floor((ev.stageY-(stageY+7))/(16*scaleY));
+			trace(scaleX+"/"+scaleY)
 			if((xPos> -1)&&(xPos<(boardWidth))&&(yPos>-1)&&(yPos<(boardHeight)))
 				if((boardLogic[xPos][yPos] == 0) && (isPlaying))
 				{

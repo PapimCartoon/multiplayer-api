@@ -19,12 +19,10 @@ class come2play_as2.api.auto_copied.ObjectDictionary extends SerializableClass
 	}
 	
 	private function getEntry(key:Object):Array {
-		return getEntry2(key, hashObject(key));
-	}
-	private function getEntry2(key:Object, hash:Number):Array {
+		var hash:Number = hashObject(key);
 		if (hashMap[hash]==null) return null;
 		var entries:Array = hashMap[hash];
-		for (var i26:Number=0; i26<entries.length; i26++) { var entry:Array = entries[i26]; 
+		for (var i24:Number=0; i24<entries.length; i24++) { var entry:Array = entries[i24]; 
 			var entryKey:Object = entry[0];
 			if (areEqual(entryKey,key)) 
 				return entry;
@@ -61,8 +59,12 @@ class come2play_as2.api.auto_copied.ObjectDictionary extends SerializableClass
 			var oldKey:Object = entry[0];
 			if (areEqual(oldKey,key)) {
 				entries.splice(i,1);
+				if (entries.length==0) {
+					delete hashMap[hash];
+				}				
 				pSize--;
 				
+				// Note that I check for oldKey (not key), so I can use indexOf that checks using object identity (not areEqual)
 				var indexInAll:Number = AS3_vs_AS2.IndexOf(allKeys,oldKey);
 				if (indexInAll==-1) throw new Error("Internal error in ObjectDictionary");
 				allKeys.splice(indexInAll,1);
@@ -74,24 +76,16 @@ class come2play_as2.api.auto_copied.ObjectDictionary extends SerializableClass
 		return null;
 	}
 	public function put(key:Object, value:Object):Void {
-		var hash:Number = hashObject(key);		
-		var entry:Array = getEntry2(key, hash);
-		if (entry==null) {
-			if (hashMap[hash]==null) hashMap[hash] = [];
-			var entries:Object = hashMap[hash];
-			entries.push( [key, value] );
-			pSize++;
-			
-			allKeys.push(key);
-			allValues.push(value);		
-		} else {
-			// replace value
-			entry[1] = value;		
-						
-			var oldKey:Object = entry[0];
-			var indexInAll:Number = AS3_vs_AS2.IndexOf(allKeys,oldKey);
-			allValues[indexInAll] = value;
-		}
+		remove(key);
+		
+		var hash:Number = hashObject(key);				
+		if (hashMap[hash]==null) hashMap[hash] = [];
+		var entries:Object = hashMap[hash];
+		entries.push( [key, value] );
+		pSize++;
+		
+		allKeys.push(key);
+		allValues.push(value);
 	}
 	
 	// Some primes: Do I want to use them to hash an array?
@@ -154,7 +148,7 @@ class come2play_as2.api.auto_copied.ObjectDictionary extends SerializableClass
 				// for static properties we use describeType
 				// because o1 and o2 have the same type, it is enough to use the fields of o1.
 				var fieldsArr:Array = AS3_vs_AS2.getFieldNames(o1);
-				for (var i156:Number=0; i156<fieldsArr.length; i156++) { var field:String = fieldsArr[i156]; 
+				for (var i150:Number=0; i150<fieldsArr.length; i150++) { var field:String = fieldsArr[i150]; 
 					allFields[field] = true;
 				}
 			}

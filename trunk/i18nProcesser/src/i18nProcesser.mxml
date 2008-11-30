@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:WindowedApplication xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" applicationComplete="applicationComplete()"   width="820" height="620">
+	<mx:Script>
+	<![CDATA[
+		import mx.controls.Alert;
+		import mx.messaging.management.Attribute;
+		import mx.messaging.channels.StreamingAMFChannel;
+		import mx.controls.FileSystemList;
+		
+		private var directory:File;
+		private var saveFile:File;
+		private var fullXml:XML;
+		private function applicationComplete():void
+		{ 		
+			saveFile = new File();
+			saveFile.addEventListener(Event.SELECT,createXml);
+			directory= File.documentsDirectory;
+			directory.nativePath = "X:\\come2play\\API_GoogleCodeSVN\\MyFakeProject"/*File.documentsDirectory*/;
+			
+		}
+		private function directoryChoosen(ev:Event):void
+		{
+			if(directory.exists)
+				start.enabled = true;
+			else
+				start.enabled = false;
+		}
+		private function processProject():void
+		{
+			fullXml = new XML("<GameData></GameData>");
+			var getFilesByType:getAllDirectoryFilesByType = new getAllDirectoryFilesByType("as");
+			var asFileList:Array/*File*/ = getFilesByType.getFiles(directory);
+			xmlView.text="";
+			FileInterpator.clearErrors();
+			var xmlCustom:XML = new XML("<custom type='list'></custom>");
+			var xmli18n:XML = new XML("<i18n type='list'></i18n>");
+			var xmli18nReplace:XML = new XML("<i18nReplace type='list'></i18nReplace>");
+			for each(var file:File in asFileList)
+			{
+				FileInterpator.getCustom(file,xmlCustom,xmli18n,xmli18nReplace,errorView);
+			}
+			fullXml.appendChild(xmlCustom);
+			fullXml.appendChild(xmli18n);
+			fullXml.appendChild(xmli18nReplace);
+			saveButton.enabled = true;
+			xmlView.text=fullXml.toString();
+		}
+		private function openProject():void
+		{
+			saveButton.enabled = false;
+			directory.browseForDirectory("Project Directory")
+			directory.addEventListener(Event.SELECT,directoryChoosen);
+		}
+		private function saveProject():void
+		{
+ 			saveFile.browseForSave("save XML as");
+			
+		}
+		private function createXml(ev:Event):void
+		{
+			var saveStream:FileStream = new FileStream();
+			saveStream.open(saveFile,FileMode.WRITE);
+			var fileName:Array = saveFile.name.split(".")
+			if((fileName[1]!= "xml") && (fileName[1]!="XML") && (fileName[1]!="Xml"))
+				Alert.show("File extension must be *.xml","Wrong file name");
+			else
+			{
+				fullXml.setName(fileName[0]);
+				trace(fullXml.toString())
+				saveStream.writeUTFBytes(fullXml.toString());
+				Alert.show("File Saved","File Saved");
+			}
+			saveStream.close();
+			
+		}
+	    ]]>
+    </mx:Script>
+	<mx:Button x="697" y="10" label="Open Project" click="openProject()"/>
+	<mx:Button x="20" y="10" id="start" label="Start" enabled="false" click="processProject()"/>
+	<mx:Button x="83" y="10" label="Save" id="saveButton" enabled="false" click="saveProject()"/>
+	<mx:TextArea x="20" y="40" width="778" height="333" id="xmlView" />
+	<mx:DataGrid width="778" height="207" id="errorView" horizontalCenter="0" verticalCenter="186">
+		<mx:columns>
+			<mx:DataGridColumn headerText="File" dataField="File" width="90"/>
+			<mx:DataGridColumn headerText="Line" dataField="Line" width="40"/>
+			<mx:DataGridColumn headerText="Position" dataField="Position" width="60"/>
+			<mx:DataGridColumn headerText="Error" dataField="Error"/>
+		</mx:columns>
+	</mx:DataGrid>
+
+</mx:WindowedApplication>

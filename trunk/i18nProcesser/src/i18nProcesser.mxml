@@ -11,7 +11,8 @@
 		private var saveFile:File;
 		private var fullXml:XML;
 		private function applicationComplete():void
-		{ 		
+		{ 	
+			XML.ignoreComments = false;	
 			saveFile = new File();
 			saveFile.addEventListener(Event.SELECT,createXml);
 			directory= File.documentsDirectory;
@@ -43,7 +44,7 @@
 			fullXml.appendChild(xmli18n);
 			fullXml.appendChild(xmli18nReplace);
 			saveButton.enabled = true;
-			xmlView.text=fullXml.toString();
+			xmlView.text=fullXml;
 		}
 		private function openProject():void
 		{
@@ -66,8 +67,8 @@
 			else
 			{
 				fullXml.setName(fileName[0]);
-				trace(fullXml.toString())
-				saveStream.writeUTFBytes(fullXml.toString());
+				trace(fullXml)
+				saveStream.writeUTFBytes(fullXml);
 				Alert.show("File Saved","File Saved");
 			}
 			saveStream.close();

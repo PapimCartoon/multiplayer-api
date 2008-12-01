@@ -10,7 +10,10 @@ package emulator {
 	import flash.external.*;
 	import flash.net.*;
 	import flash.text.*;
-	import flash.utils.*;
+	import flash.utils.ByteArray;
+	import flash.utils.Timer;
+	import flash.utils.getTimer;
+	import flash.utils.setTimeout;
 	public class Server extends MovieClip {
 			 
 		private static const COL_player_ids:String = "player_ids";
@@ -1754,10 +1757,7 @@ package emulator {
 			serverState = new ObjectDictionary();
 			for each(var severEntry:ServerEntry in serverEntries)
 			{
-				if(severEntry.value == null)
-					serverState.remove(severEntry.key)
-				else
-					serverState.put(severEntry.key,severEntry);
+					serverState.addEntry(severEntry);
 			}	
 		}
 
@@ -2251,12 +2251,7 @@ package emulator {
 				errorHandler("Error: you stored more than a 1000 keys!");
 				return;
 			}
-			//if(serverState.hasKey(stateEntery.key))
-			//	serverState.remove(stateEntery.key);
-			if(stateEntery.value == null)
-				serverState.remove(stateEntery.key);
-			else
-				serverState.put(stateEntery.key,stateEntery);
+			serverState.addEntry(stateEntery);
 			showMatchState();
 		}
 		public function doFoundHacker(user:User, msg:API_DoAllFoundHacker):void {

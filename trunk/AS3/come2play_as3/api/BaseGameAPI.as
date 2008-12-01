@@ -140,10 +140,7 @@ package come2play_as3.api {
         private function updateMirorServerState(serverEntries:Array/*ServerEntry*/):void
         {
         	for each (var serverEntry:ServerEntry in serverEntries) {
-        	    if ((serverEntry.value == null) && (serverEntry.visibleToUserIds == null))
-					serverStateMiror.remove(serverEntry.key);
-				else 
-					serverStateMiror.put(serverEntry.key,serverEntry);	
+        	    serverStateMiror.addEntry(serverEntry);	
         	}     	
         }
         public function getServerEntry(key:Object):ServerEntry

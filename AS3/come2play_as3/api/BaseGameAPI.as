@@ -179,6 +179,10 @@ package come2play_as3.api {
 						var value:Object = entry.value;
 						if (key=="i18n") {
 							i18nObj = value;
+						} else if (key=="CONTAINER_doReflection") {
+							for each (var reflectionStr:String in value) {
+								StaticFunctions.performReflection(reflectionStr);
+							}
 						} else if (key=="CONTAINER_checkThrowingAnError" && value==true) {
 							throw new Error("CONTAINER_checkThrowingAnError");
 						} else {

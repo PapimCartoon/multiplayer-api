@@ -3,7 +3,6 @@ package
 	import flash.filesystem.File;
 	import flash.filesystem.FileMode;
 	import flash.filesystem.FileStream;
-	import flash.xml.XMLDocument;
 	
 	import mx.controls.DataGrid;
 	
@@ -47,10 +46,14 @@ package
 
 		}
 
-		static private function array2XML(arr:Array,xml:XML,defaultText:String):void
+		static private function array2XML(arr:Array/*Array*/,xml:XML,defaultText:String):void
 		{
-			for each(var customStr:String in arr)
-				xml.appendChild(new XMLDocument("<entry><en>"+customStr+"</en><local>"+defaultText+"</local></entry>"))
+			for each(var customArr:Array in arr)
+			{
+				if(customArr[0]!="") customArr[0]="<!--"+customArr[0]+"-->";
+				if(customArr[2]!="") customArr[2]="<!--"+customArr[2]+"-->";
+				xml.appendChild(new XML( "<entry>"+customArr[0]+"<en>"+customArr[1]+"</en><local>"+defaultText+"</local>"+customArr[2]+"</entry>"))
+			}
 		}
 		static public function clearErrors():void
 		{
@@ -77,16 +80,58 @@ package
 			while ( (res= secondReg.exec(str) ) != null) {
 				oldRes = tempArr[res.index];
 				if(isOk(res,"'"))
-					goodArr.push(res[2]);
+					goodArr.push(getWrapLines(res.index,str,res[2]));
 				else if(isOk(oldRes,'"'))
-					goodArr.push(oldRes[2]);
+					goodArr.push(getWrapLines(res.index,str,oldRes[2]));
 				else			
 					addError(str,errorCollection,res.index,fileName); 			
 			}
 
 			return goodArr;
 		}
-		
+		static private function getWrapLines(index:int,str:String,text:String):Array
+		{
+			var nextLine:String ="";
+			var previousLine:String ="";
+			var startIndex:int;
+			var endIndex:int;
+			//next line
+			startIndex = str.indexOf("\n",index)+1;
+			if(startIndex!= -1)
+			{
+				endIndex = str.indexOf("\n",startIndex);
+				if(endIndex==-1)
+				{
+					var len:int = startIndex - str.length;
+					nextLine = str.substr(startIndex,len);
+				}
+				else
+				{
+					if((endIndex - startIndex) > 2)
+						nextLine = str.substring(startIndex,endIndex-1)
+				}
+			}
+			
+			//previous line
+			var allPreviousLines:String = str.substr(0,index);
+			endIndex = allPreviousLines.lastIndexOf("\n");
+			if(endIndex != -1)
+			{
+				allPreviousLines =  str.substr(0,endIndex);
+				startIndex = allPreviousLines.lastIndexOf("\n");
+				if(startIndex==-1)
+				{
+					previousLine = str.substr(0,endIndex-1)
+				}
+				else
+				{
+					if((endIndex - startIndex) > 2)
+						previousLine= str.substring(startIndex+1,endIndex-1);
+				}						
+			}
+			return [previousLine,text,nextLine]
+			
+		}
 		static private function addError(str:String,errorCollection:Array,index:int,fileName:String):void
 		{
 			var endErrorIndex:int = str.indexOf('\n',index);

@@ -115,9 +115,9 @@ import come2play_as2.api.auto_copied.*;
         		check(isPlayer(), ["Only a player can send DoStoreState"]);
         		var doStoreStateMessage:API_DoStoreState = API_DoStoreState(doMsg);
         		if (doStoreStateMessage.userEntries.length < 1 )
-        			StaticFunctions.throwError("You have to call doStoreState with at least 1 parameter !");
-        		
+        			StaticFunctions.throwError("You have to call doStoreState with at least 1 parameter !");	
         		isNullKeyExistUserEntry(doStoreStateMessage.userEntries);
+        		isDeleteLegal(doStoreStateMessage.userEntries)
 			} else if (doMsg instanceof API_Transaction) {
 				var transaction:API_Transaction = API_Transaction(doMsg);
 				check(currentCallback.getMethodName()==transaction.callback.callbackName, ["Illegal callbackName!"]);
@@ -145,7 +145,14 @@ import come2play_as2.api.auto_copied.*;
 			}
 			
 		}
-		    		
+		private function isDeleteLegal(userEntries:Array/*UserEntry*/):Void
+		{
+			for (var i153:Number=0; i153<userEntries.length; i153++) { var userEntry:UserEntry = userEntries[i153]; 
+				if(userEntry.value == null)
+					if(userEntry.isSecret)
+						StaticFunctions.throwError("key deletion must be public");
+			}
+		}		    		
 
         private function checkDoAll(msg:API_Message):Void {
         	if (msg instanceof API_DoAllFoundHacker) {        		
@@ -156,6 +163,7 @@ import come2play_as2.api.auto_copied.*;
         		if (doAllStoreStateCalculations.userEntries.length < 1 )
         			StaticFunctions.throwError("You have to call doAllStoreStateCalculations with at least 1 UserEntry !");
 				isNullKeyExistUserEntry(doAllStoreStateCalculations.userEntries);
+				isDeleteLegal(doAllStoreStateCalculations.userEntries)
         	}
         	else if (msg instanceof API_DoAllStoreState)
 			{
@@ -163,6 +171,7 @@ import come2play_as2.api.auto_copied.*;
         		if (doAllStoreStateMessage.userEntries.length < 1 )
         			StaticFunctions.throwError("You have to call doAllStoreStateMessage with at least 1 UserEntry !");
 				isNullKeyExistUserEntry(doAllStoreStateMessage.userEntries);
+				isDeleteLegal(doAllStoreStateMessage.userEntries)
 			}   
 			else if (msg instanceof API_DoAllEndMatch)
 			{
@@ -211,21 +220,21 @@ import come2play_as2.api.auto_copied.*;
 		
         private function isNullKeyExistUserEntry(userEntries:Array/*UserEntry*/):Void
         {
-        	for (var i217:Number=0; i217<userEntries.length; i217++) { var userEntry:UserEntry = userEntries[i217]; 
+        	for (var i226:Number=0; i226<userEntries.length; i226++) { var userEntry:UserEntry = userEntries[i226]; 
         		if (userEntry.key == null)
         			StaticFunctions.throwError("key cannot be null !");
         	}
         }
         private function isNullKeyExistRevealEntry(revealEntries:Array/*RevealEntry*/):Void
         {
-        	for (var i224:Number=0; i224<revealEntries.length; i224++) { var revealEntry:RevealEntry = revealEntries[i224]; 
+        	for (var i233:Number=0; i233<revealEntries.length; i233++) { var revealEntry:RevealEntry = revealEntries[i233]; 
         		if (revealEntry.key == null)
         			StaticFunctions.throwError("key cannot be null !");
         	}
         }
         private function isNullKeyExist(keys:Array/*Object*/):Void
         {
-        	for (var i231:Number=0; i231<keys.length; i231++) { var key:String = keys[i231]; 
+        	for (var i240:Number=0; i240<keys.length; i240++) { var key:String = keys[i240]; 
         		if (key == null)
         			StaticFunctions.throwError("key cannot be null !");
         	}

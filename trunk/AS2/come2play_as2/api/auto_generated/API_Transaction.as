@@ -22,7 +22,7 @@ import come2play_as2.api.auto_generated.*;
 			this.callback = parameters[pos++];
 			this.messages = parameters[pos++];
 		}
-		/*override*/ public function getFunctionId():Number { return -85; }
+		/*override*/ public function getFunctionId():Number { return -84; }
 		/*override*/ public function getMethodName():String { return 'aPI_Transaction'; }
 
 // This is a AUTOMATICALLY GENERATED! Do not change!

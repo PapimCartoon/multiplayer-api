@@ -166,9 +166,9 @@ package emulator.auto_copied
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-        			StaticFunctions.throwError("You have to call doStoreState with at least 1 parameter !");
-        		
+        			StaticFunctions.throwError("You have to call doStoreState with at least 1 parameter !");	
         		isNullKeyExistUserEntry(doStoreStateMessage.userEntries);
+        		isDeleteLegal(doStoreStateMessage.userEntries)
 			} else if (doMsg is API_Transaction) {
 				var transaction:API_Transaction = /*as*/doMsg as API_Transaction;
 				check(currentCallback.getMethodName()==transaction.callback.callbackName, ["Illegal callbackName!"]);
@@ -205,9 +205,19 @@ package emulator.auto_copied
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		    		
+		private function isDeleteLegal(userEntries:Array/*UserEntry*/):void
+		{
+			for each(var userEntry:UserEntry in userEntries) {
+				if(userEntry.value == null)
+					if(userEntry.isSecret)
+						StaticFunctions.throwError("key deletion must be public");
+			}
+		}		    		
 
         private function checkDoAll(msg:API_Message):void {
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
         	if (msg is API_DoAllFoundHacker) {        		
 			}
 			else if (msg is API_DoAllStoreStateCalculation) 
@@ -215,23 +225,25 @@ package emulator.auto_copied
 				var doAllStoreStateCalculations:API_DoAllStoreStateCalculation = /*as*/msg as API_DoAllStoreStateCalculation;
         		if (doAllStoreStateCalculations.userEntries.length < 1 )
         			StaticFunctions.throwError("You have to call doAllStoreStateCalculations with at least 1 UserEntry !");
+				isNullKeyExistUserEntry(doAllStoreStateCalculations.userEntries);
+				isDeleteLegal(doAllStoreStateCalculations.userEntries)
+        	}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-				isNullKeyExistUserEntry(doAllStoreStateCalculations.userEntries);
-        	}
         	else if (msg is API_DoAllStoreState)
 			{
 				var doAllStoreStateMessage:API_DoAllStoreState = /*as*/msg as API_DoAllStoreState;
         		if (doAllStoreStateMessage.userEntries.length < 1 )
         			StaticFunctions.throwError("You have to call doAllStoreStateMessage with at least 1 UserEntry !");
 				isNullKeyExistUserEntry(doAllStoreStateMessage.userEntries);
+				isDeleteLegal(doAllStoreStateMessage.userEntries)
 			}   
 			else if (msg is API_DoAllEndMatch)
+			{
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			{
 				var doAllEndMatchMessage:API_DoAllEndMatch = /*as*/msg as API_DoAllEndMatch;
         		if (doAllEndMatchMessage.finishedPlayers.length < 1 )
         			StaticFunctions.throwError("You have to call doAllEndMatch with at least 1 PlayerMatchOver !");
@@ -241,10 +253,10 @@ package emulator.auto_copied
 				var doAllRevealState:API_DoAllRevealState = /*as*/msg as API_DoAllRevealState;
         		if (doAllRevealState.revealEntries.length < 1 )
         			StaticFunctions.throwError("You have to call doAllRevealState with at least 1 RevealEntry !");
+        		isNullKeyExistRevealEntry(doAllRevealState.revealEntries);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-        		isNullKeyExistRevealEntry(doAllRevealState.revealEntries);
 			} 
 			else if (msg is API_DoAllRequestStateCalculation) 
 			{
@@ -254,10 +266,10 @@ package emulator.auto_copied
         		isNullKeyExist(doAllRequestStateCalculation.keys);
 			}
 			else if	(msg is API_DoAllRequestRandomState)
+			{
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			{
 				var doAllRequestRandomState:API_DoAllRequestRandomState = /*as*/msg as API_DoAllRequestRandomState;	
 				if (doAllRequestRandomState.key == null)
 					StaticFunctions.throwError("You have to call doAllRequestRandomState with a non null key !");
@@ -267,10 +279,10 @@ package emulator.auto_copied
 				var doAllSetTurn:API_DoAllSetTurn = /*as*/msg as API_DoAllSetTurn;
         		if (AS3_vs_AS2.IndexOf(currentPlayerIds, doAllSetTurn.userId) == -1 )
         			StaticFunctions.throwError("You have to call doAllSetTurn with a player user ID !");
+			}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			}
 			else if (msg is API_DoAllShuffleState) 
 			{
 				var doAllShuffleState:API_DoAllShuffleState = /*as*/msg as API_DoAllShuffleState;
@@ -280,10 +292,10 @@ package emulator.auto_copied
 			}
 			else
 			{
+				check(false, ["Unknown doAll message=",msg]);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-				check(false, ["Unknown doAll message=",msg]);
 			}
         }
 		
@@ -293,10 +305,10 @@ package emulator.auto_copied
         		if (userEntry.key == null)
         			StaticFunctions.throwError("key cannot be null !");
         	}
+        }
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-        }
         private function isNullKeyExistRevealEntry(revealEntries:Array/*RevealEntry*/):void
         {
         	for each (var revealEntry:RevealEntry in revealEntries) {
@@ -306,10 +318,10 @@ package emulator.auto_copied
         }
         private function isNullKeyExist(keys:Array/*Object*/):void
         {
+        	for each (var key:String in keys) {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-        	for each (var key:String in keys) {
         		if (key == null)
         			StaticFunctions.throwError("key cannot be null !");
         	}

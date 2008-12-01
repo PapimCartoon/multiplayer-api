@@ -136,10 +136,7 @@ import come2play_as2.api.*;
         private function updateMirorServerState(serverEntries:Array/*ServerEntry*/):Void
         {
         	for (var i141:Number=0; i141<serverEntries.length; i141++) { var serverEntry:ServerEntry = serverEntries[i141]; 
-        	    if (serverEntry.value == null)
-					serverStateMiror.remove(serverEntry.key);
-				else 
-					serverStateMiror.put(serverEntry.key,serverEntry);	
+        	    serverStateMiror.addEntry(serverEntry);	
         	}     	
         }
         public function getServerEntry(key:Object):ServerEntry
@@ -173,7 +170,7 @@ import come2play_as2.api.*;
 					var customInfo:API_GotCustomInfo = API_GotCustomInfo(msg);
 					var i18nObj:Object = {};
 					var customObj:Object = {};
-					for (var i179:Number=0; i179<customInfo.infoEntries.length; i179++) { var entry:InfoEntry = customInfo.infoEntries[i179]; 
+					for (var i176:Number=0; i176<customInfo.infoEntries.length; i176++) { var entry:InfoEntry = customInfo.infoEntries[i176]; 
 						var key:String = entry.key;
 						var value:Object = entry.value;
 						if (key=="i18n") {

@@ -44,6 +44,7 @@ import come2play_as2.api.auto_generated.*;
 			new RevealEntry().register();
 			new UserEntry().register();
 			new ServerEntry().register();
+			new HistoryEntry().register();
 			new API_Transaction().register();
 		}
 	}

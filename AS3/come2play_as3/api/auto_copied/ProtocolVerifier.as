@@ -152,8 +152,7 @@ package come2play_as3.api.auto_copied
 		}
 		private function isDeleteLegal(userEntries:Array/*UserEntry*/):void
 		{
-			for each(var userEntry:UserEntry in userEntries)
-			{
+			for each(var userEntry:UserEntry in userEntries) {
 				if(userEntry.value == null)
 					if(userEntry.isSecret)
 						StaticFunctions.throwError("key deletion must be public");

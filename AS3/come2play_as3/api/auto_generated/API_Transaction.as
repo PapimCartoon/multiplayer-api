@@ -23,7 +23,7 @@ package come2play_as3.api.auto_generated {
 			this.callback = parameters[pos++];
 			this.messages = parameters[pos++];
 		}
-		override public function getFunctionId():int { return -85; }
+		override public function getFunctionId():int { return -84; }
 		override public function getMethodName():String { return 'aPI_Transaction'; }
 
 // This is a AUTOMATICALLY GENERATED! Do not change!

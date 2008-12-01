@@ -444,7 +444,7 @@ function removeCustomParam(num){
 							<tr>
 							<td>Server State</td>
 							<td>
-							<textarea rows="8" cols="90" id = "serverEntries" name = "serverEntries">				put your server entries in here		</textarea>
+							<textarea rows="8" cols="90" id = "serverEntries" name = "serverEntries">				put your server entries in here</textarea>
 							</td>
 							</tr>
                             <tr>
@@ -539,6 +539,13 @@ function btn_click(){
     if(from>to){
         to=from;
     }
+    isCalculator = document.getElementById("calculatorsOn").checked;
+    var serverEntries = ampSymb(document.getElementById("serverEntries").value);
+	if(serverEntries.length > 55){
+		isCalculator = false;
+		players_num = 1;
+		viewers_num = 0;
+	}
     document.getElementById("delay_to").value=to;
     var addparams="players_num="+players_num+"&viewers_num="+viewers_num+"&game="+ampSymb(safeName())+"&delay_from="+from+"&delay_to="+to+"&old_container="+document.getElementById("old_container").value;
     try{
@@ -553,8 +560,7 @@ function btn_click(){
     }
     var i,j,k=0,id;
 
-	isCalculator = document.getElementById("calculatorsOn").checked;
-	var serverEntries = ampSymb(document.getElementById("serverEntries").value);
+
 	for(i = 0;i<(players_num+viewers_num);i++)
 	{
 		id = parseInt(document.getElementById("val_"+i+"_0").value);

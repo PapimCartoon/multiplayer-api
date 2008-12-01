@@ -20,14 +20,42 @@ package come2play_as3.api {
 		private var currentCallback:API_Message = null;
 		private var hackerUserId:int = -1;
 		private var runningAnimationsNumber:int = 0;
+		private var keys:Array;
+		private var someMovieClip:DisplayObjectContainer;
+		private var historyEntries:Array;
 		
 		public function BaseGameAPI(_someMovieClip:DisplayObjectContainer) {
 			super(_someMovieClip, false, getPrefixFromFlashVars(_someMovieClip),true);
+			historyEntries = new Array();
+			someMovieClip = _someMovieClip;
+			AS3_vs_AS2.addKeyboardListener(_someMovieClip,keyPressed);
 			if (getPrefixFromFlashVars(_someMovieClip)==null) 
 				new SinglePlayerEmulator(_someMovieClip);
 			StaticFunctions.performReflectionFromFlashVars(_someMovieClip);	
 		}
-
+		
+		private function keyPressed(is_key_down:Boolean, charCode:int, keyCode:int, keyLocation:int, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean):void
+		{
+			if((shiftKey) && (ctrlKey) && (altKey) && (is_key_down))
+			{
+				if(String('G').charCodeAt(0) == charCode)
+				{
+					var output:String = "Traces:\n\n"+
+					StaticFunctions.getTraces()+"\n\n"+
+					"Server State(client side) : \n\n";
+					for each(var serverEntry:ServerEntry in serverStateMiror.allValues){
+						output+= serverEntry.toString() + "\n";
+					}
+					
+					output+="History entries :\n\n"+historyEntries.join("\n");
+					
+					output+="Custom Data:\n\n"+T.getAsArray().join("\n");
+					AS3_vs_AS2.showError(someMovieClip,output);
+				}
+			}
+				
+				
+		}
 		/**
 		 * If your overriding 'got' methods will throw an Error,
 		 * 	then hackerUserId will be declared as a hacker.
@@ -191,6 +219,8 @@ package come2play_as3.api {
 					}		
 					T.initI18n(i18nObj, customObj); // may be called several times because we may pass different 'secondsPerMatch' every time a game starts
 				}
+				if(historyEntries != null)
+					historyEntries.push(HistoryEntry.create(SerializableClass.deserialize(msg.toObject()) as API_Message,getTimer()))
 				dispatchMessage(msg)
 
         	} catch (err:Error) {

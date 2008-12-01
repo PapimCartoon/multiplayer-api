@@ -244,12 +244,12 @@ public final class AS3_vs_AS2
 		
 		var blackBox:Sprite=new Sprite();
 		blackBox.graphics.beginFill(0x000000);
-		blackBox.graphics.drawRect(0,0,300,300);
+		blackBox.graphics.drawRect(0,0,500,500);
 		blackBox.graphics.endFill();
 		var child:TextField = new TextField();
 		child.text = msg;
-		child.width = 300;
-		child.height = 300;
+		child.width = 500;
+		child.height = 500;
 		
 		var buttonText:TextField = new TextField();
 		
@@ -264,8 +264,8 @@ public final class AS3_vs_AS2
 		buttonBox.graphics.drawRect(0,0,40,20);
 		buttonBox.graphics.endFill();
 		buttonBox.addChild(buttonText);
-		buttonBox.x = 240
-		buttonBox.y = 260;
+		buttonBox.x = 440
+		buttonBox.y = 460;
 		var closeBtn:SimpleButton = new SimpleButton(buttonBox,buttonBox,buttonBox,buttonBox);
 		blackBox.addChild(child);
 		blackBox.addChild(closeBtn);

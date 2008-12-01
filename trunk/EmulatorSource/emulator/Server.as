@@ -38,7 +38,7 @@ package emulator {
 		private var isTurnBasedGame:Boolean = false;
 		private var bGameStarted:Boolean = false;
 		private var bGameEnded:Boolean = false;
-		
+		private var messageBoxGraphic:MessageBoxGraphic;
 		private var lcFramework:LocalConnection;
 		
 		private var aUsers:Array;
@@ -85,8 +85,7 @@ package emulator {
 		private var btnMatchState:SimpleButton;
 		private var btnMatchOver:SimpleButton;
 		private var btnSavedGames:SimpleButton;
-		
-		private var btnStoreQue:SimpleButton;
+		private var btnServerData:SimpleButton;
 		private var btnUserCallQue:SimpleButton;
 		private var goBackToHistory:Button;
 		private var playByPlay:Button;
@@ -121,7 +120,7 @@ package emulator {
 		private var txtInfoDetails:TextField;
 		private var iInfoMode:int;
 		private var stateCalculationsID:int;
-		
+		private var historyEntries:Array;
 		private var constructorDelayer:Timer;
 		public function showMsg(msg:String, title:String = ""):void {
 			MsgBox.Show(msg, title);
@@ -311,13 +310,16 @@ package emulator {
 			
 			btnMatchOver = tbsPanel["_btnMatchOver"];
 			btnMatchOver.addEventListener(MouseEvent.CLICK, btnMatchOverClick);
-
+			
+			
 			btnSavedGames = tbsPanel["_btnSavedGames"];
 			btnSavedGames.addEventListener(MouseEvent.CLICK, btnSavedGamesClick);
 
 			btnSavedGames = tbsPanel["_btnHistory"];
 			btnSavedGames.addEventListener(MouseEvent.CLICK, btnHistoryClick);
-			
+			messageBoxGraphic = new MessageBoxGraphic(sendNextMessage);
+			messageBoxGraphic.x=  tbsPanel.width/2;
+			messageBoxGraphic.y =  tbsPanel.height/2;
 			goBackToHistory = new Button()
 			goBackToHistory.x = 410;
 			goBackToHistory.y = 306;
@@ -562,7 +564,12 @@ package emulator {
 				return;
 			}
 			if(root.loaderInfo.parameters["serverEntries"].length > 50)
-				loadedServerEntries = SerializableClass.deserialize(JSON.parse( root.loaderInfo.parameters["serverEntries"] ) ) as Array;
+			{
+				var serverEntriesString:String ="["+(String(root.loaderInfo.parameters["serverEntries"]).split("\n")).join(",")+"]"
+				historyEntries = SerializableClass.deserialize(JSON.parse(serverEntriesString) ) as Array ;
+				trace(historyEntries)
+			}
+				
 			//trace(JSON.stringify())
 			loadSavedGames();
 
@@ -581,6 +588,22 @@ package emulator {
 					END OF CONSTRUCTOR
 		*************************************************
 		*/
+		private function sendNextMessage():void
+		{
+			if(historyEntries.length < 1)
+				removeChild(messageBoxGraphic);
+			else
+			{
+				
+				var historyEntry:HistoryEntry = historyEntries.shift();
+				var msg:API_Message = historyEntry.message;
+				messageBoxGraphic.changeMessage(msg);
+				addChild(messageBoxGraphic)
+				for each(var user:User in aUsers)
+					user.sendMessage(msg);
+			}
+			
+		}
 		private var isLoging:Boolean = true;
 		private function handleLoging(ev:MouseEvent):void
 		{
@@ -659,6 +682,8 @@ package emulator {
 			throw new Error(msg);
 		}
 		public function got_user_localconnection_callback(user:User, msg:API_Message):void {
+			if((historyEntries != null) && (!(msg is API_DoRegisterOnServer)))
+				return;
 			if(msg is API_DoTrace)
 			{
 				var traceMsg:API_DoTrace=msg as API_DoTrace;
@@ -1457,37 +1482,36 @@ package emulator {
 				}
 			}*/
 		}
-		
-		private function btnLogClick(ev:MouseEvent):void {
-			tbsPanel.gotoAndStop("Log");
+		private function clearEmulatorGraphic():void
+		{
+			tblInfo.visible = true;
 			pnlCommands.visible = false;
 			goBackToHistory.visible = false;
 			playByPlay.visible = false;
-			logingCheckBox.visible = true;
-			pnlLog.visible = true;
+			logingCheckBox.visible = false;
+			pnlLog.visible = false;
 			pnlInfo.visible=false;
+		}
+		
+		private function btnLogClick(ev:MouseEvent):void {
+			tbsPanel.gotoAndStop("Log");
+			clearEmulatorGraphic()
+			logingCheckBox.visible = true;
+			pnlLog.visible = true;;
 			iInfoMode=0;
 		}
 		
 		private function btnCommandsClick(ev:MouseEvent):void {
 			tbsPanel.gotoAndStop("Command");
+			clearEmulatorGraphic()
 			pnlCommands.visible = true;
-			logingCheckBox.visible = false;
-			playByPlay.visible = false;
-			goBackToHistory.visible = false;
-			pnlLog.visible = false;
-			pnlInfo.visible=false;
 			iInfoMode=0;
 		}
 
 
 		private function btnMatchStateClick(ev:MouseEvent):void {
 			tbsPanel.gotoAndStop("MatchState");
-			pnlCommands.visible = false;
-			logingCheckBox.visible = false;
-			playByPlay.visible = false;
-			goBackToHistory.visible = false;
-			pnlLog.visible = false;
+			clearEmulatorGraphic()
 			pnlInfo.visible=true;
 			if(iInfoMode!=1){
 				iInfoMode=1;
@@ -1501,11 +1525,7 @@ package emulator {
 		
 		private function btnGeneralInfoClick(ev:MouseEvent):void {
 			tbsPanel.gotoAndStop("CustomInfo");
-			pnlCommands.visible = false;
-			logingCheckBox.visible = false;
-			goBackToHistory.visible = false;
-			playByPlay.visible = false;
-			pnlLog.visible = false;
+			clearEmulatorGraphic()
 			pnlInfo.visible=true;
 			if(iInfoMode!=3){
 				iInfoMode=3;
@@ -1517,14 +1537,9 @@ package emulator {
 		}
 
 		private function btnStore(ev:MouseEvent):void
-		{
-			
+		{	
 			tbsPanel.gotoAndStop("Store");
-			pnlCommands.visible = false;
-			goBackToHistory.visible = false;
-			playByPlay.visible = false;
-			logingCheckBox.visible = false;
-			pnlLog.visible = false;
+			clearEmulatorGraphic()
 			pnlInfo.visible=true;
 			if(iInfoMode!=7){
 				iInfoMode=7;
@@ -1537,11 +1552,7 @@ package emulator {
 		private function btnUserCall(ev:MouseEvent):void
 		{
 			tbsPanel.gotoAndStop("UserCallQueue");
-			pnlCommands.visible = false;
-			logingCheckBox.visible = false;
-			playByPlay.visible = false;
-			goBackToHistory.visible = false;
-			pnlLog.visible = false;
+			clearEmulatorGraphic()
 			pnlInfo.visible=true;
 			if(iInfoMode!=2){
 				iInfoMode=2;
@@ -1553,11 +1564,7 @@ package emulator {
 		
 		private function btnUserInfoClick(ev:MouseEvent):void {
 			tbsPanel.gotoAndStop("UserInfo");
-			pnlCommands.visible = false;
-			logingCheckBox.visible = false;
-			playByPlay.visible = false;
-			goBackToHistory.visible = false;
-			pnlLog.visible = false;
+			clearEmulatorGraphic();
 			pnlInfo.visible=true;
 			if(iInfoMode!=4){
 				iInfoMode=4;
@@ -1571,11 +1578,7 @@ package emulator {
 
 		private function btnMatchOverClick(ev:MouseEvent):void {
 			tbsPanel.gotoAndStop("MatchOver");
-			pnlCommands.visible = false;
-			logingCheckBox.visible = false;
-			playByPlay.visible = false;
-			goBackToHistory.visible = false;
-			pnlLog.visible = false;
+			clearEmulatorGraphic()
 			pnlInfo.visible=true;
 			if(iInfoMode!=5){
 				iInfoMode=5;
@@ -1588,11 +1591,7 @@ package emulator {
 		
 		private function btnSavedGamesClick(ev:MouseEvent):void {
 			tbsPanel.gotoAndStop("SavedGames");
-			pnlCommands.visible = false;
-			logingCheckBox.visible = false;
-			goBackToHistory.visible = false;
-			playByPlay.visible = false;
-			pnlLog.visible = false;
+			clearEmulatorGraphic()
 			pnlInfo.visible=true;
 			if(iInfoMode!=6){
 				iInfoMode=6;	
@@ -1600,13 +1599,12 @@ package emulator {
 				showSavedGames();
 			}
 		}
+
 		private function btnHistoryClick(ev:MouseEvent):void
 		{
 			tbsPanel.gotoAndStop("History");
-			pnlCommands.visible = false;
-			logingCheckBox.visible = false;
+			clearEmulatorGraphic()
 			playByPlay.visible = true;
-			pnlLog.visible = false;
 			goBackToHistory.visible = true;
 			pnlInfo.visible=true;
 			if(iInfoMode!=8){
@@ -2143,6 +2141,11 @@ package emulator {
 		}	
 		public function doRegisterOnServer(u:User):void {
 			if (u.wasRegistered) errorHandler("User "+u.Name+" called do_register_on_server twice!");
+			if(historyEntries != null)
+			{
+				sendNextMessage();
+				return;
+			}
 			// send the info of "u" to all registered users (without user "u")
 			broadcast(API_GotUserInfo.create(u.ID,u.entries)); //note, this must be before you call u.wasRegistered = true 
 			u.wasRegistered = true;		

@@ -31,7 +31,7 @@ package come2play_as3.minesweeper
 		{
 			var box:Box = boardBricks[xPos][yPos];
 			box.gotoAndStop(10*(playerNum+1) + borderingMines);
-			setTimeout(function():void{isCorrectChange(isCorrect,box)},100);
+			setTimeout(function():void{isCorrectChange(isCorrect,box)},200);
 			
 		}
 		private function isCorrectChange(isCorrect:Boolean,box:Box):void

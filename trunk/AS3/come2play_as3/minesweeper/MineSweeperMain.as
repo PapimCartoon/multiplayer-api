@@ -64,6 +64,7 @@ import flash.utils.*;
 			mineSweeperLogic.makeBoard(boardWidth,boardHeight,stageX,stageY,allPlayerIds,usersData,myUserId);
 			if(loadServerEntries != null)
 				mineSweeperLogic.loadBoard(loadServerEntries);
+			animationEnded();
 		}
 		public function gameOver(playerMatchOverArr:Array/*PlayerMatchOver*/):void
 		{
@@ -85,7 +86,6 @@ import flash.utils.*;
 			
 			graphics.width = T.custom(CUSTOM_INFO_KEY_gameWidth,graphics.width) as int;
 			graphics.height = T.custom(CUSTOM_INFO_KEY_gameHeight,graphics.height) as int;
-			trace("trace this:"+graphics.scaleX+"/"+graphics.scaleY)
 			mineSweeperLogic.setNewGraphicScale(graphics.scaleX,graphics.scaleY);
 			boardWidth = T.custom(BOARD_WIDTHstr, 12) as int;
 			boardHeight =  T.custom(BOARD_HEIGHTstr, 12) as int;
@@ -148,6 +148,7 @@ import flash.utils.*;
 				loadServerEntries = serverEntries;
 				//load game or viewer
 				graphicPlayed = true;
+				animationStarted();
 				startGraphic.play();
 				
 			}
@@ -168,7 +169,10 @@ import flash.utils.*;
 				//got calculations made by calculator	
 				if(serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" stored the data and not the calculator");
 				if(!graphicPlayed)
+				{
+					animationStarted();
 					startGraphic.play();
+				}
 			}
 			else if(serverEntry.value is PlayerMove)//state changed due to player move
 			{

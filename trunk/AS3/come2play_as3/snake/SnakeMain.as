@@ -106,7 +106,7 @@ package come2play_as3.snake
 			myUserId = T.custom(CUSTOM_INFO_KEY_myUserId, null) as int;
 			xMax = T.custom("xMax", 24) as int;
 			yMax = T.custom("yMax", 24) as int;
-			snakeSpeed = T.custom("snakeSpeed", 10) as int;
+			snakeSpeed = T.custom("snakeSpeed", 100) as int;
 		}
 		override public function gotMatchEnded(finishedPlayerIds:Array):void
 		{

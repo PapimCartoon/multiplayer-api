@@ -133,9 +133,9 @@ import flash.utils.*;
 			var isUserExist:Boolean;
 			for each(var userId:int in allPlayerIds)
 			{
-				for(var i:int;i<allUsersData.length;i++)
+				isUserExist = false;
+				for(var i:int = 0;i<allUsersData.length;i++)
 				{
-					isUserExist = false;
 					userDataObj = allUsersData[i];
 					if(userDataObj.userId == userId)
 					{

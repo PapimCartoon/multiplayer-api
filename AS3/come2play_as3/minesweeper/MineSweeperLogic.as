@@ -261,6 +261,7 @@ package come2play_as3.minesweeper
 				playerMatchOverArr.push(PlayerMatchOver.create(playerGameData[3].id,playerGameData[3].playerScore,0));
 			}	
 			mineSweeperMainPointer.gameOver(playerMatchOverArr);
+			isPlaying = false;
 		}
 
 		private function findPlayer(serverBox:ServerBox):int

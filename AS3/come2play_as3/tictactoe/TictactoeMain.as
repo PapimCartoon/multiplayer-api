@@ -52,7 +52,7 @@ public final class TictactoeMain extends ClientGameAPI {
 	private var shouldUseAvatars:Boolean = true; 
 	// for example, you can have a board of size 5x5, with winLength=4
 	private var winLength:int;
-	private var playersNumInSinglePlayer:int;
+	public static var playersNumInSinglePlayer:int = 3;
 	private var winnerPercentage:int;	
 	private var logoFullUrl:String;
 	private var customSymbolsStringArray:Array/*String*/;

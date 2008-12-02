@@ -5,7 +5,7 @@ package
 	import flash.filesystem.FileStream;
 	
 	import mx.controls.DataGrid;
-	
+	//reflection
 	public class FileInterpator
 	{
 		static private var firstTcustomReg:RegExp = 
@@ -14,8 +14,7 @@ package
 				new RegExp("T[.]custom[ \\t\\n]*[(]([ \\t\\n]*['](.*?[^\\\\])['][ \\t\\n]*[,])?","g");
 		
 		static private var firstI18nReg:RegExp= 
-				new RegExp('T[.]i18n[ \\t\\n]*[(]([ \\t\\n]*["](.*?[^\\\\])["][ \\t\\n]*[)])?',"g");
-				
+				new RegExp('T[.]i18n[ \\t\\n]*[(]([ \\t\\n]*["](.*?[^\\\\])["][ \\t\\n]*[)])?',"g");		
 		static private var secondI18nReg:RegExp=
 				new RegExp("T[.]i18n[ \\t\\n]*[(]([ \\t\\n]*['](.*?[^\\\\])['][ \\t\\n]*[)])?","g");
 		
@@ -24,10 +23,15 @@ package
 		static private var secondI18nReplaceReg:RegExp=
 				new RegExp("T[.]i18nReplace[ \\t\\n]*[(]([ \\t\\n]*['](.*?[^\\\\])['][ \\t\\n]*[,])?","g");
 		
+		static public var forbiddenTypes:String = "MovieClip Stage Function DisplayObjectContainer";		
+		static private var staticVarReg1:RegExp = new RegExp('public\\s+static\\s+var\\s+(\\w+)\\s*:\\s*(\\w+)',"g");
+		static private var staticVarReg2:RegExp = new RegExp('static\\s+public\\s+var\\s+(\\w+)\\s*:\\s*(\\w+)',"g");		
+		static private var staticFolderReg:RegExp = new RegExp('package\\s+((\\w|\\s|[.])+)',"g");
 		static private var errorCollection:Array = new Array();
 		
-		static public function getCustom(file:File,xmlCustom:XML,xmli18n:XML,xmli18nReplace:XML,errorView:DataGrid):void
+		static public function getCustom(file:File,xmlCustom:XML,xmli18n:XML,xmlreflection:XML,errorView:DataGrid):void
 		{
+
 			var newErrors:Array = new Array();
 			var fileStream:FileStream = new FileStream();
 			fileStream.open(file,FileMode.READ);
@@ -37,22 +41,70 @@ package
 			var customValues:Array = runRegExp(str,firstTcustomReg,secondTcustomReg,newErrors,fileName);	
 			var i18nValues:Array = runRegExp(str,firstI18nReg,secondI18nReg,newErrors,fileName)		
 			var i18nReplaceValues:Array =runRegExp(str,firstI18nReplaceReg,secondI18nReplaceReg,newErrors,fileName)	
+			var reflectionsArr:Array = getReflections(str);
+			if(reflectionsArr.length > 1)
+				reflectionArray2XML(reflectionsArr,str,file.name,xmlreflection)
 			array2XML(customValues,xmlCustom,"default custom value");
 			array2XML(i18nValues,xmli18n,"default i18n value");
-			array2XML(i18nReplaceValues,xmli18nReplace,"default i18nReplace value");
+			array2XML(i18nReplaceValues,xmli18n,"default i18nReplace value");
 			newErrors.sortOn("Line");
 			errorCollection = errorCollection.concat(newErrors);
 			errorView.dataProvider =errorCollection;
 
 		}
-
+		static private function getReflections(str:String):Array
+		{
+			var staticVars:Array = new Array();
+			var res:Object
+			while ( (res= staticVarReg1.exec(str) ) != null) {
+				if(forbiddenTypes.indexOf(res[2]) == -1)
+				 staticVars.push({varName:res[1],varType:res[2]})
+			}
+			while ( (res= staticVarReg2.exec(str) ) != null) {
+				if(forbiddenTypes.indexOf(res[2]) == -1)
+				 staticVars.push({varName:res[1],varType:res[2]})
+			}
+			return staticVars;
+		}
+		static private function reflectionArray2XML(reflectionsArr:Array/*Object*/,str:String,fileName:String,xmlreflection:XML):void
+		{
+			var res:Object = staticFolderReg.exec(str)
+			var packge:String="";
+			if(res != null)
+				if(res[1] != null)
+					String(res[1]).replace(new RegExp("\\s","g"),"");
+			var fileParts:Array = fileName.split(".");
+			if(packge!="")
+				packge += "::" + fileParts[0];
+			else
+				packge = fileParts[0];
+			for each(var reflection:Object in reflectionsArr)
+			{
+				var customEntry:XML = <customEntry/>;
+				customEntry.key = packge+"."+reflection.varName;
+				customEntry.value = "default reflection value";
+				customEntry.comment = reflection.varType
+				xmlreflection.appendChild(customEntry)
+			}
+			
+		}
 		static private function array2XML(arr:Array/*Array*/,xml:XML,defaultText:String):void
 		{
 			for each(var customArr:Array in arr)
 			{
-				if(customArr[0]!="") customArr[0]="<!--"+customArr[0]+"-->";
-				if(customArr[2]!="") customArr[2]="<!--"+customArr[2]+"-->";
-				xml.appendChild(new XML( "<entry>"+customArr[0]+"<en>"+customArr[1]+"</en><local>"+defaultText+"</local>"+customArr[2]+"</entry>"))
+				//if(customArr[0]!="") customArr[0]="<!--"+customArr[0]+"-->";
+				//if(customArr[2]!="") customArr[2]="<!--"+customArr[2]+"-->";
+				var customEntry:XML = <customEntry/>;
+				if(customArr[0]!="")
+					customEntry.comment =customArr[0]+"\n";
+				
+				customEntry.value=defaultText;
+				customEntry.key = customArr[1];
+				
+				customEntry.comment +=customArr[2];
+				//customArr[0]+"<key>"++"</key><value>"++"</value>"+customArr[2]
+				xml.appendChild(customEntry)			
+				//xml.appendChild(new XML( "<customEntry>"+customArr[0]+"<key>"+customArr[1]+"</key><value>"+defaultText+"</value>"+customArr[2]+"</customEntry>"))
 			}
 		}
 		static public function clearErrors():void

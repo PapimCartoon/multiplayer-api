@@ -166,7 +166,7 @@ import flash.utils.*;
 		}
 		override public function gotMatchEnded(finishedPlayerIds:Array/*int*/):void 
 		{
-			
+			mineSweeperLogic.isPlaying = false;
 		}
 		override public function gotStateChanged(serverEntries:Array):void
 		{

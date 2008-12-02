@@ -236,7 +236,7 @@ package come2play_as3.minesweeper
 			var playerMatchOverArr:Array/*PlayerMatchOver*/ = new Array();
 			for each(var playerData:PlayerData in playerGameData)
 				if(playerData.playerLives == 0)
-					playerData.playerScore = 0;				
+					playerData.playerScore = -1000;				
 			playerGameData.sortOn("playerScore", Array.NUMERIC | Array.DESCENDING);		
 			if(playerGameData.length ==1)
 			{

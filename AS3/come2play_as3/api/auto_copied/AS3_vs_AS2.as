@@ -14,8 +14,18 @@ public final class AS3_vs_AS2
 		return  o is Error ? error2String(o as Error) :
 			o is ByteArray ? byteArr2Str(o as ByteArray) :
 			o is XML ? (o as XML).toXMLString() :
+			o is Dictionary ? dictionary2Str(o as Dictionary) :
 			o is Date ? '"'+(o as Date).toLocaleTimeString()+'"' :
 			o.toString();
+	}
+	public static function dictionary2Str(dic:Dictionary):String {
+		var keys:Array = [];
+		var vals:Array = [];
+		for (var k:Object in dic) {
+			keys.push(k);
+			vals.push(dic[k]);
+		}
+		return JSON.stringify( { keys:keys, values: vals} );			
 	}
 	public static function byteArr2Str(byteArr:ByteArray):String {
 		var bytes:Array = [];

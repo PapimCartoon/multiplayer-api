@@ -129,14 +129,25 @@ import flash.utils.*;
 			loadServerEntries = null;
 			graphicPlayed = false;
 			usersData = new Array();
-			for each (var obj:Object in allUsersData)
+			var userDataObj:Object;
+			var isUserExist:Boolean;
+			for each(var userId:int in allPlayerIds)
 			{
-				if(allPlayerIds.indexOf(obj.userId) != -1)
-					usersData.push(obj);
+				for(var i:int;i<allUsersData.length;i++)
+				{
+					isUserExist = false;
+					userDataObj = allUsersData[i];
+					if(userDataObj.userId == userId)
+					{
+						isUserExist = true;
+						usersData.push(userDataObj);
+						allUsersData.splice(i,1);
+						i--;
+					}
+				}
+				if(!isUserExist)
+					usersData.push({userId:userId,name:"player "+userId});
 			}
-			
-			for(var i:int = usersData.length ;i<allPlayerIds.length;i++)
-				usersData.push({userId:allPlayerIds[i],name:"player "+allPlayerIds[i]});
 			if(serverEntries.length == 0)
 			{
 				doAllRequestRandomState("randomSeed",true);

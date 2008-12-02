@@ -23,15 +23,18 @@ package come2play_as3.api {
 		private var keys:Array;
 		private var someMovieClip:DisplayObjectContainer;
 		private var historyEntries:Array;
+		public static var HISTORY_LENGTH:int = 0;
 		
 		public function BaseGameAPI(_someMovieClip:DisplayObjectContainer) {
 			super(_someMovieClip, false, getPrefixFromFlashVars(_someMovieClip),true);
-			historyEntries = new Array();
 			someMovieClip = _someMovieClip;
 			AS3_vs_AS2.addKeyboardListener(_someMovieClip,keyPressed);
 			if (getPrefixFromFlashVars(_someMovieClip)==null) 
 				new SinglePlayerEmulator(_someMovieClip);
 			StaticFunctions.performReflectionFromFlashVars(_someMovieClip);	
+			if(HISTORY_LENGTH > 0)
+				historyEntries = new Array();
+			//come2play_as3.api::BaseGameAPI.abc = 666
 		}
 		
 		private function keyPressed(is_key_down:Boolean, charCode:int, keyCode:int, keyLocation:int, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean):void
@@ -46,8 +49,8 @@ package come2play_as3.api {
 					for each(var serverEntry:ServerEntry in serverStateMiror.allValues){
 						output+= serverEntry.toString() + "\n";
 					}
-					
-					output+="History entries :\n\n"+historyEntries.join("\n");
+					if(historyEntries!=null)
+						output+="History entries :\n\n"+historyEntries.join("\n")+"\n\n";
 					
 					output+="Custom Data:\n\n"+T.getAsArray().join("\n");
 					AS3_vs_AS2.showError(someMovieClip,output);
@@ -220,7 +223,8 @@ package come2play_as3.api {
 					T.initI18n(i18nObj, customObj); // may be called several times because we may pass different 'secondsPerMatch' every time a game starts
 				}
 				if(historyEntries != null)
-					historyEntries.push(HistoryEntry.create(SerializableClass.deserialize(msg.toObject()) as API_Message,getTimer()))
+					if(historyEntries.length < HISTORY_LENGTH)
+						historyEntries.push(HistoryEntry.create(SerializableClass.deserialize(msg.toObject()) as API_Message,getTimer()))
 				dispatchMessage(msg)
 
         	} catch (err:Error) {

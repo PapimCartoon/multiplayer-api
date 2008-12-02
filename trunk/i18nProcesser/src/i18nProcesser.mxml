@@ -35,14 +35,15 @@
 			FileInterpator.clearErrors();
 			var xmlCustom:XML = new XML("<custom type='list'></custom>");
 			var xmli18n:XML = new XML("<i18n type='list'></i18n>");
-			var xmli18nReplace:XML = new XML("<i18nReplace type='list'></i18nReplace>");
+			var xmlreflection:XML = new XML("<reflection type='list'></reflection>");
 			for each(var file:File in asFileList)
 			{
-				FileInterpator.getCustom(file,xmlCustom,xmli18n,xmli18nReplace,errorView);
+				FileInterpator.getCustom(file,xmlCustom,xmli18n,xmlreflection,errorView);
 			}
 			fullXml.appendChild(xmlCustom);
 			fullXml.appendChild(xmli18n);
-			fullXml.appendChild(xmli18nReplace);
+			fullXml.appendChild(xmlreflection);
+			
 			saveButton.enabled = true;
 			xmlView.text=fullXml;
 		}
@@ -60,7 +61,6 @@
 		private function createXml(ev:Event):void
 		{
 			var saveStream:FileStream = new FileStream();
-			saveStream.open(saveFile,FileMode.WRITE);
 			var fileName:Array = saveFile.name.split(".")
 			if((fileName[1]!= "xml") && (fileName[1]!="XML") && (fileName[1]!="Xml"))
 				Alert.show("File extension must be *.xml","Wrong file name");
@@ -68,8 +68,14 @@
 			{
 				fullXml.setName(fileName[0]);
 				trace(fullXml)
-				saveStream.writeUTFBytes(fullXml);
+				try{
+				var saveXml:XML = new XML(xmlView.text)
+				saveStream.open(saveFile,FileMode.WRITE);
+				saveStream.writeUTFBytes(saveXml);
 				Alert.show("File Saved","File Saved");
+				}catch (er:Error){
+					Alert.show("File not Saved,you made an error in the XML","Error");
+				}
 			}
 			saveStream.close();
 			

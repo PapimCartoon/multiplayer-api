@@ -197,8 +197,7 @@ import flash.utils.*;
 					doAllRevealState([RevealEntry.create(key,null,1)]);	
 					return;
 				}
-				if(myUserId == playerMove.playerId)
-					doStoreState([UserEntry.create(serverEntry.key,null,false)]);
+				doAllStoreState([UserEntry.create(serverEntry.key,null,false)]);
 			}
 			else if(serverEntry.value is ServerBox)//state changed due to RevealEntry caused by a player move
 			{

@@ -56,6 +56,8 @@ import flash.utils.*;
 			startGraphic.stop();
 			graphics.addChild(startGraphic);
 			startGraphic.addEventListener("starterEnd",startGame);
+			graphics.addEventListener(KeyboardEvent.KEY_DOWN,function (ev:KeyboardEvent):void {keyPressed(ev,true);})
+			graphics.addEventListener(KeyboardEvent.KEY_UP,function (ev:KeyboardEvent):void {keyPressed(ev,false);})
 			doRegisterOnServer();
 		}
 		
@@ -217,9 +219,11 @@ import flash.utils.*;
 				}
 			}
 		}
-		override public function gotKeyboardEvent(isKeyDown:Boolean, charCode:int, keyCode:int, keyLocation:int, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean):void
+		private function keyPressed(ev:KeyboardEvent,isDown:Boolean):void
 		{
-			mineSweeperLogic.mine = shiftKey;
+			if( (T.custom("CONTAINER_isFocusInChat",true) as Boolean) && (ev.shiftKey))
+				mineSweeperLogic.mine = isDown;
 		}
+
 	}
 }

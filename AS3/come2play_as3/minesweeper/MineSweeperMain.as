@@ -208,6 +208,7 @@ import flash.utils.*;
 			else if(serverEntry.value.type == "deadSpace")//player found a safe zone
 			{
 				serverEntry = serverEntries[1];
+				if(serverEntry == null) return;
 				if(serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" stored the data and not the calculator");
 				if(serverEntry.value is Array)
 				{

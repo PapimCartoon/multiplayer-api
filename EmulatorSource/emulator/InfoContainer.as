@@ -68,7 +68,7 @@ package emulator {
 
 			lblWait = new TextField();
 			lblWait.selectable = false;
-			lblWait.text = "Waiting for oponent\s and Calculators...";
+			lblWait.text = "Waiting for opponent\s and Calculators...";
 			lblWait.visible = false;
 			lblWait.autoSize = TextFieldAutoSize.LEFT;
 			this.addChild(lblWait);

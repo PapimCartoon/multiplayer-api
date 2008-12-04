@@ -22,17 +22,18 @@ package come2play_as3.api {
 		private var runningAnimationsNumber:int = 0;
 		private var keys:Array;
 		private var someMovieClip:DisplayObjectContainer;
-		private var historyEntries:Array;
-		private var keyboardMessages:Array;
+		private var historyEntries:Array/*HistoryEntry*/;
+		private var keyboardMessages:Array/*API_GotKeyboardEvent*/;
+		private var singlePlayerEmulator:SinglePlayerEmulator;
 		public static var HISTORY_LENGTH:int = 0;
 		
 		public function BaseGameAPI(_someMovieClip:DisplayObjectContainer) {
 			super(_someMovieClip, false, getPrefixFromFlashVars(_someMovieClip),true);
-			keyboardMessages = new Array();
+			keyboardMessages = [];
 			someMovieClip = _someMovieClip;
 			AS3_vs_AS2.addKeyboardListener(_someMovieClip,keyPressed);
 			if (getPrefixFromFlashVars(_someMovieClip)==null) 
-				new SinglePlayerEmulator(_someMovieClip);
+				singlePlayerEmulator = new SinglePlayerEmulator(_someMovieClip); // to prevent garbage collection
 			StaticFunctions.performReflectionFromFlashVars(_someMovieClip);	
 			if(HISTORY_LENGTH > 0)
 				historyEntries = new Array();
@@ -58,10 +59,10 @@ package come2play_as3.api {
 					AS3_vs_AS2.showError(someMovieClip,output);
 				}
 			}
-			if ( (!(T.custom(API_Message.CUSTOM_INFO_KEY_isFocusInChat,false) as Boolean) &&
-				 (!(T.custom(API_Message.CUSTOM_INFO_KEY_isPause,false) as Boolean) )))
-				 {
-				 	
+			if (verifier.isPlayer() &&
+				!T.custom(API_Message.CUSTOM_INFO_KEY_isFocusInChat,false) &&
+				!T.custom(API_Message.CUSTOM_INFO_KEY_isPause,false))
+				 {				 	
 					var keyBoardEvent:API_GotKeyboardEvent = API_GotKeyboardEvent.create(is_key_down, charCode, keyCode, keyLocation, altKey, ctrlKey, shiftKey)	
 				 	keyboardMessages.push(keyBoardEvent)
 				 	if(!isInTransaction())
@@ -73,7 +74,7 @@ package come2play_as3.api {
 		}
 		private function sendKeyboardEvents():void
 		{
-			while(keyboardMessages.length > 0 )
+			while (keyboardMessages.length > 0 )
 				dispatchMessage(keyboardMessages.shift());			
 		}
 		/**

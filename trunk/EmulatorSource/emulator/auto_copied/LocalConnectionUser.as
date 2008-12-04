@@ -123,19 +123,19 @@ package emulator.auto_copied
         public function gotMessage(msg:API_Message):void {}
         
         public function sendMessage(msg:API_Message):void {
-        	myTrace(['sendMessage: ',msg]);
+        	myTrace(['sendMessage: ',msg]);      		
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
         	if (msg is API_DoRegisterOnServer)
-        		AS3_vs_AS2.myTimeout(AS3_vs_AS2.delegate(this, this.reallySendMessage,msg),100);
+        		AS3_vs_AS2.myTimeout(AS3_vs_AS2.delegate(this, this.reallySendMessage,msg),1000);
         	else
         		reallySendMessage(msg);
         }
-        private function reallySendMessage(msg:API_Message):void {        						  
+        private function reallySendMessage(msg:API_Message):void {  				  
 			try{
 				AS3_vs_AS2.checkObjectIsSerializable(msg);
-        		verify(msg, true);
+        		verify(msg, true);     		
 				lcUser.send(sSendChanel, "localconnection_callback", msg.toObject());  
 
 // This is a AUTOMATICALLY GENERATED! Do not change!

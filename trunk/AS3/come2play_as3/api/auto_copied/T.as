@@ -43,19 +43,14 @@ package come2play_as3.api.auto_copied
 	 */ 
 	public final class T
 	{
-		private static var _dictionary:Object = null;
-		private static var _custom:Object = null;
+		private static var _dictionary:Object = {};
+		private static var _custom:Object = {};
 		public static function initI18n(dictionary:Object, custom:Object):void {
-			if (_dictionary==null) { _dictionary = {}; _custom = {}; }
 			var key:String;
 			for (key in dictionary)	_dictionary[key] = dictionary[key];			
 			for (key in custom)	_custom[key] = custom[key];
 		}
-		
-		// for customization, e.g., the frame-rate of the game.
-		// If defaultValue is not null, then we require that the **type** of the return value
-		// will be identical to the **type** of the defaultValue.
-		public static function getAsArray():Array
+		public static function getAsArray():Array/*InfoEntry*/
 		{
 			var infoEntries:Array/*InfoEntry*/ = new Array();
 			for(var str:String in _custom)
@@ -63,6 +58,9 @@ package come2play_as3.api.auto_copied
 			return infoEntries;
 		}
 		
+		// for customization, e.g., the frame-rate of the game.
+		// If defaultValue is not null, then we require that the **type** of the return value
+		// will be identical to the **type** of the defaultValue.		
 		public static function custom(key:String, defaultValue:Object/*Type*/):Object/*Type*/ {
 			var res:Object = _custom[key];
 			if (res==null) return defaultValue;

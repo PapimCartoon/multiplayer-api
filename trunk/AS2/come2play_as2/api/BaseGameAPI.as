@@ -18,15 +18,18 @@ import come2play_as2.api.*;
 		private var runningAnimationsNumber:Number = 0;
 		private var keys:Array;
 		private var someMovieClip:MovieClip;
-		private var historyEntries:Array;
+		private var historyEntries:Array/*HistoryEntry*/;
+		private var keyboardMessages:Array/*API_GotKeyboardEvent*/;
+		private var singlePlayerEmulator:SinglePlayerEmulator;
 		public static var HISTORY_LENGTH:Number = 0;
 		
 		public function BaseGameAPI(_someMovieClip:MovieClip) {
 			super(_someMovieClip, false, getPrefixFromFlashVars(_someMovieClip),true);
+			keyboardMessages = [];
 			someMovieClip = _someMovieClip;
 			AS3_vs_AS2.addKeyboardListener(_someMovieClip,keyPressed);
 			if (getPrefixFromFlashVars(_someMovieClip)==null) 
-				new SinglePlayerEmulator(_someMovieClip);
+				singlePlayerEmulator = new SinglePlayerEmulator(_someMovieClip); // to prevent garbage collection
 			StaticFunctions.performReflectionFromFlashVars(_someMovieClip);	
 			if(HISTORY_LENGTH > 0)
 				historyEntries = new Array();
@@ -42,7 +45,7 @@ import come2play_as2.api.*;
 					var output:String = "Traces:\n\n"+
 					StaticFunctions.getTraces()+"\n\n"+
 					"Server State(client side) : \n\n";
-					for (var i48:Number=0; i48<serverStateMiror.allValues.length; i48++) { var serverEntry:ServerEntry = serverStateMiror.allValues[i48]; 
+					for (var i51:Number=0; i51<serverStateMiror.allValues.length; i51++) { var serverEntry:ServerEntry = serverStateMiror.allValues[i51]; 
 						output+= serverEntry.toString() + "\n";
 					}
 					if(historyEntries!=null)
@@ -52,8 +55,23 @@ import come2play_as2.api.*;
 					AS3_vs_AS2.showError(someMovieClip,output);
 				}
 			}
+			if (verifier.isPlayer() &&
+				!T.custom(API_Message.CUSTOM_INFO_KEY_isFocusInChat,false) &&
+				!T.custom(API_Message.CUSTOM_INFO_KEY_isPause,false))
+				 {				 	
+					var keyBoardEvent:API_GotKeyboardEvent = API_GotKeyboardEvent.create(is_key_down, charCode, keyCode, keyLocation, altKey, ctrlKey, shiftKey)	
+				 	keyboardMessages.push(keyBoardEvent)
+				 	if(!isInTransaction())
+				 	{
+				 		sendKeyboardEvents();
+				 	}
+				 }
 				
-				
+		}
+		private function sendKeyboardEvents():Void
+		{
+			while (keyboardMessages.length > 0 )
+				dispatchMessage(keyboardMessages.shift());			
 		}
 		/**
 		 * If your overriding 'got' methods will throw an Error,
@@ -63,6 +81,7 @@ import come2play_as2.api.*;
 		 * 	however, when the state changes after doAllReveal then
 		 * 	storedByUserId is -1, so your code should call setMaybeHackerUserId.
 		 */
+		
 		public function setMaybeHackerUserId(hackerUserId:Number):Void {
 			this.hackerUserId = hackerUserId;			
 		}
@@ -162,11 +181,12 @@ import come2play_as2.api.*;
        		super.sendMessage( API_Transaction.create(API_DoFinishedCallback.create(currentCallback.getMethodName()), msgsInTransaction) );
     		msgsInTransaction = null;
 			currentCallback = null;
+			sendKeyboardEvents();
         }
         
         private function updateMirorServerState(serverEntries:Array/*ServerEntry*/):Void
         {
-        	for (var i172:Number=0; i172<serverEntries.length; i172++) { var serverEntry:ServerEntry = serverEntries[i172]; 
+        	for (var i192:Number=0; i192<serverEntries.length; i192++) { var serverEntry:ServerEntry = serverEntries[i192]; 
         	    serverStateMiror.addEntry(serverEntry);	
         	}     	
         }
@@ -201,13 +221,13 @@ import come2play_as2.api.*;
 					var customInfo:API_GotCustomInfo = API_GotCustomInfo(msg);
 					var i18nObj:Object = {};
 					var customObj:Object = {};
-					for (var i207:Number=0; i207<customInfo.infoEntries.length; i207++) { var entry:InfoEntry = customInfo.infoEntries[i207]; 
+					for (var i227:Number=0; i227<customInfo.infoEntries.length; i227++) { var entry:InfoEntry = customInfo.infoEntries[i227]; 
 						var key:String = entry.key;
 						var value:Object = entry.value;
 						if (key=="i18n") {
 							i18nObj = value;
 						} else if (key=="CONTAINER_doReflection") {
-							for (var i213:Number=0; i213<value.length; i213++) { var reflectionEntry:InfoEntry = value[i213]; 
+							for (var i233:Number=0; i233<value.length; i233++) { var reflectionEntry:InfoEntry = value[i233]; 
 								StaticFunctions.performReflectionObject(reflectionEntry.key,reflectionEntry.value);
 							}
 						} else if (key=="CONTAINER_checkThrowingAnError" && value==true) {

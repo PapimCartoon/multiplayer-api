@@ -48,7 +48,7 @@ class come2play_as2.tictactoe.TictactoeMain extends ClientGameAPI {
 	private var shouldUseAvatars:Boolean = true; 
 	// for example, you can have a board of size 5x5, with winLength=4
 	private var winLength:Number;
-	private var playersNumInSinglePlayer:Number;
+	public static var playersNumInSinglePlayer:Number = 3;
 	private var winnerPercentage:Number;	
 	private var logoFullUrl:String;
 	private var customSymbolsStringArray:Array/*String*/;

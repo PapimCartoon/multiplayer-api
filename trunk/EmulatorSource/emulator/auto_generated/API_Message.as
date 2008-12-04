@@ -31,6 +31,7 @@ package emulator.auto_generated {
 		public static const CUSTOM_INFO_KEY_gameFrameRate:String = "CONTAINER_gameFrameRate";
 		public static const CUSTOM_INFO_KEY_myUserId:String = "CONTAINER_myUserId";
 		public static const CUSTOM_INFO_KEY_isPause:String = "CONTAINER_isPause";
+		public static const CUSTOM_INFO_KEY_isFocusInChat:String = "CONTAINER_isFocusInChat";
 		public static const CUSTOM_INFO_KEY_isBack:String = "CONTAINER_isBack";
 	}
 }

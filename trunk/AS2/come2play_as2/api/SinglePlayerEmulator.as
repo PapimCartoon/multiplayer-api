@@ -12,9 +12,6 @@
 	 * gotUserInfo
 	 * gotMatchStarted
 	 * 
-	 * The server will also listen to keyboard events and call:
-	 * gotKeyboardEvent
-	 * 
 	 * When the server gets doAllEndMatch,
 	 * it will wait 2 seconds before starting a new match.
 	 */
@@ -50,18 +47,13 @@ import come2play_as2.api.*;
 			this.customInfoEntries = DEFAULT_GENERAL_INFO;
 			this.userId = DEFAULT_USER_ID;
 			this.userInfoEntries = DEFAULT_USER_INFO;
-			this.userStateEntries = DEFAULT_MATCH_STATE;			
-									
-			AS3_vs_AS2.addKeyboardListener(graphics, AS3_vs_AS2.delegate(this, this.reportKeyDown));	
-		}		
-		private function reportKeyDown(is_key_down:Boolean, charCode:Number, keyCode:Number, keyLocation:Number, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean):Void {		
-			queueSendMessage(API_GotKeyboardEvent.create(is_key_down, charCode, keyCode, keyLocation, altKey, ctrlKey, shiftKey) );
-		}		
+			this.userStateEntries = DEFAULT_MATCH_STATE;
+		}
 		
         /*override*/ public function gotMessage(msg:API_Message):Void {        	
 			if (msg instanceof API_Transaction) {
 				var transaction:API_Transaction = API_Transaction(msg);
-				for (var i65:Number=0; i65<transaction.messages.length; i65++) { var innerMsg:API_Message = transaction.messages[i65]; 
+				for (var i57:Number=0; i57<transaction.messages.length; i57++) { var innerMsg:API_Message = transaction.messages[i57]; 
 					gotMessage(innerMsg);
 				}
 				gotMessage(transaction.callback);
@@ -69,7 +61,7 @@ import come2play_as2.api.*;
 				var doStore:API_DoStoreState = API_DoStoreState(msg);				
 				var userEntries:Array/*UserEntry*/ = doStore.userEntries;
 				var serverEntries:Array/*ServerEntry*/ = [];
-				for (var i73:Number=0; i73<userEntries.length; i73++) { var userEntry:UserEntry = userEntries[i73]; 
+				for (var i65:Number=0; i65<userEntries.length; i65++) { var userEntry:UserEntry = userEntries[i65]; 
 					var serverEntry:ServerEntry = ServerEntry.create(userEntry.key, userEntry.value, userId,userEntry.isSecret ? [userId] : null, getTimer());
 					serverEntries.push(serverEntry); 
 				}
@@ -78,7 +70,7 @@ import come2play_as2.api.*;
 			} else if (msg instanceof API_DoAllEndMatch) {
 				var endMatch:API_DoAllEndMatch = API_DoAllEndMatch(msg);
 				var finishedPlayerIds:Array = [];
-				for (var i82:Number=0; i82<endMatch.finishedPlayers.length; i82++) { var matchOver:PlayerMatchOver = endMatch.finishedPlayers[i82]; 
+				for (var i74:Number=0; i74<endMatch.finishedPlayers.length; i74++) { var matchOver:PlayerMatchOver = endMatch.finishedPlayers[i74]; 
 					finishedPlayerIds.push( matchOver.playerId );
 				}
 				queueSendMessage( API_GotMatchEnded.create(finishedPlayerIds) );

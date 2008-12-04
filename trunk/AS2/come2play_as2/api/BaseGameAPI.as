@@ -16,14 +16,45 @@ import come2play_as2.api.*;
 		private var currentCallback:API_Message = null;
 		private var hackerUserId:Number = -1;
 		private var runningAnimationsNumber:Number = 0;
+		private var keys:Array;
+		private var someMovieClip:MovieClip;
+		private var historyEntries:Array;
+		public static var HISTORY_LENGTH:Number = 0;
 		
 		public function BaseGameAPI(_someMovieClip:MovieClip) {
 			super(_someMovieClip, false, getPrefixFromFlashVars(_someMovieClip),true);
+			someMovieClip = _someMovieClip;
+			AS3_vs_AS2.addKeyboardListener(_someMovieClip,keyPressed);
 			if (getPrefixFromFlashVars(_someMovieClip)==null) 
 				new SinglePlayerEmulator(_someMovieClip);
 			StaticFunctions.performReflectionFromFlashVars(_someMovieClip);	
+			if(HISTORY_LENGTH > 0)
+				historyEntries = new Array();
+			//come2play_as2.api::BaseGameAPI.abc = 666
 		}
-
+		
+		private function keyPressed(is_key_down:Boolean, charCode:Number, keyCode:Number, keyLocation:Number, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean):Void
+		{
+			if((shiftKey) && (ctrlKey) && (altKey) && (is_key_down))
+			{
+				if(String('G').charCodeAt(0) == charCode)
+				{
+					var output:String = "Traces:\n\n"+
+					StaticFunctions.getTraces()+"\n\n"+
+					"Server State(client side) : \n\n";
+					for (var i48:Number=0; i48<serverStateMiror.allValues.length; i48++) { var serverEntry:ServerEntry = serverStateMiror.allValues[i48]; 
+						output+= serverEntry.toString() + "\n";
+					}
+					if(historyEntries!=null)
+						output+="History entries :\n\n"+historyEntries.join("\n")+"\n\n";
+					
+					output+="Custom Data:\n\n"+T.getAsArray().join("\n");
+					AS3_vs_AS2.showError(someMovieClip,output);
+				}
+			}
+				
+				
+		}
 		/**
 		 * If your overriding 'got' methods will throw an Error,
 		 * 	then hackerUserId will be declared as a hacker.
@@ -135,7 +166,7 @@ import come2play_as2.api.*;
         
         private function updateMirorServerState(serverEntries:Array/*ServerEntry*/):Void
         {
-        	for (var i141:Number=0; i141<serverEntries.length; i141++) { var serverEntry:ServerEntry = serverEntries[i141]; 
+        	for (var i172:Number=0; i172<serverEntries.length; i172++) { var serverEntry:ServerEntry = serverEntries[i172]; 
         	    serverStateMiror.addEntry(serverEntry);	
         	}     	
         }
@@ -170,11 +201,15 @@ import come2play_as2.api.*;
 					var customInfo:API_GotCustomInfo = API_GotCustomInfo(msg);
 					var i18nObj:Object = {};
 					var customObj:Object = {};
-					for (var i176:Number=0; i176<customInfo.infoEntries.length; i176++) { var entry:InfoEntry = customInfo.infoEntries[i176]; 
+					for (var i207:Number=0; i207<customInfo.infoEntries.length; i207++) { var entry:InfoEntry = customInfo.infoEntries[i207]; 
 						var key:String = entry.key;
 						var value:Object = entry.value;
 						if (key=="i18n") {
 							i18nObj = value;
+						} else if (key=="CONTAINER_doReflection") {
+							for (var i213:Number=0; i213<value.length; i213++) { var reflectionEntry:InfoEntry = value[i213]; 
+								StaticFunctions.performReflectionObject(reflectionEntry.key,reflectionEntry.value);
+							}
 						} else if (key=="CONTAINER_checkThrowingAnError" && value==true) {
 							throw new Error("CONTAINER_checkThrowingAnError");
 						} else {
@@ -183,6 +218,9 @@ import come2play_as2.api.*;
 					}		
 					T.initI18n(i18nObj, customObj); // may be called several times because we may pass different 'secondsPerMatch' every time a game starts
 				}
+				if(historyEntries != null)
+					if(historyEntries.length < HISTORY_LENGTH)
+						historyEntries.push(HistoryEntry.create(API_Message(SerializableClass.deserialize(msg.toObject())),getTimer()))
 				dispatchMessage(msg)
 
         	} catch (err:Error) {

@@ -130,42 +130,44 @@ public final class StaticFunctions
 				var before:String = key.substr(REFLECTION_PREFIX.length);
 				var after:String = parameters[key];
 				if (SHOULD_CALL_TRACE) trace("Perform reflection for: "+before+"="+after);
-				performReflection2(before, after);	
+				performReflectionString(before, after);	
 			}			
 		}
 	}
 	public static function performReflection(reflStr:String):void {		
 		var two:Array = splitInTwo(reflStr, "=", false);
-		performReflection2(two[0], two[1]);
+		performReflectionString(two[0], two[1]);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
 	}
-	public static function performReflection2(before:String, after:String):void {
-		var val_obj:Object = SerializableClass.deserializeString(after);
-		//before = come2play_as3.util::EnumMessage.CouldNotConnect.__minDelayMilli = 
+	public static function performReflectionString(fullClassName:String, valStr:String):void {
+		performReflectionObject(fullClassName, SerializableClass.deserializeString(valStr));
+	}
+	public static function performReflectionObject(fullClassName:String, valObj:Object):void {
+		//fullClassName = come2play_as3.util::EnumMessage.CouldNotConnect.__minDelayMilli 
 		//after = 2000	
-		var package2:Array = splitInTwo(before, "::", false);
+		var package2:Array = splitInTwo(fullClassName, "::", false);
 		var fields2:Array = splitInTwo(package2[1], ".", false);
 		var clzName:String = trim(package2[0]) + "::" + trim(fields2[0]);
-		var fieldsName:String = trim(fields2[1]);
-		var classReference:Object = AS3_vs_AS2.getClassByName(clzName);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		storeTrace("Setting field "+fieldsName+" in class "+clzName+" to val="+val_obj);
+		var fieldsName:String = trim(fields2[1]);
+		var classReference:Object = AS3_vs_AS2.getClassByName(clzName);
+		storeTrace("Setting field "+fieldsName+" in class "+clzName+" to val="+valObj);
 		var fieldsArr:Array = fieldsName.split(".");
 		for (var i:int=0; i<fieldsArr.length; i++) {
 			var fieldName:String = fieldsArr[i];
 			if (i<fieldsArr.length-1)
 				classReference = classReference[fieldName];
 			else
-				classReference[fieldName] = val_obj;			
-		} 		
-	}
+				classReference[fieldName] = valObj;			
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		} 		
+	}
 
 
 	/**
@@ -174,11 +176,11 @@ public final class StaticFunctions
 	 * e.g., 
 	 * 	StaticFunctions.replaceAll("$y'+knkjh$y'+$y'+uoiuoiu$y'+8y$y'+", "$y'+","REPLACED") ==
 	 * 							"REPLACEDknkjhREPLACEDREPLACEDuoiuoiuREPLACED8yREPLACED"		
-	 */
-	public static function replaceAll(str:String, searchFor:String, replaceWith:String):String {		
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	 */
+	public static function replaceAll(str:String, searchFor:String, replaceWith:String):String {		
 		var index:int = 0;
 		var lastIndex:int = 0;
 		var res:Array = [];
@@ -187,11 +189,11 @@ public final class StaticFunctions
 			res.push( replaceWith );
 			index += searchFor.length;
 			lastIndex = index;			
-		}
-		res.push( str.substring(lastIndex) );
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		}
+		res.push( str.substring(lastIndex) );
 		return res.join("");
 	}
 	public static function splitInTwo(str:String, searchFor:String, isLast:Boolean):Array {
@@ -200,11 +202,11 @@ public final class StaticFunctions
 		return [str.substring(0,index),str.substring(index+searchFor.length)];
 	}
 	public static function replaceLastOccurance(str:String, searchFor:String, replaceWith:String):String {
-		var two:Array = splitInTwo(str, searchFor, true);
-		return two[0] + replaceWith + two[1];
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		var two:Array = splitInTwo(str, searchFor, true);
+		return two[0] + replaceWith + two[1];
 	}
 	public static function instance2Object(instance:Object, fields:Array/*String*/):Object {
 		var res:Object = {};
@@ -213,11 +215,11 @@ public final class StaticFunctions
 		}
 		return res;
 	}
-	public static function getShortClassName(obj:Object):String {
-		var className:String = AS3_vs_AS2.getClassName(obj);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	public static function getShortClassName(obj:Object):String {
+		var className:String = AS3_vs_AS2.getClassName(obj);
 		return className.substr(AS3_vs_AS2.stringIndexOf(className,"::")+2);		
 	}
 			

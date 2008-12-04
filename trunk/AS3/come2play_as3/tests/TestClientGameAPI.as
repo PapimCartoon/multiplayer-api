@@ -429,8 +429,7 @@ public class TestClientGameAPI extends ClientGameAPI {
 		super.sendMessage(msg);
 	}
 	override public function gotMessage(msg:API_Message):void {
-		if (!(msg is API_GotKeyboardEvent)) 
-			storeTrace(msg);
+		storeTrace(msg);
 		super.gotMessage(msg);		
 	}
 }

@@ -93,31 +93,33 @@ public final class StaticFunctions
 				var before:String = key.substr(REFLECTION_PREFIX.length);
 				var after:String = parameters[key];
 				if (SHOULD_CALL_TRACE) trace("Perform reflection for: "+before+"="+after);
-				performReflection2(before, after);	
+				performReflectionString(before, after);	
 			}			
 		}
 	}
 	public static function performReflection(reflStr:String):void {		
 		var two:Array = splitInTwo(reflStr, "=", false);
-		performReflection2(two[0], two[1]);
+		performReflectionString(two[0], two[1]);
 	}
-	public static function performReflection2(before:String, after:String):void {
-		var val_obj:Object = SerializableClass.deserializeString(after);
-		//before = come2play_as3.util::EnumMessage.CouldNotConnect.__minDelayMilli = 
+	public static function performReflectionString(fullClassName:String, valStr:String):void {
+		performReflectionObject(fullClassName, SerializableClass.deserializeString(valStr));
+	}
+	public static function performReflectionObject(fullClassName:String, valObj:Object):void {
+		//fullClassName = come2play_as3.util::EnumMessage.CouldNotConnect.__minDelayMilli 
 		//after = 2000	
-		var package2:Array = splitInTwo(before, "::", false);
+		var package2:Array = splitInTwo(fullClassName, "::", false);
 		var fields2:Array = splitInTwo(package2[1], ".", false);
 		var clzName:String = trim(package2[0]) + "::" + trim(fields2[0]);
 		var fieldsName:String = trim(fields2[1]);
 		var classReference:Object = AS3_vs_AS2.getClassByName(clzName);
-		storeTrace("Setting field "+fieldsName+" in class "+clzName+" to val="+val_obj);
+		storeTrace("Setting field "+fieldsName+" in class "+clzName+" to val="+valObj);
 		var fieldsArr:Array = fieldsName.split(".");
 		for (var i:int=0; i<fieldsArr.length; i++) {
 			var fieldName:String = fieldsArr[i];
 			if (i<fieldsArr.length-1)
 				classReference = classReference[fieldName];
 			else
-				classReference[fieldName] = val_obj;			
+				classReference[fieldName] = valObj;			
 		} 		
 	}
 

@@ -427,8 +427,7 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 		super.sendMessage(msg);
 	}
 	/*override*/ public function gotMessage(msg:API_Message):Void {
-		if (!(msg instanceof API_GotKeyboardEvent)) 
-			storeTrace(msg);
+		storeTrace(msg);
 		super.gotMessage(msg);		
 	}
 }

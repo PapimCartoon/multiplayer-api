@@ -80,8 +80,6 @@ import come2play_as2.api.auto_copied.*;
     				if (infoEntry.key==API_Message.CUSTOM_INFO_KEY_myUserId)
     					myUserId = AS3_vs_AS2.as_int(infoEntry.value);
     			}
-			} else if (gotMsg instanceof API_GotKeyboardEvent) {						    			
-    			checkInProgress(true,gotMsg);
     			
 				// can be sent whether the game is in progress or not
 			} else if (gotMsg instanceof API_GotUserInfo) { 
@@ -128,7 +126,7 @@ import come2play_as2.api.auto_copied.*;
 				
 				var wasStoreStateCalculation:Boolean = false;
 				var isRequestStateCalculation:Boolean = currentCallback instanceof API_GotRequestStateCalculation;
-				for (var i134:Number=0; i134<transaction.messages.length; i134++) { var doAllMsg:API_Message = transaction.messages[i134]; 
+				for (var i132:Number=0; i132<transaction.messages.length; i132++) { var doAllMsg:API_Message = transaction.messages[i132]; 
 					checkDoAll(doAllMsg);
 					if (isRequestStateCalculation) {
 						if (doAllMsg instanceof API_DoAllStoreStateCalculation)	
@@ -147,7 +145,7 @@ import come2play_as2.api.auto_copied.*;
 		}
 		private function isDeleteLegal(userEntries:Array/*UserEntry*/):Void
 		{
-			for (var i153:Number=0; i153<userEntries.length; i153++) { var userEntry:UserEntry = userEntries[i153]; 
+			for (var i151:Number=0; i151<userEntries.length; i151++) { var userEntry:UserEntry = userEntries[i151]; 
 				if(userEntry.value == null)
 					if(userEntry.isSecret)
 						StaticFunctions.throwError("key deletion must be public");
@@ -220,21 +218,21 @@ import come2play_as2.api.auto_copied.*;
 		
         private function isNullKeyExistUserEntry(userEntries:Array/*UserEntry*/):Void
         {
-        	for (var i226:Number=0; i226<userEntries.length; i226++) { var userEntry:UserEntry = userEntries[i226]; 
+        	for (var i224:Number=0; i224<userEntries.length; i224++) { var userEntry:UserEntry = userEntries[i224]; 
         		if (userEntry.key == null)
         			StaticFunctions.throwError("key cannot be null !");
         	}
         }
         private function isNullKeyExistRevealEntry(revealEntries:Array/*RevealEntry*/):Void
         {
-        	for (var i233:Number=0; i233<revealEntries.length; i233++) { var revealEntry:RevealEntry = revealEntries[i233]; 
+        	for (var i231:Number=0; i231<revealEntries.length; i231++) { var revealEntry:RevealEntry = revealEntries[i231]; 
         		if (revealEntry.key == null)
         			StaticFunctions.throwError("key cannot be null !");
         	}
         }
         private function isNullKeyExist(keys:Array/*Object*/):Void
         {
-        	for (var i240:Number=0; i240<keys.length; i240++) { var key:String = keys[i240]; 
+        	for (var i238:Number=0; i238<keys.length; i238++) { var key:String = keys[i238]; 
         		if (key == null)
         			StaticFunctions.throwError("key cannot be null !");
         	}

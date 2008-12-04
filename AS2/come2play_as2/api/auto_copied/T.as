@@ -1,3 +1,5 @@
+	import come2play_as2.api.auto_generated.InfoEntry;
+		
 	/**
 	 * For Translations to other languages:
 	 * The strings in your code should be passed to the translation function
@@ -52,6 +54,14 @@ import come2play_as2.api.auto_copied.*;
 		// for customization, e.g., the frame-rate of the game.
 		// If defaultValue is not null, then we require that the **type** of the return value
 		// will be identical to the **type** of the defaultValue.
+		public static function getAsArray():Array
+		{
+			var infoEntries:Array/*InfoEntry*/ = new Array();
+			for(var str:String in _custom)
+				infoEntries.push(InfoEntry.create(str,_custom[str]))
+			return infoEntries;
+		}
+		
 		public static function custom(key:String, defaultValue:Object/*Type*/):Object/*Type*/ {
 			var res:Object = _custom[key];
 			if (res==null) return defaultValue;

@@ -16,9 +16,6 @@ package come2play_as3.api
 	 * gotUserInfo
 	 * gotMatchStarted
 	 * 
-	 * The server will also listen to keyboard events and call:
-	 * gotKeyboardEvent
-	 * 
 	 * When the server gets doAllEndMatch,
 	 * it will wait 2 seconds before starting a new match.
 	 */
@@ -53,13 +50,8 @@ package come2play_as3.api
 			this.customInfoEntries = DEFAULT_GENERAL_INFO;
 			this.userId = DEFAULT_USER_ID;
 			this.userInfoEntries = DEFAULT_USER_INFO;
-			this.userStateEntries = DEFAULT_MATCH_STATE;			
-									
-			AS3_vs_AS2.addKeyboardListener(graphics, AS3_vs_AS2.delegate(this, this.reportKeyDown));	
-		}		
-		private function reportKeyDown(is_key_down:Boolean, charCode:int, keyCode:int, keyLocation:int, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean):void {		
-			queueSendMessage(API_GotKeyboardEvent.create(is_key_down, charCode, keyCode, keyLocation, altKey, ctrlKey, shiftKey) );
-		}		
+			this.userStateEntries = DEFAULT_MATCH_STATE;
+		}
 		
         override public function gotMessage(msg:API_Message):void {        	
 			if (msg is API_Transaction) {

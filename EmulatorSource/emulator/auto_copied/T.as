@@ -6,10 +6,12 @@
 // We do not share the code because the flash goes crazy if it loads to SWFs files with classes of identical names and packages.
 // So we changed the package name when we copied the directory 'auto_copied'
 package emulator.auto_copied
-{	
+{
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	import emulator.auto_generated.InfoEntry;
+		
 	/**
 	 * For Translations to other languages:
 	 * The strings in your code should be passed to the translation function
@@ -18,11 +20,11 @@ package emulator.auto_copied
 	 * or
 	 * 				T.i18n('...')
 	 * or
-	 * 				T.i18nReplace('...$key1$...$key2$...', {key1: ..., key2:...})
-	 * 
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	 * 				T.i18nReplace('...$key1$...$key2$...', {key1: ..., key2:...})
+	 * 
 	 * We have a program that goes over the source files,
 	 * finds all the above occurrences,
 	 * and extracts them to an XML that is used for translation.
@@ -31,11 +33,11 @@ package emulator.auto_copied
 	 * 				T.custom("refresh room every X seconds", 30)
 	 * By default the above code will return 30, 
 	 * unless there is a different custom value.
-	 *   
-	 * 
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	 *   
+	 * 
 	 * Do NOT use the class like this:
 	 * 				var str:String = "bla bla";
 	 * 				T.i18n(str);  // BAD!
@@ -44,11 +46,11 @@ package emulator.auto_copied
 	 * or like this:
 	 * 				T.i18n("bla $key$ foo", replacement)  // BAD! Because we check that the keys in replacement are identical to the $...$ in the string
 	 * or like this:
-	 * 		 		T.custom(key, 30)
-	 * 
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	 * 		 		T.custom(key, 30)
+	 * 
 	 * Handle left-to-right or right-to-left languages
 	 * while creating long messages, like this:
 	 * 				var t:T = new T();
@@ -57,11 +59,11 @@ package emulator.auto_copied
 	 * 				t.add(T.t("Second part..."));
 	 * 				t.add(someName2);
 	 * 				return t.join();
-	 */ 
-	public final class T
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	 */ 
+	public final class T
 	{
 		private static var _dictionary:Object = null;
 		private static var _custom:Object = null;
@@ -70,14 +72,25 @@ package emulator.auto_copied
 			var key:String;
 			for (key in dictionary)	_dictionary[key] = dictionary[key];			
 			for (key in custom)	_custom[key] = custom[key];
-		}
-		
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		}
+		
 		// for customization, e.g., the frame-rate of the game.
 		// If defaultValue is not null, then we require that the **type** of the return value
 		// will be identical to the **type** of the defaultValue.
+		public static function getAsArray():Array
+		{
+			var infoEntries:Array/*InfoEntry*/ = new Array();
+			for(var str:String in _custom)
+				infoEntries.push(InfoEntry.create(str,_custom[str]))
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+			return infoEntries;
+		}
+		
 		public static function custom(key:String, defaultValue:Object/*Type*/):Object/*Type*/ {
 			var res:Object = _custom[key];
 			if (res==null) return defaultValue;

@@ -211,8 +211,8 @@ package come2play_as3.api {
 						if (key=="i18n") {
 							i18nObj = value;
 						} else if (key=="CONTAINER_doReflection") {
-							for each (var reflectionStr:String in value) {
-								StaticFunctions.performReflection(reflectionStr);
+							for each (var reflectionEntry:InfoEntry in value) {
+								StaticFunctions.performReflectionObject(reflectionEntry.key,reflectionEntry.value);
 							}
 						} else if (key=="CONTAINER_checkThrowingAnError" && value==true) {
 							throw new Error("CONTAINER_checkThrowingAnError");
@@ -224,7 +224,7 @@ package come2play_as3.api {
 				}
 				if(historyEntries != null)
 					if(historyEntries.length < HISTORY_LENGTH)
-						historyEntries.push(HistoryEntry.create(SerializableClass.deserialize(msg.toObject()) as API_Message,getTimer()))
+						historyEntries.push(HistoryEntry.create(/*as*/SerializableClass.deserialize(msg.toObject()) as API_Message,getTimer()))
 				dispatchMessage(msg)
 
         	} catch (err:Error) {

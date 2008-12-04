@@ -27,8 +27,21 @@ public final class AS3_vs_AS2
 		return  o is Error ? error2String(o as Error) :
 			o is ByteArray ? byteArr2Str(o as ByteArray) :
 			o is XML ? (o as XML).toXMLString() :
+			o is Dictionary ? dictionary2Str(o as Dictionary) :
 			o is Date ? '"'+(o as Date).toLocaleTimeString()+'"' :
 			o.toString();
+	}
+	public static function dictionary2Str(dic:Dictionary):String {
+		var keys:Array = [];
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+		var vals:Array = [];
+		for (var k:Object in dic) {
+			keys.push(k);
+			vals.push(dic[k]);
+		}
+		return JSON.stringify( { keys:keys, values: vals} );			
 	}
 	public static function byteArr2Str(byteArr:ByteArray):String {
 		var bytes:Array = [];
@@ -326,12 +339,12 @@ public final class AS3_vs_AS2
 		
 		var blackBox:Sprite=new Sprite();
 		blackBox.graphics.beginFill(0x000000);
-		blackBox.graphics.drawRect(0,0,300,300);
+		blackBox.graphics.drawRect(0,0,500,500);
 		blackBox.graphics.endFill();
 		var child:TextField = new TextField();
 		child.text = msg;
-		child.width = 300;
-		child.height = 300;
+		child.width = 500;
+		child.height = 500;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
@@ -352,8 +365,8 @@ public final class AS3_vs_AS2
 		buttonBox.graphics.drawRect(0,0,40,20);
 		buttonBox.graphics.endFill();
 		buttonBox.addChild(buttonText);
-		buttonBox.x = 240
-		buttonBox.y = 260;
+		buttonBox.x = 440
+		buttonBox.y = 460;
 		var closeBtn:SimpleButton = new SimpleButton(buttonBox,buttonBox,buttonBox,buttonBox);
 		blackBox.addChild(child);
 		blackBox.addChild(closeBtn);

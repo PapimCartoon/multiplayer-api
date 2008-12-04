@@ -56,8 +56,6 @@ import flash.utils.*;
 			startGraphic.stop();
 			graphics.addChild(startGraphic);
 			startGraphic.addEventListener("starterEnd",startGame);
-			graphics.stage.addEventListener(KeyboardEvent.KEY_DOWN,keyPressed);
-			graphics.stage.addEventListener(KeyboardEvent.KEY_UP,keyPressed);
 			doRegisterOnServer();
 		}
 		
@@ -86,8 +84,8 @@ import flash.utils.*;
 			stageX = T.custom(CUSTOM_INFO_KEY_gameStageX, null) as int;
 			stageY = T.custom(CUSTOM_INFO_KEY_gameStageY, null) as int;
 			
-			graphics.width = T.custom(CUSTOM_INFO_KEY_gameWidth,graphics.width) as int;
-			graphics.height = T.custom(CUSTOM_INFO_KEY_gameHeight,graphics.height) as int;
+			graphics.width = T.custom(CUSTOM_INFO_KEY_gameWidth,int(graphics.width)) as int;
+			graphics.height = T.custom(CUSTOM_INFO_KEY_gameHeight,int(graphics.height)) as int;
 			mineSweeperLogic.setNewGraphicScale(graphics.scaleX,graphics.scaleY);
 			boardWidth = T.custom(BOARD_WIDTHstr, 12) as int;
 			boardHeight =  T.custom(BOARD_HEIGHTstr, 12) as int;
@@ -219,10 +217,9 @@ import flash.utils.*;
 				}
 			}
 		}
-		private function keyPressed(ev:KeyboardEvent):void
+		override public function gotKeyboardEvent(isKeyDown:Boolean, charCode:int, keyCode:int, keyLocation:int, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean):void
 		{
-			if(T.custom("CONTAINER_isFocusInChat",true) as Boolean)
-				mineSweeperLogic.mine = ev.shiftKey;
+			mineSweeperLogic.mine = shiftKey;
 		}
 
 	}

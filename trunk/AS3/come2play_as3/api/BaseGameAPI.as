@@ -23,10 +23,12 @@ package come2play_as3.api {
 		private var keys:Array;
 		private var someMovieClip:DisplayObjectContainer;
 		private var historyEntries:Array;
+		private var keyboardMessages:Array;
 		public static var HISTORY_LENGTH:int = 0;
 		
 		public function BaseGameAPI(_someMovieClip:DisplayObjectContainer) {
 			super(_someMovieClip, false, getPrefixFromFlashVars(_someMovieClip),true);
+			keyboardMessages = new Array();
 			someMovieClip = _someMovieClip;
 			AS3_vs_AS2.addKeyboardListener(_someMovieClip,keyPressed);
 			if (getPrefixFromFlashVars(_someMovieClip)==null) 
@@ -56,8 +58,23 @@ package come2play_as3.api {
 					AS3_vs_AS2.showError(someMovieClip,output);
 				}
 			}
+			if ( (!(T.custom(API_Message.CUSTOM_INFO_KEY_isFocusInChat,false) as Boolean) &&
+				 (!(T.custom(API_Message.CUSTOM_INFO_KEY_isPause,false) as Boolean) )))
+				 {
+				 	
+					var keyBoardEvent:API_GotKeyboardEvent = API_GotKeyboardEvent.create(is_key_down, charCode, keyCode, keyLocation, altKey, ctrlKey, shiftKey)	
+				 	keyboardMessages.push(keyBoardEvent)
+				 	if(!isInTransaction())
+				 	{
+				 		sendKeyboardEvents();
+				 	}
+				 }
 				
-				
+		}
+		private function sendKeyboardEvents():void
+		{
+			while(keyboardMessages.length > 0 )
+				dispatchMessage(keyboardMessages.shift());			
 		}
 		/**
 		 * If your overriding 'got' methods will throw an Error,
@@ -67,6 +84,7 @@ package come2play_as3.api {
 		 * 	however, when the state changes after doAllReveal then
 		 * 	storedByUserId is -1, so your code should call setMaybeHackerUserId.
 		 */
+		
 		public function setMaybeHackerUserId(hackerUserId:int):void {
 			this.hackerUserId = hackerUserId;			
 		}
@@ -166,6 +184,7 @@ package come2play_as3.api {
        		super.sendMessage( API_Transaction.create(API_DoFinishedCallback.create(currentCallback.getMethodName()), msgsInTransaction) );
     		msgsInTransaction = null;
 			currentCallback = null;
+			sendKeyboardEvents();
         }
         
         private function updateMirorServerState(serverEntries:Array/*ServerEntry*/):void

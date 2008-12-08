@@ -10,30 +10,38 @@ import flash.utils.*;
 public final class AS3_vs_AS2
 {
 	public static const isAS3:Boolean = true;
-	public static function specialToString(o:Object):String {
-		return  o is Error ? error2String(o as Error) :
-			o is ByteArray ? byteArr2Str(o as ByteArray) :
-			o is XML ? (o as XML).toXMLString() :
-			o is Dictionary ? dictionary2Str(o as Dictionary) :
-			o is Date ? '"'+(o as Date).toLocaleTimeString()+'"' :
-			o.toString();
-	}
-	public static function dictionary2Str(dic:Dictionary):String {
-		var keys:Array = [];
-		var vals:Array = [];
-		for (var k:Object in dic) {
-			keys.push(k);
-			vals.push(dic[k]);
+	
+	public static var NATIVE_SERIALIZERS:Array/*NativeSerializable*/;
+	public static function registerNativeSerializers():void {
+		var classes:Array/*Class*/ = [
+			ErrorSerializable,
+			XMLSerializable,
+			ByteArraySerializable,
+			DictionarySerializable,
+			DateSerializable
+		];	
+		NATIVE_SERIALIZERS = [];
+		for each (var serializerClass:Class in classes) {
+			var serializer:NativeSerializable = new serializerClass();
+			SerializableClass.registerClassAlias(serializer.__CLASS_NAME__, serializerClass);
+			serializer.register();
+			NATIVE_SERIALIZERS.push(serializer);
 		}
-		return JSON.stringify( { keys:keys, values: vals} );			
+	}
+	
+	public static function specialToString(o:Object):String {
+		var nativeSerializer:NativeSerializable = null;
+		for each (var serializer:NativeSerializable in NATIVE_SERIALIZERS) {
+			nativeSerializer = serializer.fromNative(o);
+			if (nativeSerializer!=null) break;
+		}
+		if (nativeSerializer!=null) return nativeSerializer.toString();
+		return o.toString();		
 	}
 	public static function byteArr2Str(byteArr:ByteArray):String {
-		var bytes:Array = [];
-		for (var i:int=0; i<byteArr.length; i++)
-			bytes.push(byteArr.readByte());
-		byteArr.position = 0;
-		return "["+bytes.join(", ")+"]";
+		return JSON.stringify(ByteArraySerializable.byteArr2Arr(byteArr));		
 	}
+	
 	public static function isNumber(o:Object):Boolean {
 		return o is Number;
 	}
@@ -358,8 +366,11 @@ public final class AS3_vs_AS2
 		return null;
 	}
 	public static function getClassOfInstance(instance:Object):Class {
+		// These two lines don't work for inner classes like:
+		//		AS3_vs_AS2.as$35::XMLSerializable
 		var className:String = getClassName(instance);
 		var res:Class = getClassByName(className);
+		
 		StaticFunctions.assert(res!=null, ["Missing class for instance=",instance, " className=",className]);
 		return res;		
 	}
@@ -421,4 +432,106 @@ public final class AS3_vs_AS2
 	}
 	
 }
+}
+import come2play_as3.api.auto_copied.SerializableClass;
+import come2play_as3.api.auto_copied.AS3_vs_AS2;
+import flash.utils.ByteArray;
+import flash.utils.Dictionary;
+class NativeSerializable extends SerializableClass {
+	public function NativeSerializable(shortName:String=null) {
+		super(shortName);
+	}
+	public function fromNative(obj:Object):NativeSerializable {
+		throw new Error("Must override fromNative");
+	}	
+	override public function postDeserialize():Object {
+		throw new Error("Must override postDeserialize");
+	}
+}	
+
+class ErrorSerializable extends NativeSerializable {
+	public var message:String;
+	public var errorId:int;
+	public function ErrorSerializable(err:Error=null) {
+		super("Error");
+		message = err==null ? null : err.message;
+		errorId = err==null ? 0 : err.errorID;
+	}	
+	override public function fromNative(obj:Object):NativeSerializable {
+		return obj is Error ? new ErrorSerializable(obj as Error) : null;
+	}
+	override public function postDeserialize():Object {
+		return new Error(message, errorId);
+	}	
+}
+class XMLSerializable extends NativeSerializable {
+	public var xmlStr:String;
+	public function XMLSerializable(xml:XML=null) {
+		super("XML");
+		xmlStr = xml==null ? null : xml.toXMLString();
+	}	
+	override public function fromNative(obj:Object):NativeSerializable {
+		return obj is XML ? new XMLSerializable(obj as XML) : null;
+	}
+	override public function postDeserialize():Object {
+		return new XML(xmlStr);
+	}	
+}
+class DateSerializable extends NativeSerializable {
+	public var utcDate:String; //Tue Feb 1 00:00:00 2005 UTC
+	public function DateSerializable(date:Date=null) {
+		super("Date");
+		utcDate = date==null ? null : date.toUTCString();
+	}	
+	override public function fromNative(obj:Object):NativeSerializable {
+		return obj is Date ? new DateSerializable(obj as Date) : null;
+	}
+	override public function postDeserialize():Object {
+		return new Date(utcDate);
+	}	
+}
+class DictionarySerializable extends NativeSerializable {
+	public var keyValArr:Array = [];
+	public function DictionarySerializable(dic:Dictionary=null) {
+		super("Dictionary");
+		if (dic!=null) {
+			for (var k:Object in dic) 
+	 			keyValArr.push([k, dic[k]]);
+	 	}
+	}	
+	override public function fromNative(obj:Object):NativeSerializable {
+		return obj is Dictionary ? new DictionarySerializable(obj as Dictionary) : null;
+	}
+	override public function postDeserialize():Object {
+		var res:Dictionary = new Dictionary();
+		for each (var keyVal:Array in keyValArr)
+			res[ keyVal[0] ] = keyVal[1];
+		return res;
+	}	
+}
+class ByteArraySerializable extends NativeSerializable {
+	public var arr:Array/*int*/;
+	public function ByteArraySerializable(byteArr:ByteArray=null) {
+		super("ByteArray");
+		arr = byteArr==null ? null : byteArr2Arr(byteArr);
+	}	
+	override public function fromNative(obj:Object):NativeSerializable {
+		return obj is ByteArray ? new ByteArraySerializable(obj as ByteArray) : null;
+	}
+	public static function byteArr2Arr(byteArr:ByteArray):Array {
+		var bytes:Array = [];
+		var oldPosition:int = byteArr.position;
+		byteArr.position = 0;
+		for (var i:int=0; i<byteArr.length; i++)
+			bytes.push(byteArr.readByte());
+		byteArr.position = oldPosition;
+		return bytes;
+	}
+	override public function postDeserialize():Object {
+		var res:ByteArray = new ByteArray();
+		for each (var i:int in arr)
+			res.writeByte(i);
+		res.position = 0; 
+		return res;
+	}	
 }

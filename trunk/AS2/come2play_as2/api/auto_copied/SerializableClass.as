@@ -25,6 +25,17 @@
  * - You must call 
  *   register()
  * 
+ * Note about inner classes in AS3:
+ * 	 The class-name of inner classes has '$', e.g.,
+ * 		AS3_vs_AS2.as$35::XMLNodeSerializable
+ * 	 This code doesn't work for inner classes:
+ * 		getClassByName(getClassName(instance))
+ *   Therefore, we added another static method that registers such inner classes:
+ * 	  registerClassAlias(shortName, classObject)
+ * 	 which is similar in essense to 
+ *   flash.net.registerClassAlias(aliasName, classObject):Void 
+ * 
+ * 
  * Other features:
  * - fields starting with "__" are not serialized to String 
  *   (but they are serialized on LocalConnection)
@@ -33,9 +44,6 @@
  *   This is useful in two cases:
  *   1) if you have fields that are derived from other fields (such as "__" fields).
  *   2) in Enum classes, postDeserialize may return a unique/interned object.
- * 
- * Event fields: 
- * 	
  *    
  */
 import come2play_as2.api.auto_copied.*;
@@ -65,7 +73,7 @@ class come2play_as2.api.auto_copied.SerializableClass /*<InAPI>extends Event</In
 	public function getFieldNames():Array/*String*/ {
 		var res:Array/*String*/ = [];
 		var fieldNames:Array/*String*/ = AS3_vs_AS2.getFieldNames(this);	
-		for (var i68:Number=0; i68<fieldNames.length; i68++) { var key:String = fieldNames[i68]; 
+		for (var i76:Number=0; i76<fieldNames.length; i76++) { var key:String = fieldNames[i76]; 
 			if (StaticFunctions.startsWith(key,"__")) continue;
 			if (EVENT_FIELDS!=null && AS3_vs_AS2.IndexOf(EVENT_FIELDS,key)!=-1) continue;
 			res.push(key);
@@ -76,7 +84,7 @@ class come2play_as2.api.auto_copied.SerializableClass /*<InAPI>extends Event</In
 	public function toObject():Object {
 		var values:Object = {};		
 		values[CLASS_NAME_FIELD] = __CLASS_NAME__;	
-		for (var i79:Number=0; i79<getFieldNames().length; i79++) { var key:String = getFieldNames()[i79]; 
+		for (var i87:Number=0; i87<getFieldNames().length; i87++) { var key:String = getFieldNames()[i87]; 
 			values[key] = serializable2Object(this[key]); 
 		}
 		return values;		
@@ -84,16 +92,27 @@ class come2play_as2.api.auto_copied.SerializableClass /*<InAPI>extends Event</In
 	/*<InAPI>public function eventToString():String { return super.toString(); }</InAPI>*/
 	/*<InAPI>override</InAPI>*/ public function toString():String {
 		var values:Object = {}; // shallow object - we do not change the inner serializables to Object		
-		for (var i87:Number=0; i87<getFieldNames().length; i87++) { var key:String = getFieldNames()[i87]; 
+		for (var i95:Number=0; i95<getFieldNames().length; i95++) { var key:String = getFieldNames()[i95]; 
 			values[key] = this[key]; 
 		}	
 		return JSON.instanceToString(__CLASS_NAME__, values);
 	}
 	public function isEqual(other:SerializableClass):Boolean {
-		return ObjectDictionary.areEqual(this, other);
+		return StaticFunctions.areEqual(this, other);
 	}
-	public function postDeserialize():SerializableClass {
+	public function postDeserialize():Object {
 		return this;
+	}
+	public static function registerClassAlias(shortName:String, classObject:Object/*Class*/):Void {
+		var oldClass:Object/*Class*/ = SHORTNAME_TO_CLASS[shortName];
+		if (oldClass!=null) {
+			StaticFunctions.assert(oldClass==classObject, ["You called registerClassAlias twice with shortName=",shortName," with two different classObjects! classObject1=",oldClass," classObject2=",classObject]);
+			return;
+		}
+		if (IS_TRACE_REGISTER) 
+    		StaticFunctions.storeTrace(["SerializableClass.registerClassAlias: Registered classObject=",classObject," with shortName=",shortName]);    		
+		SHORTNAME_TO_CLASS[shortName] = classObject;	
+		testCreateInstance(shortName);
 	}
 	public function register():Void {
     	// In Enum classes in $cinit(), we call register in the ctor, and the class have not yet loaded.
@@ -113,20 +132,33 @@ class come2play_as2.api.auto_copied.SerializableClass /*<InAPI>extends Event</In
     	
     	AS3_vs_AS2.checkConstructorHasNoArgs(this);    	
     	if (IS_TRACE_REGISTER) 
-    		StaticFunctions.storeTrace(["Registered class with shortName=",shortName," with exampleInstance=",this]);
-    	// testing createInstance
-    	//var exampleInstance:SerializableClass = createInstance(shortName);    	
+    		StaticFunctions.storeTrace(["SerializableClass.register: Registered class with shortName=",shortName," with exampleInstance=",this]);
+    		
+    	// testing createInstance (to make sure that if the user called registerClassAlias, then it creates legal objects)
+    	testCreateInstance(shortName);
+    }
+    private static function testCreateInstance(shortName:String):Void {
+    	// There are two scenarios "problematic" scenarios:
+    	// 1) You created an instance of inner class and then called registerClassAlias
+    	//		Because this we check that SHORTNAME_TO_CLASS[shortName]!=null
+    	// 2) You called registerClassAlias in the class static code, and therefore trying to create a new instance will throw an exception.
+    	//		Because this we check that SHORTNAME_TO_INSTANCE[shortName]!=null
+    	if (SHORTNAME_TO_CLASS[shortName]!=null && SHORTNAME_TO_INSTANCE[shortName]!=null) 
+    		createInstance(shortName).register();    	
     }
 
 	/**
 	 * Static methods and variables.
 	 */
  	private static var SHORTNAME_TO_INSTANCE:Object = {};
+ 	private static var SHORTNAME_TO_CLASS:Object = {};
  	
  	private static function getClassOfInstance(instance:SerializableClass):Object/*Class*/ {
  		return AS3_vs_AS2.getClassOfInstance(instance);
  	}
  	private static function getClassOfShortName(shortName:String):Object/*Class*/ {
+ 		var classObject:Object/*Class*/ = SHORTNAME_TO_CLASS[shortName];
+    	if (classObject!=null)  return classObject;
  		var instance:SerializableClass = SHORTNAME_TO_INSTANCE[shortName];
  		StaticFunctions.assert(instance!=null, ["You forgot to call SerializableClass.register for shortName=",shortName]); 
  		return getClassOfInstance(instance); 		

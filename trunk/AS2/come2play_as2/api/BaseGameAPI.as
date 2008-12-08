@@ -71,7 +71,7 @@ import come2play_as2.api.*;
 		private function sendKeyboardEvents():Void
 		{
 			while (keyboardMessages.length > 0 )
-				dispatchMessage(keyboardMessages.shift());			
+				dispatchMessage(API_Message(keyboardMessages.shift()));			
 		}
 		/**
 		 * If your overriding 'got' methods will throw an Error,
@@ -224,14 +224,14 @@ import come2play_as2.api.*;
 					for (var i227:Number=0; i227<customInfo.infoEntries.length; i227++) { var entry:InfoEntry = customInfo.infoEntries[i227]; 
 						var key:String = entry.key;
 						var value:Object = entry.value;
-						if (key=="i18n") {
+						if (key==API_Message.CUSTOM_INFO_KEY_i18n) {
 							i18nObj = value;
-						} else if (key=="CONTAINER_doReflection") {
-							for (var i233:Number=0; i233<value.length; i233++) { var reflectionEntry:InfoEntry = value[i233]; 
-								StaticFunctions.performReflectionObject(reflectionEntry.key,reflectionEntry.value);
+						} else if (key==API_Message.CUSTOM_INFO_KEY_reflection) {
+							for (var reflectionKey:String in value) {
+								StaticFunctions.performReflectionObject(reflectionKey,value[reflectionKey]);
 							}
-						} else if (key=="CONTAINER_checkThrowingAnError" && value==true) {
-							throw new Error("CONTAINER_checkThrowingAnError");
+						} else if (key==API_Message.CUSTOM_INFO_KEY_checkThrowingAnError && value==true) {
+							throw new Error("checkThrowingAnError");
 						} else {
 							customObj[key] = value;
 						}

@@ -182,55 +182,7 @@ public final class ObjectDictionary extends SerializableClass
        	return res; 
 	}
 	public static function areEqual(o1:Object, o2:Object):Boolean {
-		if (o1===o2) return true; // because false==[] or {} was true!
-		if (o1==null || o2==null) return false;
-		var t:String = typeof(o1);
-		if (t!=typeof(o2)) 
-			return false;
-		if (AS3_vs_AS2.getClassName(o1)!=AS3_vs_AS2.getClassName(o2))
-			return false;
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
-			
-		if (t=="object") {
-			var x:String;	
-			var allFields:Object = {};
-			var c:int = 0;	
-			for (x in o1) {
-				allFields[x] = true;
-				c++;
-			}			
-			for (x in o2) {
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
-				if (allFields[x]==null) return false;
-				c--;
-			}
-			if (c!=0) return false; // not the same number of dynamic properties
-			if (AS3_vs_AS2.isAS3) {
-				// for static properties we use describeType
-				// because o1 and o2 have the same type, it is enough to use the fields of o1.
-				var fieldsArr:Array = AS3_vs_AS2.getFieldNames(o1);
-				for each (var field:String in fieldsArr) {
-					allFields[field] = true;
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
-				}
-			}
-			for (x in allFields) 	
-				if (!o1.hasOwnProperty(x) || 
-					!o2.hasOwnProperty(x) || 
-					!areEqual(o1[x], o2[x])) return false;
-			return true;
-		} else {
-			return o1==o2;
-		}
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
+		return StaticFunctions.areEqual(o1,o2);
 	}
 }
 }

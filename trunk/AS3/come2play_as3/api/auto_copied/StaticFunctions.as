@@ -61,6 +61,45 @@ public final class StaticFunctions
 	   }
 	   return str.substring(0,k+1);
 	}
+	public static function areEqual(o1:Object, o2:Object):Boolean {
+		if (o1===o2) return true; // because false==[] or {} was true!
+		if (o1==null || o2==null) return false;
+		var t:String = typeof(o1);
+		if (t!=typeof(o2)) 
+			return false;
+		if (AS3_vs_AS2.getClassName(o1)!=AS3_vs_AS2.getClassName(o2))
+			return false;
+			
+		if (t=="object") {
+			var x:String;	
+			var allFields:Object = {};
+			var c:int = 0;	
+			for (x in o1) {
+				allFields[x] = true;
+				c++;
+			}			
+			for (x in o2) {
+				if (allFields[x]==null) return false;
+				c--;
+			}
+			if (c!=0) return false; // not the same number of dynamic properties
+			if (AS3_vs_AS2.isAS3) {
+				// for static properties we use describeType
+				// because o1 and o2 have the same type, it is enough to use the fields of o1.
+				var fieldsArr:Array = AS3_vs_AS2.getFieldNames(o1);
+				for each (var field:String in fieldsArr) {
+					allFields[field] = true;
+				}
+			}
+			for (x in allFields) 	
+				if (!o1.hasOwnProperty(x) || 
+					!o2.hasOwnProperty(x) || 
+					!areEqual(o1[x], o2[x])) return false;
+			return true;
+		} else {
+			return o1==o2;
+		}
+	}
 	
 	public static function subtractArray(arr:Array, minus:Array):Array {
 		var res:Array = arr.concat();
@@ -92,7 +131,6 @@ public final class StaticFunctions
 			if (startsWith(key,REFLECTION_PREFIX)) {
 				var before:String = key.substr(REFLECTION_PREFIX.length);
 				var after:String = parameters[key];
-				if (SHOULD_CALL_TRACE) trace("Perform reflection for: "+before+"="+after);
 				performReflectionString(before, after);	
 			}			
 		}
@@ -106,7 +144,8 @@ public final class StaticFunctions
 	}
 	public static function performReflectionObject(fullClassName:String, valObj:Object):void {
 		//fullClassName = come2play_as3.util::EnumMessage.CouldNotConnect.__minDelayMilli 
-		//after = 2000	
+		//after = 2000
+		if (SHOULD_CALL_TRACE) trace("Perform reflection for: "+fullClassName+"="+JSON.stringify(valObj));
 		var package2:Array = splitInTwo(fullClassName, "::", false);
 		var fields2:Array = splitInTwo(package2[1], ".", false);
 		var clzName:String = trim(package2[0]) + "::" + trim(fields2[0]);
@@ -160,9 +199,14 @@ public final class StaticFunctions
 		}
 		return res;
 	}
+	
+	private static var cacheShortName:Object = {};
 	public static function getShortClassName(obj:Object):String {
 		var className:String = AS3_vs_AS2.getClassName(obj);
-		return className.substr(AS3_vs_AS2.stringIndexOf(className,"::")+2);		
+		if (cacheShortName[className]!=null) return cacheShortName[className];
+		var res:String = className.substr(AS3_vs_AS2.stringIndexOf(className,"::")+2);
+		cacheShortName[className] = res;
+		return res;		
 	}
 			
 }

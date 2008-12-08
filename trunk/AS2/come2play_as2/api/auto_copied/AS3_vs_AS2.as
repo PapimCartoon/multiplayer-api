@@ -1,8 +1,11 @@
-﻿import come2play_as2.api.auto_copied.*;
+import come2play_as2.api.auto_copied.*;
 
 class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 	public static var isAS3:Boolean = false;
 	public static var isInterval:Boolean = false
+
+	// in AS3 we have special serializers for some native classes (such as Dictionary, XML, Date, etc)
+	public static function registerNativeSerializers():Void {}
 	public static function specialToString(o:Object):String {
 		return o.toString();
 	}

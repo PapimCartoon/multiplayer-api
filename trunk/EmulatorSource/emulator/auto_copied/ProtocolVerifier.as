@@ -88,7 +88,7 @@ package emulator.auto_copied
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			check(didRegisterOnServer, ["Container sent a message before getting doRegisterOnServer"]); 
+			check(didRegisterOnServer, [T.i18n("Container sent a message before getting doRegisterOnServer")]); 
 			currentCallback = gotMsg;
 			transactionStartedOn = getTimer();   
 			if (isOldBoard(gotMsg)) {

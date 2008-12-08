@@ -55,7 +55,7 @@ import come2play_as2.api.auto_copied.*;
 		}
 		public function msgToGame(gotMsg:API_Message):Void {
 			check(currentCallback==null, ["Container sent two messages without waiting! oldCallback=", currentCallback, " newCallback=",gotMsg]);
-			check(didRegisterOnServer, ["Container sent a message before getting doRegisterOnServer"]); 
+			check(didRegisterOnServer, [T.i18n("Container sent a message before getting doRegisterOnServer")]); 
 			currentCallback = gotMsg;
 			transactionStartedOn = getTimer();   
 			if (isOldBoard(gotMsg)) {

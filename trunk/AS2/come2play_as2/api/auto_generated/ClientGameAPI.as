@@ -94,5 +94,8 @@ import come2play_as2.api.auto_generated.*;
 
 		public static var CUSTOM_INFO_KEY_isPause:String = "CONTAINER_isPause";
 		public static var CUSTOM_INFO_KEY_isFocusInChat:String = "CONTAINER_isFocusInChat";
+		public static var CUSTOM_INFO_KEY_i18n:String = "CONTAINER_i18n";
+		public static var CUSTOM_INFO_KEY_reflection:String = "CONTAINER_reflection";
+		public static var CUSTOM_INFO_KEY_checkThrowingAnError:String = "CONTAINER_checkThrowingAnError";
 		public static var CUSTOM_INFO_KEY_isBack:String = "CONTAINER_isBack";
 	}

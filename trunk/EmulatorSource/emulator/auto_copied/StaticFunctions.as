@@ -89,6 +89,57 @@ public final class StaticFunctions
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
 	}
+	public static function areEqual(o1:Object, o2:Object):Boolean {
+		if (o1===o2) return true; // because false==[] or {} was true!
+		if (o1==null || o2==null) return false;
+		var t:String = typeof(o1);
+		if (t!=typeof(o2)) 
+			return false;
+		if (AS3_vs_AS2.getClassName(o1)!=AS3_vs_AS2.getClassName(o2))
+			return false;
+			
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+		if (t=="object") {
+			var x:String;	
+			var allFields:Object = {};
+			var c:int = 0;	
+			for (x in o1) {
+				allFields[x] = true;
+				c++;
+			}			
+			for (x in o2) {
+				if (allFields[x]==null) return false;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+				c--;
+			}
+			if (c!=0) return false; // not the same number of dynamic properties
+			if (AS3_vs_AS2.isAS3) {
+				// for static properties we use describeType
+				// because o1 and o2 have the same type, it is enough to use the fields of o1.
+				var fieldsArr:Array = AS3_vs_AS2.getFieldNames(o1);
+				for each (var field:String in fieldsArr) {
+					allFields[field] = true;
+				}
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+			}
+			for (x in allFields) 	
+				if (!o1.hasOwnProperty(x) || 
+					!o2.hasOwnProperty(x) || 
+					!areEqual(o1[x], o2[x])) return false;
+			return true;
+		} else {
+			return o1==o2;
+		}
+	}
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 	
 	public static function subtractArray(arr:Array, minus:Array):Array {
 		var res:Array = arr.concat();
@@ -98,10 +149,10 @@ public final class StaticFunctions
 			res.splice(indexOf, 1);
 		}
 		return res;
+	}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	}
 	
 	// e.g., random(0,2) returns either 0 or 1
 	public static function random(fromInclusive:int, toExclusive:int):int {
@@ -111,10 +162,10 @@ public final class StaticFunctions
 	public static function startsWith(str:String, start:String):Boolean {
 		return str.substr(0, start.length)==start;
 	}
+	public static function endsWith(str:String, suffix:String):Boolean {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	public static function endsWith(str:String, suffix:String):Boolean {
 		return str.substr(str.length-suffix.length, suffix.length)==suffix;
 	}
 	
@@ -124,12 +175,11 @@ public final class StaticFunctions
 		if (SHOULD_CALL_TRACE) trace("performReflectionFromFlashVars="+JSON.stringify(parameters));
 		for (var key:String in parameters) {
 			if (startsWith(key,REFLECTION_PREFIX)) {
+				var before:String = key.substr(REFLECTION_PREFIX.length);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-				var before:String = key.substr(REFLECTION_PREFIX.length);
 				var after:String = parameters[key];
-				if (SHOULD_CALL_TRACE) trace("Perform reflection for: "+before+"="+after);
 				performReflectionString(before, after);	
 			}			
 		}
@@ -137,23 +187,24 @@ public final class StaticFunctions
 	public static function performReflection(reflStr:String):void {		
 		var two:Array = splitInTwo(reflStr, "=", false);
 		performReflectionString(two[0], two[1]);
+	}
+	public static function performReflectionString(fullClassName:String, valStr:String):void {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	}
-	public static function performReflectionString(fullClassName:String, valStr:String):void {
 		performReflectionObject(fullClassName, SerializableClass.deserializeString(valStr));
 	}
 	public static function performReflectionObject(fullClassName:String, valObj:Object):void {
 		//fullClassName = come2play_as3.util::EnumMessage.CouldNotConnect.__minDelayMilli 
-		//after = 2000	
+		//after = 2000
+		if (SHOULD_CALL_TRACE) trace("Perform reflection for: "+fullClassName+"="+JSON.stringify(valObj));
 		var package2:Array = splitInTwo(fullClassName, "::", false);
 		var fields2:Array = splitInTwo(package2[1], ".", false);
 		var clzName:String = trim(package2[0]) + "::" + trim(fields2[0]);
+		var fieldsName:String = trim(fields2[1]);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		var fieldsName:String = trim(fields2[1]);
 		var classReference:Object = AS3_vs_AS2.getClassByName(clzName);
 		storeTrace("Setting field "+fieldsName+" in class "+clzName+" to val="+valObj);
 		var fieldsArr:Array = fieldsName.split(".");
@@ -163,10 +214,10 @@ public final class StaticFunctions
 				classReference = classReference[fieldName];
 			else
 				classReference[fieldName] = valObj;			
+		} 		
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		} 		
 	}
 
 
@@ -176,10 +227,10 @@ public final class StaticFunctions
 	 * e.g., 
 	 * 	StaticFunctions.replaceAll("$y'+knkjh$y'+$y'+uoiuoiu$y'+8y$y'+", "$y'+","REPLACED") ==
 	 * 							"REPLACEDknkjhREPLACEDREPLACEDuoiuoiuREPLACED8yREPLACED"		
+	 */
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	 */
 	public static function replaceAll(str:String, searchFor:String, replaceWith:String):String {		
 		var index:int = 0;
 		var lastIndex:int = 0;
@@ -189,10 +240,10 @@ public final class StaticFunctions
 			res.push( replaceWith );
 			index += searchFor.length;
 			lastIndex = index;			
+		}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		}
 		res.push( str.substring(lastIndex) );
 		return res.join("");
 	}
@@ -202,10 +253,10 @@ public final class StaticFunctions
 		return [str.substring(0,index),str.substring(index+searchFor.length)];
 	}
 	public static function replaceLastOccurance(str:String, searchFor:String, replaceWith:String):String {
+		var two:Array = splitInTwo(str, searchFor, true);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		var two:Array = splitInTwo(str, searchFor, true);
 		return two[0] + replaceWith + two[1];
 	}
 	public static function instance2Object(instance:Object, fields:Array/*String*/):Object {
@@ -215,13 +266,21 @@ public final class StaticFunctions
 		}
 		return res;
 	}
+	
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	private static var cacheShortName:Object = {};
 	public static function getShortClassName(obj:Object):String {
 		var className:String = AS3_vs_AS2.getClassName(obj);
-		return className.substr(AS3_vs_AS2.stringIndexOf(className,"::")+2);		
+		if (cacheShortName[className]!=null) return cacheShortName[className];
+		var res:String = className.substr(AS3_vs_AS2.stringIndexOf(className,"::")+2);
+		cacheShortName[className] = res;
+		return res;		
 	}
 			
 }
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 }

@@ -75,7 +75,7 @@ package come2play_as3.api {
 		private function sendKeyboardEvents():void
 		{
 			while (keyboardMessages.length > 0 )
-				dispatchMessage(keyboardMessages.shift());			
+				dispatchMessage(/*as*/keyboardMessages.shift() as API_Message);			
 		}
 		/**
 		 * If your overriding 'got' methods will throw an Error,
@@ -228,14 +228,14 @@ package come2play_as3.api {
 					for each (var entry:InfoEntry in customInfo.infoEntries) {
 						var key:String = entry.key;
 						var value:Object = entry.value;
-						if (key=="i18n") {
+						if (key==API_Message.CUSTOM_INFO_KEY_i18n) {
 							i18nObj = value;
-						} else if (key=="CONTAINER_doReflection") {
-							for each (var reflectionEntry:InfoEntry in value) {
-								StaticFunctions.performReflectionObject(reflectionEntry.key,reflectionEntry.value);
+						} else if (key==API_Message.CUSTOM_INFO_KEY_reflection) {
+							for (var reflectionKey:String in value) {
+								StaticFunctions.performReflectionObject(reflectionKey,value[reflectionKey]);
 							}
-						} else if (key=="CONTAINER_checkThrowingAnError" && value==true) {
-							throw new Error("CONTAINER_checkThrowingAnError");
+						} else if (key==API_Message.CUSTOM_INFO_KEY_checkThrowingAnError && value==true) {
+							throw new Error("checkThrowingAnError");
 						} else {
 							customObj[key] = value;
 						}

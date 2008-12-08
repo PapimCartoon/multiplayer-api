@@ -57,10 +57,49 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	   }
 	   return str.substring(0,k+1);
 	}
+	public static function areEqual(o1:Object, o2:Object):Boolean {
+		if (o1===o2) return true; // because false==[] or {} was true!
+		if (o1==null || o2==null) return false;
+		var t:String = typeof(o1);
+		if (t!=typeof(o2)) 
+			return false;
+		if (AS3_vs_AS2.getClassName(o1)!=AS3_vs_AS2.getClassName(o2))
+			return false;
+			
+		if (t=="object") {
+			var x:String;	
+			var allFields:Object = {};
+			var c:Number = 0;	
+			for (x in o1) {
+				allFields[x] = true;
+				c++;
+			}			
+			for (x in o2) {
+				if (allFields[x]==null) return false;
+				c--;
+			}
+			if (c!=0) return false; // not the same number of dynamic properties
+			if (AS3_vs_AS2.isAS3) {
+				// for static properties we use describeType
+				// because o1 and o2 have the same type, it is enough to use the fields of o1.
+				var fieldsArr:Array = AS3_vs_AS2.getFieldNames(o1);
+				for (var i88:Number=0; i88<fieldsArr.length; i88++) { var field:String = fieldsArr[i88]; 
+					allFields[field] = true;
+				}
+			}
+			for (x in allFields) 	
+				if (!o1.hasOwnProperty(x) || 
+					!o2.hasOwnProperty(x) || 
+					!areEqual(o1[x], o2[x])) return false;
+			return true;
+		} else {
+			return o1==o2;
+		}
+	}
 	
 	public static function subtractArray(arr:Array, minus:Array):Array {
 		var res:Array = arr.concat();
-		for (var i65:Number=0; i65<minus.length; i65++) { var o:Object = minus[i65]; 
+		for (var i104:Number=0; i104<minus.length; i104++) { var o:Object = minus[i104]; 
 			var indexOf:Number = AS3_vs_AS2.IndexOf(res, o);
 			StaticFunctions.assert(indexOf!=-1, ["When subtracting minus=",minus," from array=", arr, " we did not find element ",o]);				
 			res.splice(indexOf, 1);
@@ -88,7 +127,6 @@ class come2play_as2.api.auto_copied.StaticFunctions
 			if (startsWith(key,REFLECTION_PREFIX)) {
 				var before:String = key.substr(REFLECTION_PREFIX.length);
 				var after:String = parameters[key];
-				if (SHOULD_CALL_TRACE) trace("Perform reflection for: "+before+"="+after);
 				performReflectionString(before, after);	
 			}			
 		}
@@ -102,7 +140,8 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	}
 	public static function performReflectionObject(fullClassName:String, valObj:Object):Void {
 		//fullClassName = come2play_as2.util::EnumMessage.CouldNotConnect.__minDelayMilli 
-		//after = 2000	
+		//after = 2000
+		if (SHOULD_CALL_TRACE) trace("Perform reflection for: "+fullClassName+"="+JSON.stringify(valObj));
 		var package2:Array = splitInTwo(fullClassName, "::", false);
 		var fields2:Array = splitInTwo(package2[1], ".", false);
 		var clzName:String = trim(package2[0]) + "::" + trim(fields2[0]);
@@ -151,14 +190,19 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	}
 	public static function instance2Object(instance:Object, fields:Array/*String*/):Object {
 		var res:Object = {};
-		for (var i156:Number=0; i156<fields.length; i156++) { var field:String = fields[i156]; 
+		for (var i195:Number=0; i195<fields.length; i195++) { var field:String = fields[i195]; 
 			res[field] = instance[field];
 		}
 		return res;
 	}
+	
+	private static var cacheShortName:Object = {};
 	public static function getShortClassName(obj:Object):String {
 		var className:String = AS3_vs_AS2.getClassName(obj);
-		return className.substr(AS3_vs_AS2.stringIndexOf(className,"::")+2);		
+		if (cacheShortName[className]!=null) return cacheShortName[className];
+		var res:String = className.substr(AS3_vs_AS2.stringIndexOf(className,"::")+2);
+		cacheShortName[className] = res;
+		return res;		
 	}
 			
 }

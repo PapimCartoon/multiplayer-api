@@ -48,6 +48,7 @@ import come2play_as2.api.auto_copied.*;
 		public function LocalConnectionUser(_someMovieClip:MovieClip, isServer:Boolean, sPrefix:String,shouldVerify:Boolean) {
 			try{
 				_shouldVerify=shouldVerify;
+				AS3_vs_AS2.registerNativeSerializers();
 				API_LoadMessages.useAll();	
 				verifier = new ProtocolVerifier();
 				this.isServer = isServer;
@@ -85,10 +86,11 @@ import come2play_as2.api.auto_copied.*;
         
         public function gotMessage(msg:API_Message):Void {}
         
+        public static var MILL_WAIT_BEFORE_DO_REGISTER:Number = 100;
         public function sendMessage(msg:API_Message):Void {
         	myTrace(['sendMessage: ',msg]);      		
         	if (msg instanceof API_DoRegisterOnServer)
-        		AS3_vs_AS2.myTimeout(AS3_vs_AS2.delegate(this, this.reallySendMessage,msg),1000);
+        		AS3_vs_AS2.myTimeout(AS3_vs_AS2.delegate(this, this.reallySendMessage,msg),MILL_WAIT_BEFORE_DO_REGISTER);
         	else
         		reallySendMessage(msg);
         }

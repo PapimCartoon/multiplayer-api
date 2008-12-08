@@ -76,6 +76,7 @@ package emulator.auto_copied
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
 				_shouldVerify=shouldVerify;
+				AS3_vs_AS2.registerNativeSerializers();
 				API_LoadMessages.useAll();	
 				verifier = new ProtocolVerifier();
 				this.isServer = isServer;
@@ -84,10 +85,10 @@ package emulator.auto_copied
 				if (sPrefix==null) {
 					myTrace(["WARNING: didn't find 'prefix' in the loader info parameters. Probably because you are doing testing locally."]);
 					sPrefix = DEFAULT_LOCALCONNECTION_PREFIX;
-				}				
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+				}				
 				lcUser = new LocalConnection();
 				AS3_vs_AS2.addStatusListener(lcUser, this, ["localconnection_callback"]);
 				
@@ -97,10 +98,10 @@ package emulator.auto_copied
 					isServer ? sDoChanel : sGotChanel;
 				sSendChanel = 
 					!isServer ? sDoChanel : sGotChanel;				
-				myTrace(["LocalConnection listens on channel=",sListenChannel," and sends on ",sSendChanel]);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+				myTrace(["LocalConnection listens on channel=",sListenChannel," and sends on ",sSendChanel]);
 				lcUser.connect(sListenChannel);
 			}catch (err:Error) { 
 				passError("Constructor",err);
@@ -110,10 +111,10 @@ package emulator.auto_copied
 			StaticFunctions.storeTrace([AS3_vs_AS2.getClassName(this),": ",msg]);
 		}
 		
-        protected function getErrorMessage(withObj:Object, err:Error):String {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+        protected function getErrorMessage(withObj:Object, err:Error):String {
         	return "Error occurred when passing "+JSON.stringify(withObj)+", the error is=\n\t\t"+AS3_vs_AS2.error2String(err);
         }
         private function passError(withObj:Object, err:Error):void {
@@ -122,24 +123,25 @@ package emulator.auto_copied
         
         public function gotMessage(msg:API_Message):void {}
         
-        public function sendMessage(msg:API_Message):void {
-        	myTrace(['sendMessage: ',msg]);      		
+        public static var MILL_WAIT_BEFORE_DO_REGISTER:int = 100;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+        public function sendMessage(msg:API_Message):void {
+        	myTrace(['sendMessage: ',msg]);      		
         	if (msg is API_DoRegisterOnServer)
-        		AS3_vs_AS2.myTimeout(AS3_vs_AS2.delegate(this, this.reallySendMessage,msg),1000);
+        		AS3_vs_AS2.myTimeout(AS3_vs_AS2.delegate(this, this.reallySendMessage,msg),MILL_WAIT_BEFORE_DO_REGISTER);
         	else
         		reallySendMessage(msg);
         }
         private function reallySendMessage(msg:API_Message):void {  				  
 			try{
 				AS3_vs_AS2.checkObjectIsSerializable(msg);
-        		verify(msg, true);     		
-				lcUser.send(sSendChanel, "localconnection_callback", msg.toObject());  
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+        		verify(msg, true);     		
+				lcUser.send(sSendChanel, "localconnection_callback", msg.toObject());  
 			}catch(err:Error) { 
 				passError(msg, err);
 			}        	
@@ -148,11 +150,11 @@ package emulator.auto_copied
         	if	(!_shouldVerify) return;
         	if (isServer!=isSend)
     			verifier.msgFromGame(msg);
-    		else
-    			verifier.msgToGame(msg);        	
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+    		else
+    			verifier.msgToGame(msg);        	
         }
         
         public function localconnection_callback(msgObj:Object):void {
@@ -161,11 +163,11 @@ package emulator.auto_copied
         	try{
         		var deserializedMsg:Object = SerializableClass.deserialize(msgObj);
         		msg = /*as*/deserializedMsg as API_Message;
-        		if (msg==null) throwError("msgObj="+JSON.stringify(msgObj)+" is not an API_Message");
-        		
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+        		if (msg==null) throwError("msgObj="+JSON.stringify(msgObj)+" is not an API_Message");
+        		
         		myTrace(['gotMessage: ',msg]);
         		verify(msg, false);
         		gotMessage(msg);
@@ -174,4 +176,7 @@ package emulator.auto_copied
 			} 
         }
 	}
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 }

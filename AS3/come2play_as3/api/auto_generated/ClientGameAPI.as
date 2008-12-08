@@ -95,6 +95,9 @@ package come2play_as3.api.auto_generated {
 
 		public static const CUSTOM_INFO_KEY_isPause:String = "CONTAINER_isPause";
 		public static const CUSTOM_INFO_KEY_isFocusInChat:String = "CONTAINER_isFocusInChat";
+		public static const CUSTOM_INFO_KEY_i18n:String = "CONTAINER_i18n";
+		public static const CUSTOM_INFO_KEY_reflection:String = "CONTAINER_reflection";
+		public static const CUSTOM_INFO_KEY_checkThrowingAnError:String = "CONTAINER_checkThrowingAnError";
 		public static const CUSTOM_INFO_KEY_isBack:String = "CONTAINER_isBack";
 	}
 }

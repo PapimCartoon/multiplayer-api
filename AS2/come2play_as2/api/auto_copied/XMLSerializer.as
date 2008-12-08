@@ -6,7 +6,7 @@ class come2play_as2.api.auto_copied.XMLSerializer
 		var xml:XMLNode = XMLSerializer.toXML(test);
 		var test2:Object = SerializableClass.deserialize(XMLSerializer.xml2Object(xml));
 		trace("XMLSerializer xml=\n"+xml+" test2="+JSON.stringify(test2));
-		StaticFunctions.assert(ObjectDictionary.areEqual(test,test2),[test,test2]);		
+		StaticFunctions.assert(StaticFunctions.areEqual(test,test2),[test,test2]);		
 	}
 	public static function xml2Object(xml:XMLNode):Object {
 		var name:String = AS3_vs_AS2.xml_getName(xml);

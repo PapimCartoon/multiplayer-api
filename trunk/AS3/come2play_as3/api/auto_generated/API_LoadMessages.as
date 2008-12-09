@@ -28,6 +28,7 @@ package come2play_as3.api.auto_generated {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			new API_DoAllSetMove().register();
 			new API_DoAllRevealState().register();
 			new API_DoAllShuffleState().register();
 			new API_DoAllRequestRandomState().register();
@@ -37,10 +38,10 @@ package come2play_as3.api.auto_generated {
 			new API_DoAllStoreStateCalculation().register();
 			new API_DoConnectedSetScore().register();
 			new API_DoConnectedEndMatch().register();
-			new PlayerMatchOver().register();
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			new PlayerMatchOver().register();
 			new InfoEntry().register();
 			new RevealEntry().register();
 			new UserEntry().register();

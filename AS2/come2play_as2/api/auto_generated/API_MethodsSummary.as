@@ -34,12 +34,13 @@ import come2play_as2.api.auto_generated.*;
 		, new API_MethodsSummary('doAllStoreState', ['userEntries'], ['Array/*UserEntry*/'] )
 		, new API_MethodsSummary('doAllEndMatch', ['finishedPlayers'], ['Array/*PlayerMatchOver*/'] )
 		, new API_MethodsSummary('doAllSetTurn', ['userId', 'milliSecondsInTurn'], ['int', 'int'] )
+		, new API_MethodsSummary('doAllSetMove', [], [] )
 		, new API_MethodsSummary('doAllRevealState', ['revealEntries'], ['Array/*RevealEntry*/'] )
 		, new API_MethodsSummary('doAllShuffleState', ['keys'], ['Array/*Object*/'] )
-		, new API_MethodsSummary('doAllRequestRandomState', ['key', 'isSecret'], ['Object', 'Boolean'] )
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		, new API_MethodsSummary('doAllRequestRandomState', ['key', 'isSecret'], ['Object', 'Boolean'] )
 		, new API_MethodsSummary('doAllFoundHacker', ['userId', 'errorDescription'], ['int', 'String'] )
 		, new API_MethodsSummary('doAllRequestStateCalculation', ['keys'], ['Array/*Object*/'] )
 		, new API_MethodsSummary('gotRequestStateCalculation', ['requestId', 'serverEntries'], ['int', 'Array/*ServerEntry*/'] )

@@ -210,12 +210,16 @@ package come2play_as3.api.auto_copied
         		if (AS3_vs_AS2.IndexOf(currentPlayerIds, doAllSetTurn.userId) == -1 )
         			StaticFunctions.throwError("You have to call doAllSetTurn with a player user ID !");
 			}
+			else if (msg is API_DoAllSetMove) 
+			{				
+				// nothing to check
+			}
 			else if (msg is API_DoAllShuffleState) 
 			{
 				var doAllShuffleState:API_DoAllShuffleState = /*as*/msg as API_DoAllShuffleState;
         		if (doAllShuffleState.keys.length < 1 )
         			StaticFunctions.throwError("You have to call doAllShuffleState with at least 1 key !");
-        		isNullKeyExist(doAllShuffleState.keys);
+        		isNullKeyExist(doAllShuffleState.keys);			
 			}
 			else
 			{

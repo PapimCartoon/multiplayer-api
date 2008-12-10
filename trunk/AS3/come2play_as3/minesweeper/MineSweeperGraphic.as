@@ -1,5 +1,8 @@
 package come2play_as3.minesweeper
 {
+	import come2play_as3.api.auto_copied.T;
+	import come2play_as3.api.auto_generated.API_Message;
+	
 	import flash.display.MovieClip;
 	import flash.text.TextField;
 	import flash.utils.setTimeout;
@@ -85,7 +88,7 @@ package come2play_as3.minesweeper
 					tempBox.stop();
 					tempBox.x = i*16 + 9.5;
 					tempBox.y = j*16 + 7;
-					if(!isPlayer)
+					if( (!isPlayer) || ( (T.custom(API_Message.CUSTOM_INFO_KEY_isBack,false) as Boolean)))
 						tempBox.frameBtn.enabled = false;
 					boardBricks[i][j]=tempBox;
 					boardUnderPart.addChild(boardBricks[i][j]);

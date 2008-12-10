@@ -195,6 +195,7 @@ import flash.utils.*;
 				{	
 					var key:Object = {xPos:playerMove.xPos,yPos:playerMove.yPos};			
 					doAllRevealState([RevealEntry.create(key,null,1)]);	
+					doAllSetMove();
 					return;
 				}
 				doAllStoreState([UserEntry.create(serverEntry.key,null,false)]);
@@ -219,7 +220,8 @@ import flash.utils.*;
 		}
 		override public function gotKeyboardEvent(isKeyDown:Boolean, charCode:int, keyCode:int, keyLocation:int, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean):void
 		{
-			mineSweeperLogic.mine = shiftKey;
+			if(mineSweeperLogic!=null)
+				mineSweeperLogic.mine = shiftKey;
 		}
 
 	}

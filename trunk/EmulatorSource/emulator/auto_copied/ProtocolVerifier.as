@@ -283,49 +283,56 @@ package emulator.auto_copied
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			else if (msg is API_DoAllSetMove) 
+			{				
+				// nothing to check
+			}
 			else if (msg is API_DoAllShuffleState) 
 			{
 				var doAllShuffleState:API_DoAllShuffleState = /*as*/msg as API_DoAllShuffleState;
         		if (doAllShuffleState.keys.length < 1 )
         			StaticFunctions.throwError("You have to call doAllShuffleState with at least 1 key !");
-        		isNullKeyExist(doAllShuffleState.keys);
+        		isNullKeyExist(doAllShuffleState.keys);			
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			}
 			else
 			{
 				check(false, ["Unknown doAll message=",msg]);
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 			}
         }
 		
         private function isNullKeyExistUserEntry(userEntries:Array/*UserEntry*/):void
         {
         	for each (var userEntry:UserEntry in userEntries) {
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
         		if (userEntry.key == null)
         			StaticFunctions.throwError("key cannot be null !");
         	}
         }
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
         private function isNullKeyExistRevealEntry(revealEntries:Array/*RevealEntry*/):void
         {
         	for each (var revealEntry:RevealEntry in revealEntries) {
         		if (revealEntry.key == null)
         			StaticFunctions.throwError("key cannot be null !");
         	}
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
         }
         private function isNullKeyExist(keys:Array/*Object*/):void
         {
         	for each (var key:String in keys) {
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
         		if (key == null)
         			StaticFunctions.throwError("key cannot be null !");
         	}
         }
 
 	}
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 }

@@ -268,10 +268,15 @@ public final class TictactoeMain extends ClientGameAPI {
 	private function matchOverForPlayers(finishedPlayerIds:Array/*int*/):Boolean {
 		if (logic==null) return false; // match already ended
 		var colors:Array/*int*/ = [];
-		for each (var playerId:int in finishedPlayerIds) {
-			var colorOfPlayerId:int = getColor(playerId);
-			assert(colorOfPlayerId!=-1, ["Didn't find playerId=",playerId]); 
-			colors.push(colorOfPlayerId);
+		if (isSinglePlayer()) {
+			assert(finishedPlayerIds.length==1 && finishedPlayerIds[0]==allPlayerIds[0], ["The single player has finished playing, i.e., he had a timeout, chose to lose, or disconnected"])
+			colors = ongoingColors.concat(); // to clone the array
+		} else {
+			for each (var playerId:int in finishedPlayerIds) {
+				var colorOfPlayerId:int = getColor(playerId);
+				assert(colorOfPlayerId!=-1, ["Didn't find playerId=",playerId]); 
+				colors.push(colorOfPlayerId);
+			}
 		}
 		return matchOverForColors(colors);
 	}
@@ -448,8 +453,8 @@ public final class TictactoeMain extends ClientGameAPI {
 		//trace("startMove with isInProgress="+isInProgress);
 		if (logic==null) return; 
 						
-		if (isInProgress && !isSinglePlayer()) {
-			doAllSetTurn(allPlayerIds[turnOfColor],-1);
+		if (isInProgress) {
+			doAllSetTurn(isSinglePlayer() ? allPlayerIds[0] : allPlayerIds[turnOfColor],-1);
 		}		
 		if (isMyTurn()) shouldSendMove = true;
 		for each (var square:TictactoeSquare in allCells) {				

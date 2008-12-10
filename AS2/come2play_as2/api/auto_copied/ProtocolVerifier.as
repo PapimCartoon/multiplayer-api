@@ -205,12 +205,16 @@ import come2play_as2.api.auto_copied.*;
         		if (AS3_vs_AS2.IndexOf(currentPlayerIds, doAllSetTurn.userId) == -1 )
         			StaticFunctions.throwError("You have to call doAllSetTurn with a player user ID !");
 			}
+			else if (msg instanceof API_DoAllSetMove) 
+			{				
+				// nothing to check
+			}
 			else if (msg instanceof API_DoAllShuffleState) 
 			{
 				var doAllShuffleState:API_DoAllShuffleState = API_DoAllShuffleState(msg);
         		if (doAllShuffleState.keys.length < 1 )
         			StaticFunctions.throwError("You have to call doAllShuffleState with at least 1 key !");
-        		isNullKeyExist(doAllShuffleState.keys);
+        		isNullKeyExist(doAllShuffleState.keys);			
 			}
 			else
 			{
@@ -220,21 +224,21 @@ import come2play_as2.api.auto_copied.*;
 		
         private function isNullKeyExistUserEntry(userEntries:Array/*UserEntry*/):Void
         {
-        	for (var i226:Number=0; i226<userEntries.length; i226++) { var userEntry:UserEntry = userEntries[i226]; 
+        	for (var i230:Number=0; i230<userEntries.length; i230++) { var userEntry:UserEntry = userEntries[i230]; 
         		if (userEntry.key == null)
         			StaticFunctions.throwError("key cannot be null !");
         	}
         }
         private function isNullKeyExistRevealEntry(revealEntries:Array/*RevealEntry*/):Void
         {
-        	for (var i233:Number=0; i233<revealEntries.length; i233++) { var revealEntry:RevealEntry = revealEntries[i233]; 
+        	for (var i237:Number=0; i237<revealEntries.length; i237++) { var revealEntry:RevealEntry = revealEntries[i237]; 
         		if (revealEntry.key == null)
         			StaticFunctions.throwError("key cannot be null !");
         	}
         }
         private function isNullKeyExist(keys:Array/*Object*/):Void
         {
-        	for (var i240:Number=0; i240<keys.length; i240++) { var key:String = keys[i240]; 
+        	for (var i244:Number=0; i244<keys.length; i244++) { var key:String = keys[i244]; 
         		if (key == null)
         			StaticFunctions.throwError("key cannot be null !");
         	}

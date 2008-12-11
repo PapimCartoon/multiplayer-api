@@ -167,10 +167,12 @@ public final class AS3_vs_AS2
 				newMovie.addChild(loader.content);
 				if (onLoaded!=null) onLoaded(true);
 			}  );
-		myAddEventListener(contentLoaderInfo, IOErrorEvent.IO_ERROR, function (event:IOErrorEvent):void {
+		var handler:Function = function (event:Event):void {
 		        if (TRACE_LOADING) StaticFunctions.storeTrace(["Error in loading movie from url=",url," event=",event]);
 		        if (onLoaded!=null) onLoaded(false);
-		    }  );
+		    };
+		myAddEventListener(contentLoaderInfo, IOErrorEvent.IO_ERROR, handler);
+		myAddEventListener(contentLoaderInfo, SecurityErrorEvent.SECURITY_ERROR, handler);
 		graphics.addChild(newMovie);
 		if (TRACE_LOADING) StaticFunctions.storeTrace(["Loading url=",url," into a newly created child of=",graphics.name]);
 		loader.load(new URLRequest(url));

@@ -71,7 +71,7 @@ package come2play_as3.minesweeper
 		}
 		
 		
-		public function makeBoard(width:int,height:int,players:Array,isPlayer:Boolean):void
+		public function makeBoard(width:int,height:int,allPlayerIds:Array/*int*/,isPlayer:Boolean):void
 		{
 			if(boardUnderPart != null)
 				removeChild(boardUnderPart);
@@ -94,12 +94,9 @@ package come2play_as3.minesweeper
 					boardUnderPart.addChild(boardBricks[i][j]);
 				}
 			}
-			
-			
-			for(i=0;i<players.length;i++)
-			{
-				var playerObj:Object = players[i];
-				playerGraphicDataArr[i]=new PlayerGraphicData(i,playerObj.name);
+			for (i=0;i<allPlayerIds.length;i++){
+				var userId:int = allPlayerIds[i];
+				playerGraphicDataArr[i]=new PlayerGraphicData(i,T.getUserValue(userId,API_Message.USER_INFO_KEY_name,"player "+userId) as String);
 				boardUnderPart.addChild(playerGraphicDataArr[i]);	
 				updateLives(i,3);
 			}

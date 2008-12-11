@@ -5,36 +5,84 @@
 	import flash.events.MouseEvent;
 	import flash.external.*;
 	import flash.net.SharedObject;
-	import flash.text.TextField;
 
 	public class GetParams extends MovieClip {
+		private var _height:int = 20;
+		private var savePopUp:savePopup;
+		private var loadButtons:Array/*AvailableSave*/ = new Array();
 		public function GetParams() {
 			stop();
-			close_btn.addEventListener(MouseEvent.CLICK,closeFlash);
+			close_btn.addEventListener(MouseEvent.CLICK,closeFlash);		
+			if(root.loaderInfo.parameters["Save"] == "true")
+			{
+				savePopUp = new savePopup();
+				savePopUp.x= (stage.stageWidth - savePopUp.width)/2;
+				savePopUp.y= (stage.stageHeight - savePopUp.height)/2;
+				savePopUp.save_btn.addEventListener(MouseEvent.CLICK,saveGame);
+				addChild(savePopUp);
+			}
+			else
+			{	
+				loadGames();
+				//obj = shrParams.data.params
+				//trace("Loading values: "+JSON.stringify(obj))
+				//ExternalInterface.call("getParamsInit", obj);		
+			}
+
+		}
+		private function loadGames():void{
+			var sharedObject:String = root.loaderInfo.parameters["sharedObject"];
+			if ((sharedObject =="") || (sharedObject ==null)) throw new Error("SharedObject must have a name");
+			var shrParams:SharedObject = SharedObject.getLocal(sharedObject,"/");
+			for(var str:String in shrParams.data){
+				var availableSave:AvailableSave = new AvailableSave();
+				_height = availableSave.height;
+				availableSave.saveName_txt.text = str;
+				availableSave.y = loadButtons.length * (_height+3);
+				availableSave.delete_btn.addEventListener(MouseEvent.CLICK,deleteSave)
+				availableSave.Load_btn.addEventListener(MouseEvent.CLICK,loadSave)
+				addChild(availableSave)
+				loadButtons.push(availableSave)		
+			}
+			
+		}
+		private function getNumber(ypos:int):int{
+			return Math.floor(ypos/(_height+3));
+		}
+		private function deleteSave(ev:MouseEvent):void{
+			var sharedObject:String = root.loaderInfo.parameters["sharedObject"];
+			if ((sharedObject =="") || (sharedObject ==null)) throw new Error("SharedObject must have a name");
+			var shrParams:SharedObject = SharedObject.getLocal(sharedObject,"/");
+			var pos:int = getNumber(ev.stageY);
+			shrParams.data[loadButtons[pos].saveName_txt.text] = null;
+			shrParams.flush();
+			for each(var availableSave:AvailableSave in loadButtons)
+				removeChild(availableSave);
+			loadButtons = new Array();
+			loadGames();
+		}
+		private function loadSave(ev:MouseEvent):void{
+			var pos:int = getNumber(ev.stageY);
+		}
+		private function saveGame(ev:MouseEvent):void{
 			try{
 				var sharedObject:String = root.loaderInfo.parameters["sharedObject"];
 				if ((sharedObject =="") || (sharedObject ==null)) throw new Error("SharedObject must have a name");
 				var shrParams:SharedObject = SharedObject.getLocal(sharedObject,"/");
 				var obj:Object = {};
-				
-				if(root.loaderInfo.parameters["Save"] == "true")
+				for(var str:String in root.loaderInfo.parameters)
+					obj[str] = root.loaderInfo.parameters[str];	
+				if(savePopUp.saveName_txt.text !=null)
 				{
-					for(var str:String in root.loaderInfo.parameters)
-						obj[str] = root.loaderInfo.parameters[str];	
-					dataSaved_txt.text = JSON.stringify(obj)
-					shrParams.data.params = obj;
+					if(shrParams.data[savePopUp.saveName_txt.text]==null) shrParams.data[savePopUp.saveName_txt.text] = new Object();
+					shrParams.data[savePopUp.saveName_txt.text].params = obj;
 					shrParams.flush();
-				}
-				else
-				{	
-					obj = shrParams.data.params
-					trace("Loading values: "+JSON.stringify(obj))
-					ExternalInterface.call("getParamsInit", obj);		
+					removeChild(savePopUp);
 				}
 			}catch(err:Error){
 				if (ExternalInterface.available) {
-						ExternalInterface.call("errorHandler","Error : "+err.message+" happend in Object "+JSON.stringify(obj));
-						stop();
+					ExternalInterface.call("errorHandler","Error : "+err.message+" happend in Object "+JSON.stringify(obj));
+					stop();
 				}		
 			}
 		}

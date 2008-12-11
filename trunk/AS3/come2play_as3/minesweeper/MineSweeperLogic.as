@@ -102,7 +102,7 @@ package come2play_as3.minesweeper
 				shift.gotoAndStop(1);
 				
 		}
-		public function makeBoard(boardWidth:int,boardHeight:int,stageX:int,stageY:int,allPlayerIds:Array/*int*/,usersData:Array/*Object*/,myUserId:int):void
+		public function makeBoard(boardWidth:int,boardHeight:int,stageX:int,stageY:int,allPlayerIds:Array/*int*/,myUserId:int):void
 		{
 			this.boardWidth = boardWidth;
 			this.boardHeight = boardHeight;
@@ -128,7 +128,7 @@ package come2play_as3.minesweeper
 					boardLogic[i][j] = 0 ;
 				}
 			}		
-			mineSweeperGraphic.makeBoard(boardWidth,boardHeight,usersData,allPlayerIds.indexOf(myUserId) != -1);
+			mineSweeperGraphic.makeBoard(boardWidth,boardHeight,allPlayerIds,allPlayerIds.indexOf(myUserId) != -1);
 
 		}
 		public function loadBoard(serverEntries:Array/*ServerEntry*/):void

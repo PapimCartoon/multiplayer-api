@@ -241,6 +241,15 @@ package come2play_as3.api {
 						}
 					}		
 					T.initI18n(i18nObj, customObj); // may be called several times because we may pass different 'secondsPerMatch' every time a game starts
+				}else if(msg is API_GotUserInfo){
+					var infoMessage:API_GotUserInfo =/*as*/ msg as API_GotUserInfo;
+					var userObject:Object = {};
+					for each(var infoEntry:InfoEntry  in infoMessage.infoEntries){
+						trace(infoEntry.key+ "="+ infoEntry.value)
+						userObject[infoEntry.key] = infoEntry.value;
+					}
+					T.updateUser(infoMessage.userId, userObject);
+					
 				}
 				if(historyEntries != null)
 					if(historyEntries.length < HISTORY_LENGTH)

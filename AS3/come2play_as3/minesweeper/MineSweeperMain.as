@@ -30,8 +30,6 @@ import flash.utils.*;
 		private var startGraphic:Starter;
 		private var mineSweeperLogic:MineSweeperLogic;
 		private var myUserId:int; //my user id
-		private var usersData:Array; // information about all playing users
-		private var allUsersData:Array; // information about all users
 		private var allPlayerIds:Array; //playing user ids
 	/** 
 	 * Written by: Ofir Vainshtein (ofirvins@yahoo.com)
@@ -49,7 +47,6 @@ import flash.utils.*;
 			graphicPlayed = false;
 			graphics.addChild(new Background);
 			mineSweeperLogic  = new MineSweeperLogic(this,graphics);	
-			allUsersData = new Array(); 
 			startGraphic= new Starter()
 			startGraphic.x=170;
 			startGraphic.y=160;
@@ -61,7 +58,7 @@ import flash.utils.*;
 		
 		private function startGame(ev:Event):void
 		{
-			mineSweeperLogic.makeBoard(boardWidth,boardHeight,stageX,stageY,allPlayerIds,usersData,myUserId);
+			mineSweeperLogic.makeBoard(boardWidth,boardHeight,stageX,stageY,allPlayerIds,myUserId);
 			if(loadServerEntries != null)
 				mineSweeperLogic.loadBoard(loadServerEntries);
 			animationEnded();
@@ -113,41 +110,13 @@ import flash.utils.*;
 		}
 		override public function gotUserInfo(userId:int, entries:Array/*InfoEntry*/):void 
 		{
-			for each(var infoEntry:InfoEntry in entries)
-			{
-				if(infoEntry.key == "name")
-				{
-					for each(var previousPlayer:Object in allUsersData)
-						if(previousPlayer.userId == userId) return;
-					allUsersData.push({userId:userId,name:infoEntry.value});
-				}
-			}
+
 		}
 		override public function gotMatchStarted(allPlayerIds:Array, finishedPlayerIds:Array, serverEntries:Array):void
 		{
 			this.allPlayerIds = allPlayerIds;
 			loadServerEntries = null;
 			graphicPlayed = false;
-			usersData = new Array();
-			var userDataObj:Object;
-			var isUserExist:Boolean;
-			for each(var userId:int in allPlayerIds)
-			{
-				isUserExist = false;
-				for(var i:int = 0;i<allUsersData.length;i++)
-				{
-					userDataObj = allUsersData[i];
-					if(userDataObj.userId == userId)
-					{
-						isUserExist = true;
-						usersData.push(userDataObj);
-						allUsersData.splice(i,1);
-						i--;
-					}
-				}
-				if(!isUserExist)
-					usersData.push({userId:userId,name:"player "+userId});
-			}
 			if(serverEntries.length == 0)
 			{
 				doAllRequestRandomState("randomSeed",true);

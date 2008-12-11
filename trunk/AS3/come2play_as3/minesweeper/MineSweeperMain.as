@@ -205,8 +205,9 @@ import flash.utils.*;
 				var serverBox:ServerBox = serverEntry.value as ServerBox;
 				if(serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" stored the data and not the calculator");
 					mineSweeperLogic.addServerBox(serverBox);
-			}
-			else if(serverEntry.value.type == "deadSpace")//player found a safe zone
+			}else if (serverEntry.value == null){
+				if(serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" deleting a move must be agreed by all users");
+			}else if(serverEntry.value.type == "deadSpace")//player found a safe zone
 			{
 				serverEntry = serverEntries[1];
 				if(serverEntry == null) return;

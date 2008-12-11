@@ -239,7 +239,9 @@ public final class TictactoeMain extends ClientGameAPI {
 	}
 	override public function gotMatchEnded(finishedPlayerIds:Array/*int*/):void {
 		if (matchOverForPlayers(finishedPlayerIds))
-			startMove(true); // need to call it only if the current color was changed
+			startMove(true); 
+		graphics.dispatchEvent(new Event("ShowAd"));	
+			// need to call it only if the current color was changed
 		// if there is one player left (due to other users that disconnected),
 		// then I don't end the game because the container will give the user an option
 		// to either: win, cancel, or save the game.

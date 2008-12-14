@@ -4,6 +4,7 @@ package come2play_as3.minesweeper
 	import come2play_as3.api.auto_generated.API_Message;
 	
 	import flash.display.MovieClip;
+	import flash.events.Event;
 	import flash.text.TextField;
 	import flash.utils.setTimeout;
 	
@@ -29,28 +30,48 @@ package come2play_as3.minesweeper
 		{
 			var box:Box = boardBricks[xPos][yPos];
 			boardUnderPart.addChild(box);
-			box.gotoAndStop(30+playerNum*10);
-			if(boomSound != null)
-				removeChild(boomSound);
-			boomSound = new BoomSound()
-			addChild(boomSound);
+			
+			if(T.custom(API_Message.CUSTOM_INFO_KEY_isBack,false) as Boolean)
+			{
+				
+				
+				box.gotoAndStop(30+playerNum*10);
+				box.addEventListener(Event.ENTER_FRAME,function(ev:Event):void{stopBoom(box);});
+			}
+			else
+			{
+				box.gotoAndStop(30+playerNum*10);
+				if(boomSound != null)
+					removeChild(boomSound);
+				boomSound = new BoomSound()
+				addChild(boomSound);
+			}
+		}
+		private function stopBoom(box:Box):void{
+			if(box.Boom != null)
+				box.Boom.gotoAndStop(61);
+			else
+				setTimeout(function():void{stopBoom(box);},50);
 		}
 		public function revealBox(playerNum:int,borderingMines:int,xPos:int,yPos:int,isCorrect:Boolean):void
 		{
 			var box:Box = boardBricks[xPos][yPos];
 			box.gotoAndStop(10*(playerNum+1) + borderingMines);
-			if(!isCorrect){
+			if((!isCorrect) && (!(T.custom(API_Message.CUSTOM_INFO_KEY_isBack,false) as Boolean))){
 				if(mineNotFoundSound != null)
 					removeChild(mineNotFoundSound);
 				mineNotFoundSound = new MineNotFoundSound()
 				addChild(mineNotFoundSound);
 			}
-			setTimeout(function():void{isCorrectChange(isCorrect,box)},200);
+			setTimeout(function():void{isCorrectChange(isCorrect,box)},50);
 			
 		}
 		private function isCorrectChange(isCorrect:Boolean,box:Box):void
 		{
-			box.isWrong.alpha = isCorrect?0:100;
+			if(box.isWrong != null)
+				box.isWrong.alpha = isCorrect?0:100;
+			else
+				setTimeout(function():void{isCorrectChange(isCorrect,box)},50);
 		}
 		public function updateLives(playerNum:int,livesCount:int):void
 		{

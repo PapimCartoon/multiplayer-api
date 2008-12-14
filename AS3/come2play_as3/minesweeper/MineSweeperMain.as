@@ -56,12 +56,13 @@ import flash.utils.*;
 			doRegisterOnServer();
 		}
 		
-		private function startGame(ev:Event):void
+		private function startGame(ev:Event = null):void
 		{
-			mineSweeperLogic.makeBoard(boardWidth,boardHeight,stageX,stageY,allPlayerIds,myUserId);
+			//mineSweeperLogic.makeBoard(boardWidth,boardHeight,stageX,stageY,allPlayerIds,myUserId);
 			if(loadServerEntries != null)
 				mineSweeperLogic.loadBoard(loadServerEntries);
-			animationEnded();
+			if(! (T.custom(API_Message.CUSTOM_INFO_KEY_isBack,false) as Boolean) )
+				animationEnded();
 		}
 		public function gameOver(playerMatchOverArr:Array/*PlayerMatchOver*/):void
 		{
@@ -128,10 +129,16 @@ import flash.utils.*;
 				loadServerEntries = serverEntries;
 				//load game or viewer
 				graphicPlayed = true;
-				animationStarted();
-				startGraphic.play();
+				if((T.custom(API_Message.CUSTOM_INFO_KEY_isBack,false) as Boolean))
+					startGame();
+				else
+				{
+					animationStarted();
+					startGraphic.play();
+				}
 				
 			}
+			mineSweeperLogic.makeBoard(boardWidth,boardHeight,stageX,stageY,allPlayerIds,myUserId);
 		}
 		override public function gotMatchEnded(finishedPlayerIds:Array/*int*/):void 
 		{
@@ -150,8 +157,11 @@ import flash.utils.*;
 				if(serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" stored the data and not the calculator");
 				if(!graphicPlayed)
 				{
-					animationStarted();
-					startGraphic.play();
+					if(! (T.custom(API_Message.CUSTOM_INFO_KEY_isBack,false) as Boolean))
+					{
+						animationStarted();
+						startGraphic.play();
+					}
 				}
 			}
 			else if(serverEntry.value is PlayerMove)//state changed due to player move

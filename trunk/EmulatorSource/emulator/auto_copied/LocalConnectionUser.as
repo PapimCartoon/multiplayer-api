@@ -147,7 +147,7 @@ package emulator.auto_copied
 			}        	
         }
         private function verify(msg:API_Message, isSend:Boolean):void {
-        	if	(!_shouldVerify) return;
+        	if (!_shouldVerify) return;
         	if (isServer!=isSend)
     			verifier.msgFromGame(msg);
 

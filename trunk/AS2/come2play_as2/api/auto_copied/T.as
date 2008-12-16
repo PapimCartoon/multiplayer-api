@@ -44,10 +44,32 @@ import come2play_as2.api.auto_copied.*;
 	{
 		private static var _dictionary:Object = {};
 		private static var _custom:Object = {};
+		private static var _usersInfo:Object = {};
 		public static function initI18n(dictionary:Object, custom:Object):Void {
 			var key:String;
 			for (key in dictionary)	_dictionary[key] = dictionary[key];			
 			for (key in custom)	_custom[key] = custom[key];
+		}
+		static public function updateUser(userId:Number, userObject:Object):Void{
+			var currentUser:Object = _usersInfo[userId];
+			if(currentUser == null)
+				_usersInfo[userId] = userObject;
+			else{
+				for(var str:String in userObject){
+					currentUser[str] = userObject[str];
+				}
+			}
+			
+		}
+		static public function getUserValue(userId:Number,key:String,defaultValue:Object):Object{
+			var userInfo:Object = _usersInfo[userId];
+			if(userInfo == null)
+				return defaultValue;
+			var res:Object = userInfo[key];
+			if(res == null)
+				return defaultValue;
+			isSameType(res,defaultValue);
+			return res;
 		}
 		public static function getAsArray():Array/*InfoEntry*/
 		{
@@ -60,15 +82,18 @@ import come2play_as2.api.auto_copied.*;
 		// for customization, e.g., the frame-rate of the game.
 		// If defaultValue is not null, then we require that the **type** of the return value
 		// will be identical to the **type** of the defaultValue.		
+		
+		public static function isSameType(res:Object,defaultValue:Object):Void{
+			if (defaultValue==null || res==null) return;
+			var typeD:String = AS3_vs_AS2.getClassName(defaultValue);
+			var typeR:String = AS3_vs_AS2.getClassName(res);
+			StaticFunctions.assert(typeD==typeR, ["In T.custom and the T.getUserValue the type of defaultValue and the return value must be identical! DefaultValue=",defaultValue," type of DefaultValue=",typeD," result=",res," type of result=",typeR]); 
+		}
 		public static function custom(key:String, defaultValue:Object/*Type*/):Object/*Type*/ {
 			var res:Object = _custom[key];
-			if (res==null) return defaultValue;
-			if (defaultValue!=null) {
-				// the type of defaultValue must be identical to res
-				var typeD:String = AS3_vs_AS2.getClassName(defaultValue);
-				var typeR:String = AS3_vs_AS2.getClassName(res);
-				StaticFunctions.assert(typeD==typeR, ["In T.custom the type of defaultValue and the return value must be identical! DefaultValue=",defaultValue," type of DefaultValue=",typeD," result=",res," type of result=",typeR]); 
-			} 
+			if (res==null) return defaultValue;			
+			// the type of defaultValue must be identical to res
+			isSameType(res,defaultValue);
 			return res; 
 		}
 		

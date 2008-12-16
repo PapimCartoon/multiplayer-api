@@ -104,7 +104,7 @@ import come2play_as2.api.auto_copied.*;
 			}        	
         }
         private function verify(msg:API_Message, isSend:Boolean):Void {
-        	if	(!_shouldVerify) return;
+        	if (!_shouldVerify) return;
         	if (isServer!=isSend)
     			verifier.msgFromGame(msg);
     		else

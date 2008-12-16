@@ -32,7 +32,7 @@ package emulator.auto_copied
 		// Imagine ProtocolVerifier on the container, and the container sends GotMatchEnded for my player.
 		// The game may send doStoreState up until it sends the transaction for GotMatchEnded
 		// therefore we update currentPlayerIds only after we get the transaction.
-		private var nextPlayerIds:Array/*int*/; // when the container sends
+		private var nextPlayerIds:Array/*int*/; 
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
@@ -41,14 +41,15 @@ package emulator.auto_copied
 		public function ProtocolVerifier() {
 			setInterval(AS3_vs_AS2.delegate(this, this.checkAnimationInterval), MAX_ANIMATION_MILLISECONDS);
 			currentPlayerIds = [];
+			nextPlayerIds = [];
 		}
 		public function toString():String {
 			return "ProtocolVerifier:"+
 				" transactionStartedOn="+transactionStartedOn+
-				" currentCallback="+currentCallback+ 
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+				" currentCallback="+currentCallback+ 
 				" didRegisterOnServer="+didRegisterOnServer+ 
 				" currentPlayerIds="+currentPlayerIds+ 
 				" currentCallback="+currentCallback+ 
@@ -58,23 +59,36 @@ package emulator.auto_copied
         	if (transactionStartedOn==-1) return; // animation is not running
         	var now:int = getTimer();
         	if (now - transactionStartedOn < MAX_ANIMATION_MILLISECONDS) return; // animation is running for a short time
-        	// animation is running for too long
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+        	// animation is running for too long
         	StaticFunctions.throwError("An transaction is running for more than MAX_ANIMATION_MILLISECONDS="+MAX_ANIMATION_MILLISECONDS+". It started "+transactionStartedOn+" milliseconds after the script started, and now="+now+".");         	
         }
         public function isPlayer():Boolean {
         	// I can't use T.custom(API_Message.CUSTOM_INFO_KEY_myUserId,0), because ProtocolVerifier is used in emulator that runs multiple clients (thus static memory will cause a conflict)
-        	return AS3_vs_AS2.IndexOf(currentPlayerIds, myUserId)!=-1;        	
+        	return isInPlayers(myUserId);        	
+        }
+        public function isInPlayers(playerId:int):Boolean {
+        	return AS3_vs_AS2.IndexOf(currentPlayerIds, playerId)!=-1;        	
+        }
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+        public function isAllInPlayers(playerIds:Array/*int*/):Boolean {
+        	check(playerIds.length>=1, ["isAllInPlayers was called with an empty playerIds array"]);
+        	for each (var playerId:int in playerIds) {
+        		if (!isInPlayers(playerId)) return false;
+        	}
+        	return true;        	
         }
 		private function check(cond:Boolean, arr:Array):void {
 			if (cond) return;
 			StaticFunctions.assert(false, ["ProtocolVerifier found an error: ", arr]);
-		}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		}
 		private function checkServerEntries(serverEntries:Array/*ServerEntry*/):void {
 			for each (var entry:ServerEntry in serverEntries) {
 				check(entry.key!=null, ["Found a null key in serverEntry=",entry]);
@@ -84,10 +98,11 @@ package emulator.auto_copied
 			StaticFunctions.assert(inProgress == (currentPlayerIds.length>0), ["The game must ",inProgress?"" : "not"," be in progress when passing msg=",msg]); 
 		}
 		public function msgToGame(gotMsg:API_Message):void {
-			check(currentCallback==null, ["Container sent two messages without waiting! oldCallback=", currentCallback, " newCallback=",gotMsg]);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			check(gotMsg!=null, ["Got a null message!"]);
+			check(currentCallback==null, ["Container sent two messages without waiting! oldCallback=", currentCallback, " newCallback=",gotMsg]);
 			check(didRegisterOnServer, [T.i18n("Container sent a message before getting doRegisterOnServer")]); 
 			currentCallback = gotMsg;
 			transactionStartedOn = getTimer();   
@@ -96,11 +111,11 @@ package emulator.auto_copied
     			checkInProgress(true,gotMsg);
     			var stateChanged:API_GotStateChanged = /*as*/gotMsg as API_GotStateChanged;
     			checkServerEntries(stateChanged.serverEntries);
-    		} else if (gotMsg is API_GotMatchStarted) {
-    			checkInProgress(false,gotMsg);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+    		} else if (gotMsg is API_GotMatchStarted) {
+    			checkInProgress(false,gotMsg);
 				var matchStarted:API_GotMatchStarted = /*as*/gotMsg as API_GotMatchStarted;
 				checkServerEntries(matchStarted.serverEntries);
 				nextPlayerIds = StaticFunctions.subtractArray(matchStarted.allPlayerIds, matchStarted.finishedPlayerIds);
@@ -109,11 +124,11 @@ package emulator.auto_copied
 				var matchEnded:API_GotMatchEnded = /*as*/gotMsg as API_GotMatchEnded;
 				nextPlayerIds = StaticFunctions.subtractArray(currentPlayerIds, matchEnded.finishedPlayerIds);
 			} else if (gotMsg is API_GotCustomInfo) {	 					    			
-    			// isPause is called when the game is in progress,
-    			// and other info is passed before the game starts.
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+    			// isPause is called when the game is in progress,
+    			// and other info is passed before the game starts.
     			var customInfo:API_GotCustomInfo = /*as*/gotMsg as API_GotCustomInfo;
     			for each (var infoEntry:InfoEntry in customInfo.infoEntries) {
     				if (infoEntry.key==API_Message.CUSTOM_INFO_KEY_myUserId)
@@ -122,11 +137,11 @@ package emulator.auto_copied
 			} else if (gotMsg is API_GotKeyboardEvent) {						    			
     			checkInProgress(true,gotMsg);
     			
-				// can be sent whether the game is in progress or not
-			} else if (gotMsg is API_GotUserInfo) { 
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+				// can be sent whether the game is in progress or not
+			} else if (gotMsg is API_GotUserInfo) { 
 			} else if (gotMsg is API_GotUserDisconnected) {
 			} else if (gotMsg is API_GotRequestStateCalculation){
 				
@@ -135,11 +150,11 @@ package emulator.auto_copied
 				check(false, ["Illegal gotMsg=",gotMsg]);
 			}
 		}
-		public static function isOldBoard(msg:API_Message):Boolean {
-			var name:String = msg.getMethodName();
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		public static function isOldBoard(msg:API_Message):Boolean {
+			var name:String = msg.getMethodName();
 			return StaticFunctions.startsWith(name, "do_") || StaticFunctions.startsWith(name, "got_");
 		}
 		public static function isPassThrough(doMsg:API_Message):Boolean {
@@ -148,191 +163,184 @@ package emulator.auto_copied
         		isOldBoard(doMsg);
 		}
 		public function isDoAll(doMsg:API_Message):Boolean {
-			return StaticFunctions.startsWith(doMsg.getMethodName(), "doAll");
-		}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			return StaticFunctions.startsWith(doMsg.getMethodName(), "doAll");
+		}
 		
 		public function msgFromGame(doMsg:API_Message):void {
+			check(doMsg!=null, ["Send a null message!"]);
 			if (doMsg is API_DoRegisterOnServer) {
 				check(!didRegisterOnServer, ["Call DoRegisterOnServer only once!"]);
 				didRegisterOnServer = true;
-			} else if (isPassThrough(doMsg)) {
-        	} else if (doMsg is API_DoStoreState) {
-        		check(isPlayer(), ["Only a player can send DoStoreState"]);
-        		var doStoreStateMessage:API_DoStoreState = /*as*/doMsg as API_DoStoreState;
-        		if (doStoreStateMessage.userEntries.length < 1 )
+				return;
+			} 
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-        			StaticFunctions.throwError("You have to call doStoreState with at least 1 parameter !");	
+			check(didRegisterOnServer, ["The first call must be DoRegisterOnServer!"]);
+			if (isPassThrough(doMsg)) return; //e.g., we always pass doTrace or doAllFoundHacker
+			
+        	if (doMsg is API_DoStoreState) {
+        		check(isPlayer(), ["Only a player can send DoStoreState"]);
+        		var doStoreStateMessage:API_DoStoreState = /*as*/doMsg as API_DoStoreState;
         		isNullKeyExistUserEntry(doStoreStateMessage.userEntries);
         		isDeleteLegal(doStoreStateMessage.userEntries)
 			} else if (doMsg is API_Transaction) {
 				var transaction:API_Transaction = /*as*/doMsg as API_Transaction;
-				check(currentCallback.getMethodName()==transaction.callback.callbackName, ["Illegal callbackName!"]);
-				if (nextPlayerIds!=null) {
-					currentPlayerIds = nextPlayerIds; // we do this before calling checkDoAll
-					nextPlayerIds = null;
-				}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+				check(currentCallback.getMethodName()==transaction.callback.callbackName, ["Illegal callbackName!"]);
+				// The game may perform doAllFoundHacker (in a transaction) even after the game is over,
+				// because: The container may pass gotStateChanged after the game sends doAllEndMatch,
+				//			because the game should verify every doStoreState (to prevent hackers from polluting the state after they know the game will be over).
+				//if (transaction.messages.length>0) check(currentPlayerIds.length>0 || nextPlayerIds.length>0);
+				currentPlayerIds = nextPlayerIds; // we do this before calling checkDoAll
 				
 				var wasStoreStateCalculation:Boolean = false;
 				var isRequestStateCalculation:Boolean = currentCallback is API_GotRequestStateCalculation;
 				for each (var doAllMsg:API_Message in transaction.messages) {
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 					checkDoAll(doAllMsg);
 					if (isRequestStateCalculation) {
 						if (doAllMsg is API_DoAllStoreStateCalculation)	
 							wasStoreStateCalculation = true;
 						else
 							check(doAllMsg is API_DoAllFoundHacker, ["Illegal msg=",doAllMsg," when processing ",currentCallback]);
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 					}						
 				}
 				if (isRequestStateCalculation)
 					check(wasStoreStateCalculation, ["When the server calls gotRequestStateCalculation, you must call doAllStoreStateCalculation"]);
-				
-				currentCallback = null;
-        		transactionStartedOn = -1;
-			}
-			
-		}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+				
+				currentCallback = null;
+        		transactionStartedOn = -1;
+			} else {
+				check(false, ["Forgot to verify message type=",AS3_vs_AS2.getClassName(doMsg), " doMsg=",doMsg]);
+			}
+			
+		}
 		private function isDeleteLegal(userEntries:Array/*UserEntry*/):void
 		{
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			for each(var userEntry:UserEntry in userEntries) {
-				if(userEntry.value == null)
-					if(userEntry.isSecret)
-						StaticFunctions.throwError("key deletion must be public");
+				if (userEntry.value == null)
+					check(!userEntry.isSecret,["key deletion must be public! userEntry=",userEntry]);
 			}
 		}		    		
 
         private function checkDoAll(msg:API_Message):void {
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
         	if (msg is API_DoAllFoundHacker) {        		
 			}
 			else if (msg is API_DoAllStoreStateCalculation) 
-			{
-				var doAllStoreStateCalculations:API_DoAllStoreStateCalculation = /*as*/msg as API_DoAllStoreStateCalculation;
-        		if (doAllStoreStateCalculations.userEntries.length < 1 )
-        			StaticFunctions.throwError("You have to call doAllStoreStateCalculations with at least 1 UserEntry !");
-				isNullKeyExistUserEntry(doAllStoreStateCalculations.userEntries);
-				isDeleteLegal(doAllStoreStateCalculations.userEntries)
-        	}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			{
+				var doAllStoreStateCalculations:API_DoAllStoreStateCalculation = /*as*/msg as API_DoAllStoreStateCalculation;
+        		isNullKeyExistUserEntry(doAllStoreStateCalculations.userEntries);
+				isDeleteLegal(doAllStoreStateCalculations.userEntries)
+        	}
         	else if (msg is API_DoAllStoreState)
 			{
 				var doAllStoreStateMessage:API_DoAllStoreState = /*as*/msg as API_DoAllStoreState;
-        		if (doAllStoreStateMessage.userEntries.length < 1 )
-        			StaticFunctions.throwError("You have to call doAllStoreStateMessage with at least 1 UserEntry !");
-				isNullKeyExistUserEntry(doAllStoreStateMessage.userEntries);
+        		isNullKeyExistUserEntry(doAllStoreStateMessage.userEntries);
 				isDeleteLegal(doAllStoreStateMessage.userEntries)
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			}   
 			else if (msg is API_DoAllEndMatch)
 			{
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 				var doAllEndMatchMessage:API_DoAllEndMatch = /*as*/msg as API_DoAllEndMatch;
-        		if (doAllEndMatchMessage.finishedPlayers.length < 1 )
-        			StaticFunctions.throwError("You have to call doAllEndMatch with at least 1 PlayerMatchOver !");
+				isAllInPlayers(doAllEndMatchMessage.finishedPlayers);
+				// IMPORTANT Note: I do not update currentPlayerIds, because the container still needs to pass gotMatchEnded
+				// Also, the container may pass gotStateChanged after the game sends DoAllEndMatch,
+				// because the game should verify every doStoreState (to prevent hackers from polluting the state after they know the game will be over). 
 			} 
 			else if (msg is API_DoAllRevealState) 
-			{
-				var doAllRevealState:API_DoAllRevealState = /*as*/msg as API_DoAllRevealState;
-        		if (doAllRevealState.revealEntries.length < 1 )
-        			StaticFunctions.throwError("You have to call doAllRevealState with at least 1 RevealEntry !");
-        		isNullKeyExistRevealEntry(doAllRevealState.revealEntries);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			{
+				var doAllRevealState:API_DoAllRevealState = /*as*/msg as API_DoAllRevealState;
+        		isNullKeyExistRevealEntry(doAllRevealState.revealEntries);
 			} 
 			else if (msg is API_DoAllRequestStateCalculation) 
 			{
 				var doAllRequestStateCalculation:API_DoAllRequestStateCalculation = /*as*/msg as API_DoAllRequestStateCalculation;
-        		if (doAllRequestStateCalculation.keys.length < 1 )
-        			StaticFunctions.throwError("You have to call doAllRequestStateCalculation with at least 1 key !");
         		isNullKeyExist(doAllRequestStateCalculation.keys);
 			}
 			else if	(msg is API_DoAllRequestRandomState)
-			{
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			{
 				var doAllRequestRandomState:API_DoAllRequestRandomState = /*as*/msg as API_DoAllRequestRandomState;	
-				if (doAllRequestRandomState.key == null)
-					StaticFunctions.throwError("You have to call doAllRequestRandomState with a non null key !");
+				check(doAllRequestRandomState.key != null,["You have to call doAllRequestRandomState with a non null key !"]);
 			}	
 			else if (msg is API_DoAllSetTurn) 
 			{
 				var doAllSetTurn:API_DoAllSetTurn = /*as*/msg as API_DoAllSetTurn;
-        		if (AS3_vs_AS2.IndexOf(currentPlayerIds, doAllSetTurn.userId) == -1 )
-        			StaticFunctions.throwError("You have to call doAllSetTurn with a player user ID !");
+        		check(isInPlayers(doAllSetTurn.userId), ["You have to call doAllSetTurn with a playerId!"]);
 			}
+			else if (msg is API_DoAllSetMove) 
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			else if (msg is API_DoAllSetMove) 
 			{				
 				// nothing to check
 			}
 			else if (msg is API_DoAllShuffleState) 
 			{
 				var doAllShuffleState:API_DoAllShuffleState = /*as*/msg as API_DoAllShuffleState;
-        		if (doAllShuffleState.keys.length < 1 )
-        			StaticFunctions.throwError("You have to call doAllShuffleState with at least 1 key !");
         		isNullKeyExist(doAllShuffleState.keys);			
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 			}
 			else
 			{
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 				check(false, ["Unknown doAll message=",msg]);
 			}
         }
 		
         private function isNullKeyExistUserEntry(userEntries:Array/*UserEntry*/):void
         {
+        	check(userEntries.length>=1, ["userEntries must have at least one UserEntry!"]);
         	for each (var userEntry:UserEntry in userEntries) {
+        		check(userEntry.key != null,["UserEntry.key cannot be null !"]);
+        	}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-        		if (userEntry.key == null)
-        			StaticFunctions.throwError("key cannot be null !");
-        	}
         }
         private function isNullKeyExistRevealEntry(revealEntries:Array/*RevealEntry*/):void
         {
+        	check(revealEntries.length>=1, ["revealEntries must have at least one RevealEntry!"]);
         	for each (var revealEntry:RevealEntry in revealEntries) {
-        		if (revealEntry.key == null)
-        			StaticFunctions.throwError("key cannot be null !");
+        		check(revealEntry.key != null,["RevealEntry.key cannot be null !"]);
+        		check(revealEntry.userIds==null || isAllInPlayers(revealEntry.userIds), ["RevealEntry.userIds must either be null or contain only players"]); 
         	}
+        }
+        private function isNullKeyExist(keys:Array/*Object*/):void
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-        }
-        private function isNullKeyExist(keys:Array/*Object*/):void
         {
+        	check(keys.keys.length>=1,["keys must have at leasy one key!"]);        		
         	for each (var key:String in keys) {
-        		if (key == null)
-        			StaticFunctions.throwError("key cannot be null !");
+        		check(key != null,["key cannot be null !"]);
         	}
         }
 
 	}
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 }

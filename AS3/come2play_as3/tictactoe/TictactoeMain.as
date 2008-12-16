@@ -39,8 +39,6 @@ public final class TictactoeMain extends ClientGameAPI {
 	private var turnOfColor:int; // a number between 0 and allPlayerIds.length	
 	private var shouldSendMove:Boolean; // to prevent the user sending his move several times
 	private var myColor:int; // either VIEWER, or a number between 0 and allPlayerIds.length
-	// contains a mapping from userId to his avatar (see gotUserInfo)
-	private var userId2Avatar:Object;
 	
 	////////////////////////////////////////////////////
 	// Customizable fields (see gotCustomInfo)
@@ -72,7 +70,6 @@ public final class TictactoeMain extends ClientGameAPI {
 		AS3_vs_AS2.waitForStage(graphics, AS3_vs_AS2.delegate(this,this.constructGame));
 	}
 	public function constructGame():void {
-		userId2Avatar = {};		
 		doRegisterOnServer();
 	}
 	private function ROWS():int {
@@ -101,14 +98,6 @@ public final class TictactoeMain extends ClientGameAPI {
 			var col:int =  2-int(delta/3);
 			var row:int =  (delta%3);
 			userMadeHisMove( TictactoeSquare.create(row, col) );
-		}
-	}
-	override public function gotUserInfo(userId:int, entries:Array/*InfoEntry*/):void {
-		// From the userInfo, we use only the user's avatars (so we do not keep all the info entries) 
-		for each (var entry:InfoEntry in entries) {
-			if (entry.key==USER_INFO_KEY_avatar_url) {
-				userId2Avatar[userId] = entry.value.toString();
-			}
 		}
 	}
 
@@ -207,7 +196,7 @@ public final class TictactoeMain extends ClientGameAPI {
 			var avatarUrlExists:Object = {};
 			for (var colorId:int=0; colorId<allPlayerIds.length; colorId++) {
 				var playerId:int = allPlayerIds[colorId];
-				var avatarUrl:String = userId2Avatar[playerId];
+				var avatarUrl:String = AS3_vs_AS2.asString(T.getUserValue(playerId,USER_INFO_KEY_avatar_url,null));
 				if (avatarUrl!=null && avatarUrl!='' && avatarUrlExists[avatarUrl]==null) {
 					avatarUrlExists[avatarUrl] = true; // to mark that we saw this avatarUrl 
 					replaceSymbol(colorId, avatarUrl);
@@ -239,8 +228,7 @@ public final class TictactoeMain extends ClientGameAPI {
 	}
 	override public function gotMatchEnded(finishedPlayerIds:Array/*int*/):void {
 		if (matchOverForPlayers(finishedPlayerIds))
-			startMove(true); 
-			// need to call it only if the current color was changed
+			startMove(true); // need to call it only if the current color was changed
 		// if there is one player left (due to other users that disconnected),
 		// then I don't end the game because the container will give the user an option
 		// to either: win, cancel, or save the game.

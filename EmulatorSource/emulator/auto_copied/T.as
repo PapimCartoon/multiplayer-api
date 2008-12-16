@@ -67,14 +67,42 @@ package emulator.auto_copied
 	{
 		private static var _dictionary:Object = {};
 		private static var _custom:Object = {};
+		private static var _usersInfo:Object = {};
 		public static function initI18n(dictionary:Object, custom:Object):void {
 			var key:String;
 			for (key in dictionary)	_dictionary[key] = dictionary[key];			
 			for (key in custom)	_custom[key] = custom[key];
-		}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		}
+		static public function updateUser(userId:int, userObject:Object):void{
+			var currentUser:Object = _usersInfo[userId];
+			if(currentUser == null)
+				_usersInfo[userId] = userObject;
+			else{
+				for(var str:String in userObject){
+					currentUser[str] = userObject[str];
+				}
+			}
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+			
+		}
+		static public function getUserValue(userId:int,key:String,defaultValue:Object):Object{
+			var userInfo:Object = _usersInfo[userId];
+			if(userInfo == null)
+				return defaultValue;
+			var res:Object = userInfo[key];
+			if(res == null)
+				return defaultValue;
+			isSameType(res,defaultValue);
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+			return res;
+		}
 		public static function getAsArray():Array/*InfoEntry*/
 		{
 			var infoEntries:Array/*InfoEntry*/ = new Array();
@@ -83,63 +111,66 @@ package emulator.auto_copied
 			return infoEntries;
 		}
 		
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		// for customization, e.g., the frame-rate of the game.
 		// If defaultValue is not null, then we require that the **type** of the return value
+		// will be identical to the **type** of the defaultValue.		
+		
+		public static function isSameType(res:Object,defaultValue:Object):void{
+			if (defaultValue==null || res==null) return;
+			var typeD:String = AS3_vs_AS2.getClassName(defaultValue);
+			var typeR:String = AS3_vs_AS2.getClassName(res);
+			StaticFunctions.assert(typeD==typeR, ["In T.custom and the T.getUserValue the type of defaultValue and the return value must be identical! DefaultValue=",defaultValue," type of DefaultValue=",typeD," result=",res," type of result=",typeR]); 
+		}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		// will be identical to the **type** of the defaultValue.		
 		public static function custom(key:String, defaultValue:Object/*Type*/):Object/*Type*/ {
 			var res:Object = _custom[key];
-			if (res==null) return defaultValue;
-			if (defaultValue!=null) {
-				// the type of defaultValue must be identical to res
-				var typeD:String = AS3_vs_AS2.getClassName(defaultValue);
-				var typeR:String = AS3_vs_AS2.getClassName(res);
-				StaticFunctions.assert(typeD==typeR, ["In T.custom the type of defaultValue and the return value must be identical! DefaultValue=",defaultValue," type of DefaultValue=",typeD," result=",res," type of result=",typeR]); 
-			} 
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
+			if (res==null) return defaultValue;			
+			// the type of defaultValue must be identical to res
+			isSameType(res,defaultValue);
 			return res; 
 		}
 		
 		// for internationalization	
 		// i18n stands for "i"(nternationalizatio)"n"	
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		public static function i18n(str:String):String { //internationalization			
 			var res:Object = _dictionary[str];
 			return res==null ? str : res.toString();
 		}		
 		public static function i18nReplace(str:String, replacement:Object):String {
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 			var res:String = i18n(str);
 			for (var key:String in replacement) {
 				res = StaticFunctions.replaceAll(res, "$"+key+"$", ''+replacement[key]); 
 			} 
 			return res;			
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		}
 		
 		
 		public static var isLeftToRight:Boolean = true;
 		
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 		private var arr:Array;
 		public function T() {
 			arr = [];
 		}
 		public function add(str:String):void {
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			if (isLeftToRight) 
 				arr.push(str);
 			else
 				arr.unshift(str);
 		}
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 		public function join():String {
 			return arr.join("");
 		}

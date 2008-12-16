@@ -237,6 +237,15 @@ import come2play_as2.api.*;
 						}
 					}		
 					T.initI18n(i18nObj, customObj); // may be called several times because we may pass different 'secondsPerMatch' every time a game starts
+				}else if(msg instanceof API_GotUserInfo){
+					var infoMessage:API_GotUserInfo =API_GotUserInfo( msg);
+					var userObject:Object = {};
+					for (var i246:Number=0; i246<infoMessage.infoEntries.length; i246++) { var infoEntry:InfoEntry = infoMessage.infoEntries[i246]; 
+						trace(infoEntry.key+ "="+ infoEntry.value)
+						userObject[infoEntry.key] = infoEntry.value;
+					}
+					T.updateUser(infoMessage.userId, userObject);
+					
 				}
 				if(historyEntries != null)
 					if(historyEntries.length < HISTORY_LENGTH)

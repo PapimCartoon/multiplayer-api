@@ -246,7 +246,7 @@ import come2play_as2.api.auto_copied.*;
         }
         private function isNullKeyExist(keys:Array/*Object*/):Void
         {
-        	check(keys.keys.length>=1,["keys must have at leasy one key!"]);        		
+        	check(keys.length>=1,["keys must have at leasy one key!"]);        		
         	for (var i253:Number=0; i253<keys.length; i253++) { var key:String = keys[i253]; 
         		check(key != null,["key cannot be null !"]);
         	}

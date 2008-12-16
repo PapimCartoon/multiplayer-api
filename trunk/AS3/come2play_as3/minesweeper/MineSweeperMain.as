@@ -15,7 +15,6 @@ import flash.utils.*;
 		private const MINE_AMOUNTstr:String = "mineAmount"
 		
 		private var graphics:MovieClip;
-		
 		private static var boardHeight:int=10;
 		private static var boardWidth:int=10;
 		private static var mineAmount:int=10;
@@ -160,6 +159,7 @@ import flash.utils.*;
 			{
 				//got calculations made by calculator	
 				if(serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" stored the data and not the calculator");
+				if(!isPlaying) return;
 				if(!graphicPlayed)
 				{
 					if(! (T.custom(API_Message.CUSTOM_INFO_KEY_isBack,false) as Boolean))
@@ -174,6 +174,7 @@ import flash.utils.*;
 				var playerMove:PlayerMove = serverEntry.value as PlayerMove;
 				if(playerMove.playerId != serverEntry.storedByUserId) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" stored the data for another user");
 				if(playerMove.playerId != serverEntry.key.playerId) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" key did not match the value");
+				if(!isPlaying) return;
 				var newMove:Boolean = mineSweeperLogic.addPlayerMove(playerMove);
 				if(newMove)	
 				{	
@@ -188,14 +189,17 @@ import flash.utils.*;
 			{
 				var serverBox:ServerBox = serverEntry.value as ServerBox;
 				if(serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" stored the data and not the calculator");
-					mineSweeperLogic.addServerBox(serverBox);
+				if(!isPlaying) return;
+				mineSweeperLogic.addServerBox(serverBox);
 			}else if (serverEntry.value == null){
 				if(serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" deleting a move must be agreed by all users");
+				if(!isPlaying) return;
 			}else if(serverEntry.value.type == "deadSpace")//player found a safe zone
 			{
 				serverEntry = serverEntries[1];
 				if(serverEntry == null) return;
 				if(serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" stored the data and not the calculator");
+				if(!isPlaying) return;
 				if(serverEntry.value is Array)
 				{
 					var safeSquares:Array = serverEntry.value as Array;

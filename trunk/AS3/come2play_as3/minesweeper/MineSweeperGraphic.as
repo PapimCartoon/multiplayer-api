@@ -172,7 +172,8 @@ class PlayerGraphicData extends MovieClip
 		{
 			for(var i:int =(currentLives-1);i>=newLives;i-- )
 			{
-				removeChild(playerLives[i]);
+				if(contains(playerLives[i]))
+					removeChild(playerLives[i]);
 			}
 		}
 		else if(newLives != currentLives)

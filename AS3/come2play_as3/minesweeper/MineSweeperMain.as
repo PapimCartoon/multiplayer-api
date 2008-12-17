@@ -63,6 +63,7 @@ import flash.utils.*;
 				mineSweeperLogic.loadBoard(loadServerEntries);
 			if(! (T.custom(API_Message.CUSTOM_INFO_KEY_isBack,false) as Boolean) )
 				animationEnded();
+			isPlaying = true;
 		}
 		public function gameOver(playerMatchOverArr:Array/*PlayerMatchOver*/):void
 		{
@@ -116,7 +117,6 @@ import flash.utils.*;
 		}
 		override public function gotMatchStarted(allPlayerIds:Array, finishedPlayerIds:Array, serverEntries:Array):void
 		{
-			isPlaying = true;
 			this.allPlayerIds = allPlayerIds;
 			loadServerEntries = null;
 			graphicPlayed = false;

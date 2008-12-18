@@ -31,6 +31,7 @@ import flash.utils.*;
 		private var myUserId:int; //my user id
 		private var allPlayerIds:Array; //playing user ids
 		private var isPlaying:Boolean;
+		private var allowMoves:Boolean;
 	/** 
 	 * Written by: Ofir Vainshtein (ofirvins@yahoo.com)
  	**/
@@ -63,17 +64,19 @@ import flash.utils.*;
 				mineSweeperLogic.loadBoard(loadServerEntries);
 			if(! (T.custom(API_Message.CUSTOM_INFO_KEY_isBack,false) as Boolean) )
 				animationEnded();
-			isPlaying = true;
+			allowMoves = true;
 		}
 		public function gameOver(playerMatchOverArr:Array/*PlayerMatchOver*/):void
 		{
 			doAllEndMatch(playerMatchOverArr);
 			isPlaying = false;
+			allowMoves = false;
 		}
 		public function makePlayerMove(playerMove:PlayerMove):void
 		{
 			var key:Object ={xPos:playerMove.xPos,yPos:playerMove.yPos,playerId:playerMove.playerId}
-			doStoreState([UserEntry.create(key,playerMove,false)]);
+			if(allowMoves)
+				doStoreState([UserEntry.create(key,playerMove,false)]);
 		}
 		
 		//override functions
@@ -117,6 +120,7 @@ import flash.utils.*;
 		}
 		override public function gotMatchStarted(allPlayerIds:Array, finishedPlayerIds:Array, serverEntries:Array):void
 		{
+			isPlaying = true;
 			this.allPlayerIds = allPlayerIds;
 			loadServerEntries = null;
 			graphicPlayed = false;

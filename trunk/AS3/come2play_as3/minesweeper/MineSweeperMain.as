@@ -75,8 +75,10 @@ import flash.utils.*;
 		public function makePlayerMove(playerMove:PlayerMove):void
 		{
 			var key:Object ={xPos:playerMove.xPos,yPos:playerMove.yPos,playerId:playerMove.playerId}
-			if(allowMoves)
-				doStoreState([UserEntry.create(key,playerMove,false)]);
+			var serverKey:Object = {xPos:playerMove.xPos,yPos:playerMove.yPos}
+			if(allowMoves){
+				doStoreState([UserEntry.create(key,playerMove,false)],[RevealEntry.create(serverKey,null,1)]);
+			}
 		}
 		
 		//override functions
@@ -187,33 +189,38 @@ import flash.utils.*;
 				var newMove:Boolean = mineSweeperLogic.addPlayerMove(playerMove);
 				if(newMove)	
 				{	
-					var key:Object = {xPos:playerMove.xPos,yPos:playerMove.yPos};			
-					doAllRevealState([RevealEntry.create(key,null,1)]);	
+					serverEntry = serverEntries[1];
+					if(serverEntry == null){
+
+					}else if (serverEntry.value == null){
+						if(serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" deleting a move must be agreed by all users");
+						//if(!isPlaying) return;
+					}else if(serverEntry.value is ServerBox)//state changed due to RevealEntry caused by a player move
+					{
+						var serverBox:ServerBox = serverEntry.value as ServerBox;
+						if(serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" stored the data and not the calculator");
+						if(!isPlaying) return;
+						mineSweeperLogic.addServerBox(serverBox);
+					}else if (serverEntry.value == null){
+						if(serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" deleting a move must be agreed by all users");
+						//if(!isPlaying) return;
+					}else if(serverEntry.value.type == "deadSpace")//player found a safe zone
+					{
+						serverEntry = serverEntries[2];
+						if(serverEntry == null) return;
+						if(serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" stored the data and not the calculator");
+						if(!isPlaying) return;
+						if(serverEntry.value is Array)
+						{
+							var safeSquares:Array = serverEntry.value as Array;
+							mineSweeperLogic.addSafeZone(safeSquares);
+						}
+					}		
+					//doAllRevealState([RevealEntry.create(key,null,1)]);	
 					doAllSetMove();
 					return;
 				}
 				doAllStoreState([UserEntry.create(serverEntry.key,null,false)]);
-			}
-			else if(serverEntry.value is ServerBox)//state changed due to RevealEntry caused by a player move
-			{
-				var serverBox:ServerBox = serverEntry.value as ServerBox;
-				if(serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" stored the data and not the calculator");
-				if(!isPlaying) return;
-				mineSweeperLogic.addServerBox(serverBox);
-			}else if (serverEntry.value == null){
-				if(serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" deleting a move must be agreed by all users");
-				if(!isPlaying) return;
-			}else if(serverEntry.value.type == "deadSpace")//player found a safe zone
-			{
-				serverEntry = serverEntries[1];
-				if(serverEntry == null) return;
-				if(serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" stored the data and not the calculator");
-				if(!isPlaying) return;
-				if(serverEntry.value is Array)
-				{
-					var safeSquares:Array = serverEntry.value as Array;
-					mineSweeperLogic.addSafeZone(safeSquares);
-				}
 			}
 		}
 		override public function gotKeyboardEvent(isKeyDown:Boolean, charCode:int, keyCode:int, keyLocation:int, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean):void

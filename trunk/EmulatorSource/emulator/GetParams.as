@@ -12,6 +12,7 @@
 		private var loadButtons:Array/*AvailableSave*/ = new Array();
 		public function GetParams() {
 			stop();
+			trace("I am version 6");
 			close_btn.addEventListener(MouseEvent.CLICK,closeFlash);		
 			if(root.loaderInfo.parameters["Save"] == "true")
 			{
@@ -54,7 +55,7 @@
 			if ((sharedObject =="") || (sharedObject ==null)) throw new Error("SharedObject must have a name");
 			var shrParams:SharedObject = SharedObject.getLocal(sharedObject,"/");
 			var pos:int = getNumber(ev.stageY);
-			shrParams.data[loadButtons[pos].saveName_txt.text] = null;
+			delete shrParams.data[loadButtons[pos].saveName_txt.text] ;
 			shrParams.flush();
 			for each(var availableSave:AvailableSave in loadButtons)
 				removeChild(availableSave);
@@ -63,6 +64,12 @@
 		}
 		private function loadSave(ev:MouseEvent):void{
 			var pos:int = getNumber(ev.stageY);
+			var sharedObject:String = root.loaderInfo.parameters["sharedObject"];
+			if ((sharedObject =="") || (sharedObject ==null)) throw new Error("SharedObject must have a name");
+			var shrParams:SharedObject = SharedObject.getLocal(sharedObject,"/");
+			var obj:Object = shrParams.data[loadButtons[pos].saveName_txt.text]
+			trace("Loading values: "+JSON.stringify(obj))
+			ExternalInterface.call("getParamsInit", obj.params);	
 		}
 		private function saveGame(ev:MouseEvent):void{
 			try{

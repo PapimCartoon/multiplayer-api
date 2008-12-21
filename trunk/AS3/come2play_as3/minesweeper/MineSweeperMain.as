@@ -129,6 +129,7 @@ import flash.utils.*;
 				doAllRequestRandomState("randomSeed",true);
 				doAllStoreState([UserEntry.create(BOARD_WIDTHstr,boardWidth),UserEntry.create(BOARD_HEIGHTstr,boardHeight),UserEntry.create(MINE_AMOUNTstr,mineAmount)])
 				doAllRequestStateCalculation(["randomSeed",BOARD_WIDTHstr,BOARD_HEIGHTstr,MINE_AMOUNTstr]);
+				mineSweeperLogic.makeBoard(boardWidth,boardHeight,stageX,stageY,allPlayerIds,myUserId);
 			}
 			else
 			{
@@ -136,15 +137,19 @@ import flash.utils.*;
 				//load game or viewer
 				graphicPlayed = true;
 				if((T.custom(API_Message.CUSTOM_INFO_KEY_isBack,false) as Boolean))
+				{
+					mineSweeperLogic.makeBoard(boardWidth,boardHeight,stageX,stageY,allPlayerIds,myUserId);
 					startGame();
+				}
 				else
 				{
+					mineSweeperLogic.makeBoard(boardWidth,boardHeight,stageX,stageY,allPlayerIds,myUserId);
 					animationStarted();
 					startGraphic.play();
 				}
 				
 			}
-			mineSweeperLogic.makeBoard(boardWidth,boardHeight,stageX,stageY,allPlayerIds,myUserId);
+			
 		}
 		override public function gotMatchEnded(finishedPlayerIds:Array/*int*/):void 
 		{

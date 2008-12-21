@@ -22,7 +22,7 @@ import come2play_as2.api.auto_generated.*;
 		public function gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, serverEntries:Array/*ServerEntry*/):Void {}
 		public function gotMatchEnded(finishedPlayerIds:Array/*int*/):Void {}
 		
-		public function doStoreState(userEntries:Array/*UserEntry*/):Void { sendMessage( API_DoStoreState.create(userEntries) ); }
+		public function doStoreState(userEntries:Array/*UserEntry*/, revealEntries:Array/*RevealEntry*//*<InAS3> = null </InAS3>*/):Void { sendMessage( API_DoStoreState.create(userEntries, revealEntries) ); }
 		public function gotStateChanged(serverEntries:Array/*ServerEntry*/):Void {}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!

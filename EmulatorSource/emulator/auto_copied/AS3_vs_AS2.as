@@ -428,17 +428,19 @@ public final class AS3_vs_AS2
 
 		var stageTimer:Timer = new Timer(100,0);
 		stageTimer.start();	
+		trace('waitForStage...');
 		myAddEventListener(stageTimer,
 			TimerEvent.TIMER, function():void {
 					if(graphics.stage) {
+						trace('stage loaded!');
 						stageTimer.stop();
 						gameConsructor();
 					}
-				});
-	}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+				});
+	}
 
 	/**
 	 * XML differences between AS2 and AS3.
@@ -447,11 +449,11 @@ public final class AS3_vs_AS2
 	public static function xml_create(str:String):XML {
 		return new XML(str);
 	}
-	public static function xml_getName(xml:XML):String {
-		return xml.name().toString();
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	public static function xml_getName(xml:XML):String {
+		return xml.name().toString();
 	}
 	public static function xml_getSimpleContent(xml:XML):String {
 		return xml.toString();
@@ -460,11 +462,11 @@ public final class AS3_vs_AS2
 		var list:XMLList = xml.children();
 		var res:Array/*XML*/ = [];
 		for each (var child:XML in list)
-			res.push(child);
-		return res;			
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			res.push(child);
+		return res;			
 	}
 		
 
@@ -473,11 +475,11 @@ public final class AS3_vs_AS2
 	 */
 	public static function getClassName(o:Object):String {
 		return getQualifiedClassName(o);
-	}
-	public static function getClassByName(className:String):Class {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	}
+	public static function getClassByName(className:String):Class {
 		try {
 			return getDefinitionByName(className) as Class;
 		} catch (err:Error) {
@@ -486,11 +488,11 @@ public final class AS3_vs_AS2
 		return null;
 	}
 	public static function getClassOfInstance(instance:Object):Class {
-		// These two lines don't work for inner classes like:
-		//		AS3_vs_AS2.as$35::XMLSerializable
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		// These two lines don't work for inner classes like:
+		//		AS3_vs_AS2.as$35::XMLSerializable
 		var className:String = getClassName(instance);
 		var res:Class = getClassByName(className);
 		
@@ -499,11 +501,11 @@ public final class AS3_vs_AS2
 	}
 	private static var checkedClasses:Object = {};
 	public static function checkConstructorHasNoArgs(obj:SerializableClass):void {
-		var className:String = obj.__CLASS_NAME__;
-		if (checkedClasses[className]!=null) return;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		var className:String = obj.__CLASS_NAME__;
+		if (checkedClasses[className]!=null) return;
 		checkedClasses[className] = true;
 		//trace("Checking ctor of "+className);
 		var descriptionXML:XML = describeType(obj);
@@ -512,11 +514,11 @@ public final class AS3_vs_AS2
 		if (constructorList.length()>0) {
 			var constructor:XML = constructorList[0];
 			for each (var parameter:XML in constructor.children())
-				if (parameter.attribute("optional").toString()!="true")
-					StaticFunctions.throwError("The constructor of class "+className+" that extends SerializableClass has arguments that are not optional! These are the parameters of the constructor="+constructor.toXMLString()); 
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+				if (parameter.attribute("optional").toString()!="true")
+					StaticFunctions.throwError("The constructor of class "+className+" that extends SerializableClass has arguments that are not optional! These are the parameters of the constructor="+constructor.toXMLString()); 
 		}
 		// I want to check that all fields are non-static and public,
 		// but describeType only returns such fields in the first place.
@@ -525,11 +527,11 @@ public final class AS3_vs_AS2
 	private static var name2classFields:Object = {}; // mapping class names to an array of field names
 	public static function getFieldNames(instance:Object):Array {
 		var className:String = getClassName(instance);
-		var fieldNames:Array = name2classFields[className];
-		if (fieldNames==null) {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		var fieldNames:Array = name2classFields[className];
+		if (fieldNames==null) {
 			fieldNames = [];
 			// we could have also used ByteArray.writeObject,
 			// but I think this is more readable
@@ -538,11 +540,11 @@ public final class AS3_vs_AS2
 			// Iterates over the dynamic properties of an object or elements in an array and executes statement for each property or element. Object properties are not kept in any particular order, so properties may appear in a seemingly random order. Fixed properties, such as variables and methods defined in a class, are not enumerated by the for..in statement. To get a list of fixed properties, use the describeType() function, which is in the flash.utils package. 
 
 			var fieldsList:XMLList = describeType(instance).variable;
-			for each (var fieldInfo:XML in fieldsList)
-				fieldNames.push( fieldInfo.attribute("name") );			
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			for each (var fieldInfo:XML in fieldsList)
+				fieldNames.push( fieldInfo.attribute("name") );			
 			name2classFields[className] = fieldNames;			
 		}
 		return fieldNames;
@@ -551,11 +553,11 @@ public final class AS3_vs_AS2
 		var fieldNames:Array = getFieldNames(newInstance);
 		for each (var fieldName:String in fieldNames) {
 			if (StaticFunctions.startsWith(fieldName,"__")) continue;	
-			if (!obj.hasOwnProperty(fieldName))
-				throw new Error("When deserializing, we didn't find fieldName="+fieldName+" in object="+JSON.stringify(obj));
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			if (!obj.hasOwnProperty(fieldName))
+				throw new Error("When deserializing, we didn't find fieldName="+fieldName+" in object="+JSON.stringify(obj));
 		}	
 	}
 	public static function checkObjectIsSerializable(obj:Object):void {
@@ -564,11 +566,11 @@ public final class AS3_vs_AS2
 		var className:String = getClassName(obj);
 		if (className!="Array" && className!="Object")
 			if (!(obj is SerializableClass))
-				throw new Error("className="+className+" should extend SerializableClass because it was sent over a LocalConnection");
-		for each (var field:Object in obj)
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+				throw new Error("className="+className+" should extend SerializableClass because it was sent over a LocalConnection");
+		for each (var field:Object in obj)
 			checkObjectIsSerializable(field);
 	}
 	
@@ -577,11 +579,11 @@ public final class AS3_vs_AS2
 import emulator.auto_copied.SerializableClass;
 import emulator.auto_copied.AS3_vs_AS2;
 import flash.utils.ByteArray;
-import flash.utils.Dictionary;
-class NativeSerializable extends SerializableClass {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+import flash.utils.Dictionary;
+class NativeSerializable extends SerializableClass {
 	public function NativeSerializable(shortName:String=null) {
 		super(shortName);
 	}
@@ -590,11 +592,11 @@ class NativeSerializable extends SerializableClass {
 	}	
 	override public function postDeserialize():Object {
 		throw new Error("Must override postDeserialize");
-	}
-}	
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	}
+}	
 
 class ErrorSerializable extends NativeSerializable {
 	public var message:String;
@@ -603,11 +605,11 @@ class ErrorSerializable extends NativeSerializable {
 		super("Error");
 		message = err==null ? null : err.message;
 		errorId = err==null ? 0 : err.errorID;
-	}	
-	override public function fromNative(obj:Object):NativeSerializable {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	}	
+	override public function fromNative(obj:Object):NativeSerializable {
 		return obj is Error ? new ErrorSerializable(obj as Error) : null;
 	}
 	override public function postDeserialize():Object {
@@ -616,11 +618,11 @@ class ErrorSerializable extends NativeSerializable {
 }
 class XMLSerializable extends NativeSerializable {
 	public var xmlStr:String;
-	public function XMLSerializable(xml:XML=null) {
-		super("XML");
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	public function XMLSerializable(xml:XML=null) {
+		super("XML");
 		xmlStr = xml==null ? null : xml.toXMLString();
 	}	
 	override public function fromNative(obj:Object):NativeSerializable {
@@ -629,11 +631,11 @@ class XMLSerializable extends NativeSerializable {
 	override public function postDeserialize():Object {
 		return new XML(xmlStr);
 	}	
-}
-class DateSerializable extends NativeSerializable {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+}
+class DateSerializable extends NativeSerializable {
 	public var utcDate:String; //Tue Feb 1 00:00:00 2005 UTC
 	public var millisSince1970:Number; //the number of milliseconds since midnight January 1, 1970, universal time
 	public function DateSerializable(date:Date=null) {
@@ -642,11 +644,11 @@ class DateSerializable extends NativeSerializable {
 		millisSince1970 = date==null ? null : date.valueOf();
 	}	
 	override public function fromNative(obj:Object):NativeSerializable {
-		return obj is Date ? new DateSerializable(obj as Date) : null;
-	}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		return obj is Date ? new DateSerializable(obj as Date) : null;
+	}
 	override public function postDeserialize():Object {
 		return new Date(millisSince1970<=0 ? utcDate : millisSince1970);
 	}	
@@ -655,11 +657,11 @@ class DictionarySerializable extends NativeSerializable {
 	public var keyValArr:Array = [];
 	public function DictionarySerializable(dic:Dictionary=null) {
 		super("Dictionary");
-		if (dic!=null) {
-			for (var k:Object in dic) 
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		if (dic!=null) {
+			for (var k:Object in dic) 
 	 			keyValArr.push([k, dic[k]]);
 	 	}
 	}	
@@ -668,11 +670,11 @@ class DictionarySerializable extends NativeSerializable {
 	}
 	override public function postDeserialize():Object {
 		var res:Dictionary = new Dictionary();
-		for each (var keyVal:Array in keyValArr)
-			res[ keyVal[0] ] = keyVal[1];
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		for each (var keyVal:Array in keyValArr)
+			res[ keyVal[0] ] = keyVal[1];
 		return res;
 	}	
 }
@@ -681,11 +683,11 @@ class ByteArraySerializable extends NativeSerializable {
 	public function ByteArraySerializable(byteArr:ByteArray=null) {
 		super("ByteArray");
 		arr = byteArr==null ? null : byteArr2Arr(byteArr);
-	}	
-	override public function fromNative(obj:Object):NativeSerializable {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	}	
+	override public function fromNative(obj:Object):NativeSerializable {
 		return obj is ByteArray ? new ByteArraySerializable(obj as ByteArray) : null;
 	}
 	public static function byteArr2Arr(byteArr:ByteArray):Array {
@@ -694,11 +696,11 @@ class ByteArraySerializable extends NativeSerializable {
 		byteArr.position = 0;
 		for (var i:int=0; i<byteArr.length; i++)
 			bytes.push(byteArr.readByte());
-		byteArr.position = oldPosition;
-		return bytes;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		byteArr.position = oldPosition;
+		return bytes;
 	}
 	override public function postDeserialize():Object {
 		var res:ByteArray = new ByteArray();
@@ -707,4 +709,7 @@ class ByteArraySerializable extends NativeSerializable {
 		res.position = 0; 
 		return res;
 	}	
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 }

@@ -28,7 +28,7 @@ package come2play_as3.api.auto_generated {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		public function doStoreState(userEntries:Array/*UserEntry*/):void { sendMessage( API_DoStoreState.create(userEntries) ); }
+		public function doStoreState(userEntries:Array/*UserEntry*/, revealEntries:Array/*RevealEntry*//*<InAS3>*/ = null /*</InAS3>*/):void { sendMessage( API_DoStoreState.create(userEntries, revealEntries) ); }
 		public function doAllStoreState(userEntries:Array/*UserEntry*/):void { sendMessage( API_DoAllStoreState.create(userEntries) ); }
 		
 		public function doAllEndMatch(finishedPlayers:Array/*PlayerMatchOver*/):void { sendMessage( API_DoAllEndMatch.create(finishedPlayers) ); }

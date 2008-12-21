@@ -31,7 +31,7 @@ package come2play_as3.api.auto_generated {
 		, new API_MethodsSummary('gotMatchStarted', ['allPlayerIds', 'finishedPlayerIds', 'serverEntries'], ['Array/*int*/', 'Array/*int*/', 'Array/*ServerEntry*/'] )
 		, new API_MethodsSummary('gotMatchEnded', ['finishedPlayerIds'], ['Array/*int*/'] )
 		, new API_MethodsSummary('gotStateChanged', ['serverEntries'], ['Array/*ServerEntry*/'] )
-		, new API_MethodsSummary('doStoreState', ['userEntries'], ['Array/*UserEntry*/'] )
+		, new API_MethodsSummary('doStoreState', ['userEntries', 'revealEntries'], ['Array/*UserEntry*/', 'Array/*RevealEntry*/'] )
 		, new API_MethodsSummary('doAllStoreState', ['userEntries'], ['Array/*UserEntry*/'] )
 		, new API_MethodsSummary('doAllEndMatch', ['finishedPlayers'], ['Array/*PlayerMatchOver*/'] )
 		, new API_MethodsSummary('doAllSetTurn', ['userId', 'milliSecondsInTurn'], ['int', 'int'] )

@@ -69,12 +69,12 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 	}
 	
 	private var testDoubleNumbers:Boolean = false;
-	public function oldDoStoreState(userEntries:Array/*UserEntry*/):Void {
-		super.doStoreState(userEntries);
+	public function oldDoStoreState(userEntries:Array/*UserEntry*/, revealEntries:Array/*RevealEntry*//*<InAS3> = null </InAS3>*/):Void {
+		super.doStoreState(userEntries, revealEntries);
 	}
-	/*override*/ public function doStoreState(userEntries:Array/*UserEntry*/):Void {
+	/*override*/ public function doStoreState(userEntries:Array/*UserEntry*/, revealEntries:Array/*RevealEntry*//*<InAS3> = null </InAS3>*/):Void {
 		// we must delay sending doStoreState, because it cannot be inside a transaction
-		AS3_vs_AS2.myTimeout( AS3_vs_AS2.delegate(this, this.oldDoStoreState, userEntries), 100);
+		AS3_vs_AS2.myTimeout( AS3_vs_AS2.delegate(this, this.oldDoStoreState, userEntries, revealEntries), 100);
 	}
 		 
 	/*override*/ public function gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, serverEntries:Array/*ServerEntry*/):Void {

@@ -132,6 +132,7 @@ package emulator {
 
 		public function constructServer():void {
 			this.stop();
+			trace("version 1")
 			stateCalculationsID = -42;
 			afinishedPlayers=new Array();
 			serverState = new ObjectDictionary();
@@ -824,7 +825,7 @@ package emulator {
 			{
 				var revealStateMessage:API_DoAllRevealState=msg as API_DoAllRevealState;
 				saved = true;	
-				serverEntries = doAllRevealState(revealStateMessage);
+				serverEntries = doAllRevealState(revealStateMessage.revealEntries);
 			}
 			else if(msg is API_DoAllRequestStateCalculation) 
 			{
@@ -848,10 +849,15 @@ package emulator {
 			if (processedwaitingQueue.waitingDoStore())
 			{
 				var queueEntry:QueueEntry = processedwaitingQueue.shiftDoStore();
-				for each(msg in queueEntry.transaction.messageArray)
+				var revealEntries:Array/*RevealEntry*/ = new Array;
+				for each(msg in queueEntry.transaction.messageArray){
 					serverEntries = serverEntries.concat(doStoreState(msg as API_DoStoreState,queueEntry.user.ID));
-				addToQue(queueEntry);
+					revealEntries = revealEntries.concat((msg as API_DoStoreState).revealEntries)	
+				}
+				//storeServerEntries(serverEntries);
+				serverEntries = serverEntries.concat(doAllRevealState(revealEntries));
 				storeServerEntries(serverEntries);
+				addToQue(queueEntry);
 			}
 			else if(processedwaitingQueue.waitingDoAll())
 			{
@@ -1092,9 +1098,9 @@ package emulator {
 			return serverEntries;
 
 		}
-		private function doAllRevealState(msg:API_DoAllRevealState):Array/*ServerEntry*/
+		private function doAllRevealState(revealEntries:Array/*RevealEntry*/):Array/*ServerEntry*/
 		{
-			if (msg.revealEntries.length == 0)
+			if (revealEntries.length == 0)
 			{	
 				errorHandler("doAllRevealState must get at least 1 RevealEntry");
 				gameOver();
@@ -1106,7 +1112,7 @@ package emulator {
 			var serverEntry:ServerEntry;
 			var key:Object;
 			var tempServerEntry:ServerEntry
-			for each(var revealEntry:RevealEntry in msg.revealEntries)
+			for each(var revealEntry:RevealEntry in revealEntries)
 			{
 				key=revealEntry.key
 				for(var i:int=0;i<=revealEntry.depth;i++)	

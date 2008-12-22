@@ -25,25 +25,25 @@ package come2play_as3.api.auto_copied
 		public static function getGotChanelString(sPrefix:String):String {
 			return "GOT_CHANEL_"+sPrefix;
 		}
+		public static function getInitChanelString(sPrefix:String):String {
+			return "INIT_CHANEL_"+sPrefix;
+		}
 		public static function getPrefixFromFlashVars(_someMovieClip:DisplayObjectContainer):String {
 			var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(_someMovieClip);
 			var sPrefix:String = parameters["prefix"];
 			if (sPrefix==null) sPrefix = parameters["?prefix"];
 			return getPrefixFromString(sPrefix);
 		}		
-		public static function getPrefixFromString(sPrefix:String):String {
-			if (sPrefix!=null && !(sPrefix.charAt(0)>='0' && sPrefix.charAt(0)<='9')) { //it is not necessarily a number 
-				trace("calling a javascript function that should return the random fixed id");
-				var jsResult:Object = ExternalInterface.call(sPrefix);
-				sPrefix = ''+jsResult;
-			}
+		public static function getPrefixFromString(sPrefix:String):String {			
 			return sPrefix;
 		}
 				
 		
 		// we use a LocalConnection to communicate with the container
 		private var lcUser:LocalConnection; 
+		private var lcInit:LocalConnection;
 		private var sSendChanel:String;
+		private var sInitChanel:String;
 		private var isServer:Boolean;
 		public var verifier:ProtocolVerifier;
 		public var _shouldVerify:Boolean;
@@ -60,18 +60,16 @@ package come2play_as3.api.auto_copied
 				if (sPrefix==null) {
 					myTrace(["WARNING: didn't find 'prefix' in the loader info parameters. Probably because you are doing testing locally."]);
 					sPrefix = DEFAULT_LOCALCONNECTION_PREFIX;
-				}				
-				lcUser = new LocalConnection();
-				AS3_vs_AS2.addStatusListener(lcUser, this, ["localconnection_callback"]);
-				
-				var sDoChanel:String = getDoChanelString(sPrefix);
-				var sGotChanel:String = getGotChanelString(sPrefix);
-				var sListenChannel:String = 
-					isServer ? sDoChanel : sGotChanel;
-				sSendChanel = 
-					!isServer ? sDoChanel : sGotChanel;				
-				myTrace(["LocalConnection listens on channel=",sListenChannel," and sends on ",sSendChanel]);
-				lcUser.connect(sListenChannel);
+				}	
+				lcInit = new LocalConnection();
+				sInitChanel = getInitChanelString(sPrefix);
+				if(isServer){
+					myTrace(["started listening to init"])
+					AS3_vs_AS2.addStatusListener(lcInit, this, ["localconnection_init"]);
+					lcInit.connect(sInitChanel);
+				}else{
+					AS3_vs_AS2.myTimeout(AS3_vs_AS2.delegate(this, this.sendPrefix),MILL_WAIT_BEFORE_DO_REGISTER);
+				}		
 			}catch (err:Error) { 
 				passError("Constructor",err);
 			}
@@ -93,9 +91,21 @@ package come2play_as3.api.auto_copied
         public function sendMessage(msg:API_Message):void {
         	myTrace(['sendMessage: ',msg]);      		
         	if (msg is API_DoRegisterOnServer)
-        		AS3_vs_AS2.myTimeout(AS3_vs_AS2.delegate(this, this.reallySendMessage,msg),MILL_WAIT_BEFORE_DO_REGISTER);
-        	else
+        		AS3_vs_AS2.myTimeout(AS3_vs_AS2.delegate(this, this.reallySendMessage,msg),MILL_WAIT_BEFORE_DO_REGISTER*10);
+        	else{
+        		trace("realy send doregister")
         		reallySendMessage(msg);
+        		}
+        }
+        private function sendPrefix():void {  				  
+			try{
+				var prefix:String = String(Math.floor(Math.random()*1000000));
+				myTrace(["sent prefix",prefix,isServer]);
+				localconnection_init(prefix) 		
+				lcInit.send(sInitChanel, "localconnection_init", prefix);  
+			}catch(err:Error) { 
+				passError("prefix error,prefix :"+prefix, err);
+			}        	
         }
         private function reallySendMessage(msg:API_Message):void {  				  
 			try{
@@ -112,10 +122,32 @@ package come2play_as3.api.auto_copied
     			verifier.msgFromGame(msg);
     		else
     			verifier.msgToGame(msg);        	
+        }  
+        public function localconnection_init(sPrefix:String):void {
+        	if (StaticFunctions.DID_SHOW_ERROR) return;
+        	try{
+        		myTrace(["got prefix",sPrefix,isServer]);
+        		if(isServer)
+        			lcInit.close();
+        		lcUser = new LocalConnection();
+				AS3_vs_AS2.addStatusListener(lcUser, this, ["localconnection_callback"]);
+				
+				var sDoChanel:String = getDoChanelString(sPrefix);
+				var sGotChanel:String = getGotChanelString(sPrefix);
+				var sListenChannel:String = 
+					isServer ? sDoChanel : sGotChanel;
+				sSendChanel = 
+					!isServer ? sDoChanel : sGotChanel;				
+				myTrace(["LocalConnection listens on channel=",sListenChannel," and sends on ",sSendChanel]);
+				lcUser.connect(sListenChannel);
+			} catch(err:Error) { 
+				passError("local connection init",err);
+			} 
         }
-        
+                   
         public function localconnection_callback(msgObj:Object):void {
         	if (StaticFunctions.DID_SHOW_ERROR) return;
+        	trace("realy got doregister")
         	var msg:API_Message = null;
         	try{
         		var deserializedMsg:Object = SerializableClass.deserialize(msgObj);

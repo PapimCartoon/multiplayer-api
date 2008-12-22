@@ -191,7 +191,7 @@ import flash.utils.*;
 				{	
 					serverEntry = serverEntries[1];
 					if(serverEntry == null){
-
+						trace("Ok")
 					}else if (serverEntry.value == null){
 						if(serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" deleting a move must be agreed by all users");
 						//if(!isPlaying) return;

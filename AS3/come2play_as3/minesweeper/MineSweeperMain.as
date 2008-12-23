@@ -76,7 +76,7 @@ import flash.utils.*;
 		{
 			var key:Object ={xPos:playerMove.xPos,yPos:playerMove.yPos,playerId:playerMove.playerId}
 			var serverKey:Object = {xPos:playerMove.xPos,yPos:playerMove.yPos}
-			if(allowMoves && super.canDoAnimations()){
+			if(allowMoves){
 				doStoreState([UserEntry.create(key,playerMove,false)],[RevealEntry.create(serverKey,null,1)]);
 			}
 		}
@@ -88,9 +88,13 @@ import flash.utils.*;
 			myUserId = T.custom(CUSTOM_INFO_KEY_myUserId, null) as int;
 			stageX = T.custom(CUSTOM_INFO_KEY_gameStageX, null) as int;
 			stageY = T.custom(CUSTOM_INFO_KEY_gameStageY, null) as int;
-			
-			graphics.width = T.custom(CUSTOM_INFO_KEY_gameWidth,int(graphics.width)) as int;
-			graphics.height = T.custom(CUSTOM_INFO_KEY_gameHeight,int(graphics.height)) as int;
+			for each(var info:InfoEntry in infoEntries){
+				if(info.key == CUSTOM_INFO_KEY_gameWidth){
+					graphics.width = T.custom(CUSTOM_INFO_KEY_gameWidth,int(graphics.width)) as int;
+				}else if(info.key == CUSTOM_INFO_KEY_gameHeight){
+					graphics.height = T.custom(CUSTOM_INFO_KEY_gameHeight,int(graphics.height)) as int;
+				}
+			}	
 			mineSweeperLogic.setNewGraphicScale(graphics.scaleX,graphics.scaleY);
 			boardWidth = T.custom(BOARD_WIDTHstr, 12) as int;
 			boardHeight =  T.custom(BOARD_HEIGHTstr, 12) as int;

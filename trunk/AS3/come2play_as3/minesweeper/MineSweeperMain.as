@@ -76,7 +76,7 @@ import flash.utils.*;
 		{
 			var key:Object ={xPos:playerMove.xPos,yPos:playerMove.yPos,playerId:playerMove.playerId}
 			var serverKey:Object = {xPos:playerMove.xPos,yPos:playerMove.yPos}
-			if(allowMoves){
+			if(allowMoves && super.canDoAnimations()){
 				doStoreState([UserEntry.create(key,playerMove,false)],[RevealEntry.create(serverKey,null,1)]);
 			}
 		}

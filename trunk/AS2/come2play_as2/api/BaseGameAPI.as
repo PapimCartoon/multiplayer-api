@@ -12,6 +12,7 @@ import come2play_as2.api.*;
 		public static var ERROR_DO_ALL:String = "You can only call a doAll* message when the server calls gotStateChanged, gotMatchStarted, gotMatchEnded, or gotRequestStateCalculation.";
 		
 		private var msgsInTransaction:Array/*API_Message*/ = null;
+		private var doStoreQueue:Array/*API_DoStoreState*/ = new Array;
 		private var serverStateMiror:ObjectDictionary;
 		private var currentCallback:API_Message = null;
 		private var hackerUserId:Number = -1;
@@ -45,7 +46,7 @@ import come2play_as2.api.*;
 					var output:String = "Traces:\n\n"+
 					StaticFunctions.getTraces()+"\n\n"+
 					"Server State(client side) : \n\n";
-					for (var i51:Number=0; i51<serverStateMiror.allValues.length; i51++) { var serverEntry:ServerEntry = serverStateMiror.allValues[i51]; 
+					for (var i52:Number=0; i52<serverStateMiror.allValues.length; i52++) { var serverEntry:ServerEntry = serverStateMiror.allValues[i52]; 
 						output+= serverEntry.toString() + "\n";
 					}
 					if(historyEntries!=null)
@@ -182,11 +183,17 @@ import come2play_as2.api.*;
     		msgsInTransaction = null;
 			currentCallback = null;
 			sendKeyboardEvents();
+			sendDoStoreStateEvents();
         }
-        
+        private function sendDoStoreStateEvents():Void{
+        	for (var i192:Number=0; i192<doStoreQueue.length; i192++) { var doStoreMsg:API_DoStoreState = doStoreQueue[i192]; 
+        		super.sendMessage(doStoreMsg);
+        	}
+        	doStoreQueue = new Array();
+        }
         private function updateMirorServerState(serverEntries:Array/*ServerEntry*/):Void
         {
-        	for (var i192:Number=0; i192<serverEntries.length; i192++) { var serverEntry:ServerEntry = serverEntries[i192]; 
+        	for (var i199:Number=0; i199<serverEntries.length; i199++) { var serverEntry:ServerEntry = serverEntries[i199]; 
         	    serverStateMiror.addEntry(serverEntry);	
         	}     	
         }
@@ -221,7 +228,7 @@ import come2play_as2.api.*;
 					var customInfo:API_GotCustomInfo = API_GotCustomInfo(msg);
 					var i18nObj:Object = {};
 					var customObj:Object = {};
-					for (var i227:Number=0; i227<customInfo.infoEntries.length; i227++) { var entry:InfoEntry = customInfo.infoEntries[i227]; 
+					for (var i234:Number=0; i234<customInfo.infoEntries.length; i234++) { var entry:InfoEntry = customInfo.infoEntries[i234]; 
 						var key:String = entry.key;
 						var value:Object = entry.value;
 						if (key==API_Message.CUSTOM_INFO_KEY_i18n) {
@@ -240,7 +247,7 @@ import come2play_as2.api.*;
 				}else if(msg instanceof API_GotUserInfo){
 					var infoMessage:API_GotUserInfo =API_GotUserInfo( msg);
 					var userObject:Object = {};
-					for (var i246:Number=0; i246<infoMessage.infoEntries.length; i246++) { var infoEntry:InfoEntry = infoMessage.infoEntries[i246]; 
+					for (var i253:Number=0; i253<infoMessage.infoEntries.length; i253++) { var infoEntry:InfoEntry = infoMessage.infoEntries[i253]; 
 						trace(infoEntry.key+ "="+ infoEntry.value)
 						userObject[infoEntry.key] = infoEntry.value;
 					}
@@ -279,8 +286,9 @@ import come2play_as2.api.*;
         	}
         	if (doMsg instanceof API_DoStoreState) {
         		if (isInTransaction())
-        			throwError("You can call doStoreState only when you are not inside a transaction! doMsg="+doMsg);        			
-        		super.sendMessage(doMsg);
+        			doStoreQueue.push(doMsg)
+     			else       			
+        			super.sendMessage(doMsg);
         		return;
         	}        	
 			      	

@@ -1,4 +1,4 @@
-﻿	import come2play_as2.api.auto_generated.*;
+	import come2play_as2.api.auto_generated.*;
 	
 	import flash.external.*;
 	 
@@ -84,7 +84,7 @@ import come2play_as2.api.auto_copied.*;
         
         public function gotMessage(msg:API_Message):Void {}
         
-        public static var MILL_WAIT_BEFORE_DO_REGISTER:Number = 300;
+        public static var MILL_WAIT_BEFORE_DO_REGISTER:Number = 100;
         public function sendMessage(msg:API_Message):Void {
         	myTrace(['sendMessage: ',msg]);      		
         	if (msg instanceof API_DoRegisterOnServer)

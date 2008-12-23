@@ -289,10 +289,13 @@ package come2play_as3.api {
         		return;
         	}
         	if (doMsg is API_DoStoreState) {
-        		if (isInTransaction())
+        		if (isInTransaction()){
+        			trace("push message")
         			doStoreQueue.push(doMsg)
-     			else       			
+        		}else{
+        			trace("send message")
         			super.sendMessage(doMsg);
+        		}
         		return;
         	}        	
 			      	

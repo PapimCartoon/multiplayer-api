@@ -16,6 +16,7 @@ package come2play_as3.api {
 		public static var ERROR_DO_ALL:String = "You can only call a doAll* message when the server calls gotStateChanged, gotMatchStarted, gotMatchEnded, or gotRequestStateCalculation.";
 		
 		private var msgsInTransaction:Array/*API_Message*/ = null;
+		private var doStoreQueue:Array/*API_DoStoreState*/ = new Array;
 		private var serverStateMiror:ObjectDictionary;
 		private var currentCallback:API_Message = null;
 		private var hackerUserId:int = -1;
@@ -186,8 +187,14 @@ package come2play_as3.api {
     		msgsInTransaction = null;
 			currentCallback = null;
 			sendKeyboardEvents();
+			sendDoStoreStateEvents();
         }
-        
+        private function sendDoStoreStateEvents():void{
+        	for each(var doStoreMsg:API_DoStoreState in doStoreQueue){
+        		super.sendMessage(doStoreMsg);
+        	}
+        	doStoreQueue = new Array();
+        }
         private function updateMirorServerState(serverEntries:Array/*ServerEntry*/):void
         {
         	for each (var serverEntry:ServerEntry in serverEntries) {
@@ -283,8 +290,9 @@ package come2play_as3.api {
         	}
         	if (doMsg is API_DoStoreState) {
         		if (isInTransaction())
-        			throwError("You can call doStoreState only when you are not inside a transaction! doMsg="+doMsg);        			
-        		super.sendMessage(doMsg);
+        			doStoreQueue.push(doMsg)
+     			else       			
+        			super.sendMessage(doMsg);
         		return;
         	}        	
 			      	

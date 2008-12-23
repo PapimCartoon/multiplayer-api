@@ -136,7 +136,7 @@ package emulator.auto_copied
         }
         private function sendPrefix():void {  				  
 			try{
-				var prefix:String = String(Math.floor(Math.random()*int.MAX_VALUE));
+				var prefix:String = String(Math.floor(Math.random()*1000000));
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 

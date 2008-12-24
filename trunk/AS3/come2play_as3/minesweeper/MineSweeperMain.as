@@ -94,8 +94,8 @@ import flash.utils.*;
 				}else if(info.key == CUSTOM_INFO_KEY_gameHeight){
 					graphics.height = T.custom(CUSTOM_INFO_KEY_gameHeight,int(graphics.height)) as int;
 				}
-			}	
-			mineSweeperLogic.setNewGraphicScale(graphics.scaleX,graphics.scaleY);
+				mineSweeperLogic.setNewGraphicScale(graphics.scaleX,graphics.scaleY);
+			}		
 			boardWidth = T.custom(BOARD_WIDTHstr, 12) as int;
 			boardHeight =  T.custom(BOARD_HEIGHTstr, 12) as int;
 			mineAmount = T.custom(MINE_AMOUNTstr, 20) as int;

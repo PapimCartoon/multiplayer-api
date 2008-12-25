@@ -1,4 +1,4 @@
-import come2play_as2.api.auto_copied.*;
+﻿import come2play_as2.api.auto_copied.*;
 
 class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 	public static var isAS3:Boolean = false;
@@ -58,14 +58,21 @@ class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 		movie.onRollOver = isActive ? mouseOverFunc : null; 
 		movie.onRollOut = isActive ? mouseOutFunc : null; 
 	}
-	public static function addStatusListener(conn:LocalConnection, client:Object, functions:Array):Void {
+	public static function addStatusListener(conn:LocalConnection, client:Object, functions:Array,handlerFun:Function):Void {
 		for (var i:Number=0; i<functions.length; i++) {
 			var key:String = functions[i];
 			conn[key] = delegate(client, client[key]);
 		}
 		conn.onStatus = function(infoObject:Object) { 
-			if (infoObject.level=='error')
-				StaticFunctions.showError("LocalConnection.onStatus error! (Are you sure you are running this game inside the emulator?)");
+			if (infoObject.level=='error'){
+				if(handlerFun != null)
+					handlerFun(false)
+				else
+					StaticFunctions.showError("LocalConnection.onStatus error! (Are you sure you are running this game inside the emulator?)");
+			}else{
+				if(handlerFun != null)
+					handlerFun(true);
+			}
 		};
 	}
 	

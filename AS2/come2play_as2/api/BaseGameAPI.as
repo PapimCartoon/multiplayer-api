@@ -285,10 +285,13 @@ import come2play_as2.api.*;
         		return;
         	}
         	if (doMsg instanceof API_DoStoreState) {
-        		if (isInTransaction())
+        		if (isInTransaction()){
+        			trace("push message")
         			doStoreQueue.push(doMsg)
-     			else       			
+        		}else{
+        			trace("send message")
         			super.sendMessage(doMsg);
+        		}
         		return;
         	}        	
 			      	

@@ -103,6 +103,7 @@ public final class AS3_vs_AS2
 	// because in our framework we wrap the event listener with try&catch
 	// similary, our framework have a better error report mechanism (than an error window)
 	public static var myAddEventListenerFunc:Function = null; 
+	public static var myAddTimeoutFunc:Function = null; 
 	public static var myShowError:Function = null;
 	private static function assertNotFramework():void {
 		StaticFunctions.assert(myAddEventListenerFunc==null,["You cannot call this method in framework"]);
@@ -116,18 +117,35 @@ public final class AS3_vs_AS2
 		}
 	}
 	
-	
-	public static function addStatusListener(conn:LocalConnection, client:Object, functions:Array):void {
+	//the reaso we have a functions Array is because un AS2 we can't use the client object
+	public static function addStatusListener(conn:LocalConnection, client:Object, functions:Array, handlerFunc:Function = null):void {
 		conn.client = client;
-		myAddEventListener(conn, StatusEvent.STATUS, 
-			function (event:StatusEvent):void {
-        		if (event.level=='error')
-        			StaticFunctions.showError("LocalConnection.onStatus error="+event+" client="+client+" client's class="+getClassName(client)+". Are you sure you are running this game inside the emulator?)"); 
-  			});		
+		myAddEventListener(conn, StatusEvent.STATUS,function (ev:Event):void{localConnectionFailed(ev,client, handlerFunc)});	
+		myAddEventListener(conn, SecurityErrorEvent.SECURITY_ERROR,function (ev:Event):void{localConnectionFailed(ev,client, handlerFunc)});			
 	}
-	public static function myTimeout(func:Function, in_milliseconds:int):void {		
-		assertNotFramework();
-		setTimeout(func,in_milliseconds);
+	private static function localConnectionFailed(event:Event,client:Object, handlerFunc:Function = null):void {
+		if(event is StatusEvent){
+	        if ((event as StatusEvent).level=='error'){
+	        	if(handlerFunc!=null)
+	        		handlerFunc(false);
+	        	else
+	        		StaticFunctions.showError("LocalConnection.onStatus error="+event+" client="+client+" client's class="+getClassName(client)+". Are you sure you are running this game inside the emulator?)"); 
+	      		
+	        }else{
+	        	if(handlerFunc!=null)
+	        		handlerFunc(true);
+	        }
+		}else if(event is SecurityErrorEvent){
+	 			StaticFunctions.showError("LocalConnection.onStatus error="+event+" client="+client+" client's class="+getClassName(client)+". Are you sure you are running this game inside the emulator?)");		
+ 		}
+  	}
+	public static function myTimeout(func:Function, in_milliseconds:int):void {	
+		if (SerializableClass.IS_IN_FRAMEWORK) {
+			StaticFunctions.assert(myAddTimeoutFunc!=null,["Come2play forgot to set myAddTimeoutFunc"]);
+			myAddTimeoutFunc(func, in_milliseconds);
+		} else {	
+			setTimeout(func,in_milliseconds);
+		}
 	}
 	public static function error2String(e:Error):String {
 		return e.toString()+" stacktraces="+e.getStackTrace();

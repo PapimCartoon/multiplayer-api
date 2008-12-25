@@ -45,6 +45,7 @@ package come2play_as3.api.auto_copied
 		private var sSendChanel:String;
 		private var sInitChanel:String;
 		private var isServer:Boolean;
+		private var prefix:String;
 		public var verifier:ProtocolVerifier;
 		public var _shouldVerify:Boolean;
 		//Constructor
@@ -63,17 +64,30 @@ package come2play_as3.api.auto_copied
 				}	
 				lcInit = new LocalConnection();
 				sInitChanel = getInitChanelString(sPrefix);
+				AS3_vs_AS2.addStatusListener(lcInit, this, ["localconnection_init"],  AS3_vs_AS2.delegate(this, this.connectionHandler));
 				if(isServer){
-					myTrace(["started listening to init"])
-					AS3_vs_AS2.addStatusListener(lcInit, this, ["localconnection_init"]);
-					lcInit.connect(sInitChanel);
+					myTrace(["started sending stuff"])
+					prefix = String(Math.floor(Math.random()*1000000));
+					localconnection_init(prefix) 
+					AS3_vs_AS2.myTimeout(AS3_vs_AS2.delegate(this, this.sendPrefix),(MILL_WAIT_BEFORE_DO_REGISTER));
 				}else{
-					AS3_vs_AS2.myTimeout(AS3_vs_AS2.delegate(this, this.sendPrefix),MILL_WAIT_BEFORE_DO_REGISTER);
+					myTrace(["started listening to stuff on ",sInitChanel])
+					lcInit.connect(sInitChanel);	
 				}		
+
 			}catch (err:Error) { 
 				passError("Constructor",err);
 			}
 		}
+		private function connectionHandler(isSuccess:Boolean):void {
+			myTrace(["connectionHandler isSuccess : ",isSuccess])
+			if(isSuccess){
+				//localconnection_init(prefix) 	
+			}else{
+				AS3_vs_AS2.myTimeout(AS3_vs_AS2.delegate(this, this.sendPrefix),(MILL_WAIT_BEFORE_DO_REGISTER*10));
+			}
+		}
+
 		public function myTrace(msg:Array):void {			
 			StaticFunctions.storeTrace([AS3_vs_AS2.getClassName(this),": ",msg]);
 		}
@@ -90,20 +104,22 @@ package come2play_as3.api.auto_copied
         public static var MILL_WAIT_BEFORE_DO_REGISTER:int = 100;
         public function sendMessage(msg:API_Message):void {
         	myTrace(['sendMessage: ',msg]);      		
-        	if (msg is API_DoRegisterOnServer)
-        		AS3_vs_AS2.myTimeout(AS3_vs_AS2.delegate(this, this.reallySendMessage,msg),MILL_WAIT_BEFORE_DO_REGISTER*10);
-        	else{
+        	if (msg is API_DoRegisterOnServer){
+        		if(lcUser != null)
+        			reallySendMessage(msg);
+        		else
+        			AS3_vs_AS2.myTimeout(AS3_vs_AS2.delegate(this, this.sendMessage,msg),MILL_WAIT_BEFORE_DO_REGISTER);	
+        	}else{
         		trace("realy send doregister")
         		reallySendMessage(msg);
-        		}
+        	}
         }
         private function sendPrefix():void {  				  
 			try{
-				var prefix:String = String(Math.floor(Math.random()*1000000));
-				myTrace(["sent prefix",prefix,isServer]);
-				localconnection_init(prefix) 		
+				myTrace(["sent prefix on ",sInitChanel," prefix sent is:",prefix,isServer]);	
 				lcInit.send(sInitChanel, "localconnection_init", prefix);  
 			}catch(err:Error) { 
+				
 				passError("prefix error,prefix :"+prefix, err);
 			}        	
         }
@@ -127,7 +143,7 @@ package come2play_as3.api.auto_copied
         	if (StaticFunctions.DID_SHOW_ERROR) return;
         	try{
         		myTrace(["got prefix",sPrefix,isServer]);
-        		if(isServer)
+        		if(!isServer)
         			lcInit.close();
         		lcUser = new LocalConnection();
 				AS3_vs_AS2.addStatusListener(lcUser, this, ["localconnection_callback"]);

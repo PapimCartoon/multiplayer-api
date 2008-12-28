@@ -10,6 +10,7 @@ import flash.utils.*;
 	public class MineSweeperMain extends ClientGameAPI
 	{
 		//consts
+		static public const squareSize:int = 19;
 		private const BOARD_WIDTHstr:String = "Height"
 		private const BOARD_HEIGHTstr:String = "Width"
 		private const MINE_AMOUNTstr:String = "mineAmount"

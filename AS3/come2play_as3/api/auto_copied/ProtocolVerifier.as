@@ -137,6 +137,7 @@ package come2play_as3.api.auto_copied
         		check(isPlayer(), ["Only a player can send DoStoreState"]);
         		var doStoreStateMessage:API_DoStoreState = /*as*/doMsg as API_DoStoreState;
         		isNullKeyExistUserEntry(doStoreStateMessage.userEntries);
+        		isNullKeyExistRevealEntry(doStoreStateMessage.revealEntries)
         		isDeleteLegal(doStoreStateMessage.userEntries)
 			} else if (doMsg is API_Transaction) {
 				var transaction:API_Transaction = /*as*/doMsg as API_Transaction;
@@ -243,8 +244,9 @@ package come2play_as3.api.auto_copied
         }
         private function isNullKeyExistRevealEntry(revealEntries:Array/*RevealEntry*/):void
         {
-        	check(revealEntries.length>=1, ["revealEntries must have at least one RevealEntry!"]);
+        	//check(revealEntries.length>=1, ["revealEntries must have at least one RevealEntry!"]);
         	for each (var revealEntry:RevealEntry in revealEntries) {
+        		check(revealEntry != null,["RevealEntry cannot be null !"]);
         		check(revealEntry.key != null,["RevealEntry.key cannot be null !"]);
         		check(revealEntry.userIds==null || isAllInPlayers(revealEntry.userIds), ["RevealEntry.userIds must either be null or contain only players"]); 
         	}

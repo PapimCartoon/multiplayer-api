@@ -153,8 +153,8 @@ package come2play_as3.minesweeper
 		}
 		private function selectMine(ev:MouseEvent):void
 		{
-			var xPos:int = Math.floor((ev.stageX-(stageX+9.5))/(16*scaleX));
-			var yPos:int = Math.floor((ev.stageY-(stageY+7))/(16*scaleY));
+			var xPos:int = Math.floor((ev.stageX-(stageX+9.5))/(MineSweeperMain.squareSize*scaleX));
+			var yPos:int = Math.floor((ev.stageY-(stageY+7))/(MineSweeperMain.squareSize*scaleY));
 			trace(scaleX+"/"+scaleY)
 			if((xPos> -1)&&(xPos<(boardWidth))&&(yPos>-1)&&(yPos<(boardHeight)))
 				if((boardLogic[xPos][yPos] == 0) && (isPlaying))

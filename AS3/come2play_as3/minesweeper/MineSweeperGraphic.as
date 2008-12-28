@@ -51,7 +51,7 @@ package come2play_as3.minesweeper
 			if(box.Boom != null)
 				box.Boom.gotoAndStop(61);
 			else
-				setTimeout(function():void{stopBoom(box);},50);
+				setTimeout(function():void{stopBoom(box);},10);
 		}
 		public function revealBox(playerNum:int,borderingMines:int,xPos:int,yPos:int,isCorrect:Boolean):void
 		{
@@ -63,7 +63,7 @@ package come2play_as3.minesweeper
 				mineNotFoundSound = new MineNotFoundSound()
 				addChild(mineNotFoundSound);
 			}
-			setTimeout(function():void{isCorrectChange(isCorrect,box)},50);
+			setTimeout(function():void{isCorrectChange(isCorrect,box)},10);
 			
 		}
 		private function isCorrectChange(isCorrect:Boolean,box:Box):void
@@ -71,7 +71,7 @@ package come2play_as3.minesweeper
 			if(box.isWrong != null)
 				box.isWrong.alpha = isCorrect?0:100;
 			else
-				setTimeout(function():void{isCorrectChange(isCorrect,box)},50);
+				setTimeout(function():void{isCorrectChange(isCorrect,box)},10);
 		}
 		public function updateLives(playerNum:int,livesCount:int):void
 		{
@@ -107,8 +107,9 @@ package come2play_as3.minesweeper
 				{
 					var tempBox:Box =new Box()
 					tempBox.stop();
-					tempBox.x = i*16 + 9.5;
-					tempBox.y = j*16 + 7;
+					tempBox.width = tempBox.height = MineSweeperMain.squareSize;
+					tempBox.x = i*MineSweeperMain.squareSize + 9.5;
+					tempBox.y = j*MineSweeperMain.squareSize + 7;
 					if( (!isPlayer) || ( (T.custom(API_Message.CUSTOM_INFO_KEY_isBack,false) as Boolean)))
 						tempBox.frameBtn.enabled = false;
 					boardBricks[i][j]=tempBox;

@@ -852,10 +852,12 @@ package emulator {
 				var revealEntries:Array/*RevealEntry*/ = new Array;
 				for each(msg in queueEntry.transaction.messageArray){
 					serverEntries = serverEntries.concat(doStoreState(msg as API_DoStoreState,queueEntry.user.ID));
-					revealEntries = revealEntries.concat((msg as API_DoStoreState).revealEntries)	
+					if((msg as API_DoStoreState).revealEntries != null)
+						revealEntries = revealEntries.concat((msg as API_DoStoreState).revealEntries)	
 				}
 				//storeServerEntries(serverEntries);
-				serverEntries = serverEntries.concat(doAllRevealState(revealEntries));
+				if((revealEntries != null) && (revealEntries.length > 1))
+					serverEntries = serverEntries.concat(doAllRevealState(revealEntries));
 				storeServerEntries(serverEntries);
 				addToQue(queueEntry);
 			}

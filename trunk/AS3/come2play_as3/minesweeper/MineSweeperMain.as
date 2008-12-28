@@ -11,9 +11,6 @@ import flash.utils.*;
 	{
 		//consts
 		static public const squareSize:int = 19;
-		private const BOARD_WIDTHstr:String = "Height"
-		private const BOARD_HEIGHTstr:String = "Width"
-		private const MINE_AMOUNTstr:String = "mineAmount"
 		
 		private var graphics:MovieClip;
 		private static var boardHeight:int=10;
@@ -97,9 +94,9 @@ import flash.utils.*;
 				}
 				mineSweeperLogic.setNewGraphicScale(graphics.scaleX,graphics.scaleY);
 			}		
-			boardWidth = T.custom(BOARD_WIDTHstr, 12) as int;
-			boardHeight =  T.custom(BOARD_HEIGHTstr, 12) as int;
-			mineAmount = T.custom(MINE_AMOUNTstr, 20) as int;
+			boardWidth = T.custom("Board Width", 12) as int;
+			boardHeight =  T.custom("Board height", 12) as int;
+			mineAmount = T.custom("Mine Amount", 20) as int;
 
 		}
 		override public function gotRequestStateCalculation(requestId:int, serverEntries:Array):void
@@ -107,11 +104,11 @@ import flash.utils.*;
 			for each (var serverEntry:ServerEntry in serverEntries)
 			{
 				if(serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" stored a random key");
-				if (serverEntry.key == BOARD_HEIGHTstr) 
+				if (serverEntry.key == "Board height") 
 					var calcHeight:int = serverEntry.value as int;
-				else if (serverEntry.key == BOARD_WIDTHstr) 
+				else if (serverEntry.key == "Board Width") 
 					var calcWidth:int = serverEntry.value as int;
-				else if (serverEntry.key == MINE_AMOUNTstr)
+				else if (serverEntry.key == "Mine Amount")
 					var calcMineAmount:int = serverEntry.value as int;
 				else if(serverEntry.key == "randomSeed")
 					var calcRandomSeed:int = serverEntry.value as int;
@@ -134,8 +131,8 @@ import flash.utils.*;
 			if(serverEntries.length == 0)
 			{
 				doAllRequestRandomState("randomSeed",true);
-				doAllStoreState([UserEntry.create(BOARD_WIDTHstr,boardWidth),UserEntry.create(BOARD_HEIGHTstr,boardHeight),UserEntry.create(MINE_AMOUNTstr,mineAmount)])
-				doAllRequestStateCalculation(["randomSeed",BOARD_WIDTHstr,BOARD_HEIGHTstr,MINE_AMOUNTstr]);
+				doAllStoreState([UserEntry.create("Board Width",boardWidth),UserEntry.create("Board height",boardHeight),UserEntry.create("Mine Amount",mineAmount)])
+				doAllRequestStateCalculation(["randomSeed","Board Width","Board height","Mine Amount"]);
 				mineSweeperLogic.makeBoard(boardWidth,boardHeight,stageX,stageY,allPlayerIds,myUserId);
 			}
 			else

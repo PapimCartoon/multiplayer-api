@@ -51,10 +51,12 @@ package come2play_as3.api {
 					var output:String = "Traces:\n\n"+
 					StaticFunctions.getTraces()+"\n\n"+
 					"Server State(client side) : \n\n";
-
-					for each(var serverEntry:ServerEntry in serverStateMiror.allValues){
-						serverEntries.push(serverEntry);
-						output+= serverEntry.toString() + "\n";
+					
+					if(serverStateMiror!=null){
+						for each(var serverEntry:ServerEntry in serverStateMiror.allValues){
+							serverEntries.push(serverEntry);
+							output+= serverEntry.toString() + "\n";
+						}
 					}
 					if(historyEntries!=null)
 						output+="History entries :\n\n"+historyEntries.join("\n")+"\n\n";

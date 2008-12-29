@@ -47,10 +47,12 @@ import come2play_as2.api.*;
 					var output:String = "Traces:\n\n"+
 					StaticFunctions.getTraces()+"\n\n"+
 					"Server State(client side) : \n\n";
-
-					for (var i54:Number=0; i54<serverStateMiror.allValues.length; i54++) { var serverEntry:ServerEntry = serverStateMiror.allValues[i54]; 
-						serverEntries.push(serverEntry);
-						output+= serverEntry.toString() + "\n";
+					
+					if(serverStateMiror!=null){
+						for (var i55:Number=0; i55<serverStateMiror.allValues.length; i55++) { var serverEntry:ServerEntry = serverStateMiror.allValues[i55]; 
+							serverEntries.push(serverEntry);
+							output+= serverEntry.toString() + "\n";
+						}
 					}
 					if(historyEntries!=null)
 						output+="History entries :\n\n"+historyEntries.join("\n")+"\n\n";
@@ -198,14 +200,14 @@ import come2play_as2.api.*;
 			if (verifier.isPlayer()) sendDoStoreStateEvents();
         }
         private function sendDoStoreStateEvents():Void{
-        	for (var i204:Number=0; i204<doStoreQueue.length; i204++) { var doStoreMsg:API_DoStoreState = doStoreQueue[i204]; 
+        	for (var i206:Number=0; i206<doStoreQueue.length; i206++) { var doStoreMsg:API_DoStoreState = doStoreQueue[i206]; 
         		super.sendMessage(doStoreMsg);
         	}
         	doStoreQueue = [];
         }
         private function updateMirorServerState(serverEntries:Array/*ServerEntry*/):Void
         {
-        	for (var i211:Number=0; i211<serverEntries.length; i211++) { var serverEntry:ServerEntry = serverEntries[i211]; 
+        	for (var i213:Number=0; i213<serverEntries.length; i213++) { var serverEntry:ServerEntry = serverEntries[i213]; 
         	    serverStateMiror.addEntry(serverEntry);	
         	}     	
         }
@@ -242,7 +244,7 @@ import come2play_as2.api.*;
 					var customInfo:API_GotCustomInfo = API_GotCustomInfo(msg);
 					var i18nObj:Object = {};
 					var customObj:Object = {};
-					for (var i248:Number=0; i248<customInfo.infoEntries.length; i248++) { var entry:InfoEntry = customInfo.infoEntries[i248]; 
+					for (var i250:Number=0; i250<customInfo.infoEntries.length; i250++) { var entry:InfoEntry = customInfo.infoEntries[i250]; 
 						var key:String = entry.key;
 						var value:Object = entry.value;
 						if (key==API_Message.CUSTOM_INFO_KEY_i18n) {
@@ -261,7 +263,7 @@ import come2play_as2.api.*;
 				}else if(msg instanceof API_GotUserInfo){
 					var infoMessage:API_GotUserInfo =API_GotUserInfo( msg);
 					var userObject:Object = {};
-					for (var i267:Number=0; i267<infoMessage.infoEntries.length; i267++) { var infoEntry:InfoEntry = infoMessage.infoEntries[i267]; 
+					for (var i269:Number=0; i269<infoMessage.infoEntries.length; i269++) { var infoEntry:InfoEntry = infoMessage.infoEntries[i269]; 
 						trace(infoEntry.key+ "="+ infoEntry.value)
 						userObject[infoEntry.key] = infoEntry.value;
 					}

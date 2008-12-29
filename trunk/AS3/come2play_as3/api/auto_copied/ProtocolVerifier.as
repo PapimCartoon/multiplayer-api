@@ -52,6 +52,7 @@ package come2play_as3.api.auto_copied
         	return currentPlayerIds;
         }
         public function getFinishedPlayerIds():Array/*int*/ {
+        	if(allPlayerIds == null) return new Array();
         	var finishedPlayerids:Array = allPlayerIds.concat();
         	for each (var playerId:int in currentPlayerIds) {
         		var spliceIndex:int = AS3_vs_AS2.IndexOf(finishedPlayerids,playerId);

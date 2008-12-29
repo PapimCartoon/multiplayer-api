@@ -856,7 +856,7 @@ package emulator {
 						revealEntries = revealEntries.concat((msg as API_DoStoreState).revealEntries)	
 				}
 				//storeServerEntries(serverEntries);
-				if((revealEntries != null) && (revealEntries.length > 1))
+				if((revealEntries != null) && (revealEntries.length >= 1))
 					serverEntries = serverEntries.concat(doAllRevealState(revealEntries));
 				storeServerEntries(serverEntries);
 				addToQue(queueEntry);

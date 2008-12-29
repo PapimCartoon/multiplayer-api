@@ -1,7 +1,5 @@
 package come2play_as3.api.auto_copied
-{
-	import come2play_as3.api.auto_generated.InfoEntry;
-		
+{		
 	/**
 	 * For Translations to other languages:
 	 * The strings in your code should be passed to the translation function
@@ -72,18 +70,12 @@ package come2play_as3.api.auto_copied
 			isSameType(res,defaultValue);
 			return res;
 		}
-		public static function getAsArray():Array/*InfoEntry*/
-		{
-			var infoEntries:Array/*InfoEntry*/ = new Array();
-			for(var str:String in _custom)
-				infoEntries.push(InfoEntry.create(str,_custom[str]))
-			return infoEntries;
-		}
-		
 		// for customization, e.g., the frame-rate of the game.
 		// If defaultValue is not null, then we require that the **type** of the return value
 		// will be identical to the **type** of the defaultValue.		
-		
+		public static function getCustom():Object {
+			return _custom;
+		}
 		public static function isSameType(res:Object,defaultValue:Object):void{
 			if (defaultValue==null || res==null) return;
 			var typeD:String = AS3_vs_AS2.getClassName(defaultValue);

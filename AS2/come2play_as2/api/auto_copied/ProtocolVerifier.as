@@ -11,6 +11,7 @@ import come2play_as2.api.auto_copied.*;
 		private var currentCallback:API_Message = null;
 		private var didRegisterOnServer:Boolean = false;
 		private var currentPlayerIds:Array/*int*/;
+		private var allPlayerIds:Array/*int*/;
 		// Imagine ProtocolVerifier on the container, and the container sends GotMatchEnded for my player.
 		// The game may send doStoreState up until it sends the transaction for GotMatchEnded
 		// therefore we update currentPlayerIds only after we get the transaction.
@@ -42,12 +43,23 @@ import come2play_as2.api.auto_copied.*;
         	// I can't use T.custom(API_Message.CUSTOM_INFO_KEY_myUserId,0), because ProtocolVerifier is used in emulator that runs multiple clients (thus static memory will cause a conflict)
         	return isInPlayers(myUserId);        	
         }
+        public function getAllPlayerIds():Array/*int*/{
+        	return currentPlayerIds;
+        }
+        public function getFinishedPlayerIds():Array/*int*/ {
+        	var finishedPlayerids:Array = allPlayerIds.concat();
+        	for (var i54:Number=0; i54<currentPlayerIds.length; i54++) { var playerId:Number = currentPlayerIds[i54]; 
+        		var spliceIndex:Number = AS3_vs_AS2.IndexOf(finishedPlayerids,playerId);
+        		finishedPlayerids.splice(spliceIndex,1);
+        	}	
+        	return finishedPlayerids;
+        }
         public function isInPlayers(playerId:Number):Boolean {
         	return AS3_vs_AS2.IndexOf(currentPlayerIds, playerId)!=-1;        	
         }
         public function isAllInPlayers(playerIds:Array/*int*/):Boolean {
         	check(playerIds.length>=1, ["isAllInPlayers was called with an empty playerIds array"]);
-        	for (var i53:Number=0; i53<playerIds.length; i53++) { var playerId:Number = playerIds[i53]; 
+        	for (var i65:Number=0; i65<playerIds.length; i65++) { var playerId:Number = playerIds[i65]; 
         		if (!isInPlayers(playerId)) return false;
         	}
         	return true;        	
@@ -57,7 +69,7 @@ import come2play_as2.api.auto_copied.*;
 			StaticFunctions.assert(false, ["ProtocolVerifier found an error: ", arr]);
 		}
 		private function checkServerEntries(serverEntries:Array/*ServerEntry*/):Void {
-			for (var i63:Number=0; i63<serverEntries.length; i63++) { var entry:ServerEntry = serverEntries[i63]; 
+			for (var i75:Number=0; i75<serverEntries.length; i75++) { var entry:ServerEntry = serverEntries[i75]; 
 				check(entry.key!=null, ["Found a null key in serverEntry=",entry]);
 			}
 		}
@@ -79,6 +91,7 @@ import come2play_as2.api.auto_copied.*;
     			checkInProgress(false,gotMsg);
 				var matchStarted:API_GotMatchStarted = API_GotMatchStarted(gotMsg);
 				checkServerEntries(matchStarted.serverEntries);
+				allPlayerIds = matchStarted.allPlayerIds.concat();
 				nextPlayerIds = StaticFunctions.subtractArray(matchStarted.allPlayerIds, matchStarted.finishedPlayerIds);
     		} else if (gotMsg instanceof API_GotMatchEnded) {	    			
     			checkInProgress(true,gotMsg);
@@ -88,7 +101,7 @@ import come2play_as2.api.auto_copied.*;
     			// isPause is called when the game is in progress,
     			// and other info is passed before the game starts.
     			var customInfo:API_GotCustomInfo = API_GotCustomInfo(gotMsg);
-    			for (var i94:Number=0; i94<customInfo.infoEntries.length; i94++) { var infoEntry:InfoEntry = customInfo.infoEntries[i94]; 
+    			for (var i107:Number=0; i107<customInfo.infoEntries.length; i107++) { var infoEntry:InfoEntry = customInfo.infoEntries[i107]; 
     				if (infoEntry.key==API_Message.CUSTOM_INFO_KEY_myUserId)
     					myUserId = AS3_vs_AS2.as_int(infoEntry.value);
     			}
@@ -145,7 +158,7 @@ import come2play_as2.api.auto_copied.*;
 				
 				var wasStoreStateCalculation:Boolean = false;
 				var isRequestStateCalculation:Boolean = currentCallback instanceof API_GotRequestStateCalculation;
-				for (var i151:Number=0; i151<transaction.messages.length; i151++) { var doAllMsg:API_Message = transaction.messages[i151]; 
+				for (var i164:Number=0; i164<transaction.messages.length; i164++) { var doAllMsg:API_Message = transaction.messages[i164]; 
 					checkDoAll(doAllMsg);
 					if (isRequestStateCalculation) {
 						if (doAllMsg instanceof API_DoAllStoreStateCalculation)	
@@ -172,7 +185,7 @@ import come2play_as2.api.auto_copied.*;
 		}
 		private function isDeleteLegal(userEntries:Array/*UserEntry*/):Void
 		{
-			for (var i178:Number=0; i178<userEntries.length; i178++) { var userEntry:UserEntry = userEntries[i178]; 
+			for (var i191:Number=0; i191<userEntries.length; i191++) { var userEntry:UserEntry = userEntries[i191]; 
 				if (userEntry.value == null)
 					check(!userEntry.isSecret,["key deletion must be public! userEntry=",userEntry]);
 			}
@@ -239,14 +252,14 @@ import come2play_as2.api.auto_copied.*;
         private function isNullKeyExistUserEntry(userEntries:Array/*UserEntry*/):Void
         {
         	check(userEntries.length>=1, ["userEntries must have at least one UserEntry!"]);
-        	for (var i245:Number=0; i245<userEntries.length; i245++) { var userEntry:UserEntry = userEntries[i245]; 
+        	for (var i258:Number=0; i258<userEntries.length; i258++) { var userEntry:UserEntry = userEntries[i258]; 
         		check(userEntry.key != null,["UserEntry.key cannot be null !"]);
         	}
         }
         private function isNullKeyExistRevealEntry(revealEntries:Array/*RevealEntry*/):Void
         {
         	//check(revealEntries.length>=1, ["revealEntries must have at least one RevealEntry!"]);
-        	for (var i252:Number=0; i252<revealEntries.length; i252++) { var revealEntry:RevealEntry = revealEntries[i252]; 
+        	for (var i265:Number=0; i265<revealEntries.length; i265++) { var revealEntry:RevealEntry = revealEntries[i265]; 
         		check(revealEntry != null,["RevealEntry cannot be null !"]);
         		check(revealEntry.key != null,["RevealEntry.key cannot be null !"]);
         		check(revealEntry.userIds==null || isAllInPlayers(revealEntry.userIds), ["RevealEntry.userIds must either be null or contain only players"]); 
@@ -255,7 +268,7 @@ import come2play_as2.api.auto_copied.*;
         private function isNullKeyExist(keys:Array/*Object*/):Void
         {
         	check(keys.length>=1,["keys must have at leasy one key!"]);        		
-        	for (var i261:Number=0; i261<keys.length; i261++) { var key:String = keys[i261]; 
+        	for (var i274:Number=0; i274<keys.length; i274++) { var key:String = keys[i274]; 
         		check(key != null,["key cannot be null !"]);
         	}
         }

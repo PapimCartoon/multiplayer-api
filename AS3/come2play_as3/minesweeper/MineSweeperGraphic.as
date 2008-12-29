@@ -40,6 +40,7 @@ package come2play_as3.minesweeper
 			}
 			else
 			{
+				box.mouseChildren = false;
 				box.gotoAndStop(30+playerNum*10);
 				if(boomSound != null)
 					removeChild(boomSound);

@@ -59,9 +59,9 @@ package come2play_as3.api {
 					if(historyEntries!=null)
 						output+="History entries :\n\n"+historyEntries.join("\n")+"\n\n";
 					
-					output+="Custom Data:\n\n"+T.getAsArray().join("\n");
+					output+="Custom Data:\n\n"+getTAsArray().join("\n");
 					var gotMatchStarted:API_GotMatchStarted = API_GotMatchStarted.create(verifier.getAllPlayerIds(),verifier.getFinishedPlayerIds(),serverEntries)
-					AS3_vs_AS2.showError(someMovieClip,JSON.stringify(gotMatchStarted)+"\n"+output);
+					AS3_vs_AS2.showError(someMovieClip,"gotMatchStarted : \n\n"+JSON.stringify(gotMatchStarted)+"\n"+output);
 				}
 			}
 			if (verifier.isPlayer() &&
@@ -76,6 +76,14 @@ package come2play_as3.api {
 				 	}
 				 }
 				
+		}
+		private function getTAsArray():Array/*InfoEntry*/
+		{
+			var infoEntries:Array/*InfoEntry*/ = new Array();
+			var custom:Object = T.getCustom();
+			for(var str:String in custom)
+				infoEntries.push(InfoEntry.create(str,custom[str]))
+			return infoEntries;
 		}
 		private function sendKeyboardEvents():void
 		{

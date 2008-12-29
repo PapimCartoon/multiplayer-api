@@ -16,6 +16,7 @@ package come2play_as3.api.auto_copied
 		private var currentCallback:API_Message = null;
 		private var didRegisterOnServer:Boolean = false;
 		private var currentPlayerIds:Array/*int*/;
+		private var allPlayerIds:Array/*int*/;
 		// Imagine ProtocolVerifier on the container, and the container sends GotMatchEnded for my player.
 		// The game may send doStoreState up until it sends the transaction for GotMatchEnded
 		// therefore we update currentPlayerIds only after we get the transaction.
@@ -46,6 +47,17 @@ package come2play_as3.api.auto_copied
         public function isPlayer():Boolean {
         	// I can't use T.custom(API_Message.CUSTOM_INFO_KEY_myUserId,0), because ProtocolVerifier is used in emulator that runs multiple clients (thus static memory will cause a conflict)
         	return isInPlayers(myUserId);        	
+        }
+        public function getAllPlayerIds():Array/*int*/{
+        	return currentPlayerIds;
+        }
+        public function getFinishedPlayerIds():Array/*int*/ {
+        	var finishedPlayerids:Array = allPlayerIds.concat();
+        	for each (var playerId:int in currentPlayerIds) {
+        		var spliceIndex:int = AS3_vs_AS2.IndexOf(finishedPlayerids,playerId);
+        		finishedPlayerids.splice(spliceIndex,1);
+        	}	
+        	return finishedPlayerids;
         }
         public function isInPlayers(playerId:int):Boolean {
         	return AS3_vs_AS2.IndexOf(currentPlayerIds, playerId)!=-1;        	
@@ -84,6 +96,7 @@ package come2play_as3.api.auto_copied
     			checkInProgress(false,gotMsg);
 				var matchStarted:API_GotMatchStarted = /*as*/gotMsg as API_GotMatchStarted;
 				checkServerEntries(matchStarted.serverEntries);
+				allPlayerIds = matchStarted.allPlayerIds.concat();
 				nextPlayerIds = StaticFunctions.subtractArray(matchStarted.allPlayerIds, matchStarted.finishedPlayerIds);
     		} else if (gotMsg is API_GotMatchEnded) {	    			
     			checkInProgress(true,gotMsg);

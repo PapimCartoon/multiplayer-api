@@ -185,9 +185,9 @@ function addCustomParam(){
 	var cell1=row.insertCell(1);
 	cell0.innerHTML="<input type=text size = 30 value = 'param: "+custom_param_num+" name' name='paramName_"+custom_param_num+"' id='paramName_"+custom_param_num+"'>";
 	if(custom_param_num >4){
-		cell1.innerHTML="<input type=text size = 70 value = 'insert value here' name='paramValue_"+custom_param_num+"' id='paramValue_"+custom_param_num+"'> <a style=\"cursor:pointer;color:blue;\" onclick=\"removeCustomParam("+custom_param_num+");\">x</a>";
+		cell1.innerHTML="<input type=text size = 70 value = '\"insert value here\"' name='paramValue_"+custom_param_num+"' id='paramValue_"+custom_param_num+"'> <a style=\"cursor:pointer;color:blue;\" onclick=\"removeCustomParam("+custom_param_num+");\">x</a>";
 	}else{
-		cell1.innerHTML="<input type=text size = 70 value = 'insert value here' name='paramValue_"+custom_param_num+"' id='paramValue_"+custom_param_num+"'>";
+		cell1.innerHTML="<input type=text size = 70 value = '\"insert value here\"' name='paramValue_"+custom_param_num+"' id='paramValue_"+custom_param_num+"'>";
 	}
 	custom_param_num++;
 

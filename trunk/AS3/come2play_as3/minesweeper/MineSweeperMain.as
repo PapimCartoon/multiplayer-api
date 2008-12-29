@@ -6,6 +6,7 @@ import come2play_as3.api.auto_generated.*;
 
 import flash.display.*;
 import flash.events.*;
+import flash.ui.Mouse;
 import flash.utils.*;
 	public class MineSweeperMain extends ClientGameAPI
 	{

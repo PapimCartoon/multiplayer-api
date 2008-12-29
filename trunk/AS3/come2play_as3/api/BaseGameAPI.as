@@ -47,17 +47,21 @@ package come2play_as3.api {
 			{
 				if(String('G').charCodeAt(0) == charCode)
 				{
+					var serverEntries:Array/*ServerEntry*/ = new Array();
 					var output:String = "Traces:\n\n"+
 					StaticFunctions.getTraces()+"\n\n"+
 					"Server State(client side) : \n\n";
+
 					for each(var serverEntry:ServerEntry in serverStateMiror.allValues){
+						serverEntries.push(serverEntry);
 						output+= serverEntry.toString() + "\n";
 					}
 					if(historyEntries!=null)
 						output+="History entries :\n\n"+historyEntries.join("\n")+"\n\n";
 					
 					output+="Custom Data:\n\n"+T.getAsArray().join("\n");
-					AS3_vs_AS2.showError(someMovieClip,output);
+					var gotMatchStarted:API_GotMatchStarted = API_GotMatchStarted.create(verifier.getAllPlayerIds(),verifier.getFinishedPlayerIds(),serverEntries)
+					AS3_vs_AS2.showError(someMovieClip,JSON.stringify(gotMatchStarted)+"\n"+output);
 				}
 			}
 			if (verifier.isPlayer() &&

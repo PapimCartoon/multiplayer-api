@@ -170,6 +170,8 @@ package come2play_as3.minesweeper
 			{
 				if((playerMove.xPos == queuedMove.xPos) && (playerMove.yPos == queuedMove.yPos))
 					return false;
+				if(boardLogic[playerMove.xPos][playerMove.yPos] == 3)
+					return false;
 			}
 			movesInProcess.push(playerMove);
 			boardLogic[playerMove.xPos][playerMove.yPos] = 2;

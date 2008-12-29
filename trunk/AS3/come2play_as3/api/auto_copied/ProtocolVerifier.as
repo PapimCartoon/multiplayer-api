@@ -157,8 +157,14 @@ package come2play_as3.api.auto_copied
 							wasStoreStateCalculation = true;
 						else
 							check(doAllMsg is API_DoAllFoundHacker, ["Illegal msg=",doAllMsg," when processing ",currentCallback]);
-					}						
+					}					
 				}
+				if (transaction.messages.length>0)
+					check(isRequestStateCalculation ||
+						  currentCallback is API_GotMatchStarted || 
+						  currentCallback is API_GotMatchEnded ||
+						  currentCallback is API_GotStateChanged, ["You can change the state with a doAll message only in a transaction that corresponds to GotMatchStarted, GotMatchEnded or GotStateChanged. doAllMsg=",doAllMsg," currentCallback=",currentCallback]);
+						  
 				if (isRequestStateCalculation)
 					check(wasStoreStateCalculation, ["When the server calls gotRequestStateCalculation, you must call doAllStoreStateCalculation"]);
 				

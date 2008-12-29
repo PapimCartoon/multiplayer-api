@@ -132,6 +132,7 @@ import come2play_as2.api.auto_copied.*;
         		check(isPlayer(), ["Only a player can send DoStoreState"]);
         		var doStoreStateMessage:API_DoStoreState = API_DoStoreState(doMsg);
         		isNullKeyExistUserEntry(doStoreStateMessage.userEntries);
+        		isNullKeyExistRevealEntry(doStoreStateMessage.revealEntries)
         		isDeleteLegal(doStoreStateMessage.userEntries)
 			} else if (doMsg instanceof API_Transaction) {
 				var transaction:API_Transaction = API_Transaction(doMsg);
@@ -144,15 +145,21 @@ import come2play_as2.api.auto_copied.*;
 				
 				var wasStoreStateCalculation:Boolean = false;
 				var isRequestStateCalculation:Boolean = currentCallback instanceof API_GotRequestStateCalculation;
-				for (var i150:Number=0; i150<transaction.messages.length; i150++) { var doAllMsg:API_Message = transaction.messages[i150]; 
+				for (var i151:Number=0; i151<transaction.messages.length; i151++) { var doAllMsg:API_Message = transaction.messages[i151]; 
 					checkDoAll(doAllMsg);
 					if (isRequestStateCalculation) {
 						if (doAllMsg instanceof API_DoAllStoreStateCalculation)	
 							wasStoreStateCalculation = true;
 						else
 							check(doAllMsg instanceof API_DoAllFoundHacker, ["Illegal msg=",doAllMsg," when processing ",currentCallback]);
-					}						
+					}					
 				}
+				if (transaction.messages.length>0)
+					check(isRequestStateCalculation ||
+						  currentCallback instanceof API_GotMatchStarted || 
+						  currentCallback instanceof API_GotMatchEnded ||
+						  currentCallback instanceof API_GotStateChanged, ["You can change the state with a doAll message only in a transaction that corresponds to GotMatchStarted, GotMatchEnded or GotStateChanged. doAllMsg=",doAllMsg," currentCallback=",currentCallback]);
+						  
 				if (isRequestStateCalculation)
 					check(wasStoreStateCalculation, ["When the server calls gotRequestStateCalculation, you must call doAllStoreStateCalculation"]);
 				
@@ -165,7 +172,7 @@ import come2play_as2.api.auto_copied.*;
 		}
 		private function isDeleteLegal(userEntries:Array/*UserEntry*/):Void
 		{
-			for (var i171:Number=0; i171<userEntries.length; i171++) { var userEntry:UserEntry = userEntries[i171]; 
+			for (var i178:Number=0; i178<userEntries.length; i178++) { var userEntry:UserEntry = userEntries[i178]; 
 				if (userEntry.value == null)
 					check(!userEntry.isSecret,["key deletion must be public! userEntry=",userEntry]);
 			}
@@ -232,14 +239,15 @@ import come2play_as2.api.auto_copied.*;
         private function isNullKeyExistUserEntry(userEntries:Array/*UserEntry*/):Void
         {
         	check(userEntries.length>=1, ["userEntries must have at least one UserEntry!"]);
-        	for (var i238:Number=0; i238<userEntries.length; i238++) { var userEntry:UserEntry = userEntries[i238]; 
+        	for (var i245:Number=0; i245<userEntries.length; i245++) { var userEntry:UserEntry = userEntries[i245]; 
         		check(userEntry.key != null,["UserEntry.key cannot be null !"]);
         	}
         }
         private function isNullKeyExistRevealEntry(revealEntries:Array/*RevealEntry*/):Void
         {
-        	check(revealEntries.length>=1, ["revealEntries must have at least one RevealEntry!"]);
-        	for (var i245:Number=0; i245<revealEntries.length; i245++) { var revealEntry:RevealEntry = revealEntries[i245]; 
+        	//check(revealEntries.length>=1, ["revealEntries must have at least one RevealEntry!"]);
+        	for (var i252:Number=0; i252<revealEntries.length; i252++) { var revealEntry:RevealEntry = revealEntries[i252]; 
+        		check(revealEntry != null,["RevealEntry cannot be null !"]);
         		check(revealEntry.key != null,["RevealEntry.key cannot be null !"]);
         		check(revealEntry.userIds==null || isAllInPlayers(revealEntry.userIds), ["RevealEntry.userIds must either be null or contain only players"]); 
         	}
@@ -247,7 +255,7 @@ import come2play_as2.api.auto_copied.*;
         private function isNullKeyExist(keys:Array/*Object*/):Void
         {
         	check(keys.length>=1,["keys must have at leasy one key!"]);        		
-        	for (var i253:Number=0; i253<keys.length; i253++) { var key:String = keys[i253]; 
+        	for (var i261:Number=0; i261<keys.length; i261++) { var key:String = keys[i261]; 
         		check(key != null,["key cannot be null !"]);
         	}
         }

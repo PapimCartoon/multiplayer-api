@@ -26,7 +26,7 @@ package come2play_as3.api {
 		private var historyEntries:Array/*HistoryEntry*/;
 		private var keyboardMessages:Array/*API_GotKeyboardEvent*/;
 		private var singlePlayerEmulator:SinglePlayerEmulator;
-		public static var HISTORY_LENGTH:int = 0;
+		public static var HISTORY_LENGTH:int = 100;
 		
 		public function BaseGameAPI(_someMovieClip:DisplayObjectContainer) {
 			super(_someMovieClip, false, getPrefixFromFlashVars(_someMovieClip),true);
@@ -187,13 +187,13 @@ package come2play_as3.api {
     		msgsInTransaction = null;
 			currentCallback = null;
 			sendKeyboardEvents();
-			sendDoStoreStateEvents();
+			if (verifier.isPlayer()) sendDoStoreStateEvents();
         }
         private function sendDoStoreStateEvents():void{
         	for each(var doStoreMsg:API_DoStoreState in doStoreQueue){
         		super.sendMessage(doStoreMsg);
         	}
-        	doStoreQueue = new Array();
+        	doStoreQueue = [];
         }
         private function updateMirorServerState(serverEntries:Array/*ServerEntry*/):void
         {
@@ -217,6 +217,7 @@ package come2play_as3.api {
 				currentCallback = msg;
 				
         		hackerUserId = -1;
+        		
 	    		if (msg is API_GotStateChanged) {
 	    			var stateChanged:API_GotStateChanged = /*as*/msg as API_GotStateChanged;
 	    			if (stateChanged.serverEntries.length >= 1) {
@@ -225,6 +226,7 @@ package come2play_as3.api {
 		    			hackerUserId = serverEntry.storedByUserId;
 		    		}
 	    		} else if (msg is API_GotMatchStarted) {
+	    			doStoreQueue = [];
 	    			serverStateMiror = new ObjectDictionary();
 					var matchStarted:API_GotMatchStarted = /*as*/msg as API_GotMatchStarted;
 					updateMirorServerState(matchStarted.serverEntries);

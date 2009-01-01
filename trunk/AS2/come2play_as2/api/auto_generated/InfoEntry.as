@@ -12,7 +12,7 @@ import come2play_as2.api.auto_generated.*;
 			var res:InfoEntry = new InfoEntry();
 			res.key = key;
 
-// This is a AUTOMATICALLY GENERATED! Do not change!
+// This instanceof a AUTOMATICALLY GENERATED! Do not change!
 
 			res.value = value;
 			return res;
@@ -25,7 +25,7 @@ import come2play_as2.api.auto_generated.*;
 		/*override*/ public function getFunctionId():Number { return -89; }
 		/*override*/ public function getMethodName():String { return 'infoEntry'; }
 
-// This is a AUTOMATICALLY GENERATED! Do not change!
+// This instanceof a AUTOMATICALLY GENERATED! Do not change!
 
 		/*override*/ public function getMethodParameters():Array { return [key, value]; }
 		/*override*/ public function getMethodParametersNum():Number { return 2; }

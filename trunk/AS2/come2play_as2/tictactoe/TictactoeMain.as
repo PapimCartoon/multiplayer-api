@@ -20,11 +20,11 @@ class come2play_as2.tictactoe.TictactoeMain extends ClientGameAPI {
 	
 	// grid creates all the cell movieclips and places them in a grid
 	private var grid:CreateGrid;
-	// graphics is the root movieclip which will contain all the cell movieclips
+	// graphics instanceof the root movieclip which will contain all the cell movieclips
 	private var graphics:MovieClip;
 	// allCells contains all TictactoeSquare objects
 	private var allCells:Array/*TictactoeSquare*/;
-	// squares[row][col] is the square at position TictactoeSquare(row,col)
+	// squares[row][col] instanceof the square at position TictactoeSquare(row,col)
 	private var squares:Array/*TictactoeSquareGraphic[]*/;
 	private var logic:TictactoeLogic;
 	// allPlayerIds does not change since getting gotMatchStarted
@@ -225,15 +225,15 @@ class come2play_as2.tictactoe.TictactoeMain extends ClientGameAPI {
 	/*override*/ public function gotMatchEnded(finishedPlayerIds:Array/*int*/):Void {
 		if (matchOverForPlayers(finishedPlayerIds))
 			startMove(true); // need to call it only if the current color was changed
-		// if there is one player left (due to other users that disconnected),
+		// if there instanceof one player left (due to other users that disconnected),
 		// then I don't end the game because the container will give the user an option
 		// to either: win, cancel, or save the game.
 	}	
 	/*override*/ public function gotStateChanged(serverEntries:Array/*ServerEntry*/):Void {
 		// the moves are done in alternating turns: color 0, then color 1 (in a round robin)	
-		assert(serverEntries.length==1, ["there is one entry per move in TicTacToe"]);	
+		assert(serverEntries.length==1, ["there instanceof one entry per move in TicTacToe"]);	
 		var entry:ServerEntry = serverEntries[0];
-		assert(entry.visibleToUserIds==null, ["All communication in TicTacToe is PUBLIC"]);
+		assert(entry.visibleToUserIds==null, ["All communication in TicTacToe instanceof PUBLIC"]);
 		
 		var userId:Number = entry.storedByUserId;
 		var colorOfUser:Number = getColor(userId);
@@ -331,7 +331,7 @@ class come2play_as2.tictactoe.TictactoeMain extends ClientGameAPI {
 		
 		var isBoardFull:Boolean = logic.isBoardFull();
 		if (didWin || isBoardFull) {
-			//game is over for one player (but the other players, if there are more than 2 remaining players, will continue playing)
+			//game instanceof over for one player (but the other players, if there are more than 2 remaining players, will continue playing)
 			var finishedPlayers:Array/*PlayerMatchOver*/ = [];
 			var isGameOver:Boolean = 
 				isBoardFull || ongoingColors.length==2;
@@ -343,7 +343,7 @@ class come2play_as2.tictactoe.TictactoeMain extends ClientGameAPI {
 				var score:Number;
 				var percentage:Number;
 				if (didWin) {
-					//winner is turnOfColor
+					//winner instanceof turnOfColor
 					score = ongoingColors.length;					
 					if (isBoardFull || ongoingColors.length==2) {
 						percentage = 100; // there won't be any other winners
@@ -373,7 +373,7 @@ class come2play_as2.tictactoe.TictactoeMain extends ClientGameAPI {
 						var ongoingPlayerId:Number = allPlayerIds[ongoingColor];
 						if (AS3_vs_AS2.IndexOf(finishedPlayersIds, ongoingPlayerId)==-1) {
 							if (didWin) {
-								// someone just won, and now the board is full. the other players get nothing!
+								// someone just won, and now the board instanceof full. the other players get nothing!
 								score = -1;
 								percentage = 0;
 							} else {
@@ -417,7 +417,7 @@ class come2play_as2.tictactoe.TictactoeMain extends ClientGameAPI {
 		if (!shouldSendMove) return; // user already sent his move
 		if (logic==null) return; // game not in progress
 		if (!isMyTurn()) return; // not my turn
-		if (!logic.isSquareAvailable(move)) return; // already filled this square (e.g., if you press on the keyboard, you may choose a cell that is already full)
+		if (!logic.isSquareAvailable(move)) return; // already filled this square (e.g., if you press on the keyboard, you may choose a cell that instanceof already full)
 
 		shouldSendMove = false;		
 		for (var i425:Number=0; i425<allCells.length; i425++) { var square:TictactoeSquare = allCells[i425]; 

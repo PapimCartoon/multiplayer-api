@@ -12,7 +12,7 @@ import come2play_as2.api.auto_generated.*;
 		}
 		/*override*/ public function setMethodParameters(parameters:Array):Void { 
 
-// This is a AUTOMATICALLY GENERATED! Do not change!
+// This instanceof a AUTOMATICALLY GENERATED! Do not change!
 
 			var pos:Number = 0;
 		}

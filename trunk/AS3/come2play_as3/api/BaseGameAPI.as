@@ -6,6 +6,7 @@ package come2play_as3.api {
 	import flash.events.*;
 	import flash.external.*;
 	import flash.net.*;
+	import flash.system.Security;
 	import flash.utils.*;
 	
 	/**
@@ -30,6 +31,7 @@ package come2play_as3.api {
 		
 		public function BaseGameAPI(_someMovieClip:DisplayObjectContainer) {
 			super(_someMovieClip, false, getPrefixFromFlashVars(_someMovieClip),true);
+			
 			keyboardMessages = [];
 			someMovieClip = _someMovieClip;
 			AS3_vs_AS2.addKeyboardListener(_someMovieClip,keyPressed);

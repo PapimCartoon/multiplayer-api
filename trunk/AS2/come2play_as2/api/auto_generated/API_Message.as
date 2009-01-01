@@ -12,7 +12,7 @@ import come2play_as2.api.auto_generated.*;
 		public function getMethodParameters():Array { throw new Error("You must subclass API_Message!"); return null; }
 		public function getMethodParametersNum():Number { throw new Error("You must subclass API_Message!"); return -1; }
 
-// This is a AUTOMATICALLY GENERATED! Do not change!
+// This instanceof a AUTOMATICALLY GENERATED! Do not change!
 
 		public static var USER_INFO_KEY_name:String = "name";
 		public static var USER_INFO_KEY_avatar_url:String = "avatar_url";
@@ -25,7 +25,7 @@ import come2play_as2.api.auto_generated.*;
 		public static var CUSTOM_INFO_KEY_gameStageX:String = "CONTAINER_gameStageX";
 		public static var CUSTOM_INFO_KEY_gameStageY:String = "CONTAINER_gameStageY";
 
-// This is a AUTOMATICALLY GENERATED! Do not change!
+// This instanceof a AUTOMATICALLY GENERATED! Do not change!
 
 		public static var CUSTOM_INFO_KEY_gameHeight:String = "CONTAINER_gameHeight";
 		public static var CUSTOM_INFO_KEY_gameWidth:String = "CONTAINER_gameWidth";
@@ -38,6 +38,6 @@ import come2play_as2.api.auto_generated.*;
 		public static var CUSTOM_INFO_KEY_checkThrowingAnError:String = "CONTAINER_checkThrowingAnError";
 		public static var CUSTOM_INFO_KEY_isBack:String = "CONTAINER_isBack";
 
-// This is a AUTOMATICALLY GENERATED! Do not change!
+// This instanceof a AUTOMATICALLY GENERATED! Do not change!
 
 	}

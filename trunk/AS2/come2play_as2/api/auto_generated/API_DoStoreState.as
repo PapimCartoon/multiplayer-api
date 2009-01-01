@@ -12,7 +12,7 @@ import come2play_as2.api.auto_generated.*;
 			var res:API_DoStoreState = new API_DoStoreState();
 			res.userEntries = userEntries;
 
-// This is a AUTOMATICALLY GENERATED! Do not change!
+// This instanceof a AUTOMATICALLY GENERATED! Do not change!
 
 			res.revealEntries = revealEntries;
 			return res;
@@ -25,7 +25,7 @@ import come2play_as2.api.auto_generated.*;
 		/*override*/ public function getFunctionId():Number { return -118; }
 		/*override*/ public function getMethodName():String { return 'doStoreState'; }
 
-// This is a AUTOMATICALLY GENERATED! Do not change!
+// This instanceof a AUTOMATICALLY GENERATED! Do not change!
 
 		/*override*/ public function getMethodParameters():Array { return [userEntries, revealEntries]; }
 		/*override*/ public function getMethodParametersNum():Number { return 2; }

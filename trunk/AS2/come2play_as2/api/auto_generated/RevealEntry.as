@@ -12,7 +12,7 @@ import come2play_as2.api.auto_generated.*;
 		public static function create(key/*any type*/, userIds:Array/*int*//*<InAS3> = null </InAS3>*/, depth:Number/*<InAS3> = 0 </InAS3>*/):RevealEntry {
 			var res:RevealEntry = new RevealEntry();
 
-// This is a AUTOMATICALLY GENERATED! Do not change!
+// This instanceof a AUTOMATICALLY GENERATED! Do not change!
 
 			res.key = key;
 			res.userIds = userIds;
@@ -25,7 +25,7 @@ import come2play_as2.api.auto_generated.*;
 			this.key = parameters[pos++];
 			this.userIds = parameters[pos++];
 
-// This is a AUTOMATICALLY GENERATED! Do not change!
+// This instanceof a AUTOMATICALLY GENERATED! Do not change!
 
 			this.depth = parameters[pos++];
 		}

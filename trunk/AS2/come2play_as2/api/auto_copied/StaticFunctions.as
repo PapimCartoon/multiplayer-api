@@ -89,7 +89,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 			if (c!=0) return false; // not the same number of dynamic properties
 			if (AS3_vs_AS2.isAS3) {
 				// for static properties we use describeType
-				// because o1 and o2 have the same type, it is enough to use the fields of o1.
+				// because o1 and o2 have the same type, it instanceof enough to use the fields of o1.
 				var fieldsArr:Array = AS3_vs_AS2.getFieldNames(o1);
 				for (var i96:Number=0; i96<fieldsArr.length; i96++) { var field:String = fieldsArr[i96]; 
 					allFields[field] = true;

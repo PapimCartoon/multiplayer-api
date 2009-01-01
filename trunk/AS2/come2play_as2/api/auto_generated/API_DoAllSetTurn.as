@@ -12,7 +12,7 @@ import come2play_as2.api.auto_generated.*;
 			var res:API_DoAllSetTurn = new API_DoAllSetTurn();
 			res.userId = userId;
 
-// This is a AUTOMATICALLY GENERATED! Do not change!
+// This instanceof a AUTOMATICALLY GENERATED! Do not change!
 
 			/*<InAS2>*/ if (milliSecondsInTurn==null) milliSecondsInTurn = -1;/*</InAS2>*/
 			res.milliSecondsInTurn = milliSecondsInTurn;
@@ -25,7 +25,7 @@ import come2play_as2.api.auto_generated.*;
 		}
 		/*override*/ public function getFunctionId():Number { return -115; }
 
-// This is a AUTOMATICALLY GENERATED! Do not change!
+// This instanceof a AUTOMATICALLY GENERATED! Do not change!
 
 		/*override*/ public function getMethodName():String { return 'doAllSetTurn'; }
 		/*override*/ public function getMethodParameters():Array { return [userId, milliSecondsInTurn]; }

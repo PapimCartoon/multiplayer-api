@@ -12,7 +12,7 @@ import come2play_as2.api.auto_generated.*;
 			var res:API_DoAllFoundHacker = new API_DoAllFoundHacker();
 			res.userId = userId;
 
-// This is a AUTOMATICALLY GENERATED! Do not change!
+// This instanceof a AUTOMATICALLY GENERATED! Do not change!
 
 			res.errorDescription = errorDescription;
 			return res;
@@ -25,7 +25,7 @@ import come2play_as2.api.auto_generated.*;
 		/*override*/ public function getFunctionId():Number { return -111; }
 		/*override*/ public function getMethodName():String { return 'doAllFoundHacker'; }
 
-// This is a AUTOMATICALLY GENERATED! Do not change!
+// This instanceof a AUTOMATICALLY GENERATED! Do not change!
 
 		/*override*/ public function getMethodParameters():Array { return [userId, errorDescription]; }
 		/*override*/ public function getMethodParametersNum():Number { return 2; }

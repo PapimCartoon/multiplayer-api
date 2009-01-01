@@ -12,7 +12,7 @@ import come2play_as2.api.auto_generated.*;
 		public var visibleToUserIds:Array/*int*/;
 		public var changedTimeInMilliSeconds:Number;
 
-// This is a AUTOMATICALLY GENERATED! Do not change!
+// This instanceof a AUTOMATICALLY GENERATED! Do not change!
 
 		public static function create(key/*any type*/, value/*any type*/, storedByUserId:Number, visibleToUserIds:Array/*int*/, changedTimeInMilliSeconds:Number):ServerEntry {
 			var res:ServerEntry = new ServerEntry();
@@ -25,7 +25,7 @@ import come2play_as2.api.auto_generated.*;
 		}
 		/*override*/ public function setMethodParameters(parameters:Array):Void { 
 
-// This is a AUTOMATICALLY GENERATED! Do not change!
+// This instanceof a AUTOMATICALLY GENERATED! Do not change!
 
 			var pos:Number = 0;
 			this.key = parameters[pos++];
@@ -38,7 +38,7 @@ import come2play_as2.api.auto_generated.*;
 		/*override*/ public function getMethodName():String { return 'serverEntry'; }
 		/*override*/ public function getMethodParameters():Array { return [key, value, storedByUserId, visibleToUserIds, changedTimeInMilliSeconds]; }
 
-// This is a AUTOMATICALLY GENERATED! Do not change!
+// This instanceof a AUTOMATICALLY GENERATED! Do not change!
 
 		/*override*/ public function getMethodParametersNum():Number { return 5; }
 	}

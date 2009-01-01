@@ -12,7 +12,7 @@ import come2play_as2.api.auto_generated.*;
 			var res:API_GotRequestStateCalculation = new API_GotRequestStateCalculation();
 			res.requestId = requestId;
 
-// This is a AUTOMATICALLY GENERATED! Do not change!
+// This instanceof a AUTOMATICALLY GENERATED! Do not change!
 
 			res.serverEntries = serverEntries;
 			return res;
@@ -25,7 +25,7 @@ import come2play_as2.api.auto_generated.*;
 		/*override*/ public function getFunctionId():Number { return -109; }
 		/*override*/ public function getMethodName():String { return 'gotRequestStateCalculation'; }
 
-// This is a AUTOMATICALLY GENERATED! Do not change!
+// This instanceof a AUTOMATICALLY GENERATED! Do not change!
 
 		/*override*/ public function getMethodParameters():Array { return [requestId, serverEntries]; }
 		/*override*/ public function getMethodParametersNum():Number { return 2; }

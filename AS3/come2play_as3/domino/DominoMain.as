@@ -107,7 +107,7 @@ package come2play_as3.domino
 			myUserId = T.custom(CUSTOM_INFO_KEY_myUserId, null) as int;
 			stageX = T.custom(CUSTOM_INFO_KEY_gameStageX, null) as int;
 			stageY = T.custom(CUSTOM_INFO_KEY_gameStageY, null) as int;
-			cubeMaxValue = T.custom("cubeMaxValue", 7) as int;
+			cubeMaxValue = T.custom("Cube Max Value", 7) as int;
 		}
 		override public function gotUserInfo(userId:int, entries:Array/*InfoEntry*/):void 
 		{

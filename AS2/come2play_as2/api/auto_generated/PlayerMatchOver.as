@@ -12,7 +12,7 @@ import come2play_as2.api.auto_generated.*;
 		public static function create(playerId:Number, score:Number, potPercentage:Number):PlayerMatchOver {
 			var res:PlayerMatchOver = new PlayerMatchOver();
 
-// This is a AUTOMATICALLY GENERATED! Do not change!
+// This instanceof a AUTOMATICALLY GENERATED! Do not change!
 
 			res.playerId = playerId;
 			res.score = score;
@@ -25,7 +25,7 @@ import come2play_as2.api.auto_generated.*;
 			this.score = parameters[pos++];
 			this.potPercentage = parameters[pos++];
 
-// This is a AUTOMATICALLY GENERATED! Do not change!
+// This instanceof a AUTOMATICALLY GENERATED! Do not change!
 
 		}
 		/*override*/ public function getFunctionId():Number { return -90; }

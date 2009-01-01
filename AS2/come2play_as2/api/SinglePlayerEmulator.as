@@ -41,7 +41,7 @@ import come2play_as2.api.*;
 		private var userInfoEntries:Array/*InfoEntry*/;
 		private var userStateEntries:Array/*ServerEntry*/;
 		private var apiMsgsQueue:Array/*API_Message*/ = [];
-		
+		private var serverStateMiror:ObjectDictionary;
 		public function SinglePlayerEmulator(graphics:MovieClip) {
 			super(graphics,true, DEFAULT_LOCALCONNECTION_PREFIX,true);
 			this.customInfoEntries = DEFAULT_GENERAL_INFO;
@@ -49,46 +49,211 @@ import come2play_as2.api.*;
 			this.userInfoEntries = DEFAULT_USER_INFO;
 			this.userStateEntries = DEFAULT_MATCH_STATE;
 		}
-		
-        /*override*/ public function gotMessage(msg:API_Message):Void {        	
+		private function updateUserIds(userIdsToUpdate:Array/*int*/,uerIdsToAdd:Array/*int*/):Boolean{
+			var updated:Boolean = false;
+			for (var i55:Number=0; i55<uerIdsToAdd.length; i55++) { var id:Number = uerIdsToAdd[i55]; 
+				if(AS3_vs_AS2.IndexOf(userIdsToUpdate,id)==-1){
+					updated = true;
+					userIdsToUpdate.push(id);
+				}
+			}
+			return updated;
+		}	
+		private function doRevealEntry(revealEntry:RevealEntry):ServerEntry{
+			var oldServerEntry:ServerEntry =ServerEntry( serverStateMiror.getValue(revealEntry.key))
+			var serverEntry:ServerEntry =ServerEntry.create(oldServerEntry.key,oldServerEntry.value,oldServerEntry.storedByUserId,oldServerEntry.visibleToUserIds,getTimer());
+			if (serverEntry == null)return null;
+			if (serverEntry.visibleToUserIds == null) return null;
+			if (revealEntry.userIds == null) {
+				serverEntry.visibleToUserIds = null;	
+			}else if (!updateUserIds(serverEntry.visibleToUserIds,revealEntry.userIds)) return null;
+			serverStateMiror.addEntry(serverEntry);	
+			return serverEntry
+		}
+		private function doRevealPointer(revealEntry:RevealEntry):Object{
+			var serverEntry:ServerEntry = doRevealEntry(revealEntry)
+			if(serverEntry == null){
+				serverEntry = ServerEntry( serverStateMiror.getValue(revealEntry.key));
+				if(serverEntry == null){
+					return null;
+				}else{
+					return serverEntry.value
+				}
+			}else{
+				return serverEntry;
+			}
+		}	
+		private function doRevealEntries(revealEntries:Array/*RevealEntry*/):Array/*ServerEntries*/{
+			var serverEntries:Array/*ServerEntry*/ = new Array();
+			var serverEntry:ServerEntry;
+			var pointerObject:Object;
+			for (var i91:Number=0; i91<revealEntries.length; i91++) { var revealEntry:RevealEntry = revealEntries[i91]; 
+				if (revealEntry.depth == 0) {
+					serverEntry = doRevealEntry(revealEntry);
+					if (serverEntry!=null)	serverEntries.push(serverEntry);
+				}else if (revealEntry.depth > 0) {
+					for(var i:Number =0;i<=revealEntry.depth;i++){	
+						pointerObject = doRevealPointer(revealEntry);
+						if(pointerObject == null){
+							//break;
+						}else if(pointerObject instanceof ServerEntry){
+							serverEntry = ServerEntry(pointerObject);
+							serverEntries.push(serverEntry);
+							revealEntry.key = serverEntry.value;	
+						}else{
+							revealEntry.key = pointerObject;
+						}				
+					}
+				}
+			}
+			return serverEntries;
+		}
+		private function shuffleEntries(keys:Array/*Object*/,serverEntries:Array/*SErverEntry*/):Array/*ServerEntry*/{
+			var randIndex:Number;
+			var newServerEntries:Array = new Array();
+			var serverEntry:ServerEntry;
+			var currentKey:Object;
+			while(serverEntries.length > 0){
+				randIndex =Math.random()*serverEntries.length;
+				serverEntry = serverEntries[randIndex]
+				serverEntries.splice(randIndex,1);
+				currentKey = keys.pop()
+				newServerEntries.push(ServerEntry.create(currentKey,null,-1,[],getTimer()));
+				serverStateMiror.addEntry(ServerEntry.create(currentKey,serverEntry.value,-1,[],getTimer()));
+			}
+			return newServerEntries;
+		}
+		/*storePrefrence
+		 * 1 - normal do store
+		 * 2 - doAllStore
+		 * 3 - calculator store
+		 */
+		private function extractStoredData(userEntries:Array/*UserEntry*/,storePrefrence:Number):Array/*ServerEntries*/{
+			var serverEntries:Array/*ServerEntry*/ = [];
+			var serverEntry:ServerEntry;
+			for (var i135:Number=0; i135<userEntries.length; i135++) { var userEntry:UserEntry = userEntries[i135]; 
+				switch(storePrefrence){
+					case 1:serverEntry = ServerEntry.create(userEntry.key, userEntry.value,userId,userEntry.isSecret ? [userId] : null, getTimer()); break;
+					case 2:serverEntry = ServerEntry.create(userEntry.key, userEntry.value,-1,userEntry.isSecret ? [] : null, getTimer()); break;
+					case 3:serverEntry = ServerEntry.create(userEntry.key, userEntry.value,-1,userEntry.isSecret ? [] : null, getTimer()); break;
+				}
+				
+				serverStateMiror.addEntry(serverEntry);
+				serverEntries.push(serverEntry); 
+			}	
+			return serverEntries;
+		}
+		private function combineServerEntries(serverEntries:Array/*ServerEntry*/):Array/*ServerEntry*/{
+			var combinedServerEntries:Array/*ServerEntry*/ = new Array();
+			
+			return combinedServerEntries
+		}
+		private function messageHandler(msg:API_Message,transactionEntries:Array/*<InAS3> = null</InAS3>*/):Void{
+		var serverEntries:Array/*ServerEntry*/ = [];
+			var serverEntry:ServerEntry;
 			if (msg instanceof API_Transaction) {
 				var transaction:API_Transaction = API_Transaction(msg);
-				for (var i57:Number=0; i57<transaction.messages.length; i57++) { var innerMsg:API_Message = transaction.messages[i57]; 
-					gotMessage(innerMsg);
+				for (var i157:Number=0; i157<transaction.messages.length; i157++) { var innerMsg:API_Message = transaction.messages[i157]; 
+					messageHandler(innerMsg,serverEntries);
 				}
+				if(serverEntries.length > 0)
+					queueSendMessage(API_GotStateChanged.create(serverEntries))
 				gotMessage(transaction.callback);
 			} else if (msg instanceof API_DoStoreState) {
 				var doStore:API_DoStoreState = API_DoStoreState(msg);				
-				var userEntries:Array/*UserEntry*/ = doStore.userEntries;
-				var serverEntries:Array/*ServerEntry*/ = [];
-				for (var i65:Number=0; i65<userEntries.length; i65++) { var userEntry:UserEntry = userEntries[i65]; 
-					var serverEntry:ServerEntry = ServerEntry.create(userEntry.key, userEntry.value, userId,userEntry.isSecret ? [userId] : null, getTimer());
-					serverEntries.push(serverEntry); 
-				}
-				queueSendMessage(API_GotStateChanged.create(serverEntries));
+				serverEntries = extractStoredData(doStore.userEntries,1);
+				if(doStore.revealEntries !=null)
+					serverEntries = serverEntries.concat(doRevealEntries(doStore.revealEntries))
+				if(transactionEntries == null)
+					queueSendMessage(API_GotStateChanged.create(serverEntries));
+				else
+					transactionEntries = transactionEntries.concat(serverEntries);
 				
-			} else if (msg instanceof API_DoAllEndMatch) {
+			}else if (msg instanceof API_DoAllStoreState) { 
+				var doAllStoreMsg:API_DoAllStoreState = API_DoAllStoreState(msg);
+				serverEntries = extractStoredData(doAllStoreMsg.userEntries,2)
+				if(transactionEntries == null)
+					queueSendMessage(API_GotStateChanged.create(serverEntries));
+				else
+					transactionEntries = transactionEntries.concat(serverEntries);
+        	}else if(msg instanceof API_DoAllStoreStateCalculation){
+        		var stateCalculations:API_DoAllStoreStateCalculation = API_DoAllStoreStateCalculation(msg);
+        		serverEntries = extractStoredData(stateCalculations.userEntries,3)
+				queueSendMessage(API_GotStateChanged.create(serverEntries))
+        	}else if (msg instanceof API_DoAllShuffleState){
+        		var shuffleState:API_DoAllShuffleState = API_DoAllShuffleState(msg);
+        		var Key:Object;
+        		for(var i:Number =0;i<shuffleState.keys.length;i++){
+        			Key = shuffleState.keys[i];
+        			serverEntry = ServerEntry(serverStateMiror.getValue(Key))
+        			if(serverEntry != null)
+        				serverEntries.push(serverEntry);
+        			else{
+        				shuffleState.keys.splice(i,1);
+        				i--;
+        			}
+        		}
+        		serverEntries = shuffleEntries(shuffleState.keys,serverEntries);
+        		if(transactionEntries == null)
+					queueSendMessage(API_GotStateChanged.create(serverEntries));
+				else
+					transactionEntries = transactionEntries.concat(serverEntries);
+        	}else if (msg instanceof API_DoAllRevealState){
+        		var revealStateMsg:API_DoAllRevealState = API_DoAllRevealState(msg);
+				serverEntries = doRevealEntries(revealStateMsg.revealEntries)
+				if(transactionEntries == null)
+					queueSendMessage(API_GotStateChanged.create(serverEntries));
+				else
+					transactionEntries = transactionEntries.concat(serverEntries);
+        	}else if (msg instanceof API_DoAllRequestRandomState) { 
+        		var doAllSecretStateMsg:API_DoAllRequestRandomState = API_DoAllRequestRandomState(msg);
+				var randomINT:Number = Math.random()*int.MAX_VALUE;
+				serverEntry = ServerEntry.create(doAllSecretStateMsg.key,randomINT,-1,doAllSecretStateMsg.isSecret?[]:null,getTimer())
+				serverStateMiror.addEntry(serverEntry);
+				if(transactionEntries == null)
+					queueSendMessage(API_GotStateChanged.create([serverEntry]));
+				else
+					transactionEntries = transactionEntries.concat([serverEntry]);
+        	}else if (msg instanceof API_DoAllEndMatch) {
 				var endMatch:API_DoAllEndMatch = API_DoAllEndMatch(msg);
 				var finishedPlayerIds:Array = [];
-				for (var i74:Number=0; i74<endMatch.finishedPlayers.length; i74++) { var matchOver:PlayerMatchOver = endMatch.finishedPlayers[i74]; 
+				for (var i221:Number=0; i221<endMatch.finishedPlayers.length; i221++) { var matchOver:PlayerMatchOver = endMatch.finishedPlayers[i221]; 
 					finishedPlayerIds.push( matchOver.playerId );
 				}
 				queueSendMessage( API_GotMatchEnded.create(finishedPlayerIds) );
 				AS3_vs_AS2.myTimeout(AS3_vs_AS2.delegate(this, this.sendNewMatch), 2000);
 			} else if (msg instanceof API_DoRegisterOnServer) {
 				doRegisterOnServer();
+			} else if (msg instanceof API_DoAllRequestStateCalculation) { 
+				var requestStateCalculationMsg:API_DoAllRequestStateCalculation = API_DoAllRequestStateCalculation(msg);
+				for (var i230:Number=0; i230<requestStateCalculationMsg.keys.length; i230++) { var key:Object = requestStateCalculationMsg.keys[i230]; 
+					var entry:ServerEntry = ServerEntry(serverStateMiror.getValue(key));
+					if(entry!= null)
+						serverEntries.push(entry)
+					else
+						trace(JSON.stringify(key))
+				}
+				queueSendMessage(API_GotRequestStateCalculation.create(1,serverEntries))
 			} else if (msg instanceof API_DoFinishedCallback) {
 				if (apiMsgsQueue.length==0) throwError("Game sent too many DoFinishedCallback");
 				apiMsgsQueue.shift();
 				if (apiMsgsQueue.length>0) sendTopQueue();
-			}				
+			}		
+		}
+		
+        /*override*/ public function gotMessage(msg:API_Message):Void {        	
+			messageHandler(msg);			
   		}
   		private function doRegisterOnServer():Void {
   			queueSendMessage(API_GotCustomInfo.create(customInfoEntries) );
   			queueSendMessage(API_GotUserInfo.create(userId, userInfoEntries) );
 	 		sendNewMatch();
   		}
-  		private function sendNewMatch():Void {	 
+  		private function sendNewMatch():Void {
+  			serverStateMiror = new ObjectDictionary();	
+  			for (var i255:Number=0; i255<userStateEntries.length; i255++) { var serverEntry:ServerEntry = userStateEntries[i255]; 
+  				serverStateMiror.addEntry(serverEntry);
+			}				
   			queueSendMessage(API_GotMatchStarted.create([userId], [], userStateEntries) );	 	
   		}
   		private function queueSendMessage(msg:API_Message):Void {

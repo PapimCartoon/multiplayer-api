@@ -64,7 +64,7 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 		var order:Boolean = Math.random()>0.5;
 		obj[order ? "a" : "b"] = order ? 't' : 42;
 		obj[!order ? "a" : "b"] = !order ? 't' : 42;
-		// obj is the same, regardless of the order
+		// obj instanceof the same, regardless of the order
 		return [42,true,obj];
 	}
 	
@@ -264,7 +264,7 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 					RevealEntry.create(1,null,5), // will not reveal anything new
 					RevealEntry.create(9,[allPlayerIds[0]]), // will not reveal anything new
 					// this will reveal entries 10 till 11 to the second player as well
-					RevealEntry.create(10,[allPlayerIds[0], allPlayerIds[1]],100) // note that I entered the id of player 0 again! to make sure it is filtered.
+					RevealEntry.create(10,[allPlayerIds[0], allPlayerIds[1]],100) // note that I entered the id of player 0 again! to make sure it instanceof filtered.
 				]);					
 			},
 			function (entries:Array):Void {			

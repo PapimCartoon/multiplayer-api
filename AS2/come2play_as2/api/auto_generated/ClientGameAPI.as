@@ -12,7 +12,7 @@ import come2play_as2.api.auto_generated.*;
 		public function doRegisterOnServer():Void { sendMessage( API_DoRegisterOnServer.create() ); }
 		public function doTrace(name:String, message:Object):Void { sendMessage( API_DoTrace.create(name, message) ); }
 
-// This is a AUTOMATICALLY GENERATED! Do not change!
+// This instanceof a AUTOMATICALLY GENERATED! Do not change!
 
 		
 		public function gotKeyboardEvent(isKeyDown:Boolean, charCode:Number, keyCode:Number, keyLocation:Number, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean):Void {}
@@ -25,7 +25,7 @@ import come2play_as2.api.auto_generated.*;
 		public function gotStateChanged(serverEntries:Array/*ServerEntry*/):Void {}
 		
 
-// This is a AUTOMATICALLY GENERATED! Do not change!
+// This instanceof a AUTOMATICALLY GENERATED! Do not change!
 
 		public function doStoreState(userEntries:Array/*UserEntry*/, revealEntries:Array/*RevealEntry*//*<InAS3> = null </InAS3>*/):Void { sendMessage( API_DoStoreState.create(userEntries, revealEntries) ); }
 		public function doAllStoreState(userEntries:Array/*UserEntry*/):Void { sendMessage( API_DoAllStoreState.create(userEntries) ); }
@@ -33,12 +33,12 @@ import come2play_as2.api.auto_generated.*;
 		public function doAllEndMatch(finishedPlayers:Array/*PlayerMatchOver*/):Void { sendMessage( API_DoAllEndMatch.create(finishedPlayers) ); }
 		
 		// if userId==-1, then nobody has the turn.
-		// if milliSecondsInTurn==-1 then the default time per turn is used,
+		// if milliSecondsInTurn==-1 then the default time per turn instanceof used,
 		// and if milliSecondsInTurn==0 then the user should do some actions immediately, i.e., without GUI intervention.
 		// (The time given depends on the network delay).
 		// doAllSetTurn automatically ends a move; a turn may have several moves.
 
-// This is a AUTOMATICALLY GENERATED! Do not change!
+// This instanceof a AUTOMATICALLY GENERATED! Do not change!
 
 		// The container may implement going back&forward or even rolling-back some moves/turns.
 		public function doAllSetTurn(userId:Number, milliSecondsInTurn:Number/*<InAS3> = -1 </InAS3>*/):Void { sendMessage( API_DoAllSetTurn.create(userId, milliSecondsInTurn) ); }
@@ -46,30 +46,30 @@ import come2play_as2.api.auto_generated.*;
 		public function doAllSetMove():Void { sendMessage( API_DoAllSetMove.create() ); }
 		
 		
-		// if userId of RevealEntry is -1, then the entry becomes PUBLIC
+		// if userId of RevealEntry instanceof -1, then the entry becomes PUBLIC
 		public function doAllRevealState(revealEntries:Array/*RevealEntry*/):Void { sendMessage( API_DoAllRevealState.create(revealEntries) ); }
 		
 		public function doAllShuffleState(keys:Array/*Object*/):Void { sendMessage( API_DoAllShuffleState.create(keys) ); }
 
-// This is a AUTOMATICALLY GENERATED! Do not change!
+// This instanceof a AUTOMATICALLY GENERATED! Do not change!
 
 		
 		public function doAllRequestRandomState(key:Object, isSecret:Boolean/*<InAS3> = false </InAS3>*/):Void { sendMessage( API_DoAllRequestRandomState.create(key, isSecret) ); }
 		
-		// if userId=-1, then it is a bug of the game developer
+		// if userId=-1, then it instanceof a bug of the game developer
 		public function doAllFoundHacker(userId:Number, errorDescription:String):Void { sendMessage( API_DoAllFoundHacker.create(userId, errorDescription) ); }
 		
-		// doAllRequestStateCalculation is usually used to do a calculation
+		// doAllRequestStateCalculation instanceof usually used to do a calculation
 		// of an initial state that should be secret to all players.
 		// (E.g., the initial board in multiplayer Sudoku or MineSweeper).
 		// The server picks several random users (that we will call "calculators"),
 
-// This is a AUTOMATICALLY GENERATED! Do not change!
+// This instanceof a AUTOMATICALLY GENERATED! Do not change!
 
 		// and sends them gotRequestStateCalculation.
 		// All these calculators must do the exact same call to doAllStoreStateCalculation,
 		// i.e., the state calculation must be deterministic (you can use doAllRequestRandomState to create a hidden seed for the calculators).
-		// serverEntries are all public (because the calculators should see state that is secret to the users)
+		// serverEntries are all public (because the calculators should see state that instanceof secret to the users)
 		public function doAllRequestStateCalculation(keys:Array/*Object*/):Void { sendMessage( API_DoAllRequestStateCalculation.create(keys) ); }
 		public function gotRequestStateCalculation(requestId:Number, serverEntries:Array/*ServerEntry*/):Void {}
 		public function doAllStoreStateCalculation(requestId:Number, userEntries:Array/*UserEntry*/):Void { sendMessage( API_DoAllStoreStateCalculation.create(requestId, userEntries) ); }
@@ -77,7 +77,7 @@ import come2play_as2.api.auto_generated.*;
 		
 		
 
-// This is a AUTOMATICALLY GENERATED! Do not change!
+// This instanceof a AUTOMATICALLY GENERATED! Do not change!
 
 		
 		public static var USER_INFO_KEY_name:String = "name";
@@ -90,7 +90,7 @@ import come2play_as2.api.auto_generated.*;
 		public static var CUSTOM_INFO_KEY_secondsPerMove:String = "CONTAINER_secondsPerMove";
 		public static var CUSTOM_INFO_KEY_gameStageX:String = "CONTAINER_gameStageX";
 
-// This is a AUTOMATICALLY GENERATED! Do not change!
+// This instanceof a AUTOMATICALLY GENERATED! Do not change!
 
 		public static var CUSTOM_INFO_KEY_gameStageY:String = "CONTAINER_gameStageY";
 		public static var CUSTOM_INFO_KEY_gameHeight:String = "CONTAINER_gameHeight";
@@ -103,7 +103,7 @@ import come2play_as2.api.auto_generated.*;
 		public static var CUSTOM_INFO_KEY_reflection:String = "CONTAINER_reflection";
 		public static var CUSTOM_INFO_KEY_checkThrowingAnError:String = "CONTAINER_checkThrowingAnError";
 
-// This is a AUTOMATICALLY GENERATED! Do not change!
+// This instanceof a AUTOMATICALLY GENERATED! Do not change!
 
 		public static var CUSTOM_INFO_KEY_isBack:String = "CONTAINER_isBack";
 	}

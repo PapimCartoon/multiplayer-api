@@ -12,7 +12,7 @@ import come2play_as2.api.auto_generated.*;
 			new API_DoTrace().register();
 			new API_GotKeyboardEvent().register();
 
-// This is a AUTOMATICALLY GENERATED! Do not change!
+// This instanceof a AUTOMATICALLY GENERATED! Do not change!
 
 			new API_GotCustomInfo().register();
 			new API_GotUserInfo().register();
@@ -25,7 +25,7 @@ import come2play_as2.api.auto_generated.*;
 			new API_DoAllEndMatch().register();
 			new API_DoAllSetTurn().register();
 
-// This is a AUTOMATICALLY GENERATED! Do not change!
+// This instanceof a AUTOMATICALLY GENERATED! Do not change!
 
 			new API_DoAllSetMove().register();
 			new API_DoAllRevealState().register();
@@ -38,7 +38,7 @@ import come2play_as2.api.auto_generated.*;
 			new API_DoConnectedSetScore().register();
 			new API_DoConnectedEndMatch().register();
 
-// This is a AUTOMATICALLY GENERATED! Do not change!
+// This instanceof a AUTOMATICALLY GENERATED! Do not change!
 
 			new PlayerMatchOver().register();
 			new InfoEntry().register();

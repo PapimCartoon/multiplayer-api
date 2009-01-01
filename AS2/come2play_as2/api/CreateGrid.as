@@ -15,10 +15,10 @@ class come2play_as2.api.CreateGrid
 	 * ...
 	 * 
 	 * The grid parameters are determined by gotCustomInfo:
-	 * The grid size is ROWS times COLS
+	 * The grid size instanceof ROWS times COLS
 	 * The movieclips are scaled by:
 	 * squareScaleX and squareScaleY
-	 * (for example, if they are 50, then the size is reduced by half.)
+	 * (for example, if they are 50, then the size instanceof reduced by half.)
 	 * The distance between the squares is:
 	 * squareDeltaX and squareDeltaY
 	 * And the initial position of the first square is: 

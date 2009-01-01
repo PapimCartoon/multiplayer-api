@@ -11,7 +11,7 @@ package emulator.auto_copied
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
 	import flash.display.*;
-	import flash.system.System;
+	import flash.system.*;
 	import flash.utils.*;
 	
 // Only StaticFunctions and JSON are copied to flex_utils 
@@ -25,6 +25,18 @@ public final class StaticFunctions
 
 	public static var allTraces:Array = [];
 	public static var MAX_TRACES_NUM:int = 50;
+	public static var IS_ALLOW_DOMAINS:Boolean = true;	 
+	
+	public static function allowDomains():void {
+		if (IS_ALLOW_DOMAINS) {
+			storeTrace("Allowing all domains access");
+			Security.allowDomain("*");
+		}
+	}
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+			
 	public static function storeTrace(obj:Object):void {
 		if (allTraces.length>=MAX_TRACES_NUM) allTraces.shift();
 		var arr:Array = ["Time: ", getTimer(), " Trace: ", obj];
@@ -33,10 +45,10 @@ public final class StaticFunctions
 	}
 	public static var DID_SHOW_ERROR:Boolean = false;
 	public static function getTraces():String {
+		return (allTraces.length==0 ? '' : 
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		return (allTraces.length==0 ? '' : 
 				(allTraces.length<MAX_TRACES_NUM ? "All":"The last "+MAX_TRACES_NUM)+" stored traces are:\n"+
 				allTraces.join("\n"));
 	}
@@ -46,23 +58,23 @@ public final class StaticFunctions
 		} catch (err:Error) {
 			// the flash gives an error if we try to set the clipboard not due to a user activity,
 			// e.g., if the java disconnects then setClipboard throws an error.
+		}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		}
 	}
 	public static function showError(msg:String):void {
 		if (DID_SHOW_ERROR) return;
 		DID_SHOW_ERROR = true;
-		var msg:String = "An ERRRRRRRRRRROR occurred:\n"+msg+"\n"+ getTraces();
+		var msg:String = "An ERRRRRRRRRRROR occurred on time "+getTimer()+":\n"+msg+"\n"+ getTraces();
 		setClipboard(msg);
 		if (SHOULD_SHOW_ERRORS) AS3_vs_AS2.showError(someMovieClip, msg);
 		if (SHOULD_CALL_TRACE) trace("\n\n\n"+msg+"\n\n\n");
 	}
+	public static function throwError(msg:String):void {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	public static function throwError(msg:String):void {
 		var err:Error = new Error(msg);
 		showError("Throwing the following error="+AS3_vs_AS2.error2String(err));
 		throw err;
@@ -72,10 +84,10 @@ public final class StaticFunctions
 	}
 	
 	public static function isEmptyChar(str:String):Boolean {
+		return str==" " || str=="\n" || str=="\t" || str=="\r"; //String.fromCharCode(10)
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		return str==" " || str=="\n" || str=="\t" || str=="\r"; //String.fromCharCode(10)
 	}
 	public static function trim(str:String):String {
 	   var j:int, strlen:int, k:int;
@@ -85,10 +97,10 @@ public final class StaticFunctions
 		  j++
 	   } 
 	   if(j>0) {
+		  str = str.substring(j)
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		  str = str.substring(j)
 		  if(j == strlen) return str;
 	   }
 	   k = str.length - 1;
@@ -98,10 +110,10 @@ public final class StaticFunctions
 	   return str.substring(0,k+1);
 	}
 	public static function areEqual(o1:Object, o2:Object):Boolean {
+		if (o1===o2) return true; // because false==[] or {} was true!
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		if (o1===o2) return true; // because false==[] or {} was true!
 		if (o1==null || o2==null) return false;
 		var t:String = typeof(o1);
 		if (t!=typeof(o2)) 
@@ -111,10 +123,10 @@ public final class StaticFunctions
 			
 		if (t=="object") {
 			var x:String;	
+			var allFields:Object = {};
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			var allFields:Object = {};
 			var c:int = 0;	
 			for (x in o1) {
 				allFields[x] = true;
@@ -124,10 +136,10 @@ public final class StaticFunctions
 				if (allFields[x]==null) return false;
 				c--;
 			}
+			if (c!=0) return false; // not the same number of dynamic properties
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			if (c!=0) return false; // not the same number of dynamic properties
 			if (AS3_vs_AS2.isAS3) {
 				// for static properties we use describeType
 				// because o1 and o2 have the same type, it is enough to use the fields of o1.
@@ -137,10 +149,10 @@ public final class StaticFunctions
 				}
 			}
 			for (x in allFields) 	
+				if (!o1.hasOwnProperty(x) || 
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-				if (!o1.hasOwnProperty(x) || 
 					!o2.hasOwnProperty(x) || 
 					!areEqual(o1[x], o2[x])) return false;
 			return true;
@@ -150,10 +162,10 @@ public final class StaticFunctions
 	}
 	
 	public static function subtractArray(arr:Array, minus:Array):Array {
+		var res:Array = arr.concat();
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		var res:Array = arr.concat();
 		for each (var o:Object in minus) {
 			var indexOf:int = AS3_vs_AS2.IndexOf(res, o);
 			StaticFunctions.assert(indexOf!=-1, ["When subtracting minus=",minus," from array=", arr, " we did not find element ",o]);				
@@ -163,10 +175,10 @@ public final class StaticFunctions
 	}
 	
 	// e.g., random(0,2) returns either 0 or 1
+	public static function random(fromInclusive:int, toExclusive:int):int {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	public static function random(fromInclusive:int, toExclusive:int):int {
 		var delta:int = toExclusive - fromInclusive;
 		return Math.floor( delta * Math.random() ) + fromInclusive;
 	}
@@ -176,10 +188,10 @@ public final class StaticFunctions
 	public static function endsWith(str:String, suffix:String):Boolean {
 		return str.substr(str.length-suffix.length, suffix.length)==suffix;
 	}
+	
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	
 	private static const REFLECTION_PREFIX:String = "REFLECTION_";
 	public static function performReflectionFromFlashVars(_someMovieClip:DisplayObjectContainer):void {		
 		var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(_someMovieClip);
@@ -189,10 +201,10 @@ public final class StaticFunctions
 				var before:String = key.substr(REFLECTION_PREFIX.length);
 				var after:String = parameters[key];
 				performReflectionString(before, after);	
+			}			
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			}			
 		}
 	}
 	public static function performReflection(reflStr:String):void {		
@@ -202,10 +214,10 @@ public final class StaticFunctions
 	public static function performReflectionString(fullClassName:String, valStr:String):void {
 		performReflectionObject(fullClassName, SerializableClass.deserializeString(valStr));
 	}
+	public static function performReflectionObject(fullClassName:String, valObj:Object):void {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	public static function performReflectionObject(fullClassName:String, valObj:Object):void {
 		//fullClassName = come2play_as3.util::EnumMessage.CouldNotConnect.__minDelayMilli 
 		//after = 2000
 		if (SHOULD_CALL_TRACE) trace("Perform reflection for: "+fullClassName+"="+JSON.stringify(valObj));
@@ -215,10 +227,10 @@ public final class StaticFunctions
 		var fieldsName:String = trim(fields2[1]);
 		var classReference:Object = AS3_vs_AS2.getClassByName(clzName);
 		storeTrace("Setting field "+fieldsName+" in class "+clzName+" to val="+valObj);
+		var fieldsArr:Array = fieldsName.split(".");
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		var fieldsArr:Array = fieldsName.split(".");
 		for (var i:int=0; i<fieldsArr.length; i++) {
 			var fieldName:String = fieldsArr[i];
 			if (i<fieldsArr.length-1)
@@ -229,8 +241,8 @@ public final class StaticFunctions
 	}
 
 
-// This is a AUTOMATICALLY GENERATED! Do not change!
 
+// This is a AUTOMATICALLY GENERATED! Do not change!
 
 	/**
 	 * Similar to replace with:  new RegExp(searchFor,"g")
@@ -241,10 +253,10 @@ public final class StaticFunctions
 	 */
 	public static function replaceAll(str:String, searchFor:String, replaceWith:String):String {		
 		var index:int = 0;
+		var lastIndex:int = 0;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		var lastIndex:int = 0;
 		var res:Array = [];
 		while ( (index = AS3_vs_AS2.stringIndexOf(str, searchFor, index)) != -1) {
 			res.push( str.substring(lastIndex,index) );
@@ -254,10 +266,10 @@ public final class StaticFunctions
 		}
 		res.push( str.substring(lastIndex) );
 		return res.join("");
+	}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	}
 	public static function splitInTwo(str:String, searchFor:String, isLast:Boolean):Array {
 		var index:int = isLast ? AS3_vs_AS2.stringLastIndexOf(str, searchFor) : AS3_vs_AS2.stringIndexOf(str, searchFor);
 		if (index==-1) showError("Did not find searchFor="+searchFor+" in string="+str);
@@ -267,10 +279,10 @@ public final class StaticFunctions
 		var two:Array = splitInTwo(str, searchFor, true);
 		return two[0] + replaceWith + two[1];
 	}
+	public static function instance2Object(instance:Object, fields:Array/*String*/):Object {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	public static function instance2Object(instance:Object, fields:Array/*String*/):Object {
 		var res:Object = {};
 		for each (var field:String in fields) {
 			res[field] = instance[field];
@@ -280,10 +292,10 @@ public final class StaticFunctions
 	
 	private static var cacheShortName:Object = {};
 	public static function getShortClassName(obj:Object):String {
+		var className:String = AS3_vs_AS2.getClassName(obj);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		var className:String = AS3_vs_AS2.getClassName(obj);
 		if (cacheShortName[className]!=null) return cacheShortName[className];
 		var res:String = className.substr(AS3_vs_AS2.stringIndexOf(className,"::")+2);
 		cacheShortName[className] = res;

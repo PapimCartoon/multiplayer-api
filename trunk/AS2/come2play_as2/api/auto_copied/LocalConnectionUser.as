@@ -5,6 +5,7 @@
 import come2play_as2.api.auto_copied.*;
 	class come2play_as2.api.auto_copied.LocalConnectionUser
 	{
+		public static var VERSION_FOR_TRACE:Number = 7;
 		public static var REVIEW_USER_ID:Number = -1; // special userId that instanceof used for reviewing games		
 		public static var DEFAULT_LOCALCONNECTION_PREFIX:String = ""+StaticFunctions.random(1,10000);
 		public static function showError(msg:String):Void {
@@ -17,13 +18,13 @@ import come2play_as2.api.auto_copied.*;
 			if (!val) StaticFunctions.assert(false, args);
 		}
 		public static function getDoChanelString(sRandomPrefix:String):String {
-			return "DO_CHANEL_"+sRandomPrefix;
+			return "_DO_CHANEL_"+sRandomPrefix;
 		}
 		public static function getGotChanelString(sRandomPrefix:String):String {
-			return "GOT_CHANEL_"+sRandomPrefix;
+			return "_GOT_CHANEL_"+sRandomPrefix;
 		}
 		public static function getInitChanelString(sPrefix:String):String {
-			return "INIT_CHANEL_"+sPrefix;
+			return "_INIT_CHANEL_"+sPrefix;
 		}
 		public static function getPrefixFromFlashVars(_someMovieClip:MovieClip):String {
 			var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(_someMovieClip);
@@ -49,6 +50,8 @@ import come2play_as2.api.auto_copied.*;
 		//Constructor
 		public function LocalConnectionUser(_someMovieClip:MovieClip, isServer:Boolean, sPrefix:String,shouldVerify:Boolean) {
 			try{
+				StaticFunctions.allowDomains();
+				StaticFunctions.storeTrace(["VERSION_FOR_TRACE=",VERSION_FOR_TRACE]);
 				_shouldVerify=shouldVerify;
 				AS3_vs_AS2.registerNativeSerializers();
 				API_LoadMessages.useAll();	

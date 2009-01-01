@@ -8,6 +8,15 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	public static var someMovieClip:MovieClip; // so we can display error messages on the stage
 	public static var allTraces:Array = [];
 	public static var MAX_TRACES_NUM:Number = 50;
+	public static var IS_ALLOW_DOMAINS:Boolean = true;	 
+	
+	public static function allowDomains():Void {
+		if (IS_ALLOW_DOMAINS) {
+			storeTrace("Allowing all domains access");
+			Security.allowDomain("*");
+		}
+	}
+			
 	public static function storeTrace(obj:Object):Void {
 		if (allTraces.length>=MAX_TRACES_NUM) allTraces.shift();
 		var arr:Array = ["Time: ", getTimer(), " Trace: ", obj];
@@ -31,7 +40,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	public static function showError(msg:String):Void {
 		if (DID_SHOW_ERROR) return;
 		DID_SHOW_ERROR = true;
-		var msg:String = "An ERRRRRRRRRRROR occurred:\n"+msg+"\n"+ getTraces();
+		var msg:String = "An ERRRRRRRRRRROR occurred on time "+getTimer()+":\n"+msg+"\n"+ getTraces();
 		setClipboard(msg);
 		if (SHOULD_SHOW_ERRORS) AS3_vs_AS2.showError(someMovieClip, msg);
 		if (SHOULD_CALL_TRACE) trace("\n\n\n"+msg+"\n\n\n");
@@ -91,7 +100,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 				// for static properties we use describeType
 				// because o1 and o2 have the same type, it instanceof enough to use the fields of o1.
 				var fieldsArr:Array = AS3_vs_AS2.getFieldNames(o1);
-				for (var i96:Number=0; i96<fieldsArr.length; i96++) { var field:String = fieldsArr[i96]; 
+				for (var i105:Number=0; i105<fieldsArr.length; i105++) { var field:String = fieldsArr[i105]; 
 					allFields[field] = true;
 				}
 			}
@@ -107,7 +116,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	
 	public static function subtractArray(arr:Array, minus:Array):Array {
 		var res:Array = arr.concat();
-		for (var i112:Number=0; i112<minus.length; i112++) { var o:Object = minus[i112]; 
+		for (var i121:Number=0; i121<minus.length; i121++) { var o:Object = minus[i121]; 
 			var indexOf:Number = AS3_vs_AS2.IndexOf(res, o);
 			StaticFunctions.assert(indexOf!=-1, ["When subtracting minus=",minus," from array=", arr, " we did not find element ",o]);				
 			res.splice(indexOf, 1);
@@ -198,7 +207,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	}
 	public static function instance2Object(instance:Object, fields:Array/*String*/):Object {
 		var res:Object = {};
-		for (var i203:Number=0; i203<fields.length; i203++) { var field:String = fields[i203]; 
+		for (var i212:Number=0; i212<fields.length; i212++) { var field:String = fields[i212]; 
 			res[field] = instance[field];
 		}
 		return res;

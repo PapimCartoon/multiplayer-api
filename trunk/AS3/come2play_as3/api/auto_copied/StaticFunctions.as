@@ -44,7 +44,7 @@ public final class StaticFunctions
 	public static function showError(msg:String):void {
 		if (DID_SHOW_ERROR) return;
 		DID_SHOW_ERROR = true;
-		var msg:String = "An ERRRRRRRRRRROR occurred:\n"+msg+"\n"+ getTraces();
+		var msg:String = "An ERRRRRRRRRRROR occurred on time "+getTimer()+":\n"+msg+"\n"+ getTraces();
 		setClipboard(msg);
 		if (SHOULD_SHOW_ERRORS) AS3_vs_AS2.showError(someMovieClip, msg);
 		if (SHOULD_CALL_TRACE) trace("\n\n\n"+msg+"\n\n\n");

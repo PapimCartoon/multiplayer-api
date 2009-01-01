@@ -148,7 +148,7 @@ public final class AS3_vs_AS2
 		}
 	}
 	public static function error2String(e:Error):String {
-		return e.toString()+" stacktraces="+e.getStackTrace();
+		return e==null ? "null" : e.toString()+" stacktraces="+e.getStackTrace();
 	}
 	public static function getTimeString():String {
 		return new Date().toLocaleTimeString();

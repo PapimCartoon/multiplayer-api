@@ -15,8 +15,10 @@ public final class StaticFunctions
 	public static var IS_ALLOW_DOMAINS:Boolean = true;	 
 	
 	public static function allowDomains():void {
-		if (IS_ALLOW_DOMAINS)
+		if (IS_ALLOW_DOMAINS) {
+			storeTrace("Allowing all domains access");
 			Security.allowDomain("*");
+		}
 	}
 			
 	public static function storeTrace(obj:Object):void {

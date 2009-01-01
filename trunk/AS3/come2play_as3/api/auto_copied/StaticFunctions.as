@@ -24,11 +24,19 @@ public final class StaticFunctions
 				(allTraces.length<MAX_TRACES_NUM ? "All":"The last "+MAX_TRACES_NUM)+" stored traces are:\n"+
 				allTraces.join("\n"));
 	}
+	public static function setClipboard(msg:String):void {
+		try {			
+			System.setClipboard(msg);
+		} catch (err:Error) {
+			// the flash gives an error if we try to set the clipboard not due to a user activity,
+			// e.g., if the java disconnects then setClipboard throws an error.
+		}
+	}
 	public static function showError(msg:String):void {
 		if (DID_SHOW_ERROR) return;
 		DID_SHOW_ERROR = true;
 		var msg:String = "An ERRRRRRRRRRROR occurred:\n"+msg+"\n"+ getTraces();
-		System.setClipboard(msg);
+		setClipboard(msg);
 		if (SHOULD_SHOW_ERRORS) AS3_vs_AS2.showError(someMovieClip, msg);
 		if (SHOULD_CALL_TRACE) trace("\n\n\n"+msg+"\n\n\n");
 	}

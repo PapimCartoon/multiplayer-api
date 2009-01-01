@@ -1,7 +1,7 @@
 package come2play_as3.api.auto_copied
 {
 	import flash.display.*;
-	import flash.system.System;
+	import flash.system.*;
 	import flash.utils.*;
 	
 // Only StaticFunctions and JSON are copied to flex_utils 

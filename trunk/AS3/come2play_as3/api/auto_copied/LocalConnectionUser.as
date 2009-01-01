@@ -54,6 +54,7 @@ package come2play_as3.api.auto_copied
 		//Constructor
 		public function LocalConnectionUser(_someMovieClip:DisplayObjectContainer, isServer:Boolean, sPrefix:String,shouldVerify:Boolean) {
 			try{
+				StaticFunctions.allowDomains();
 				_shouldVerify=shouldVerify;
 				AS3_vs_AS2.registerNativeSerializers();
 				API_LoadMessages.useAll();	

@@ -12,6 +12,13 @@ public final class StaticFunctions
 	public static var someMovieClip:DisplayObjectContainer; // so we can display error messages on the stage
 	public static var allTraces:Array = [];
 	public static var MAX_TRACES_NUM:int = 50;
+	public static var IS_ALLOW_DOMAINS:Boolean = true;	 
+	
+	public static function allowDomains():void {
+		if (IS_ALLOW_DOMAINS)
+			Security.allowDomain("*");
+	}
+			
 	public static function storeTrace(obj:Object):void {
 		if (allTraces.length>=MAX_TRACES_NUM) allTraces.shift();
 		var arr:Array = ["Time: ", getTimer(), " Trace: ", obj];

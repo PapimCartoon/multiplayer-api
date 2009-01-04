@@ -20,9 +20,9 @@ package come2play_as3.api.auto_generated {
 		public function gotCustomInfo(infoEntries:Array/*InfoEntry*/):void {}
 		public function gotUserInfo(userId:int, infoEntries:Array/*InfoEntry*/):void {}
 		public function gotUserDisconnected(userId:int):void {}
+		
 		public function gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, serverEntries:Array/*ServerEntry*/):void {}
 		public function gotMatchEnded(finishedPlayerIds:Array/*int*/):void {}
-		
 		public function gotStateChanged(serverEntries:Array/*ServerEntry*/):void {}
 		
 

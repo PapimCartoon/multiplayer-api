@@ -50,7 +50,7 @@ import come2play_as2.api.*;
 					"Server State(client side) : \n\n";
 					
 					if(serverStateMiror!=null){
-						for (var i57:Number=0; i57<serverStateMiror.allValues.length; i57++) { var serverEntry:ServerEntry = serverStateMiror.allValues[i57]; 
+						for (var i56:Number=0; i56<serverStateMiror.allValues.length; i56++) { var serverEntry:ServerEntry = serverStateMiror.allValues[i56]; 
 							serverEntries.push(serverEntry);
 							output+= serverEntry.toString() + "\n";
 						}
@@ -201,14 +201,14 @@ import come2play_as2.api.*;
 			if (verifier.isPlayer()) sendDoStoreStateEvents();
         }
         private function sendDoStoreStateEvents():Void{
-        	for (var i208:Number=0; i208<doStoreQueue.length; i208++) { var doStoreMsg:API_DoStoreState = doStoreQueue[i208]; 
+        	for (var i207:Number=0; i207<doStoreQueue.length; i207++) { var doStoreMsg:API_DoStoreState = doStoreQueue[i207]; 
         		super.sendMessage(doStoreMsg);
         	}
         	doStoreQueue = [];
         }
         private function updateMirorServerState(serverEntries:Array/*ServerEntry*/):Void
         {
-        	for (var i215:Number=0; i215<serverEntries.length; i215++) { var serverEntry:ServerEntry = serverEntries[i215]; 
+        	for (var i214:Number=0; i214<serverEntries.length; i214++) { var serverEntry:ServerEntry = serverEntries[i214]; 
         	    serverStateMiror.addEntry(serverEntry);	
         	}     	
         }
@@ -245,7 +245,7 @@ import come2play_as2.api.*;
 					var customInfo:API_GotCustomInfo = API_GotCustomInfo(msg);
 					var i18nObj:Object = {};
 					var customObj:Object = {};
-					for (var i252:Number=0; i252<customInfo.infoEntries.length; i252++) { var entry:InfoEntry = customInfo.infoEntries[i252]; 
+					for (var i251:Number=0; i251<customInfo.infoEntries.length; i251++) { var entry:InfoEntry = customInfo.infoEntries[i251]; 
 						var key:String = entry.key;
 						var value:Object = entry.value;
 						if (key==API_Message.CUSTOM_INFO_KEY_i18n) {
@@ -264,7 +264,7 @@ import come2play_as2.api.*;
 				}else if(msg instanceof API_GotUserInfo){
 					var infoMessage:API_GotUserInfo =API_GotUserInfo( msg);
 					var userObject:Object = {};
-					for (var i271:Number=0; i271<infoMessage.infoEntries.length; i271++) { var infoEntry:InfoEntry = infoMessage.infoEntries[i271]; 
+					for (var i270:Number=0; i270<infoMessage.infoEntries.length; i270++) { var infoEntry:InfoEntry = infoMessage.infoEntries[i270]; 
 						trace(infoEntry.key+ "="+ infoEntry.value)
 						userObject[infoEntry.key] = infoEntry.value;
 					}
@@ -294,8 +294,12 @@ import come2play_as2.api.*;
 			if (AS3_vs_AS2.isAS3 && !this.hasOwnProperty(methodName)) return;
 			var func:Function = Function(this[methodName]);
 			if (func==null) return;
-			todo: gotMatchStarted gotMatchEnded gotStateChanged
-			func.apply(this, msg.getMethodParameters());
+			var params:Array = msg.getMethodParameters();
+			if (msg instanceof API_GotMatchStarted || msg instanceof API_GotMatchEnded || msg instanceof API_GotStateChanged) {
+				// removes the msgNum:Number
+				params.shift();
+			}
+			func.apply(this, params);
         }
         /*override*/ public function sendMessage(doMsg:API_Message):Void {
         	if (ProtocolVerifier.isPassThrough(doMsg)) {

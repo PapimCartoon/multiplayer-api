@@ -29,6 +29,8 @@ package come2play_as3.api.auto_copied
 		public static function assert(val:Boolean, args:Array):void {
 			if (!val) StaticFunctions.assert(false, args);
 		}
+
+		// I added the "_" on purpose because of different domains issues, see: http://livedocs.adobe.com/flex/gumbo/langref/flash/net/LocalConnection.html
 		public static function getDoChanelString(sRandomPrefix:String):String {
 			if(IS_LOCAL_CONNECTION_UDERSCORE)
 				return "_DO_CHANEL_"+sRandomPrefix;

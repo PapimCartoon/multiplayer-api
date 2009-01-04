@@ -19,9 +19,9 @@ import come2play_as2.api.auto_generated.*;
 		public function gotCustomInfo(infoEntries:Array/*InfoEntry*/):Void {}
 		public function gotUserInfo(userId:Number, infoEntries:Array/*InfoEntry*/):Void {}
 		public function gotUserDisconnected(userId:Number):Void {}
+		
 		public function gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, serverEntries:Array/*ServerEntry*/):Void {}
 		public function gotMatchEnded(finishedPlayerIds:Array/*int*/):Void {}
-		
 		public function gotStateChanged(serverEntries:Array/*ServerEntry*/):Void {}
 		
 

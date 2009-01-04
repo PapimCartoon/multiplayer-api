@@ -118,12 +118,16 @@ public final class AS3_vs_AS2
 	}
 	
 	//the reaso we have a functions Array is because un AS2 we can't use the client object
+	static public var DO_TRACE:Boolean = false;
 	public static function addStatusListener(conn:LocalConnection, client:Object, functions:Array, handlerFunc:Function = null):void {
 		conn.client = client;
 		myAddEventListener(conn, StatusEvent.STATUS,function (ev:Event):void{localConnectionFailed(ev,client, handlerFunc)});	
 		myAddEventListener(conn, SecurityErrorEvent.SECURITY_ERROR,function (ev:Event):void{localConnectionFailed(ev,client, handlerFunc)});			
 	}
 	private static function localConnectionFailed(event:Event,client:Object, handlerFunc:Function = null):void {
+		if(DO_TRACE){
+			StaticFunctions.storeTrace([" localConnectionFailed ",event]);
+		}
 		if(event is StatusEvent){
 	        if ((event as StatusEvent).level=='error'){
 	        	if(handlerFunc!=null)

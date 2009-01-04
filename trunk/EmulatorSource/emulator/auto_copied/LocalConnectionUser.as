@@ -17,15 +17,25 @@ package emulator.auto_copied
 	import flash.net.*;
 	import flash.utils.clearInterval;
 	import flash.utils.setInterval;
+	import flash.utils.setTimeout;
 	 
 	public class LocalConnectionUser
-	{
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	{
 		public static var VERSION_FOR_TRACE:int = 7;
-		public static var REVIEW_USER_ID:int = -1; // special userId that is used for reviewing games		
+		public static var REVIEW_USER_ID:int = -1; // special userId that is used for reviewing games
+		public static var IS_LOCAL_CONNECTION_UDERSCORE:Boolean = false;		
 		public static var DEFAULT_LOCALCONNECTION_PREFIX:String = ""+StaticFunctions.random(1,10000);
+		public static var MILL_WAIT_BEFORE_DO_REGISTER:int = 100;
+		public static var MILL_AFTER_ALLOW_DOMAINS:int = 500;
+		public static var DO_TRACE:Boolean = false;
+		public static var AGREE_ON_PREFIX:Boolean = true;
+		public static var ALLOW_DOMAIN:String = "*";
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		public static function showError(msg:String):void {
 			StaticFunctions.showError(msg);
 		}
@@ -33,22 +43,28 @@ package emulator.auto_copied
 			StaticFunctions.throwError(msg);
 		}		
 		public static function assert(val:Boolean, args:Array):void {
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 			if (!val) StaticFunctions.assert(false, args);
 		}
 		public static function getDoChanelString(sRandomPrefix:String):String {
-			return "_DO_CHANEL_"+sRandomPrefix;
-		}
-		public static function getGotChanelString(sRandomPrefix:String):String {
-			return "_GOT_CHANEL_"+sRandomPrefix;
-		}
-		public static function getInitChanelString(sPrefix:String):String {
-			return "_INIT_CHANEL_"+sPrefix;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			if(IS_LOCAL_CONNECTION_UDERSCORE)
+				return "_DO_CHANEL_"+sRandomPrefix;
+			return "DO_CHANEL_"+sRandomPrefix;
+		}
+		public static function getGotChanelString(sRandomPrefix:String):String {
+			if(IS_LOCAL_CONNECTION_UDERSCORE)
+				return "_GOT_CHANEL_"+sRandomPrefix;
+			return "GOT_CHANEL_"+sRandomPrefix;
+		}
+		public static function getInitChanelString(sPrefix:String):String {
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+			if(IS_LOCAL_CONNECTION_UDERSCORE)
+				return "_INIT_CHANEL_"+sPrefix;
+			return "INIT_CHANEL_"+sPrefix;
 		}
 		public static function getPrefixFromFlashVars(_someMovieClip:DisplayObjectContainer):String {
 			var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(_someMovieClip);
@@ -56,12 +72,12 @@ package emulator.auto_copied
 			if (sPrefix==null) sPrefix = parameters["?prefix"];
 			return getPrefixFromString(sPrefix);
 		}		
-		public static function getPrefixFromString(sPrefix:String):String {			
-			return sPrefix;
-		}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		public static function getPrefixFromString(sPrefix:String):String {			
+			return sPrefix;
+		}
 				
 		
 		// we use a LocalConnection to communicate with the container
@@ -69,59 +85,82 @@ package emulator.auto_copied
 		private var lcInit:LocalConnection;
 		private var sSendChanel:String;
 		private var sInitChanel:String;
-		private var isServer:Boolean;
-		private var randomPrefix:String;
-		private var sendPrefixIntervalId:uint;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		private var isServer:Boolean;
+		private var randomPrefix:String;
+		private var sendPrefixIntervalId:uint;
 		public var verifier:ProtocolVerifier;
 		public var _shouldVerify:Boolean;
 		//Constructor
 		public function LocalConnectionUser(_someMovieClip:DisplayObjectContainer, isServer:Boolean, sPrefix:String,shouldVerify:Boolean) {
-			try{
-				StaticFunctions.allowDomains();
+			
+				if (!isServer) // in the container we apply the reflection in RoomLogic (e.g., for a room we do not have a localconnection) 
+					StaticFunctions.performReflectionFromFlashVars(_someMovieClip);
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+				StaticFunctions.allowDomains();	
 				StaticFunctions.storeTrace(["VERSION_FOR_TRACE=",VERSION_FOR_TRACE]);
 				_shouldVerify=shouldVerify;
 				AS3_vs_AS2.registerNativeSerializers();
 				API_LoadMessages.useAll();	
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 				verifier = new ProtocolVerifier();
 				this.isServer = isServer;
 				StaticFunctions.storeTrace(["ProtocolVerifier=",verifier]);
 				StaticFunctions.someMovieClip = _someMovieClip;
 				if (sPrefix==null) {
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 					myTrace(["WARNING: didn't find 'prefix' in the loader info parameters. Probably because you are doing testing locally."]);
 					sPrefix = DEFAULT_LOCALCONNECTION_PREFIX;
-				}	
-				lcInit = new LocalConnection();
-				sInitChanel = getInitChanelString(sPrefix);
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
-				AS3_vs_AS2.addStatusListener(lcInit, this, ["localconnection_init"],  AS3_vs_AS2.delegate(this, this.connectionHandler));
-				if(isServer){
-					randomPrefix = String(Math.floor(Math.random()*1000000));
-					myTrace(["Attempting to send the randomPrefix with which LocalConnections will communicate... randomPrefix=",randomPrefix])
-					localconnection_init(randomPrefix);
-					sendPrefixIntervalId = setInterval(AS3_vs_AS2.delegate(this, this.sendPrefix),MILL_WAIT_BEFORE_DO_REGISTER);
+				}
+				sInitChanel = getInitChanelString(sPrefix);		
+				if(MILL_AFTER_ALLOW_DOMAINS == 0){
+					buildConnection();
 				}else{
-					myTrace(["started listening to stuff on ",sInitChanel])
-					lcInit.connect(sInitChanel);	
-				}		
+					setTimeout(buildConnection,MILL_AFTER_ALLOW_DOMAINS);	
+				}			
+		}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		
+		private function buildConnection():void{
+			try{
+				if(AGREE_ON_PREFIX){
+					lcInit = createLocalConnection()
+					AS3_vs_AS2.addStatusListener(lcInit, this, ["localconnection_init"],  AS3_vs_AS2.delegate(this, this.connectionHandler));
+					if(isServer){
+						randomPrefix = String(StaticFunctions.random(1,1000000));
+						myTrace(["Attempting to send the randomPrefix with which LocalConnections will communicate... randomPrefix=",randomPrefix])
+						localconnection_init(randomPrefix);
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+						sendPrefixIntervalId = setInterval(AS3_vs_AS2.delegate(this, this.sendPrefix),MILL_WAIT_BEFORE_DO_REGISTER);
+					}else{
+						myTrace(["started listening to stuff on ",sInitChanel])
+						lcInit.connect(sInitChanel);	
+					}	
+				}else{
+					localconnection_init(sInitChanel)
+				}	
 
 			}catch (err:Error) { 
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 				passError("Constructor",err);
 			}
+			
 		}
+		
 		private function connectionHandler(isSuccess:Boolean):void {
-			if (isSuccess) {				
-				myTrace(["Succeeded sending the randomPrefix"]);
+			myTrace(["connectionHandler sending random prefix isSuccess: "+isSuccess]);
+			if (isSuccess) {		
 				clearInterval(sendPrefixIntervalId);
 			}
 
@@ -129,30 +168,31 @@ package emulator.auto_copied
 
 		}
 
-		public function myTrace(msg:Array):void {			
-			StaticFunctions.storeTrace([AS3_vs_AS2.getClassName(this),": ",msg]);
+		public function myTrace(msg:Array):void {	
+			if(DO_TRACE)			
+				StaticFunctions.storeTrace([AS3_vs_AS2.getClassName(this),": ",msg]);
 		}
 		
         protected function getErrorMessage(withObj:Object, err:Error):String {
         	return "Error occurred when passing "+JSON.stringify(withObj)+", the error is=\n\t\t"+AS3_vs_AS2.error2String(err);
         }
-        private function passError(withObj:Object, err:Error):void {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+        private function passError(withObj:Object, err:Error):void {
         	showError(getErrorMessage(withObj,err));        	
         }
         
         public function gotMessage(msg:API_Message):void {}
         
-        public static var MILL_WAIT_BEFORE_DO_REGISTER:int = 100;
+       
         public function sendMessage(msg:API_Message):void {
         	if (msg is API_DoRegisterOnServer){
         		if (lcUser != null)
-        			reallySendMessage(msg);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+        			reallySendMessage(msg);
         		else
         			AS3_vs_AS2.myTimeout(AS3_vs_AS2.delegate(this, this.sendMessage,msg),MILL_WAIT_BEFORE_DO_REGISTER);	
         	} else {
@@ -161,11 +201,11 @@ package emulator.auto_copied
         }
         private function sendPrefix():void {  				  
 			try{
-				//myTrace(["sent randomPrefix on ",sInitChanel," randomPrefix sent is:",randomPrefix,isServer]);	
-				lcInit.send(sInitChanel, "localconnection_init", randomPrefix);  
+				myTrace(["sent randomPrefix on ",sInitChanel," randomPrefix sent is:",randomPrefix," Is server: ",isServer]);	
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+				lcInit.send(sInitChanel, "localconnection_init", randomPrefix);  
 			}catch(err:Error) { 				
 				passError("prefix error,prefix :"+randomPrefix, err);
 			}        	
@@ -175,10 +215,10 @@ package emulator.auto_copied
         		myTrace(['sendMessage: ',msg]);      		
 				AS3_vs_AS2.checkObjectIsSerializable(msg);
         		verify(msg, true);     		
-				lcUser.send(sSendChanel, "localconnection_callback", msg.toObject());  
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+				lcUser.send(sSendChanel, "localconnection_callback", msg.toObject());  
 			}catch(err:Error) { 
 				passError(msg, err);
 			}        	
@@ -188,25 +228,35 @@ package emulator.auto_copied
         	if (isServer!=isSend)
     			verifier.msgFromGame(msg);
     		else
-    			verifier.msgToGame(msg);        	
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+    			verifier.msgToGame(msg);        	
         }  
+        private function createLocalConnection():LocalConnection{
+        	var lc:LocalConnection = new LocalConnection();
+        	if(StaticFunctions.ALLOW_DOMAINS != null)
+				lc.allowDomain(StaticFunctions.ALLOW_DOMAINS)
+			myTrace(["locoal connection Domain",lc.domain])	
+			return lc;
+        }
         public function localconnection_init(sRandomPrefix:String):void {
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
         	if (StaticFunctions.DID_SHOW_ERROR) return;
         	try{
         		myTrace(["got sRandomPrefix",sRandomPrefix,isServer]);
         		if (!isServer)
         			lcInit.close();
-        		lcUser = new LocalConnection();
+        		lcUser = createLocalConnection()
 				AS3_vs_AS2.addStatusListener(lcUser, this, ["localconnection_callback"]);
 				
+				var sDoChanel:String = getDoChanelString(sRandomPrefix);
+				var sGotChanel:String = getGotChanelString(sRandomPrefix);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-				var sDoChanel:String = getDoChanelString(sRandomPrefix);
-				var sGotChanel:String = getGotChanelString(sRandomPrefix);
 				var sListenChannel:String = 
 					isServer ? sDoChanel : sGotChanel;
 				sSendChanel = 
@@ -215,11 +265,11 @@ package emulator.auto_copied
 				lcUser.connect(sListenChannel);
 			} catch(err:Error) { 
 				passError("local connection init",err);
+			} 
+        }
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			} 
-        }
                    
         public function localconnection_callback(msgObj:Object):void {
         	if (StaticFunctions.DID_SHOW_ERROR) return;
@@ -228,11 +278,11 @@ package emulator.auto_copied
         		var deserializedMsg:Object = SerializableClass.deserialize(msgObj);
         		msg = /*as*/deserializedMsg as API_Message;
         		if (msg==null) throwError("msgObj="+JSON.stringify(msgObj)+" is not an API_Message");
+        		
+        		myTrace(['gotMessage: ',msg]);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-        		
-        		myTrace(['gotMessage: ',msg]);
         		verify(msg, false);
         		gotMessage(msg);
 			} catch(err:Error) { 

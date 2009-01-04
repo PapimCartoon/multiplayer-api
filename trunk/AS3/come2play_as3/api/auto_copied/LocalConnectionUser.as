@@ -7,12 +7,19 @@ package come2play_as3.api.auto_copied
 	import flash.net.*;
 	import flash.utils.clearInterval;
 	import flash.utils.setInterval;
+	import flash.utils.setTimeout;
 	 
 	public class LocalConnectionUser
 	{
 		public static var VERSION_FOR_TRACE:int = 7;
-		public static var REVIEW_USER_ID:int = -1; // special userId that is used for reviewing games		
+		public static var REVIEW_USER_ID:int = -1; // special userId that is used for reviewing games
+		public static var IS_LOCAL_CONNECTION_UDERSCORE:Boolean = false;		
 		public static var DEFAULT_LOCALCONNECTION_PREFIX:String = ""+StaticFunctions.random(1,10000);
+		public static var MILL_WAIT_BEFORE_DO_REGISTER:int = 100;
+		public static var MILL_AFTER_ALLOW_DOMAINS:int = 500;
+		public static var DO_TRACE:Boolean = false;
+		public static var AGREE_ON_PREFIX:Boolean = true;
+		public static var ALLOW_DOMAIN:String = "*";
 		public static function showError(msg:String):void {
 			StaticFunctions.showError(msg);
 		}
@@ -23,13 +30,19 @@ package come2play_as3.api.auto_copied
 			if (!val) StaticFunctions.assert(false, args);
 		}
 		public static function getDoChanelString(sRandomPrefix:String):String {
-			return "_DO_CHANEL_"+sRandomPrefix;
+			if(IS_LOCAL_CONNECTION_UDERSCORE)
+				return "_DO_CHANEL_"+sRandomPrefix;
+			return "DO_CHANEL_"+sRandomPrefix;
 		}
 		public static function getGotChanelString(sRandomPrefix:String):String {
-			return "_GOT_CHANEL_"+sRandomPrefix;
+			if(IS_LOCAL_CONNECTION_UDERSCORE)
+				return "_GOT_CHANEL_"+sRandomPrefix;
+			return "GOT_CHANEL_"+sRandomPrefix;
 		}
 		public static function getInitChanelString(sPrefix:String):String {
-			return "_INIT_CHANEL_"+sPrefix;
+			if(IS_LOCAL_CONNECTION_UDERSCORE)
+				return "_INIT_CHANEL_"+sPrefix;
+			return "INIT_CHANEL_"+sPrefix;
 		}
 		public static function getPrefixFromFlashVars(_someMovieClip:DisplayObjectContainer):String {
 			var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(_someMovieClip);
@@ -54,8 +67,10 @@ package come2play_as3.api.auto_copied
 		public var _shouldVerify:Boolean;
 		//Constructor
 		public function LocalConnectionUser(_someMovieClip:DisplayObjectContainer, isServer:Boolean, sPrefix:String,shouldVerify:Boolean) {
-			try{
-				StaticFunctions.allowDomains();
+			
+				if (!isServer) // in the container we apply the reflection in RoomLogic (e.g., for a room we do not have a localconnection) 
+					StaticFunctions.performReflectionFromFlashVars(_someMovieClip);
+				StaticFunctions.allowDomains();	
 				StaticFunctions.storeTrace(["VERSION_FOR_TRACE=",VERSION_FOR_TRACE]);
 				_shouldVerify=shouldVerify;
 				AS3_vs_AS2.registerNativeSerializers();
@@ -67,33 +82,49 @@ package come2play_as3.api.auto_copied
 				if (sPrefix==null) {
 					myTrace(["WARNING: didn't find 'prefix' in the loader info parameters. Probably because you are doing testing locally."]);
 					sPrefix = DEFAULT_LOCALCONNECTION_PREFIX;
-				}	
-				lcInit = new LocalConnection();
-				sInitChanel = getInitChanelString(sPrefix);
-				AS3_vs_AS2.addStatusListener(lcInit, this, ["localconnection_init"],  AS3_vs_AS2.delegate(this, this.connectionHandler));
-				if(isServer){
-					randomPrefix = String(Math.floor(Math.random()*1000000));
-					myTrace(["Attempting to send the randomPrefix with which LocalConnections will communicate... randomPrefix=",randomPrefix])
-					localconnection_init(randomPrefix);
-					sendPrefixIntervalId = setInterval(AS3_vs_AS2.delegate(this, this.sendPrefix),MILL_WAIT_BEFORE_DO_REGISTER);
+				}
+				sInitChanel = getInitChanelString(sPrefix);		
+				if(MILL_AFTER_ALLOW_DOMAINS == 0){
+					buildConnection();
 				}else{
-					myTrace(["started listening to stuff on ",sInitChanel])
-					lcInit.connect(sInitChanel);	
-				}		
+					setTimeout(buildConnection,MILL_AFTER_ALLOW_DOMAINS);	
+				}			
+		}
+		
+		private function buildConnection():void{
+			try{
+				if(AGREE_ON_PREFIX){
+					lcInit = createLocalConnection()
+					AS3_vs_AS2.addStatusListener(lcInit, this, ["localconnection_init"],  AS3_vs_AS2.delegate(this, this.connectionHandler));
+					if(isServer){
+						randomPrefix = String(StaticFunctions.random(1,1000000));
+						myTrace(["Attempting to send the randomPrefix with which LocalConnections will communicate... randomPrefix=",randomPrefix])
+						localconnection_init(randomPrefix);
+						sendPrefixIntervalId = setInterval(AS3_vs_AS2.delegate(this, this.sendPrefix),MILL_WAIT_BEFORE_DO_REGISTER);
+					}else{
+						myTrace(["started listening to stuff on ",sInitChanel])
+						lcInit.connect(sInitChanel);	
+					}	
+				}else{
+					localconnection_init(sInitChanel)
+				}	
 
 			}catch (err:Error) { 
 				passError("Constructor",err);
 			}
+			
 		}
+		
 		private function connectionHandler(isSuccess:Boolean):void {
-			if (isSuccess) {				
-				myTrace(["Succeeded sending the randomPrefix"]);
+			myTrace(["connectionHandler sending random prefix isSuccess: "+isSuccess]);
+			if (isSuccess) {		
 				clearInterval(sendPrefixIntervalId);
 			}
 		}
 
-		public function myTrace(msg:Array):void {			
-			StaticFunctions.storeTrace([AS3_vs_AS2.getClassName(this),": ",msg]);
+		public function myTrace(msg:Array):void {	
+			if(DO_TRACE)			
+				StaticFunctions.storeTrace([AS3_vs_AS2.getClassName(this),": ",msg]);
 		}
 		
         protected function getErrorMessage(withObj:Object, err:Error):String {
@@ -105,7 +136,7 @@ package come2play_as3.api.auto_copied
         
         public function gotMessage(msg:API_Message):void {}
         
-        public static var MILL_WAIT_BEFORE_DO_REGISTER:int = 100;
+       
         public function sendMessage(msg:API_Message):void {
         	if (msg is API_DoRegisterOnServer){
         		if (lcUser != null)
@@ -118,7 +149,7 @@ package come2play_as3.api.auto_copied
         }
         private function sendPrefix():void {  				  
 			try{
-				//myTrace(["sent randomPrefix on ",sInitChanel," randomPrefix sent is:",randomPrefix,isServer]);	
+				myTrace(["sent randomPrefix on ",sInitChanel," randomPrefix sent is:",randomPrefix," Is server: ",isServer]);	
 				lcInit.send(sInitChanel, "localconnection_init", randomPrefix);  
 			}catch(err:Error) { 				
 				passError("prefix error,prefix :"+randomPrefix, err);
@@ -141,13 +172,20 @@ package come2play_as3.api.auto_copied
     		else
     			verifier.msgToGame(msg);        	
         }  
+        private function createLocalConnection():LocalConnection{
+        	var lc:LocalConnection = new LocalConnection();
+        	if(StaticFunctions.ALLOW_DOMAINS != null)
+				lc.allowDomain(StaticFunctions.ALLOW_DOMAINS)
+			myTrace(["locoal connection Domain",lc.domain])	
+			return lc;
+        }
         public function localconnection_init(sRandomPrefix:String):void {
         	if (StaticFunctions.DID_SHOW_ERROR) return;
         	try{
         		myTrace(["got sRandomPrefix",sRandomPrefix,isServer]);
         		if (!isServer)
         			lcInit.close();
-        		lcUser = new LocalConnection();
+        		lcUser = createLocalConnection()
 				AS3_vs_AS2.addStatusListener(lcUser, this, ["localconnection_callback"]);
 				
 				var sDoChanel:String = getDoChanelString(sRandomPrefix);

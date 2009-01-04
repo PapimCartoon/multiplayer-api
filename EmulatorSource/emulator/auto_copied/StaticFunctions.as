@@ -11,7 +11,6 @@ package emulator.auto_copied
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
 	import flash.display.*;
-	import flash.net.LocalConnection;
 	import flash.system.*;
 	import flash.utils.*;
 	
@@ -20,10 +19,10 @@ public final class StaticFunctions
 {			
 	public static var SHOULD_SHOW_ERRORS:Boolean = true;
 	public static var SHOULD_CALL_TRACE:Boolean = true; // in the online version we turn it off to save runtime
+	public static var someMovieClip:DisplayObjectContainer; // so we can display error messages on the stage
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	public static var someMovieClip:DisplayObjectContainer; // so we can display error messages on the stage
 	public static var allTraces:Array = [];
 	public static var MAX_TRACES_NUM:int = 50;
 	public static var ALLOW_DOMAINS:String = "*";//Specifying "*" does not include local hosts	 
@@ -32,7 +31,8 @@ public final class StaticFunctions
 
 		if(ALLOW_DOMAINS != null){
 			storeTrace("Allowing all domains access to : "+ALLOW_DOMAINS+" saמdbox type :"+Security.sandboxType);
-			Security.allowDomain(ALLOW_DOMAINS);
+			/*<InAS3>*/Security.allowDomain(ALLOW_DOMAINS);/*</InAS3>*/
+			/*<InAS2>System.security.allowDomain(ALLOW_DOMAINS);</InAS2>*/
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 

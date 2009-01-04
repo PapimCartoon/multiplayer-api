@@ -22,6 +22,7 @@
 	public final class SinglePlayerEmulator extends LocalConnectionUser
 	{
 		public static var DEFAULT_USER_ID:int = 42; 
+		public var messageNum:int;
 		public static var DEFAULT_GENERAL_INFO:Array/*InfoEntry*/ =
 			[  
 				InfoEntry.create(API_Message.CUSTOM_INFO_KEY_myUserId,DEFAULT_USER_ID), 
@@ -175,7 +176,7 @@
 					serverEntries = serverEntries.concat(tempServerEntries);
 				}
 				if(serverEntries.length > 0)
-					queueSendMessage(API_GotStateChanged.create(combineServerEntries(serverEntries)))
+					queueSendMessage(API_GotStateChanged.create(++messageNum,combineServerEntries(serverEntries)))
 				gotMessage(transaction.callback);
 			} else if (msg is API_DoStoreState) {
 				var doStore:API_DoStoreState = /*as*/msg as API_DoStoreState;				
@@ -183,7 +184,7 @@
 				if(doStore.revealEntries !=null)
 					serverEntries = serverEntries.concat(doRevealEntries(doStore.revealEntries))
 				if(transactionEntries == null)
-					queueSendMessage(API_GotStateChanged.create(serverEntries));
+					queueSendMessage(API_GotStateChanged.create(++messageNum,serverEntries));
 				else
 					return serverEntries;
 				
@@ -191,13 +192,13 @@
 				var doAllStoreMsg:API_DoAllStoreState = /*as*/msg as API_DoAllStoreState;
 				serverEntries = extractStoredData(doAllStoreMsg.userEntries,2)
 				if(transactionEntries == null)
-					queueSendMessage(API_GotStateChanged.create(serverEntries));
+					queueSendMessage(API_GotStateChanged.create(++messageNum,serverEntries));
 				else
 					return serverEntries;
         	}else if(msg is API_DoAllStoreStateCalculation){
         		var stateCalculations:API_DoAllStoreStateCalculation = /*as*/msg as API_DoAllStoreStateCalculation;
         		serverEntries = extractStoredData(stateCalculations.userEntries,3)
-				queueSendMessage(API_GotStateChanged.create(serverEntries))
+				queueSendMessage(API_GotStateChanged.create(++messageNum,serverEntries))
         	}else if (msg is API_DoAllShuffleState){
         		var shuffleState:API_DoAllShuffleState = /*as*/msg as API_DoAllShuffleState;
         		var Key:Object;
@@ -213,14 +214,14 @@
         		}
         		serverEntries = shuffleEntries(shuffleState.keys,serverEntries);
         		if(transactionEntries == null)
-					queueSendMessage(API_GotStateChanged.create(serverEntries));
+					queueSendMessage(API_GotStateChanged.create(++messageNum,serverEntries));
 				else
 					return serverEntries;
         	}else if (msg is API_DoAllRevealState){
         		var revealStateMsg:API_DoAllRevealState = /*as*/msg as API_DoAllRevealState;
 				serverEntries = doRevealEntries(revealStateMsg.revealEntries)
 				if(transactionEntries == null)
-					queueSendMessage(API_GotStateChanged.create(serverEntries));
+					queueSendMessage(API_GotStateChanged.create(++messageNum,serverEntries));
 				else
 					return serverEntries;
         	}else if (msg is API_DoAllRequestRandomState) { 
@@ -229,7 +230,7 @@
 				serverEntry = ServerEntry.create(doAllSecretStateMsg.key,randomINT,-1,doAllSecretStateMsg.isSecret?[]:null,getTimer())
 				serverStateMiror.addEntry(serverEntry);
 				if(transactionEntries == null)
-					queueSendMessage(API_GotStateChanged.create([serverEntry]));
+					queueSendMessage(API_GotStateChanged.create(++messageNum,[serverEntry]));
 				else
 					return [serverEntry];
         	}else if (msg is API_DoAllEndMatch) {
@@ -238,7 +239,7 @@
 				for each (var matchOver:PlayerMatchOver in endMatch.finishedPlayers) {
 					finishedPlayerIds.push( matchOver.playerId );
 				}
-				queueSendMessage( API_GotMatchEnded.create(finishedPlayerIds) );
+				queueSendMessage( API_GotMatchEnded.create(++messageNum,finishedPlayerIds) );
 				AS3_vs_AS2.myTimeout(AS3_vs_AS2.delegate(this, this.sendNewMatch), 2000);
 			} else if (msg is API_DoRegisterOnServer) {
 				doRegisterOnServer();
@@ -273,7 +274,8 @@
   			for each(var serverEntry:ServerEntry in userStateEntries) {
   				serverStateMiror.addEntry(serverEntry);
 			}				
-  			queueSendMessage(API_GotMatchStarted.create([userId], [], userStateEntries) );	 	
+			messageNum = 0;
+  			queueSendMessage(API_GotMatchStarted.create(messageNum,[userId], [], userStateEntries) );	 	
   		}
   		private function queueSendMessage(msg:API_Message):void {
   			apiMsgsQueue.push(msg);

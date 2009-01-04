@@ -59,7 +59,7 @@ import come2play_as2.api.*;
 						output+="History entries :\n\n"+historyEntries.join("\n")+"\n\n";
 					
 					output+="Custom Data:\n\n"+getTAsArray().join("\n");
-					var gotMatchStarted:API_GotMatchStarted = API_GotMatchStarted.create(verifier.getAllPlayerIds(),verifier.getFinishedPlayerIds(),serverEntries)
+					var gotMatchStarted:API_GotMatchStarted = API_GotMatchStarted.create(0,verifier.getAllPlayerIds(),verifier.getFinishedPlayerIds(),serverEntries)
 					AS3_vs_AS2.showError(someMovieClip,"gotMatchStarted : \n\n"+JSON.stringify(gotMatchStarted)+"\n"+output);
 				}
 			}
@@ -194,21 +194,25 @@ import come2play_as2.api.*;
         private function sendFinishedCallback():Void {
         	checkInsideTransaction();        	
         	if (runningAnimationsNumber>0) return;
-       		super.sendMessage( API_Transaction.create(API_DoFinishedCallback.create(currentCallback.getMethodName()), msgsInTransaction) );
+        	var msgNum:Number = -666;
+        	if (currentCallback instanceof API_GotMatchStarted) msgNum = (API_GotMatchStarted(currentCallback)).msgNum;
+        	if (currentCallback instanceof API_GotMatchEnded) msgNum = (API_GotMatchEnded(currentCallback)).msgNum;
+        	if (currentCallback instanceof API_GotStateChanged) msgNum = (API_GotStateChanged(currentCallback)).msgNum; 
+       		super.sendMessage( API_Transaction.create(API_DoFinishedCallback.create(currentCallback.getMethodName(),msgNum), msgsInTransaction) );
     		msgsInTransaction = null;
 			currentCallback = null;
 			sendKeyboardEvents();
 			if (verifier.isPlayer()) sendDoStoreStateEvents();
         }
         private function sendDoStoreStateEvents():Void{
-        	for (var i207:Number=0; i207<doStoreQueue.length; i207++) { var doStoreMsg:API_DoStoreState = doStoreQueue[i207]; 
+        	for (var i211:Number=0; i211<doStoreQueue.length; i211++) { var doStoreMsg:API_DoStoreState = doStoreQueue[i211]; 
         		super.sendMessage(doStoreMsg);
         	}
         	doStoreQueue = [];
         }
         private function updateMirorServerState(serverEntries:Array/*ServerEntry*/):Void
         {
-        	for (var i214:Number=0; i214<serverEntries.length; i214++) { var serverEntry:ServerEntry = serverEntries[i214]; 
+        	for (var i218:Number=0; i218<serverEntries.length; i218++) { var serverEntry:ServerEntry = serverEntries[i218]; 
         	    serverStateMiror.addEntry(serverEntry);	
         	}     	
         }
@@ -245,7 +249,7 @@ import come2play_as2.api.*;
 					var customInfo:API_GotCustomInfo = API_GotCustomInfo(msg);
 					var i18nObj:Object = {};
 					var customObj:Object = {};
-					for (var i251:Number=0; i251<customInfo.infoEntries.length; i251++) { var entry:InfoEntry = customInfo.infoEntries[i251]; 
+					for (var i255:Number=0; i255<customInfo.infoEntries.length; i255++) { var entry:InfoEntry = customInfo.infoEntries[i255]; 
 						var key:String = entry.key;
 						var value:Object = entry.value;
 						if (key==API_Message.CUSTOM_INFO_KEY_i18n) {
@@ -264,7 +268,7 @@ import come2play_as2.api.*;
 				}else if(msg instanceof API_GotUserInfo){
 					var infoMessage:API_GotUserInfo =API_GotUserInfo( msg);
 					var userObject:Object = {};
-					for (var i270:Number=0; i270<infoMessage.infoEntries.length; i270++) { var infoEntry:InfoEntry = infoMessage.infoEntries[i270]; 
+					for (var i274:Number=0; i274<infoMessage.infoEntries.length; i274++) { var infoEntry:InfoEntry = infoMessage.infoEntries[i274]; 
 						trace(infoEntry.key+ "="+ infoEntry.value)
 						userObject[infoEntry.key] = infoEntry.value;
 					}

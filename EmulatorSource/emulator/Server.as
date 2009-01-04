@@ -35,6 +35,7 @@ package emulator {
 		private static const COL_serverEntries:String= "Server_Entries";
 		private static const COL_TimeSent:String = "Time_Sent";
 		//Private variables
+		private var messageNum:int;
 		private var isTurnBasedGame:Boolean = false;
 		private var bGameStarted:Boolean = false;
 		private var bGameEnded:Boolean = false;
@@ -1185,7 +1186,7 @@ package emulator {
 			FinishHistory.wholePot-=(FinishHistory.wholePot*percentageOfPot)/100;
 			afinishedPlayers.push(finishedPart);
 			deltaHistory.addPlayerMatchOver(getOngoingPlayerIds(),finishedPart,getTimer()-matchStartTime);
-			broadcast(API_GotMatchEnded.create(tempFinishedPlayersIds));
+			broadcast(API_GotMatchEnded.create(++messageNum,tempFinishedPlayersIds));
 			if (aPlayers.length == FinishHistory.totalFinishingPlayers)
 				gameOver();
 			showMatchOver();
@@ -1244,7 +1245,7 @@ package emulator {
 				stateEntries.push(serverEntry);
 			}
 	
-			u.sendOperation(API_GotMatchStarted.create(aPlayers,finished_player_ids,stateEntries));			
+			u.sendOperation(API_GotMatchStarted.create(messageNum,aPlayers,finished_player_ids,stateEntries));			
 		}
 		
 		public function addMessageLog(user:String, funcname:String, message:String):void {
@@ -1636,6 +1637,7 @@ package emulator {
 			FinishHistory.totalFinishingPlayers=0;
 			FinishHistory.wholePot=100;
 			iCurTurn=-1;
+			messageNum = 0;
 			waitingQueue = new MessagQueue(aPlayers.length,getOngoingPlayerIds());
 			if(loadedServerEntries != null)
 			{
@@ -1682,7 +1684,7 @@ package emulator {
 						FinishHistory.totalFinishingPlayers ++;
 					}
 					afinishedPlayers.push(playerDelta.finishHistory);
-					broadcast(API_GotMatchEnded.create(finishedPlayerIds));
+					broadcast(API_GotMatchEnded.create(++messageNum,finishedPlayerIds));
 				}
 				changeTimerTime();
 				changedToDelta++;
@@ -2215,6 +2217,7 @@ package emulator {
 			}
 			
 			var tempServerEntries:Array/*ServerEntry*/;
+			messageNum++;
 			for each(var tempUser:User in aUsers)
 			{
 				tempServerEntries = new Array();
@@ -2228,7 +2231,7 @@ package emulator {
 						tempServerEntries.push(ServerEntry.create(serverEntry.key,null,serverEntry.storedByUserId,serverEntry.visibleToUserIds,serverEntry.changedTimeInMilliSeconds));
 					
 				}
-				tempUser.sendOperation(API_GotStateChanged.create(tempServerEntries));
+				tempUser.sendOperation(API_GotStateChanged.create(messageNum,tempServerEntries));
 			}
 		}
 		
@@ -2284,7 +2287,7 @@ package emulator {
 
 
 			if(tempPlayerIds.length > 0)
-				broadcast(API_GotMatchEnded.create(tempPlayerIds));
+				broadcast(API_GotMatchEnded.create(++messageNum,tempPlayerIds));
 			bGameEnded = true;
 			btnNewGame.visible = true;
 			btnCancelGame.visible = false;

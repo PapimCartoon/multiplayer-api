@@ -63,7 +63,7 @@ package come2play_as3.api {
 						output+="History entries :\n\n"+historyEntries.join("\n")+"\n\n";
 					
 					output+="Custom Data:\n\n"+getTAsArray().join("\n");
-					var gotMatchStarted:API_GotMatchStarted = API_GotMatchStarted.create(verifier.getAllPlayerIds(),verifier.getFinishedPlayerIds(),serverEntries)
+					var gotMatchStarted:API_GotMatchStarted = API_GotMatchStarted.create(0,verifier.getAllPlayerIds(),verifier.getFinishedPlayerIds(),serverEntries)
 					AS3_vs_AS2.showError(someMovieClip,"gotMatchStarted : \n\n"+JSON.stringify(gotMatchStarted)+"\n"+output);
 				}
 			}
@@ -198,7 +198,11 @@ package come2play_as3.api {
         private function sendFinishedCallback():void {
         	checkInsideTransaction();        	
         	if (runningAnimationsNumber>0) return;
-       		super.sendMessage( API_Transaction.create(API_DoFinishedCallback.create(currentCallback.getMethodName()), msgsInTransaction) );
+        	var msgNum:int = -666;
+        	if (currentCallback is API_GotMatchStarted) msgNum = (/*as*/currentCallback as API_GotMatchStarted).msgNum;
+        	if (currentCallback is API_GotMatchEnded) msgNum = (/*as*/currentCallback as API_GotMatchEnded).msgNum;
+        	if (currentCallback is API_GotStateChanged) msgNum = (/*as*/currentCallback as API_GotStateChanged).msgNum; 
+       		super.sendMessage( API_Transaction.create(API_DoFinishedCallback.create(currentCallback.getMethodName(),msgNum), msgsInTransaction) );
     		msgsInTransaction = null;
 			currentCallback = null;
 			sendKeyboardEvents();

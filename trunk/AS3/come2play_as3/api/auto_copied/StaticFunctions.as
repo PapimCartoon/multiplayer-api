@@ -1,7 +1,6 @@
 package come2play_as3.api.auto_copied
 {
 	import flash.display.*;
-	import flash.net.LocalConnection;
 	import flash.system.*;
 	import flash.utils.*;
 	
@@ -19,7 +18,8 @@ public final class StaticFunctions
 
 		if(ALLOW_DOMAINS != null){
 			storeTrace("Allowing all domains access to : "+ALLOW_DOMAINS+" saמdbox type :"+Security.sandboxType);
-			Security.allowDomain(ALLOW_DOMAINS);
+			/*<InAS3>*/Security.allowDomain(ALLOW_DOMAINS);/*</InAS3>*/
+			/*<InAS2>System.security.allowDomain(ALLOW_DOMAINS);</InAS2>*/
 		}
 	}
 			

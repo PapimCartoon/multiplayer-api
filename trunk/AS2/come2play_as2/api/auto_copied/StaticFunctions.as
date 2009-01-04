@@ -14,7 +14,8 @@ class come2play_as2.api.auto_copied.StaticFunctions
 
 		if(ALLOW_DOMAINS != null){
 			storeTrace("Allowing all domains access to : "+ALLOW_DOMAINS+" saמdbox type :"+Security.sandboxType);
-			Security.allowDomain(ALLOW_DOMAINS);
+			/*<InAS3>Security.allowDomain(ALLOW_DOMAINS);</InAS3>*/
+			/*<InAS2>*/System.security.allowDomain(ALLOW_DOMAINS);/*</InAS2>*/
 		}
 	}
 			

@@ -83,7 +83,7 @@ import come2play_as2.api.auto_copied.*;
 				if(MILL_AFTER_ALLOW_DOMAINS == 0){
 					buildConnection();
 				}else{
-					setTimeout(buildConnection,MILL_AFTER_ALLOW_DOMAINS);	
+					AS3_vs_AS2.myTimeout(AS3_vs_AS2.delegate(this,this.buildConnection),MILL_AFTER_ALLOW_DOMAINS);	
 				}			
 		}
 		

@@ -6,7 +6,6 @@ package come2play_as3.api {
 	import flash.events.*;
 	import flash.external.*;
 	import flash.net.*;
-	import flash.system.Security;
 	import flash.utils.*;
 	
 	/**
@@ -299,7 +298,12 @@ package come2play_as3.api {
 			if (AS3_vs_AS2.isAS3 && !this.hasOwnProperty(methodName)) return;
 			var func:Function = /*as*/this[methodName] as Function;
 			if (func==null) return;
-			func.apply(this, msg.getMethodParameters());
+			var params:Array = msg.getMethodParameters();
+			if (msg is API_GotMatchStarted || msg is API_GotMatchEnded || msg is API_GotStateChanged) {
+				// removes the msgNum:int
+				params.shift();
+			}
+			func.apply(this, params);
         }
         override public function sendMessage(doMsg:API_Message):void {
         	if (ProtocolVerifier.isPassThrough(doMsg)) {

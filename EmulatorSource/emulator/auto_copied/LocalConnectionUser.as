@@ -30,7 +30,7 @@ package emulator.auto_copied
 		public static var DEFAULT_LOCALCONNECTION_PREFIX:String = ""+StaticFunctions.random(1,10000);
 		public static var MILL_WAIT_BEFORE_DO_REGISTER:int = 100;
 		public static var MILL_AFTER_ALLOW_DOMAINS:int = 500;
-		public static var DO_TRACE:Boolean = false;
+		public static var DO_TRACE:Boolean = true;
 		public static var AGREE_ON_PREFIX:Boolean = true;
 		public static var ALLOW_DOMAIN:String = "*";
 

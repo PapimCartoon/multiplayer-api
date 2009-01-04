@@ -5,25 +5,28 @@ package emulator.auto_generated {
 	import emulator.*;
 	import emulator.auto_copied.*;
 	public  class API_GotStateChanged extends API_Message {
+		public var msgNum:int;
 		public var serverEntries:Array/*ServerEntry*/;
-		public static function create(serverEntries:Array/*ServerEntry*/):API_GotStateChanged {
+		public static function create(msgNum:int, serverEntries:Array/*ServerEntry*/):API_GotStateChanged {
 			var res:API_GotStateChanged = new API_GotStateChanged();
-			res.serverEntries = serverEntries;
-			return res;
+			res.msgNum = msgNum;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			res.serverEntries = serverEntries;
+			return res;
 		}
 		override public function setMethodParameters(parameters:Array):void { 
 			var pos:int = 0;
+			this.msgNum = parameters[pos++];
 			this.serverEntries = parameters[pos++];
 		}
 		override public function getFunctionId():int { return -119; }
 		override public function getMethodName():String { return 'gotStateChanged'; }
-		override public function getMethodParameters():Array { return [serverEntries]; }
-		override public function getMethodParametersNum():int { return 1; }
-	}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		override public function getMethodParameters():Array { return [msgNum, serverEntries]; }
+		override public function getMethodParametersNum():int { return 2; }
+	}
 }

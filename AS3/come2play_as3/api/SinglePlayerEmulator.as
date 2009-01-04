@@ -64,6 +64,7 @@
 		}	
 		private function doRevealEntry(revealEntry:RevealEntry):ServerEntry{
 			var oldServerEntry:ServerEntry =/*as*/ serverStateMiror.getValue(revealEntry.key) as ServerEntry
+			if (oldServerEntry == null) return null;
 			var serverEntry:ServerEntry =ServerEntry.create(oldServerEntry.key,oldServerEntry.value,oldServerEntry.storedByUserId,oldServerEntry.visibleToUserIds,getTimer());
 			if (serverEntry == null)return null;
 			if (serverEntry.visibleToUserIds == null) return null;
@@ -147,20 +148,34 @@
 			return serverEntries;
 		}
 		private function combineServerEntries(serverEntries:Array/*ServerEntry*/):Array/*ServerEntry*/{
-			var combinedServerEntries:Array/*ServerEntry*/ = new Array();
+			var combinedServerEntries:Array/*ServerEntry*/ = new Array();	
+			var dicArray:Array = new Array();
+			for(var i:int = (serverEntries.length -1);i>=0;i--)
+			{
+				var serverEntry:ServerEntry = serverEntries[i];
+				if(dicArray[JSON.stringify(serverEntry.key)] == null)
+				{
+					dicArray[JSON.stringify(serverEntry.key)] = true;
+					combinedServerEntries.unshift(serverEntry);
+				}
+			}
 			
 			return combinedServerEntries
 		}
-		private function messageHandler(msg:API_Message,transactionEntries:Array/*<InAS3>*/ = null/*</InAS3>*/):void{
+		
+		private function messageHandler(msg:API_Message,transactionEntries:Array/*<InAS3>*/ = null/*</InAS3>*/):Array{
 		var serverEntries:Array/*ServerEntry*/ = [];
 			var serverEntry:ServerEntry;
 			if (msg is API_Transaction) {
 				var transaction:API_Transaction = /*as*/msg as API_Transaction;
+				var tempServerEntries:Array;
 				for each (var innerMsg:API_Message in transaction.messages) {
-					messageHandler(innerMsg,serverEntries);
+					tempServerEntries = messageHandler(innerMsg,serverEntries);
+					if(tempServerEntries.length>0)
+					serverEntries = serverEntries.concat(tempServerEntries);
 				}
 				if(serverEntries.length > 0)
-					queueSendMessage(API_GotStateChanged.create(serverEntries))
+					queueSendMessage(API_GotStateChanged.create(combineServerEntries(serverEntries)))
 				gotMessage(transaction.callback);
 			} else if (msg is API_DoStoreState) {
 				var doStore:API_DoStoreState = /*as*/msg as API_DoStoreState;				
@@ -170,7 +185,7 @@
 				if(transactionEntries == null)
 					queueSendMessage(API_GotStateChanged.create(serverEntries));
 				else
-					transactionEntries = transactionEntries.concat(serverEntries);
+					return serverEntries;
 				
 			}else if (msg is API_DoAllStoreState) { 
 				var doAllStoreMsg:API_DoAllStoreState = /*as*/msg as API_DoAllStoreState;
@@ -178,7 +193,7 @@
 				if(transactionEntries == null)
 					queueSendMessage(API_GotStateChanged.create(serverEntries));
 				else
-					transactionEntries = transactionEntries.concat(serverEntries);
+					return serverEntries;
         	}else if(msg is API_DoAllStoreStateCalculation){
         		var stateCalculations:API_DoAllStoreStateCalculation = /*as*/msg as API_DoAllStoreStateCalculation;
         		serverEntries = extractStoredData(stateCalculations.userEntries,3)
@@ -200,14 +215,14 @@
         		if(transactionEntries == null)
 					queueSendMessage(API_GotStateChanged.create(serverEntries));
 				else
-					transactionEntries = transactionEntries.concat(serverEntries);
+					return serverEntries;
         	}else if (msg is API_DoAllRevealState){
         		var revealStateMsg:API_DoAllRevealState = /*as*/msg as API_DoAllRevealState;
 				serverEntries = doRevealEntries(revealStateMsg.revealEntries)
 				if(transactionEntries == null)
 					queueSendMessage(API_GotStateChanged.create(serverEntries));
 				else
-					transactionEntries = transactionEntries.concat(serverEntries);
+					return serverEntries;
         	}else if (msg is API_DoAllRequestRandomState) { 
         		var doAllSecretStateMsg:API_DoAllRequestRandomState = /*as*/msg as API_DoAllRequestRandomState;
 				var randomINT:int = Math.random()*int.MAX_VALUE;
@@ -216,7 +231,7 @@
 				if(transactionEntries == null)
 					queueSendMessage(API_GotStateChanged.create([serverEntry]));
 				else
-					transactionEntries = transactionEntries.concat([serverEntry]);
+					return [serverEntry];
         	}else if (msg is API_DoAllEndMatch) {
 				var endMatch:API_DoAllEndMatch = /*as*/msg as API_DoAllEndMatch;
 				var finishedPlayerIds:Array = [];
@@ -241,7 +256,8 @@
 				if (apiMsgsQueue.length==0) throwError("Game sent too many DoFinishedCallback");
 				apiMsgsQueue.shift();
 				if (apiMsgsQueue.length>0) sendTopQueue();
-			}		
+			}	
+			return [];	
 		}
 		
         override public function gotMessage(msg:API_Message):void {        	

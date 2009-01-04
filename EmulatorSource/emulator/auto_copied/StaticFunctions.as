@@ -31,7 +31,7 @@ public final class StaticFunctions
 	public static function allowDomains():void {
 
 		if(ALLOW_DOMAINS != null){
-			storeTrace("Allowing all domains access to : "+ALLOW_DOMAINS+" snadbox type :"+Security.sandboxType);
+			storeTrace("Allowing all domains access to : "+ALLOW_DOMAINS+" saמdbox type :"+Security.sandboxType);
 			Security.allowDomain(ALLOW_DOMAINS);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!

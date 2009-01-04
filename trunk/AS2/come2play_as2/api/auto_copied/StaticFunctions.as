@@ -13,7 +13,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	public static function allowDomains():Void {
 
 		if(ALLOW_DOMAINS != null){
-			storeTrace("Allowing all domains access to : "+ALLOW_DOMAINS+" snadbox type :"+Security.sandboxType);
+			storeTrace("Allowing all domains access to : "+ALLOW_DOMAINS+" saמdbox type :"+Security.sandboxType);
 			Security.allowDomain(ALLOW_DOMAINS);
 		}
 	}

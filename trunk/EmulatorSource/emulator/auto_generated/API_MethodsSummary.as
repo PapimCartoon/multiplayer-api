@@ -26,9 +26,9 @@ package emulator.auto_generated {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		, new API_MethodsSummary('gotMatchStarted', ['allPlayerIds', 'finishedPlayerIds', 'serverEntries'], ['Array/*int*/', 'Array/*int*/', 'Array/*ServerEntry*/'] )
-		, new API_MethodsSummary('gotMatchEnded', ['finishedPlayerIds'], ['Array/*int*/'] )
-		, new API_MethodsSummary('gotStateChanged', ['serverEntries'], ['Array/*ServerEntry*/'] )
+		, new API_MethodsSummary('gotMatchStarted', ['msgNum', 'allPlayerIds', 'finishedPlayerIds', 'serverEntries'], ['int', 'Array/*int*/', 'Array/*int*/', 'Array/*ServerEntry*/'] )
+		, new API_MethodsSummary('gotMatchEnded', ['msgNum', 'finishedPlayerIds'], ['int', 'Array/*int*/'] )
+		, new API_MethodsSummary('gotStateChanged', ['msgNum', 'serverEntries'], ['int', 'Array/*ServerEntry*/'] )
 		, new API_MethodsSummary('doStoreState', ['userEntries', 'revealEntries'], ['Array/*UserEntry*/', 'Array/*RevealEntry*/'] )
 		, new API_MethodsSummary('doAllStoreState', ['userEntries'], ['Array/*UserEntry*/'] )
 		, new API_MethodsSummary('doAllEndMatch', ['finishedPlayers'], ['Array/*PlayerMatchOver*/'] )

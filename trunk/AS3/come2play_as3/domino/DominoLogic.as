@@ -134,7 +134,7 @@ package come2play_as3.domino
 		{
 			if (avaibleDominoMoves.length == 0) return;
 			var avaibleMove:AvaibleMove = avaibleDominoMoves[dominoNum];
-			dominoMainPointer.doTrace("chack",avaibleMove.isLeft+"/"+avaibleMove.isRight);
+			dominoMainPointer.doTrace("check",avaibleMove.isLeft+"/"+avaibleMove.isRight);
 			if((avaibleMove.isLeft == false )&& (avaibleMove.isRight==false))
 				return;
 			removeArrows();

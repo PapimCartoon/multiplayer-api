@@ -294,6 +294,7 @@ import come2play_as2.api.*;
 			if (AS3_vs_AS2.isAS3 && !this.hasOwnProperty(methodName)) return;
 			var func:Function = Function(this[methodName]);
 			if (func==null) return;
+			todo: gotMatchStarted gotMatchEnded gotStateChanged
 			func.apply(this, msg.getMethodParameters());
         }
         /*override*/ public function sendMessage(doMsg:API_Message):Void {

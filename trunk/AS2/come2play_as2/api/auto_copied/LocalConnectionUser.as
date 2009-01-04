@@ -11,7 +11,7 @@ import come2play_as2.api.auto_copied.*;
 		public static var DEFAULT_LOCALCONNECTION_PREFIX:String = ""+StaticFunctions.random(1,10000);
 		public static var MILL_WAIT_BEFORE_DO_REGISTER:Number = 100;
 		public static var MILL_AFTER_ALLOW_DOMAINS:Number = 500;
-		public static var DO_TRACE:Boolean = false;
+		public static var DO_TRACE:Boolean = true;
 		public static var AGREE_ON_PREFIX:Boolean = true;
 		public static var ALLOW_DOMAIN:String = "*";
 		public static function showError(msg:String):Void {

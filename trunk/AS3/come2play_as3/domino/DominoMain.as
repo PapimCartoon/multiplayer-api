@@ -127,6 +127,7 @@ package come2play_as3.domino
 				doAllStoreState(dominoLogic.getCubesArray());
 				doAllShuffleState(dominoLogic.getDominoKeysArray());
 				doAllRevealState(dominoLogic.getFirstDevision());
+				trace("Match started")
 			}
 			else
 			{

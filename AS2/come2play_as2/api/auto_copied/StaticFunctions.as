@@ -1,4 +1,4 @@
-	
+﻿	
 // Only StaticFunctions and JSON are copied to flex_utils 
 import come2play_as2.api.auto_copied.*;
 class come2play_as2.api.auto_copied.StaticFunctions
@@ -13,7 +13,13 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	public static function allowDomains():Void {
 
 		if(ALLOW_DOMAINS != null){
-			storeTrace("Allowing all domains access to : "+ALLOW_DOMAINS+" saמdbox type :"+Security.sandboxType);
+			
+			
+			storeTrace("Allowing all domains access to : "+ALLOW_DOMAINS+" saמdbox type :"+
+			/*<InAS3>Security.sandboxType</InAS3>*/
+			/*<InAS2>*/System.security.sandboxType/*</InAS2>*/
+			);
+			
 			/*<InAS3>Security.allowDomain(ALLOW_DOMAINS);</InAS3>*/
 			/*<InAS2>*/System.security.allowDomain(ALLOW_DOMAINS);/*</InAS2>*/
 		}
@@ -102,7 +108,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 				// for static properties we use describeType
 				// because o1 and o2 have the same type, it instanceof enough to use the fields of o1.
 				var fieldsArr:Array = AS3_vs_AS2.getFieldNames(o1);
-				for (var i107:Number=0; i107<fieldsArr.length; i107++) { var field:String = fieldsArr[i107]; 
+				for (var i113:Number=0; i113<fieldsArr.length; i113++) { var field:String = fieldsArr[i113]; 
 					allFields[field] = true;
 				}
 			}
@@ -118,7 +124,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	
 	public static function subtractArray(arr:Array, minus:Array):Array {
 		var res:Array = arr.concat();
-		for (var i123:Number=0; i123<minus.length; i123++) { var o:Object = minus[i123]; 
+		for (var i129:Number=0; i129<minus.length; i129++) { var o:Object = minus[i129]; 
 			var indexOf:Number = AS3_vs_AS2.IndexOf(res, o);
 			StaticFunctions.assert(indexOf!=-1, ["When subtracting minus=",minus," from array=", arr, " we did not find element ",o]);				
 			res.splice(indexOf, 1);
@@ -209,7 +215,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	}
 	public static function instance2Object(instance:Object, fields:Array/*String*/):Object {
 		var res:Object = {};
-		for (var i214:Number=0; i214<fields.length; i214++) { var field:String = fields[i214]; 
+		for (var i220:Number=0; i220<fields.length; i220++) { var field:String = fields[i220]; 
 			res[field] = instance[field];
 		}
 		return res;

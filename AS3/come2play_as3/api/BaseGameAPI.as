@@ -37,7 +37,7 @@ package come2play_as3.api {
 			AS3_vs_AS2.addKeyboardListener(_someMovieClip,keyPressed);
 			if (getPrefixFromFlashVars(_someMovieClip)==null) 
 				singlePlayerEmulator = new SinglePlayerEmulator(_someMovieClip); // to prevent garbage collection
-			StaticFunctions.performReflectionFromFlashVars(_someMovieClip);	
+				
 			if(HISTORY_LENGTH > 0)
 				historyEntries = new Array();
 			//come2play_as3.api::BaseGameAPI.abc = 666

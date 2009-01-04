@@ -1,6 +1,7 @@
 package come2play_as3.api.auto_copied
 {
 	import flash.display.*;
+	import flash.net.LocalConnection;
 	import flash.system.*;
 	import flash.utils.*;
 	
@@ -12,12 +13,13 @@ public final class StaticFunctions
 	public static var someMovieClip:DisplayObjectContainer; // so we can display error messages on the stage
 	public static var allTraces:Array = [];
 	public static var MAX_TRACES_NUM:int = 50;
-	public static var IS_ALLOW_DOMAINS:Boolean = true;	 
+	public static var ALLOW_DOMAINS:String = "*";//Specifying "*" does not include local hosts	 
 	
 	public static function allowDomains():void {
-		if (IS_ALLOW_DOMAINS) {
-			storeTrace("Allowing all domains access");
-			Security.allowDomain("*");
+
+		if(ALLOW_DOMAINS != null){
+			storeTrace("Allowing all domains access to : "+ALLOW_DOMAINS+" snadbox type :"+Security.sandboxType);
+			Security.allowDomain(ALLOW_DOMAINS);
 		}
 	}
 			

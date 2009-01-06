@@ -20,7 +20,7 @@ The Operations are divided into two groups as well:
 `do` operations which may be called by a single player
 {{{
 doRegisterOnServer()
-doStoreState(userEntries:Array/*UserEntry*/)
+doStoreState(userEntries:Array/*UserEntry*/,revealEntries:Array/*RevealEntry*/)
 doTrace(name:String, message:Object)
 }}}
 

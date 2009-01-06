@@ -84,7 +84,7 @@ i.e., there is a player that hasn't finished playing.
 
 || *Function* || *Description* ||
 || [doRegisterOnServer] || Call it after your _game_ finished loading ||
-|| [doStoreState] || Call it to store/update/delete your match state ||
+|| [doStoreState] || Call it to store/update/reveal/delete your match state ||
 || [doTrace] || Call it to store traces to help you debug your application in the emulator and online ||
 || [doAllRequestRandomState] || Call to receive a random state ||
 || [doAllShuffleState] || Call to shuffle an array of ServerEntry ||

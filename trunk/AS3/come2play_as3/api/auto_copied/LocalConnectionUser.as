@@ -14,7 +14,7 @@ package come2play_as3.api.auto_copied
 		public static var REVIEW_USER_ID:int = -1; // special userId that is used for reviewing games
 		public static var IS_LOCAL_CONNECTION_UDERSCORE:Boolean = false;		
 		public static var DEFAULT_LOCALCONNECTION_PREFIX:String = ""+StaticFunctions.random(1,10000);
-		public static var MILL_WAIT_BEFORE_DO_REGISTER:int = 100;
+		public static var MILL_WAIT_BEFORE_DO_REGISTER:int = 500;
 		public static var MILL_AFTER_ALLOW_DOMAINS:int = 500;
 		public static var DO_TRACE:Boolean = true;
 		public static var AGREE_ON_PREFIX:Boolean = true;
@@ -64,6 +64,7 @@ package come2play_as3.api.auto_copied
 		private var isServer:Boolean;
 		private var randomPrefix:String;
 		private var sendPrefixIntervalId:uint;
+		private var connectionMade:Boolean;
 		public var verifier:ProtocolVerifier;
 		public var _shouldVerify:Boolean;
 		//Constructor
@@ -71,6 +72,7 @@ package come2play_as3.api.auto_copied
 			
 				if (!isServer) // in the container we apply the reflection in RoomLogic (e.g., for a room we do not have a localconnection) 
 					StaticFunctions.performReflectionFromFlashVars(_someMovieClip);
+				connectionMade = false;
 				StaticFunctions.allowDomains();	
 				StaticFunctions.storeTrace(["VERSION_FOR_TRACE=",VERSION_FOR_TRACE]);
 				_shouldVerify=shouldVerify;
@@ -118,7 +120,8 @@ package come2play_as3.api.auto_copied
 		
 		private function connectionHandler(isSuccess:Boolean):void {
 			myTrace(["connectionHandler sending random prefix isSuccess: "+isSuccess]);
-			if (isSuccess) {		
+			if ((isSuccess) || (connectionMade)) {
+				connectionMade = true		
 				clearInterval(sendPrefixIntervalId);
 			}
 		}

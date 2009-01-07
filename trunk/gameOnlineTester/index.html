@@ -248,7 +248,7 @@
 		num = parseInt(document.getElementById(load).value);
 		if(isNaN(num)){
 			throw load+" must be a number";
-		}else if(num<1){
+		}else if(num<0){
 			throw load+" must be larger than 0";
 		}
 		return num;
@@ -376,19 +376,19 @@
 			</TR>
 			<TR>
 				<TD>SWF Height:</TD>
-				<TD><input type="text" id="swfHeight" value="500"></TD>
+				<TD><input type="text" id="swfHeight" value="570"></TD>
 			</TR>
 			<TR>
 				<TD>SWF Width:</TD>
-				<TD><input type="text" id="swfWidth" value="600"></TD>
+				<TD><input type="text" id="swfWidth" value="500"></TD>
 			</TR>
 			<TR>
 				<TD>Board X position:</TD>
-				<TD><input type="text" id="gameStageX" value="10"></TD>
+				<TD><input type="text" id="gameStageX" value="100"></TD>
 			</TR>
 			<TR>
 				<TD>Board Y position:</TD>
-				<TD><input type="text" id="gameStageY" value="70"></TD>
+				<TD><input type="text" id="gameStageY" value="0"></TD>
 			</TR>
 			<TR>
 				<TD>Board Height:</TD>

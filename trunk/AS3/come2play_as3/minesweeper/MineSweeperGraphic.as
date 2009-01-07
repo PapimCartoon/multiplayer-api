@@ -64,16 +64,12 @@ package come2play_as3.minesweeper
 				mineNotFoundSound = new MineNotFoundSound()
 				addChild(mineNotFoundSound);
 			}
-			setTimeout(function():void{isCorrectChange(isCorrect,box)},10);
+			if(!isCorrect){
+				box.addChild(new Xmarker);	
+			}
 			
 		}
-		private function isCorrectChange(isCorrect:Boolean,box:Box):void
-		{
-			if(box.isWrong != null)
-				box.isWrong.alpha = isCorrect?0:100;
-			else
-				setTimeout(function():void{isCorrectChange(isCorrect,box)},10);
-		}
+
 		public function updateLives(playerNum:int,livesCount:int):void
 		{
 			var player:PlayerGraphicData = playerGraphicDataArr[playerNum];

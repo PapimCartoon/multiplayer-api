@@ -1,0 +1,456 @@
+<HTML>
+<HEAD>
+	<TITLE>framework tester</TITLE>
+	<LINK REL="Stylesheet" HREF="http://www.come2play.com/css/general2.3.css" TYPE="Text/css">
+	<script language="javascript" src="FlashObject.js"></script>
+	<script language="javascript" src="GetParams.js"></script>
+	<script language="javascript" src="params.js"></script>
+	<script language="javascript">
+	var openRooms = new Array();
+	function removeTableRow(tableName,removeNum){
+		table = document.getElementById(tableName);
+		table.deleteRow(removeNum)
+		var rows = table.rows.length;
+		for(var i=removeNum;i<rows;i++){
+			var row = table.rows[i]
+			var key = document.getElementById("key_"+tableName+"_"+(i+1)).value
+			var value = document.getElementById("value_"+tableName+"_"+(i+1)).value
+			var cell = row.cells[0];
+			cell.innerHTML = "<input type=\"text\" id=\"key_"+tableName+"_"+i+"\" value=\""+key+"\">";
+			var cell = row.cells[1];
+			cell.innerHTML = "<input type=\"text\" id=\"value_"+tableName+"_"+i+"\" value=\""+value+"\">";
+			var cell = row.cells[2];
+			cell.innerHTML = "<A HREF=\"#\" onclick=\"removeTableRow('"+tableName+"',"+i+");\"><H1>X</H1></A>";
+		}
+		
+	}
+	function addTableEntry(tableName){
+		try{
+			addEntryField(tableName,"key","value");
+		}catch(err){
+			alert(err)
+			return;
+		}
+	}
+	function myConcat(arr1,arr2){
+		var arrRes = new Array()
+		for(var arr1Key in arr1){
+			for(var arr2key in arr2){
+				if(arr1Key == arr2key) throw "tried to duplicate a value in the concat : "+arr2key
+			}
+			arrRes[arr1Key] = arr1[arr1Key]
+		}
+
+		for(var arr2key in arr2){
+			arrRes[arr2key] = arr2[arr2key]
+		}
+		return arrRes;
+	}
+	function getTableCustomParams(tableName){
+		var tableData = new Array();
+		var table = document.getElementById(tableName);
+		var rows = table.rows.length;
+		for(var i=0;i<rows;i++){
+			tableData[tableName+"_"+i] = document.getElementById("key_"+tableName+"_"+i).value;
+			tableData[document.getElementById("key_"+tableName+"_"+i).value] = document.getElementById("value_"+tableName+"_"+i).value;		
+		}
+		return tableData;
+	
+	}
+	function load_click(){	
+		document.getElementById("paramsHandler").style.left = width/2 - 300+"px";
+		document.getElementById("paramsHandler").style.top = "200px";
+		loadSharedObject("Come2PlayFrameworkTest",document.getElementById("paramsHandler"));
+	}
+	function getParams(savedDataObj){
+		try{
+			var obj;
+			for(var i=0;i<paramArr.length;i++){
+				obj = paramArr[i];
+				if(obj.isUser == true) continue;
+				if(obj.type == "int"){
+					document.getElementById(obj.htmlName).value=savedDataObj[obj.htmlName];
+				}else if(obj.type == "string"){
+					document.getElementById(obj.htmlName).value=savedDataObj[obj.htmlName];
+				}else if(obj.type == "boolean"){
+					document.getElementById(obj.htmlName).checked = (savedDataObj[obj.htmlName] == "true");
+				}	
+			}
+			
+			PlayerNumChanged();
+			var len = parseInt(savedDataObj["PlayersNumSim"]);
+			for(var i=1;i<=len;i++){
+				for(var j=0;j<paramArr.length;j++){
+					obj = paramArr[j];
+					if(obj.isUser != true) continue;
+					if(obj.type == "int"){
+						document.getElementById("player_"+i+"_"+obj.htmlName).value=savedDataObj["player_"+i+"_"+obj.htmlName];
+					}else if(obj.type == "string"){
+						document.getElementById("player_"+i+"_"+obj.htmlName).value=savedDataObj["player_"+i+"_"+obj.htmlName];
+					}else if(obj.type == "boolean"){
+						document.getElementById("player_"+i+"_"+obj.htmlName).checked = (savedDataObj["player_"+i+"_"+obj.htmlName] == "true");
+					}	
+				}
+			}
+			addTableParams("gameTable",savedDataObj);
+			addTableParams("serverTable",savedDataObj);
+		}catch(err){
+			alert("Load failed "+ err)
+		}
+	}
+	function addTableParams(tableName,savedParams){
+		var table = document.getElementById(tableName);
+		var delCount = table.rows.length;
+		for(var i =0;i<delCount;i++){
+			table.deleteRow(0);
+		}
+		i=0;
+		while(savedParams[tableName+"_"+i]!=null){
+			var key = savedParams[tableName+"_"+i];
+			var value = savedParams[savedParams[tableName+"_"+i]];	
+			addEntryField(tableName,key,value);
+			i++;
+		}
+	}
+	function getPlayerParams(playerNum){
+		var playerParams = new Array();
+		var obj ;
+		for(var i=0;i<paramArr.length;i++){
+			obj = paramArr[i];
+			if(obj.isUser != true) continue;
+			if(obj.type == "int"){
+				playerParams[obj.htmlName] =checkVaildNumber("player_"+playerNum+"_"+obj.htmlName)
+			}else if(obj.type == "string"){
+				playerParams[obj.htmlName] =document.getElementById("player_"+playerNum+"_"+obj.htmlName).value;
+			}else if(obj.type == "boolean"){
+				playerParams[obj.htmlName] = document.getElementById("player_"+playerNum+"_"+obj.htmlName).checked;
+			}	
+		}
+		return playerParams;
+	}
+	function getPlayerParamsForSave(playerNum){
+		var playerParams = new Array();
+		var obj;
+		for(var i =0;i<paramArr.length;i++){
+			obj = paramArr[i];
+			if(obj.isUser != true) continue;
+			if(obj.type == "int"){
+				playerParams["player_"+playerNum+"_"+obj.htmlName] = checkVaildNumber("player_"+playerNum+"_"+obj.htmlName)
+			}else if(obj.type == "string"){
+				playerParams["player_"+playerNum+"_"+obj.htmlName] = document.getElementById("player_"+playerNum+"_"+obj.htmlName).value;
+			}else if(obj.type == "boolean"){
+				playerParams["player_"+playerNum+"_"+obj.htmlName] = document.getElementById("player_"+playerNum+"_"+obj.htmlName).checked;
+			}	
+		}
+
+		return playerParams;
+	}
+	function save_click(){
+		try{
+			var params = getFormParams();
+			var PlayersNumSim = checkVaildNumber("PlayersNumSim");
+			allPlayerParams = new Array()
+			for(var i=1;i<=PlayersNumSim;i++)
+				allPlayerParams = myConcat(getPlayerParamsForSave(i),allPlayerParams);
+			document.getElementById("paramsHandler").style.left = width/2 - 300+"px";
+			document.getElementById("paramsHandler").style.top = "200px";
+			params["PlayersNumSim"] = PlayersNumSim;
+			var gameCustomData = getTableCustomParams("gameTable")
+			var serverCustomData = getTableCustomParams("serverTable")
+			
+			var saveParams = myConcat(allPlayerParams,params);
+			saveParams = myConcat(saveParams,gameCustomData);
+			saveParams = myConcat(saveParams,serverCustomData);
+			saveSharedObject("Come2PlayFrameworkTest",document.getElementById("paramsHandler"),parametersToUrl(saveParams));
+		}catch(err){
+			alert("error saving"+err);
+			return;
+		}
+	}
+	function LaunchBtn_click(){
+		try{
+			var params = getFormParams();
+			var PlayersNumSim = checkVaildNumber("PlayersNumSim");
+			var gameCustomValues = getTableCustomParams("gameTable");
+			var serverCustomValues = getTableCustomParams("serverTable");
+			var isAutoMatch = document.getElementById("AutoMatch").checked;
+			if(document.getElementById("LaunchBtn").value != "Launch Test"){
+				var obj;
+				for(var i=0;i<openRooms.length;i++){
+					obj = openRooms[i];
+					obj.close();
+				}
+				openRooms = new Array();
+				document.getElementById("LaunchBtn").value = "Launch Test"
+			}else{
+				var playerParms;
+				var matchParams ;
+				var autoMatchParams = new Array;
+				if(isAutoMatch){
+					autoMatchParams["flash_type"] = "game";
+					autoMatchParams["type"] = "AutoMatch"
+					autoMatchParams["match_string"] = "dogs";
+					autoMatchParams["room_id"] = 2+ Math.ceil(1000*Math.random());
+				}else{
+					autoMatchParams["flash_type"] = "room";
+				}
+				for(var i=1;i<=PlayersNumSim;i++){
+					var cureentPlayerMatchParams = new Array();
+					playerParms = getPlayerParams(i);
+					cureentPlayerMatchParams = myConcat(params,playerParms)
+					cureentPlayerMatchParams = myConcat(cureentPlayerMatchParams,serverCustomValues);
+					cureentPlayerMatchParams = myConcat(cureentPlayerMatchParams,gameCustomValues);
+					cureentPlayerMatchParams = myConcat(autoMatchParams,cureentPlayerMatchParams)
+					openRooms.push(window.open("room.html?"+parametersToUrl(cureentPlayerMatchParams)));
+
+				}
+				document.getElementById("LaunchBtn").value = "Close Test"
+			}
+		}catch(err){
+			alert("LaunchBtn_click : "+ err);
+			return ;
+		}
+	}
+	function parametersToUrl(param_arr) {
+	    var flash_arr = new Array();
+	    for(var key in param_arr) {
+	        var val = param_arr[key];
+	        flash_arr[flash_arr.length] = key + "=" + encodeURIComponent(val);
+	    }
+	    return flash_arr.join("&");
+	}
+	function getFormParams(){
+		var params = new Array();
+		var obj;
+		for(var i=0;i<paramArr.length;i++){
+		
+			obj = paramArr[i];
+			if(obj.isUser == true) continue;
+			if(obj.defultValue != null){
+				if(document.getElementById("isDefault"+obj.htmlName).checked)
+				{
+					params[obj.htmlName] = obj.defultValue;
+					continue;
+				}
+			}
+			
+			if(obj.type == "int"){
+				params[obj.htmlName] = checkVaildNumber(obj.htmlName)
+			}else if(obj.type == "string"){
+				params[obj.htmlName] = document.getElementById(obj.htmlName).value;
+			}else if(obj.type == "boolean"){
+				params[obj.htmlName] = document.getElementById(obj.htmlName).checked;
+			}
+		}
+		return params;
+	}
+	function checkVaildNumber(load){
+		num = parseInt(document.getElementById(load).value);
+		if(isNaN(num)){
+			throw load+" must be a number";
+		}else if(num<1){
+			throw load+" must be larger than 0";
+		}
+		return num;
+	}
+	function initPlayerRow(row,num){
+		var value;
+		var obj;
+		for(var i=0;i<paramArr.length;i++){
+			obj = paramArr[i];
+			if(obj.isUser != true) continue;
+			if(obj.callFunc != null){
+				val = obj.callFunc();
+			}else if(obj.htmlName == "name"){
+				val = "Player "+num;
+			}else if(obj.htmlName == "id"){
+				val = num;
+			}else{
+				val = "";
+			}
+			if(obj.type == "int"){
+				addCell(row,"<INPUT TYPE='text'  id='player_"+num+"_"+obj.htmlName+"' value='"+val+"'>");
+			}else if(obj.type == "string"){
+				addCell(row,"<INPUT TYPE='text' size='10' id='player_"+num+"_"+obj.htmlName+"' value='"+val+"'>");
+			}else if(obj.type == "boolean"){
+				addCell(row,"<INPUT TYPE='checkbox' id='player_"+num+"_"+obj.htmlName+"'>");
+			}			
+		}
+	}
+	function addCell(row,data){
+		var cell = row.insertCell(0);
+		cell.innerHTML = data;
+	}
+	function PlayerNumChanged(){
+		try{
+			var PlayersNumSim = checkVaildNumber("PlayersNumSim") + 1;
+			var playerTable = document.getElementById("playerTable");
+			var rows = playerTable.rows.length ;
+			if(rows > PlayersNumSim){
+				for(var i=rows;i>PlayersNumSim;i--){
+					playerTable.deleteRow(i-1);
+				}
+			}
+			else if(rows < PlayersNumSim){
+				for(var i=rows;i<PlayersNumSim;i++){
+					initPlayerRow(playerTable.insertRow(i),i);
+				}
+			}
+		}catch(err){
+			alert("PlayerNumChanged :"+err)
+			return;
+		}
+	}
+	function addEntryField(tableName,key,value){
+		var table = document.getElementById(tableName);
+		var num = table.rows.length;
+		var row = table.insertRow(num)
+		var cell = row.insertCell(0);
+		cell.innerHTML = "<A HREF=\"#\" onclick=\"removeTableRow('"+tableName+"',"+num+");\"><H1>X</H1></A>";
+		cell = row.insertCell(0);
+		cell.innerHTML = "<input type=\"text\" id=\"value_"+tableName+"_"+num+"\" value=\""+value+"\">";
+		cell = row.insertCell(0);
+		cell.innerHTML = "<input type=\"text\" id=\"key_"+tableName+"_"+num+"\" value=\""+key+"\">";	
+	}
+	function init(){
+		var playerTable = document.getElementById("playerTable");
+		var row = playerTable.insertRow(0);
+		for(var i =0;i<paramArr.length;i++){
+		    var obj = paramArr[i];
+			if(obj.isUser != true) continue;
+			var cell = row.insertCell(0);
+			cell.innerHTML = obj.colName;
+		}
+		window.onresize = myResize;
+		myResize();
+		//startup script
+		PlayerNumChanged();
+		for(var i=0;i<customInit.length;i++){
+			var customItem = customInit[i];
+			addEntryField(customItem.tableName,customItem.key,customItem.value);
+		}
+	}
+
+	</script>
+</HEAD>
+<BODY onload="init()">
+	<FORM target="_self" method="get">
+		<TABLE>
+			<TR>
+			<TD>
+			<input value="Save Settings" type="button" id="SvaeBtn" onclick="save_click();" />
+			<input value="Load Settings" type="button" id="LoadBtn" onclick="load_click();" />
+			</TD>
+			<TD COLSPAN=2></TD>
+			</TR>
+			<TR>
+				<TD>Game SWF :</TD>
+				<TD><input type="text" id="gameSwf" value="../AS3/SWFs/MinesweeperAS3.swf?"></TD>
+				<TD>is Yoav Container ? </TD>
+				<TD><input type="checkbox" id="isYoavContainer" value="isYoavContainer"></TD>
+			</TR>
+			<TR>
+				<TD>Old Board name :</TD>
+				<TD><input type="text" id="oldBoard" value="Reversi"></TD>
+				<TD>is Old Board ? </TD>
+				<TD><input type="checkbox" id="isOldBoard" value="isOldBoard"></TD>
+			</TR>
+			<TR>
+				<TD>Room XML :</TD>
+				<TD><input type="text" id="roomXML" value="XML/config2.xml"></TD>
+				<TD>use default ? </TD>
+				<TD><input type="checkbox" id="isDefaultroomXML" value="isDefaultroomXML" checked="true"></TD>
+			</TR>
+			<TR>
+				<TD>Game XML :</TD>
+				<TD><input type="text" id="gameXML" value="XML/config2.xml"></TD>
+				<TD>use default ? </TD>
+				<TD><input type="checkbox" id="isDefaultgameXML" value="isDefaultgameXML" checked="true"></TD>
+			</TR>
+			<TR>
+				<TD COLSPAN=2>
+				../AS3/SWFs/MinesweeperAS3.swf?
+				<BR>
+				../AS3/SWFs/TicTacToe_AS3.swf?
+				</TD>
+			</TR>
+			<TR>
+				<TD>SWF Height:</TD>
+				<TD><input type="text" id="swfHeight" value="500"></TD>
+			</TR>
+			<TR>
+				<TD>SWF Width:</TD>
+				<TD><input type="text" id="swfWidth" value="600"></TD>
+			</TR>
+			<TR>
+				<TD>Board X position:</TD>
+				<TD><input type="text" id="gameStageX" value="10"></TD>
+			</TR>
+			<TR>
+				<TD>Board Y position:</TD>
+				<TD><input type="text" id="gameStageY" value="70"></TD>
+			</TR>
+			<TR>
+				<TD>Board Height:</TD>
+				<TD><input type="text" id="boardHeight" value="400"></TD>
+			</TR>
+			<TR>
+				<TD>Board Width:</TD>
+				<TD><input type="text" id="boardWidth" value="400"></TD>
+			</TR>
+			<TR>
+				<TD>Number of Players to simulate:</TD>
+				<TD><input type="text" onchange="PlayerNumChanged();" id="PlayersNumSim" value="1"></TD>
+				<TD ALIGN ="LEFT">Auto match? </TD>
+				<TD><input type="checkbox" id="AutoMatch" value="AutoMatch"></TD>
+			</TR>
+			<TR>
+				<TD>Players Number</TD>
+				<TD><input type="text" id="PlayersNum" value="1"></TD>
+			</TR>
+			<TR>
+				<TD>Minimum Players Number</TD>
+				<TD><input type="text" id="MinPlayersNum" value="1"></TD>
+			</TR>
+			<TR>
+				<TD>Maximum Players Number</TD>
+				<TD><input type="text" id="MaxPlayersNum" value="1"></TD>
+			</TR>
+			
+			<TR>
+				<TD></TD>
+				<TD COLSPAN=4>
+					Player Info:
+					<TABLE id="playerTable" border="1">
+
+					</TABLE>
+				</TD>
+			</TR>
+			<TR>
+				<TD></TD>
+				<TD COLSPAN=4>
+					Server Custom Info:
+					<TABLE id="serverTable" border="1">
+
+					</TABLE>
+					<A HREF="#" onclick="addTableEntry('serverTable');"><H3>Add Custom Server Entry</H3></A>
+				</TD>
+			</TR>
+			<TR>
+				<TD></TD>
+				<TD COLSPAN=4>
+					Game Custom Info:
+					<TABLE id="gameTable" border="1">
+
+					</TABLE>
+					<A HREF="#" onclick="addTableEntry('gameTable');"><H3>Add Custom Game Entry</H3></A>
+				</TD>
+			</TR>
+		</TABLE>
+
+		<input value="Launch Test" type="button" id="LaunchBtn" onclick="LaunchBtn_click();" />
+	</FORM>
+	<DIV id="paramsHandler" style="position:absolute;"></DIV>
+</BODY>
+
+</HTML>

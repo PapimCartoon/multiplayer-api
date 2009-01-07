@@ -1,0 +1,181 @@
+<HTML>
+<HEAD>
+	<TITLE>Room tester</TITLE>
+	<LINK REL="Stylesheet" HREF="http://www.come2play.com/css/general2.3.css" TYPE="Text/css">
+	<script language="javascript" src="FlashObject.js"></script>
+	<script language="javascript" src="params.js"></script>
+	<script type="text/javascript">
+	var openWindows = new Array();
+	var prefix_random_number = 2+ Math.ceil(1000000*Math.random());
+    function javascript_get_prefix_method() {
+            return prefix_random_number;
+    }
+	function parametersToUrl(param_arr) {
+	    var flash_arr = new Array();
+	    for(var key in param_arr) {
+	        var val = param_arr[key];
+	        flash_arr[flash_arr.length] = key + "=" + encodeURIComponent(val);
+	    }
+	    return flash_arr.join("&");
+	}
+	function openJavaScriptPopup(type, url){
+		var paramsToSend = new Array();
+		var obj;
+		for(var i=0;i<paramArr.length;i++){
+			obj = paramArr[i];
+			paramsToSend[obj.htmlName] = windowParams[obj.htmlName]
+		}
+		paramsToSend = parametersToUrl(paramsToSend);
+		openWindows.push(single_popup=window.open(url+"&"+paramsToSend+"&flash_type=game&type="+type))
+	}
+	function getParametersFromURL() {
+	    var res = new Array();
+	    var searchStr = window.location.search;
+	    if (searchStr.length<2) return res;
+	    var parameters = searchStr.substring(1);
+	    //window.alert(parameters);
+	    var arr = parameters.split("&");
+	    for(var i=0; i<arr.length; i++) {       
+	        //window.alert(arr[i]);
+	        var key_val = arr[i].split("=");
+	        if (key_val.length!=2) window.alert("Error in getParametersFromURL:"+arr[i]);
+	        key_val[0] = unescape(key_val[0]);
+	        key_val[1] = unescape(key_val[1]);
+	        //window.alert(key_val[0] + "====" + key_val[1]);
+	        res[ key_val[0] ] = key_val[1];
+	    }           
+	    return res;
+	}
+	function loadSWF(swf,params,width,height)
+	{
+		try{
+			writeFlash(
+			document.getElementById("roomDiv"),//where to position window
+			swf+"?"+params,width,height,//size and needed SWF
+			"",//flash vars
+			"Room");
+		}catch(err){
+		}
+	}
+	function passUnloadToFlash() {
+		if(thisMovie("Room").innerHTML !="")
+			thisMovie("Room").flashCallBack_onunloadEvent();
+	}
+	function addTableParams(params,tableName){
+		var i=0;
+		var putCustomIn;
+		if(tableName == "serverTable"){
+			putCustomIn = "override_customInitInfo.custom.ADD";
+		}else if(tableName == "gameTable"){
+			putCustomIn = "override_config.game_parameters.customInitInfo.custom.ADD";
+		}
+		
+		while(windowParams[tableName+"_"+i]!=null){
+			params[putCustomIn+"_"+tableName+"_"+i] = "<entry><key>"+windowParams[tableName+"_"+i]+"</key><value>"+windowParams[windowParams[tableName+"_"+i]]+"</value></entry>"
+			i++;
+		}
+	}
+	
+	function thisMovie(name) {
+		if (navigator.appName.indexOf("Microsoft") != -1) {
+			return window[name]
+		}
+		else {
+			return document[name]
+		}
+	}
+
+	</script>	
+</HEAD>
+<BODY onbeforeunload="passUnloadToFlash();">
+
+	
+	<div id="roomDiv" name="roomDiv"></div>
+	<script type="text/javascript">
+		var windowParams = getParametersFromURL();
+		var params=new Array();
+		var loadSwf;
+		//shared information betweeng game and room begins here
+		var obj;
+		for(var i=0;i<paramArr.length;i++){
+			obj = paramArr[i];
+			if(obj.isUser == true){
+				if(obj.htmlName == "tokens")
+					params[obj.xmlName]=windowParams[obj.htmlName];
+				else
+					params[obj.xmlName]=encodeURIComponent(windowParams[obj.htmlName]);
+			}else if(obj.xmlName != null){
+				if (( (windowParams["flash_type"] == "room") && (obj.xmlName.indexOf("room_parameters")!=-1))  || ((windowParams["flash_type"] == "game") && (obj.xmlName.indexOf("game_parameters")!=-1)))
+				{
+					params[obj.xmlName]=windowParams[obj.htmlName];
+				}else if ((obj.xmlName.indexOf("room_parameters")==-1) && (obj.xmlName.indexOf("game_parameters")==-1)){
+					params[obj.xmlName]=windowParams[obj.htmlName];
+				}
+				
+			}
+				
+		}
+		addTableParams(params,"serverTable")
+		
+		params["chat_skin_url"]="graphics/chatGraphics.swf";		
+
+		//shared information betweeng game and room ends here
+		if (windowParams["flash_type"] == "room"){
+		document.title = "Room Tester"
+			if(windowParams["isYoavContainer"] == "true")
+				params["swf_url"]=  "framework/MxmlRoomGraphics.swf";
+			else
+				params["swf_url"]=  "framework/RoomGraphicsNoMXML.swf";
+				
+			params["skin_url"]="graphics/RoomGraphics.swf";		
+			params["config_url"]=windowParams["roomXML"];
+			params["override_config.game_parameters"] = "DELETE";
+			params["override_config.flash_type"] = "room";
+			params["override_config.openJavaScriptPopup.start_game_from_invite_url"] = "room.html?";
+			params["override_config.openJavaScriptPopup.start_game_from_table_url"] = "room.html?";		
+		}
+		else if(windowParams["flash_type"] == "game"){
+		document.title = "Game Tester"
+		addTableParams(params,"gameTable")
+			if(windowParams["isYoavContainer"] == "true")
+				params["swf_url"] = "framework/MxmlGameGraphics.swf";
+			else
+				params["swf_url"] = "framework/GameGraphicsNoMXML.swf";
+			params["skin_url"]="graphics/GameGraphics.swf";	
+			params["config_url"]=windowParams["gameXML"];	
+			
+			params["override_config.game_parameters.prefix_local_connection_id"] = "100"+params["override_config.extra_args.user_id"];
+			params["override_config.game_parameters.game_room.room_id"] = windowParams["room_id"];
+			params["override_config.game_parameters.table_room.room_id"] = windowParams["room_id"];
+			if(windowParams["isOldBoard"] == "true"){
+				params["override_config.game_parameters.board_swf_url"] = getOldBoard(windowParams["oldBoard"])
+				params["override_config.game_parameters.game_room.game_kind"] = "OldBoard";
+				params["override_config.game_parameters.table_room.game_kind"] = "OldBoard";
+				params["override_config.game_parameters.game_room.game_name"] = windowParams["oldBoard"];
+				params["override_config.game_parameters.table_room.game_name"] = windowParams["oldBoard"];
+			}		
+			params["override_config.game_parameters.play_type"] = "MultiPlayer";
+			params["override_config.flash_type"] = "game";
+			if(windowParams["type"] == "start_game_from_table_url"){
+				params["override_config.game_parameters.start_scenario"] = "FromTable";
+				params["override_config.game_parameters.FromTable.table_id"] = windowParams["table_id"];
+				params["override_config.game_parameters.FromTable.player_ids"] = windowParams["player_ids"];		
+			}
+			else if(windowParams["type"] == "start_game_from_invite_url"){
+				params["override_config.game_parameters.start_scenario"] = "SentInvitation";
+				params["override_config.game_parameters.SentInvitation.player_ids"] = windowParams["player_ids"];
+			}else if(windowParams["type"] == "AutoMatch"){
+				params["override_config.game_parameters.start_scenario"] = "AutoMatch";
+				params["override_config.game_parameters.AutoMatch.match_string"] = windowParams["match_string"];
+			}
+			
+			
+		}
+		if(windowParams["isYoavContainer"] == "true"){
+			loadSWF(params["swf_url"],parametersToUrl(params),windowParams["swfWidth"],windowParams["swfHeight"])
+		}else{
+			loadSWF("graphics/distrabutionSwf.swf",parametersToUrl(params),windowParams["swfWidth"],windowParams["swfHeight"])
+		}
+	</script>
+</BODY>
+</HTML>

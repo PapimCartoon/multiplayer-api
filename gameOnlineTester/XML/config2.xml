@@ -152,7 +152,7 @@ Not used by the graphics yet (but should be displayed):
 		74.63.37.41:8080:xmlsocket,74.63.37.41:80:rtmpt
 		192.168.0.138:2000:xmlsocket,192.168.0.138:8083:rtmpt
 		-->
-		<entry><key>override all_java_ips</key><value>'localhost:2000:xmlsocket,localhost:8083:rtmpt'</value></entry>
+		<entry><key>override all_java_ips</key><value>'80.179.46.235:8080:xmlsocket,80.179.46.235:80:rtmpt'</value></entry>
 		
 		<!--
 		<entry><key>ARTIFICIAL_TO_JAVA_DELAY</key><value>'1000-2000'</value></entry>
@@ -984,7 +984,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 			
 			<ui>
 				<is_hide_avatar_in_chat_list type="boolean">false</is_hide_avatar_in_chat_list>
-				<is_align_vertical type="boolean">false</is_align_vertical>
+				<is_align_vertical type="boolean">true</is_align_vertical>
 				<is_with_bet type="boolean">true</is_with_bet>
 				<is_with_emoticons type="boolean">true</is_with_emoticons>
 			</ui>

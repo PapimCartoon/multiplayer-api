@@ -1,0 +1,50 @@
+<roomlist type="list">
+	<room>
+		<room_id>7468</room_id>
+		<all_java_ips></all_java_ips> 		
+		<room_name>Chess room</room_name> 
+		<cur_users>5</cur_users> 
+		<max_users>20</max_users> 
+		<open_in_seconds>0</open_in_seconds>
+		<close_in_seconds>0</close_in_seconds>
+		<game_kind>OldBoard</game_kind>
+		<game_name>Chess</game_name>	
+		<room_md5>alltembels</room_md5>
+		
+		<opening_date>01/02/2004</opening_date>
+		<closing_date>01/04/2010</closing_date>
+		<open_status>2</open_status>
+	</room>
+	<room>
+		<room_id>2</room_id> 
+		<all_java_ips></all_java_ips> 	
+		<room_name>BackGammon room</room_name> 
+		<cur_users>1</cur_users> 
+		<max_users>20</max_users> 
+		<open_in_seconds>0</open_in_seconds>
+		<close_in_seconds>0</close_in_seconds>
+		<game_kind>OldBoard</game_kind>
+		<game_name>BackGammon</game_name>				
+		<room_md5>alltembels</room_md5> 
+		
+		<opening_date>01/02/2004</opening_date>
+		<closing_date>01/04/2010</closing_date>
+		<open_status>2</open_status>
+	</room>
+	<room>
+		<room_id>3</room_id> 
+		<all_java_ips></all_java_ips> 	
+		<room_name>Connect4 room</room_name> 
+		<cur_users>1</cur_users> 
+		<max_users>20</max_users> 
+		<open_in_seconds>0</open_in_seconds>
+		<close_in_seconds>0</close_in_seconds>
+		<game_kind>OldBoard</game_kind>
+		<game_name>Connect4</game_name>				
+		<room_md5>alltembels</room_md5> 
+		
+		<opening_date>01/02/2004</opening_date>
+		<closing_date>01/04/2010</closing_date>
+		<open_status>2</open_status>
+	</room>
+</roomlist>

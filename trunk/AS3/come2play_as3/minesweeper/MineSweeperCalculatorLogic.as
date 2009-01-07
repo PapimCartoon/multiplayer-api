@@ -16,14 +16,14 @@ package come2play_as3.minesweeper
 			
 		}
 		
-		static public function createMineBoard(randomSeed:int,mineAmount:int,boardWidth:int,boardHeight:int):Array/*UserEntry*/
+		static public function createMineBoard(randomSeed:int,mineAmount:int,boardWidth:int):Array/*UserEntry*/
 		{
 			var randomSeedGenerator:RandomGenerator = new RandomGenerator(randomSeed);
 			var mines:Array = new Array();
 			//create mine positions
 			while(mines.length < mineAmount)
 			{
-				var mineUncalculated:int = randomSeedGenerator.nextInRange(0, boardHeight * boardWidth);
+				var mineUncalculated:int = randomSeedGenerator.nextInRange(0, boardWidth * boardWidth);
 				var newPos:Object = {xPos: int(mineUncalculated/boardWidth),yPos:(mineUncalculated%boardWidth)};
 				if (!doesExist(newPos,mines))
 					mines.push(newPos);
@@ -33,12 +33,12 @@ package come2play_as3.minesweeper
 			for(var i:int=0;i<boardWidth;i++)
 			{
 				newCalculatorBoard[i] = new Array();
-				for(var j:int=0;j<boardHeight;j++)
+				for(var j:int=0;j<boardWidth;j++)
 					newCalculatorBoard[i][j]=0		
 			}
 			//put mines on board		
 			for(i=0;i<boardWidth;i++)
-				for(j=0;j<boardHeight;j++)
+				for(j=0;j<boardWidth;j++)
 				{
 					if(doesExist({xPos:i,yPos:j},mines))
 					{
@@ -61,14 +61,14 @@ package come2play_as3.minesweeper
 				}
 				
 				
-			var sort:UnionSort = new UnionSort(newCalculatorBoard,boardWidth,boardHeight);
+			var sort:UnionSort = new UnionSort(newCalculatorBoard,boardWidth,boardWidth);
 			var userEntries:Array= new Array();
 			var serverBox:ServerBox;	
 			//find connected squares to each white square and create ServerEntries
 			
 			
 			for(i=0;i<boardWidth;i++)
-				for(j=0;j<boardHeight;j++)	
+				for(j=0;j<boardWidth;j++)	
 				{
 					if(newCalculatorBoard[i][j] == 0)
 						userEntries.push(UserEntry.create({xPos:i,yPos:j},{type:"deadSpace",id:sort.getBrick(i,j)},true));

@@ -14,7 +14,6 @@ import flash.utils.*;
 		static public const squareSize:int = 19;
 		
 		private var graphics:MovieClip;
-		private static var boardHeight:int=10;
 		private static var boardWidth:int=10;
 		private static var mineAmount:int=10;
 		private var stageX:int = 0;
@@ -96,7 +95,6 @@ import flash.utils.*;
 				mineSweeperLogic.setNewGraphicScale(graphics.scaleX,graphics.scaleY);
 			}		
 			boardWidth = T.custom("Board Width", 12) as int;
-			boardHeight =  T.custom("Board height", 12) as int;
 			mineAmount = T.custom("Mine Amount", 20) as int;
 
 		}
@@ -105,9 +103,7 @@ import flash.utils.*;
 			for each (var serverEntry:ServerEntry in serverEntries)
 			{
 				if(serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" stored a random key");
-				if (serverEntry.key == "Board height") 
-					var calcHeight:int = serverEntry.value as int;
-				else if (serverEntry.key == "Board Width") 
+				if (serverEntry.key == "Board Width") 
 					var calcWidth:int = serverEntry.value as int;
 				else if (serverEntry.key == "Mine Amount")
 					var calcMineAmount:int = serverEntry.value as int;
@@ -117,7 +113,7 @@ import flash.utils.*;
 			
 			
 			//BOARD_WIDTHstr,BOARD_HEIGHTstr,MINE_AMOUNTstr
-			doAllStoreStateCalculation(requestId,MineSweeperCalculatorLogic.createMineBoard(calcRandomSeed,calcMineAmount,calcWidth,calcHeight));	
+			doAllStoreStateCalculation(requestId,MineSweeperCalculatorLogic.createMineBoard(calcRandomSeed,calcMineAmount,calcWidth));	
 		}
 		override public function gotUserInfo(userId:int, entries:Array/*InfoEntry*/):void 
 		{
@@ -132,9 +128,9 @@ import flash.utils.*;
 			if(serverEntries.length == 0)
 			{
 				doAllRequestRandomState("randomSeed",true);
-				doAllStoreState([UserEntry.create("Board Width",boardWidth),UserEntry.create("Board height",boardHeight),UserEntry.create("Mine Amount",mineAmount)])
-				doAllRequestStateCalculation(["randomSeed","Board Width","Board height","Mine Amount"]);
-				mineSweeperLogic.makeBoard(boardWidth,boardHeight,stageX,stageY,allPlayerIds,myUserId);
+				doAllStoreState([UserEntry.create("Board Width",boardWidth),UserEntry.create("Mine Amount",mineAmount)])
+				doAllRequestStateCalculation(["randomSeed","Board Width","Mine Amount"]);
+				mineSweeperLogic.makeBoard(boardWidth,stageX,stageY,allPlayerIds,myUserId);
 			}
 			else
 			{
@@ -143,12 +139,12 @@ import flash.utils.*;
 				graphicPlayed = true;
 				if((T.custom(API_Message.CUSTOM_INFO_KEY_isBack,false) as Boolean))
 				{
-					mineSweeperLogic.makeBoard(boardWidth,boardHeight,stageX,stageY,allPlayerIds,myUserId);
+					mineSweeperLogic.makeBoard(boardWidth,stageX,stageY,allPlayerIds,myUserId);
 					startGame();
 				}
 				else
 				{
-					mineSweeperLogic.makeBoard(boardWidth,boardHeight,stageX,stageY,allPlayerIds,myUserId);
+					mineSweeperLogic.makeBoard(boardWidth,stageX,stageY,allPlayerIds,myUserId);
 					animationStarted();
 					startGraphic.play();
 				}
@@ -165,11 +161,11 @@ import flash.utils.*;
 			if(!isPlaying)
 				return;
 			var serverEntry:ServerEntry = serverEntries[0]
-			if(serverEntries.length == 4)
+			if(serverEntry.key == "randomSeed")
 			{
 				if(serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" tryed to change custom info or random seed");
 			}
-			else if(serverEntries.length >= (boardHeight * boardWidth))//state changed due to creation of board by calculators
+			else if(serverEntries.length >= (boardWidth * boardWidth))//state changed due to creation of board by calculators
 			{
 				//got calculations made by calculator	
 				if(serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" stored the data and not the calculator");

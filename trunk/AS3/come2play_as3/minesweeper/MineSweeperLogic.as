@@ -33,7 +33,6 @@ package come2play_as3.minesweeper
 		value 3 means the move is on the board
 		*/
 		private var boardWidth:int;/*board width in squares*/
-		private var boardHeight:int;/*board height in squares*/
 		
 		private var stageX:int;/*the x where the game is positioned*/
 		private var stageY:int;/*the y where the game is positioned*/
@@ -98,10 +97,9 @@ package come2play_as3.minesweeper
 				shift.gotoAndStop(1);
 				
 		}
-		public function makeBoard(boardWidth:int,boardHeight:int,stageX:int,stageY:int,allPlayerIds:Array/*int*/,myUserId:int):void
+		public function makeBoard(boardWidth:int,stageX:int,stageY:int,allPlayerIds:Array/*int*/,myUserId:int):void
 		{
 			this.boardWidth = boardWidth;
-			this.boardHeight = boardHeight;
 			this.stageX = stageX;
 			this.stageY = stageY;
 			this.myUserId = myUserId;
@@ -119,12 +117,12 @@ package come2play_as3.minesweeper
 			for(i=0;i<boardWidth;i++)
 			{
 				boardLogic[i] = new Array();
-				for(var j:int=0;j<boardHeight;j++)
+				for(var j:int=0;j<boardWidth;j++)
 				{
 					boardLogic[i][j] = 0 ;
 				}
 			}		
-			mineSweeperGraphic.makeBoard(boardWidth,boardHeight,allPlayerIds,allPlayerIds.indexOf(myUserId) != -1);
+			mineSweeperGraphic.makeBoard(boardWidth,allPlayerIds,allPlayerIds.indexOf(myUserId) != -1);
 
 		}
 		public function loadBoard(serverEntries:Array/*ServerEntry*/):void
@@ -156,7 +154,7 @@ package come2play_as3.minesweeper
 			var xPos:int = Math.floor((ev.stageX-(stageX+9.5))/(MineSweeperMain.squareSize*scaleX));
 			var yPos:int = Math.floor((ev.stageY-(stageY+7))/(MineSweeperMain.squareSize*scaleY));
 			trace(scaleX+"/"+scaleY)
-			if((xPos> -1)&&(xPos<(boardWidth))&&(yPos>-1)&&(yPos<(boardHeight)))
+			if((xPos> -1)&&(xPos<(boardWidth))&&(yPos>-1)&&(yPos<(boardWidth)))
 				if((boardLogic[xPos][yPos] == 0) && (isPlaying))
 				{
 					boardLogic[xPos][yPos] = 1;
@@ -224,7 +222,7 @@ package come2play_as3.minesweeper
 			mineSweeperGraphic.updateScore(playerNum,currentData.playerScore);
 			boardLogic[serverBox.xPos][serverBox.yPos] = 3
 			madeMoves++;
-			if((madeMoves >= boardHeight * boardWidth) || (currentData.playerLives == 0))
+			if((madeMoves >= boardWidth * boardWidth) || (currentData.playerLives == 0))
 				gameOver();
 		}
 		
@@ -328,7 +326,7 @@ package come2play_as3.minesweeper
 			}
 			mineSweeperGraphic.updateLives(playerNum,currentData.playerLives);
 			mineSweeperGraphic.updateScore(playerNum,currentData.playerScore);
-			if((madeMoves >= boardHeight * boardWidth) || (currentData.playerLives == 0))
+			if((madeMoves >= boardWidth * boardWidth) || (currentData.playerLives == 0))
 				gameOver();
 		}
 	}

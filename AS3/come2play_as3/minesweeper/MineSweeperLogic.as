@@ -161,7 +161,27 @@ package come2play_as3.minesweeper
 					mineSweeperMainPointer.makePlayerMove(PlayerMove.create(xPos,yPos,myUserId,isMine));
 				}
 		}
+		public function getRandomMove(xpos:int,ypos:int):ComputerMove{
+			for(var i:int = xpos;i<boardWidth;i++){
+				for(var j:int = ypos;j<boardWidth;j++){
+					if(boardLogic[i][j] == 0){
+						return ComputerMove.create(i,j);
+					}
+				}
+			}
+			return null;
+		}
 		
+		public function getComputerMove():ComputerMove{
+			var computerMove:ComputerMove = getRandomMove(Math.random()*boardWidth,Math.random()*boardWidth);
+			if(computerMove == null){
+				computerMove = getRandomMove(0,0);
+			}
+			if(computerMove != null){
+				boardLogic[computerMove.xPos][computerMove.yPos] = 1;
+			}
+			return computerMove;
+		}
 		public function addPlayerMove(playerMove:PlayerMove):Boolean
 		{
 			for each(var queuedMove:PlayerMove in movesInProcess)
@@ -175,6 +195,20 @@ package come2play_as3.minesweeper
 			boardLogic[playerMove.xPos][playerMove.yPos] = 2;
 			return true;
 		}
+		public function addComputerMove(computerMove:ComputerMove):Boolean
+		{
+			var fakePlayerMove:PlayerMove = PlayerMove.create(computerMove.xPos,computerMove.yPos,-1,false);
+			for each(var queuedMove:PlayerMove in movesInProcess)
+			{
+				if((fakePlayerMove.xPos == queuedMove.xPos) && (fakePlayerMove.yPos == queuedMove.yPos))
+					return false;
+				if(boardLogic[fakePlayerMove.xPos][fakePlayerMove.yPos] == 3)
+					return false;
+			}
+			movesInProcess.push(fakePlayerMove);
+			boardLogic[fakePlayerMove.xPos][fakePlayerMove.yPos] = 2;
+			return true;
+		}
 		
 		public function addServerBox(serverBox:ServerBox):void
 		{
@@ -185,17 +219,27 @@ package come2play_as3.minesweeper
 				if ((playerMove.xPos == serverBox.xPos) && (playerMove.yPos == serverBox.yPos))
 				{
 					movesInProcess.splice(i,1);
-					updateMove(playerMove,serverBox);
+					updateMove(playerMove,serverBox,playerMove.playerId == -1);
 					return;
 				}
 			}
 		}
 		
-		private function updateMove(playerMove:PlayerMove,serverBox:ServerBox):void
+		private function updateMove(playerMove:PlayerMove,serverBox:ServerBox,isComputer:Boolean):void
 		{
 			var playerNum:int = allPlayerIds.indexOf(playerMove.playerId);
 			var currentData:PlayerData = playerGameData[playerNum]
-			if((playerMove.isMine) && (serverBox.isMine))//player found mine
+			if(isComputer){
+				if(serverBox.isMine){
+					mineSweeperGraphic.foundMine(playerNum,serverBox.xPos,serverBox.yPos);
+					currentData.addLifePart();
+					currentData.playerScore += 10;
+				}else{
+					mineSweeperGraphic.revealBox(playerNum,serverBox.borderingMines,serverBox.xPos,serverBox.yPos,true);
+					currentData.playerScore += 1;
+				}
+				
+			}else if((playerMove.isMine) && (serverBox.isMine))//player found mine
 			{
 				mineSweeperGraphic.foundMine(playerNum,serverBox.xPos,serverBox.yPos);
 				currentData.addLifePart();
@@ -244,8 +288,15 @@ package come2play_as3.minesweeper
 			}
 			if(playerGameData.length ==2)
 			{
-				playerMatchOverArr.push(PlayerMatchOver.create(playerGameData[0].id,playerGameData[0].playerScore,100));
-				playerMatchOverArr.push(PlayerMatchOver.create(playerGameData[1].id,playerGameData[1].playerScore,0));
+				if(allPlayerIds.indexOf(-1) !=-1){
+					if(playerGameData[0].id == -1)
+						playerMatchOverArr.push(PlayerMatchOver.create(playerGameData[1].id,playerGameData[1].playerScore - playerGameData[0].playerScore,0));
+					else
+						playerMatchOverArr.push(PlayerMatchOver.create(playerGameData[0].id,playerGameData[0].playerScore -playerGameData[1].playerScore,100));
+				}else{
+					playerMatchOverArr.push(PlayerMatchOver.create(playerGameData[0].id,playerGameData[0].playerScore,100));
+					playerMatchOverArr.push(PlayerMatchOver.create(playerGameData[1].id,playerGameData[1].playerScore,0));
+				}
 			}
 			else if(playerGameData.length ==3)
 			{
@@ -300,7 +351,7 @@ package come2play_as3.minesweeper
 					break;
 				}
 			}
-			
+			var isComputer:Boolean = (playerMove.playerId == -1);
 			for each (serverBox in safeSquares)
 			{
 				if(boardLogic[serverBox.xPos][serverBox.yPos] != 3)
@@ -317,7 +368,7 @@ package come2play_as3.minesweeper
 		
 			var playerNum:int = allPlayerIds.indexOf(playerMove.playerId);
 			var currentData:PlayerData = playerGameData[playerNum];
-			if(!playerMove.isMine)
+			if((!playerMove.isMine) || isComputer)
 				currentData.playerScore += score;
 			else
 			{

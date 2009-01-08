@@ -6,7 +6,6 @@ import come2play_as3.api.auto_generated.*;
 
 import flash.display.*;
 import flash.events.*;
-import flash.ui.Mouse;
 import flash.utils.*;
 	public class MineSweeperMain extends ClientGameAPI
 	{
@@ -30,6 +29,7 @@ import flash.utils.*;
 		private var allPlayerIds:Array; //playing user ids
 		private var isPlaying:Boolean;
 		private var allowMoves:Boolean;
+		private var computerMoveTimer:Timer;
 	/** 
 	 * Written by: Ofir Vainshtein (ofirvins@yahoo.com)
  	**/
@@ -40,6 +40,8 @@ import flash.utils.*;
 			super(graphics);
 			this.graphics = graphics;
 			AS3_vs_AS2.waitForStage(graphics,constructGame);
+			computerMoveTimer = new Timer(100,0);
+			computerMoveTimer.addEventListener(TimerEvent.TIMER,computerMakeMove)
 		}
 		public function constructGame():void
 		{ 
@@ -62,6 +64,7 @@ import flash.utils.*;
 				mineSweeperLogic.loadBoard(loadServerEntries);
 			if(! (T.custom(API_Message.CUSTOM_INFO_KEY_isBack,false) as Boolean) )
 				animationEnded();
+			if(allPlayerIds.indexOf(-1) != -1) computerMoveTimer.start();
 			allowMoves = true;
 		}
 		public function gameOver(playerMatchOverArr:Array/*PlayerMatchOver*/):void
@@ -86,6 +89,7 @@ import flash.utils.*;
 			myUserId = T.custom(CUSTOM_INFO_KEY_myUserId, null) as int;
 			stageX = T.custom(CUSTOM_INFO_KEY_gameStageX, null) as int;
 			stageY = T.custom(CUSTOM_INFO_KEY_gameStageY, null) as int;
+			computerMoveTimer.delay = T.custom("ComputerSpeed",2500) as int;
 			for each(var info:InfoEntry in infoEntries){
 				if(info.key == CUSTOM_INFO_KEY_gameWidth){
 					graphics.width = T.custom(CUSTOM_INFO_KEY_gameWidth,int(graphics.width)) as int;
@@ -110,14 +114,20 @@ import flash.utils.*;
 				else if(serverEntry.key == "randomSeed")
 					var calcRandomSeed:int = serverEntry.value as int;
 			}
-			
-			
-			//BOARD_WIDTHstr,BOARD_HEIGHTstr,MINE_AMOUNTstr
 			doAllStoreStateCalculation(requestId,MineSweeperCalculatorLogic.createMineBoard(calcRandomSeed,calcMineAmount,calcWidth));	
 		}
 		override public function gotUserInfo(userId:int, entries:Array/*InfoEntry*/):void 
 		{
 
+		}
+		private function computerMakeMove(ev:TimerEvent):void{
+			var computerMove:ComputerMove = mineSweeperLogic.getComputerMove();
+			if(computerMove == null) return;
+			var key:Object ={xPos:computerMove.xPos,yPos:computerMove.yPos,playerId:-1}
+			var serverKey:Object = {xPos:computerMove.xPos,yPos:computerMove.yPos}
+			if(allowMoves){
+				doStoreState([UserEntry.create(key,computerMove,false)],[RevealEntry.create(serverKey,null,1)]);
+			}
 		}
 		override public function gotMatchStarted(allPlayerIds:Array, finishedPlayerIds:Array, serverEntries:Array):void
 		{
@@ -125,6 +135,9 @@ import flash.utils.*;
 			this.allPlayerIds = allPlayerIds;
 			loadServerEntries = null;
 			graphicPlayed = false;
+			if(allPlayerIds.length == 1){
+				allPlayerIds.push(-1);
+			}
 			if(serverEntries.length == 0)
 			{
 				doAllRequestRandomState("randomSeed",true);
@@ -154,12 +167,44 @@ import flash.utils.*;
 		}
 		override public function gotMatchEnded(finishedPlayerIds:Array/*int*/):void 
 		{
+			computerMoveTimer.reset();
 			mineSweeperLogic.isPlaying = false;
+		}
+		private function addNewMove(serverEntries:Array/*ServerEntry*/):void{
+			var serverEntry:ServerEntry = serverEntries[1];
+			if(serverEntry == null){
+				trace("Ok")
+			}else if (serverEntry.value == null){
+				if(serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" deleting a move must be agreed by all users");
+				//if(!isPlaying) return;
+			}else if(serverEntry.value is ServerBox)//state changed due to RevealEntry caused by a player move
+			{
+				var serverBox:ServerBox = serverEntry.value as ServerBox;
+				if(serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" stored the data and not the calculator");
+				if(!isPlaying) return;
+				mineSweeperLogic.addServerBox(serverBox);
+			}else if (serverEntry.value == null){
+				if(serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" deleting a move must be agreed by all users");
+				//if(!isPlaying) return;
+			}else if(serverEntry.value.type == "deadSpace")//player found a safe zone
+			{
+				serverEntry = serverEntries[2];
+				if(serverEntry == null) return;
+				if(serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" stored the data and not the calculator");
+				if(!isPlaying) return;
+				if(serverEntry.value is Array)
+				{
+					var safeSquares:Array = serverEntry.value as Array;
+					mineSweeperLogic.addSafeZone(safeSquares);
+				}
+			}		
+			doAllSetMove();
 		}
 		override public function gotStateChanged(serverEntries:Array):void
 		{
 			if(!isPlaying)
 				return;
+			var newMove:Boolean;
 			var serverEntry:ServerEntry = serverEntries[0]
 			if(serverEntry.key == "randomSeed")
 			{
@@ -185,41 +230,22 @@ import flash.utils.*;
 				if(playerMove.playerId != serverEntry.storedByUserId) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" stored the data for another user");
 				if(playerMove.playerId != serverEntry.key.playerId) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" key did not match the value");
 				if(!isPlaying) return;
-				var newMove:Boolean = mineSweeperLogic.addPlayerMove(playerMove);
+				newMove = mineSweeperLogic.addPlayerMove(playerMove);
 				if(newMove)	
 				{	
-					serverEntry = serverEntries[1];
-					if(serverEntry == null){
-						trace("Ok")
-					}else if (serverEntry.value == null){
-						if(serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" deleting a move must be agreed by all users");
-						//if(!isPlaying) return;
-					}else if(serverEntry.value is ServerBox)//state changed due to RevealEntry caused by a player move
-					{
-						var serverBox:ServerBox = serverEntry.value as ServerBox;
-						if(serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" stored the data and not the calculator");
-						if(!isPlaying) return;
-						mineSweeperLogic.addServerBox(serverBox);
-					}else if (serverEntry.value == null){
-						if(serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" deleting a move must be agreed by all users");
-						//if(!isPlaying) return;
-					}else if(serverEntry.value.type == "deadSpace")//player found a safe zone
-					{
-						serverEntry = serverEntries[2];
-						if(serverEntry == null) return;
-						if(serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" stored the data and not the calculator");
-						if(!isPlaying) return;
-						if(serverEntry.value is Array)
-						{
-							var safeSquares:Array = serverEntry.value as Array;
-							mineSweeperLogic.addSafeZone(safeSquares);
-						}
-					}		
-					//doAllRevealState([RevealEntry.create(key,null,1)]);	
-					doAllSetMove();
+					addNewMove(serverEntries)
 					return;
 				}
 				doAllStoreState([UserEntry.create(serverEntry.key,null,false)]);
+			}else if (serverEntry.value is ComputerMove){
+				if(allPlayerIds.indexOf(-1) != -1) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" stored a computer move and not a player move")
+				var computerMove:ComputerMove = serverEntry.value as ComputerMove;
+				newMove = mineSweeperLogic.addComputerMove(computerMove);
+				if(newMove){
+					addNewMove(serverEntries)
+					return;
+				}
+				
 			}
 		}
 		override public function gotKeyboardEvent(isKeyDown:Boolean, charCode:int, keyCode:int, keyLocation:int, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean):void

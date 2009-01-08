@@ -115,7 +115,13 @@ package come2play_as3.minesweeper
 			}
 			for (i=0;i<allPlayerIds.length;i++){
 				var userId:int = allPlayerIds[i];
-				playerGraphicDataArr[i]=new PlayerGraphicData(i,T.getUserValue(userId,API_Message.USER_INFO_KEY_name,"player "+userId) as String);
+				var name:String;
+				if(userId == -1){
+					name = "Computer"
+				}else{
+					name = "player "+userId;
+				}
+				playerGraphicDataArr[i]=new PlayerGraphicData(i,T.getUserValue(userId,API_Message.USER_INFO_KEY_name,name) as String);
 				boardUnderPart.addChild(playerGraphicDataArr[i]);	
 				updateLives(i,3);
 			}

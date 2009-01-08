@@ -135,6 +135,11 @@
 			params["override_config.openJavaScriptPopup.start_game_from_table_url"] = "room.html?";		
 		}
 		else if(windowParams["flash_type"] == "game"){
+		var lastGameChar =params["override_config.game_parameters.board_swf_url"].charAt(params["override_config.game_parameters.board_swf_url"].length -1);
+		if((lastGameChar != "?") && (lastGameChar !="&") ){
+			params["override_config.game_parameters.board_swf_url"]+="?";
+		}
+		
 		document.title = "Game Tester"
 		addTableParams(params,"gameTable")
 			if(windowParams["isYoavContainer"] == "true")

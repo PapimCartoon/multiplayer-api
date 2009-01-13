@@ -1,0 +1,232 @@
+<html>
+<HEAD>
+
+
+
+<SCRIPT LANGUAGE="JavaScript" src="js/save_form.js"></SCRIPT>
+<SCRIPT LANGUAGE="JavaScript">
+
+// Cookie Functions  ////////////////////  (:)
+
+
+
+// Set the cookie.
+
+// SetCookie('your_cookie_name', 'your_cookie_value', exp);
+
+
+
+// Get the cookie.
+
+// var someVariable = GetCookie('your_cookie_name');
+
+
+
+var expDays = 100;
+
+var exp = new Date(); 
+
+exp.setTime(exp.getTime() + (expDays*24*60*60*1000));
+
+
+
+function getCookieVal (offset) {  
+
+	var endstr = document.cookie.indexOf (";", offset);  
+
+	if (endstr == -1) { endstr = document.cookie.length; }
+
+	return unescape(document.cookie.substring(offset, endstr));
+
+}
+
+
+function GetCookie (name) {  
+
+	var arg = name + "=";  
+
+	var alen = arg.length;  
+
+	var clen = document.cookie.length;  
+
+	var i = 0;  
+
+	while (i < clen) {    
+
+		var j = i + alen;    
+
+		if (document.cookie.substring(i, j) == arg) return getCookieVal (j);    
+
+		i = document.cookie.indexOf(" ", i) + 1;    
+
+		if (i == 0) break;   
+
+	}  
+
+	return null;
+
+}
+
+
+//4096 bytes per cookie
+function SetCookie (name, value) {  
+
+	var argv = SetCookie.arguments;  
+
+	var argc = SetCookie.arguments.length;  
+
+	var expires = (argc > 2) ? argv[2] : null;  
+
+	var path = (argc > 3) ? argv[3] : null;  
+
+	var domain = (argc > 4) ? argv[4] : null;  
+
+	var secure = (argc > 5) ? argv[5] : false;  
+
+	document.cookie = name + "=" + escape (value) + 
+
+	((expires == null) ? "" : ("; expires=" + expires.toGMTString())) + 
+
+	((path == null) ? "" : ("; path=" + path)) +  
+
+	((domain == null) ? "" : ("; domain=" + domain)) +    
+
+	((secure == true) ? "; secure" : "");
+
+}
+
+
+
+
+// cookieForms saves form content of a page.
+
+
+
+// use the following code to call it:
+
+//  <body onLoad="cookieForms('open', 'form_1', 'form_2', 'form_n')" onUnLoad="cookieForms('save', 'form_1', 'form_2', 'form_n')">
+
+
+
+
+
+function cookieForms() {  
+
+	var mode = cookieForms.arguments[0];
+
+	for(f=1; f<cookieForms.arguments.length; f++) {
+
+		formName = cookieForms.arguments[f];
+		var myform = document[formName];		
+
+		if(mode == 'open') {	
+			cookieValue = GetCookie('saved_'+formName);
+			//window.alert('open='+cookieValue);
+			loadForm(myform, cookieValue);			
+		}				
+
+		if(mode == 'save') {
+			cookieValue = saveForm(myform);			
+			SetCookie('saved_'+formName, cookieValue, exp);		
+
+		}	
+
+	}
+
+}
+
+function addEntryField() {
+		var table = document.getElementById("gameTable");
+		var num = table.rows.length;
+		var row = table.insertRow(num);
+		var cell = row.insertCell(0);
+		cell.innerHTML = 'bla bla <input type="text" value="asdasd"> ';
+}
+</script>
+
+
+
+</HEAD>
+
+
+<body onload="cookieForms('open', 'yourform')" onunload="cookieForms('save', 'yourform')">
+
+</p>
+
+<input value="addEntryField" type="button" onclick="addEntryField();" />
+
+<hr size="1" width="300" align="left">
+
+<form name="yourform">
+
+
+					<TABLE id="gameTable" border="1">
+
+					</TABLE>
+
+ <p>Text Fields: 
+
+  <input type="text" value="">
+
+ </p>
+
+ <p>Passwords: 
+
+  <input type="password"  value="">
+
+  <br>
+
+  (won't be saved)</p>
+
+
+
+ <p>TextAreas: 
+
+  <textarea ></textarea>
+
+ </p>
+
+ <p>Dropdowns: 
+
+  <select >
+
+   <option value="one">One</option>
+
+   <option value="two">Two</option>
+
+   <option value="three">Three</option>
+
+  </select>
+
+ </p>
+ <p>Dropdowns: 
+
+  <select >
+
+   <option value="three">Three</option>
+
+  </select>
+
+ </p>
+
+ <p>Checkboxes: 
+
+  <input type="checkbox"  value="ummm">
+
+ </p>
+
+ <p>Radio Buttons: 
+
+  <input type="radio" name="6" value="snuh">
+
+  <input type="radio" name="6" value="whuf">
+
+ </p>
+
+ <hr size="1" width="300" align="left">
+
+</form>
+
+</body>
+
+</html>

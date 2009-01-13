@@ -5,7 +5,6 @@
 import come2play_as2.api.auto_copied.*;
 	class come2play_as2.api.auto_copied.LocalConnectionUser
 	{
-		public static var VERSION_FOR_TRACE:Number = 7;
 		public static var REVIEW_USER_ID:Number = -1; // special userId that instanceof used for reviewing games
 		public static var IS_LOCAL_CONNECTION_UDERSCORE:Boolean = false;		
 		public static var DEFAULT_LOCALCONNECTION_PREFIX:String = ""+StaticFunctions.random(1,10000);
@@ -69,7 +68,6 @@ import come2play_as2.api.auto_copied.*;
 					StaticFunctions.performReflectionFromFlashVars(_someMovieClip);
 				connectionMade = false;
 				StaticFunctions.allowDomains();	
-				StaticFunctions.storeTrace(["VERSION_FOR_TRACE=",VERSION_FOR_TRACE]);
 				_shouldVerify=shouldVerify;
 				AS3_vs_AS2.registerNativeSerializers();
 				API_LoadMessages.useAll();	

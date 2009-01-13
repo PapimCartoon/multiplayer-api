@@ -121,7 +121,7 @@ import flash.utils.*;
 
 		}
 		private function computerMakeMove(ev:TimerEvent):void{
-			var computerMove:ComputerMove = mineSweeperLogic.getComputerMove();
+			var computerMove:Object/*ComputerMove*/ = mineSweeperLogic.getObject/*ComputerMove*/();
 			if(computerMove == null) return;
 			var key:Object ={xPos:computerMove.xPos,yPos:computerMove.yPos,playerId:-1}
 			var serverKey:Object = {xPos:computerMove.xPos,yPos:computerMove.yPos}
@@ -237,10 +237,10 @@ import flash.utils.*;
 					return;
 				}
 				doAllStoreState([UserEntry.create(serverEntry.key,null,false)]);
-			}else if (serverEntry.value is ComputerMove){
+			}else if (serverEntry.value is Object/*ComputerMove*/){
 				if(allPlayerIds.indexOf(-1) != -1) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" stored a computer move and not a player move")
-				var computerMove:ComputerMove = serverEntry.value as ComputerMove;
-				newMove = mineSweeperLogic.addComputerMove(computerMove);
+				var computerMove:Object/*ComputerMove*/ = serverEntry.value as Object/*ComputerMove*/;
+				newMove = mineSweeperLogic.addObject/*ComputerMove*/(computerMove);
 				if(newMove){
 					addNewMove(serverEntries)
 					return;

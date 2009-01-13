@@ -8,7 +8,6 @@ import flash.events.*;
 import flash.text.*;
 
 public class TestClientGameAPI extends ClientGameAPI {
-	//public var dp:DataProvider = new DataProvider();
 	private var my_graphics:MovieClip;	
 	private var outTracesText:Object;
 	private var exampleOperationsText:Object;
@@ -115,21 +114,25 @@ public class TestClientGameAPI extends ClientGameAPI {
 		});
 		expect(
 		function ():void {
-			doAllRevealState([RevealEntry.create("a",null,3),RevealEntry.create("e",[2],0)]);
+			doAllRevealState([RevealEntry.create("a",null,3)]);
 		},
 		function (entries:Array):void {
-			require(entries.length == 5)
-			var entry0:ServerEntry = entries[0];
-			var entry1:ServerEntry = entries[1];
-			var entry2:ServerEntry = entries[2];
-			var entry3:ServerEntry = entries[3];
-			var entry4:ServerEntry = entries[4];
-			require(entry0.visibleToUserIds == null)
-			require(entry1.visibleToUserIds == null)
-			require(entry2.visibleToUserIds == null)
-			require(entry3.visibleToUserIds == null)
-			require(entry4.visibleToUserIds != null)
+			require(entries.length == 4);			
+			for each (var entry:ServerEntry in entries) {
+				require(entry.visibleToUserIds == null);
+			}
 		});
+		if (allPlayerIds.length>1) {
+			expect(
+			function ():void {
+				doAllRevealState([RevealEntry.create("e",[allPlayerIds[1]],0)]);
+			},
+			function (entries:Array):void {
+				require(entries.length == 1)
+				var entry0:ServerEntry = entries[0];
+				require(entry0.visibleToUserIds != null)
+			});
+		}
 		/*myCodeEnd*/
 		expect(
 		function ():void {

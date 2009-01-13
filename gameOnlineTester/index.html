@@ -5,6 +5,7 @@
 	<script language="javascript" src="FlashObject.js"></script>
 	<script language="javascript" src="GetParams.js"></script>
 	<script language="javascript" src="params.js"></script>
+	<script language="javascript" src="js/save_form.js"></script>
 	<script language="javascript">
 	var openRooms = new Array();
 	function removeTableRow(tableName,removeNum){
@@ -62,38 +63,10 @@
 		document.getElementById("paramsHandler").style.top = "200px";
 		loadSharedObject("Come2PlayFrameworkTest",document.getElementById("paramsHandler"));
 	}
-	function getParams(savedDataObj){
+	function getParams(savedDataObj){ // called by flash
 		try{
-			var obj;
-			for(var i=0;i<paramArr.length;i++){
-				obj = paramArr[i];
-				if(obj.isUser == true) continue;
-				if(obj.type == "int"){
-					document.getElementById(obj.htmlName).value=savedDataObj[obj.htmlName];
-				}else if(obj.type == "string"){
-					document.getElementById(obj.htmlName).value=savedDataObj[obj.htmlName];
-				}else if(obj.type == "boolean"){
-					document.getElementById(obj.htmlName).checked = (savedDataObj[obj.htmlName] == "true");
-				}	
-			}
-			
-			PlayerNumChanged();
-			var len = parseInt(savedDataObj["PlayersNumSim"]);
-			for(var i=1;i<=len;i++){
-				for(var j=0;j<paramArr.length;j++){
-					obj = paramArr[j];
-					if(obj.isUser != true) continue;
-					if(obj.type == "int"){
-						document.getElementById("player_"+i+"_"+obj.htmlName).value=savedDataObj["player_"+i+"_"+obj.htmlName];
-					}else if(obj.type == "string"){
-						document.getElementById("player_"+i+"_"+obj.htmlName).value=savedDataObj["player_"+i+"_"+obj.htmlName];
-					}else if(obj.type == "boolean"){
-						document.getElementById("player_"+i+"_"+obj.htmlName).checked = (savedDataObj["player_"+i+"_"+obj.htmlName] == "true");
-					}	
-				}
-			}
-			addTableParams("gameTable",savedDataObj);
-			addTableParams("serverTable",savedDataObj);
+			var saveStr = savedDataObj["save"];
+			loadForm(getMyForm(), saveStr);
 		}catch(err){
 			alert("Load failed "+ err)
 		}
@@ -145,23 +118,12 @@
 
 		return playerParams;
 	}
+	function getMyForm() { return document.getElementById("myform"); }
 	function save_click(){
 		try{
-			var params = getFormParams();
-			var PlayersNumSim = checkVaildNumber("PlayersNumSim");
-			allPlayerParams = new Array()
-			for(var i=1;i<=PlayersNumSim;i++)
-				allPlayerParams = myConcat(getPlayerParamsForSave(i),allPlayerParams);
 			document.getElementById("paramsHandler").style.left = width/2 - 300+"px";
 			document.getElementById("paramsHandler").style.top = "200px";
-			params["PlayersNumSim"] = PlayersNumSim;
-			var gameCustomData = getTableCustomParams("gameTable")
-			var serverCustomData = getTableCustomParams("serverTable")
-			
-			var saveParams = myConcat(allPlayerParams,params);
-			saveParams = myConcat(saveParams,gameCustomData);
-			saveParams = myConcat(saveParams,serverCustomData);
-			saveSharedObject("Come2PlayFrameworkTest",document.getElementById("paramsHandler"),parametersToUrl(saveParams));
+			saveSharedObject("Come2PlayFrameworkTest",document.getElementById("paramsHandler"), "save="+saveForm(getMyForm()) );
 		}catch(err){
 			alert("error saving"+err);
 			return;
@@ -333,12 +295,12 @@
 
 	</script>
 </HEAD>
-<BODY onload="init()">
-	<FORM target="_self" method="get">
+<BODY onload="init()" >
+	<FORM target="_self" method="get" id='myform'>
 		<TABLE>
 			<TR>
 			<TD>
-			<input value="Save Settings" type="button" id="SvaeBtn" onclick="save_click();" />
+			<input value="Save Settings" type="button" id="SaveBtn" onclick="save_click();" />
 			<input value="Load Settings" type="button" id="LoadBtn" onclick="load_click();" />
 			</TD>
 			<TD COLSPAN=2></TD>
@@ -451,6 +413,7 @@
 		<input value="Launch Test" type="button" id="LaunchBtn" onclick="LaunchBtn_click();" />
 	</FORM>
 	<DIV id="paramsHandler" style="position:absolute;"></DIV>
+
 </BODY>
 
 </HTML>

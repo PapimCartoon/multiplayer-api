@@ -7,6 +7,12 @@ package come2play_as3.api.auto_copied
 // Only StaticFunctions and JSON are copied to flex_utils 
 public final class StaticFunctions
 {			
+	public static var GOOGLE_REVISION_NUMBER:int = 728;
+	public static var COME2PLAY_REVISION_NUMBER:int = 1374;
+	public static function getRevision():String {
+		return "g="+GOOGLE_REVISION_NUMBER+",c2p="+COME2PLAY_REVISION_NUMBER;		
+	}
+	
 	public static var SHOULD_SHOW_ERRORS:Boolean = true;
 	public static var SHOULD_CALL_TRACE:Boolean = true; // in the online version we turn it off to save runtime
 	public static var someMovieClip:DisplayObjectContainer; // so we can display error messages on the stage
@@ -14,8 +20,14 @@ public final class StaticFunctions
 	public static var MAX_TRACES_NUM:int = 50;
 	public static var ALLOW_DOMAINS:String = "*";//Specifying "*" does not include local hosts	 
 	
+	private static var LOGGED_REVISIONS:Boolean = false;
 	public static function allowDomains():void {
-		if(ALLOW_DOMAINS != null){
+		if (!LOGGED_REVISIONS) {
+			LOGGED_REVISIONS = true;
+			StaticFunctions.storeTrace(["GOOGLE_REVISION_NUMBER=",GOOGLE_REVISION_NUMBER, " COME2PLAY_REVISION_NUMBER=",COME2PLAY_REVISION_NUMBER]);
+		}
+		
+		if (ALLOW_DOMAINS != null){
 			storeTrace("Allowing all domains access to : "+ALLOW_DOMAINS+" saמdbox type :"+Security.sandboxType);
 			Security.allowDomain(ALLOW_DOMAINS);
 		}
@@ -27,7 +39,6 @@ public final class StaticFunctions
 		if (SHOULD_CALL_TRACE) trace( arr.join("") );
 		allTraces.push(arr);
 	}
-	public static var DID_SHOW_ERROR:Boolean = false;
 	public static function getTraces():String {
 		return (allTraces.length==0 ? '' : 
 				(allTraces.length<MAX_TRACES_NUM ? "All":"The last "+MAX_TRACES_NUM)+" stored traces are:\n"+
@@ -41,6 +52,7 @@ public final class StaticFunctions
 			// e.g., if the java disconnects then setClipboard throws an error.
 		}
 	}
+	public static var DID_SHOW_ERROR:Boolean = false;
 	public static function showError(msg:String):void {
 		if (DID_SHOW_ERROR) return;
 		DID_SHOW_ERROR = true;

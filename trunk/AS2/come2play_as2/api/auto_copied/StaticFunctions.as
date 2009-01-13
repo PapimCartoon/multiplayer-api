@@ -3,6 +3,12 @@
 import come2play_as2.api.auto_copied.*;
 class come2play_as2.api.auto_copied.StaticFunctions
 {			
+	public static var GOOGLE_REVISION_NUMBER:Number = 728;
+	public static var COME2PLAY_REVISION_NUMBER:Number = 1374;
+	public static function getRevision():String {
+		return "g="+GOOGLE_REVISION_NUMBER+",c2p="+COME2PLAY_REVISION_NUMBER;		
+	}
+	
 	public static var SHOULD_SHOW_ERRORS:Boolean = true;
 	public static var SHOULD_CALL_TRACE:Boolean = true; // in the online version we turn it off to save runtime
 	public static var someMovieClip:MovieClip; // so we can display error messages on the stage
@@ -10,8 +16,14 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	public static var MAX_TRACES_NUM:Number = 50;
 	public static var ALLOW_DOMAINS:String = "*";//Specifying "*" does not include local hosts	 
 	
+	private static var LOGGED_REVISIONS:Boolean = false;
 	public static function allowDomains():Void {
-		if(ALLOW_DOMAINS != null){
+		if (!LOGGED_REVISIONS) {
+			LOGGED_REVISIONS = true;
+			StaticFunctions.storeTrace(["GOOGLE_REVISION_NUMBER=",GOOGLE_REVISION_NUMBER, " COME2PLAY_REVISION_NUMBER=",COME2PLAY_REVISION_NUMBER]);
+		}
+		
+		if (ALLOW_DOMAINS != null){
 			storeTrace("Allowing all domains access to : "+ALLOW_DOMAINS+" saמdbox type :"+System.security.sandboxType);
 			System.security.allowDomain(ALLOW_DOMAINS);
 		}
@@ -23,7 +35,6 @@ class come2play_as2.api.auto_copied.StaticFunctions
 		if (SHOULD_CALL_TRACE) trace( arr.join("") );
 		allTraces.push(arr);
 	}
-	public static var DID_SHOW_ERROR:Boolean = false;
 	public static function getTraces():String {
 		return (allTraces.length==0 ? '' : 
 				(allTraces.length<MAX_TRACES_NUM ? "All":"The last "+MAX_TRACES_NUM)+" stored traces are:\n"+
@@ -37,6 +48,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 			// e.g., if the java disconnects then setClipboard throws an error.
 		}
 	}
+	public static var DID_SHOW_ERROR:Boolean = false;
 	public static function showError(msg:String):Void {
 		if (DID_SHOW_ERROR) return;
 		DID_SHOW_ERROR = true;
@@ -100,7 +112,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 				// for static properties we use describeType
 				// because o1 and o2 have the same type, it instanceof enough to use the fields of o1.
 				var fieldsArr:Array = AS3_vs_AS2.getFieldNames(o1);
-				for (var i105:Number=0; i105<fieldsArr.length; i105++) { var field:String = fieldsArr[i105]; 
+				for (var i117:Number=0; i117<fieldsArr.length; i117++) { var field:String = fieldsArr[i117]; 
 					allFields[field] = true;
 				}
 			}
@@ -116,7 +128,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	
 	public static function subtractArray(arr:Array, minus:Array):Array {
 		var res:Array = arr.concat();
-		for (var i121:Number=0; i121<minus.length; i121++) { var o:Object = minus[i121]; 
+		for (var i133:Number=0; i133<minus.length; i133++) { var o:Object = minus[i133]; 
 			var indexOf:Number = AS3_vs_AS2.IndexOf(res, o);
 			StaticFunctions.assert(indexOf!=-1, ["When subtracting minus=",minus," from array=", arr, " we did not find element ",o]);				
 			res.splice(indexOf, 1);
@@ -207,7 +219,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	}
 	public static function instance2Object(instance:Object, fields:Array/*String*/):Object {
 		var res:Object = {};
-		for (var i212:Number=0; i212<fields.length; i212++) { var field:String = fields[i212]; 
+		for (var i224:Number=0; i224<fields.length; i224++) { var field:String = fields[i224]; 
 			res[field] = instance[field];
 		}
 		return res;

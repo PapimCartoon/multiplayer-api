@@ -252,25 +252,23 @@ import come2play_as2.api.auto_copied.*;
 		
         private function isNullKeyExistUserEntry(userEntries:Array/*UserEntry*/):Void
         {
-        	check(userEntries.length>=1, ["userEntries must have at least one UserEntry!"]);
+        	check(userEntries.length!=0, ["userEntries must have at least one UserEntry!"]);
         	for (var i259:Number=0; i259<userEntries.length; i259++) { var userEntry:UserEntry = userEntries[i259]; 
-        		check(userEntry.key != null,["UserEntry.key cannot be null !"]);
+        		check(userEntry.key != null,["UserEntry.key cannot be null ! userEntry=",userEntry]);
         	}
         }
         private function isNullKeyExistRevealEntry(revealEntries:Array/*RevealEntry*/):Void
         {
         	//check(revealEntries.length>=1, ["revealEntries must have at least one RevealEntry!"]);
         	for (var i266:Number=0; i266<revealEntries.length; i266++) { var revealEntry:RevealEntry = revealEntries[i266]; 
-        		check(revealEntry != null,["RevealEntry cannot be null !"]);
-        		check(revealEntry.key != null,["RevealEntry.key cannot be null !"]);
-        		check(revealEntry.userIds==null || isAllInPlayers(revealEntry.userIds), ["RevealEntry.userIds must either be null or contain only players"]); 
+        		check(revealEntry != null && revealEntry.key != null && (revealEntry.userIds==null || isAllInPlayers(revealEntry.userIds)), ["RevealEntry.key cannot be null, userIds must either be null or contain only players. revealEntry=",revealEntry]); 
         	}
         }
         private function isNullKeyExist(keys:Array/*Object*/):Void
         {
-        	check(keys.length>=1,["keys must have at leasy one key!"]);        		
-        	for (var i275:Number=0; i275<keys.length; i275++) { var key:String = keys[i275]; 
-        		check(key != null,["key cannot be null !"]);
+        	check(keys.length!=0,["keys must have at leasy one key!"]);        		
+        	for (var i273:Number=0; i273<keys.length; i273++) { var key:String = keys[i273]; 
+        		check(key != null,["key cannot be null ! keys=",keys]);
         	}
         }
 

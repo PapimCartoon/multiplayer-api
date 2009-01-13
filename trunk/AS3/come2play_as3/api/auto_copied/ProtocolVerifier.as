@@ -257,25 +257,23 @@ package come2play_as3.api.auto_copied
 		
         private function isNullKeyExistUserEntry(userEntries:Array/*UserEntry*/):void
         {
-        	check(userEntries.length>=1, ["userEntries must have at least one UserEntry!"]);
+        	check(userEntries.length!=0, ["userEntries must have at least one UserEntry!"]);
         	for each (var userEntry:UserEntry in userEntries) {
-        		check(userEntry.key != null,["UserEntry.key cannot be null !"]);
+        		check(userEntry.key != null,["UserEntry.key cannot be null ! userEntry=",userEntry]);
         	}
         }
         private function isNullKeyExistRevealEntry(revealEntries:Array/*RevealEntry*/):void
         {
         	//check(revealEntries.length>=1, ["revealEntries must have at least one RevealEntry!"]);
         	for each (var revealEntry:RevealEntry in revealEntries) {
-        		check(revealEntry != null,["RevealEntry cannot be null !"]);
-        		check(revealEntry.key != null,["RevealEntry.key cannot be null !"]);
-        		check(revealEntry.userIds==null || isAllInPlayers(revealEntry.userIds), ["RevealEntry.userIds must either be null or contain only players"]); 
+        		check(revealEntry != null && revealEntry.key != null && (revealEntry.userIds==null || isAllInPlayers(revealEntry.userIds)), ["RevealEntry.key cannot be null, userIds must either be null or contain only players. revealEntry=",revealEntry]); 
         	}
         }
         private function isNullKeyExist(keys:Array/*Object*/):void
         {
-        	check(keys.length>=1,["keys must have at leasy one key!"]);        		
+        	check(keys.length!=0,["keys must have at leasy one key!"]);        		
         	for each (var key:String in keys) {
-        		check(key != null,["key cannot be null !"]);
+        		check(key != null,["key cannot be null ! keys=",keys]);
         	}
         }
 

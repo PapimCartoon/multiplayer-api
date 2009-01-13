@@ -151,13 +151,10 @@
 			
 			params["override_config.game_parameters.prefix_local_connection_id"] = "100"+params["override_config.extra_args.user_id"];
 			params["override_config.game_parameters.game_room.room_id"] = windowParams["room_id"];
-			params["override_config.game_parameters.table_room.room_id"] = windowParams["room_id"];
 			if(windowParams["isOldBoard"] == "true"){
 				params["override_config.game_parameters.board_swf_url"] = getOldBoard(windowParams["oldBoard"])
 				params["override_config.game_parameters.game_room.game_kind"] = "OldBoard";
-				params["override_config.game_parameters.table_room.game_kind"] = "OldBoard";
 				params["override_config.game_parameters.game_room.game_name"] = windowParams["oldBoard"];
-				params["override_config.game_parameters.table_room.game_name"] = windowParams["oldBoard"];
 			}		
 			params["override_config.game_parameters.play_type"] = "MultiPlayer";
 			params["override_config.flash_type"] = "game";

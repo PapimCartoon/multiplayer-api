@@ -161,19 +161,19 @@ package come2play_as3.minesweeper
 					mineSweeperMainPointer.makePlayerMove(PlayerMove.create(xPos,yPos,myUserId,isMine));
 				}
 		}
-		public function getRandomMove(xpos:int,ypos:int):ComputerMove{
+		public function getRandomMove(xpos:int,ypos:int):Object/*ComputerMove*/{
 			for(var i:int = xpos;i<boardWidth;i++){
 				for(var j:int = ypos;j<boardWidth;j++){
 					if(boardLogic[i][j] == 0){
-						return ComputerMove.create(i,j);
+						return {}; //todo: Object/*ComputerMove*/.create(i,j);
 					}
 				}
 			}
 			return null;
 		}
 		
-		public function getComputerMove():ComputerMove{
-			var computerMove:ComputerMove = getRandomMove(Math.random()*boardWidth,Math.random()*boardWidth);
+		public function getObject/*ComputerMove*/():Object/*ComputerMove*/{
+			var computerMove:Object/*ComputerMove*/ = getRandomMove(Math.random()*boardWidth,Math.random()*boardWidth);
 			if(computerMove == null){
 				computerMove = getRandomMove(0,0);
 			}
@@ -195,7 +195,7 @@ package come2play_as3.minesweeper
 			boardLogic[playerMove.xPos][playerMove.yPos] = 2;
 			return true;
 		}
-		public function addComputerMove(computerMove:ComputerMove):Boolean
+		public function addObject/*ComputerMove*/(computerMove:Object/*ComputerMove*/):Boolean
 		{
 			var fakePlayerMove:PlayerMove = PlayerMove.create(computerMove.xPos,computerMove.yPos,-1,false);
 			for each(var queuedMove:PlayerMove in movesInProcess)

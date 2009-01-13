@@ -6,7 +6,6 @@ import flash.text.*;
 
 import come2play_as2.tests.*;
 class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
-	//public var dp:DataProvider = new DataProvider();
 	private var my_graphics:MovieClip;	
 	private var outTracesText:Object;
 	private var exampleOperationsText:Object;
@@ -34,7 +33,7 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 			"\n\n"
 			);
 
-		for (var i38:Number=0; i38<API_MethodsSummary.SUMMARY_API.length; i38++) { var methodSummary:API_MethodsSummary = API_MethodsSummary.SUMMARY_API[i38]; 
+		for (var i37:Number=0; i37<API_MethodsSummary.SUMMARY_API.length; i37++) { var methodSummary:API_MethodsSummary = API_MethodsSummary.SUMMARY_API[i37]; 
 			var methodName:String = methodSummary.methodName; 
 			if (methodName.substring(0,2)!="do") continue;
 			if (methodName=="doRegisterOnServer") continue;
@@ -113,21 +112,25 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 		});
 		expect(
 		function ():Void {
-			doAllRevealState([RevealEntry.create("a",null,3),RevealEntry.create("e",[2],0)]);
+			doAllRevealState([RevealEntry.create("a",null,3)]);
 		},
 		function (entries:Array):Void {
-			require(entries.length == 5)
-			var entry0:ServerEntry = entries[0];
-			var entry1:ServerEntry = entries[1];
-			var entry2:ServerEntry = entries[2];
-			var entry3:ServerEntry = entries[3];
-			var entry4:ServerEntry = entries[4];
-			require(entry0.visibleToUserIds == null)
-			require(entry1.visibleToUserIds == null)
-			require(entry2.visibleToUserIds == null)
-			require(entry3.visibleToUserIds == null)
-			require(entry4.visibleToUserIds != null)
+			require(entries.length == 4);			
+			for (var i120:Number=0; i120<entries.length; i120++) { var entry:ServerEntry = entries[i120]; 
+				require(entry.visibleToUserIds == null);
+			}
 		});
+		if (allPlayerIds.length>1) {
+			expect(
+			function ():Void {
+				doAllRevealState([RevealEntry.create("e",[allPlayerIds[1]],0)]);
+			},
+			function (entries:Array):Void {
+				require(entries.length == 1)
+				var entry0:ServerEntry = entries[0];
+				require(entry0.visibleToUserIds != null)
+			});
+		}
 		/*myCodeEnd*/
 		expect(
 		function ():Void {
@@ -348,7 +351,7 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 				if (!didSendEndMatch) {
 					didSendEndMatch = true;
 					var finishedPlayers:Array = [];
-					for (var i352:Number=0; i352<allPlayerIds.length; i352++) { var id:Number = allPlayerIds[i352]; 
+					for (var i355:Number=0; i355<allPlayerIds.length; i355++) { var id:Number = allPlayerIds[i355]; 
 						finishedPlayers.push( PlayerMatchOver.create(id, id==winnerId ? 1000 : -1000, id==winnerId ? 100 : 0) );		
 					}
 					doAllEndMatch(finishedPlayers);

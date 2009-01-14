@@ -22,7 +22,6 @@ package come2play_as3.api {
 		private var hackerUserId:int = -1;
 		private var runningAnimationsNumber:int = 0;
 		private var keys:Array;
-		private var someMovieClip:DisplayObjectContainer;
 		private var historyEntries:Array/*HistoryEntry*/;
 		private var keyboardMessages:Array/*API_GotKeyboardEvent*/;
 		private var singlePlayerEmulator:SinglePlayerEmulator;
@@ -32,7 +31,6 @@ package come2play_as3.api {
 			super(_someMovieClip, false, getPrefixFromFlashVars(_someMovieClip),true);
 			
 			keyboardMessages = [];
-			someMovieClip = _someMovieClip;
 			AS3_vs_AS2.addKeyboardListener(_someMovieClip,keyPressed);
 			if (getPrefixFromFlashVars(_someMovieClip)==null) 
 				singlePlayerEmulator = new SinglePlayerEmulator(_someMovieClip); // to prevent garbage collection
@@ -64,7 +62,7 @@ package come2play_as3.api {
 					
 					output+="Custom Data:\n\n"+getTAsArray().join("\n");
 					var gotMatchStarted:API_GotMatchStarted = API_GotMatchStarted.create(0,verifier.getAllPlayerIds(),verifier.getFinishedPlayerIds(),serverEntries)
-					AS3_vs_AS2.showError(someMovieClip,"gotMatchStarted : \n\n"+JSON.stringify(gotMatchStarted)+"\n"+output);
+					AS3_vs_AS2.showMessage("gotMatchStarted : \n\n"+JSON.stringify(gotMatchStarted)+"\n"+output, "traces");
 				}
 			}
 			if (verifier.isPlayer() &&

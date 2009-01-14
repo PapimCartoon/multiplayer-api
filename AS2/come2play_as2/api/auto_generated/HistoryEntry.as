@@ -12,7 +12,7 @@ import come2play_as2.api.auto_generated.*;
 			var res:HistoryEntry = new HistoryEntry();
 			res.message = message;
 
-// This instanceof a AUTOMATICALLY GENERATED! Do not change!
+// This is a AUTOMATICALLY GENERATED! Do not change!
 
 			res.gotTimeInMilliSeconds = gotTimeInMilliSeconds;
 			return res;
@@ -25,7 +25,7 @@ import come2play_as2.api.auto_generated.*;
 		/*override*/ public function getFunctionId():Number { return -85; }
 		/*override*/ public function getMethodName():String { return 'historyEntry'; }
 
-// This instanceof a AUTOMATICALLY GENERATED! Do not change!
+// This is a AUTOMATICALLY GENERATED! Do not change!
 
 		/*override*/ public function getMethodParameters():Array { return [message, gotTimeInMilliSeconds]; }
 		/*override*/ public function getMethodParametersNum():Number { return 2; }

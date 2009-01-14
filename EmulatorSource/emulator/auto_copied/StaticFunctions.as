@@ -17,8 +17,8 @@ package emulator.auto_copied
 // Only StaticFunctions and JSON are copied to flex_utils 
 public final class StaticFunctions
 {			
-	public static var GOOGLE_REVISION_NUMBER:int = 728;
-	public static var COME2PLAY_REVISION_NUMBER:int = 1374;
+	public static var GOOGLE_REVISION_NUMBER:int = 729;
+	public static var COME2PLAY_REVISION_NUMBER:int = 1388;
 	public static function getRevision():String {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
@@ -83,7 +83,7 @@ public final class StaticFunctions
 		DID_SHOW_ERROR = true;
 		var msg:String = "An ERRRRRRRRRRROR occurred on time "+getTimer()+":\n"+msg+"\n"+ getTraces();
 		setClipboard(msg);
-		if (SHOULD_SHOW_ERRORS) AS3_vs_AS2.showError(someMovieClip, msg);
+		if (SHOULD_SHOW_ERRORS) AS3_vs_AS2.showError(msg);
 		if (SHOULD_CALL_TRACE) trace("\n\n\n"+msg+"\n\n\n");
 
 // This is a AUTOMATICALLY GENERATED! Do not change!

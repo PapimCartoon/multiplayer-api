@@ -10,12 +10,12 @@
 	 * 
 	 * We have a program that goes over the source files,
 	 * finds all the above occurrences,
-	 * and extracts them to an XML that instanceof used for translation.
+	 * and extracts them to an XML that is used for translation.
 	 * 
 	 * Similarly, you can use this class for customization points:
 	 * 				T.custom("refresh room every X seconds", 30)
 	 * By default the above code will return 30, 
-	 * unless there instanceof a different custom value.
+	 * unless there is a different custom value.
 	 *   
 	 * 
 	 * Do NOT use the class like this:
@@ -70,7 +70,7 @@ import come2play_as2.api.auto_copied.*;
 			return res;
 		}
 		// for customization, e.g., the frame-rate of the game.
-		// If defaultValue instanceof not null, then we require that the **type** of the return value
+		// If defaultValue is not null, then we require that the **type** of the return value
 		// will be identical to the **type** of the defaultValue.		
 		public static function getCustom():Object {
 			return _custom;

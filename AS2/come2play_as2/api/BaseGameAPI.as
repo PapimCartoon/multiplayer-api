@@ -18,7 +18,6 @@ import come2play_as2.api.*;
 		private var hackerUserId:Number = -1;
 		private var runningAnimationsNumber:Number = 0;
 		private var keys:Array;
-		private var someMovieClip:MovieClip;
 		private var historyEntries:Array/*HistoryEntry*/;
 		private var keyboardMessages:Array/*API_GotKeyboardEvent*/;
 		private var singlePlayerEmulator:SinglePlayerEmulator;
@@ -28,7 +27,6 @@ import come2play_as2.api.*;
 			super(_someMovieClip, false, getPrefixFromFlashVars(_someMovieClip),true);
 			
 			keyboardMessages = [];
-			someMovieClip = _someMovieClip;
 			AS3_vs_AS2.addKeyboardListener(_someMovieClip,keyPressed);
 			if (getPrefixFromFlashVars(_someMovieClip)==null) 
 				singlePlayerEmulator = new SinglePlayerEmulator(_someMovieClip); // to prevent garbage collection
@@ -50,7 +48,7 @@ import come2play_as2.api.*;
 					"Server State(client side) : \n\n";
 					
 					if(serverStateMiror!=null){
-						for (var i56:Number=0; i56<serverStateMiror.allValues.length; i56++) { var serverEntry:ServerEntry = serverStateMiror.allValues[i56]; 
+						for (var i54:Number=0; i54<serverStateMiror.allValues.length; i54++) { var serverEntry:ServerEntry = serverStateMiror.allValues[i54]; 
 							serverEntries.push(serverEntry);
 							output+= serverEntry.toString() + "\n";
 						}
@@ -60,7 +58,7 @@ import come2play_as2.api.*;
 					
 					output+="Custom Data:\n\n"+getTAsArray().join("\n");
 					var gotMatchStarted:API_GotMatchStarted = API_GotMatchStarted.create(0,verifier.getAllPlayerIds(),verifier.getFinishedPlayerIds(),serverEntries)
-					AS3_vs_AS2.showError(someMovieClip,"gotMatchStarted : \n\n"+JSON.stringify(gotMatchStarted)+"\n"+output);
+					AS3_vs_AS2.showMessage("gotMatchStarted : \n\n"+JSON.stringify(gotMatchStarted)+"\n"+output, "traces");
 				}
 			}
 			if (verifier.isPlayer() &&
@@ -95,14 +93,14 @@ import come2play_as2.api.*;
 		 * We automatically set hackerUserId to storedByUserId 
 		 * 	whenever receiving gotStateChanged,
 		 * 	however, when the state changes after doAllReveal then
-		 * 	storedByUserId instanceof -1, so your code should call setMaybeHackerUserId.
+		 * 	storedByUserId is -1, so your code should call setMaybeHackerUserId.
 		 */
 		
 		public function setMaybeHackerUserId(hackerUserId:Number):Void {
 			this.hackerUserId = hackerUserId;			
 		}
 		/**
-		 * gotError instanceof called whenever your overriding 'got' methods
+		 * gotError is called whenever your overriding 'got' methods
 		 * 	throw an Error.
 		 */
 		public function gotError(withObj:Object, err:Error):Void {
@@ -127,16 +125,16 @@ import come2play_as2.api.*;
 		 * and doStoreState if and only if you are not inside a transaction.
 		 * 
 		 * Animations may be displayed only inside a transaction
-		 * 	that instanceof either gotMatchStarted or gotMatchEnded or gotStateChanged.
+		 * 	that is either gotMatchStarted or gotMatchEnded or gotStateChanged.
 		 * 
 		 * About loading images:
-		 * Flash caches loaded images, but only after loading instanceof completed.
+		 * Flash caches loaded images, but only after loading is completed.
 		 * So, if you want to use the same image in many places
 		 * (e.g., place some custom image on all the pieces)
 		 * then you should first call cacheImage,
 		 * and only in the  onLoaded  function load the image to all the pieces.
-		 * Function cacheImage starts an animation, and when the image instanceof loaded 
-		 * (or failed to load) then the animation instanceof ended.
+		 * Function cacheImage starts an animation, and when the image is loaded 
+		 * (or failed to load) then the animation is ended.
 		 * The image will be stored in some 
 		 * newly created invisible child in someMovieClip. 
 		 * E.g.,
@@ -205,14 +203,14 @@ import come2play_as2.api.*;
 			if (verifier.isPlayer()) sendDoStoreStateEvents();
         }
         private function sendDoStoreStateEvents():Void{
-        	for (var i211:Number=0; i211<doStoreQueue.length; i211++) { var doStoreMsg:API_DoStoreState = doStoreQueue[i211]; 
+        	for (var i209:Number=0; i209<doStoreQueue.length; i209++) { var doStoreMsg:API_DoStoreState = doStoreQueue[i209]; 
         		super.sendMessage(doStoreMsg);
         	}
         	doStoreQueue = [];
         }
         private function updateMirorServerState(serverEntries:Array/*ServerEntry*/):Void
         {
-        	for (var i218:Number=0; i218<serverEntries.length; i218++) { var serverEntry:ServerEntry = serverEntries[i218]; 
+        	for (var i216:Number=0; i216<serverEntries.length; i216++) { var serverEntry:ServerEntry = serverEntries[i216]; 
         	    serverStateMiror.addEntry(serverEntry);	
         	}     	
         }
@@ -249,7 +247,7 @@ import come2play_as2.api.*;
 					var customInfo:API_GotCustomInfo = API_GotCustomInfo(msg);
 					var i18nObj:Object = {};
 					var customObj:Object = {};
-					for (var i255:Number=0; i255<customInfo.infoEntries.length; i255++) { var entry:InfoEntry = customInfo.infoEntries[i255]; 
+					for (var i253:Number=0; i253<customInfo.infoEntries.length; i253++) { var entry:InfoEntry = customInfo.infoEntries[i253]; 
 						var key:String = entry.key;
 						var value:Object = entry.value;
 						if (key==API_Message.CUSTOM_INFO_KEY_i18n) {
@@ -268,7 +266,7 @@ import come2play_as2.api.*;
 				}else if(msg instanceof API_GotUserInfo){
 					var infoMessage:API_GotUserInfo =API_GotUserInfo( msg);
 					var userObject:Object = {};
-					for (var i274:Number=0; i274<infoMessage.infoEntries.length; i274++) { var infoEntry:InfoEntry = infoMessage.infoEntries[i274]; 
+					for (var i272:Number=0; i272<infoMessage.infoEntries.length; i272++) { var infoEntry:InfoEntry = infoMessage.infoEntries[i272]; 
 						trace(infoEntry.key+ "="+ infoEntry.value)
 						userObject[infoEntry.key] = infoEntry.value;
 					}

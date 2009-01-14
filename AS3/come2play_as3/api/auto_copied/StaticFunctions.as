@@ -7,8 +7,8 @@ package come2play_as3.api.auto_copied
 // Only StaticFunctions and JSON are copied to flex_utils 
 public final class StaticFunctions
 {			
-	public static var GOOGLE_REVISION_NUMBER:int = 728;
-	public static var COME2PLAY_REVISION_NUMBER:int = 1374;
+	public static var GOOGLE_REVISION_NUMBER:int = 729;
+	public static var COME2PLAY_REVISION_NUMBER:int = 1388;
 	public static function getRevision():String {
 		return "g="+GOOGLE_REVISION_NUMBER+",c2p="+COME2PLAY_REVISION_NUMBER;		
 	}
@@ -58,7 +58,7 @@ public final class StaticFunctions
 		DID_SHOW_ERROR = true;
 		var msg:String = "An ERRRRRRRRRRROR occurred on time "+getTimer()+":\n"+msg+"\n"+ getTraces();
 		setClipboard(msg);
-		if (SHOULD_SHOW_ERRORS) AS3_vs_AS2.showError(someMovieClip, msg);
+		if (SHOULD_SHOW_ERRORS) AS3_vs_AS2.showError(msg);
 		if (SHOULD_CALL_TRACE) trace("\n\n\n"+msg+"\n\n\n");
 	}
 	public static function throwError(msg:String):void {

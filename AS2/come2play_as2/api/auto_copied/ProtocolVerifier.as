@@ -33,14 +33,14 @@ import come2play_as2.api.auto_copied.*;
 				"";
 		}
         private function checkAnimationInterval():Void {
-        	if (transactionStartedOn==-1) return; // animation instanceof not running
+        	if (transactionStartedOn==-1) return; // animation is not running
         	var now:Number = getTimer();
-        	if (now - transactionStartedOn < MAX_ANIMATION_MILLISECONDS) return; // animation instanceof running for a short time
-        	// animation instanceof running for too long
-        	StaticFunctions.throwError("An transaction instanceof running for more than MAX_ANIMATION_MILLISECONDS="+MAX_ANIMATION_MILLISECONDS+". It started "+transactionStartedOn+" milliseconds after the script started, and now="+now+".");         	
+        	if (now - transactionStartedOn < MAX_ANIMATION_MILLISECONDS) return; // animation is running for a short time
+        	// animation is running for too long
+        	StaticFunctions.throwError("An transaction is running for more than MAX_ANIMATION_MILLISECONDS="+MAX_ANIMATION_MILLISECONDS+". It started "+transactionStartedOn+" milliseconds after the script started, and now="+now+".");         	
         }
         public function isPlayer():Boolean {
-        	// I can't use T.custom(API_Message.CUSTOM_INFO_KEY_myUserId,0), because ProtocolVerifier instanceof used in emulator that runs multiple clients (thus static memory will cause a conflict)
+        	// I can't use T.custom(API_Message.CUSTOM_INFO_KEY_myUserId,0), because ProtocolVerifier is used in emulator that runs multiple clients (thus static memory will cause a conflict)
         	return isInPlayers(myUserId);        	
         }
         public function getAllPlayerIds():Array/*int*/{
@@ -99,8 +99,8 @@ import come2play_as2.api.auto_copied.*;
 				var matchEnded:API_GotMatchEnded = API_GotMatchEnded(gotMsg);
 				nextPlayerIds = StaticFunctions.subtractArray(currentPlayerIds, matchEnded.finishedPlayerIds);
 			} else if (gotMsg instanceof API_GotCustomInfo) {	 					    			
-    			// isPause instanceof called when the game instanceof in progress,
-    			// and other info instanceof passed before the game starts.
+    			// isPause is called when the game is in progress,
+    			// and other info is passed before the game starts.
     			var customInfo:API_GotCustomInfo = API_GotCustomInfo(gotMsg);
     			for (var i108:Number=0; i108<customInfo.infoEntries.length; i108++) { var infoEntry:InfoEntry = customInfo.infoEntries[i108]; 
     				if (infoEntry.key==API_Message.CUSTOM_INFO_KEY_myUserId)
@@ -109,7 +109,7 @@ import come2play_as2.api.auto_copied.*;
 			} else if (gotMsg instanceof API_GotKeyboardEvent) {						    			
     			checkInProgress(true,gotMsg);
     			
-				// can be sent whether the game instanceof in progress or not
+				// can be sent whether the game is in progress or not
 			} else if (gotMsg instanceof API_GotUserInfo) { 
 			} else if (gotMsg instanceof API_GotUserDisconnected) {
 			} else if (gotMsg instanceof API_GotRequestStateCalculation){
@@ -151,7 +151,7 @@ import come2play_as2.api.auto_copied.*;
 			} else if (doMsg instanceof API_Transaction) {
 				var transaction:API_Transaction = API_Transaction(doMsg);
 				check(currentCallback.getMethodName()==transaction.callback.callbackName, ["Illegal callbackName!"]);
-				// The game may perform doAllFoundHacker (in a transaction) even after the game instanceof over,
+				// The game may perform doAllFoundHacker (in a transaction) even after the game is over,
 				// because: The container may pass gotStateChanged after the game sends doAllEndMatch,
 				//			because the game should verify every doStoreState (to prevent hackers from polluting the state after they know the game will be over).
 				//if (transaction.messages.length>0) check(currentPlayerIds.length>0 || nextPlayerIds.length>0);

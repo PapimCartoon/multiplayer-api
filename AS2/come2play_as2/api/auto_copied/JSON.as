@@ -71,7 +71,7 @@ import come2play_as2.api.auto_copied.*;
 	        if (SerializableClass.isToStringObject(argToString)) {	        	
 	            return '{' + object2JSON(arg) + '}';
 	        }
-	        // I do not do stringify again, because Enum, Stake, User, and other classes, create toString that instanceof parsable.
+	        // I do not do stringify again, because Enum, Stake, User, and other classes, create toString that is parsable.
 	        // E.g.,  { $Enum$ name:"NormalUser" , type:"come2play_as2.auto_generated::EnumSupervisor"}
 	        return argToString;                 
 	    }
@@ -127,7 +127,7 @@ import come2play_as2.api.auto_copied.*;
         }
 
         private function throwError(m:String):Void {
-            StaticFunctions.throwError('Error converting a string to a flash object: '+m + "\nError in position="+(at-1)+" containing character=' "+text.charAt(at-1)+" '\nThe entire string:\n'"+text+"'\nThe successfully parsed string:\n'"+text.substring(0,at-1)+"'\n"+"The string should be in a format that instanceof a legal ActionScript3 literal (including Boolean, String, Array, int, or Object). For example, the following are legal strings:\n"+ 	"'I\\'m a legal, string!\\n'\n"+"['an','array',42, null, true, false, -42, 'unicode=\\u05D0']\n"+"{ an : 'object field', 'foo bar' : 'other field' }\n"   	);
+            StaticFunctions.throwError('Error converting a string to a flash object: '+m + "\nError in position="+(at-1)+" containing character=' "+text.charAt(at-1)+" '\nThe entire string:\n'"+text+"'\nThe successfully parsed string:\n'"+text.substring(0,at-1)+"'\n"+"The string should be in a format that is a legal ActionScript3 literal (including Boolean, String, Array, int, or Object). For example, the following are legal strings:\n"+ 	"'I\\'m a legal, string!\\n'\n"+"['an','array',42, null, true, false, -42, 'unicode=\\u05D0']\n"+"{ an : 'object field', 'foo bar' : 'other field' }\n"   	);
         }
         private function next():String {
             ch = text.charAt(at);

@@ -12,47 +12,69 @@
 	 * gotUserInfo
 	 * gotMatchStarted
 	 * 
+	 * When NUM_OF_PLAYERS=1, there is a single player,
+	 * which is suitable for real-time games (like MineSweeper).
+	 * In turn-based games (like Monopoly), you can simulate several players.
+	 * The emulator will start with the first player,
+	 * and whenever it receives a call doAllSetTurn(X),
+	 * then it will end the match, change CUSTOM_INFO_KEY_myUserId to X,
+	 * and load the match.
+	 * 
 	 * When the server gets doAllEndMatch,
 	 * it will wait 2 seconds before starting a new match.
 	 */
 import come2play_as2.api.*;
 	class come2play_as2.api.SinglePlayerEmulator extends LocalConnectionUser
 	{
-		public static var DEFAULT_USER_ID:Number = 42; 
-		public var messageNum:Number;
-		public static var DEFAULT_GENERAL_INFO:Array/*InfoEntry*/ =
-			[  
-				InfoEntry.create(API_Message.CUSTOM_INFO_KEY_myUserId,DEFAULT_USER_ID), 
+		public static var START_NEW_GAME_AFTER_MILLISECONDS:Number = 5000;
+		public static var NUM_OF_PLAYERS:Number = 2;
+		public static var DEFAULT_USER_IDS:Array/*int*/ = [42,43,44,45];
+		private static function getFirstPlayerId():Number {
+			return DEFAULT_USER_IDS[0];
+		}
+		private static function getPlayerIds():Array/*int*/ {
+			var res:Array/*int*/ = [];
+			for (var i:Number=0; i<NUM_OF_PLAYERS; i++)
+				res.push(DEFAULT_USER_IDS[i]);
+			return res;			
+		}
+		public static var DEFAULT_FINISHED_USER_IDS:Array/*int*/ = []; // if you want to simulate loading a match where some users already finished playing
+		public static var DEFAULT_CUSTOM_INFO:Array/*InfoEntry*/ =
+			[   
 				InfoEntry.create(API_Message.CUSTOM_INFO_KEY_logoFullUrl,"../../Emulator/example_logo.jpg"), 
 				InfoEntry.create(API_Message.CUSTOM_INFO_KEY_gameHeight,400), 
 				InfoEntry.create(API_Message.CUSTOM_INFO_KEY_gameWidth,400),
-				InfoEntry.create("checkThrowingAnError",false), // testing the red error window
-				// game specific info
-				// I replaced the second default symbol with a camel image
-				InfoEntry.create("customSymbolsStringArray",[null, "../../Emulator/camel70x70.PNG"])  
+				InfoEntry.create("checkThrowingAnError",false) // testing the red error window
 			];
-		public static var DEFAULT_USER_INFO:Array/*InfoEntry*/ =
-				[ 	InfoEntry.create(API_Message.USER_INFO_KEY_name, "User name"),
+		public static var OVERRIDING_CUSTOM_INFO:Array/*InfoEntry*/ = []; // set by reflection, do not set it in the code!
+		public static var DEFAULT_USERS_INFO:Array/*InfoEntry[]*/ =
+			[
+				[ 	InfoEntry.create(API_Message.USER_INFO_KEY_name, "Player A"),
 					InfoEntry.create(API_Message.USER_INFO_KEY_avatar_url, "../../Emulator/Avatar_1.gif")
-				];
+				],
+				[ 	InfoEntry.create(API_Message.USER_INFO_KEY_name, "Player B"),
+					InfoEntry.create(API_Message.USER_INFO_KEY_avatar_url, "../../Emulator/Avatar_2.gif")
+				],
+				[ 	InfoEntry.create(API_Message.USER_INFO_KEY_name, "Player C"),
+					InfoEntry.create(API_Message.USER_INFO_KEY_avatar_url, "../../Emulator/Avatar_3.gif")
+				],
+				[ 	InfoEntry.create(API_Message.USER_INFO_KEY_name, "Player D"),
+					InfoEntry.create(API_Message.USER_INFO_KEY_avatar_url, "../../Emulator/Avatar_4.gif")
+				]
+			];
 		public static var DEFAULT_MATCH_STATE:Array/*ServerEntry*/ = []; // you can change this and load a saved match
-						
-		private var customInfoEntries:Array/*InfoEntry*/;
-		private var userId:Number; 
-		private var userInfoEntries:Array/*InfoEntry*/;
-		private var userStateEntries:Array/*ServerEntry*/;
+												 
+		private var messageNum:Number = 10000;
+		private var curUserId:Number; // the current userId (we change this curUserId when getting doAllSetTurn)
+		private var finishedUserIds:Array/*int*/;
 		private var apiMsgsQueue:Array/*API_Message*/ = [];
 		private var serverStateMiror:ObjectDictionary;
 		public function SinglePlayerEmulator(graphics:MovieClip) {
-			super(graphics,true, DEFAULT_LOCALCONNECTION_PREFIX,true);
-			this.customInfoEntries = DEFAULT_GENERAL_INFO;
-			this.userId = DEFAULT_USER_ID;
-			this.userInfoEntries = DEFAULT_USER_INFO;
-			this.userStateEntries = DEFAULT_MATCH_STATE;
+			super(graphics,true, DEFAULT_LOCALCONNECTION_PREFIX,true);			
 		}
-		private function updateUserIds(userIdsToUpdate:Array/*int*/,uerIdsToAdd:Array/*int*/):Boolean{
+		private function updateUserIds(userIdsToUpdate:Array/*int*/,userIdsToAdd:Array/*int*/):Boolean{
 			var updated:Boolean = false;
-			for (var i56:Number=0; i56<uerIdsToAdd.length; i56++) { var id:Number = uerIdsToAdd[i56]; 
+			for (var i78:Number=0; i78<userIdsToAdd.length; i78++) { var id:Number = userIdsToAdd[i78]; 
 				if(AS3_vs_AS2.IndexOf(userIdsToUpdate,id)==-1){
 					updated = true;
 					userIdsToUpdate.push(id);
@@ -89,7 +111,7 @@ import come2play_as2.api.*;
 			var serverEntries:Array/*ServerEntry*/ = new Array();
 			var serverEntry:ServerEntry;
 			var pointerObject:Object;
-			for (var i93:Number=0; i93<revealEntries.length; i93++) { var revealEntry:RevealEntry = revealEntries[i93]; 
+			for (var i115:Number=0; i115<revealEntries.length; i115++) { var revealEntry:RevealEntry = revealEntries[i115]; 
 				if (revealEntry.depth == 0) {
 					serverEntry = doRevealEntry(revealEntry);
 					if (serverEntry!=null)	serverEntries.push(serverEntry);
@@ -133,9 +155,9 @@ import come2play_as2.api.*;
 		private function extractStoredData(userEntries:Array/*UserEntry*/,storePrefrence:Number):Array/*ServerEntries*/{
 			var serverEntries:Array/*ServerEntry*/ = [];
 			var serverEntry:ServerEntry;
-			for (var i137:Number=0; i137<userEntries.length; i137++) { var userEntry:UserEntry = userEntries[i137]; 
+			for (var i159:Number=0; i159<userEntries.length; i159++) { var userEntry:UserEntry = userEntries[i159]; 
 				switch(storePrefrence){
-					case 1:serverEntry = ServerEntry.create(userEntry.key, userEntry.value,userId,userEntry.isSecret ? [userId] : null, getTimer()); break;
+					case 1:serverEntry = ServerEntry.create(userEntry.key, userEntry.value,curUserId,userEntry.isSecret ? [curUserId] : null, getTimer()); break;
 					case 2:serverEntry = ServerEntry.create(userEntry.key, userEntry.value,-1,userEntry.isSecret ? [] : null, getTimer()); break;
 					case 3:serverEntry = ServerEntry.create(userEntry.key, userEntry.value,-1,userEntry.isSecret ? [] : null, getTimer()); break;
 				}
@@ -167,7 +189,7 @@ import come2play_as2.api.*;
 			if (msg instanceof API_Transaction) {
 				var transaction:API_Transaction = API_Transaction(msg);
 				var tempServerEntries:Array;
-				for (var i171:Number=0; i171<transaction.messages.length; i171++) { var innerMsg:API_Message = transaction.messages[i171]; 
+				for (var i193:Number=0; i193<transaction.messages.length; i193++) { var innerMsg:API_Message = transaction.messages[i193]; 
 					tempServerEntries = messageHandler(innerMsg,serverEntries);
 					if(tempServerEntries.length>0)
 					serverEntries = serverEntries.concat(tempServerEntries);
@@ -232,17 +254,27 @@ import come2play_as2.api.*;
 					return [serverEntry];
         	}else if (msg instanceof API_DoAllEndMatch) {
 				var endMatch:API_DoAllEndMatch = API_DoAllEndMatch(msg);
-				var finishedPlayerIds:Array = [];
-				for (var i237:Number=0; i237<endMatch.finishedPlayers.length; i237++) { var matchOver:PlayerMatchOver = endMatch.finishedPlayers[i237]; 
-					finishedPlayerIds.push( matchOver.playerId );
+				var newlyFinishedUserIds:Array = [];
+				var t:T = new T();
+				t.add( T.i18n("Game is over for:\n") );
+				for (var i261:Number=0; i261<endMatch.finishedPlayers.length; i261++) { var matchOver:PlayerMatchOver = endMatch.finishedPlayers[i261]; 
+					var playerId:Number = matchOver.playerId;
+					newlyFinishedUserIds.push( playerId );
+					finishedUserIds.push( playerId );
+					t.add( T.i18nReplace("$name$ score is $score$, and he will win $percent$ percent of the gambling pot.\n", {name: getUserName(playerId), score: matchOver.score, percent: matchOver.potPercentage }) );
+				}				 
+				queueSendMessage( API_GotMatchEnded.create(++messageNum,newlyFinishedUserIds) );
+				if (finishedUserIds.length==NUM_OF_PLAYERS) {
+					t.add( T.i18n("A new game will start in 5 seconds...\n") );
+					// game is completely over for all players
+					AS3_vs_AS2.myTimeout(AS3_vs_AS2.delegate(this, this.sendNewMatch), START_NEW_GAME_AFTER_MILLISECONDS);
 				}
-				queueSendMessage( API_GotMatchEnded.create(++messageNum,finishedPlayerIds) );
-				AS3_vs_AS2.myTimeout(AS3_vs_AS2.delegate(this, this.sendNewMatch), 2000);
+				AS3_vs_AS2.showMessage(t.join(),"gameOver");
 			} else if (msg instanceof API_DoRegisterOnServer) {
 				doRegisterOnServer();
 			} else if (msg instanceof API_DoAllRequestStateCalculation) { 
 				var requestStateCalculationMsg:API_DoAllRequestStateCalculation = API_DoAllRequestStateCalculation(msg);
-				for (var i246:Number=0; i246<requestStateCalculationMsg.keys.length; i246++) { var key:Object = requestStateCalculationMsg.keys[i246]; 
+				for (var i278:Number=0; i278<requestStateCalculationMsg.keys.length; i278++) { var key:Object = requestStateCalculationMsg.keys[i278]; 
 					var entry:ServerEntry = ServerEntry(serverStateMiror.getValue(key));
 					if(entry!= null)
 						serverEntries.push(entry)
@@ -250,6 +282,19 @@ import come2play_as2.api.*;
 						trace(JSON.stringify(key))
 				}
 				queueSendMessage(API_GotRequestStateCalculation.create(1,serverEntries))
+        	} else if (msg instanceof API_DoAllSetTurn) {
+        		var setTurn:API_DoAllSetTurn = API_DoAllSetTurn(msg);
+        		if (setTurn.userId!=curUserId) {
+        			// we switch users by ending and loading the match
+        			var userId:Number = setTurn.userId;
+					AS3_vs_AS2.showMessage( T.i18nReplace("The turn of $name$ is starting.\n", {name: getUserName(userId)}) , "newTurn");
+					
+        			var ongoingIds:Array/*int*/ = StaticFunctions.subtractArray(getPlayerIds(),finishedUserIds);
+					queueSendMessage( API_GotMatchEnded.create(++messageNum,ongoingIds) );
+					setCurUserId(userId);
+					queueSendMessage( API_GotMatchStarted.create(++messageNum,getPlayerIds(), finishedUserIds, serverStateMiror.getValues() ) );
+        		}
+        		
 			} else if (msg instanceof API_DoFinishedCallback) {
 				if (apiMsgsQueue.length==0) throwError("Game sent too many DoFinishedCallback");
 				apiMsgsQueue.shift();
@@ -258,21 +303,36 @@ import come2play_as2.api.*;
 			return [];	
 		}
 		
+		private function setCurUserId(id:Number):Void {
+			curUserId = id;
+			queueSendMessage(API_GotCustomInfo.create([ InfoEntry.create(API_Message.CUSTOM_INFO_KEY_myUserId,curUserId) ]));
+		}
+		private function getUserName(id:Number):String {
+			return T.getUserValue(id,API_Message.USER_INFO_KEY_name,"Player "+id).toString();
+		}
         /*override*/ public function gotMessage(msg:API_Message):Void {        	
 			messageHandler(msg);			
   		}
   		private function doRegisterOnServer():Void {
-  			queueSendMessage(API_GotCustomInfo.create(customInfoEntries) );
-  			queueSendMessage(API_GotUserInfo.create(userId, userInfoEntries) );
-	 		sendNewMatch();
-  		}
-  		private function sendNewMatch():Void {
+  			queueSendMessage(API_GotCustomInfo.create(DEFAULT_CUSTOM_INFO.concat(OVERRIDING_CUSTOM_INFO)) );
+  			
+  			if (DEFAULT_USERS_INFO.length>0) {
+	  			var pos:Number = 0;
+	  			for (var i322:Number=0; i322<getPlayerIds().length; i322++) { var curUserId:Number = getPlayerIds()[i322]; 
+	  				queueSendMessage(API_GotUserInfo.create(curUserId, pos<DEFAULT_USERS_INFO.length ? DEFAULT_USERS_INFO[pos++] : DEFAULT_USERS_INFO[pos-1]) );
+				}
+	  		}
+	  		sendNewMatch();
+	  	}	  	
+	  	private function sendNewMatch():Void {
+	  		setCurUserId( getFirstPlayerId() );
+	  		
   			serverStateMiror = new ObjectDictionary();	
-  			for (var i272:Number=0; i272<userStateEntries.length; i272++) { var serverEntry:ServerEntry = userStateEntries[i272]; 
+  			for (var i332:Number=0; i332<DEFAULT_MATCH_STATE.length; i332++) { var serverEntry:ServerEntry = DEFAULT_MATCH_STATE[i332]; 
   				serverStateMiror.addEntry(serverEntry);
-			}				
-			messageNum = 0;
-  			queueSendMessage(API_GotMatchStarted.create(messageNum,[userId], [], userStateEntries) );	 	
+			}
+			finishedUserIds = DEFAULT_FINISHED_USER_IDS.concat(); // to create a copy
+  			queueSendMessage(API_GotMatchStarted.create(++messageNum,getPlayerIds(), finishedUserIds, serverStateMiror.getValues() ) );	 	
   		}
   		private function queueSendMessage(msg:API_Message):Void {
   			apiMsgsQueue.push(msg);

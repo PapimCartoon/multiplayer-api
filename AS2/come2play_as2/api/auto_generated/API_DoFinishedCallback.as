@@ -12,7 +12,7 @@ import come2play_as2.api.auto_generated.*;
 			var res:API_DoFinishedCallback = new API_DoFinishedCallback();
 			res.callbackName = callbackName;
 
-// This instanceof a AUTOMATICALLY GENERATED! Do not change!
+// This is a AUTOMATICALLY GENERATED! Do not change!
 
 			res.msgNum = msgNum;
 			return res;
@@ -25,7 +25,7 @@ import come2play_as2.api.auto_generated.*;
 		/*override*/ public function getFunctionId():Number { return -128; }
 		/*override*/ public function getMethodName():String { return 'doFinishedCallback'; }
 
-// This instanceof a AUTOMATICALLY GENERATED! Do not change!
+// This is a AUTOMATICALLY GENERATED! Do not change!
 
 		/*override*/ public function getMethodParameters():Array { return [callbackName, msgNum]; }
 		/*override*/ public function getMethodParametersNum():Number { return 2; }

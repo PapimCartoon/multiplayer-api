@@ -1,4 +1,4 @@
-﻿package come2play_as3.api
+package come2play_as3.api
 {
 	import come2play_as3.api.auto_copied.*;
 	import come2play_as3.api.auto_generated.*;
@@ -16,46 +16,68 @@
 	 * gotUserInfo
 	 * gotMatchStarted
 	 * 
+	 * When NUM_OF_PLAYERS=1, there is a single player,
+	 * which is suitable for real-time games (like MineSweeper).
+	 * In turn-based games (like Monopoly), you can simulate several players.
+	 * The emulator will start with the first player,
+	 * and whenever it receives a call doAllSetTurn(X),
+	 * then it will end the match, change CUSTOM_INFO_KEY_myUserId to X,
+	 * and load the match.
+	 * 
 	 * When the server gets doAllEndMatch,
 	 * it will wait 2 seconds before starting a new match.
 	 */
 	public final class SinglePlayerEmulator extends LocalConnectionUser
 	{
-		public static var DEFAULT_USER_ID:int = 42; 
-		public var messageNum:int;
-		public static var DEFAULT_GENERAL_INFO:Array/*InfoEntry*/ =
-			[  
-				InfoEntry.create(API_Message.CUSTOM_INFO_KEY_myUserId,DEFAULT_USER_ID), 
+		public static var START_NEW_GAME_AFTER_MILLISECONDS:int = 5000;
+		public static var NUM_OF_PLAYERS:int = 2;
+		public static var DEFAULT_USER_IDS:Array/*int*/ = [42,43,44,45];
+		private static function getFirstPlayerId():int {
+			return DEFAULT_USER_IDS[0];
+		}
+		private static function getPlayerIds():Array/*int*/ {
+			var res:Array/*int*/ = [];
+			for (var i:int=0; i<NUM_OF_PLAYERS; i++)
+				res.push(DEFAULT_USER_IDS[i]);
+			return res;			
+		}
+		public static var DEFAULT_FINISHED_USER_IDS:Array/*int*/ = []; // if you want to simulate loading a match where some users already finished playing
+		public static var DEFAULT_CUSTOM_INFO:Array/*InfoEntry*/ =
+			[   
 				InfoEntry.create(API_Message.CUSTOM_INFO_KEY_logoFullUrl,"../../Emulator/example_logo.jpg"), 
 				InfoEntry.create(API_Message.CUSTOM_INFO_KEY_gameHeight,400), 
 				InfoEntry.create(API_Message.CUSTOM_INFO_KEY_gameWidth,400),
-				InfoEntry.create("checkThrowingAnError",false), // testing the red error window
-				// game specific info
-				// I replaced the second default symbol with a camel image
-				InfoEntry.create("customSymbolsStringArray",[null, "../../Emulator/camel70x70.PNG"])  
+				InfoEntry.create("checkThrowingAnError",false) // testing the red error window
 			];
-		public static var DEFAULT_USER_INFO:Array/*InfoEntry*/ =
-				[ 	InfoEntry.create(API_Message.USER_INFO_KEY_name, "User name"),
+		public static var OVERRIDING_CUSTOM_INFO:Array/*InfoEntry*/ = []; // set by reflection, do not set it in the code!
+		public static var DEFAULT_USERS_INFO:Array/*InfoEntry[]*/ =
+			[
+				[ 	InfoEntry.create(API_Message.USER_INFO_KEY_name, "Player A"),
 					InfoEntry.create(API_Message.USER_INFO_KEY_avatar_url, "../../Emulator/Avatar_1.gif")
-				];
+				],
+				[ 	InfoEntry.create(API_Message.USER_INFO_KEY_name, "Player B"),
+					InfoEntry.create(API_Message.USER_INFO_KEY_avatar_url, "../../Emulator/Avatar_2.gif")
+				],
+				[ 	InfoEntry.create(API_Message.USER_INFO_KEY_name, "Player C"),
+					InfoEntry.create(API_Message.USER_INFO_KEY_avatar_url, "../../Emulator/Avatar_3.gif")
+				],
+				[ 	InfoEntry.create(API_Message.USER_INFO_KEY_name, "Player D"),
+					InfoEntry.create(API_Message.USER_INFO_KEY_avatar_url, "../../Emulator/Avatar_4.gif")
+				]
+			];
 		public static var DEFAULT_MATCH_STATE:Array/*ServerEntry*/ = []; // you can change this and load a saved match
-						
-		private var customInfoEntries:Array/*InfoEntry*/;
-		private var userId:int; 
-		private var userInfoEntries:Array/*InfoEntry*/;
-		private var userStateEntries:Array/*ServerEntry*/;
+												 
+		private var messageNum:int = 10000;
+		private var curUserId:int; // the current userId (we change this curUserId when getting doAllSetTurn)
+		private var finishedUserIds:Array/*int*/;
 		private var apiMsgsQueue:Array/*API_Message*/ = [];
 		private var serverStateMiror:ObjectDictionary;
 		public function SinglePlayerEmulator(graphics:DisplayObjectContainer) {
-			super(graphics,true, DEFAULT_LOCALCONNECTION_PREFIX,true);
-			this.customInfoEntries = DEFAULT_GENERAL_INFO;
-			this.userId = DEFAULT_USER_ID;
-			this.userInfoEntries = DEFAULT_USER_INFO;
-			this.userStateEntries = DEFAULT_MATCH_STATE;
+			super(graphics,true, DEFAULT_LOCALCONNECTION_PREFIX,true);			
 		}
-		private function updateUserIds(userIdsToUpdate:Array/*int*/,uerIdsToAdd:Array/*int*/):Boolean{
+		private function updateUserIds(userIdsToUpdate:Array/*int*/,userIdsToAdd:Array/*int*/):Boolean{
 			var updated:Boolean = false;
-			for each(var id:int in uerIdsToAdd){
+			for each(var id:int in userIdsToAdd){
 				if(AS3_vs_AS2.IndexOf(userIdsToUpdate,id)==-1){
 					updated = true;
 					userIdsToUpdate.push(id);
@@ -138,7 +160,7 @@
 			var serverEntry:ServerEntry;
 			for each (var userEntry:UserEntry in userEntries) {
 				switch(storePrefrence){
-					case 1:serverEntry = ServerEntry.create(userEntry.key, userEntry.value,userId,userEntry.isSecret ? [userId] : null, getTimer()); break;
+					case 1:serverEntry = ServerEntry.create(userEntry.key, userEntry.value,curUserId,userEntry.isSecret ? [curUserId] : null, getTimer()); break;
 					case 2:serverEntry = ServerEntry.create(userEntry.key, userEntry.value,-1,userEntry.isSecret ? [] : null, getTimer()); break;
 					case 3:serverEntry = ServerEntry.create(userEntry.key, userEntry.value,-1,userEntry.isSecret ? [] : null, getTimer()); break;
 				}
@@ -235,12 +257,22 @@
 					return [serverEntry];
         	}else if (msg is API_DoAllEndMatch) {
 				var endMatch:API_DoAllEndMatch = /*as*/msg as API_DoAllEndMatch;
-				var finishedPlayerIds:Array = [];
+				var newlyFinishedUserIds:Array = [];
+				var t:T = new T();
+				t.add( T.i18n("Game is over for:\n") );
 				for each (var matchOver:PlayerMatchOver in endMatch.finishedPlayers) {
-					finishedPlayerIds.push( matchOver.playerId );
+					var playerId:int = matchOver.playerId;
+					newlyFinishedUserIds.push( playerId );
+					finishedUserIds.push( playerId );
+					t.add( T.i18nReplace("$name$ score is $score$, and he will win $percent$ percent of the gambling pot.\n", {name: getUserName(playerId), score: matchOver.score, percent: matchOver.potPercentage }) );
+				}				 
+				queueSendMessage( API_GotMatchEnded.create(++messageNum,newlyFinishedUserIds) );
+				if (finishedUserIds.length==NUM_OF_PLAYERS) {
+					t.add( T.i18n("A new game will start in 5 seconds...\n") );
+					// game is completely over for all players
+					AS3_vs_AS2.myTimeout(AS3_vs_AS2.delegate(this, this.sendNewMatch), START_NEW_GAME_AFTER_MILLISECONDS);
 				}
-				queueSendMessage( API_GotMatchEnded.create(++messageNum,finishedPlayerIds) );
-				AS3_vs_AS2.myTimeout(AS3_vs_AS2.delegate(this, this.sendNewMatch), 2000);
+				AS3_vs_AS2.showMessage(t.join(),"gameOver");
 			} else if (msg is API_DoRegisterOnServer) {
 				doRegisterOnServer();
 			} else if (msg is API_DoAllRequestStateCalculation) { 
@@ -253,6 +285,19 @@
 						trace(JSON.stringify(key))
 				}
 				queueSendMessage(API_GotRequestStateCalculation.create(1,serverEntries))
+        	} else if (msg is API_DoAllSetTurn) {
+        		var setTurn:API_DoAllSetTurn = /*as*/msg as API_DoAllSetTurn;
+        		if (setTurn.userId!=curUserId) {
+        			// we switch users by ending and loading the match
+        			var userId:int = setTurn.userId;
+					AS3_vs_AS2.showMessage( T.i18nReplace("The turn of $name$ is starting.\n", {name: getUserName(userId)}) , "newTurn");
+					
+        			var ongoingIds:Array/*int*/ = StaticFunctions.subtractArray(getPlayerIds(),finishedUserIds);
+					queueSendMessage( API_GotMatchEnded.create(++messageNum,ongoingIds) );
+					setCurUserId(userId);
+					queueSendMessage( API_GotMatchStarted.create(++messageNum,getPlayerIds(), finishedUserIds, serverStateMiror.getValues() ) );
+        		}
+        		
 			} else if (msg is API_DoFinishedCallback) {
 				if (apiMsgsQueue.length==0) throwError("Game sent too many DoFinishedCallback");
 				apiMsgsQueue.shift();
@@ -261,21 +306,36 @@
 			return [];	
 		}
 		
+		private function setCurUserId(id:int):void {
+			curUserId = id;
+			queueSendMessage(API_GotCustomInfo.create([ InfoEntry.create(API_Message.CUSTOM_INFO_KEY_myUserId,curUserId) ]));
+		}
+		private function getUserName(id:int):String {
+			return T.getUserValue(id,API_Message.USER_INFO_KEY_name,"Player "+id).toString();
+		}
         override public function gotMessage(msg:API_Message):void {        	
 			messageHandler(msg);			
   		}
   		private function doRegisterOnServer():void {
-  			queueSendMessage(API_GotCustomInfo.create(customInfoEntries) );
-  			queueSendMessage(API_GotUserInfo.create(userId, userInfoEntries) );
-	 		sendNewMatch();
-  		}
-  		private function sendNewMatch():void {
+  			queueSendMessage(API_GotCustomInfo.create(DEFAULT_CUSTOM_INFO.concat(OVERRIDING_CUSTOM_INFO)) );
+  			
+  			if (DEFAULT_USERS_INFO.length>0) {
+	  			var pos:int = 0;
+	  			for each (var curUserId:int in getPlayerIds()) {
+	  				queueSendMessage(API_GotUserInfo.create(curUserId, pos<DEFAULT_USERS_INFO.length ? DEFAULT_USERS_INFO[pos++] : DEFAULT_USERS_INFO[pos-1]) );
+				}
+	  		}
+	  		sendNewMatch();
+	  	}	  	
+	  	private function sendNewMatch():void {
+	  		setCurUserId( getFirstPlayerId() );
+	  		
   			serverStateMiror = new ObjectDictionary();	
-  			for each(var serverEntry:ServerEntry in userStateEntries) {
+  			for each(var serverEntry:ServerEntry in DEFAULT_MATCH_STATE) {
   				serverStateMiror.addEntry(serverEntry);
-			}				
-			messageNum = 0;
-  			queueSendMessage(API_GotMatchStarted.create(messageNum,[userId], [], userStateEntries) );	 	
+			}
+			finishedUserIds = DEFAULT_FINISHED_USER_IDS.concat(); // to create a copy
+  			queueSendMessage(API_GotMatchStarted.create(++messageNum,getPlayerIds(), finishedUserIds, serverStateMiror.getValues() ) );	 	
   		}
   		private function queueSendMessage(msg:API_Message):void {
   			apiMsgsQueue.push(msg);

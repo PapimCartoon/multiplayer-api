@@ -177,7 +177,7 @@ Not used by the graphics yet (but should be displayed):
 		<entry><key>DebugMultipleMessages</key><value>false</value></entry>
 		<!--causes the framework to show a waiting screen  -->
 		<entry><key>StartUp_3_WaitingForOpponents tags</key><value>'<custom>SHOW_AD</custom>'</value></entry>
-		<entry><key>adType</key><value>'MochiAd'</value></entry>
+		<entry><key>adType</key><value>'gameJacket'</value></entry>
 		<!--
 		MochiAd
 		cpmStar
@@ -188,7 +188,7 @@ Not used by the graphics yet (but should be displayed):
 		TurnBased
 		NO_TIMER
 		-->
-		<entry><key>TimerType</key><value>'TurnBased'</value></entry>
+		<entry><key>TimerType</key><value>'NO_TIMER'</value></entry>
 		<!--
 		tableStyle - tells the room which view to use as default
 		BOX - for box view

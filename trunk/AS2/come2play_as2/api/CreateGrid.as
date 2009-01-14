@@ -14,38 +14,28 @@ class come2play_as2.api.CreateGrid
 	 * Square_2_0 , Square_2_1 , Square_2_2 , ...
 	 * ...
 	 * 
-	 * The grid parameters are determined by gotCustomInfo:
-	 * The grid size instanceof ROWS times COLS
+	 * The grid parameters are determined by gotCustomInfo via reflection:
+	 * The grid size is ROWS times COLS
 	 * The movieclips are scaled by:
 	 * squareScaleX and squareScaleY
-	 * (for example, if they are 50, then the size instanceof reduced by half.)
+	 * (for example, if they are 50, then the size is reduced by half.)
 	 * The distance between the squares is:
 	 * squareDeltaX and squareDeltaY
 	 * And the initial position of the first square is: 
 	 * squareStartX and squareStartY
 	 */
-	public var ROWS:Number;
-	public var COLS:Number;
-	public var squareScaleX:Number;
-	public var squareScaleY:Number;
-	public var squareStartX:Number;
-	public var squareStartY:Number;
-	public var squareDeltaX:Number;
-	public var squareDeltaY:Number;
+	public static var ROWS:Number = 3;
+	public static var COLS:Number = 3;
+	public static var squareScaleX:Number = 100;
+	public static var squareScaleY:Number = 100;
+	public static var squareStartX:Number = 50;
+	public static var squareStartY:Number = 50;
+	public static var squareDeltaX:Number = 84;
+	public static var squareDeltaY:Number = 84;
 		
-	public function CreateGrid(defaultRows:Number, defaultCols:Number, 
-			defaultSize:Number, 
-			defaultScale:Number, defaultStartPos:Number) {
-		ROWS = AS3_vs_AS2.as_int(T.custom("ROWS",defaultRows)); 
-		COLS = AS3_vs_AS2.as_int(T.custom("COLS",defaultCols));
-		StaticFunctions.assert(ROWS>1 && ROWS<=10, ["Illegal ROWS=",ROWS]);
-		StaticFunctions.assert(COLS>1 && COLS<=10, ["Illegal COLS=",COLS]);
-		squareScaleX = AS3_vs_AS2.as_int(T.custom("squareScaleX",defaultScale)); 
-		squareScaleY = AS3_vs_AS2.as_int(T.custom("squareScaleY",defaultScale)); 
-		squareDeltaX = AS3_vs_AS2.as_int(T.custom("squareDeltaX",defaultSize)); 
-		squareDeltaY = AS3_vs_AS2.as_int(T.custom("squareDeltaY",defaultSize)); 
-		squareStartX = AS3_vs_AS2.as_int(T.custom("squareStartX",defaultStartPos)); 
-		squareStartY = AS3_vs_AS2.as_int(T.custom("squareStartY",defaultStartPos));
+	public function CreateGrid() {
+		StaticFunctions.assert(ROWS>1, ["Illegal ROWS=",ROWS]);
+		StaticFunctions.assert(COLS>1, ["Illegal COLS=",COLS]);
 	}
 	public function createMovieClips(graphics:MovieClip, squareLinkageName:String):Void {
 		for (var row:Number=0; row<ROWS; row++)

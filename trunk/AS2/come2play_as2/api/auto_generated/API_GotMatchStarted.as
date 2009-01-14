@@ -12,7 +12,7 @@ import come2play_as2.api.auto_generated.*;
 		public var serverEntries:Array/*ServerEntry*/;
 		public static function create(msgNum:Number, allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, serverEntries:Array/*ServerEntry*/):API_GotMatchStarted {
 
-// This instanceof a AUTOMATICALLY GENERATED! Do not change!
+// This is a AUTOMATICALLY GENERATED! Do not change!
 
 			var res:API_GotMatchStarted = new API_GotMatchStarted();
 			res.msgNum = msgNum;
@@ -25,7 +25,7 @@ import come2play_as2.api.auto_generated.*;
 			var pos:Number = 0;
 			this.msgNum = parameters[pos++];
 
-// This instanceof a AUTOMATICALLY GENERATED! Do not change!
+// This is a AUTOMATICALLY GENERATED! Do not change!
 
 			this.allPlayerIds = parameters[pos++];
 			this.finishedPlayerIds = parameters[pos++];

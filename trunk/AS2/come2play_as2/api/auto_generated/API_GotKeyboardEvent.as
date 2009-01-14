@@ -12,7 +12,7 @@ import come2play_as2.api.auto_generated.*;
 		public var keyLocation:Number;
 		public var altKey:Boolean;
 
-// This instanceof a AUTOMATICALLY GENERATED! Do not change!
+// This is a AUTOMATICALLY GENERATED! Do not change!
 
 		public var ctrlKey:Boolean;
 		public var shiftKey:Boolean;
@@ -25,7 +25,7 @@ import come2play_as2.api.auto_generated.*;
 			res.altKey = altKey;
 			res.ctrlKey = ctrlKey;
 
-// This instanceof a AUTOMATICALLY GENERATED! Do not change!
+// This is a AUTOMATICALLY GENERATED! Do not change!
 
 			res.shiftKey = shiftKey;
 			return res;
@@ -38,7 +38,7 @@ import come2play_as2.api.auto_generated.*;
 			this.keyLocation = parameters[pos++];
 			this.altKey = parameters[pos++];
 
-// This instanceof a AUTOMATICALLY GENERATED! Do not change!
+// This is a AUTOMATICALLY GENERATED! Do not change!
 
 			this.ctrlKey = parameters[pos++];
 			this.shiftKey = parameters[pos++];

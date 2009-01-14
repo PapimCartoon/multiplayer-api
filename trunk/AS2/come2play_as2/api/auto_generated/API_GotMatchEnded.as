@@ -12,7 +12,7 @@ import come2play_as2.api.auto_generated.*;
 			var res:API_GotMatchEnded = new API_GotMatchEnded();
 			res.msgNum = msgNum;
 
-// This instanceof a AUTOMATICALLY GENERATED! Do not change!
+// This is a AUTOMATICALLY GENERATED! Do not change!
 
 			res.finishedPlayerIds = finishedPlayerIds;
 			return res;
@@ -25,7 +25,7 @@ import come2play_as2.api.auto_generated.*;
 		/*override*/ public function getFunctionId():Number { return -120; }
 		/*override*/ public function getMethodName():String { return 'gotMatchEnded'; }
 
-// This instanceof a AUTOMATICALLY GENERATED! Do not change!
+// This is a AUTOMATICALLY GENERATED! Do not change!
 
 		/*override*/ public function getMethodParameters():Array { return [msgNum, finishedPlayerIds]; }
 		/*override*/ public function getMethodParametersNum():Number { return 2; }

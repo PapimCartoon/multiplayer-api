@@ -3,7 +3,7 @@
  * A class may extend SerializableClass
  * 	to get the following features:
  * - field __CLASS_NAME__ contains a unique name,
- * 	 by default it instanceof the class name (without the package name).  
+ * 	 by default it is the class name (without the package name).  
  * - serialization on LocalConnection
  * 	 using the method "toObject()".
  * - serialization to String
@@ -32,7 +32,7 @@
  * 		getClassByName(getClassName(instance))
  *   Therefore, we added another static method that registers such inner classes:
  * 	  registerClassAlias(shortName, classObject)
- * 	 which instanceof similar in essense to 
+ * 	 which is similar in essense to 
  *   flash.net.registerClassAlias(aliasName, classObject):Void 
  * 
  * 
@@ -41,7 +41,7 @@
  *   (but they are serialized on LocalConnection)
  * - Your class may override postDeserialize
  *   to do post processing and even return a different object.
- *   This instanceof useful in two cases:
+ *   This is useful in two cases:
  *   1) if you have fields that are derived from other fields (such as "__" fields).
  *   2) in Enum classes, postDeserialize may return a unique/interned object.
  *    
@@ -51,11 +51,11 @@ class come2play_as2.api.auto_copied.SerializableClass /*<InAPI>extends Event</In
 {
 	public static var EVENT_FIELDS:Array
 		/*<InAPI> = ["type", "bubbles", "cancelable", "currentTarget", "eventPhase", "target"]</InAPI>*/;
-	public static var IS_THROWING_EXCEPTIONS:Boolean = true; // in the online version we set it to false. (Consider the case that a hacker stores secret data which instanceof illegal values)
+	public static var IS_THROWING_EXCEPTIONS:Boolean = true; // in the online version we set it to false. (Consider the case that a hacker stores secret data which is illegal values)
 	public static var IS_TESTING_SAME_REGISTER:Boolean = true; // for efficiency the online version turns it off
 	public static var IS_TRACE_REGISTER:Boolean = false;
 	
-	// this code changes when the java auto-copies the code (we replace come2play_as2.api with the new package name, which instanceof either come2play_as2 or emulator)
+	// this code changes when the java auto-copies the code (we replace come2play_as2.api with the new package name, which is either come2play_as2 or emulator)
 	public static var IS_IN_GAME:Boolean = "come2play_as2.api" == "come2play_as2" + ".api";
 	public static var IS_IN_FRAMEWORK:Boolean = "come2play_as2.api" == "come2play_as2"; 
 	
@@ -66,7 +66,7 @@ class come2play_as2.api.auto_copied.SerializableClass /*<InAPI>extends Event</In
 			) {
 		__CLASS_NAME__ = shortName==null ? StaticFunctions.getShortClassName(this) : shortName;
 		/*<InAPI>super(__CLASS_NAME__,bubbles, cancelable);</InAPI>*/
-		StaticFunctions.assert(!XMLSerializer.isReserved(__CLASS_NAME__),["The shortName=",__CLASS_NAME__," instanceof a reserved word, please use another shortName."]); 
+		StaticFunctions.assert(!XMLSerializer.isReserved(__CLASS_NAME__),["The shortName=",__CLASS_NAME__," is a reserved word, please use another shortName."]); 
 		StaticFunctions.assert(AS3_vs_AS2.stringIndexOf(__CLASS_NAME__,"$")==-1,["Illegal shortName in SerializableClass! shortName=",shortName]);
 		register();
 	}	

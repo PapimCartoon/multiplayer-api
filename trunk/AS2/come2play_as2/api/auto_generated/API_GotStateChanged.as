@@ -12,7 +12,7 @@ import come2play_as2.api.auto_generated.*;
 			var res:API_GotStateChanged = new API_GotStateChanged();
 			res.msgNum = msgNum;
 
-// This instanceof a AUTOMATICALLY GENERATED! Do not change!
+// This is a AUTOMATICALLY GENERATED! Do not change!
 
 			res.serverEntries = serverEntries;
 			return res;
@@ -25,7 +25,7 @@ import come2play_as2.api.auto_generated.*;
 		/*override*/ public function getFunctionId():Number { return -119; }
 		/*override*/ public function getMethodName():String { return 'gotStateChanged'; }
 
-// This instanceof a AUTOMATICALLY GENERATED! Do not change!
+// This is a AUTOMATICALLY GENERATED! Do not change!
 
 		/*override*/ public function getMethodParameters():Array { return [msgNum, serverEntries]; }
 		/*override*/ public function getMethodParametersNum():Number { return 2; }

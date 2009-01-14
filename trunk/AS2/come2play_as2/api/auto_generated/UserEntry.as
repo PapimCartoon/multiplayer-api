@@ -12,7 +12,7 @@ import come2play_as2.api.auto_generated.*;
 		public static function create(key/*any type*/, value/*any type*/, isSecret:Boolean/*<InAS3> = false </InAS3>*/):UserEntry {
 			var res:UserEntry = new UserEntry();
 
-// This instanceof a AUTOMATICALLY GENERATED! Do not change!
+// This is a AUTOMATICALLY GENERATED! Do not change!
 
 			res.key = key;
 			res.value = value;
@@ -25,7 +25,7 @@ import come2play_as2.api.auto_generated.*;
 			this.key = parameters[pos++];
 			this.value = parameters[pos++];
 
-// This instanceof a AUTOMATICALLY GENERATED! Do not change!
+// This is a AUTOMATICALLY GENERATED! Do not change!
 
 			this.isSecret = parameters[pos++];
 		}

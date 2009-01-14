@@ -5,7 +5,7 @@
 import come2play_as2.api.auto_copied.*;
 	class come2play_as2.api.auto_copied.LocalConnectionUser
 	{
-		public static var REVIEW_USER_ID:Number = -1; // special userId that instanceof used for reviewing games
+		public static var REVIEW_USER_ID:Number = -1; // special userId that is used for reviewing games
 		public static var IS_LOCAL_CONNECTION_UDERSCORE:Boolean = false;		
 		public static var DEFAULT_LOCALCONNECTION_PREFIX:String = ""+StaticFunctions.random(1,10000);
 		public static var MILL_WAIT_BEFORE_DO_REGISTER:Number = 500;
@@ -204,7 +204,7 @@ import come2play_as2.api.auto_copied.*;
         	try{
         		var deserializedMsg:Object = SerializableClass.deserialize(msgObj);
         		msg = API_Message(deserializedMsg);
-        		if (msg==null) throwError("msgObj="+JSON.stringify(msgObj)+" instanceof not an API_Message");
+        		if (msg==null) throwError("msgObj="+JSON.stringify(msgObj)+" is not an API_Message");
         		
         		myTrace(['gotMessage: ',msg]);
         		verify(msg, false);

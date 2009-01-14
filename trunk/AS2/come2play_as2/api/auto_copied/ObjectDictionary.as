@@ -8,7 +8,7 @@ class come2play_as2.api.auto_copied.ObjectDictionary extends SerializableClass
 	//all the variables of this class are public because it extends SerializableClass
 	public var hashMap:Object;
 	public var pSize:Number;
-	// the order of inserted keys and values instanceof important in the API for server entries
+	// the order of inserted keys and values is important in the API for server entries
 	public var allKeys:Array;
 	public var allValues:Array;
 

@@ -15,7 +15,7 @@ class come2play_as2.tictactoe.TictactoeSquareGraphic
 	// symbolsContainer will contain a child for each symbol (0 .. MAX_SYMBOLS-1)
 	private var symbolsContainer:MovieClip;	
 	private var allSymbols:Array/*DisplayObject*/; // symbolsContainer contains an array of symbols
-	private var allSymbolGraphics:Array/*DisplayObject*/; // each symbol contains a single child that instanceof the graphics of the symbol
+	private var allSymbolGraphics:Array/*DisplayObject*/; // each symbol contains a single child that is the graphics of the symbol
 	private var currentTurnForMouseOver:Number = BTN_NONE - 1; // so we will make the first assignment (to show the logo) 
 
 	private var move:TictactoeSquare;
@@ -108,7 +108,7 @@ class come2play_as2.tictactoe.TictactoeSquareGraphic
     private var alphaPercentage:Number;
     private var moveAnimationIntervalId:Number = -1;
     public function startMoveAnimation():Void {
-    	StaticFunctions.assert(moveAnimationIntervalId==-1, ["TictactoeSquareGraphic instanceof already in animation mode! sqaure=", move]);
+    	StaticFunctions.assert(moveAnimationIntervalId==-1, ["TictactoeSquareGraphic is already in animation mode! sqaure=", move]);
     	
 		graphic.animationStarted();
 		soundMovieClip.gotoAndPlay("MakeSound");

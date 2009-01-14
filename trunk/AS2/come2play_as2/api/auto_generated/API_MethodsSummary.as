@@ -12,7 +12,7 @@ import come2play_as2.api.auto_generated.*;
 		public function API_MethodsSummary(methodName:String, parameterNames:Array/*String*/, parameterTypes:Array/*String*/) {
 			this.methodName = methodName;
 
-// This instanceof a AUTOMATICALLY GENERATED! Do not change!
+// This is a AUTOMATICALLY GENERATED! Do not change!
 
 			this.parameterNames = parameterNames;
 			this.parameterTypes = parameterTypes;
@@ -25,7 +25,7 @@ import come2play_as2.api.auto_generated.*;
 		, new API_MethodsSummary('gotUserInfo', ['userId', 'infoEntries'], ['int', 'Array/*InfoEntry*/'] )
 		, new API_MethodsSummary('gotUserDisconnected', ['userId'], ['int'] )
 
-// This instanceof a AUTOMATICALLY GENERATED! Do not change!
+// This is a AUTOMATICALLY GENERATED! Do not change!
 
 		, new API_MethodsSummary('gotMatchStarted', ['msgNum', 'allPlayerIds', 'finishedPlayerIds', 'serverEntries'], ['int', 'Array/*int*/', 'Array/*int*/', 'Array/*ServerEntry*/'] )
 		, new API_MethodsSummary('gotMatchEnded', ['msgNum', 'finishedPlayerIds'], ['int', 'Array/*int*/'] )
@@ -38,7 +38,7 @@ import come2play_as2.api.auto_generated.*;
 		, new API_MethodsSummary('doAllRevealState', ['revealEntries'], ['Array/*RevealEntry*/'] )
 		, new API_MethodsSummary('doAllShuffleState', ['keys'], ['Array/*Object*/'] )
 
-// This instanceof a AUTOMATICALLY GENERATED! Do not change!
+// This is a AUTOMATICALLY GENERATED! Do not change!
 
 		, new API_MethodsSummary('doAllRequestRandomState', ['key', 'isSecret'], ['Object', 'Boolean'] )
 		, new API_MethodsSummary('doAllFoundHacker', ['userId', 'errorDescription'], ['int', 'String'] )

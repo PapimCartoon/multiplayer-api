@@ -1,8 +1,7 @@
-﻿import come2play_as2.api.auto_copied.*;
+import come2play_as2.api.auto_copied.*;
 
 class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 	public static var isAS3:Boolean = false;
-	public static var isInterval:Boolean = false
 
 	// in AS3 we have special serializers for some native classes (such as Dictionary, XML, Date, etc)
 	public static function registerNativeSerializers():Void {}
@@ -189,16 +188,22 @@ class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 			func(is_key_down, charCode, keyCode, keyLocation, altKey, ctrlKey, shiftKey);
 		}
 	}
-	public static function showError(graphics:MovieClip, msg:String):Void {
-		trace("I started printing an error :"+_root.getNextHighestDepth())
-		if (!isInterval)
-		{
-			isInterval = true;
-			var abc:Number = setInterval(showError,4000,graphics,msg);
-		}
+	
+	//public static var isInterval:Boolean = false
+	public static function showError(msg:String):Void {
+		//if (!isInterval) {
+		//	isInterval = true;
+		//	setInterval(showError,4000,graphics,msg);
+		//}
+		showMessage(msg, "error");
+	}
+	public static function showMessage(msg:String, kind:String):Void {
+		trace("I started showMessage: msg="+msg+" getNextHighestDepth="+_root.getNextHighestDepth());
+		
 		_root._visible = true;
 		_root._alpha = 100;
-		var container:MovieClip =_root.createEmptyMovieClip("___error_message"+Math.random(),_root.getNextHighestDepth());
+		var msgMcName:String = "___error_message"+Math.random();
+		var container:MovieClip =_root.createEmptyMovieClip(msgMcName,_root.getNextHighestDepth());
 		container.beginFill(0x000000);
 		container.moveTo(0, 0);
 		container.lineTo(500, 0);
@@ -210,7 +215,14 @@ class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 		label.selectable = true;
 		label.text = msg;
 		label.textColor = 0xFF0000;
-		trace("I finished printing an error")
+		trace("I finished showMessage")
+		
+		if (kind!="error") {
+			myTimeout( function ():Void {
+				trace("removeMovieClip container="+msgMcName);
+				container.removeMovieClip();
+				}, 2000);
+		}
 	}
 	
 

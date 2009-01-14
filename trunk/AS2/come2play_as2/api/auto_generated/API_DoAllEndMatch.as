@@ -12,7 +12,7 @@ import come2play_as2.api.auto_generated.*;
 			res.finishedPlayers = finishedPlayers;
 			return res;
 
-// This instanceof a AUTOMATICALLY GENERATED! Do not change!
+// This is a AUTOMATICALLY GENERATED! Do not change!
 
 		}
 		/*override*/ public function setMethodParameters(parameters:Array):Void { 
@@ -25,5 +25,5 @@ import come2play_as2.api.auto_generated.*;
 		/*override*/ public function getMethodParametersNum():Number { return 1; }
 	}
 
-// This instanceof a AUTOMATICALLY GENERATED! Do not change!
+// This is a AUTOMATICALLY GENERATED! Do not change!
 

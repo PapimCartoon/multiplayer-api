@@ -3,8 +3,8 @@
 import come2play_as2.api.auto_copied.*;
 class come2play_as2.api.auto_copied.StaticFunctions
 {			
-	public static var GOOGLE_REVISION_NUMBER:Number = 728;
-	public static var COME2PLAY_REVISION_NUMBER:Number = 1374;
+	public static var GOOGLE_REVISION_NUMBER:Number = 729;
+	public static var COME2PLAY_REVISION_NUMBER:Number = 1388;
 	public static function getRevision():String {
 		return "g="+GOOGLE_REVISION_NUMBER+",c2p="+COME2PLAY_REVISION_NUMBER;		
 	}
@@ -54,7 +54,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 		DID_SHOW_ERROR = true;
 		var msg:String = "An ERRRRRRRRRRROR occurred on time "+getTimer()+":\n"+msg+"\n"+ getTraces();
 		setClipboard(msg);
-		if (SHOULD_SHOW_ERRORS) AS3_vs_AS2.showError(someMovieClip, msg);
+		if (SHOULD_SHOW_ERRORS) AS3_vs_AS2.showError(msg);
 		if (SHOULD_CALL_TRACE) trace("\n\n\n"+msg+"\n\n\n");
 	}
 	public static function throwError(msg:String):Void {
@@ -110,7 +110,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 			if (c!=0) return false; // not the same number of dynamic properties
 			if (AS3_vs_AS2.isAS3) {
 				// for static properties we use describeType
-				// because o1 and o2 have the same type, it instanceof enough to use the fields of o1.
+				// because o1 and o2 have the same type, it is enough to use the fields of o1.
 				var fieldsArr:Array = AS3_vs_AS2.getFieldNames(o1);
 				for (var i117:Number=0; i117<fieldsArr.length; i117++) { var field:String = fieldsArr[i117]; 
 					allFields[field] = true;

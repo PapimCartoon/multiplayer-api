@@ -271,15 +271,21 @@ public final class AS3_vs_AS2
 				func(is_key_down, charCode, keyCode, keyLocation, altKey, ctrlKey, shiftKey);
 			});	
 	}
-	public static function showError(graphics:DisplayObjectContainer, msg:String):void {
-		trace("Showing error: myShowError="+myShowError+
-			" graphics="+graphics+
-			" graphics.stage="+ (graphics==null ? "null" : graphics.stage) +
-			" msg="+msg);
+	public static function showError(msg:String):void {
+		trace("Showing error: myShowError="+myShowError);
 		if (myShowError!=null) {
 			myShowError(msg);
 			return;
 		}
+		showMessage(msg, "error");
+	}
+	// possible kinds are: error, traces, newTurn, gameOver
+	public static function showMessage(msg:String, kind:String):void {
+		var graphics:DisplayObjectContainer = StaticFunctions.someMovieClip;
+		trace("Showing message: msg="+msg+
+			" graphics="+graphics+
+			" graphics.stage="+ (graphics==null ? "null" : graphics.stage) );
+			
 		if (graphics==null) return;
 		graphics = graphics.stage;
 		if (graphics==null) return;
@@ -306,8 +312,8 @@ public final class AS3_vs_AS2
 		buttonBox.graphics.drawRect(0,0,40,20);
 		buttonBox.graphics.endFill();
 		buttonBox.addChild(buttonText);
-		buttonBox.x = 440
-		buttonBox.y = 460;
+		buttonBox.x = graphics.width/2;
+		buttonBox.y = graphics.height/2;
 		var closeBtn:SimpleButton = new SimpleButton(buttonBox,buttonBox,buttonBox,buttonBox);
 		blackBox.addChild(child);
 		blackBox.addChild(closeBtn);
@@ -323,7 +329,7 @@ public final class AS3_vs_AS2
 				graphics.removeChild(blackBox);
 				} 
 			);
-		trace("Finished showing error message");
+		trace("Finished showing message");
 	}
 	
 	

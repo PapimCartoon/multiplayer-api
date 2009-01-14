@@ -12,7 +12,7 @@ import come2play_as2.api.auto_generated.*;
 			var res:API_DoTrace = new API_DoTrace();
 			res.name = name;
 
-// This instanceof a AUTOMATICALLY GENERATED! Do not change!
+// This is a AUTOMATICALLY GENERATED! Do not change!
 
 			res.message = message;
 			return res;
@@ -25,7 +25,7 @@ import come2play_as2.api.auto_generated.*;
 		/*override*/ public function getFunctionId():Number { return -126; }
 		/*override*/ public function getMethodName():String { return 'doTrace'; }
 
-// This instanceof a AUTOMATICALLY GENERATED! Do not change!
+// This is a AUTOMATICALLY GENERATED! Do not change!
 
 		/*override*/ public function getMethodParameters():Array { return [name, message]; }
 		/*override*/ public function getMethodParametersNum():Number { return 2; }

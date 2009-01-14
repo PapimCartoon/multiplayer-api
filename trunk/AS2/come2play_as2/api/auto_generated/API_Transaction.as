@@ -12,7 +12,7 @@ import come2play_as2.api.auto_generated.*;
 			var res:API_Transaction = new API_Transaction();
 			res.callback = callback;
 
-// This instanceof a AUTOMATICALLY GENERATED! Do not change!
+// This is a AUTOMATICALLY GENERATED! Do not change!
 
 			res.messages = messages;
 			return res;
@@ -25,7 +25,7 @@ import come2play_as2.api.auto_generated.*;
 		/*override*/ public function getFunctionId():Number { return -84; }
 		/*override*/ public function getMethodName():String { return 'aPI_Transaction'; }
 
-// This instanceof a AUTOMATICALLY GENERATED! Do not change!
+// This is a AUTOMATICALLY GENERATED! Do not change!
 
 		/*override*/ public function getMethodParameters():Array { return [callback, messages]; }
 		/*override*/ public function getMethodParametersNum():Number { return 2; }

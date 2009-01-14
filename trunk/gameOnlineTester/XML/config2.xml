@@ -402,7 +402,6 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 			<custom>
 				<entry><key>CONTAINER_checkThrowingAnError</key><value>false</value></entry>
 				<entry><key>customSymbolsStringArray</key><value>[null, "../../../API_GoogleCodeSVN/Emulator/camel70x70.PNG"]</value></entry>
-				<entry><key>playersNumInSinglePlayer</key><value>2</value></entry>
 				<entry><key>shouldUseAvatars</key><value>true</value></entry>
 				<entry><key>ROWS</key><value>4</value></entry>
 				<entry><key>COLS</key><value>3</value></entry>

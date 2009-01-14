@@ -16,7 +16,7 @@ public final class CreateGrid
 	 * Square_2_0 , Square_2_1 , Square_2_2 , ...
 	 * ...
 	 * 
-	 * The grid parameters are determined by gotCustomInfo:
+	 * The grid parameters are determined by gotCustomInfo via reflection:
 	 * The grid size is ROWS times COLS
 	 * The movieclips are scaled by:
 	 * squareScaleX and squareScaleY
@@ -26,28 +26,18 @@ public final class CreateGrid
 	 * And the initial position of the first square is: 
 	 * squareStartX and squareStartY
 	 */
-	public var ROWS:int;
-	public var COLS:int;
-	public var squareScaleX:int;
-	public var squareScaleY:int;
-	public var squareStartX:int;
-	public var squareStartY:int;
-	public var squareDeltaX:int;
-	public var squareDeltaY:int;
+	public static var ROWS:int = 3;
+	public static var COLS:int = 3;
+	public static var squareScaleX:int = 100;
+	public static var squareScaleY:int = 100;
+	public static var squareStartX:int = 50;
+	public static var squareStartY:int = 50;
+	public static var squareDeltaX:int = 84;
+	public static var squareDeltaY:int = 84;
 		
-	public function CreateGrid(defaultRows:int, defaultCols:int, 
-			defaultSize:int, 
-			defaultScale:int, defaultStartPos:int) {
-		ROWS = AS3_vs_AS2.as_int(T.custom("ROWS",defaultRows)); 
-		COLS = AS3_vs_AS2.as_int(T.custom("COLS",defaultCols));
-		StaticFunctions.assert(ROWS>1 && ROWS<=10, ["Illegal ROWS=",ROWS]);
-		StaticFunctions.assert(COLS>1 && COLS<=10, ["Illegal COLS=",COLS]);
-		squareScaleX = AS3_vs_AS2.as_int(T.custom("squareScaleX",defaultScale)); 
-		squareScaleY = AS3_vs_AS2.as_int(T.custom("squareScaleY",defaultScale)); 
-		squareDeltaX = AS3_vs_AS2.as_int(T.custom("squareDeltaX",defaultSize)); 
-		squareDeltaY = AS3_vs_AS2.as_int(T.custom("squareDeltaY",defaultSize)); 
-		squareStartX = AS3_vs_AS2.as_int(T.custom("squareStartX",defaultStartPos)); 
-		squareStartY = AS3_vs_AS2.as_int(T.custom("squareStartY",defaultStartPos));
+	public function CreateGrid() {
+		StaticFunctions.assert(ROWS>1, ["Illegal ROWS=",ROWS]);
+		StaticFunctions.assert(COLS>1, ["Illegal COLS=",COLS]);
 	}
 	public function createMovieClips(graphics:MovieClip, squareLinkageName:String):void {
 		for (var row:int=0; row<ROWS; row++)

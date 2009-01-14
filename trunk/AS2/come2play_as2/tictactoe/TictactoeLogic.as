@@ -3,7 +3,7 @@ import come2play_as2.api.auto_copied.*;
 
 /**
  * The classic game of TicTacToe.
- * You have a board of ROWS x COLS squares. The board instanceof empty at the beginning. 
+ * You have a board of ROWS x COLS squares. The board is empty at the beginning. 
  * Each player chooses a square and fills it with his color. 
  * (In the traditional game the "colors" are either X or O.)
  * A player that fills a whole row, column or diagonal, wins and finishes playing.
@@ -22,7 +22,7 @@ class come2play_as2.tictactoe.TictactoeLogic extends SerializableClass {
 	public var PLAYERS_NUM:Number;
 	
 	//gameState[row][col] - who owns the square <row,col>
-	// SQUARE_AVAILABLE means nobody owns it, otherwise it instanceof a number between 0 and PLAYERS_NUM-1
+	// SQUARE_AVAILABLE means nobody owns it, otherwise it is a number between 0 and PLAYERS_NUM-1
 	public var gameState:Array;
 	// The number of squares which are not SQUARE_AVAILABLE
 	public var filledNum:Number; 
@@ -62,13 +62,13 @@ class come2play_as2.tictactoe.TictactoeLogic extends SerializableClass {
 	
 	// Makes a move in TicTacToe by placing either X or O in square <row,col>
 	public function makeMove(color:Number, move:TictactoeSquare):Void {
-		if (!isSquareAvailable(move)) LocalConnectionUser.throwError("Square "+move+" instanceof not available! Logic="+this);
+		if (!isSquareAvailable(move)) LocalConnectionUser.throwError("Square "+move+" is not available! Logic="+this);
 		if (color<0 || color>=PLAYERS_NUM) LocalConnectionUser.throwError("Illegal color="+color+" PLAYERS_NUM="+PLAYERS_NUM+" Logic="+this);
 		setOwner(move, color);
 		filledNum++;
 	}
 		
-	// checks if there instanceof a winning row, column, or diagonal that passes through square <row,col>
+	// checks if there is a winning row, column, or diagonal that passes through square <row,col>
 	// If not, it returns null. 
 	// Otherwise, it returns all the cells that are the "winning cells" (to display in a end-game animation)
 	public function getWinningCells(move:TictactoeSquare):Array/*TictactoeSquare*/ {

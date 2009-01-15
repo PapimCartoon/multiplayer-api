@@ -121,7 +121,7 @@ import flash.utils.*;
 
 		}
 		private function computerMakeMove(ev:TimerEvent):void{
-			var computerMove:Object/*ComputerMove*/ = mineSweeperLogic.getObject/*ComputerMove*/();
+			var computerMove:ComputerMove = mineSweeperLogic.getComputerMove();
 			if(computerMove == null) return;
 			var key:Object ={xPos:computerMove.xPos,yPos:computerMove.yPos,playerId:-1}
 			var serverKey:Object = {xPos:computerMove.xPos,yPos:computerMove.yPos}

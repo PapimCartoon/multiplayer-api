@@ -30,7 +30,7 @@ package come2play_as3.api
 	public final class SinglePlayerEmulator extends LocalConnectionUser
 	{
 		public static var START_NEW_GAME_AFTER_MILLISECONDS:int = 5000;
-		public static var NUM_OF_PLAYERS:int = 2;
+		public static var NUM_OF_PLAYERS:int = 1;
 		public static var DEFAULT_USER_IDS:Array/*int*/ = [42,43,44,45];
 		private static function getFirstPlayerId():int {
 			return DEFAULT_USER_IDS[0];
@@ -145,7 +145,7 @@ package come2play_as3.api
 				serverEntry = serverEntries[randIndex]
 				serverEntries.splice(randIndex,1);
 				currentKey = keys.pop()
-				newServerEntries.push(ServerEntry.create(currentKey,null,-1,[],getTimer()));
+				newServerEntries.unshift(ServerEntry.create(currentKey,null,-1,[],getTimer()));
 				serverStateMiror.addEntry(ServerEntry.create(currentKey,serverEntry.value,-1,[],getTimer()));
 			}
 			return newServerEntries;
@@ -166,7 +166,14 @@ package come2play_as3.api
 				}
 				
 				serverStateMiror.addEntry(serverEntry);
-				serverEntries.push(serverEntry); 
+				
+				if((userEntry.isSecret) && (storePrefrence!=1)){
+					var secretServerEntry:ServerEntry = ServerEntry.create(serverEntry.key,null,serverEntry.storedByUserId,serverEntry.visibleToUserIds,serverEntry.changedTimeInMilliSeconds);
+					serverEntries.push(secretServerEntry); 
+				}else{
+					serverEntries.push(serverEntry); 
+				}
+				
 			}	
 			return serverEntries;
 		}

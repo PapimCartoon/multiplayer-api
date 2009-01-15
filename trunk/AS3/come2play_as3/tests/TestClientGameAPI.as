@@ -297,7 +297,8 @@ public class TestClientGameAPI extends ClientGameAPI {
 			var entry:ServerEntry;
 			var j:int;
 			for (j=5; j<=9; j++) {
-				entry = entries[j-5];	
+				entry = entries[j-5];
+				trace(entry.key+"=="+j)	
 				require(entry.key==j);
 				require(entry.visibleToUserIds.length==0);
 				require(entry.storedByUserId==-1);

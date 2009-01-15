@@ -151,9 +151,11 @@ Not used by the graphics yet (but should be displayed):
 		Java237 (for testing without ASP): 80.179.46.237:8080:xmlsocket,80.179.46.237:80:rtmpt
 		74.63.37.40:8080:xmlsocket
 		74.63.37.41:8080:xmlsocket,74.63.37.41:80:rtmpt
-		192.168.0.138:2000:xmlsocket,192.168.0.138:8083:rtmpt
+		192.168.0.138:2000:xmlsocket,192.168.0.138:8080:rtmpt
 		-->
-		<entry><key>override all_java_ips</key><value>'localhost:2000:xmlsocket'</value></entry>
+		
+		
+		<entry><key>override all_java_ips</key><value>'74.63.37.38:8080:xmlsocket,74.63.37.38:80:rtmpt'</value></entry>
 		
 		<!--
 		<entry><key>ARTIFICIAL_TO_JAVA_DELAY</key><value>'1000-2000'</value></entry>
@@ -177,7 +179,7 @@ Not used by the graphics yet (but should be displayed):
 		<entry><key>DebugMultipleMessages</key><value>false</value></entry>
 		<!--causes the framework to show a waiting screen  -->
 		<entry><key>StartUp_3_WaitingForOpponents tags</key><value>'<custom>SHOW_AD</custom>'</value></entry>
-		<entry><key>adType</key><value>'gameJacket'</value></entry>
+		<entry><key>adType</key><value>'MochiAd'</value></entry>
 		<!--
 		MochiAd
 		cpmStar
@@ -576,7 +578,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 	</game_parameters>
 	
 	<room_parameters type="optional">
-		<refresh_url>../xml_input/come2play_rooms.xml</refresh_url>
+		<refresh_url>XML/come2play_rooms.xml</refresh_url>
 		<!-- 
 			If you pass rooms here (as item elements), 
 			then it will save the first call to refresh_url.

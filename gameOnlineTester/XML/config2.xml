@@ -146,16 +146,14 @@ Not used by the graphics yet (but should be displayed):
 		<entry><key>RunUnitTests</key><value>false</value></entry>
 		
 		<!--
-		Local:  localhost:2000:xmlsocket,localhost:8083:rtmpt
-		Java44 (for testing with Amir's ASP): 74.63.37.40:8080:xmlsocket,74.63.37.40:80:rtmpt
-		Java237 (for testing without ASP): 80.179.46.237:8080:xmlsocket,80.179.46.237:80:rtmpt
-		74.63.37.40:8080:xmlsocket
-		74.63.37.41:8080:xmlsocket,74.63.37.41:80:rtmpt
-		192.168.0.138:2000:xmlsocket,192.168.0.138:8080:rtmpt
-		-->
-		
-		
-		<entry><key>override all_java_ips</key><value>'74.63.37.38:8080:xmlsocket,74.63.37.38:80:rtmpt'</value></entry>
+		Local:  localhost:2000:socket,localhost:2000:old_xmlsocket,localhost:8083:rtmpt
+		Java44 (for testing with Amir's ASP): 74.63.37.40:8080:socket,74.63.37.40:8080:old_xmlsocket,74.63.37.40:80:rtmpt
+		Java237 (for testing without ASP): 80.179.46.237:8080:socket,80.179.46.237:8080:old_xmlsocket,80.179.46.237:80:rtmpt
+		74.63.37.40:8080:socket
+		74.63.37.41:8080:socket
+		192.168.0.138:2000:socket
+		-->		
+		<entry><key>override all_java_ips</key><value>'localhost:2000:socket,localhost:2000:old_xmlsocket,localhost:8083:rtmpt'</value></entry>
 		
 		<!--
 		<entry><key>ARTIFICIAL_TO_JAVA_DELAY</key><value>'1000-2000'</value></entry>
@@ -266,6 +264,7 @@ Not used by the graphics yet (but should be displayed):
 		
 		An API game may be started by any number of players 
 			between @min_player_number and @max_player_number.
+		E.g., TicTcToe must have at least 2 players, while MineSweeper can have 1 player.
 		@players_number decides how many players should join a game till it starts
 		The game can decide to end the match if some players disconnect.
 		When we get to the last player, we give him the option to:
@@ -277,7 +276,7 @@ Not used by the graphics yet (but should be displayed):
 			(given priority to those that played before, according to the order that they connected).
 	-->
 	<players_number type="int">2</players_number>
-	<min_player_number type="int">1</min_player_number>
+	<min_player_number type="int">2</min_player_number>
 	<max_player_number type="int">2</max_player_number>
 		
 	<game_parameters type="optional">		
@@ -493,7 +492,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 		-->
 		<players_info type="optional,list">
 		  <player>
-		  	<user_id>1</user_id>
+		  	<user_id>999</user_id>
 			<params>
 			  	  <is_male>true</is_male>
 			  	  <is_veteran_user>true</is_veteran_user>
@@ -508,24 +507,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 		    	  <!-- config.game_name is prefixed to the rating, e.g., game_rating_chess . I do this to make sure the ratings of different games don't override one another -->
 				  <game_rating>2010</game_rating>		    
 			</params>
-		  </player>			
-		  <player>
-		  	<user_id>2</user_id>
-			<params>
-			  	  <is_male>true</is_male>
-			  	  <is_veteran_user>true</is_veteran_user>
-				  <is_guest>false</is_guest>
-				  <name>Erez</name>
-				  <avatar_url>../images/Avatar_1.gif</avatar_url>
-				  <supervisor>Supervisor</supervisor>
-				  <credibility>100</credibility>
-				  <tokens>0:4000,2:20</tokens>
-				  <votes_sum>9</votes_sum>
-				  <votes_count>54</votes_count>	
-		    	  <!-- config.game_name is prefixed to the rating, e.g., game_rating_chess . I do this to make sure the ratings of different games don't override one another -->
-				  <game_rating>2010</game_rating>		  
-			</params>
-		  </player>			
+		  </player>
 		</players_info>
 		
 		<FromTable type="optional">

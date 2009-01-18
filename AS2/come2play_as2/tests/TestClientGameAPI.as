@@ -295,7 +295,8 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 			var entry:ServerEntry;
 			var j:Number;
 			for (j=5; j<=9; j++) {
-				entry = entries[j-5];	
+				entry = entries[j-5];
+				trace(entry.key+"=="+j)	
 				require(entry.key==j);
 				require(entry.visibleToUserIds.length==0);
 				require(entry.storedByUserId==-1);
@@ -351,7 +352,7 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 				if (!didSendEndMatch) {
 					didSendEndMatch = true;
 					var finishedPlayers:Array = [];
-					for (var i355:Number=0; i355<allPlayerIds.length; i355++) { var id:Number = allPlayerIds[i355]; 
+					for (var i356:Number=0; i356<allPlayerIds.length; i356++) { var id:Number = allPlayerIds[i356]; 
 						finishedPlayers.push( PlayerMatchOver.create(id, id==winnerId ? 1000 : -1000, id==winnerId ? 100 : 0) );		
 					}
 					doAllEndMatch(finishedPlayers);

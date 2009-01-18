@@ -9,7 +9,7 @@ function getRandomTokens(){
 	return "0:"+Math.ceil(1000*Math.random())+","+"1:"+Math.ceil(300*Math.random())
 }
 function getOldBoard(game){
-	return "../../as2_old_boards/OldBoardContainer.swf?oldboard_swf=../../as2_old_boards/boards/"+game+"_board.swf&game_type="+game+"&variant_str=&"
+	return "../../svn/as2_old_boards/OldBoardContainer.swf?oldboard_swf=../../svn/as2_old_boards/boards/"+game+"_board.swf&game_type="+game+"&variant_str=&"
 }
 
 var supervisorLevels = new Array("Admin","Supervisor","MiniSupervisor","NormalUser");

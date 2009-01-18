@@ -22,12 +22,14 @@
 				savePopUp.save_btn.addEventListener(MouseEvent.CLICK,saveGame);
 				addChild(savePopUp);
 			}
-			else
+			else if(root.loaderInfo.parameters["Save"] == "false")
 			{	
 				loadGames();
 				//obj = shrParams.data.params
 				//trace("Loading values: "+JSON.stringify(obj))
 				//ExternalInterface.call("getParamsInit", obj);		
+			}else{
+				saveDataTo(root.loaderInfo.parameters["Save"]);
 			}
 
 		}
@@ -72,26 +74,31 @@
 			ExternalInterface.call("getParamsInit", obj.params);	
 		}
 		private function saveGame(ev:MouseEvent):void{
+			if(saveDataTo(savePopUp.saveName_txt.text))
+				removeChild(savePopUp);
+		}
+		private function saveDataTo(saveName:String):Boolean{
 			try{
+				if(saveName == null) return false;
 				var sharedObject:String = root.loaderInfo.parameters["sharedObject"];
 				if ((sharedObject =="") || (sharedObject ==null)) throw new Error("SharedObject must have a name");
 				var shrParams:SharedObject = SharedObject.getLocal(sharedObject,"/");
 				var obj:Object = {};
 				for(var str:String in root.loaderInfo.parameters)
 					obj[str] = root.loaderInfo.parameters[str];	
-				if(savePopUp.saveName_txt.text !=null)
-				{
-					if(shrParams.data[savePopUp.saveName_txt.text]==null) shrParams.data[savePopUp.saveName_txt.text] = new Object();
-					shrParams.data[savePopUp.saveName_txt.text].params = obj;
-					shrParams.flush();
-					removeChild(savePopUp);
-				}
+				if(shrParams.data[saveName]==null) shrParams.data[saveName] = new Object();
+				shrParams.data[saveName].params = obj;
+				shrParams.flush();
+				return true;
 			}catch(err:Error){
 				if (ExternalInterface.available) {
 					ExternalInterface.call("errorHandler","Error : "+err.message+" happend in Object "+JSON.stringify(obj));
 					stop();
-				}		
+				}	
+				return false;	
 			}
+			return false;
+			
 		}
 		private function closeFlash(ev:MouseEvent):void
 		{

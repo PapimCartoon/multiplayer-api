@@ -129,6 +129,7 @@
 			return;
 		}
 	}
+	
 	function LaunchBtn_click(){
 		try{
 			var params = getFormParams();
@@ -166,6 +167,7 @@
 					openRooms.push(window.open("room.html?"+parametersToUrl(cureentPlayerMatchParams)));
 
 				}
+				autoSaveSharedObject("Come2PlayFrameworkTest",document.getElementById("paramsHandler"), "save="+saveForm(getMyForm()) )
 				document.getElementById("LaunchBtn").value = "Close Test"
 			}
 		}catch(err){
@@ -291,6 +293,7 @@
 			var customItem = customInit[i];
 			addEntryField(customItem.tableName,customItem.key,customItem.value);
 		}
+		autoLoadSharedObject("Come2PlayFrameworkTest",document.getElementById("paramsHandler"))
 	}
 
 	</script>

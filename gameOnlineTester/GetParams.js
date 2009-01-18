@@ -20,7 +20,15 @@ function loadSharedObject(sharedObject,div){
 	divToDelete =div;
 	writeFlash(div,"GetParams.swf?sharedObject="+sharedObject+"&Save=false","600","500","","getParams");
 }
+function autoLoadSharedObject(sharedObject,div){
+	divToDelete =div;
+	writeFlash(div,"GetParams.swf?sharedObject="+sharedObject+"&Save=autoLoad","600","500","","getParams");
+}
 function saveSharedObject(sharedObject,div,saveData){
 	divToDelete = div;
 	writeFlash(div,"GetParams.swf?sharedObject="+sharedObject+"&Save=true&"+saveData,"600","500","","getParams");
+}
+function autoSaveSharedObject(sharedObject,div,saveData){
+	divToDelete = div;
+	writeFlash(div,"GetParams.swf?sharedObject="+sharedObject+"&Save=autoSave&"+saveData,"600","500","","getParams");
 }

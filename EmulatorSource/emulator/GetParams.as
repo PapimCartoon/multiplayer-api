@@ -28,8 +28,11 @@
 				//obj = shrParams.data.params
 				//trace("Loading values: "+JSON.stringify(obj))
 				//ExternalInterface.call("getParamsInit", obj);		
-			}else{
+			}else if(root.loaderInfo.parameters["Save"] == "autoSave"){
 				saveDataTo(root.loaderInfo.parameters["Save"]);
+				ExternalInterface.call("dataSaved");
+			}else if(root.loaderInfo.parameters["Save"] == "autoLoad"){
+				loadStateByName("autoSave")
 			}
 
 		}
@@ -66,11 +69,17 @@
 		}
 		private function loadSave(ev:MouseEvent):void{
 			var pos:int = getNumber(ev.stageY);
+			loadStateByName(loadButtons[pos].saveName_txt.text)
+			
+		}
+		
+		private function loadStateByName(name:String):void{
 			var sharedObject:String = root.loaderInfo.parameters["sharedObject"];
 			if ((sharedObject =="") || (sharedObject ==null)) throw new Error("SharedObject must have a name");
 			var shrParams:SharedObject = SharedObject.getLocal(sharedObject,"/");
-			var obj:Object = shrParams.data[loadButtons[pos].saveName_txt.text]
+			var obj:Object = shrParams.data[name]
 			trace("Loading values: "+JSON.stringify(obj))
+			if(obj == null) return;
 			ExternalInterface.call("getParamsInit", obj.params);	
 		}
 		private function saveGame(ev:MouseEvent):void{

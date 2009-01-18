@@ -16,7 +16,7 @@ import come2play_as2.api.auto_generated.*;
 
 			var pos:Number = 0;
 		}
-		/*override*/ public function getFunctionId():Number { return 8; }
+		/*override*/ public function getFunctionId():Number { return 6; }
 		/*override*/ public function getMethodName():String { return 'doAllSetMove'; }
 		/*override*/ public function getMethodParameters():Array { return []; }
 		/*override*/ public function getMethodParametersNum():Number { return 0; }

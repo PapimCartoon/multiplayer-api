@@ -17,7 +17,7 @@ package come2play_as3.api.auto_generated {
 
 			var pos:int = 0;
 		}
-		override public function getFunctionId():int { return 8; }
+		override public function getFunctionId():int { return 6; }
 		override public function getMethodName():String { return 'doAllSetMove'; }
 		override public function getMethodParameters():Array { return []; }
 		override public function getMethodParametersNum():int { return 0; }

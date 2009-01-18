@@ -27,7 +27,7 @@ import come2play_as2.api.*;
 	class come2play_as2.api.SinglePlayerEmulator extends LocalConnectionUser
 	{
 		public static var START_NEW_GAME_AFTER_MILLISECONDS:Number = 5000;
-		public static var NUM_OF_PLAYERS:Number = 2;
+		public static var NUM_OF_PLAYERS:Number = 1;
 		public static var DEFAULT_USER_IDS:Array/*int*/ = [42,43,44,45];
 		private static function getFirstPlayerId():Number {
 			return DEFAULT_USER_IDS[0];
@@ -142,7 +142,7 @@ import come2play_as2.api.*;
 				serverEntry = serverEntries[randIndex]
 				serverEntries.splice(randIndex,1);
 				currentKey = keys.pop()
-				newServerEntries.push(ServerEntry.create(currentKey,null,-1,[],getTimer()));
+				newServerEntries.unshift(ServerEntry.create(currentKey,null,-1,[],getTimer()));
 				serverStateMiror.addEntry(ServerEntry.create(currentKey,serverEntry.value,-1,[],getTimer()));
 			}
 			return newServerEntries;
@@ -163,7 +163,14 @@ import come2play_as2.api.*;
 				}
 				
 				serverStateMiror.addEntry(serverEntry);
-				serverEntries.push(serverEntry); 
+				
+				if((userEntry.isSecret) && (storePrefrence!=1)){
+					var secretServerEntry:ServerEntry = ServerEntry.create(serverEntry.key,null,serverEntry.storedByUserId,serverEntry.visibleToUserIds,serverEntry.changedTimeInMilliSeconds);
+					serverEntries.push(secretServerEntry); 
+				}else{
+					serverEntries.push(serverEntry); 
+				}
+				
 			}	
 			return serverEntries;
 		}
@@ -189,7 +196,7 @@ import come2play_as2.api.*;
 			if (msg instanceof API_Transaction) {
 				var transaction:API_Transaction = API_Transaction(msg);
 				var tempServerEntries:Array;
-				for (var i193:Number=0; i193<transaction.messages.length; i193++) { var innerMsg:API_Message = transaction.messages[i193]; 
+				for (var i200:Number=0; i200<transaction.messages.length; i200++) { var innerMsg:API_Message = transaction.messages[i200]; 
 					tempServerEntries = messageHandler(innerMsg,serverEntries);
 					if(tempServerEntries.length>0)
 					serverEntries = serverEntries.concat(tempServerEntries);
@@ -257,7 +264,7 @@ import come2play_as2.api.*;
 				var newlyFinishedUserIds:Array = [];
 				var t:T = new T();
 				t.add( T.i18n("Game is over for:\n") );
-				for (var i261:Number=0; i261<endMatch.finishedPlayers.length; i261++) { var matchOver:PlayerMatchOver = endMatch.finishedPlayers[i261]; 
+				for (var i268:Number=0; i268<endMatch.finishedPlayers.length; i268++) { var matchOver:PlayerMatchOver = endMatch.finishedPlayers[i268]; 
 					var playerId:Number = matchOver.playerId;
 					newlyFinishedUserIds.push( playerId );
 					finishedUserIds.push( playerId );
@@ -274,7 +281,7 @@ import come2play_as2.api.*;
 				doRegisterOnServer();
 			} else if (msg instanceof API_DoAllRequestStateCalculation) { 
 				var requestStateCalculationMsg:API_DoAllRequestStateCalculation = API_DoAllRequestStateCalculation(msg);
-				for (var i278:Number=0; i278<requestStateCalculationMsg.keys.length; i278++) { var key:Object = requestStateCalculationMsg.keys[i278]; 
+				for (var i285:Number=0; i285<requestStateCalculationMsg.keys.length; i285++) { var key:Object = requestStateCalculationMsg.keys[i285]; 
 					var entry:ServerEntry = ServerEntry(serverStateMiror.getValue(key));
 					if(entry!= null)
 						serverEntries.push(entry)
@@ -318,7 +325,7 @@ import come2play_as2.api.*;
   			
   			if (DEFAULT_USERS_INFO.length>0) {
 	  			var pos:Number = 0;
-	  			for (var i322:Number=0; i322<getPlayerIds().length; i322++) { var curUserId:Number = getPlayerIds()[i322]; 
+	  			for (var i329:Number=0; i329<getPlayerIds().length; i329++) { var curUserId:Number = getPlayerIds()[i329]; 
 	  				queueSendMessage(API_GotUserInfo.create(curUserId, pos<DEFAULT_USERS_INFO.length ? DEFAULT_USERS_INFO[pos++] : DEFAULT_USERS_INFO[pos-1]) );
 				}
 	  		}
@@ -328,7 +335,7 @@ import come2play_as2.api.*;
 	  		setCurUserId( getFirstPlayerId() );
 	  		
   			serverStateMiror = new ObjectDictionary();	
-  			for (var i332:Number=0; i332<DEFAULT_MATCH_STATE.length; i332++) { var serverEntry:ServerEntry = DEFAULT_MATCH_STATE[i332]; 
+  			for (var i339:Number=0; i339<DEFAULT_MATCH_STATE.length; i339++) { var serverEntry:ServerEntry = DEFAULT_MATCH_STATE[i339]; 
   				serverStateMiror.addEntry(serverEntry);
 			}
 			finishedUserIds = DEFAULT_FINISHED_USER_IDS.concat(); // to create a copy

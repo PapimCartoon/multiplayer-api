@@ -59,7 +59,6 @@ import flash.utils.*;
 		
 		private function startGame(ev:Event = null):void
 		{
-			//mineSweeperLogic.makeBoard(boardWidth,boardHeight,stageX,stageY,allPlayerIds,myUserId);
 			if(loadServerEntries != null)
 				mineSweeperLogic.loadBoard(loadServerEntries);
 			if(! (T.custom(API_Message.CUSTOM_INFO_KEY_isBack,false) as Boolean) )
@@ -132,18 +131,18 @@ import flash.utils.*;
 		override public function gotMatchStarted(allPlayerIds:Array, finishedPlayerIds:Array, serverEntries:Array):void
 		{
 			isPlaying = true;
-			this.allPlayerIds = allPlayerIds;
+			this.allPlayerIds = allPlayerIds.concat();
 			loadServerEntries = null;
 			graphicPlayed = false;
-			if(allPlayerIds.length == 1){
-				allPlayerIds.push(-1);
+			if(this.allPlayerIds.length == 1){
+				this.allPlayerIds.push(-1);
 			}
 			if(serverEntries.length == 0)
 			{
 				doAllRequestRandomState("randomSeed",true);
 				doAllStoreState([UserEntry.create("Board Width",boardWidth),UserEntry.create("Mine Amount",mineAmount)])
 				doAllRequestStateCalculation(["randomSeed","Board Width","Mine Amount"]);
-				mineSweeperLogic.makeBoard(boardWidth,stageX,stageY,allPlayerIds,myUserId);
+				mineSweeperLogic.makeBoard(boardWidth,stageX,stageY,this.allPlayerIds,myUserId);
 			}
 			else
 			{
@@ -152,12 +151,12 @@ import flash.utils.*;
 				graphicPlayed = true;
 				if((T.custom(API_Message.CUSTOM_INFO_KEY_isBack,false) as Boolean))
 				{
-					mineSweeperLogic.makeBoard(boardWidth,stageX,stageY,allPlayerIds,myUserId);
+					mineSweeperLogic.makeBoard(boardWidth,stageX,stageY,this.allPlayerIds,myUserId);
 					startGame();
 				}
 				else
 				{
-					mineSweeperLogic.makeBoard(boardWidth,stageX,stageY,allPlayerIds,myUserId);
+					mineSweeperLogic.makeBoard(boardWidth,stageX,stageY,this.allPlayerIds,myUserId);
 					animationStarted();
 					startGraphic.play();
 				}
@@ -237,10 +236,10 @@ import flash.utils.*;
 					return;
 				}
 				doAllStoreState([UserEntry.create(serverEntry.key,null,false)]);
-			}else if (serverEntry.value is Object/*ComputerMove*/){
-				if(allPlayerIds.indexOf(-1) != -1) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" stored a computer move and not a player move")
-				var computerMove:Object/*ComputerMove*/ = serverEntry.value as Object/*ComputerMove*/;
-				newMove = mineSweeperLogic.addObject/*ComputerMove*/(computerMove);
+			}else if (serverEntry.value is ComputerMove){
+				if(allPlayerIds.indexOf(-1) == -1) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" stored a computer move and not a player move")
+				var computerMove:ComputerMove = serverEntry.value as ComputerMove;
+				newMove = mineSweeperLogic.addComputerMove(computerMove);
 				if(newMove){
 					addNewMove(serverEntries)
 					return;

@@ -195,7 +195,7 @@ package come2play_as3.minesweeper
 			boardLogic[playerMove.xPos][playerMove.yPos] = 2;
 			return true;
 		}
-		public function addObject/*ComputerMove*/(computerMove:Object/*ComputerMove*/):Boolean
+		public function addComputerMove(computerMove:ComputerMove):Boolean
 		{
 			var fakePlayerMove:PlayerMove = PlayerMove.create(computerMove.xPos,computerMove.yPos,-1,false);
 			for each(var queuedMove:PlayerMove in movesInProcess)

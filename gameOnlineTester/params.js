@@ -42,8 +42,8 @@ paramArr.push( {htmlName:"PlayersNumSim",type:"int"});
 paramArr.push( {htmlName:"AutoMatch",type:"boolean"});
 
 paramArr.push( {htmlName:"MinPlayersNum",xmlName:"override_config.min_player_number",type:"int"});
-paramArr.push( {htmlName:"MaxPlayersNum",xmlName:"override_config.max_player_number",type:"int"});
-paramArr.push( {htmlName:"PlayersNum",xmlName:"override_config.players_number",type:"int"});
+paramArr.push( {htmlName:"MaxPlayersNum",xmlName:"override_config.max_player_number",type:"int",minValue:"MinPlayersNum"});
+paramArr.push( {htmlName:"PlayersNum",xmlName:"override_config.players_number",type:"int",minValue:"MinPlayersNum"});
 paramArr.push( {htmlName:"boardHeight",xmlName:"override_config.game_parameters.board_height",type:"int"});
 paramArr.push( {htmlName:"boardWidth",xmlName:"override_config.game_parameters.board_width",type:"int"});
 paramArr.push( {htmlName:"gameStageX",xmlName:"override_config.game_parameters.gameStageX",type:"int"});

@@ -101,23 +101,6 @@
 		}
 		return playerParams;
 	}
-	function getPlayerParamsForSave(playerNum){
-		var playerParams = new Array();
-		var obj;
-		for(var i =0;i<paramArr.length;i++){
-			obj = paramArr[i];
-			if(obj.isUser != true) continue;
-			if(obj.type == "int"){
-				playerParams["player_"+playerNum+"_"+obj.htmlName] = checkVaildNumber("player_"+playerNum+"_"+obj.htmlName)
-			}else if(obj.type == "string"){
-				playerParams["player_"+playerNum+"_"+obj.htmlName] = document.getElementById("player_"+playerNum+"_"+obj.htmlName).value;
-			}else if(obj.type == "boolean"){
-				playerParams["player_"+playerNum+"_"+obj.htmlName] = document.getElementById("player_"+playerNum+"_"+obj.htmlName).checked;
-			}	
-		}
-
-		return playerParams;
-	}
 	function getMyForm() { return document.getElementById("myform"); }
 	function save_click(){
 		try{
@@ -153,7 +136,7 @@
 					autoMatchParams["flash_type"] = "game";
 					autoMatchParams["type"] = "AutoMatch"
 					autoMatchParams["match_string"] = "dogs";
-					autoMatchParams["room_id"] = 2+ Math.ceil(1000*Math.random());
+					autoMatchParams["room_id"] = 999//2+ Math.ceil(1000*Math.random());
 				}else{
 					autoMatchParams["flash_type"] = "room";
 				}
@@ -171,7 +154,7 @@
 				document.getElementById("LaunchBtn").value = "Close Test"
 			}
 		}catch(err){
-			alert("LaunchBtn_click : "+ err);
+			alert("can't launch game because: "+err);
 			return ;
 		}
 	}
@@ -187,8 +170,10 @@
 		var params = new Array();
 		var obj;
 		for(var i=0;i<paramArr.length;i++){
-		
 			obj = paramArr[i];
+			if(obj.minValue !=null){
+				if(document.getElementById(obj.htmlName).value<document.getElementById(obj.minValue).value) throw obj.htmlName+" Must be equel to or bigger then "+obj.minValue
+			}
 			if(obj.isUser == true) continue;
 			if(obj.defultValue != null){
 				if(document.getElementById("isDefault"+obj.htmlName).checked)

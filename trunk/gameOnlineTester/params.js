@@ -34,7 +34,10 @@ isUser - is the value refers to a user
 
 */
 paramArr.push( {htmlName:"isYoavContainer",type:"boolean"});
-paramArr.push( {htmlName:"isOldBoard",type:"boolean"});
+paramArr.push( {htmlName:"isOldBoard",type:"boolean",connectedTo:"gameSwf"});
+paramArr.push( {htmlName:"isDefaultroomXML",type:"boolean",connectedTo:"roomXML"});
+paramArr.push( {htmlName:"isDefaultgameXML",type:"boolean",connectedTo:"gameXML"});
+
 paramArr.push( {htmlName:"PlayersNumSim",type:"int"});
 paramArr.push( {htmlName:"AutoMatch",type:"boolean"});
 

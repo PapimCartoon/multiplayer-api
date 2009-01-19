@@ -281,9 +281,11 @@
 		var row = playerTable.insertRow(0);
 		for(var i =0;i<paramArr.length;i++){
 		    var obj = paramArr[i];
+			if(obj.connectedTo !=null) showDefaultValue(obj.htmlName)
 			if(obj.isUser != true) continue;
 			var cell = row.insertCell(0);
 			cell.innerHTML = obj.colName;
+
 		}
 		window.onresize = myResize;
 		myResize();
@@ -293,9 +295,24 @@
 			var customItem = customInit[i];
 			addEntryField(customItem.tableName,customItem.key,customItem.value);
 		}
+	}
+	function load_Auto_Saved(){
 		autoLoadSharedObject("Come2PlayFrameworkTest",document.getElementById("paramsHandler"))
 	}
-
+	function showDefaultValue(defaultToClose){
+		for(var i=0;i<paramArr.length;i++){
+			obj = paramArr[i];
+			if(obj.htmlName == defaultToClose) {
+				var element = document.getElementById(obj.connectedTo)
+				break;
+			}
+		}
+		if(document.getElementById(defaultToClose).checked){
+			element.disabled = "disabled"
+		}else{
+			element.disabled = ""
+		}
+	}
 	</script>
 </HEAD>
 <BODY onload="init()" >
@@ -305,6 +322,7 @@
 			<TD>
 			<input value="Save Settings" type="button" id="SaveBtn" onclick="save_click();" />
 			<input value="Load Settings" type="button" id="LoadBtn" onclick="load_click();" />
+			<input value="Load Auto Saved Settings" type="button" id="LoadBtn" onclick="load_Auto_Saved();" />
 			</TD>
 			<TD COLSPAN=2></TD>
 			</TR>
@@ -318,19 +336,19 @@
 				<TD>Old Board name :</TD>
 				<TD><input type="text" id="oldBoard" value="Reversi"></TD>
 				<TD>is Old Board ? </TD>
-				<TD><input type="checkbox" id="isOldBoard" value="isOldBoard"></TD>
+				<TD><input type="checkbox" id="isOldBoard" value="isOldBoard" onchange="showDefaultValue('isOldBoard');"></TD>
 			</TR>
 			<TR>
 				<TD>Room XML :</TD>
 				<TD><input type="text" id="roomXML" value="XML/config2.xml"></TD>
 				<TD>use default ? </TD>
-				<TD><input type="checkbox" id="isDefaultroomXML" value="isDefaultroomXML" checked="true"></TD>
+				<TD><input type="checkbox" id="isDefaultroomXML" value="isDefaultroomXML" checked="true" onchange="showDefaultValue('isDefaultroomXML');"></TD>
 			</TR>
 			<TR>
 				<TD>Game XML :</TD>
 				<TD><input type="text" id="gameXML" value="XML/config2.xml"></TD>
 				<TD>use default ? </TD>
-				<TD><input type="checkbox" id="isDefaultgameXML" value="isDefaultgameXML" checked="true"></TD>
+				<TD><input type="checkbox" id="isDefaultgameXML" value="isDefaultgameXML" checked="true" onchange="showDefaultValue('isDefaultgameXML');"></TD>
 			</TR>
 			<TR>
 				<TD COLSPAN=2>

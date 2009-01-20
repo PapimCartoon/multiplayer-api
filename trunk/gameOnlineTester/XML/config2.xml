@@ -654,7 +654,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 		If any of these two parameters is less than or **equal** to 0, then you **cannot** reconnect. 
 	     -->
 	  <can_reconnect_after_seconds type="int">1</can_reconnect_after_seconds> 
-	  <wait_before_close_seconds type="int">15</wait_before_close_seconds> 
+	  <wait_before_close_seconds type="int">1</wait_before_close_seconds> 
 	  <!-- md5 is:	  
 		MD5( SECRET + 
 		'x' + config.extra_args.user_id + 
@@ -910,18 +910,18 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 			<Gray_color>0x999999</Gray_color> <!-- 0x999999 -->
 			
 			<!-- Button color for message buttons -->
-			<MessageButton_OK_color>0x00FF00</MessageButton_OK_color>
-			<MessageButton_CANCEL_color>0xFF0000</MessageButton_CANCEL_color>
-			<MessageButton_YES_color>0x0000FF</MessageButton_YES_color>
-			<MessageButton_NO_color>0xFFFF00</MessageButton_NO_color>
-			<MessageButton_ACCEPT_color>0x00FFFF</MessageButton_ACCEPT_color>
-			<MessageButton_REJECT_color>0xFF00FF</MessageButton_REJECT_color>
-			<MessageButton_PLAY_AGAIN_color>0xFF0000</MessageButton_PLAY_AGAIN_color>
-			<MessageButton_SAVE_TO_FAVORITE_color>0xFF0000</MessageButton_SAVE_TO_FAVORITE_color>
-			<MessageButton_QUIT_PLAYING_color>0xFF0000</MessageButton_QUIT_PLAYING_color>
-			<MessageButton_WIN_GAME_color>0xFF0000</MessageButton_WIN_GAME_color>
-			<MessageButton_CANCEL_GAME_color>0xFF0000</MessageButton_CANCEL_GAME_color>
-			<MessageButton_SAVE_GAME_color>0xFF0000</MessageButton_SAVE_GAME_color>    	
+			<MessageButton_OK_color>0x9DC641</MessageButton_OK_color>
+			<MessageButton_CANCEL_color>0xDD1D67</MessageButton_CANCEL_color>
+			<MessageButton_YES_color>0x9DC641</MessageButton_YES_color>
+			<MessageButton_NO_color>0xDD1D67</MessageButton_NO_color>
+			<MessageButton_ACCEPT_color>0x9DC641</MessageButton_ACCEPT_color>
+			<MessageButton_REJECT_color>0xDD1D67</MessageButton_REJECT_color>
+			<MessageButton_PLAY_AGAIN_color>0x9DC641</MessageButton_PLAY_AGAIN_color>
+			<MessageButton_SAVE_TO_FAVORITE_color>0x9DC641</MessageButton_SAVE_TO_FAVORITE_color>
+			<MessageButton_QUIT_PLAYING_color>0xDD1D67</MessageButton_QUIT_PLAYING_color>
+			<MessageButton_WIN_GAME_color>0x9DC641</MessageButton_WIN_GAME_color>
+			<MessageButton_CANCEL_GAME_color>0xDD1D67</MessageButton_CANCEL_GAME_color>
+			<MessageButton_SAVE_GAME_color>0x9DC641</MessageButton_SAVE_GAME_color>    	
 		</theme>
 		
 		<!-- ads -->

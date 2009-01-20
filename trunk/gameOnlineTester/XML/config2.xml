@@ -155,11 +155,11 @@ Not used by the graphics yet (but should be displayed):
 		74.63.37.41:8080:socket
 		192.168.0.138:2000:socket
 		-->		
-		<!--
-		<entry><key>override all_java_ips</key><value>'localhost:2000:socket,localhost:2000:old_xmlsocket,localhost:8083:rtmpt'</value></entry>
-		-->
-		<entry><key>override all_java_ips</key><value>'80.179.46.235:8080:socket,80.179.46.235:8080:old_xmlsocket,80.179.46.235:80:rtmpt'</value></entry>
 		
+		<entry><key>override all_java_ips</key><value>'localhost:2000:socket,localhost:2000:old_xmlsocket,localhost:8083:rtmpt'</value></entry>
+		<!--
+		<entry><key>override all_java_ips</key><value>'80.179.46.235:8080:socket,80.179.46.235:8080:old_xmlsocket,80.179.46.235:80:rtmpt'</value></entry>
+		-->
 
 		<!--
 		<entry><key>ARTIFICIAL_TO_JAVA_DELAY</key><value>'200-800'</value></entry>

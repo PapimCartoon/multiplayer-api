@@ -38,7 +38,6 @@ oldBoardValues.push({type:"gameName",gameName:"BackGammon"})
 oldBoardValues.push({type:"variant",gameName:"BackGammon",variant:"Original"})
 oldBoardValues.push({type:"variant",gameName:"BackGammon",variant:"tapa"})
 oldBoardValues.push({type:"variant",gameName:"BackGammon",variant:"Nackgammon"})
-oldBoardValues.push({type:"variant",gameName:"BackGammon",variant:"randomX70"})  
 
 oldBoardValues.push({type:"gameName",gameName:"Go"})
 oldBoardValues.push({type:"variant",gameName:"Go",variant:"9_5"})
@@ -79,8 +78,8 @@ oldBoardValues.push({type:"variant",gameName:"Blob",variant:"Original"})
 oldBoardValues.push({type:"variant",gameName:"Blob",variant:"randomX70"})
 
 oldBoardValues.push({type:"gameName",gameName:"Connect4"})
-oldBoardValues.push({type:"variant",gameName:"Blob",variant:"Original"})
-oldBoardValues.push({type:"variant",gameName:"Blob",variant:"randomX70"})
+oldBoardValues.push({type:"variant",gameName:"Connect4",variant:"Original"})
+oldBoardValues.push({type:"variant",gameName:"Connect4",variant:"randomX70"})
           
 
 
@@ -125,7 +124,6 @@ paramArr.push( {htmlName:"gameStageY",xmlName:"override_config.game_parameters.g
 paramArr.push( {htmlName:"gameSwf",xmlName:"override_config.game_parameters.board_swf_url",type:"string"});
 
 
-paramArr.push( {htmlName:"oldBoard",type:"string"});
 paramArr.push( {htmlName:"swfWidth",type:"string"});
 paramArr.push( {htmlName:"swfHeight",type:"string"});
 paramArr.push( {htmlName:"roomXML",xmlName:"config_url",type:"string",defultValue:"XML/config2.xml"});

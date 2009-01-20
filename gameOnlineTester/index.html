@@ -8,6 +8,7 @@
 	<script language="javascript" src="js/save_form.js"></script>
 	<script language="javascript">
 	var openRooms = new Array();
+	var come2playCookie;
 	function removeTableRow(tableName,removeNum){
 		table = document.getElementById(tableName);
 		table.deleteRow(removeNum)
@@ -191,7 +192,7 @@
 				params[obj.htmlName] = document.getElementById(obj.htmlName).checked;
 			}
 		}
-		if(document.cookie == "come2play"){
+		if(come2playCookie == "come2play"){
 			var gameName = document.getElementById("oldBoard").value;
 			if( gameName !="Play new Game"){
 				params["oldBoard"] = gameName;
@@ -281,14 +282,24 @@
 				oldVariants[obj.gameName].push(obj.variant)
 			}
 		}
-		var wholeLineData = "<TD>Old Board name :</TD><TD>"
+		var row = document.getElementById("come2playData");
+		var cell = row.insertCell(0);
+		cell.innerHTML = "Old Board name :";
+		//cell = "<TD></TD><TD>"
 		var comboStr = "<select name=\"oldBoard\" id=\"oldBoard\" onchange=\"updateVariants()\">";
 		for(i=0;i<oldGames.length;i++){
 			comboStr+="<option value=\""+oldGames[i]+"\">"+oldGames[i]+"</option>";
 		}
 		comboStr+="</select>";
-		wholeLineData +=comboStr + "</TD><TD id=\"variant\"><TD>"
-		document.getElementById("come2playData").innerHTML = wholeLineData;
+		var cell = row.insertCell(1);
+		cell.innerHTML = comboStr;
+		var cell = row.insertCell(2);
+		cell.id = "variant";
+		//wholeLineData +=comboStr + "</TD><TD id=\"variant\"></TD>";
+		
+		
+		//alert(wholeLineData)
+		//document.getElementById("come2playData").innerHTML = wholeLineData;
 	}
 	function updateVariants(){
 		var gameName = document.getElementById("oldBoard").value
@@ -308,10 +319,13 @@
 			if(document.cookie=="come2play"){
 				document.cookie = "";
 			}else{
+				come2playCookie = "come2play";
 				document.cookie = "come2play";
 			}
+		}else if(document.cookie == "come2play"){
+			come2playCookie = "come2play";
 		}
-		if(document.cookie == "come2play"){
+		if(come2playCookie == "come2play"){
 			addOldBoard();
 		}
 		var playerTable = document.getElementById("playerTable");
@@ -369,7 +383,7 @@
 				<TD>is Yoav Container ? </TD>
 				<TD><input type="checkbox" id="isYoavContainer" value="isYoavContainer"></TD>
 			</TR>
-			<TR id="come2playData">
+			<TR id="come2playData" name="come2playData"> 
 			</TR>
 			<TR>
 				<TD>Room XML :</TD>

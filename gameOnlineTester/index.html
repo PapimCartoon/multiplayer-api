@@ -191,6 +191,13 @@
 				params[obj.htmlName] = document.getElementById(obj.htmlName).checked;
 			}
 		}
+		if(document.cookie == "come2play"){
+			var gameName = document.getElementById("oldBoard").value;
+			if( gameName !="Play new Game"){
+				params["oldBoard"] = gameName;
+				params["extra_match_info"] = document.getElementById("oldBoardVariant").value;
+			}
+		}
 		return params;
 	}
 	function checkVaildNumber(load){
@@ -261,7 +268,52 @@
 		cell = row.insertCell(0);
 		cell.innerHTML = "<input type=\"text\" id=\"key_"+tableName+"_"+num+"\" value=\""+key+"\">";	
 	}
+	var oldGames = new Array();
+	var oldVariants = new Array();
+	function addOldBoard(){
+		oldGames.push("Play new Game")
+		for(var i=0;i<oldBoardValues.length;i++){
+			var obj = oldBoardValues[i];
+			if(obj.type == "gameName"){
+				oldGames.push(obj.gameName)
+			}else if(obj.type == "variant"){
+				if(oldVariants[obj.gameName] == null) oldVariants[obj.gameName] = new Array();
+				oldVariants[obj.gameName].push(obj.variant)
+			}
+		}
+		var wholeLineData = "<TD>Old Board name :</TD><TD>"
+		var comboStr = "<select name=\"oldBoard\" id=\"oldBoard\" onchange=\"updateVariants()\">";
+		for(i=0;i<oldGames.length;i++){
+			comboStr+="<option value=\""+oldGames[i]+"\">"+oldGames[i]+"</option>";
+		}
+		comboStr+="</select>";
+		wholeLineData +=comboStr + "</TD><TD id=\"variant\"><TD>"
+		document.getElementById("come2playData").innerHTML = wholeLineData;
+	}
+	function updateVariants(){
+		var gameName = document.getElementById("oldBoard").value
+		if(gameName == "Play new Game"){
+			document.getElementById("variant").innerHTML = ""
+		}else{
+			var comboStr = "<select name=\"oldBoardVariant\" id=\"oldBoardVariant\">";
+			for(i=0;i<oldVariants[gameName].length;i++){
+				comboStr+="<option value=\""+oldVariants[gameName][i]+"\">"+oldVariants[gameName][i]+"</option>";
+			}
+			comboStr+="</select>";
+			document.getElementById("variant").innerHTML = comboStr
+		}
+	}
 	function init(){
+		if(window.location.search.indexOf("come2play") != -1){
+			if(document.cookie=="come2play"){
+				document.cookie = "";
+			}else{
+				document.cookie = "come2play";
+			}
+		}
+		if(document.cookie == "come2play"){
+			addOldBoard();
+		}
 		var playerTable = document.getElementById("playerTable");
 		var row = playerTable.insertRow(0);
 		for(var i =0;i<paramArr.length;i++){
@@ -317,11 +369,7 @@
 				<TD>is Yoav Container ? </TD>
 				<TD><input type="checkbox" id="isYoavContainer" value="isYoavContainer"></TD>
 			</TR>
-			<TR>
-				<TD>Old Board name :</TD>
-				<TD><input type="text" id="oldBoard" value="Reversi"></TD>
-				<TD>is Old Board ? </TD>
-				<TD><input type="checkbox" id="isOldBoard" value="isOldBoard" onchange="showDefaultValue('isOldBoard');"></TD>
+			<TR id="come2playData">
 			</TR>
 			<TR>
 				<TD>Room XML :</TD>

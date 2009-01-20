@@ -13,14 +13,86 @@ function getOldBoard(game){
 }
 
 var supervisorLevels = new Array("Admin","Supervisor","MiniSupervisor","NormalUser");
-paramArr = new Array();
+var oldBoardValues = new Array();
+oldBoardValues.push({type:"gameName",gameName:"Sudoku"})
+oldBoardValues.push({type:"variant",gameName:"Sudoku",variant:"9_Easy"})
+oldBoardValues.push({type:"variant",gameName:"Sudoku",variant:"9_Normal"})
+oldBoardValues.push({type:"variant",gameName:"Sudoku",variant:"9_Hard"})
+oldBoardValues.push({type:"variant",gameName:"Sudoku",variant:"9_Extreme"})     
+
+oldBoardValues.push({type:"gameName",gameName:"FindWord"})
+oldBoardValues.push({type:"variant",gameName:"FindWord",variant:"hebrew"})
+oldBoardValues.push({type:"variant",gameName:"FindWord",variant:"english"})
+
+oldBoardValues.push({type:"gameName",gameName:"Puzzle"})
+oldBoardValues.push({type:"variant",gameName:"Puzzle",variant:"3_WorldTravel"})
+oldBoardValues.push({type:"variant",gameName:"Puzzle",variant:"5_ArtEntert"})
+oldBoardValues.push({type:"variant",gameName:"Puzzle",variant:"10_Food"})
+
+oldBoardValues.push({type:"gameName",gameName:"Checkers"})
+oldBoardValues.push({type:"variant",gameName:"Checkers",variant:"Israeli"})
+oldBoardValues.push({type:"variant",gameName:"Checkers",variant:"International"})
+oldBoardValues.push({type:"variant",gameName:"Checkers",variant:"Israeli_randomX70"})
+
+oldBoardValues.push({type:"gameName",gameName:"BackGammon"})
+oldBoardValues.push({type:"variant",gameName:"BackGammon",variant:"Original"})
+oldBoardValues.push({type:"variant",gameName:"BackGammon",variant:"tapa"})
+oldBoardValues.push({type:"variant",gameName:"BackGammon",variant:"Nackgammon"})
+oldBoardValues.push({type:"variant",gameName:"BackGammon",variant:"randomX70"})  
+
+oldBoardValues.push({type:"gameName",gameName:"Go"})
+oldBoardValues.push({type:"variant",gameName:"Go",variant:"9_5"})
+oldBoardValues.push({type:"variant",gameName:"Go",variant:"9_6"})
+oldBoardValues.push({type:"variant",gameName:"Go",variant:"13_5"})
+oldBoardValues.push({type:"variant",gameName:"Go",variant:"13_6"})  
+oldBoardValues.push({type:"variant",gameName:"Go",variant:"19_5"})  
+oldBoardValues.push({type:"variant",gameName:"Go",variant:"19_6"})  
+oldBoardValues.push({type:"variant",gameName:"Go",variant:"9_5_randomX70"})  
+
+oldBoardValues.push({type:"gameName",gameName:"Chess"})
+oldBoardValues.push({type:"variant",gameName:"Chess",variant:"Original"})
+oldBoardValues.push({type:"variant",gameName:"Chess",variant:"Chess256"})
+oldBoardValues.push({type:"variant",gameName:"Chess",variant:"Chess960"})
+oldBoardValues.push({type:"variant",gameName:"Chess",variant:"Chess960x2"})  
+oldBoardValues.push({type:"variant",gameName:"Chess",variant:"ShuffleChess"})
+oldBoardValues.push({type:"variant",gameName:"Chess",variant:"CornerChess"})
+oldBoardValues.push({type:"variant",gameName:"Chess",variant:"Dice"})
+oldBoardValues.push({type:"variant",gameName:"Chess",variant:"Extintion"}) 
+oldBoardValues.push({type:"variant",gameName:"Chess",variant:"Atomic"})
+oldBoardValues.push({type:"variant",gameName:"Chess",variant:"ThreeChecks"})
+oldBoardValues.push({type:"variant",gameName:"Chess",variant:"Dice"})
+oldBoardValues.push({type:"variant",gameName:"Chess",variant:"Dice_ThreeChecks_ShuffleChess_randomX70"})  
+
+oldBoardValues.push({type:"gameName",gameName:"Reversi"})
+oldBoardValues.push({type:"variant",gameName:"Reversi",variant:"Original"})
+oldBoardValues.push({type:"variant",gameName:"Reversi",variant:"randomX70"})
+
+oldBoardValues.push({type:"gameName",gameName:"Simon"})
+oldBoardValues.push({type:"variant",gameName:"Simon",variant:"Original"})
+
+oldBoardValues.push({type:"gameName",gameName:"Beatles"})
+oldBoardValues.push({type:"variant",gameName:"Beatles",variant:"10_3"})
+oldBoardValues.push({type:"variant",gameName:"Beatles",variant:"10_4"})
+
+oldBoardValues.push({type:"gameName",gameName:"Blob"})
+oldBoardValues.push({type:"variant",gameName:"Blob",variant:"Original"})
+oldBoardValues.push({type:"variant",gameName:"Blob",variant:"randomX70"})
+
+oldBoardValues.push({type:"gameName",gameName:"Connect4"})
+oldBoardValues.push({type:"variant",gameName:"Blob",variant:"Original"})
+oldBoardValues.push({type:"variant",gameName:"Blob",variant:"randomX70"})
+          
+
+
+
+
+
 
 customInit = new Array();
 customInit.push({tableName:"serverTable",key:"chatType",value:"FIXED"})
 customInit.push({tableName:"serverTable",key:"ARTIFICIAL_TO_JAVA_DELAY",value:"'1000-2000'"})
 customInit.push({tableName:"serverTable",key:"ARTIFICIAL_FROM_JAVA_DELAY",value:"'1000-2000'"})
 customInit.push({tableName:"serverTable",key:"isWithTables",value:"true"})
-
 customInit.push({tableName:"gameTable",key:"Board Width",value:"12"})
 customInit.push({tableName:"gameTable",key:"Mine Amount",value:"20"})
 
@@ -33,8 +105,9 @@ defultValue - values which have a defualt value should have a check box with the
 isUser - is the value refers to a user
 
 */
+paramArr = new Array();
 paramArr.push( {htmlName:"isYoavContainer",type:"boolean"});
-paramArr.push( {htmlName:"isOldBoard",type:"boolean",connectedTo:"gameSwf"});
+//paramArr.push( {htmlName:"isOldBoard",type:"boolean"});
 paramArr.push( {htmlName:"isDefaultroomXML",type:"boolean",connectedTo:"roomXML"});
 paramArr.push( {htmlName:"isDefaultgameXML",type:"boolean",connectedTo:"gameXML"});
 

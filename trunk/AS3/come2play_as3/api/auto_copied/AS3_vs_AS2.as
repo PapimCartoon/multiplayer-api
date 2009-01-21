@@ -3,6 +3,8 @@
 import flash.display.*;
 import flash.events.*;
 import flash.net.*;
+import flash.system.ApplicationDomain;
+import flash.system.LoaderContext;
 import flash.text.TextField;
 import flash.text.TextFormat;
 import flash.utils.*;
@@ -197,7 +199,7 @@ public final class AS3_vs_AS2
 		myAddEventListener(contentLoaderInfo, SecurityErrorEvent.SECURITY_ERROR, handler);
 		graphics.addChild(newMovie);
 		if (TRACE_LOADING) StaticFunctions.storeTrace(["Loading url=",url," into a newly created child of=",graphics.name]);
-		loader.load(new URLRequest(url));
+		loader.load(new URLRequest(url),new LoaderContext(true,ApplicationDomain.currentDomain));
 		return newMovie;
 	}
 	public static function scaleMovie(graphics:DisplayObject, x_percentage:int, y_percentage:int):void {

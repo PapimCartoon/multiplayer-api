@@ -1,7 +1,7 @@
 <HTML>
 <HEAD>
 	<TITLE>Room tester</TITLE>
-	<LINK REL="Stylesheet" HREF="http://www.come2play.com/css/general2.3.css" TYPE="Text/css">
+	<!--<LINK REL="Stylesheet" HREF="http://www.come2play.com/css/general2.3.css" TYPE="Text/css">-->
 	<script language="javascript" src="FlashObject.js"></script>
 	<script language="javascript" src="params.js"></script>
 	<script type="text/javascript">
@@ -23,7 +23,8 @@
 		var obj;
 		for(var i=0;i<paramArr.length;i++){
 			obj = paramArr[i];
-			paramsToSend[obj.htmlName] = windowParams[obj.htmlName]
+			if(obj.fromTable == null)
+				paramsToSend[obj.htmlName] = windowParams[obj.htmlName]
 		}
 		paramsToSend = parametersToUrl(paramsToSend);
 		openWindows.push(single_popup=window.open(url+"&"+paramsToSend+"&flash_type=game&type="+type))
@@ -99,6 +100,7 @@
 		var obj;
 		for(var i=0;i<paramArr.length;i++){
 			obj = paramArr[i];
+			if((obj.fromTable) && (windowParams["type"] != "start_game_from_table_url")) continue;
 			if(obj.isUser == true){
 				if(obj.htmlName == "tokens")
 					params[obj.xmlName]=windowParams[obj.htmlName];

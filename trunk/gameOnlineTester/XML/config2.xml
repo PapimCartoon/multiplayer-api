@@ -167,9 +167,9 @@ Not used by the graphics yet (but should be displayed):
 		-->
 		
 		<!--
-		chatType can be FIXED,DYNAMIC or NO_CHAT
+		chatType can be FIXED,DYNAMIC_OPEN,DYNAMIC_CLOSED or NO_CHAT
 		 -->
-		<entry><key>chatType</key><value>'FIXED'</value></entry>
+		<entry><key>chatType</key><value>'DYNAMIC_CLOSED'</value></entry>
 		<!--
 		logoUrl - url where end game logo is placed
 		logoLink - url clicking the logo will lead
@@ -194,7 +194,7 @@ Not used by the graphics yet (but should be displayed):
 		TurnBased
 		NO_TIMER
 		-->
-		<entry><key>TimerType</key><value>'NO_TIMER'</value></entry>
+		<entry><key>TimerType</key><value>'TurnBased'</value></entry>
 		<!--
 		tableStyle - tells the room which view to use as default
 		BOX - for box view
@@ -206,9 +206,10 @@ Not used by the graphics yet (but should be displayed):
 		<entry><key>MochiCode</key><value>'9011e16508e2fcfa'</value></entry>
 		<entry><key>CPMStarSubPoolID</key><value>1</value></entry>
 		<entry><key>CPMStarPoolID</key><value>1910</value></entry>
-
+		
+		<entry><key>MessageButton_Back To Main_color</key><value>"0x9DC641"</value></entry>
+		<entry><key>MessageButton_Play Alone_color</key><value>"0xDD1D67"</value></entry>
 	</custom>
-	
 		<!--
 		Stuff that will need to be translated:
 			taunts.taunt.title
@@ -530,7 +531,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 			<play_password>alltembels</play_password>
 			<!-- the order of players is important: the first one is white, the second is black -->
 			<player_ids>26,71</player_ids>
-			<stakes type="Stake">0</stakes>			
+			<stakes type="Stake">1:10</stakes>			
 		</FromTable>
 		
 		<!-- 
@@ -720,7 +721,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 	</user_info>
 	
     <!-- league_stage_id determines the tokens in this stage  -->
-    <league_stage_id type="int">0</league_stage_id>
+    <league_stage_id type="int">1</league_stage_id>
     <!-- config.game_name is prefixed to the rating, e.g., game_rating_chess . I do this to make sure the ratings of different games don't override one another -->
     <game_name>chess</game_name>
 		

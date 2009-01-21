@@ -131,6 +131,7 @@ paramArr.push( {htmlName:"roomXML",xmlName:"config_url",type:"string",defultValu
 paramArr.push( {htmlName:"gameXML",xmlName:"config_url",type:"string",defultValue:"XML/config2.xml"});
 
 
+paramArr.push( {htmlName:"isVeteran",xmlName:"override_config.user_info.params.is_veteran_user",type:"boolean",isUser:true,colName:"is Veteran"});
 paramArr.push( {htmlName:"isMale",xmlName:"override_config.user_info.params.is_male",type:"boolean",isUser:true,colName:"is Male"});
 paramArr.push( {htmlName:"isGuest",xmlName:"override_config.user_info.params.is_guest",type:"boolean",isUser:true,colName:"is Guest"});
 paramArr.push( {htmlName:"credibility",xmlName:"override_config.user_info.params.credibility",type:"int",isUser:true,callFunc:getRandomNum,colName:"Credibility"});

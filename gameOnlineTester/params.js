@@ -112,6 +112,7 @@ paramArr.push( {htmlName:"isDefaultgameXML",type:"boolean",connectedTo:"gameXML"
 
 paramArr.push( {htmlName:"PlayersNumSim",type:"int"});
 paramArr.push( {htmlName:"AutoMatch",type:"boolean"});
+paramArr.push( {htmlName:"stake",xmlName:"override_config.game_parameters.FromTable.stakes",fromTable:"true",type:"string"});
 
 paramArr.push( {htmlName:"MinPlayersNum",xmlName:"override_config.min_player_number",type:"int"});
 paramArr.push( {htmlName:"MaxPlayersNum",xmlName:"override_config.max_player_number",type:"int",minValue:"MinPlayersNum"});

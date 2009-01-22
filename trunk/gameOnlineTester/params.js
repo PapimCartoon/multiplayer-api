@@ -1,8 +1,8 @@
-function getRandomNum(){
+﻿function getRandomNum(){
 	return Math.ceil(3000*Math.random())
 }
 function getRandomsupervisor(){
-	var superLevel = Math.ceil(3*Math.random());
+	var superLevel = Math.ceil(4*Math.random()-1);
 	return supervisorLevels[superLevel];
 }
 function getRandomTokens(){
@@ -11,8 +11,12 @@ function getRandomTokens(){
 function getOldBoard(game){
 	return "../../svn/as2_old_boards/OldBoardContainer.swf?oldboard_swf=../../svn/as2_old_boards/boards/"+game+"_board.swf&game_type="+game+"&variant_str=&"
 }
-
+function getPlayerName(){
+	var playerInit = Math.ceil(5*Math.random()-1);
+	return playerInitial[playerInit];
+}
 var supervisorLevels = new Array("Admin","Supervisor","MiniSupervisor","NormalUser");
+var playerInitial = new Array("player","שחקן","播放器","opção","खिलाड़ी")
 var oldBoardValues = new Array();
 oldBoardValues.push({type:"gameName",gameName:"Sudoku"})
 oldBoardValues.push({type:"variant",gameName:"Sudoku",variant:"9_Easy"})
@@ -141,6 +145,6 @@ paramArr.push( {htmlName:"avatar",xmlName:"override_config.user_info.params.avat
 paramArr.push( {htmlName:"GameRating",xmlName:"override_config.user_info.params.game_rating",type:"int",isUser:true,callFunc:getRandomNum,colName:"Game rating"});
 paramArr.push( {htmlName:"tokens",xmlName:"override_config.user_info.params.tokens",type:"string",isUser:true,callFunc:getRandomTokens,colName:"Tokens"});
 paramArr.push( {htmlName:"supervisor",xmlName:"override_config.user_info.params.supervisor",type:"string",isUser:true,callFunc:getRandomsupervisor,colName:"Supervisor"});
-paramArr.push( {htmlName:"name",xmlName:"override_config.user_info.params.name",type:"string",isUser:true,colName:"Name"});
+paramArr.push( {htmlName:"name",xmlName:"override_config.user_info.params.name",type:"string",isUser:true,colName:"Name",callFunc:getPlayerName});
 paramArr.push( {htmlName:"id",xmlName:"override_config.extra_args.user_id",type:"int",isUser:true,colName:"ID"});
 

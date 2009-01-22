@@ -219,12 +219,13 @@
 			if(obj.isUser != true) continue;
 			if(obj.callFunc != null){
 				val = obj.callFunc();
-			}else if(obj.htmlName == "name"){
-				val = "Player "+num;
 			}else if(obj.htmlName == "id"){
 				val = num;
 			}else{
 				val = "";
+			}
+			if(obj.htmlName == "name"){
+				val +=(" "+num);
 			}
 			if(obj.type == "int"){
 				addCell(row,"<INPUT TYPE='text'  id='player_"+num+"_"+obj.htmlName+"' value='"+val+"'>");

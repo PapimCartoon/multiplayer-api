@@ -159,7 +159,8 @@ Not used by the graphics yet (but should be displayed):
 		<entry><key>override all_java_ips</key><value>'localhost:2000:socket,localhost:2000:old_xmlsocket,localhost:8083:rtmpt'</value></entry>
 		-->
 		<entry><key>override all_java_ips</key><value>'80.179.46.235:8080:socket,80.179.46.235:8080:old_xmlsocket,80.179.46.235:80:rtmpt'</value></entry>
-		<entry><key>come2play_as3.room::RoomLogic.TRACE_XML</key><value>false</value></entry>
+	
+		<entry><key>come2play_as3.room::RoomLogic.TRACE_XML</key><value>true</value></entry>
 
 		<!--
 		<entry><key>ARTIFICIAL_TO_JAVA_DELAY</key><value>'200-800'</value></entry>
@@ -865,12 +866,12 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 			<chat_output_height type="int">90</chat_output_height> 	<!-- there has to be at least 55 px difference -->
 			<user_list_width type="int">150</user_list_width>
 			
-			<max_content_height type="int">2000</max_content_height>   <!-- this makes sure the actual graphics that is
+			<max_content_height type="int">1000</max_content_height>   <!-- this makes sure the actual graphics that is
 																				   the chat output won't be big enough to affect
 																				   performance -->
 			
 			<max_chars_in_inputfield type="int">50</max_chars_in_inputfield> 	<!-- 0 is for unlimited -->
-			<chat_line_leading type="int">0</chat_line_leading> 	<!-- this parameter sets the leading for messages that have
+			<chat_line_leading type="int">10</chat_line_leading> 	<!-- this parameter sets the leading for messages that have
 															 emoticons, so if you change their size, you might want
 															 to adjust this as well -->
 			<emoticon_spacer type="int">3</emoticon_spacer>    	<!-- this parameter sets space that is created in the textfield

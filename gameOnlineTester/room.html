@@ -40,8 +40,8 @@
 	        //window.alert(arr[i]);
 	        var key_val = arr[i].split("=");
 	        if (key_val.length!=2) window.alert("Error in getParametersFromURL:"+arr[i]);
-	        key_val[0] = unescape(key_val[0]);
-	        key_val[1] = unescape(key_val[1]);
+	        key_val[0] = decodeURIComponent(key_val[0]);
+	        key_val[1] = decodeURIComponent(key_val[1]);
 	        //window.alert(key_val[0] + "====" + key_val[1]);
 	        res[ key_val[0] ] = key_val[1];
 	    }           
@@ -102,6 +102,7 @@
 			obj = paramArr[i];
 			if((obj.fromTable) && (windowParams["type"] != "start_game_from_table_url")) continue;
 			if(obj.isUser == true){
+				
 				if(obj.htmlName == "tokens")
 					params[obj.xmlName]=windowParams[obj.htmlName];
 				else

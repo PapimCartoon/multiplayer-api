@@ -106,11 +106,11 @@ import come2play_as2.api.*;
 		public function gotError(withObj:Object, err:Error):Void {
 			sendMessage( API_DoAllFoundHacker.create(hackerUserId, 
 				"Got error withObj="+JSON.stringify(withObj)+
-				" err="+AS3_vs_AS2.error2String(err)+
-				" runningAnimationsNumber="+runningAnimationsNumber+
-				" currentCallback="+currentCallback+
-				" msgsInTransaction="+JSON.stringify(msgsInTransaction)+
-				" traces="+StaticFunctions.getTraces() ) );
+				"\nerr="+AS3_vs_AS2.error2String(err)+
+				"\nrunningAnimationsNumber="+runningAnimationsNumber+
+				"\ncurrentCallback="+currentCallback+
+				"\nmsgsInTransaction="+JSON.stringify(msgsInTransaction)+
+				"\ntraces="+StaticFunctions.getTraces() ) );
 		}
 		/** 
 		 * A transaction starts when the server calls
@@ -124,8 +124,7 @@ import come2play_as2.api.*;
 		 * You may call doAll methods if and only if you are inside a transaction,
 		 * and doStoreState if and only if you are not inside a transaction.
 		 * 
-		 * Animations may be displayed only inside a transaction
-		 * 	that is either gotMatchStarted or gotMatchEnded or gotStateChanged.
+		 * Animations may be displayed only inside a transaction.
 		 * 
 		 * About loading images:
 		 * Flash caches loaded images, but only after loading is completed.
@@ -147,8 +146,6 @@ import come2play_as2.api.*;
 		 */		 
         public function animationStarted():Void {
         	checkInsideTransaction();
-			if (!canDoAnimations())
-				throwError("You can do animations only when the server calls gotMatchStarted, gotMatchEnded, or gotStateChanged");
         	runningAnimationsNumber++;        	
         }
         public function animationEnded():Void {
@@ -158,13 +155,6 @@ import come2play_as2.api.*;
         	runningAnimationsNumber--;
         	sendFinishedCallback();        	        	
         }
-        public function canDoAnimations():Boolean {
-			return currentCallback instanceof API_GotCustomInfo || 
-				currentCallback instanceof API_GotMatchStarted ||
-				currentCallback instanceof API_GotMatchEnded || 
-				currentCallback instanceof API_GotUserInfo ||
-				currentCallback instanceof API_GotStateChanged;
-		}
 		public function cacheImage(imageUrl:String, someMovieClip:MovieClip,
 					onLoaded:Function):Void {		
 			animationStarted();
@@ -203,14 +193,14 @@ import come2play_as2.api.*;
 			if (verifier.isPlayer()) sendDoStoreStateEvents();
         }
         private function sendDoStoreStateEvents():Void{
-        	for (var i209:Number=0; i209<doStoreQueue.length; i209++) { var doStoreMsg:API_DoStoreState = doStoreQueue[i209]; 
+        	for (var i199:Number=0; i199<doStoreQueue.length; i199++) { var doStoreMsg:API_DoStoreState = doStoreQueue[i199]; 
         		super.sendMessage(doStoreMsg);
         	}
         	doStoreQueue = [];
         }
         private function updateMirorServerState(serverEntries:Array/*ServerEntry*/):Void
         {
-        	for (var i216:Number=0; i216<serverEntries.length; i216++) { var serverEntry:ServerEntry = serverEntries[i216]; 
+        	for (var i206:Number=0; i206<serverEntries.length; i206++) { var serverEntry:ServerEntry = serverEntries[i206]; 
         	    serverStateMiror.addEntry(serverEntry);	
         	}     	
         }
@@ -247,7 +237,7 @@ import come2play_as2.api.*;
 					var customInfo:API_GotCustomInfo = API_GotCustomInfo(msg);
 					var i18nObj:Object = {};
 					var customObj:Object = {};
-					for (var i253:Number=0; i253<customInfo.infoEntries.length; i253++) { var entry:InfoEntry = customInfo.infoEntries[i253]; 
+					for (var i243:Number=0; i243<customInfo.infoEntries.length; i243++) { var entry:InfoEntry = customInfo.infoEntries[i243]; 
 						var key:String = entry.key;
 						var value:Object = entry.value;
 						if (key==API_Message.CUSTOM_INFO_KEY_i18n) {
@@ -266,7 +256,7 @@ import come2play_as2.api.*;
 				}else if(msg instanceof API_GotUserInfo){
 					var infoMessage:API_GotUserInfo =API_GotUserInfo( msg);
 					var userObject:Object = {};
-					for (var i272:Number=0; i272<infoMessage.infoEntries.length; i272++) { var infoEntry:InfoEntry = infoMessage.infoEntries[i272]; 
+					for (var i262:Number=0; i262<infoMessage.infoEntries.length; i262++) { var infoEntry:InfoEntry = infoMessage.infoEntries[i262]; 
 						trace(infoEntry.key+ "="+ infoEntry.value)
 						userObject[infoEntry.key] = infoEntry.value;
 					}

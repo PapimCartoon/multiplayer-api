@@ -3,8 +3,8 @@ package come2play_as3.api
 	import come2play_as3.api.auto_copied.*;
 	import come2play_as3.api.auto_generated.*;
 	
-	import flash.display.DisplayObjectContainer;
-	import flash.utils.getTimer;
+	import flash.display.*;
+	import flash.utils.*;
 	
 	/**
 	 * This class simulates a server that works only for a single player.
@@ -66,6 +66,10 @@ package come2play_as3.api
 				]
 			];
 		public static var DEFAULT_MATCH_STATE:Array/*ServerEntry*/ = []; // you can change this and load a saved match
+		
+		
+		public static var WAIT_BETWEEN_EXTRA_CALLBACKS:int = 0;
+		public static var EXTRA_CALLBACKS:Array/*API_Message*/ = [];
 												 
 		private var messageNum:int = 10000;
 		private var curUserId:int; // the current userId (we change this curUserId when getting doAllSetTurn)
@@ -342,7 +346,24 @@ package come2play_as3.api
   				serverStateMiror.addEntry(serverEntry);
 			}
 			finishedUserIds = DEFAULT_FINISHED_USER_IDS.concat(); // to create a copy
-  			queueSendMessage(API_GotMatchStarted.create(++messageNum,getPlayerIds(), finishedUserIds, serverStateMiror.getValues() ) );	 	
+  			queueSendMessage(API_GotMatchStarted.create(++messageNum,getPlayerIds(), finishedUserIds, serverStateMiror.getValues() ) );
+  			if (WAIT_BETWEEN_EXTRA_CALLBACKS==0) {
+	  			for each (var extraCallback:API_Message in EXTRA_CALLBACKS) {
+	  				trace("Passing extraCallback="+extraCallback);
+	  				queueSendMessage( extraCallback );
+	  			}
+	  		} else  				
+  				checkExtraCallbacks();	 	
+  		}
+  		private function checkExtraCallbacks():void {
+  			if (EXTRA_CALLBACKS.length==0) return;
+  			AS3_vs_AS2.myTimeout( AS3_vs_AS2.delegate(this, this.sendExtraCallback), WAIT_BETWEEN_EXTRA_CALLBACKS);
+  		}
+  		private function sendExtraCallback():void {
+  			var extraCallback:API_Message = /*as*/EXTRA_CALLBACKS.shift() as API_Message;
+  			StaticFunctions.assert(extraCallback!=null,["Error in sendExtraCallback! EXTRA_CALLBACKS=",EXTRA_CALLBACKS]);
+  			queueSendMessage( extraCallback );
+  			checkExtraCallbacks();  			
   		}
   		private function queueSendMessage(msg:API_Message):void {
   			apiMsgsQueue.push(msg);

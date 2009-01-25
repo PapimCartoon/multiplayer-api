@@ -110,11 +110,11 @@ package come2play_as3.api {
 		public function gotError(withObj:Object, err:Error):void {
 			sendMessage( API_DoAllFoundHacker.create(hackerUserId, 
 				"Got error withObj="+JSON.stringify(withObj)+
-				" err="+AS3_vs_AS2.error2String(err)+
-				" runningAnimationsNumber="+runningAnimationsNumber+
-				" currentCallback="+currentCallback+
-				" msgsInTransaction="+JSON.stringify(msgsInTransaction)+
-				" traces="+StaticFunctions.getTraces() ) );
+				"\nerr="+AS3_vs_AS2.error2String(err)+
+				"\nrunningAnimationsNumber="+runningAnimationsNumber+
+				"\ncurrentCallback="+currentCallback+
+				"\nmsgsInTransaction="+JSON.stringify(msgsInTransaction)+
+				"\ntraces="+StaticFunctions.getTraces() ) );
 		}
 		/** 
 		 * A transaction starts when the server calls
@@ -128,8 +128,7 @@ package come2play_as3.api {
 		 * You may call doAll methods if and only if you are inside a transaction,
 		 * and doStoreState if and only if you are not inside a transaction.
 		 * 
-		 * Animations may be displayed only inside a transaction
-		 * 	that is either gotMatchStarted or gotMatchEnded or gotStateChanged.
+		 * Animations may be displayed only inside a transaction.
 		 * 
 		 * About loading images:
 		 * Flash caches loaded images, but only after loading is completed.
@@ -151,8 +150,6 @@ package come2play_as3.api {
 		 */		 
         public function animationStarted():void {
         	checkInsideTransaction();
-			if (!canDoAnimations())
-				throwError("You can do animations only when the server calls gotMatchStarted, gotMatchEnded, or gotStateChanged");
         	runningAnimationsNumber++;        	
         }
         public function animationEnded():void {
@@ -162,13 +159,6 @@ package come2play_as3.api {
         	runningAnimationsNumber--;
         	sendFinishedCallback();        	        	
         }
-        public function canDoAnimations():Boolean {
-			return currentCallback is API_GotCustomInfo || 
-				currentCallback is API_GotMatchStarted ||
-				currentCallback is API_GotMatchEnded || 
-				currentCallback is API_GotUserInfo ||
-				currentCallback is API_GotStateChanged;
-		}
 		public function cacheImage(imageUrl:String, someMovieClip:MovieClip,
 					onLoaded:Function):void {		
 			animationStarted();
@@ -224,13 +214,15 @@ package come2play_as3.api {
         }
         
         override public function gotMessage(msg:API_Message):void {
-        	try {
-        		if (isInTransaction()) {					
-        			throwError("The container sent an API message without waiting for DoFinishedCallback");
-				}
-        		if (runningAnimationsNumber!=0 || currentCallback!=null)
-        			throwError("Internal error! runningAnimationsNumber="+runningAnimationsNumber+" msgsInTransaction="+msgsInTransaction+" currentCallback="+currentCallback);
+        	if (isInTransaction()) {					
+    			throwError("The container sent an API message without waiting for DoFinishedCallback");
+			}
+    		if (runningAnimationsNumber!=0 || currentCallback!=null)
+    			throwError("Internal error! runningAnimationsNumber="+runningAnimationsNumber+" msgsInTransaction="+msgsInTransaction+" currentCallback="+currentCallback);
+    			
+        	try {        		
 				msgsInTransaction = []; // we start a transaction
+				animationStarted();
 				currentCallback = msg;
 				
         		hackerUserId = -1;
@@ -290,10 +282,8 @@ package come2play_as3.api {
 					// to avoid an infinite loop, I can't call passError again.
 					showError("Another error occurred when calling gotError. The new error is="+AS3_vs_AS2.error2String(err2));
 				}
-    		} finally {       
-        		// we end a transaction
-    			sendFinishedCallback(); 			
-    		}        		   	
+    		}
+    		animationEnded();     		   	
         }
         public function dispatchMessage(msg:API_Message):void {
         	var methodName:String = msg.getMethodName();

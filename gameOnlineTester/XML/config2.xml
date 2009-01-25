@@ -135,7 +135,6 @@ Not used by the graphics yet (but should be displayed):
 			VARIANT is for OldBoard games.
 			For example:
 			LOCALTEST_Beatles-10_4-2-MultiPlayer
-			LOCALTEST_FindWord-hebrew-1-ReviewMatch
 		 -->
 		<entry><key>isSendErrorImage</key><value>false</value></entry>		 
 		<entry><key>LOCALTEST_Beatles-10_4-1-MultiPlayer</key><value>'364d5a22fa5ed4855d880b7592e6a7c8c7758a96fce44fd390a26dade3afc358abb6234e7ab86b70781ac76ab30eb4b9b32a9253925f6914f2667e3656907fc8642890aaa3e2a49e1a437e70c40d7637cd8a36fa4004c6bec2c1bea6c4915a9a19141b41239ea47656e2422eaaa136ba31310afa04e0139f153a79aef8258e1eeea903bd3a9d0966d9ccba706dc5a716c54472f192642f6170c32e2485cb4488df75f01ae9d7c6046706e1b0ac6d9ba0652e3142152120fd3aa854b5b6883a541131591a27d9c15db13e8232ccc4f8e0652e3142152120fd0d813fcae91c0c8115739d0d9de1a80fa25783a6467072aae7cdc1dd7013902f29aeb9a89fe955b6fdde40b8f0dca1f51526f6643ca3c051f25ba344d634a952cf9d89cf7f946fa78de12836484877e7e86011601f1de6f99b1c53e6f0aa70090ca1f83ced83ba54e3bd60a0ceefbcf3a6399e05c01d814c69fa4ebec5f37fa3741cd0affe33f23d6005f6e0234c9b7eb36f63777dbc3b687abb22ce3b85aabf9a63ab87bb41826860fd8632208790b22c1a6d8414859e31946ce61b1b57eb57677c737f5f786e422aff07c6f6d2404e24946d30455420edcc39d97ff1468a348ea3dddd7b78adc787b6a8a51441ef9c5a27222a1d5bd29b'</value></entry>
@@ -306,7 +305,7 @@ Not used by the graphics yet (but should be displayed):
 		(if you want to start a new TurnBased game, then pass in load_saved_match: saved_match_id=-1, and match_state='')
 		
 		I now list all possible single-user scenarios:
-		- Single player game: (e.g., play puzzle or sudoku by yourself, or play both sides in a chess game)
+		- Single player game: (e.g., play sudoku by yourself, or play both sides in a chess game)
 		  set play_type=MultiPlayer with players_number=1
 		- Favorite match: (Viewing a favorite match that was previously saved.)
 		  make sure you have the load_saved_match and players_info elements.
@@ -344,23 +343,31 @@ Not used by the graphics yet (but should be displayed):
 		For old API boards, you use the OldContainer and add the board name as a parameter 'oldgame'.
 				
 Old board:	
+
+These are the 9 old games (Make sure you changed game_name to the correct game):
+Reversi Sudoku BackGammon Beatles Blob Checkers Chess Connect4 Go
+Not supported anymore: FindWord, Simon, Puzzle
+
 extra_match_info depends on the game.
-randomX__ can be added to almost every game to create randomness,
-e.g., randomX70 means that 70% of the possible moves are kept (30% of the squares are eliminated at random)
+1) Sudoku: 9_Easy  9_Normal 9_Hard 9_Extreme
+2) Checkers: Israeli International   Israeli_randomX70
+3) BackGammon: Original tapa Nackgammon
+4) Go: 9_5  9_6 13_5 13_6 19_5 19_6    9_5_randomX70
+5) Chess: Original Chess256, Chess960, Chess960x2, ShuffleChess, CornerChess    Dice Extintion Atomic ThreeChecks    Dice_ThreeChecks_ShuffleChess_randomX70
+6) Reversi: Original randomX70
+7) Beatles: 10_3 10_4
+8) Blob: Original randomX70
+9) Connect4: Original randomX70
 
-Go: 9_5 9_5_randomX60 9_6 13_5 13_6 19_5 19_6
-Puzzle: 3_WorldTravel 5_ArtEntert 10_Food 
-BackGammon: tapa withMars Nackgammon 
-Checkers: Israeli International
-Sudoku: 4_Easy 9_Easy  9_Normal 9_Hard 9_Extreme 
-FindWord: hebrew english
-Chess: Dice Chess960 ThreeChecks Extintion Atomic Chess256 Chess960x2 ShuffleChess CornerChess 
+Explanation about  _randomX70 :
+It means that 70% of the possible moves are kept (30% of the squares are eliminated at random)
+randomX__ can be added to almost every game to create randomness.
 
-These are the 12 old games (Make sure you changed game_name to the correct game):
-Puzzle Reversi Simon Sudoku BackGammon Beatles Blob Checkers Chess Connect4 FindWord Go
+Explanation about Chess:
+- Opening types:   Chess256, Chess960, Chess960x2, ShuffleChess, CornerChess
+- different rules:   Dice, Extintion, Atomic, ThreeChecks
+
 	
-Puzzle must have "&variant_str=" :
-../../as2_old_boards/OldBoardContainer.swf?oldboard_swf=../../as2_old_boards/boards/Puzzle_board.swf&game_type=Puzzle&variant_str=5_ArtEntert&
 Chess with dice: (set extra_match_info to "Dice")
 ../../as2_old_boards/OldBoardContainer.swf?oldboard_swf=../../as2_old_boards/boards/Chess_board.swf&game_type=Chess&
 Chess without dice: set extra_match_info to "")
@@ -410,11 +417,6 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 		<customInitInfo>
 			<custom>
 				<entry><key>CONTAINER_checkThrowingAnError</key><value>false</value></entry>
-				<entry><key>customSymbolsStringArray</key><value>[null, "../../../API_GoogleCodeSVN/Emulator/camel70x70.PNG"]</value></entry>
-				<entry><key>shouldUseAvatars</key><value>true</value></entry>
-				<entry><key>ROWS</key><value>4</value></entry>
-				<entry><key>COLS</key><value>3</value></entry>
-				<entry><key>snakeSpeed</key><value>250</value></entry>
 			</custom>
 			<i18n>			
 				<entry><key>Container sent a message before getting doRegisterOnServer</key><value>'באג בקונטיינר ששלח הודעה לפני שהמשחק נרשם'</value></entry>
@@ -456,9 +458,8 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 					**OldBoard** games.
 			example: 
 				Chess960_randomX90
-				3_WorldTravel 
 		-->
-		<extra_match_info>3_WorldTravel</extra_match_info>
+		<extra_match_info></extra_match_info>
 		
 		<!-- 
 			For API games (not OldBoard):
@@ -477,7 +478,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 			OldBoard (in Turn-based games)
 			and ClientBoard (when keeping history).
 			
-		Turn-based OldBoard games (except Simon):
+		Turn-based OldBoard games:
 			Go,
 		    Reversi,
 		    Chess,

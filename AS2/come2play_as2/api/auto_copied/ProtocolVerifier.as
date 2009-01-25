@@ -150,7 +150,7 @@ import come2play_as2.api.auto_copied.*;
         		isDeleteLegal(doStoreStateMessage.userEntries)
 			} else if (doMsg instanceof API_Transaction) {
 				var transaction:API_Transaction = API_Transaction(doMsg);
-				check(currentCallback.getMethodName()==transaction.callback.callbackName, ["Illegal callbackName!"]);
+				check(currentCallback!=null && currentCallback.getMethodName()==transaction.callback.callbackName, ["Illegal callbackName!"]);
 				// The game may perform doAllFoundHacker (in a transaction) even after the game is over,
 				// because: The container may pass gotStateChanged after the game sends doAllEndMatch,
 				//			because the game should verify every doStoreState (to prevent hackers from polluting the state after they know the game will be over).

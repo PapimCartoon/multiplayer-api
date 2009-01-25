@@ -1,12 +1,10 @@
-﻿package come2play_as3.api.auto_copied
+package come2play_as3.api.auto_copied
 {
 import flash.display.*;
 import flash.events.*;
 import flash.net.*;
-import flash.system.ApplicationDomain;
-import flash.system.LoaderContext;
-import flash.text.TextField;
-import flash.text.TextFormat;
+import flash.text.*;
+import flash.system.*;
 import flash.utils.*;
 	
 public final class AS3_vs_AS2
@@ -31,7 +29,15 @@ public final class AS3_vs_AS2
 		}
 	}
 	
+	public static function getDisplayObjectDesc(movie:DisplayObject):String {
+		return getDisplayObjectPath(movie)+(movie is MovieClip ? " in frame="+(movie as MovieClip).currentLabel : "");
+	}
+	public static function getDisplayObjectPath(movie:DisplayObject):String {
+		if (movie==null || movie.name==null || movie==StaticFunctions.someMovieClip) return '';
+		return getDisplayObjectPath(movie.parent)+"."+movie.name;		
+	}
 	public static function specialToString(o:Object):String {
+		if (o is DisplayObject) return getDisplayObjectDesc(o as DisplayObject); // instead of the default toString which returns "[object peshka2_15]", I want to return the fullname and current keyframe (if it is a movieclip)
 		var nativeSerializer:NativeSerializable = null;
 		for each (var serializer:NativeSerializable in NATIVE_SERIALIZERS) {
 			nativeSerializer = serializer.fromNative(o);
@@ -59,22 +65,27 @@ public final class AS3_vs_AS2
 	public static function isSerializableClass(o:Object):Boolean {
 		return o is SerializableClass;
 	}
-	public static function as_int(o:Object):int {
-		return o as int;
-	}
 	public static function convertToInt(o:Object):int {
 		return int(o);
 	}
+	public static function as_int(o:Object):int {
+		StaticFunctions.assert(o is int,["Argument to as_int must be an integer! o=",o]);
+		return o as int;
+	}
 	public static function asBoolean(o:Object):Boolean {
+		StaticFunctions.assert(o is Boolean,["Argument to asBoolean must be an Boolean! o=",o]);
 		return o as Boolean;
 	}
 	public static function asString(o:Object):String {
+		StaticFunctions.assert(o is String,["Argument to asString must be an String! o=",o]);
 		return o as String;
 	}
 	public static function asArray(o:Object):Array {
+		StaticFunctions.assert(o is Array,["Argument to asArray must be an Array! o=",o]);
 		return o as Array;
 	}
 	public static function asSerializableClass(o:Object):SerializableClass {
+		StaticFunctions.assert(o is SerializableClass,["Argument to asSerializableClass must be an SerializableClass! o=",o]);
 		return o as SerializableClass;
 	}
 	
@@ -83,12 +94,15 @@ public final class AS3_vs_AS2
 				return handler.apply(thisObj, otherArgs.concat(args) ); 
 			};
 	}
+	public static var TRACE_ONPRESS:Boolean = true;;
 	public static function addOnPress(movie:IEventDispatcher, func:Function, isActive:Boolean):void {
 		assertNotFramework();
 		//function (event:MouseEvent):void { 
-		movie.removeEventListener(MouseEvent.CLICK , func);
-		if (isActive)
-			movie.addEventListener(MouseEvent.CLICK , func);
+		movie.removeEventListener(MouseEvent.MOUSE_DOWN , func);
+		if (isActive) {
+			if (TRACE_ONPRESS) StaticFunctions.storeTrace(["Added on MOUSE_DOWN to movie=",movie]);
+			movie.addEventListener(MouseEvent.MOUSE_DOWN , func);
+		}
 	}
 	public static function addOnMouseOver(movie:IEventDispatcher, mouseOverFunc:Function, mouseOutFunc:Function, isActive:Boolean):void {		
 		assertNotFramework();
@@ -172,11 +186,16 @@ public final class AS3_vs_AS2
 	}	
 	private static var prevent_garbage_collection:Array = [];
 	public static var TRACE_LOADING:Boolean = false;
-	public static function loadMovieIntoNewChild(graphics:MovieClip, 
-			url:String, onLoaded:Function):DisplayObject {
+	public static function loadMovieIntoNewChild(graphics:MovieClip, url:String, onLoaded:Function):DisplayObject {
+		var newMovie:DisplayObjectContainer = new Sprite();
+		graphics.addChild(newMovie);
+		loadMovieIntoNewChild2(newMovie,url,onLoaded);
+		return newMovie;
+	}
+				
+	public static function loadMovieIntoNewChild2(newMovie:DisplayObjectContainer, url:String, onLoaded:Function):void {
 		var loader:Loader = new Loader();
 		prevent_garbage_collection.push(loader);
-		var newMovie:DisplayObjectContainer = new Sprite();
 		var contentLoaderInfo:LoaderInfo = loader.contentLoaderInfo;
 		// Possible events for contentLoaderInfo:
 		//Event.COMPLETE
@@ -197,10 +216,8 @@ public final class AS3_vs_AS2
 		    };
 		myAddEventListener(contentLoaderInfo, IOErrorEvent.IO_ERROR, handler);
 		myAddEventListener(contentLoaderInfo, SecurityErrorEvent.SECURITY_ERROR, handler);
-		graphics.addChild(newMovie);
-		if (TRACE_LOADING) StaticFunctions.storeTrace(["Loading url=",url," into a newly created child of=",graphics.name]);
+		if (TRACE_LOADING) StaticFunctions.storeTrace(["Loading url=",url," into a newly created child=",newMovie]);
 		loader.load(new URLRequest(url),new LoaderContext(true,ApplicationDomain.currentDomain));
-		return newMovie;
 	}
 	public static function scaleMovie(graphics:DisplayObject, x_percentage:int, y_percentage:int):void {
 		scaleMovieX(graphics,x_percentage);

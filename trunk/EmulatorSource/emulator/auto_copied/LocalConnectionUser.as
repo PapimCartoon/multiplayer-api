@@ -260,16 +260,17 @@ package emulator.auto_copied
         }
         public function localconnection_init(sRandomPrefix:String):void {
         	if (StaticFunctions.DID_SHOW_ERROR) return;
+        	if(lcUser != null) return;
         	try{
         		myTrace(["got sRandomPrefix",sRandomPrefix," on ",sInitChanel,"server :",isServer]);
         		lcUser = createLocalConnection()
 				AS3_vs_AS2.addStatusListener(lcUser, this, ["localconnection_callback"]);
 				
 				var sDoChanel:String = getDoChanelString(sRandomPrefix);
-				var sGotChanel:String = getGotChanelString(sRandomPrefix);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+				var sGotChanel:String = getGotChanelString(sRandomPrefix);
 				var sListenChannel:String = 
 					isServer ? sDoChanel : sGotChanel;
 				sSendChanel = 
@@ -279,10 +280,10 @@ package emulator.auto_copied
 				if (!isServer){
         			sendHandShakeDoRegister();
         		}
-			} catch(err:Error) { 
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			} catch(err:Error) { 
 				passError("local connection init",err);
 			} 
         }
@@ -292,10 +293,10 @@ package emulator.auto_copied
         	var msg:API_Message = null;
         	try{
         		var deserializedMsg:Object = SerializableClass.deserialize(msgObj);
-        		msg = /*as*/deserializedMsg as API_Message;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+        		msg = /*as*/deserializedMsg as API_Message;
         		if (msg==null) throwError("msgObj="+JSON.stringify(msgObj)+" is not an API_Message");
         		
         		myTrace(['gotMessage: ',msg]);
@@ -305,10 +306,10 @@ package emulator.auto_copied
 						clearInterval(sendPrefixIntervalId);
 	        		}else{
 	        			lcInit.close();
-	        		}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	        		}
 	        		return;
         		}
         		verify(msg, false);
@@ -318,4 +319,7 @@ package emulator.auto_copied
 			} 
         }
 	}
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 }

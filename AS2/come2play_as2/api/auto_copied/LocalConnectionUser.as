@@ -187,6 +187,7 @@ import come2play_as2.api.auto_copied.*;
         }
         public function localconnection_init(sRandomPrefix:String):Void {
         	if (StaticFunctions.DID_SHOW_ERROR) return;
+        	if(lcUser != null) return;
         	try{
         		myTrace(["got sRandomPrefix",sRandomPrefix," on ",sInitChanel,"server :",isServer]);
         		lcUser = createLocalConnection()

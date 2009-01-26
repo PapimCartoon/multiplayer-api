@@ -947,7 +947,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 			<ui>
 				<is_hide_avatar_in_chat_list type="boolean">false</is_hide_avatar_in_chat_list>
 				<is_align_vertical type="boolean">true</is_align_vertical>
-				<is_with_bet type="boolean">true</is_with_bet>
+				<is_with_bet type="boolean">false</is_with_bet>
 				<is_with_emoticons type="boolean">true</is_with_emoticons>
 			</ui>
 			

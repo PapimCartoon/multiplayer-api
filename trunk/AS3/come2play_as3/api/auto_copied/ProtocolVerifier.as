@@ -85,7 +85,7 @@ package come2play_as3.api.auto_copied
 		public function msgToGame(gotMsg:API_Message):void {
 			check(gotMsg!=null, ["Got a null message!"]);
 			check(currentCallback==null, ["Container sent two messages without waiting! oldCallback=", currentCallback, " newCallback=",gotMsg]);
-			check(didRegisterOnServer, [T.i18n("Container sent a message before getting doRegisterOnServer")]); 
+			//check(didRegisterOnServer, [T.i18n("Container sent a message before getting doRegisterOnServer")]); 
 			currentCallback = gotMsg;
 			transactionStartedOn = getTimer();   
 			if (isOldBoard(gotMsg)) {
@@ -117,6 +117,7 @@ package come2play_as3.api.auto_copied
 				// can be sent whether the game is in progress or not
 			} else if (gotMsg is API_GotUserInfo) { 
 			} else if (gotMsg is API_GotUserDisconnected) {
+			} else if (gotMsg is API_DoRegisterOnServer) {
 			} else if (gotMsg is API_GotRequestStateCalculation){
 				
 			}

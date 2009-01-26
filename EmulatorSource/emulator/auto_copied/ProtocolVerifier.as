@@ -119,7 +119,7 @@ package emulator.auto_copied
 		public function msgToGame(gotMsg:API_Message):void {
 			check(gotMsg!=null, ["Got a null message!"]);
 			check(currentCallback==null, ["Container sent two messages without waiting! oldCallback=", currentCallback, " newCallback=",gotMsg]);
-			check(didRegisterOnServer, [T.i18n("Container sent a message before getting doRegisterOnServer")]); 
+			//check(didRegisterOnServer, [T.i18n("Container sent a message before getting doRegisterOnServer")]); 
 			currentCallback = gotMsg;
 			transactionStartedOn = getTimer();   
 			if (isOldBoard(gotMsg)) {
@@ -160,12 +160,13 @@ package emulator.auto_copied
 				// can be sent whether the game is in progress or not
 			} else if (gotMsg is API_GotUserInfo) { 
 			} else if (gotMsg is API_GotUserDisconnected) {
+			} else if (gotMsg is API_DoRegisterOnServer) {
 			} else if (gotMsg is API_GotRequestStateCalculation){
 				
-			}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			}
 			else {
 				check(false, ["Illegal gotMsg=",gotMsg]);
 			}
@@ -175,10 +176,10 @@ package emulator.auto_copied
 			return StaticFunctions.startsWith(name, "do_") || StaticFunctions.startsWith(name, "got_");
 		}
 		public static function isPassThrough(doMsg:API_Message):Boolean {
-			return doMsg is API_DoAllFoundHacker || 
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			return doMsg is API_DoAllFoundHacker || 
 				doMsg is API_DoRegisterOnServer || doMsg is API_DoTrace ||
         		isOldBoard(doMsg);
 		}
@@ -188,10 +189,10 @@ package emulator.auto_copied
 		
 		public function msgFromGame(doMsg:API_Message):void {
 			check(doMsg!=null, ["Send a null message!"]);
-			if (doMsg is API_DoRegisterOnServer) {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			if (doMsg is API_DoRegisterOnServer) {
 				check(!didRegisterOnServer, ["Call DoRegisterOnServer only once!"]);
 				didRegisterOnServer = true;
 				return;
@@ -201,10 +202,10 @@ package emulator.auto_copied
 			
         	if (doMsg is API_DoStoreState) {
         		check(isPlayer(), ["Only a player can send DoStoreState"]);
-        		var doStoreStateMessage:API_DoStoreState = /*as*/doMsg as API_DoStoreState;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+        		var doStoreStateMessage:API_DoStoreState = /*as*/doMsg as API_DoStoreState;
         		isNullKeyExistUserEntry(doStoreStateMessage.userEntries);
         		isNullKeyExistRevealEntry(doStoreStateMessage.revealEntries)
         		isDeleteLegal(doStoreStateMessage.userEntries)
@@ -214,10 +215,10 @@ package emulator.auto_copied
 				// The game may perform doAllFoundHacker (in a transaction) even after the game is over,
 				// because: The container may pass gotStateChanged after the game sends doAllEndMatch,
 				//			because the game should verify every doStoreState (to prevent hackers from polluting the state after they know the game will be over).
-				//if (transaction.messages.length>0) check(currentPlayerIds.length>0 || nextPlayerIds.length>0);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+				//if (transaction.messages.length>0) check(currentPlayerIds.length>0 || nextPlayerIds.length>0);
 				currentPlayerIds = nextPlayerIds; // we do this before calling checkDoAll
 				
 				var wasStoreStateCalculation:Boolean = false;
@@ -227,10 +228,10 @@ package emulator.auto_copied
 					if (isRequestStateCalculation) {
 						if (doAllMsg is API_DoAllStoreStateCalculation)	
 							wasStoreStateCalculation = true;
-						else
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+						else
 							check(doAllMsg is API_DoAllFoundHacker, ["Illegal msg=",doAllMsg," when processing ",currentCallback]);
 					}					
 				}
@@ -240,10 +241,10 @@ package emulator.auto_copied
 						  currentCallback is API_GotMatchEnded ||
 						  currentCallback is API_GotStateChanged, ["You can change the state with a doAll message only in a transaction that corresponds to GotMatchStarted, GotMatchEnded or GotStateChanged. doAllMsg=",doAllMsg," currentCallback=",currentCallback]);
 						  
-				if (isRequestStateCalculation)
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+				if (isRequestStateCalculation)
 					check(wasStoreStateCalculation, ["When the server calls gotRequestStateCalculation, you must call doAllStoreStateCalculation"]);
 				
 				currentCallback = null;
@@ -253,10 +254,10 @@ package emulator.auto_copied
 			}
 			
 		}
-		private function isDeleteLegal(userEntries:Array/*UserEntry*/):void
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		private function isDeleteLegal(userEntries:Array/*UserEntry*/):void
 		{
 			for each(var userEntry:UserEntry in userEntries) {
 				if (userEntry.value == null)
@@ -266,10 +267,10 @@ package emulator.auto_copied
 
         private function checkDoAll(msg:API_Message):void {
         	if (msg is API_DoAllFoundHacker) {        		
-			}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			}
 			else if (msg is API_DoAllStoreStateCalculation) 
 			{
 				var doAllStoreStateCalculations:API_DoAllStoreStateCalculation = /*as*/msg as API_DoAllStoreStateCalculation;
@@ -279,10 +280,10 @@ package emulator.auto_copied
         	else if (msg is API_DoAllStoreState)
 			{
 				var doAllStoreStateMessage:API_DoAllStoreState = /*as*/msg as API_DoAllStoreState;
-        		isNullKeyExistUserEntry(doAllStoreStateMessage.userEntries);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+        		isNullKeyExistUserEntry(doAllStoreStateMessage.userEntries);
 				isDeleteLegal(doAllStoreStateMessage.userEntries)
 			}   
 			else if (msg is API_DoAllEndMatch)
@@ -292,10 +293,10 @@ package emulator.auto_copied
 				// IMPORTANT Note: I do not update currentPlayerIds, because the container still needs to pass gotMatchEnded
 				// Also, the container may pass gotStateChanged after the game sends DoAllEndMatch,
 				// because the game should verify every doStoreState (to prevent hackers from polluting the state after they know the game will be over). 
-			} 
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			} 
 			else if (msg is API_DoAllRevealState) 
 			{
 				var doAllRevealState:API_DoAllRevealState = /*as*/msg as API_DoAllRevealState;
@@ -305,10 +306,10 @@ package emulator.auto_copied
 			{
 				var doAllRequestStateCalculation:API_DoAllRequestStateCalculation = /*as*/msg as API_DoAllRequestStateCalculation;
         		isNullKeyExist(doAllRequestStateCalculation.keys);
-			}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			}
 			else if	(msg is API_DoAllRequestRandomState)
 			{
 				var doAllRequestRandomState:API_DoAllRequestRandomState = /*as*/msg as API_DoAllRequestRandomState;	
@@ -318,10 +319,10 @@ package emulator.auto_copied
 			{
 				var doAllSetTurn:API_DoAllSetTurn = /*as*/msg as API_DoAllSetTurn;
         		check(isInPlayers(doAllSetTurn.userId), ["You have to call doAllSetTurn with a playerId!"]);
-			}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			}
 			else if (msg is API_DoAllSetMove) 
 			{				
 				// nothing to check
@@ -331,10 +332,10 @@ package emulator.auto_copied
 				var doAllShuffleState:API_DoAllShuffleState = /*as*/msg as API_DoAllShuffleState;
         		isNullKeyExist(doAllShuffleState.keys);			
 			}
-			else
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			else
 			{
 				check(false, ["Unknown doAll message=",msg]);
 			}
@@ -344,10 +345,10 @@ package emulator.auto_copied
         {
         	check(userEntries.length!=0, ["userEntries must have at least one UserEntry!"]);
         	for each (var userEntry:UserEntry in userEntries) {
-        		check(userEntry.key != null,["UserEntry.key cannot be null ! userEntry=",userEntry]);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+        		check(userEntry.key != null,["UserEntry.key cannot be null ! userEntry=",userEntry]);
         	}
         }
         private function isNullKeyExistRevealEntry(revealEntries:Array/*RevealEntry*/):void
@@ -357,10 +358,10 @@ package emulator.auto_copied
         		check(revealEntry != null && revealEntry.key != null && (revealEntry.userIds==null || isAllInPlayers(revealEntry.userIds)), ["RevealEntry.key cannot be null, userIds must either be null or contain only players. revealEntry=",revealEntry]); 
         	}
         }
-        private function isNullKeyExist(keys:Array/*Object*/):void
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+        private function isNullKeyExist(keys:Array/*Object*/):void
         {
         	check(keys.length!=0,["keys must have at leasy one key!"]);        		
         	for each (var key:String in keys) {

@@ -210,13 +210,15 @@ import come2play_as2.api.*;
         }
         
         /*override*/ public function gotMessage(msg:API_Message):Void {
-        	try {
-        		if (isInTransaction()) {					
-        			throwError("The container sent an API message without waiting for DoFinishedCallback");
-				}
-        		if (runningAnimationsNumber!=0 || currentCallback!=null)
-        			throwError("Internal error! runningAnimationsNumber="+runningAnimationsNumber+" msgsInTransaction="+msgsInTransaction+" currentCallback="+currentCallback);
+        	if (isInTransaction()) {					
+    			throwError("The container sent an API message without waiting for DoFinishedCallback");
+			}
+    		if (runningAnimationsNumber!=0 || currentCallback!=null)
+    			throwError("Internal error! runningAnimationsNumber="+runningAnimationsNumber+" msgsInTransaction="+msgsInTransaction+" currentCallback="+currentCallback);
+    			
+        	try {        		
 				msgsInTransaction = []; // we start a transaction
+				animationStarted();
 				currentCallback = msg;
 				
         		hackerUserId = -1;
@@ -237,7 +239,7 @@ import come2play_as2.api.*;
 					var customInfo:API_GotCustomInfo = API_GotCustomInfo(msg);
 					var i18nObj:Object = {};
 					var customObj:Object = {};
-					for (var i243:Number=0; i243<customInfo.infoEntries.length; i243++) { var entry:InfoEntry = customInfo.infoEntries[i243]; 
+					for (var i245:Number=0; i245<customInfo.infoEntries.length; i245++) { var entry:InfoEntry = customInfo.infoEntries[i245]; 
 						var key:String = entry.key;
 						var value:Object = entry.value;
 						if (key==API_Message.CUSTOM_INFO_KEY_i18n) {
@@ -256,7 +258,7 @@ import come2play_as2.api.*;
 				}else if(msg instanceof API_GotUserInfo){
 					var infoMessage:API_GotUserInfo =API_GotUserInfo( msg);
 					var userObject:Object = {};
-					for (var i262:Number=0; i262<infoMessage.infoEntries.length; i262++) { var infoEntry:InfoEntry = infoMessage.infoEntries[i262]; 
+					for (var i264:Number=0; i264<infoMessage.infoEntries.length; i264++) { var infoEntry:InfoEntry = infoMessage.infoEntries[i264]; 
 						trace(infoEntry.key+ "="+ infoEntry.value)
 						userObject[infoEntry.key] = infoEntry.value;
 					}
@@ -276,10 +278,8 @@ import come2play_as2.api.*;
 					// to avoid an infinite loop, I can't call passError again.
 					showError("Another error occurred when calling gotError. The new error is="+AS3_vs_AS2.error2String(err2));
 				}
-    		} finally {       
-        		// we end a transaction
-    			sendFinishedCallback(); 			
-    		}        		   	
+    		}
+    		animationEnded();     		   	
         }
         public function dispatchMessage(msg:API_Message):Void {
         	var methodName:String = msg.getMethodName();

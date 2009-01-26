@@ -58,7 +58,7 @@ import come2play_as2.api.auto_copied.*;
 		private var isServer:Boolean;
 		private var randomPrefix:String;
 		private var sendPrefixIntervalId:Number;
-		private var connectionMade:Boolean;
+		private var handShakeMade:Boolean = false;
 		public var verifier:ProtocolVerifier;
 		public var _shouldVerify:Boolean;
 		//Constructor
@@ -66,7 +66,6 @@ import come2play_as2.api.auto_copied.*;
 			
 				if (!isServer) // in the container we apply the reflection in RoomLogic (e.g., for a room we do not have a localconnection) 
 					StaticFunctions.performReflectionFromFlashVars(_someMovieClip);
-				connectionMade = false;
 				StaticFunctions.allowDomains();	
 				_shouldVerify=shouldVerify;
 				AS3_vs_AS2.registerNativeSerializers();
@@ -88,10 +87,13 @@ import come2play_as2.api.auto_copied.*;
 		}
 		
 		private function buildConnection():Void{
+			var failedConnect:Boolean = false;
 			try{
 				if(AGREE_ON_PREFIX){
-					lcInit = createLocalConnection()
-					AS3_vs_AS2.addStatusListener(lcInit, this, ["localconnection_init"],  AS3_vs_AS2.delegate(this, this.connectionHandler));
+					if(lcInit == null){
+						lcInit = createLocalConnection()
+						AS3_vs_AS2.addStatusListener(lcInit, this, ["localconnection_init"],  AS3_vs_AS2.delegate(this, this.connectionHandler));
+					}
 					if(isServer){
 						randomPrefix = String(StaticFunctions.random(1,1000000));
 						myTrace(["Attempting to send the randomPrefix with which LocalConnections will communicate... randomPrefix=",randomPrefix])
@@ -106,17 +108,17 @@ import come2play_as2.api.auto_copied.*;
 				}	
 
 			}catch (err:Error) { 
-				passError("Constructor",err);
+				failedConnect = true;
+				setTimeout(buildConnection,1000);
+				//passError("Constructor",err);
 			}
+			if(!failedConnect) madeConnection();
 			
 		}
+		private function madeConnection():Void {}
 		
 		private function connectionHandler(isSuccess:Boolean):Void {
-			myTrace(["connectionHandler sending random prefix isSuccess: "+isSuccess]);
-			if ((isSuccess) || (connectionMade)) {
-				connectionMade = true		
-				clearInterval(sendPrefixIntervalId);
-			}
+			myTrace(["Depracated connectionHandler sending random prefix isSuccess: "+isSuccess,"my_user_prefix ",sInitChanel]);
 		}
 
 		public function myTrace(msg:Array):Void {	
@@ -131,7 +133,7 @@ import come2play_as2.api.auto_copied.*;
         	showError(getErrorMessage(withObj,err));        	
         }
         
-        public function gotMessage(msg:API_Message):Void {}
+        public function gotMessage(msg:API_Message):Void{}
         
        
         public function sendMessage(msg:API_Message):Void {
@@ -162,6 +164,13 @@ import come2play_as2.api.auto_copied.*;
 				passError(msg, err);
 			}        	
         }
+        private function sendHandShakeDoRegister():Void{
+        	try{
+        		lcUser.send(sSendChanel, "localconnection_callback",API_DoRegisterOnServer.create());  
+        	}catch(err:Error){
+        		setTimeout(sendHandShakeDoRegister,1000);
+        	}
+        }
         private function verify(msg:API_Message, isSend:Boolean):Void {
         	if (!_shouldVerify) return;
         	if (isServer!=isSend)
@@ -179,9 +188,7 @@ import come2play_as2.api.auto_copied.*;
         public function localconnection_init(sRandomPrefix:String):Void {
         	if (StaticFunctions.DID_SHOW_ERROR) return;
         	try{
-        		myTrace(["got sRandomPrefix",sRandomPrefix,isServer]);
-        		if (!isServer)
-        			lcInit.close();
+        		myTrace(["got sRandomPrefix",sRandomPrefix," on ",sInitChanel,"server :",isServer]);
         		lcUser = createLocalConnection()
 				AS3_vs_AS2.addStatusListener(lcUser, this, ["localconnection_callback"]);
 				
@@ -193,6 +200,9 @@ import come2play_as2.api.auto_copied.*;
 					!isServer ? sDoChanel : sGotChanel;				
 				myTrace(["LocalConnection listens on channel=",sListenChannel," and sends on ",sSendChanel]);
 				lcUser.connect(sListenChannel);
+				if (!isServer){
+        			sendHandShakeDoRegister();
+        		}
 			} catch(err:Error) { 
 				passError("local connection init",err);
 			} 
@@ -207,6 +217,15 @@ import come2play_as2.api.auto_copied.*;
         		if (msg==null) throwError("msgObj="+JSON.stringify(msgObj)+" is not an API_Message");
         		
         		myTrace(['gotMessage: ',msg]);
+        		if((msg instanceof API_DoRegisterOnServer) && (!handShakeMade)){
+        			handShakeMade = true;
+	        		if(isServer){	
+						clearInterval(sendPrefixIntervalId);
+	        		}else{
+	        			lcInit.close();
+	        		}
+	        		return;
+        		}
         		verify(msg, false);
         		gotMessage(msg);
 			} catch(err:Error) { 

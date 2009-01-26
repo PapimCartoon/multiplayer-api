@@ -80,7 +80,7 @@ import come2play_as2.api.auto_copied.*;
 		public function msgToGame(gotMsg:API_Message):Void {
 			check(gotMsg!=null, ["Got a null message!"]);
 			check(currentCallback==null, ["Container sent two messages without waiting! oldCallback=", currentCallback, " newCallback=",gotMsg]);
-			check(didRegisterOnServer, [T.i18n("Container sent a message before getting doRegisterOnServer")]); 
+			//check(didRegisterOnServer, [T.i18n("Container sent a message before getting doRegisterOnServer")]); 
 			currentCallback = gotMsg;
 			transactionStartedOn = getTimer();   
 			if (isOldBoard(gotMsg)) {
@@ -112,6 +112,7 @@ import come2play_as2.api.auto_copied.*;
 				// can be sent whether the game is in progress or not
 			} else if (gotMsg instanceof API_GotUserInfo) { 
 			} else if (gotMsg instanceof API_GotUserDisconnected) {
+			} else if (gotMsg instanceof API_DoRegisterOnServer) {
 			} else if (gotMsg instanceof API_GotRequestStateCalculation){
 				
 			}
@@ -159,7 +160,7 @@ import come2play_as2.api.auto_copied.*;
 				
 				var wasStoreStateCalculation:Boolean = false;
 				var isRequestStateCalculation:Boolean = currentCallback instanceof API_GotRequestStateCalculation;
-				for (var i165:Number=0; i165<transaction.messages.length; i165++) { var doAllMsg:API_Message = transaction.messages[i165]; 
+				for (var i166:Number=0; i166<transaction.messages.length; i166++) { var doAllMsg:API_Message = transaction.messages[i166]; 
 					checkDoAll(doAllMsg);
 					if (isRequestStateCalculation) {
 						if (doAllMsg instanceof API_DoAllStoreStateCalculation)	
@@ -186,7 +187,7 @@ import come2play_as2.api.auto_copied.*;
 		}
 		private function isDeleteLegal(userEntries:Array/*UserEntry*/):Void
 		{
-			for (var i192:Number=0; i192<userEntries.length; i192++) { var userEntry:UserEntry = userEntries[i192]; 
+			for (var i193:Number=0; i193<userEntries.length; i193++) { var userEntry:UserEntry = userEntries[i193]; 
 				if (userEntry.value == null)
 					check(!userEntry.isSecret,["key deletion must be public! userEntry=",userEntry]);
 			}
@@ -253,21 +254,21 @@ import come2play_as2.api.auto_copied.*;
         private function isNullKeyExistUserEntry(userEntries:Array/*UserEntry*/):Void
         {
         	check(userEntries.length!=0, ["userEntries must have at least one UserEntry!"]);
-        	for (var i259:Number=0; i259<userEntries.length; i259++) { var userEntry:UserEntry = userEntries[i259]; 
+        	for (var i260:Number=0; i260<userEntries.length; i260++) { var userEntry:UserEntry = userEntries[i260]; 
         		check(userEntry.key != null,["UserEntry.key cannot be null ! userEntry=",userEntry]);
         	}
         }
         private function isNullKeyExistRevealEntry(revealEntries:Array/*RevealEntry*/):Void
         {
         	//check(revealEntries.length>=1, ["revealEntries must have at least one RevealEntry!"]);
-        	for (var i266:Number=0; i266<revealEntries.length; i266++) { var revealEntry:RevealEntry = revealEntries[i266]; 
+        	for (var i267:Number=0; i267<revealEntries.length; i267++) { var revealEntry:RevealEntry = revealEntries[i267]; 
         		check(revealEntry != null && revealEntry.key != null && (revealEntry.userIds==null || isAllInPlayers(revealEntry.userIds)), ["RevealEntry.key cannot be null, userIds must either be null or contain only players. revealEntry=",revealEntry]); 
         	}
         }
         private function isNullKeyExist(keys:Array/*Object*/):Void
         {
         	check(keys.length!=0,["keys must have at leasy one key!"]);        		
-        	for (var i273:Number=0; i273<keys.length; i273++) { var key:String = keys[i273]; 
+        	for (var i274:Number=0; i274<keys.length; i274++) { var key:String = keys[i274]; 
         		check(key != null,["key cannot be null ! keys=",keys]);
         	}
         }

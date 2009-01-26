@@ -143,7 +143,7 @@ Not used by the graphics yet (but should be displayed):
 		<entry><key>block_user_ids</key><value>[]</value></entry>
 		<entry><key>DebugSendReport</key><value>false</value></entry>
 		<entry><key>RunUnitTests</key><value>false</value></entry>
-		
+		<entry><key>moreGames</key><value>[["http://weburbanist.com/wp-content/uploads/2008/01/hotel-room-with-crazy-symbols.jpg","http://www.google.com"],["http://www.freegamesnews.com/en/wp-content/uploads/2007/05/strange-room-300.jpg","http://www.yahoo.com"],["http://dyn.ifilm.com/resize/image/stills/films/resize/istd/2835109.jpg","http://www.come2play.com"],["http://www.dvrcade.com/media/HT/layout.jpg","http://www.w3schools.com"]]</value></entry>
 		
 		
 		<!--
@@ -154,11 +154,11 @@ Not used by the graphics yet (but should be displayed):
 		74.63.37.41:8080:socket
 		192.168.0.138:2000:socket
 		-->		
-		<!--
-		<entry><key>override all_java_ips</key><value>'localhost:2000:socket,localhost:2000:old_xmlsocket,localhost:8083:rtmpt'</value></entry>
-		-->
-		<entry><key>override all_java_ips</key><value>'80.179.46.235:8080:socket,80.179.46.235:8080:old_xmlsocket,80.179.46.235:80:rtmpt'</value></entry>
 		
+		<entry><key>override all_java_ips</key><value>'localhost:2000:socket,localhost:2000:old_xmlsocket,localhost:8083:rtmpt'</value></entry>
+		<!--
+		<entry><key>override all_java_ips</key><value>'80.179.46.235:8080:socket,80.179.46.235:8080:old_xmlsocket,80.179.46.235:80:rtmpt'</value></entry>
+		-->
 		<entry><key>come2play_as3.room::RoomLogic.TRACE_XML</key><value>true</value></entry>
 
 		<!--

@@ -143,7 +143,7 @@ Not used by the graphics yet (but should be displayed):
 		<entry><key>block_user_ids</key><value>[]</value></entry>
 		<entry><key>DebugSendReport</key><value>false</value></entry>
 		<entry><key>RunUnitTests</key><value>false</value></entry>
-		<entry><key>moreGames</key><value>[["http://weburbanist.com/wp-content/uploads/2008/01/hotel-room-with-crazy-symbols.jpg","http://www.google.com"],["http://www.freegamesnews.com/en/wp-content/uploads/2007/05/strange-room-300.jpg","http://www.yahoo.com"],["http://dyn.ifilm.com/resize/image/stills/films/resize/istd/2835109.jpg","http://www.come2play.com"],["http://www.dvrcade.com/media/HT/layout.jpg","http://www.w3schools.com"]]</value></entry>
+		<entry><key>moreGames</key><value>[]</value></entry>
 		
 		
 		<!--

@@ -224,9 +224,6 @@
 			}else{
 				val = "";
 			}
-			if(obj.htmlName == "name"){
-				val +=(" "+num);
-			}
 			if(obj.type == "int"){
 				addCell(row,"<INPUT TYPE='text'  id='player_"+num+"_"+obj.htmlName+"' value='"+val+"'>");
 			}else if(obj.type == "string"){

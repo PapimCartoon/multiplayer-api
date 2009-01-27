@@ -31,8 +31,9 @@ class come2play_as2.api.auto_copied.StaticFunctions
 			
 	public static function storeTrace(obj:Object):Void {
 		if (allTraces.length>=MAX_TRACES_NUM) allTraces.shift();
-		var arr:Array = ["Time: ", getTimer(), " Trace: ", obj];
-		if (SHOULD_CALL_TRACE) trace( arr.join("") );
+		var arr:Array = ["Time: ", getTimer(), " Trace: "];
+		if (SHOULD_CALL_TRACE) trace( arr.join("")+JSON.stringify(obj) );
+		arr.push(obj);
 		allTraces.push(arr);
 	}
 	public static function getTraces():String {
@@ -112,7 +113,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 				// for static properties we use describeType
 				// because o1 and o2 have the same type, it is enough to use the fields of o1.
 				var fieldsArr:Array = AS3_vs_AS2.getFieldNames(o1);
-				for (var i117:Number=0; i117<fieldsArr.length; i117++) { var field:String = fieldsArr[i117]; 
+				for (var i118:Number=0; i118<fieldsArr.length; i118++) { var field:String = fieldsArr[i118]; 
 					allFields[field] = true;
 				}
 			}
@@ -128,7 +129,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	
 	public static function subtractArray(arr:Array, minus:Array):Array {
 		var res:Array = arr.concat();
-		for (var i133:Number=0; i133<minus.length; i133++) { var o:Object = minus[i133]; 
+		for (var i134:Number=0; i134<minus.length; i134++) { var o:Object = minus[i134]; 
 			var indexOf:Number = AS3_vs_AS2.IndexOf(res, o);
 			StaticFunctions.assert(indexOf!=-1, ["When subtracting minus=",minus," from array=", arr, " we did not find element ",o]);				
 			res.splice(indexOf, 1);
@@ -219,7 +220,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	}
 	public static function instance2Object(instance:Object, fields:Array/*String*/):Object {
 		var res:Object = {};
-		for (var i224:Number=0; i224<fields.length; i224++) { var field:String = fields[i224]; 
+		for (var i225:Number=0; i225<fields.length; i225++) { var field:String = fields[i225]; 
 			res[field] = instance[field];
 		}
 		return res;

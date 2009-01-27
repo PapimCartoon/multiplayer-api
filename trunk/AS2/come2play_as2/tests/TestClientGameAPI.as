@@ -331,6 +331,50 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 		});
 		
 		
+		
+		
+		expect(
+		function ():Void {
+			if(allPlayerIds[0] == myUserId)
+				doStoreState([UserEntry.create("IseeAll",12,true)],[RevealEntry.create("IseeAll",null)])			
+		},
+		function (entries:Array):Void {		
+			require(entries.length==2);		
+			var serverEntry:ServerEntry = entries[0];
+			if(allPlayerIds[0] == myUserId)
+				require(serverEntry.value==12);
+			else
+				require(serverEntry.value==null);	
+			require(serverEntry.key=="IseeAll");
+			serverEntry = entries[1];
+			require(serverEntry.value==12);	
+			require(serverEntry.key=="IseeAll");
+			}		
+		);
+		
+		expect(
+		function ():Void {
+			doAllStoreState([UserEntry.create("watchDelta1",1,true),UserEntry.create("watchDelta2",2,true),UserEntry.create("watchDelta3",3,true)])
+			doAllShuffleState(["watchDelta1","watchDelta2","watchDelta3"]);
+			doAllRevealState([RevealEntry.create("watchDelta1",null),RevealEntry.create("watchDelta2",null),RevealEntry.create("watchDelta3",null)])		
+		},
+		function (entries:Array):Void {		
+			require(entries.length==3);	
+			var total:Number = 0;	
+			var serverEntry:ServerEntry = entries[0];
+			require(serverEntry.key == "watchDelta1");
+			total+=serverEntry.value;
+			serverEntry = entries[1];
+			require(serverEntry.key == "watchDelta2");
+			total+=serverEntry.value;
+			serverEntry = entries[2];
+			require(serverEntry.key == "watchDelta3");
+			total+=serverEntry.value;
+			require(total == 6)
+			}		
+		);
+		
+		
 		// to end the game I simulate a real-time game:
 		// the first one to store a certain value will win!
 		var didSendEndMatch:Boolean = false;
@@ -352,7 +396,7 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 				if (!didSendEndMatch) {
 					didSendEndMatch = true;
 					var finishedPlayers:Array = [];
-					for (var i356:Number=0; i356<allPlayerIds.length; i356++) { var id:Number = allPlayerIds[i356]; 
+					for (var i400:Number=0; i400<allPlayerIds.length; i400++) { var id:Number = allPlayerIds[i400]; 
 						finishedPlayers.push( PlayerMatchOver.create(id, id==winnerId ? 1000 : -1000, id==winnerId ? 100 : 0) );		
 					}
 					doAllEndMatch(finishedPlayers);

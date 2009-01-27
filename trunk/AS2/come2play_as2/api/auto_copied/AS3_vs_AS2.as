@@ -75,6 +75,9 @@ class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 		};
 	}
 	
+	public static function myInterval(func:Function, in_milliseconds:Number):Number {
+		return setInterval(func, in_milliseconds);
+	}
 	public static function myTimeout(func:Function, in_milliseconds:Number):Void {
 		var res_interval_id:Number;
 		res_interval_id = setInterval( function () {

@@ -6,8 +6,6 @@ package come2play_as3.api.auto_copied
 	import flash.external.*;
 	import flash.net.*;
 	import flash.utils.clearInterval;
-	import flash.utils.setInterval;
-	import flash.utils.setTimeout;
 	 
 	public class LocalConnectionUser
 	{
@@ -104,7 +102,7 @@ package come2play_as3.api.auto_copied
 						randomPrefix = String(StaticFunctions.random(1,1000000));
 						myTrace(["Game Attempting to send the randomPrefix with which LocalConnections will communicate... randomPrefix=",randomPrefix])
 						localconnection_init(randomPrefix);
-						sendPrefixIntervalId = setInterval(AS3_vs_AS2.delegate(this, this.sendPrefix),MILL_WAIT_BEFORE_DO_REGISTER);
+						sendPrefixIntervalId = AS3_vs_AS2.myInterval(AS3_vs_AS2.delegate(this, this.sendPrefix),MILL_WAIT_BEFORE_DO_REGISTER);
 					}else{
 						myTrace(["Container started listening to stuff on ",sInitChanel])
 						lcInit.connect(sInitChanel);	
@@ -115,7 +113,7 @@ package come2play_as3.api.auto_copied
 
 			}catch (err:Error) { 
 				failedConnect = true;
-				setTimeout(buildConnection,1000);
+				AS3_vs_AS2.myTimeout( AS3_vs_AS2.delegate(this,this.buildConnection),1000);
 				//passError("Constructor",err);
 			}
 			if(!failedConnect) madeConnection();
@@ -174,7 +172,7 @@ package come2play_as3.api.auto_copied
         	try{
         		lcUser.send(sSendChanel, "localconnection_callback",API_DoRegisterOnServer.create());  
         	}catch(err:Error){
-        		setTimeout(sendHandShakeDoRegister,1000);
+        		AS3_vs_AS2.myTimeout( AS3_vs_AS2.delegate(this,this.sendHandShakeDoRegister),1000);
         	}
         }
         private function verify(msg:API_Message, isSend:Boolean):void {

@@ -754,7 +754,7 @@ package emulator {
 							if(!ObjectDictionary.areEqual(lastStateCalculation.userEntries,storeStateCalculation.userEntries)) errorHandler("calculators gave diffrent values");
 							var serverEntries:Array/*ServerEntry*/ = doAllStoreStateCalculation(storeStateCalculation);
 							deltaHistory.addDelta(getOngoingPlayerIds(),serverEntries,getTimer()-matchStartTime);
-							sendStateChanged(serverEntries);
+							sendStateChanged(serverEntries,true);
 							storeServerEntries(serverEntries);
 							calculatorQueue = new Array();
 						}
@@ -845,10 +845,12 @@ package emulator {
 
 		private function processQueue(processedwaitingQueue:MessagQueue,isTransaction:Boolean):Array/*ServerEntry*/
 		{
+			var collapseData:Boolean = true;
 			var msg:API_Message;
 			var serverEntries:Array = new Array();
 			if (processedwaitingQueue.waitingDoStore())
 			{
+				collapseData = false;
 				var queueEntry:QueueEntry = processedwaitingQueue.shiftDoStore();
 				var revealEntries:Array/*RevealEntry*/ = new Array;
 				for each(msg in queueEntry.transaction.messageArray){
@@ -856,10 +858,14 @@ package emulator {
 					if((msg as API_DoStoreState).revealEntries != null)
 						revealEntries = revealEntries.concat((msg as API_DoStoreState).revealEntries)	
 				}
-				//storeServerEntries(serverEntries);
-				if((revealEntries != null) && (revealEntries.length >= 1))
-					serverEntries = serverEntries.concat(doAllRevealState(revealEntries));
+				//throw new Error("doStore must have more then 1 entry in serverEntries");
 				storeServerEntries(serverEntries);
+				if((revealEntries != null) && (revealEntries.length >= 1)){
+					var revealedEntries:Array = doAllRevealState(revealEntries);
+					storeServerEntries(revealedEntries);
+					serverEntries = serverEntries.concat(revealedEntries)
+				}
+	
 				addToQue(queueEntry);
 			}
 			else if(processedwaitingQueue.waitingDoAll())
@@ -912,7 +918,7 @@ package emulator {
 				}
 				else
 				{
-					sendStateChanged(serverEntries);
+					sendStateChanged(serverEntries,collapseData);
 					deltaHistory.addDelta(getOngoingPlayerIds(),serverEntries,getTimer()-matchStartTime);
 					showHistory();
 				}		
@@ -1672,7 +1678,7 @@ package emulator {
 				{
 					var serverEntries:Array/*ServerEntry*/ = playerDelta.serverEntries;
 					storeServerEntries(serverEntries);
-					sendStateChanged(serverEntries);
+					sendStateChanged(serverEntries,true);
 				}
 				else if (playerDelta.finishHistory != null)
 				{
@@ -2202,20 +2208,23 @@ package emulator {
 			for each(var serverEntry:ServerEntry in serverEntries)
 				doStoreOneState(serverEntry);
 		}
-		public function sendStateChanged(oldServerEntries:Array/*ServerEntry*/):void
+		public function sendStateChanged(oldServerEntries:Array/*ServerEntry*/,collapseData:Boolean):void
 		{
 			var serverEntries:Array/*ServerEntry*/ = new Array
-			var dicArray:Array = new Array();
-			for(var i:int = (oldServerEntries.length -1);i>=0;i--)
-			{
-				var serverEntry:ServerEntry = oldServerEntries[i];
-				if(dicArray[JSON.stringify(serverEntry.key)] == null)
+			if(collapseData){
+				var dicArray:Array = new Array();
+				for(var i:int = (oldServerEntries.length -1);i>=0;i--)
 				{
-					dicArray[JSON.stringify(serverEntry.key)] = true;
-					serverEntries.unshift(serverEntry);
+					var serverEntry:ServerEntry = oldServerEntries[i];
+					if(dicArray[JSON.stringify(serverEntry.key)] == null)
+					{
+						dicArray[JSON.stringify(serverEntry.key)] = true;
+						serverEntries.unshift(serverEntry);
+					}
 				}
+			}else{
+				serverEntries = oldServerEntries;
 			}
-			
 			var tempServerEntries:Array/*ServerEntry*/;
 			messageNum++;
 			for each(var tempUser:User in aUsers)

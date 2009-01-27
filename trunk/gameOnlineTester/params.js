@@ -15,6 +15,9 @@ function getPlayerName(){
 	var playerInit = Math.ceil(5*Math.random()-1);
 	return playerInitial[playerInit];
 }
+function getPlayerId(){
+	return Math.ceil(Math.random()*10000000);
+}
 var supervisorLevels = new Array("Admin","Supervisor","MiniSupervisor","NormalUser");
 var playerInitial = new Array("player","שחקן","播放器","opção","खिलाड़ी")
 var oldBoardValues = new Array();
@@ -146,5 +149,5 @@ paramArr.push( {htmlName:"GameRating",xmlName:"override_config.user_info.params.
 paramArr.push( {htmlName:"tokens",xmlName:"override_config.user_info.params.tokens",type:"string",isUser:true,callFunc:getRandomTokens,colName:"Tokens"});
 paramArr.push( {htmlName:"supervisor",xmlName:"override_config.user_info.params.supervisor",type:"string",isUser:true,callFunc:getRandomsupervisor,colName:"Supervisor"});
 paramArr.push( {htmlName:"name",xmlName:"override_config.user_info.params.name",type:"string",isUser:true,colName:"Name",callFunc:getPlayerName});
-paramArr.push( {htmlName:"id",xmlName:"override_config.extra_args.user_id",type:"int",isUser:true,colName:"ID"});
+paramArr.push( {htmlName:"id",xmlName:"override_config.extra_args.user_id",type:"int",isUser:true,colName:"ID",callFunc:getPlayerId});
 

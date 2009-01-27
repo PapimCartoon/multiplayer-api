@@ -189,7 +189,7 @@ public final class AS3_vs_AS2
 	}	
 	private static var prevent_garbage_collection:Array = [];
 	public static var TRACE_LOADING:Boolean = false;
-	public static function loadMovieIntoNewChild(graphics:MovieClip, url:String, onLoaded:Function):DisplayObject {
+	public static function loadMovieIntoNewChild(graphics:MovieClip, url:String, onLoaded:Function):DisplayObjectContainer {
 		var newMovie:DisplayObjectContainer = new Sprite();
 		graphics.addChild(newMovie);
 		loadMovieIntoNewChild2(newMovie,url,onLoaded);
@@ -249,7 +249,7 @@ public final class AS3_vs_AS2
 		graphics.addChild(child);
 		return child;
 	}
-	public static function createMovieInstance(graphics:MovieClip, linkageName:String, name:String):MovieClip {
+	public static function createMovieInstance(graphics:DisplayObjectContainer, linkageName:String, name:String):MovieClip {
 		var _Class:Class = getClassByName(linkageName);
 		var dup:MovieClip = (new _Class()) as MovieClip;
 		dup.name = name;

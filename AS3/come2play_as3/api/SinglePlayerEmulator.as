@@ -29,6 +29,8 @@ package come2play_as3.api
 	 */
 	public final class SinglePlayerEmulator extends LocalConnectionUser
 	{
+		public static var SHOW_TURN_MSGS:Boolean = false;
+		public static var SHOW_GAME_OVER_MSGS:Boolean = true;
 		public static var START_NEW_GAME_AFTER_MILLISECONDS:int = 5000;
 		public static var NUM_OF_PLAYERS:int = 1;
 		public static var DEFAULT_USER_IDS:Array/*int*/ = [42,43,44,45];
@@ -283,7 +285,7 @@ package come2play_as3.api
 					// game is completely over for all players
 					AS3_vs_AS2.myTimeout(AS3_vs_AS2.delegate(this, this.sendNewMatch), START_NEW_GAME_AFTER_MILLISECONDS);
 				}
-				AS3_vs_AS2.showMessage(t.join(),"gameOver");
+				if (SHOW_GAME_OVER_MSGS) AS3_vs_AS2.showMessage(t.join(),"gameOver");
 			} else if (msg is API_DoRegisterOnServer) {
 				doRegisterOnServer();
 			} else if (msg is API_DoAllRequestStateCalculation) { 
@@ -301,7 +303,7 @@ package come2play_as3.api
         		if (setTurn.userId!=curUserId) {
         			// we switch users by ending and loading the match
         			var userId:int = setTurn.userId;
-					AS3_vs_AS2.showMessage( T.i18nReplace("The turn of $name$ is starting.\n", {name: getUserName(userId)}) , "newTurn");
+					if (SHOW_TURN_MSGS) AS3_vs_AS2.showMessage( T.i18nReplace("The turn of $name$ is starting.\n", {name: getUserName(userId)}) , "newTurn");
 					
         			var ongoingIds:Array/*int*/ = StaticFunctions.subtractArray(getPlayerIds(),finishedUserIds);
 					queueSendMessage( API_GotMatchEnded.create(++messageNum,ongoingIds) );

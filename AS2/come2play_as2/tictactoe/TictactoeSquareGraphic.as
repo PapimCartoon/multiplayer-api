@@ -65,7 +65,8 @@ class come2play_as2.tictactoe.TictactoeSquareGraphic
 			AS3_vs_AS2.loadMovieIntoNewChild(allSymbols[color], symbolUrl,
 				function(isSuccess:Boolean):Void { 
 					if (isSuccess) {
-						AS3_vs_AS2.removeMovie(thisObj.allSymbolGraphics[color]);						
+						AS3_vs_AS2.removeMovie(thisObj.allSymbolGraphics[color]);
+						AS3_vs_AS2.createMovieInstance(newSymbol,"SmallSymbol_"+color,"symbolGraphics");
 						thisObj.addSymbol(color, newSymbol);
 					} 
 				} );		

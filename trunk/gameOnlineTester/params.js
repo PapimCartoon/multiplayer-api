@@ -1,4 +1,4 @@
-﻿function getRandomNum(){
+function getRandomNum(){
 	return Math.ceil(3000*Math.random())
 }
 function getRandomsupervisor(){
@@ -9,7 +9,7 @@ function getRandomTokens(){
 	return "0:"+Math.ceil(1000*Math.random())+","+"1:"+Math.ceil(300*Math.random())
 }
 function getOldBoard(game){
-	return "../../svn/as2_old_boards/OldBoardContainer.swf?oldboard_swf=../../svn/as2_old_boards/boards/"+game+"_board.swf&game_type="+game+"&variant_str=&"
+	return "../../svn/as3_old_boards/OldBoardContainer.swf?oldboard_swf=../../svn/as3_old_boards/boards/"+game+"_board.swf&game_type="+game+"&variant_str=&"
 }
 function getPlayerName(){
 	var playerInit = Math.ceil(5*Math.random()-1);
@@ -19,7 +19,7 @@ function getPlayerId(){
 	return Math.ceil(Math.random()*10000000);
 }
 var supervisorLevels = new Array("Admin","Supervisor","MiniSupervisor","NormalUser");
-var playerInitial = new Array("player","שחקן","播放器","opção","खिलाड़ी")
+var playerInitial = new Array("player","שחקן","???","op??o","???????")
 var oldBoardValues = new Array();
 oldBoardValues.push({type:"gameName",gameName:"Sudoku"})
 oldBoardValues.push({type:"variant",gameName:"Sudoku",variant:"9_Easy"})

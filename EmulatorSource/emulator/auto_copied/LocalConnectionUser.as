@@ -89,26 +89,26 @@ package emulator.auto_copied
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
 		private var sInitChanel:String;
-		private var isServer:Boolean;
+		private var isContainer:Boolean;
 		private var randomPrefix:String;
 		private var sendPrefixIntervalId:uint;
 		private var handShakeMade:Boolean = false;
 		public var verifier:ProtocolVerifier;
 		public var _shouldVerify:Boolean;
 		//Constructor
-		public function LocalConnectionUser(_someMovieClip:DisplayObjectContainer, isServer:Boolean, sPrefix:String,shouldVerify:Boolean) {
+		public function LocalConnectionUser(_someMovieClip:DisplayObjectContainer, isContainer:Boolean, sPrefix:String,shouldVerify:Boolean) {
 			
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-				if (!isServer) // in the container we apply the reflection in RoomLogic (e.g., for a room we do not have a localconnection) 
+				if (!isContainer) // in the container we apply the reflection in RoomLogic (e.g., for a room we do not have a localconnection) 
 					StaticFunctions.performReflectionFromFlashVars(_someMovieClip);
 				StaticFunctions.allowDomains();	
 				_shouldVerify=shouldVerify;
 				AS3_vs_AS2.registerNativeSerializers();
 				API_LoadMessages.useAll();	
 				verifier = new ProtocolVerifier();
-				this.isServer = isServer;
+				this.isContainer = isContainer;
 				StaticFunctions.storeTrace(["ProtocolVerifier=",verifier]);
 				StaticFunctions.someMovieClip = _someMovieClip;
 
@@ -140,13 +140,13 @@ package emulator.auto_copied
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-					if(isServer){
+					if(!isContainer){
 						randomPrefix = String(StaticFunctions.random(1,1000000));
-						myTrace(["Attempting to send the randomPrefix with which LocalConnections will communicate... randomPrefix=",randomPrefix])
+						myTrace(["Game Attempting to send the randomPrefix with which LocalConnections will communicate... randomPrefix=",randomPrefix])
 						localconnection_init(randomPrefix);
 						sendPrefixIntervalId = setInterval(AS3_vs_AS2.delegate(this, this.sendPrefix),MILL_WAIT_BEFORE_DO_REGISTER);
 					}else{
-						myTrace(["started listening to stuff on ",sInitChanel])
+						myTrace(["Container started listening to stuff on ",sInitChanel])
 						lcInit.connect(sInitChanel);	
 					}	
 				}else{
@@ -196,7 +196,7 @@ package emulator.auto_copied
        
         public function sendMessage(msg:API_Message):void {
         	if (msg is API_DoRegisterOnServer){
-        		if (lcUser != null)
+        		if (handShakeMade)/*(lcUser != null)*/
         			reallySendMessage(msg);
         		else
         			AS3_vs_AS2.myTimeout(AS3_vs_AS2.delegate(this, this.sendMessage,msg),MILL_WAIT_BEFORE_DO_REGISTER);	
@@ -209,7 +209,7 @@ package emulator.auto_copied
         }
         private function sendPrefix():void {  				  
 			try{
-				myTrace(["sent randomPrefix on ",sInitChanel," randomPrefix sent is:",randomPrefix," Is server: ",isServer]);	
+				myTrace(["sent randomPrefix on ",sInitChanel," randomPrefix sent is:",randomPrefix," Is server: ",isContainer]);	
 				lcInit.send(sInitChanel, "localconnection_init", randomPrefix);  
 			}catch(err:Error) { 				
 				passError("prefix error,prefix :"+randomPrefix, err);
@@ -240,7 +240,7 @@ package emulator.auto_copied
         }
         private function verify(msg:API_Message, isSend:Boolean):void {
         	if (!_shouldVerify) return;
-        	if (isServer!=isSend)
+        	if (isContainer!=isSend)
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
@@ -262,7 +262,7 @@ package emulator.auto_copied
         	if (StaticFunctions.DID_SHOW_ERROR) return;
         	if(lcUser != null) return;
         	try{
-        		myTrace(["got sRandomPrefix",sRandomPrefix," on ",sInitChanel,"server :",isServer]);
+        		myTrace(["Container? :",isContainer,"got sRandomPrefix=",sRandomPrefix," on sInitChanel=",sInitChanel]);
         		lcUser = createLocalConnection()
 				AS3_vs_AS2.addStatusListener(lcUser, this, ["localconnection_callback"]);
 				
@@ -272,19 +272,17 @@ package emulator.auto_copied
 
 				var sGotChanel:String = getGotChanelString(sRandomPrefix);
 				var sListenChannel:String = 
-					isServer ? sDoChanel : sGotChanel;
+					isContainer ? sDoChanel : sGotChanel;
 				sSendChanel = 
-					!isServer ? sDoChanel : sGotChanel;				
-				myTrace(["LocalConnection listens on channel=",sListenChannel," and sends on ",sSendChanel]);
+					!isContainer ? sDoChanel : sGotChanel;				
+				myTrace(["Container? :",isContainer,"LocalConnection listens on channel=",sListenChannel," and sends on ",sSendChanel]);
 				lcUser.connect(sListenChannel);
-				if (!isServer){
-        			sendHandShakeDoRegister();
-        		}
+				if(isContainer)	sendHandShakeDoRegister();
+			} catch(err:Error) { 
+				passError("local connection init",err);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			} catch(err:Error) { 
-				passError("local connection init",err);
 			} 
         }
                    
@@ -293,24 +291,24 @@ package emulator.auto_copied
         	var msg:API_Message = null;
         	try{
         		var deserializedMsg:Object = SerializableClass.deserialize(msgObj);
+        		msg = /*as*/deserializedMsg as API_Message;
+        		if (msg==null) throwError("msgObj="+JSON.stringify(msgObj)+" is not an API_Message");
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-        		msg = /*as*/deserializedMsg as API_Message;
-        		if (msg==null) throwError("msgObj="+JSON.stringify(msgObj)+" is not an API_Message");
         		
         		myTrace(['gotMessage: ',msg]);
         		if((msg is API_DoRegisterOnServer) && (!handShakeMade)){
         			handShakeMade = true;
-	        		if(isServer){	
-						clearInterval(sendPrefixIntervalId);
+	        		if(isContainer){	
+	        			lcInit.close();	
 	        		}else{
-	        			lcInit.close();
+	        			clearInterval(sendPrefixIntervalId);
+	        			return;
+	        		}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	        		}
-	        		return;
         		}
         		verify(msg, false);
         		gotMessage(msg);
@@ -319,7 +317,4 @@ package emulator.auto_copied
 			} 
         }
 	}
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 }

@@ -176,7 +176,7 @@ package come2play_as3.api {
 		/****************************
 		 * Below this line we only have private and overriding methods.
 		 */
-        private function isInTransaction():Boolean {
+        public function isInTransaction():Boolean {
         	return msgsInTransaction!=null
         }
         private function checkInsideTransaction():void {

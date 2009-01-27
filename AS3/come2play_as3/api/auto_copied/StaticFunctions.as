@@ -35,8 +35,9 @@ public final class StaticFunctions
 			
 	public static function storeTrace(obj:Object):void {
 		if (allTraces.length>=MAX_TRACES_NUM) allTraces.shift();
-		var arr:Array = ["Time: ", getTimer(), " Trace: ", obj];
-		if (SHOULD_CALL_TRACE) trace( arr.join("") );
+		var arr:Array = ["Time: ", getTimer(), " Trace: "];
+		if (SHOULD_CALL_TRACE) trace( arr.join("")+JSON.stringify(obj) );
+		arr.push(obj);
 		allTraces.push(arr);
 	}
 	public static function getTraces():String {

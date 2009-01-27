@@ -3,8 +3,8 @@ package come2play_as3.api.auto_copied
 import flash.display.*;
 import flash.events.*;
 import flash.net.*;
-import flash.text.*;
 import flash.system.*;
+import flash.text.*;
 import flash.utils.*;
 	
 public final class AS3_vs_AS2
@@ -159,6 +159,9 @@ public final class AS3_vs_AS2
 	 			StaticFunctions.showError("LocalConnection.onStatus error="+event+" client="+client+" client's class="+getClassName(client)+". Are you sure you are running this game inside the emulator?)");		
  		}
   	}
+	public static function myInterval(func:Function, in_milliseconds:int):int {
+		return setInterval(func,in_milliseconds); // todo: use wrapWithCatch, and move myAddEventListener and error handling code to StaticFunctions.as
+	}	
 	public static function myTimeout(func:Function, in_milliseconds:int):void {	
 		if (SerializableClass.IS_IN_FRAMEWORK) {
 			StaticFunctions.assert(myAddTimeoutFunc!=null,["Come2play forgot to set myAddTimeoutFunc"]);

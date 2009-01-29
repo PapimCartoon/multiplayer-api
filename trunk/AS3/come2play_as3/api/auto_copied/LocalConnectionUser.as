@@ -142,7 +142,7 @@ package come2play_as3.api.auto_copied
        
         public function sendMessage(msg:API_Message):void {
         	if (msg is API_DoRegisterOnServer){
-        		if (handShakeMade)/*(lcUser != null)*/
+        		if ((handShakeMade) && (lcUser != null))
         			reallySendMessage(msg);
         		else
         			AS3_vs_AS2.myTimeout(AS3_vs_AS2.delegate(this, this.sendMessage,msg),MILL_WAIT_BEFORE_DO_REGISTER);	

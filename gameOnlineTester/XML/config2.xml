@@ -144,6 +144,10 @@ Not used by the graphics yet (but should be displayed):
 		<entry><key>DebugSendReport</key><value>false</value></entry>
 		<entry><key>RunUnitTests</key><value>false</value></entry>
 		<entry><key>moreGames</key><value>[]</value></entry>
+		<entry><key>do_alternate_start_turn</key><value>true</value></entry>
+		
+		
+		<entry><key>inviteBuddyLink</key><value>"http://www.myFakeCome2play.com/inviteFriend.asp?good=true&bad=false"</value></entry>
 		
 		
 		<!--
@@ -659,7 +663,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 		If any of these two parameters is less than or **equal** to 0, then you **cannot** reconnect. 
 	     -->
 	  <can_reconnect_after_seconds type="int">1</can_reconnect_after_seconds> 
-	  <wait_before_close_seconds type="int">15</wait_before_close_seconds> 
+	  <wait_before_close_seconds type="int">1</wait_before_close_seconds> 
 	  <!-- md5 is:	  
 		MD5( SECRET + 
 		'x' + config.extra_args.user_id + 
@@ -946,7 +950,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 			<ui>
 				<is_hide_avatar_in_chat_list type="boolean">false</is_hide_avatar_in_chat_list>
 				<is_align_vertical type="boolean">true</is_align_vertical>
-				<is_with_bet type="boolean">false</is_with_bet>
+				<is_with_bet type="boolean">true</is_with_bet>
 				<is_with_emoticons type="boolean">true</is_with_emoticons>
 			</ui>
 			

@@ -162,6 +162,8 @@ import flash.utils.*;
 				}
 				
 			}
+			if(mineSweeperLogic!=null)
+				mineSweeperLogic.mine = false;
 			
 		}
 		override public function gotMatchEnded(finishedPlayerIds:Array/*int*/):void 

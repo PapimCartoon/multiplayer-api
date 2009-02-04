@@ -172,6 +172,7 @@
 		var obj;
 		for(var i=0;i<paramArr.length;i++){
 			obj = paramArr[i];
+			if(document.getElementById(obj.htmlName) == null) continue;
 			if(obj.fromTable != null) continue;
 			if(obj.minValue !=null){
 				if(document.getElementById(obj.htmlName).value<document.getElementById(obj.minValue).value) throw obj.htmlName+" Must be equel to or bigger then "+obj.minValue
@@ -324,9 +325,24 @@
 		}else if(document.cookie == "come2play"){
 			come2playCookie = "come2play";
 		}
+		
+		
+		var row = document.getElementById("containerData");
+		var cell = row.insertCell(0);
+
 		if(come2playCookie == "come2play"){
+			
+			
+			cell.innerHTML = "<input type=\"checkbox\" id=\"isYoavContainer\" value=\"isYoavContainer\">";
+			cell = row.insertCell(0);
+			cell.innerHTML = "is Yoav Container ? ";
+			cell = row.insertCell(0);
 			addOldBoard();
 		}
+		cell.innerHTML = "<input type=\"text\" id=\"gameSwf\" value=\"../AS3/SWFs/MinesweeperAS3.swf?\">";
+		cell = row.insertCell(0);
+		cell.innerHTML = "Game SWF :";
+		
 		var playerTable = document.getElementById("playerTable");
 		var row = playerTable.insertRow(0);
 		for(var i =0;i<paramArr.length;i++){
@@ -376,11 +392,7 @@
 			</TD>
 			<TD COLSPAN=2></TD>
 			</TR>
-			<TR>
-				<TD>Game SWF :</TD>
-				<TD><input type="text" id="gameSwf" value="../AS3/SWFs/MinesweeperAS3.swf?"></TD>
-				<TD>is Yoav Container ? </TD>
-				<TD><input type="checkbox" id="isYoavContainer" value="isYoavContainer"></TD>
+			<TR id="containerData" name="containerData">
 			</TR>
 			<TR id="come2playData" name="come2playData"> 
 			</TR>

@@ -143,7 +143,7 @@ Not used by the graphics yet (but should be displayed):
 		<entry><key>block_user_ids</key><value>[]</value></entry>
 		<entry><key>DebugSendReport</key><value>false</value></entry>
 		<entry><key>RunUnitTests</key><value>false</value></entry>
-		<entry><key>moreGames</key><value>[]</value></entry>
+		<entry><key>moreGames</key><value>[["http://www.authorstream.com/Content/Belly-13348-Nice-pics-slides-slide-music-audio-pictures-5575-Entertainment-ppt-powerpoint-118_88.jpg","http://www.authorstream.com/Content/Belly-13348-Nice-pics-slides-slide-music-audio-pictures-5575-Entertainment-ppt-powerpoint-118_88.jpg"]]</value></entry>
 		
 		<!--
 		<entry><key>popoutUrl</key><value>"file:///X:/come2play/API_GoogleCodeSVN/gameOnlineTester/room.html?flash_type=game&type=AutoMatch&match_string=dogs&room_id=999&isYoavContainer=false&isDefaultroomXML=true&isDefaultgameXML=true&PlayersNumSim=1&AutoMatch=true&MinPlayersNum=2&MaxPlayersNum=2&PlayersNum=2&boardHeight=400&boardWidth=400&gameStageX=100&gameStageY=0&gameSwf=..%2FAS3%2FSWFs%2FMinesweeperAS3.swf%3F&swfWidth=500&swfHeight=570&roomXML=XML%2Fconfig2.xml&gameXML=XML%2Fconfig2.xml&isVeteran=false&isMale=false&isGuest=false&credibility=39&votes_sum=2957&votes_count=216&avatar=&GameRating=1964&tokens=0%3A277%2C1%3A241&supervisor=Supervisor&name=%C3%97%C2%A9%C3%97%E2%80%94%C3%97%C2%A7%C3%97%C5%B8&id=810174&serverTable_0=chatType&chatType=FIXED&serverTable_1=isWithTables&isWithTables=true&gameTable_0=Board%20Width&Board%20Width=12&gameTable_1=Mine%20Amount&Mine%20Amount=20"</value></entry>
@@ -878,7 +878,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 																				   performance -->
 			
 			<max_chars_in_inputfield type="int">50</max_chars_in_inputfield> 	<!-- 0 is for unlimited -->
-			<chat_line_leading type="int">10</chat_line_leading> 	<!-- this parameter sets the leading for messages that have
+			<chat_line_leading type="int">0</chat_line_leading> 	<!-- this parameter sets the leading for messages that have
 															 emoticons, so if you change their size, you might want
 															 to adjust this as well -->
 			<emoticon_spacer type="int">3</emoticon_spacer>    	<!-- this parameter sets space that is created in the textfield

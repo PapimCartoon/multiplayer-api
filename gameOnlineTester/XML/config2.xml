@@ -150,7 +150,7 @@ Not used by the graphics yet (but should be displayed):
 		-->
 		<entry><key>rewardfolderURL</key><value>"graphics/rewards/"</value></entry>
 		<entry><key>tokenSet</key><value>[[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[5,"5.swf"],[10,"10.swf"],[50,"50.swf"],[100,"100.swf"],[500,"500.swf"],[1000,"1000.swf"]]</value></entry>
-		<entry><key>rewardSet</key><value>[[5000012,"horse.swf"]]</value></entry>
+		<entry><key>rewardSet</key><value>[[5000010,"Virtual_Drink_Martini.swf"],[5000012,"horse.swf"],[5000013,"Virtual_Hat.swf"],[5000014,"Virtual_Ping.swf"]]</value></entry>
 		
 		
 		

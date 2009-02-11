@@ -147,12 +147,15 @@ Not used by the graphics yet (but should be displayed):
 		
 		<!--
 		<entry><key>popoutUrl</key><value>"file:///X:/come2play/API_GoogleCodeSVN/gameOnlineTester/room.html?flash_type=game&type=AutoMatch&match_string=dogs&room_id=999&isYoavContainer=false&isDefaultroomXML=true&isDefaultgameXML=true&PlayersNumSim=1&AutoMatch=true&MinPlayersNum=2&MaxPlayersNum=2&PlayersNum=2&boardHeight=400&boardWidth=400&gameStageX=100&gameStageY=0&gameSwf=..%2FAS3%2FSWFs%2FMinesweeperAS3.swf%3F&swfWidth=500&swfHeight=570&roomXML=XML%2Fconfig2.xml&gameXML=XML%2Fconfig2.xml&isVeteran=false&isMale=false&isGuest=false&credibility=39&votes_sum=2957&votes_count=216&avatar=&GameRating=1964&tokens=0%3A277%2C1%3A241&supervisor=Supervisor&name=%C3%97%C2%A9%C3%97%E2%80%94%C3%97%C2%A7%C3%97%C5%B8&id=810174&serverTable_0=chatType&chatType=FIXED&serverTable_1=isWithTables&isWithTables=true&gameTable_0=Board%20Width&Board%20Width=12&gameTable_1=Mine%20Amount&Mine%20Amount=20"</value></entry>
+			<entry><key>rewardSet</key><value>[[5000010,"Virtual_Drink_Martini.swf"],[5000012,"horse.swf"],[5000013,"Virtual_Hat.swf"],[5000014,"Virtual_Ping.swf"]]</value></entry>
+		
+		
 		-->
-		<entry><key>rewardfolderURL</key><value>"graphics/rewards/"</value></entry>
-		<entry><key>tokenSet</key><value>[[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[1,"1.swf"],[5,"5.swf"],[10,"10.swf"],[50,"50.swf"],[100,"100.swf"],[500,"500.swf"],[1000,"1000.swf"]]</value></entry>
-		<entry><key>rewardSet</key><value>[[5000010,"Virtual_Drink_Martini.swf"],[5000012,"horse.swf"],[5000013,"Virtual_Hat.swf"],[5000014,"Virtual_Ping.swf"]]</value></entry>
+		<entry><key>rewardFolderURL</key><value>"graphics/rewards/"</value></entry>
+		<entry><key>tokenSet</key><value>[[1,"1.swf"],[5,"5.swf"],[10,"10.swf"],[50,"50.swf"],[100,"100.swf"],[500,"500.swf"],[1000,"1000.swf"]]</value></entry>
 		
 		
+	
 		
 		
 		

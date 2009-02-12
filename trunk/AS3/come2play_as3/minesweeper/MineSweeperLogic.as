@@ -54,7 +54,7 @@ package come2play_as3.minesweeper
 			shift.addEventListener(MouseEvent.CLICK,pressShift);
 			shift.addEventListener(MouseEvent.ROLL_OVER,overShift);
 			shift.addEventListener(MouseEvent.ROLL_OUT,leftShift);
-			shift.stroke_mc.visible = false;
+			//shift.stroke_mc.visible = false;
 			this.graphics.addChild(shift)
 			
 			mineSweeperGraphic = new MineSweeperGraphic();
@@ -81,16 +81,16 @@ package come2play_as3.minesweeper
 		}
 		private function overShift(ev:MouseEvent):void
 		{
-			shift.stroke_mc.visible = true;
+			//shift.stroke_mc.visible = true;
 		}
 		private function leftShift(ev:MouseEvent):void
 		{
-			shift.stroke_mc.visible = false;
+			//shift.stroke_mc.visible = false;
 		}
 		public function set mine(isMine:Boolean):void
 		{
 			this.isMine = isMine;
-			shift.stroke_mc.visible = false;
+			//shift.stroke_mc.visible = false;
 			if(isMine)
 				shift.gotoAndStop(8);
 			else

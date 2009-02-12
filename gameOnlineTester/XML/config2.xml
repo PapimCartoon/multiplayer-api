@@ -274,7 +274,7 @@ Not used by the graphics yet (but should be displayed):
 			  <supervisor>NormalUser</supervisor>
 			  <credibility>0</credibility>
 			  <tokens>0:100</tokens>
-			  <tokens_data>[{ $RewardInfo$ "id":0 , "name":"ofir" , "url":"Virtual_Drink_Martini.swf" , "value":10}]</tokens_data>
+			  <tokens_data>[{ $RewardInfo$ "id":1 , "name":"ofir" , "url":"Virtual_Drink_Martini.swf" , "value":10}]</tokens_data>
 			  <votes_sum>0</votes_sum>
 			  <votes_count>0</votes_count>	
 			  <game_rating>1500</game_rating>		  
@@ -532,7 +532,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 				  <supervisor>Supervisor</supervisor>
 				  <credibility>100</credibility>
 				  <tokens>0:4000,2:20</tokens>
-				  <tokens_data>[{ $RewardInfo$ "id":0 , "name":"ofir" , "url":"Virtual_Drink_Martini.swf" , "value":10}]</tokens_data>
+				  <tokens_data>[{ $RewardInfo$ "id":1 , "name":"ofir" , "url":"Virtual_Drink_Martini.swf" , "value":10}]</tokens_data>
 				  <votes_sum>9</votes_sum>
 				  <votes_count>54</votes_count>		
 		    	  <!-- config.game_name is prefixed to the rating, e.g., game_rating_chess . I do this to make sure the ratings of different games don't override one another -->
@@ -719,7 +719,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 		  <supervisor>NormalUser</supervisor>
 		  <credibility>100</credibility>
 		  <tokens>0:5000,2:20</tokens>
-		  <tokens_data>[{ $RewardInfo$ "id":0 , "name":"ofir" , "url":"Virtual_Drink_Martini.swf" , "value":10}]</tokens_data>
+		  <tokens_data>[{ $RewardInfo$ "id":1 , "name":"ofir" , "url":"Virtual_Drink_Martini.swf" , "value":10}]</tokens_data>
 		  <votes_sum>9</votes_sum>
 		  <votes_count>54</votes_count>
     	  <!-- I add config.game_name to the rating, e.g., game_rating_chess . 
@@ -747,7 +747,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 	</user_info>
 	
     <!-- league_stage_id determines the tokens in this stage  -->
-    <league_stage_id type="int">1</league_stage_id>
+    <league_stage_id type="int">0</league_stage_id>
     <!-- config.game_name is prefixed to the rating, e.g., game_rating_chess . I do this to make sure the ratings of different games don't override one another -->
     <game_name>chess</game_name>
 		

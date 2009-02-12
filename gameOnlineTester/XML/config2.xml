@@ -105,9 +105,11 @@ Not used by the graphics yet (but should be displayed):
 	is_male="boolean"
 	is_veteran_user="boolean"
 	is_guest="boolean"
+	site_name="string"
 	supervisor="EnumSupervisor"
 	credibility="int"
 	tokens="Stake"
+	tokens_data="string"
 	votes_sum="int"
 	votes_count="int"
 	game_rating="int"	
@@ -153,10 +155,8 @@ Not used by the graphics yet (but should be displayed):
 		<entry><key>rewardFolderURL</key><value>"graphics/rewards/"</value></entry>
 		<entry><key>tokenFolderURL</key><value>"graphics/rewards/"</value></entry>
 		
-		<entry><key>tokenSet</key><value>[[1,"1.swf"],[5,"5.swf"],[10,"10.swf"],[50,"50.swf"],[100,"100.swf"],[500,"500.swf"],[1000,"1000.swf"]]</value></entry>
-		<entry><key>rewardSet</key><value>[[5000010,"Virtual_Drink_Martini.swf"],[5000012,"horse.swf"],[5000013,"Virtual_Hat.swf"],[5000014,"Virtual_Ping.swf"]]</value></entry>
-		
-	
+		<entry><key>tokenSet</key><value>[[0,"0.swf"],[1,"1.swf"],[5,"5.swf"],[10,"10.swf"],[50,"50.swf"],[100,"100.swf"],[500,"500.swf"],[1000,"1000.swf"]]</value></entry>
+
 		
 		
 		
@@ -268,11 +268,13 @@ Not used by the graphics yet (but should be displayed):
 			  <is_male>true</is_male>
 			  <is_veteran_user>false</is_veteran_user>
 			  <is_guest>true</is_guest>
+			  <site_name>facebook</site_name>
 			  <name>Unknown #user_id#</name>
 			  <avatar_url>../images/Avatar_4.gif</avatar_url>
 			  <supervisor>NormalUser</supervisor>
 			  <credibility>0</credibility>
 			  <tokens>0:100</tokens>
+			  <tokens_data>[{ $RewardInfo$ "id":0 , "name":"ofir" , "url":"Virtual_Drink_Martini.swf" , "value":10}]</tokens_data>
 			  <votes_sum>0</votes_sum>
 			  <votes_count>0</votes_count>	
 			  <game_rating>1500</game_rating>		  
@@ -524,11 +526,13 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 			  	  <is_male>true</is_male>
 			  	  <is_veteran_user>false</is_veteran_user>
 			  	  <is_guest>false</is_guest>
+			  	  <site_name>facebook</site_name>
 				  <name>Yoav</name>
 				  <avatar_url>../images/Avatar_2.gif</avatar_url>
 				  <supervisor>Supervisor</supervisor>
 				  <credibility>100</credibility>
 				  <tokens>0:4000,2:20</tokens>
+				  <tokens_data>[{ $RewardInfo$ "id":0 , "name":"ofir" , "url":"Virtual_Drink_Martini.swf" , "value":10}]</tokens_data>
 				  <votes_sum>9</votes_sum>
 				  <votes_count>54</votes_count>		
 		    	  <!-- config.game_name is prefixed to the rating, e.g., game_rating_chess . I do this to make sure the ratings of different games don't override one another -->
@@ -693,6 +697,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 		  <is_male>true</is_male>
 		  <is_veteran_user>false</is_veteran_user>
 		  <is_guest>false</is_guest>
+		  <site_name>facebook</site_name>
 		  <name>Yoav</name>
 		  <!-- 
 		  - avatar examples:
@@ -714,6 +719,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 		  <supervisor>NormalUser</supervisor>
 		  <credibility>100</credibility>
 		  <tokens>0:5000,2:20</tokens>
+		  <tokens_data>[{ $RewardInfo$ "id":0 , "name":"ofir" , "url":"Virtual_Drink_Martini.swf" , "value":10}]</tokens_data>
 		  <votes_sum>9</votes_sum>
 		  <votes_count>54</votes_count>
     	  <!-- I add config.game_name to the rating, e.g., game_rating_chess . 

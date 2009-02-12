@@ -882,7 +882,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 			Level1 ::    0 - 999
 			Level2 :: 1000 - 1999
 		-->
-		<ratings type="int_array">0,1000,2000,3000,4000,5000,6000,7000</ratings>    	
+		<ratings type="int_array">0,1200,1400,1600,1800,2000,2200,2400</ratings>    	
 		<!--
 			chat properties
 		-->

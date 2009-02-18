@@ -1,4 +1,4 @@
-function getRandomNum(){
+﻿function getRandomNum(){
 	return Math.ceil(3000*Math.random())
 }
 function getRandomsupervisor(){
@@ -18,8 +18,15 @@ function getPlayerName(){
 function getPlayerId(){
 	return Math.ceil(Math.random()*10000000);
 }
+function getPlayerAvatar(){
+	return "images/Avatar_"+Math.ceil(Math.random()*4)+".gif";
+}
+
+
+
+
 var supervisorLevels = new Array("Admin","Supervisor","MiniSupervisor","NormalUser");
-var playerInitial = new Array("player","שחקן","???","op??o","???????")
+var playerInitial = new Array("player","שחקן","播放器","usuário","Hráč")
 var oldBoardValues = new Array();
 oldBoardValues.push({type:"gameName",gameName:"Sudoku"})
 oldBoardValues.push({type:"variant",gameName:"Sudoku",variant:"9_Easy"})
@@ -144,7 +151,7 @@ paramArr.push( {htmlName:"isGuest",xmlName:"override_config.user_info.params.is_
 paramArr.push( {htmlName:"credibility",xmlName:"override_config.user_info.params.credibility",type:"int",isUser:true,callFunc:getRandomNum,colName:"Credibility"});
 paramArr.push( {htmlName:"votes_sum",xmlName:"override_config.user_info.params.votes_sum",type:"int",isUser:true,callFunc:getRandomNum,colName:"Votes sum"});
 paramArr.push( {htmlName:"votes_count",xmlName:"override_config.user_info.params.votes_count",type:"int",isUser:true,callFunc:getRandomNum,colName:"Votes count"});
-paramArr.push( {htmlName:"avatar",xmlName:"override_config.user_info.params.avatar_url",type:"string",isUser:true,colName:"Avatar url"});
+paramArr.push( {htmlName:"avatar",xmlName:"override_config.user_info.params.avatar_url",type:"string",isUser:true,colName:"Avatar url",callFunc:getPlayerAvatar});
 paramArr.push( {htmlName:"GameRating",xmlName:"override_config.user_info.params.game_rating",type:"int",isUser:true,callFunc:getRandomNum,colName:"Game rating"});
 paramArr.push( {htmlName:"tokens",xmlName:"override_config.user_info.params.tokens",type:"string",isUser:true,callFunc:getRandomTokens,colName:"Tokens"});
 paramArr.push( {htmlName:"supervisor",xmlName:"override_config.user_info.params.supervisor",type:"string",isUser:true,callFunc:getRandomsupervisor,colName:"Supervisor"});

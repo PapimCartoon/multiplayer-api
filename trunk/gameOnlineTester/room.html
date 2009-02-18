@@ -10,6 +10,23 @@
 	var javaToConnect = "<entry><key>override all_java_ips</key><value>'74.63.37.40:8080:socket,74.63.37.40:8080:old_xmlsocket,74.63.37.40:80:rtmpt'</value></entry>"
 
 	var prefix_random_number = 2+ Math.ceil(1000000*Math.random());
+	var customStakeData = new Array();
+	function addStake(oldStake){
+		for(var i=0;i<rewards.length;i++){
+			var rewardData = rewards[i];
+			var index = oldStake.indexOf(rewardData.newStake);
+			if(index!=-1){
+				customStakeData.push(rewardData.rewardInfoEntry);
+			}
+			var index = oldStake.indexOf(rewardData.oldStake);
+			if(index!=-1){
+				customStakeData.push(rewardData.rewardInfoEntry);
+				oldStake = oldStake.replace(rewardData.oldStake,rewardData.newStake);
+			}
+			
+		}
+		return oldStake;
+	}
     function javascript_get_prefix_method() {
             return prefix_random_number;
     }
@@ -108,9 +125,9 @@
 			if((obj.fromTable) && (windowParams["type"] != "start_game_from_table_url")) continue;
 			if(obj.isUser == true){
 				
-				if(obj.htmlName == "tokens")
-					params[obj.xmlName]=windowParams[obj.htmlName];
-				else
+				if(obj.htmlName == "tokens"){
+						params[obj.xmlName]=addStake(windowParams[obj.htmlName]);		
+				}else
 					params[obj.xmlName]=encodeURIComponent(windowParams[obj.htmlName]);
 			}else if(obj.xmlName != null){
 				if (( (windowParams["flash_type"] == "room") && (obj.xmlName.indexOf("room_parameters")!=-1))  || ((windowParams["flash_type"] == "game") && (obj.xmlName.indexOf("game_parameters")!=-1)))
@@ -123,6 +140,18 @@
 			}
 				
 		}
+		var stakeData ="["
+		while(customStakeData.length >1){
+			stakeData+=customStakeData.pop()+",";
+		}
+		if(customStakeData.length == 1){
+			stakeData+=customStakeData.pop()+"]";
+		}else{
+			stakeData+="]";
+		}
+		params["override_config.user_info.params.tokens_data"] = stakeData
+		
+		
 		addTableParams(params,"serverTable")
 		
 		params["chat_skin_url"]="graphics/chatGraphics.swf";		

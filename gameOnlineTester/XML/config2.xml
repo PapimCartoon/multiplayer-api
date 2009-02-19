@@ -156,7 +156,7 @@ Not used by the graphics yet (but should be displayed):
 		<entry><key>tokenFolderURL</key><value>"graphics/rewards/"</value></entry>
 		<entry><key>noUserPic</key><value>"images/noOne.png"</value></entry>
 		<entry><key>tokenSet</key><value>[[0,"0.swf"],[1,"1.swf"],[5,"5.swf"],[10,"10.swf"],[50,"50.swf"],[100,"100.swf"],[500,"500.swf"],[1000,"1000.swf"],["x","x.swf"]]</value></entry>
-
+		<entry><key>rewardPageLink</key><value>"www.google.com/aaa.asp?"</value></entry>
 		
 		
 		

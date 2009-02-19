@@ -96,7 +96,7 @@ oldBoardValues.push({type:"variant",gameName:"Connect4",variant:"Original"})
 oldBoardValues.push({type:"variant",gameName:"Connect4",variant:"randomX70"})
        
 var rewards = new Array();
-rewards.push({oldStake:"1:",newStake:"1000001:",rewardInfoEntry:'{ $RewardInfo$ "id":1000001 , "name":"cool" , "imageURL":"Virtual_Drink_Martini.swf" , "value":111}'});
+rewards.push({oldStake:"1:",newStake:"1000001:",rewardInfoEntry:'{ $RewardInfo$ "id":1000001 , "name":"Virtual_Drink_Martini" , "imageURL":"Virtual_Drink_Martini.swf" , "value":111}'});
 rewards.push({oldStake:"2:",newStake:"1000002:",rewardInfoEntry:'{ $RewardInfo$ "id":1000002 , "name":"cool" , "imageURL":"Virtual_Hat.swf" , "value":111}'});
 rewards.push({oldStake:"3:",newStake:"1000003:",rewardInfoEntry:'{ $RewardInfo$ "id":1000003 , "name":"cool" , "imageURL":"Virtual_Ping.swf" , "value":111}'});
 							

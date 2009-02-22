@@ -17,7 +17,7 @@ package emulator.auto_copied
 // Only StaticFunctions and JSON are copied to flex_utils 
 public final class StaticFunctions
 {			
-	public static var GOOGLE_REVISION_NUMBER:int = 830;
+	public static var GOOGLE_REVISION_NUMBER:int = 835;
 	public static var COME2PLAY_REVISION_NUMBER:int = 1977;
 	public static function getRevision():String {
 

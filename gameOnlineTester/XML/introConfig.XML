@@ -6,6 +6,12 @@
 		<smallGameThumb></smallGameThumb><!--The URL the game will load as a side image-->
 		<introLogoURL></introLogoURL><!--The URL of the logo that is connected to the owner-->
 	</graphics>
+	<user_info>
+	  <name>ofir the cool</name>
+	  <avatar_url>ofir.jpg</avatar_url>
+	  <is_guest>false</is_guest>
+	  <user_statistics_url>http://www.google.com</user_statistics_url>
+	</user_info>
 	<moreGrabIt><!--All the grab it links-->	
 		<grabIt>
 			<image>http://www.notus-online.com/catalog/pics/Sexy_Satin_With_Lacework_6_Pics_Underwear_Set.jpg</image><!--The URL of the image to load for the grab it link-->	

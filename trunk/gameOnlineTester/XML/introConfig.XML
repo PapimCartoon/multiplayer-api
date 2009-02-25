@@ -22,7 +22,7 @@
 
 	<!--if this value is empty you can't invite a friend-->
 	<inviteBuddyURL>http://www.google.com/</inviteBuddyURL>
-	<moreGamesURL>http://www.google.com/</inviteBuddyURL>
+	<moreGamesURL>http://www.google.com/</moreGamesURL>
 	<!--if this value is not empty you must popout your game to play-->
 	<popoutURL></popoutURL>
 	<!--if this value is not empty the intro screen will do the action specefied-->

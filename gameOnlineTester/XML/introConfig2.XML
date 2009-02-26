@@ -1,0 +1,49 @@
+<introConfig>
+	<configURL>XML/config2.XML</configURL>
+	<graphics>
+		<gameDisplayName>bad game</gameDisplayName><!--The name of the game that will be displayed-->
+		<bigGameThumb></bigGameThumb><!--The URL the game will load as the background for the intro screen-->
+		<smallGameThumb></smallGameThumb><!--The URL the game will load as a side image-->
+		<introLogoURL></introLogoURL><!--The URL of the logo that is connected to the owner-->
+	</graphics>
+	<moreGrabIt><!--All the grab it links-->	
+
+	</moreGrabIt>
+	<moreGames>	
+
+	</moreGames>
+
+	<!--if this value is empty you can't invite a friend-->
+	<inviteBuddyURL>http://www.google.com/</inviteBuddyURL>
+	<!--if this value is not empty you must popout your game to play-->
+	<popoutURL></popoutURL>
+	<!--if this value is not empty the intro screen will do the action specefied-->
+	<autoMatchType></autoMatchType>
+
+
+	<inviteAutoMatch>
+		<tableID></tableID> <!-- The table id of the game you connect to-->
+		<tablePassword></tablePassword><!-- The play password of the game you connect to-->
+		<viewPassword></viewPassword><!-- The view password of the game you connect to-->
+		<autoMatchString></autoMatchString><!-- The autoMatch string of the game you connect to-->
+	</inviteAutoMatch>
+	<userManagement>
+		<registerURL></registerURL>
+		<!-- put name=..&email=..&pass..&is_male..&date_of_birth..&first_name..&last_name 
+		result=true/false
+		-->
+		
+		<loginURL>http://127.0.0.1/index.asp?action=login&</loginURL>
+		<!-- put email,pass & all distribution params.. 
+		gets intro_config_url=..
+		-->
+		<validateEmailURL></validateEmailURL>
+		<!-- put email
+		result=true/false
+		-->
+		<validateNameURL></validateNameURL>
+		<!-- put name=..
+		result=true/false
+		-->
+	</userManagement>
+</introConfig>

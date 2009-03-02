@@ -38,6 +38,7 @@ public final class AS3_vs_AS2
 	}
 	public static function specialToString(o:Object):String {
 		if (o is DisplayObject) return getDisplayObjectDesc(o as DisplayObject); // instead of the default toString which returns "[object peshka2_15]", I want to return the fullname and current keyframe (if it is a movieclip)
+		if (o is URLRequest) return (o as URLRequest).url;
 		var nativeSerializer:NativeSerializable = null;
 		for each (var serializer:NativeSerializable in NATIVE_SERIALIZERS) {
 			nativeSerializer = serializer.fromNative(o);

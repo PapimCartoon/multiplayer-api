@@ -9,7 +9,7 @@
 	<user_info>
 	  <name>ofir the cool</name>
 	  <avatar_url>ofir.jpg</avatar_url>
-	  <is_guest>false</is_guest>
+	  <is_guest>true</is_guest>
 	  <user_statistics_url>http://www.google.com</user_statistics_url>
 	</user_info>
 	<grabIt>url</grabIt>

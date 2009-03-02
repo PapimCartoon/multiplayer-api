@@ -221,7 +221,7 @@ Not used by the graphics yet (but should be displayed):
 		-->
 		<entry><key>tableStyle</key><value>'LINE'</value></entry>
 
-		<entry><key>MochiCode</key><value>'53c06abe662b2907'</value></entry>
+		<entry><key>MochiCode</key><value>'496c1cb27474da05'</value></entry>
 		<entry><key>CPMStarSubPoolID</key><value>1</value></entry>
 		<entry><key>CPMStarPoolID</key><value>1910</value></entry>
 		
@@ -965,7 +965,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 			
 			<ads>
 				<is_show_pre_add type="boolean">true</is_show_pre_add>
-				<is_show_post_add type="boolean">false</is_show_post_add>
+				<is_show_post_add type="boolean">true</is_show_post_add>
 			</ads>
 			
 			<ui>

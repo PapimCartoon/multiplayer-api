@@ -28,7 +28,7 @@
 	<inviteBuddyURL>http://www.google.com/</inviteBuddyURL>
 	<moreGamesURL>http://www.google.com/</moreGamesURL>
 	<!--if this value is not empty you must popout your game to play-->
-	<popoutURL>asd</popoutURL>
+	<popoutURL></popoutURL>
 	<!--if this value is not empty the intro screen will do the action specefied-->
 	<autoMatchType></autoMatchType>
 

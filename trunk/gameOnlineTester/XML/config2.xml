@@ -747,7 +747,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 	</user_info>
 	
     <!-- league_stage_id determines the tokens in this stage  -->
-    <league_stage_id type="int">0</league_stage_id>
+    <league_stage_id type="string">0</league_stage_id>
     <!-- config.game_name is prefixed to the rating, e.g., game_rating_chess . I do this to make sure the ratings of different games don't override one another -->
     <game_name>chess</game_name>
 		

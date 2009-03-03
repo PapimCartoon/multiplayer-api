@@ -109,7 +109,6 @@ Not used by the graphics yet (but should be displayed):
 	supervisor="EnumSupervisor"
 	credibility="int"
 	tokens="Stake"
-	tokens_data="string"
 	votes_sum="int"
 	votes_count="int"
 	game_rating="int"	
@@ -274,7 +273,6 @@ Not used by the graphics yet (but should be displayed):
 			  <supervisor>NormalUser</supervisor>
 			  <credibility>0</credibility>
 			  <tokens>0:100</tokens>
-			  <tokens_data>[]</tokens_data>
 			  <votes_sum>0</votes_sum>
 			  <votes_count>0</votes_count>	
 			  <game_rating>1500</game_rating>		  
@@ -532,7 +530,6 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 				  <supervisor>Supervisor</supervisor>
 				  <credibility>100</credibility>
 				  <tokens>0:4000,2:20</tokens>
-				  <tokens_data>[]</tokens_data>
 				  <votes_sum>9</votes_sum>
 				  <votes_count>54</votes_count>		
 		    	  <!-- config.game_name is prefixed to the rating, e.g., game_rating_chess . I do this to make sure the ratings of different games don't override one another -->
@@ -719,7 +716,6 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 		  <supervisor>NormalUser</supervisor>
 		  <credibility>100</credibility>
 		  <tokens>0:5000,2:20</tokens>
-		  <tokens_data>[]</tokens_data>
 		  <votes_sum>9</votes_sum>
 		  <votes_count>54</votes_count>
     	  <!-- I add config.game_name to the rating, e.g., game_rating_chess . 

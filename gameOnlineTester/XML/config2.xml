@@ -165,7 +165,7 @@ Not used by the graphics yet (but should be displayed):
 		
 		
 		<entry><key>grabIt</key><value>"http://www.facebook.com"</value></entry>
-		<entry><key>do_alternate_start_turn</key><value>true</value></entry>
+		<entry><key>do_alternate_start_turn</key><value>false</value></entry>
 		
 		
 		<entry><key>inviteBuddyLink</key><value>"http://www.google.com"</value></entry>

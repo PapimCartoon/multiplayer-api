@@ -144,6 +144,7 @@ Not used by the graphics yet (but should be displayed):
 		<entry><key>block_user_ids</key><value>[]</value></entry>
 		<entry><key>DebugSendReport</key><value>false</value></entry>
 		<entry><key>RunUnitTests</key><value>false</value></entry>
+		<entry><key>MaxTablesInGraphic</key><value>1</value></entry>
 		<entry><key>moreGames</key><value>[["http://www.authorstream.com/Content/Belly-13348-Nice-pics-slides-slide-music-audio-pictures-5575-Entertainment-ppt-powerpoint-118_88.jpg","http://www.authorstream.com/Content/Belly-13348-Nice-pics-slides-slide-music-audio-pictures-5575-Entertainment-ppt-powerpoint-118_88.jpg"]]</value></entry>
 		
 		<!--
@@ -221,7 +222,7 @@ Not used by the graphics yet (but should be displayed):
 		-->
 		<entry><key>tableStyle</key><value>'LINE'</value></entry>
 
-		<entry><key>MochiCode</key><value>'496c1cb27474da05'</value></entry>
+		<entry><key>MochiCode</key><value>'53c06abe662b2907'</value></entry>
 		<entry><key>CPMStarSubPoolID</key><value>1</value></entry>
 		<entry><key>CPMStarPoolID</key><value>1910</value></entry>
 		

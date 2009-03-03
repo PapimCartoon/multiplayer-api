@@ -96,9 +96,9 @@ oldBoardValues.push({type:"variant",gameName:"Connect4",variant:"Original"})
 oldBoardValues.push({type:"variant",gameName:"Connect4",variant:"randomX70"})
        
 var rewards = new Array();
-rewards.push({oldStake:"1:",addData:":name=Virtual_Drink_Martini&imageURL=Virtual_Drink_Martini.swf&value=111"});
-rewards.push({oldStake:"2:",addData:":name=cool&imageURL=Virtual_Hat.swf&value=111"});
-rewards.push({oldStake:"3:",addData:":name=cool&imageURL=Virtual_Ping.swf&value=111"});
+rewards.push({oldStake:"1:",addData:":value=111&name=Virtual_Drink_Martini&imageURL=Virtual_Drink_Martini.swf"});
+rewards.push({oldStake:"2:",addData:":value=111&name=cool&imageURL=Virtual_Hat.swf"});
+rewards.push({oldStake:"3:",addData:":value=111&name=cool&imageURL=Virtual_Ping.swf"});
 							
 
 

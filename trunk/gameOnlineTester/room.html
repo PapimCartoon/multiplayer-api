@@ -11,15 +11,22 @@
 
 	var prefix_random_number = 2+ Math.ceil(1000000*Math.random());
 	function addStake(oldStake){
+	
+		var brokenStake = oldStake.split(",");
 		for(var i=0;i<rewards.length;i++){
 			var rewardData = rewards[i];
-			var index = oldStake.indexOf(rewardData.oldStake);
-			if(index!=-1){
-				if(oldStake.indexOf(rewardData.addData) == -1)
-					oldStake += rewardData.addData;
-			}		
+			for(var j=0;j<brokenStake.length;j++){
+				var currnetStake = brokenStake[j]
+				var index = currnetStake.indexOf(rewardData.oldStake);
+				if(index>1)	continue;
+				if(index == -1)continue;
+				if(currnetStake.indexOf(rewardData.addData) == -1){
+					currnetStake += rewardData.addData;
+				}
+				brokenStake[j] = currnetStake;
+			}			
 		}
-		return oldStake;
+		return brokenStake.join(",");
 	}
     function javascript_get_prefix_method() {
             return prefix_random_number;

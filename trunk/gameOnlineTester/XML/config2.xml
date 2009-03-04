@@ -274,7 +274,7 @@ Not used by the graphics yet (but should be displayed):
 			  <avatar_url>../images/Avatar_4.gif</avatar_url>
 			  <supervisor>NormalUser</supervisor>
 			  <credibility>0</credibility>
-			  <tokens>0:100</tokens>
+			  <tokens>0:100:</tokens>
 			  <votes_sum>0</votes_sum>
 			  <votes_count>0</votes_count>	
 			  <game_rating>1500</game_rating>		  
@@ -554,7 +554,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 			<play_password>alltembels</play_password>
 			<!-- the order of players is important: the first one is white, the second is black -->
 			<player_ids>26,71</player_ids>
-			<stakes type="Stake">1:10</stakes>			
+			<stakes type="Stake">0:10</stakes>			
 		</FromTable>
 		
 		<!-- 

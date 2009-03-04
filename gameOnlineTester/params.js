@@ -53,6 +53,23 @@ oldBoardValues.push({type:"variant",gameName:"BackGammon",variant:"Original"})
 oldBoardValues.push({type:"variant",gameName:"BackGammon",variant:"tapa"})
 oldBoardValues.push({type:"variant",gameName:"BackGammon",variant:"Nackgammon"})
 
+
+
+oldBoardValues.push({type:"variant",gameName:"BackGammon",variant:"TestingFullHouse"})
+oldBoardValues.push({type:"variant",gameName:"BackGammon",variant:"TestingOneDice"})
+oldBoardValues.push({type:"variant",gameName:"BackGammon",variant:"TestingTurkishMars"})
+oldBoardValues.push({type:"variant",gameName:"BackGammon",variant:"TestingEnding"})
+oldBoardValues.push({type:"variant",gameName:"BackGammon",variant:"TestingBiggerDice"})
+oldBoardValues.push({type:"variant",gameName:"BackGammon",variant:"TestingSmallerDice"})
+oldBoardValues.push({type:"variant",gameName:"BackGammon",variant:"TestingTwoDice"})
+oldBoardValues.push({type:"variant",gameName:"BackGammon",variant:"TestingBug12"})
+oldBoardValues.push({type:"variant",gameName:"BackGammon",variant:"TestingBug15"})
+oldBoardValues.push({type:"variant",gameName:"BackGammon",variant:"TestingBug53"})
+oldBoardValues.push({type:"variant",gameName:"BackGammon",variant:"TestingBug54"})
+oldBoardValues.push({type:"variant",gameName:"BackGammon",variant:"TestingBug63"})
+oldBoardValues.push({type:"variant",gameName:"BackGammon",variant:"TestingBug64"})
+
+
 oldBoardValues.push({type:"gameName",gameName:"Go"})
 oldBoardValues.push({type:"variant",gameName:"Go",variant:"9_5"})
 oldBoardValues.push({type:"variant",gameName:"Go",variant:"9_6"})

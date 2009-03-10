@@ -3,6 +3,9 @@ package come2play_as3.api.auto_copied
 public final class ErrorHandler
 {
 	public function toString():String { // we put in the traces new ErrorHandler()
+		return getOngoingTimers();
+	}
+	public static function getOngoingTimers():String {
 		var res:Array = [];
 		res.push("My stack traces:");	
 		res.push( my_stack_trace.join(",\n") );
@@ -18,7 +21,7 @@ public final class ErrorHandler
 			res.push( "\t"+JSON.stringify(arr2) );
 		}
 		res.push("\n");		
-		return res.join("\n");		
+		return res.join("\n");
 	}
 	
 	

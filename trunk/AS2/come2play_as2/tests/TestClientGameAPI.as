@@ -33,7 +33,7 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 			"\n\n"
 			);
 
-		for (var i37:Number=0; i37<API_MethodsSummary.SUMMARY_API.length; i37++) { var methodSummary:API_MethodsSummary = API_MethodsSummary.SUMMARY_API[i37]; 
+		var p37:Number=0; for (var i37:String in API_MethodsSummary.SUMMARY_API) { var methodSummary:API_MethodsSummary = API_MethodsSummary.SUMMARY_API[API_MethodsSummary.SUMMARY_API.length==null ? i37 : p37]; p37++;
 			var methodName:String = methodSummary.methodName; 
 			if (methodName.substring(0,2)!="do") continue;
 			if (methodName=="doRegisterOnServer") continue;
@@ -116,7 +116,7 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 		},
 		function (entries:Array):Void {
 			require(entries.length == 4);			
-			for (var i120:Number=0; i120<entries.length; i120++) { var entry:ServerEntry = entries[i120]; 
+			var p120:Number=0; for (var i120:String in entries) { var entry:ServerEntry = entries[entries.length==null ? i120 : p120]; p120++;
 				require(entry.visibleToUserIds == null);
 			}
 		});
@@ -396,7 +396,7 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 				if (!didSendEndMatch) {
 					didSendEndMatch = true;
 					var finishedPlayers:Array = [];
-					for (var i400:Number=0; i400<allPlayerIds.length; i400++) { var id:Number = allPlayerIds[i400]; 
+					var p400:Number=0; for (var i400:String in allPlayerIds) { var id:Number = allPlayerIds[allPlayerIds.length==null ? i400 : p400]; p400++;
 						finishedPlayers.push( PlayerMatchOver.create(id, id==winnerId ? 1000 : -1000, id==winnerId ? 100 : 0) );		
 					}
 					doAllEndMatch(finishedPlayers);

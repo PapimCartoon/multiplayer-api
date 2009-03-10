@@ -24,7 +24,7 @@ class come2play_as2.api.auto_copied.ObjectDictionary extends SerializableClass
 		var hash:Number = hashObject(key);
 		if (hashMap[hash]==null) return null;
 		var entries:Array = hashMap[hash];
-		for (var i26:Number=0; i26<entries.length; i26++) { var entry:Array = entries[i26]; 
+		var p26:Number=0; for (var i26:String in entries) { var entry:Array = entries[entries.length==null ? i26 : p26]; p26++;
 			var entryKey:Object = entry[0];
 			if (areEqual(entryKey,key)) 
 				return entry;

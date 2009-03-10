@@ -34,7 +34,7 @@ package come2play_as3.api {
 			StaticFunctions.alwaysTrace(this);
 			ErrorHandler.SEND_BUG_REPORT = AS3_vs_AS2.delegate(this, this.sendBugReport);
 			keyboardMessages = [];
-			AS3_vs_AS2.addKeyboardListener(_someMovieClip,keyPressed);
+			AS3_vs_AS2.addKeyboardListener(_someMovieClip, ErrorHandler.wrapWithCatch("keyPressed",AS3_vs_AS2.delegate(this,this.keyPressed)));
 			if (getPrefixFromFlashVars(_someMovieClip)==null) 
 				singlePlayerEmulator = new SinglePlayerEmulator(_someMovieClip); // to prevent garbage collection
 				

@@ -145,7 +145,7 @@ Not used by the graphics yet (but should be displayed):
 		<entry><key>block_user_ids</key><value>[]</value></entry>
 		<entry><key>DebugSendReport</key><value>false</value></entry>
 		<entry><key>RunUnitTests</key><value>false</value></entry>
-		<entry><key>MaxTablesInGraphic</key><value>1</value></entry>
+		<entry><key>MaxTablesInGraphic</key><value>2</value></entry>
 		<entry><key>moreGames</key><value>[["http://www.authorstream.com/Content/Belly-13348-Nice-pics-slides-slide-music-audio-pictures-5575-Entertainment-ppt-powerpoint-118_88.jpg","http://www.authorstream.com/Content/Belly-13348-Nice-pics-slides-slide-music-audio-pictures-5575-Entertainment-ppt-powerpoint-118_88.jpg"]]</value></entry>
 		
 		<!--
@@ -306,7 +306,7 @@ Not used by the graphics yet (but should be displayed):
 			(given priority to those that played before, according to the order that they connected).
 	-->
 	<players_number type="int">2</players_number>
-	<min_player_number type="int">2</min_player_number>
+	<min_player_number type="int">1</min_player_number>
 	<max_player_number type="int">2</max_player_number>
 		
 	<game_parameters type="optional">		
@@ -965,7 +965,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 			</waiting_screen>
 			
 			<ads>
-				<is_show_pre_add type="boolean">true</is_show_pre_add>
+				<is_show_pre_add type="boolean">false</is_show_pre_add>
 				<is_show_post_add type="boolean">true</is_show_post_add>
 			</ads>
 			

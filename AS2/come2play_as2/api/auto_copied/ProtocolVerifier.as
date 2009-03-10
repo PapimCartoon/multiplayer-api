@@ -48,7 +48,7 @@ import come2play_as2.api.auto_copied.*;
         public function getFinishedPlayerIds():Array/*int*/ {
         	if(allPlayerIds == null) return new Array();
         	var finishedPlayerids:Array = allPlayerIds.concat();
-        	for (var i54:Number=0; i54<currentPlayerIds.length; i54++) { var playerId:Number = currentPlayerIds[i54]; 
+        	var p54:Number=0; for (var i54:String in currentPlayerIds) { var playerId:Number = currentPlayerIds[currentPlayerIds.length==null ? i54 : p54]; p54++;
         		var spliceIndex:Number = AS3_vs_AS2.IndexOf(finishedPlayerids,playerId);
         		finishedPlayerids.splice(spliceIndex,1);
         	}	
@@ -59,7 +59,7 @@ import come2play_as2.api.auto_copied.*;
         }
         public function isAllInPlayers(playerIds:Array/*int*/):Boolean {
         	check(playerIds.length>=1, ["isAllInPlayers was called with an empty playerIds array"]);
-        	for (var i65:Number=0; i65<playerIds.length; i65++) { var playerId:Number = playerIds[i65]; 
+        	var p65:Number=0; for (var i65:String in playerIds) { var playerId:Number = playerIds[playerIds.length==null ? i65 : p65]; p65++;
         		if (!isInPlayers(playerId)) return false;
         	}
         	return true;        	
@@ -69,7 +69,7 @@ import come2play_as2.api.auto_copied.*;
 			StaticFunctions.assert(false, ["ProtocolVerifier found an error: ", arr]);
 		}
 		private function checkServerEntries(serverEntries:Array/*ServerEntry*/):Void {
-			for (var i75:Number=0; i75<serverEntries.length; i75++) { var entry:ServerEntry = serverEntries[i75]; 
+			var p75:Number=0; for (var i75:String in serverEntries) { var entry:ServerEntry = serverEntries[serverEntries.length==null ? i75 : p75]; p75++;
 				check(entry.key!=null, ["Found a null key in serverEntry=",entry]);
 			}
 		}
@@ -101,7 +101,7 @@ import come2play_as2.api.auto_copied.*;
     			// isPause is called when the game is in progress,
     			// and other info is passed before the game starts.
     			var customInfo:API_GotCustomInfo = API_GotCustomInfo(gotMsg);
-    			for (var i107:Number=0; i107<customInfo.infoEntries.length; i107++) { var infoEntry:InfoEntry = customInfo.infoEntries[i107]; 
+    			var p107:Number=0; for (var i107:String in customInfo.infoEntries) { var infoEntry:InfoEntry = customInfo.infoEntries[customInfo.infoEntries.length==null ? i107 : p107]; p107++;
     				if (infoEntry.key==API_Message.CUSTOM_INFO_KEY_myUserId)
     					myUserId = AS3_vs_AS2.as_int(infoEntry.value);
     			}
@@ -158,7 +158,7 @@ import come2play_as2.api.auto_copied.*;
 				
 				var wasStoreStateCalculation:Boolean = false;
 				var isRequestStateCalculation:Boolean = currentCallback instanceof API_GotRequestStateCalculation;
-				for (var i164:Number=0; i164<transaction.messages.length; i164++) { var doAllMsg:API_Message = transaction.messages[i164]; 
+				var p164:Number=0; for (var i164:String in transaction.messages) { var doAllMsg:API_Message = transaction.messages[transaction.messages.length==null ? i164 : p164]; p164++;
 					checkDoAll(doAllMsg);
 					if (isRequestStateCalculation) {
 						if (doAllMsg instanceof API_DoAllStoreStateCalculation)	
@@ -185,7 +185,7 @@ import come2play_as2.api.auto_copied.*;
 		}
 		private function isDeleteLegal(userEntries:Array/*UserEntry*/):Void
 		{
-			for (var i191:Number=0; i191<userEntries.length; i191++) { var userEntry:UserEntry = userEntries[i191]; 
+			var p191:Number=0; for (var i191:String in userEntries) { var userEntry:UserEntry = userEntries[userEntries.length==null ? i191 : p191]; p191++;
 				if (userEntry.value == null)
 					check(!userEntry.isSecret,["key deletion must be public! userEntry=",userEntry]);
 			}
@@ -252,21 +252,21 @@ import come2play_as2.api.auto_copied.*;
         private function isNullKeyExistUserEntry(userEntries:Array/*UserEntry*/):Void
         {
         	check(userEntries.length!=0, ["userEntries must have at least one UserEntry!"]);
-        	for (var i258:Number=0; i258<userEntries.length; i258++) { var userEntry:UserEntry = userEntries[i258]; 
+        	var p258:Number=0; for (var i258:String in userEntries) { var userEntry:UserEntry = userEntries[userEntries.length==null ? i258 : p258]; p258++;
         		check(userEntry.key != null,["UserEntry.key cannot be null ! userEntry=",userEntry]);
         	}
         }
         private function isNullKeyExistRevealEntry(revealEntries:Array/*RevealEntry*/):Void
         {
         	//check(revealEntries.length>=1, ["revealEntries must have at least one RevealEntry!"]);
-        	for (var i265:Number=0; i265<revealEntries.length; i265++) { var revealEntry:RevealEntry = revealEntries[i265]; 
+        	var p265:Number=0; for (var i265:String in revealEntries) { var revealEntry:RevealEntry = revealEntries[revealEntries.length==null ? i265 : p265]; p265++;
         		check(revealEntry != null && revealEntry.key != null && (revealEntry.userIds==null || isAllInPlayers(revealEntry.userIds)), ["RevealEntry.key cannot be null, userIds must either be null or contain only players. revealEntry=",revealEntry]); 
         	}
         }
         private function isNullKeyExist(keys:Array/*Object*/):Void
         {
         	check(keys.length!=0,["keys must have at leasy one key!"]);        		
-        	for (var i272:Number=0; i272<keys.length; i272++) { var key:String = keys[i272]; 
+        	var p272:Number=0; for (var i272:String in keys) { var key:String = keys[keys.length==null ? i272 : p272]; p272++;
         		check(key != null,["key cannot be null ! keys=",keys]);
         	}
         }

@@ -2,22 +2,25 @@ import come2play_as2.api.auto_copied.*;
 class come2play_as2.api.auto_copied.ErrorHandler
 {
 	public function toString():String { // we put in the traces new ErrorHandler()
+		return getOngoingTimers();
+	}
+	public static function getOngoingTimers():String {
 		var res:Array = [];
 		res.push("My stack traces:");	
 		res.push( my_stack_trace.join(",\n") );
 		res.push("\n");
 					
 		res.push("My ongoingIntervals:");
-		for (var i10:Number=0; i10<ongoingIntervals.length; i10++) { var arr1:Array = ongoingIntervals[i10]; 
+		var p13:Number=0; for (var i13:String in ongoingIntervals) { var arr1:Array = ongoingIntervals[ongoingIntervals.length==null ? i13 : p13]; p13++;
 			res.push( "\t"+JSON.stringify(arr1) );
 		}
 		res.push("\n");
 		res.push("My ongoingTimeouts:\n");
-		for (var i15:Number=0; i15<ongoingTimeouts.length; i15++) { var arr2:Array = ongoingTimeouts[i15]; 
+		var p18:Number=0; for (var i18:String in ongoingTimeouts) { var arr2:Array = ongoingTimeouts[ongoingTimeouts.length==null ? i18 : p18]; p18++;
 			res.push( "\t"+JSON.stringify(arr2) );
 		}
 		res.push("\n");		
-		return res.join("\n");		
+		return res.join("\n");
 	}
 	
 	

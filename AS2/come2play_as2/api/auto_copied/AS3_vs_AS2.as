@@ -315,6 +315,13 @@ class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 	 */	
 	// we use CLASS_NAME_FIELD (because when we add CLASS_NAME_FIELD to the prototype, it is serialized in LocalConnection, so no point in having two properties with the same content) 
 	public static function getClassName(o:Object):String {
+		var typeOfName:String = typeof(o);
+		if (typeOfName=="string") return "String";
+		if (typeOfName=="movieclip") return "MovieClip";
+		if (typeOfName=="boolean") return "Boolean";
+		if (typeOfName=="number") return "Number";
+		if (typeOfName=="function") return "Function";
+			 
 		//typeof is not good enough! for SerializableClass I want to know the class name
 		// when you create a class, it is stored in _global.PACKAGES...CLASS_NAME
 		// so I traverse _global, and lookup the __proto__, and when I find it, as an optimization I store it as CLASS_NAME_FIELD

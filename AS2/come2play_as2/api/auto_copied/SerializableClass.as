@@ -73,7 +73,7 @@ class come2play_as2.api.auto_copied.SerializableClass /*<InAPI>extends Event</In
 	public function getFieldNames():Array/*String*/ {
 		var res:Array/*String*/ = [];
 		var fieldNames:Array/*String*/ = AS3_vs_AS2.getFieldNames(this);	
-		for (var i76:Number=0; i76<fieldNames.length; i76++) { var key:String = fieldNames[i76]; 
+		var p76:Number=0; for (var i76:String in fieldNames) { var key:String = fieldNames[fieldNames.length==null ? i76 : p76]; p76++;
 			if (StaticFunctions.startsWith(key,"__")) continue;
 			if (EVENT_FIELDS!=null && AS3_vs_AS2.IndexOf(EVENT_FIELDS,key)!=-1) continue;
 			res.push(key);
@@ -84,7 +84,7 @@ class come2play_as2.api.auto_copied.SerializableClass /*<InAPI>extends Event</In
 	public function toObject():Object {
 		var values:Object = {};		
 		values[CLASS_NAME_FIELD] = __CLASS_NAME__;	
-		for (var i87:Number=0; i87<getFieldNames().length; i87++) { var key:String = getFieldNames()[i87]; 
+		var p87:Number=0; for (var i87:String in getFieldNames()) { var key:String = getFieldNames()[getFieldNames().length==null ? i87 : p87]; p87++;
 			values[key] = serializable2Object(this[key]); 
 		}
 		return values;		
@@ -92,7 +92,7 @@ class come2play_as2.api.auto_copied.SerializableClass /*<InAPI>extends Event</In
 	/*<InAPI>public function eventToString():String { return super.toString(); }</InAPI>*/
 	/*<InAPI>override</InAPI>*/ public function toString():String {
 		var values:Object = {}; // shallow object - we do not change the inner serializables to Object		
-		for (var i95:Number=0; i95<getFieldNames().length; i95++) { var key:String = getFieldNames()[i95]; 
+		var p95:Number=0; for (var i95:String in getFieldNames()) { var key:String = getFieldNames()[getFieldNames().length==null ? i95 : p95]; p95++;
 			values[key] = this[key]; 
 		}	
 		return JSON.instanceToString(__CLASS_NAME__, values);

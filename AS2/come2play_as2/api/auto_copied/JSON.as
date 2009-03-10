@@ -89,7 +89,7 @@ import come2play_as2.api.auto_copied.*;
 	    	var res:Array = [];
         	// I want deterministic output, so sort the keys
         	var keys:Array = getSortedKeys(arg);
-        	for (var i91:Number=0; i91<keys.length; i91++) { var z:String = keys[i91]; 
+        	var p91:Number=0; for (var i91:String in keys) { var z:String = keys[keys.length==null ? i91 : p91]; p91++;
                 res.push( stringify(z) + ':' + stringify(arg[z]) );
             }
             return res.join(" , ");	    	

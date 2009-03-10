@@ -30,7 +30,7 @@ import come2play_as2.api.*;
 			StaticFunctions.alwaysTrace(this);
 			ErrorHandler.SEND_BUG_REPORT = AS3_vs_AS2.delegate(this, this.sendBugReport);
 			keyboardMessages = [];
-			AS3_vs_AS2.addKeyboardListener(_someMovieClip,keyPressed);
+			AS3_vs_AS2.addKeyboardListener(_someMovieClip, ErrorHandler.wrapWithCatch("keyPressed",AS3_vs_AS2.delegate(this,this.keyPressed)));
 			if (getPrefixFromFlashVars(_someMovieClip)==null) 
 				singlePlayerEmulator = new SinglePlayerEmulator(_someMovieClip); // to prevent garbage collection
 				
@@ -46,7 +46,7 @@ import come2play_as2.api.*;
 				"Server State(client side) : \n\n";					
 			var serverEntries:Array/*ServerEntry*/ = new Array();
 			if(serverStateMiror!=null){
-				for (var i52:Number=0; i52<serverStateMiror.allValues.length; i52++) { var serverEntry:ServerEntry = serverStateMiror.allValues[i52]; 
+				var p52:Number=0; for (var i52:String in serverStateMiror.allValues) { var serverEntry:ServerEntry = serverStateMiror.allValues[serverStateMiror.allValues.length==null ? i52 : p52]; p52++;
 					serverEntries.push(serverEntry);
 					output+= serverEntry.toString() + "\n";
 				}
@@ -207,14 +207,14 @@ import come2play_as2.api.*;
 			if (verifier.isPlayer()) sendDoStoreStateEvents();
         }
         private function sendDoStoreStateEvents():Void{
-        	for (var i213:Number=0; i213<doStoreQueue.length; i213++) { var doStoreMsg:API_DoStoreState = doStoreQueue[i213]; 
+        	var p213:Number=0; for (var i213:String in doStoreQueue) { var doStoreMsg:API_DoStoreState = doStoreQueue[doStoreQueue.length==null ? i213 : p213]; p213++;
         		super.sendMessage(doStoreMsg);
         	}
         	doStoreQueue = [];
         }
         private function updateMirorServerState(serverEntries:Array/*ServerEntry*/):Void
         {
-        	for (var i220:Number=0; i220<serverEntries.length; i220++) { var serverEntry:ServerEntry = serverEntries[i220]; 
+        	var p220:Number=0; for (var i220:String in serverEntries) { var serverEntry:ServerEntry = serverEntries[serverEntries.length==null ? i220 : p220]; p220++;
         	    serverStateMiror.addEntry(serverEntry);	
         	}     	
         }
@@ -253,7 +253,7 @@ import come2play_as2.api.*;
 					var customInfo:API_GotCustomInfo = API_GotCustomInfo(msg);
 					var i18nObj:Object = {};
 					var customObj:Object = {};
-					for (var i259:Number=0; i259<customInfo.infoEntries.length; i259++) { var entry:InfoEntry = customInfo.infoEntries[i259]; 
+					var p259:Number=0; for (var i259:String in customInfo.infoEntries) { var entry:InfoEntry = customInfo.infoEntries[customInfo.infoEntries.length==null ? i259 : p259]; p259++;
 						var key:String = entry.key;
 						var value:Object = entry.value;
 						if (key==API_Message.CUSTOM_INFO_KEY_i18n) {
@@ -274,7 +274,7 @@ import come2play_as2.api.*;
 				}else if(msg instanceof API_GotUserInfo){
 					var infoMessage:API_GotUserInfo =API_GotUserInfo( msg);
 					var userObject:Object = {};
-					for (var i280:Number=0; i280<infoMessage.infoEntries.length; i280++) { var infoEntry:InfoEntry = infoMessage.infoEntries[i280]; 
+					var p280:Number=0; for (var i280:String in infoMessage.infoEntries) { var infoEntry:InfoEntry = infoMessage.infoEntries[infoMessage.infoEntries.length==null ? i280 : p280]; p280++;
 						trace(infoEntry.key+ "="+ infoEntry.value)
 						userObject[infoEntry.key] = infoEntry.value;
 					}

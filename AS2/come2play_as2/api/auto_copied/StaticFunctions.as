@@ -153,7 +153,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 				// for static properties we use describeType
 				// because o1 and o2 have the same type, it is enough to use the fields of o1.
 				var fieldsArr:Array = AS3_vs_AS2.getFieldNames(o1);
-				for (var i158:Number=0; i158<fieldsArr.length; i158++) { var field:String = fieldsArr[i158]; 
+				var p158:Number=0; for (var i158:String in fieldsArr) { var field:String = fieldsArr[fieldsArr.length==null ? i158 : p158]; p158++;
 					allFields[field] = true;
 				}
 			}
@@ -169,7 +169,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	
 	public static function subtractArray(arr:Array, minus:Array):Array {
 		var res:Array = arr.concat();
-		for (var i174:Number=0; i174<minus.length; i174++) { var o:Object = minus[i174]; 
+		var p174:Number=0; for (var i174:String in minus) { var o:Object = minus[minus.length==null ? i174 : p174]; p174++;
 			var indexOf:Number = AS3_vs_AS2.IndexOf(res, o);
 			StaticFunctions.assert(indexOf!=-1, ["When subtracting minus=",minus," from array=", arr, " we did not find element ",o]);				
 			res.splice(indexOf, 1);
@@ -272,7 +272,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	}
 	public static function instance2Object(instance:Object, fields:Array/*String*/):Object {
 		var res:Object = {};
-		for (var i277:Number=0; i277<fields.length; i277++) { var field:String = fields[i277]; 
+		var p277:Number=0; for (var i277:String in fields) { var field:String = fields[fields.length==null ? i277 : p277]; p277++;
 			res[field] = instance[field];
 		}
 		return res;

@@ -24,7 +24,7 @@ class come2play_as2.api.auto_copied.XMLSerializer
 		var children:Array/*XML*/ = AS3_vs_AS2.xml_getChildren(xml);
 		if (name==RESERVED_NAMES.arr) {
 			var arr:Array = [];
-			for (var i26:Number=0; i26<children.length; i26++) { var child2:XMLNode = children[i26]; 
+			var p26:Number=0; for (var i26:String in children) { var child2:XMLNode = children[children.length==null ? i26 : p26]; p26++;
 				arr.push( xml2Object(child2) );
 			}
 			return arr;					
@@ -33,7 +33,7 @@ class come2play_as2.api.auto_copied.XMLSerializer
 			if (name!=RESERVED_NAMES.obj)
 				obj[SerializableClass.CLASS_NAME_FIELD] = name;
 				
-			for (var i35:Number=0; i35<children.length; i35++) { var child:XMLNode = children[i35]; 
+			var p35:Number=0; for (var i35:String in children) { var child:XMLNode = children[children.length==null ? i35 : p35]; p35++;
 				var singleGrandChild:Array = 
 					AS3_vs_AS2.xml_getChildren(child);
 				StaticFunctions.assert(singleGrandChild.length==1, ["A field should have a single value! Illegal child=",child]);
@@ -60,7 +60,7 @@ class come2play_as2.api.auto_copied.XMLSerializer
 				 							">","&gt;");					 							
     }
     public static function isReserved(s:String):Boolean {
-    	for (var i62:Number=0; i62<RESERVED_NAMES.length; i62++) { var str:String = RESERVED_NAMES[i62]; 
+    	var p62:Number=0; for (var i62:String in RESERVED_NAMES) { var str:String = RESERVED_NAMES[RESERVED_NAMES.length==null ? i62 : p62]; p62++;
     		if (s==str) return true;	    		
     	}
     	return false;
@@ -110,7 +110,7 @@ class come2play_as2.api.auto_copied.XMLSerializer
     			"\n");
     	} else { 
     		res.push(indentStr+"<"+elementType+">\n");
-    		for (var i112:Number=0; i112<childrenKeys.length; i112++) { var childKey:String = childrenKeys[i112]; 
+    		var p112:Number=0; for (var i112:String in childrenKeys) { var childKey:String = childrenKeys[childrenKeys.length==null ? i112 : p112]; p112++;
 	    		var esc:String;
 	    		if (!isArr) {
 		    		esc = escapeXML(childKey);

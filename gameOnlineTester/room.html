@@ -195,6 +195,8 @@
 				params["override_config.game_parameters.start_scenario"] = "SentInvitation";
 				params["override_config.game_parameters.SentInvitation.player_ids"] = windowParams["player_ids"];
 			}else if(windowParams["type"] == "AutoMatch"){
+				params["intro_screen_url"] = "graphics/IntroScreenSkin.swf"
+				params["intro_config_url"] = "XML/introConfig.XML"	
 				params["override_config.game_parameters.start_scenario"] = "AutoMatch";
 				params["override_config.game_parameters.AutoMatch.match_string"] = windowParams["match_string"];
 			}

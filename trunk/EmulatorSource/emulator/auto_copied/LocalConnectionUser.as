@@ -15,15 +15,14 @@ package emulator.auto_copied
 	import flash.display.*;
 	import flash.external.*;
 	import flash.net.*;
-	import flash.utils.clearInterval;
 	 
 	public class LocalConnectionUser
 	{
 		public static var REVIEW_USER_ID:int = -1; // special userId that is used for reviewing games
+		public static var IS_LOCAL_CONNECTION_UDERSCORE:Boolean = false;		
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		public static var IS_LOCAL_CONNECTION_UDERSCORE:Boolean = false;		
 		public static var DEFAULT_LOCALCONNECTION_PREFIX:String = ""+StaticFunctions.random(1,10000);
 		public static var MILL_WAIT_BEFORE_DO_REGISTER:int = 500;
 		public static var MILL_AFTER_ALLOW_DOMAINS:int = 500;
@@ -33,10 +32,10 @@ package emulator.auto_copied
 		public static function showError(msg:String):void {
 			StaticFunctions.showError(msg);
 		}
+		public static function throwError(msg:String):void {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		public static function throwError(msg:String):void {
 			StaticFunctions.throwError(msg);
 		}		
 		public static function assert(val:Boolean, args:Array):void {
@@ -46,10 +45,10 @@ package emulator.auto_copied
 		// I added the "_" on purpose because of different domains issues, see: http://livedocs.adobe.com/flex/gumbo/langref/flash/net/LocalConnection.html
 		public static function getDoChanelString(sRandomPrefix:String):String {
 			if(IS_LOCAL_CONNECTION_UDERSCORE)
+				return "_DO_CHANEL_"+sRandomPrefix;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-				return "_DO_CHANEL_"+sRandomPrefix;
 			return "DO_CHANEL_"+sRandomPrefix;
 		}
 		public static function getGotChanelString(sRandomPrefix:String):String {
@@ -59,10 +58,10 @@ package emulator.auto_copied
 		}
 		public static function getInitChanelString(sPrefix:String):String {
 			if(IS_LOCAL_CONNECTION_UDERSCORE)
+				return "_INIT_CHANEL_"+sPrefix;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-				return "_INIT_CHANEL_"+sPrefix;
 			return "INIT_CHANEL_"+sPrefix;
 		}
 		public static function getPrefixFromFlashVars(_someMovieClip:DisplayObjectContainer):String {
@@ -72,10 +71,10 @@ package emulator.auto_copied
 			return getPrefixFromString(sPrefix);
 		}		
 		public static function getPrefixFromString(sPrefix:String):String {			
+			return sPrefix;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			return sPrefix;
 		}
 				
 		
@@ -85,11 +84,11 @@ package emulator.auto_copied
 		private var sSendChanel:String;
 		private var sInitChanel:String;
 		private var isContainer:Boolean;
+		private var randomPrefix:String;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		private var randomPrefix:String;
-		private var sendPrefixIntervalId:uint;
+		private var sendPrefixInterval:MyInterval;
 		private var handShakeMade:Boolean = false;
 		public var verifier:ProtocolVerifier;
 		public var _shouldVerify:Boolean;
@@ -98,10 +97,10 @@ package emulator.auto_copied
 			
 				if (!isContainer) // in the container we apply the reflection in RoomLogic (e.g., for a room we do not have a localconnection) 
 					StaticFunctions.performReflectionFromFlashVars(_someMovieClip);
+				StaticFunctions.allowDomains();	
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-				StaticFunctions.allowDomains();	
 				_shouldVerify=shouldVerify;
 				AS3_vs_AS2.registerNativeSerializers();
 				API_LoadMessages.useAll();	
@@ -111,23 +110,23 @@ package emulator.auto_copied
 				StaticFunctions.someMovieClip = _someMovieClip;
 				if (sPrefix==null) {
 					myTrace(["WARNING: didn't find 'prefix' in the loader info parameters. Probably because you are doing testing locally."]);
+					sPrefix = DEFAULT_LOCALCONNECTION_PREFIX;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-					sPrefix = DEFAULT_LOCALCONNECTION_PREFIX;
 				}
 				sInitChanel = getInitChanelString(sPrefix);		
-				if(MILL_AFTER_ALLOW_DOMAINS == 0){
+				if (MILL_AFTER_ALLOW_DOMAINS == 0){
 					buildConnection();
 				}else{
-					AS3_vs_AS2.myTimeout(AS3_vs_AS2.delegate(this,this.buildConnection),MILL_AFTER_ALLOW_DOMAINS);	
+					ErrorHandler.myTimeout("buildConnection",AS3_vs_AS2.delegate(this,this.buildConnection),MILL_AFTER_ALLOW_DOMAINS);	
 				}			
 		}
 		
+		private function buildConnection():void{
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		private function buildConnection():void{
 			var failedConnect:Boolean = false;
 			try{
 				if(AGREE_ON_PREFIX){
@@ -137,12 +136,13 @@ package emulator.auto_copied
 					}
 					if(!isContainer){
 						randomPrefix = String(StaticFunctions.random(1,1000000));
+						myTrace(["Game Attempting to send the randomPrefix with which LocalConnections will communicate. . . randomPrefix=",randomPrefix])
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-						myTrace(["Game Attempting to send the randomPrefix with which LocalConnections will communicate... randomPrefix=",randomPrefix])
 						localconnection_init(randomPrefix);
-						sendPrefixIntervalId = AS3_vs_AS2.myInterval(AS3_vs_AS2.delegate(this, this.sendPrefix),MILL_WAIT_BEFORE_DO_REGISTER);
+						sendPrefixInterval = new MyInterval( "sendLocalConnectionPrefix" );
+						sendPrefixInterval.start( AS3_vs_AS2.delegate(this, this.sendPrefix),MILL_WAIT_BEFORE_DO_REGISTER);
 					}else{
 						myTrace(["Container started listening to stuff on ",sInitChanel])
 						lcInit.connect(sInitChanel);	
@@ -156,7 +156,7 @@ package emulator.auto_copied
 
 			}catch (err:Error) { 
 				failedConnect = true;
-				AS3_vs_AS2.myTimeout( AS3_vs_AS2.delegate(this,this.buildConnection),1000);
+				ErrorHandler.myTimeout("buildLocalConnection", AS3_vs_AS2.delegate(this,this.buildConnection),1000);
 				//passError("Constructor",err);
 			}
 			if(!failedConnect) madeConnection();
@@ -197,7 +197,7 @@ package emulator.auto_copied
         		if ((handShakeMade) && (lcUser != null))
         			reallySendMessage(msg);
         		else
-        			AS3_vs_AS2.myTimeout(AS3_vs_AS2.delegate(this, this.sendMessage,msg),MILL_WAIT_BEFORE_DO_REGISTER);	
+        			ErrorHandler.myTimeout("SendDoRegisterOnServer",AS3_vs_AS2.delegate(this, this.sendMessage,msg),MILL_WAIT_BEFORE_DO_REGISTER);	
         	} else {
         		reallySendMessage(msg);
         	}
@@ -233,7 +233,7 @@ package emulator.auto_copied
 
         		lcUser.send(sSendChanel, "localconnection_callback",API_DoRegisterOnServer.create());  
         	}catch(err:Error){
-        		AS3_vs_AS2.myTimeout( AS3_vs_AS2.delegate(this,this.sendHandShakeDoRegister),1000);
+        		ErrorHandler.myTimeout("sendHandShakeDoRegister", AS3_vs_AS2.delegate(this,this.sendHandShakeDoRegister),1000);
         	}
         }
         private function verify(msg:API_Message, isSend:Boolean):void {
@@ -257,8 +257,8 @@ package emulator.auto_copied
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-        	if (StaticFunctions.DID_SHOW_ERROR) return;
-        	if(lcUser != null) return;
+        	if (ErrorHandler.didReportError) return;
+        	if (lcUser != null) return;
         	try{
         		myTrace(["Container? :",isContainer,"got sRandomPrefix=",sRandomPrefix," on sInitChanel=",sInitChanel]);
         		lcUser = createLocalConnection()
@@ -285,7 +285,7 @@ package emulator.auto_copied
 
                    
         public function localconnection_callback(msgObj:Object):void {
-        	if (StaticFunctions.DID_SHOW_ERROR) return;
+        	if (ErrorHandler.didReportError) return;
         	var msg:API_Message = null;
         	try{
         		var deserializedMsg:Object = SerializableClass.deserialize(msgObj);
@@ -301,7 +301,7 @@ package emulator.auto_copied
 	        		if(isContainer){	
 	        			lcInit.close();	
 	        		}else{
-	        			clearInterval(sendPrefixIntervalId);
+	        			sendPrefixInterval.clear();
 	        			return;
 	        		}
         		}
@@ -313,6 +313,17 @@ package emulator.auto_copied
 			} catch(err:Error) { 
 				passError(msg==null ? msgObj : msg, err);
 			} 
-        }
+        }        
+	
+		public static function getMsgNum(currentCallback:API_Message):int {
+			var msgNum:int = -666;
+	    	if (currentCallback is API_GotMatchStarted) msgNum = (/*as*/currentCallback as API_GotMatchStarted).msgNum;
+	    	if (currentCallback is API_GotMatchEnded) msgNum = (/*as*/currentCallback as API_GotMatchEnded).msgNum;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+	    	if (currentCallback is API_GotStateChanged) msgNum = (/*as*/currentCallback as API_GotStateChanged).msgNum;
+	    	return msgNum;
+	 	}			
 	}
 }

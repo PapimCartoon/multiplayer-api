@@ -416,8 +416,7 @@ public final class TictactoeMain extends ClientGameAPI {
 		}					
 		
 		if (!isSavedGame) {
-			startMove(true);
-			animationEnded(); // must be after we call all the doAll functions (and in startMove we have doAllSetTurn) 
+			startMove(true);  
 		}
 	}
 	private function getEntryKey():int {

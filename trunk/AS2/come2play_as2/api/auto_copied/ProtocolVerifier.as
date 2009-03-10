@@ -5,7 +5,7 @@
 import come2play_as2.api.auto_copied.*;
 	class come2play_as2.api.auto_copied.ProtocolVerifier
 	{
-		public static var MAX_ANIMATION_MILLISECONDS:Number = 10*1000; // max 10 seconds for animations
+		public static var MAX_ANIMATION_MILLISECONDS:Number = 30*1000; // max 30 seconds for animations
 
 		private var transactionStartedOn:Number = -1; 
 		private var currentCallback:API_Message = null;
@@ -19,7 +19,7 @@ import come2play_as2.api.auto_copied.*;
 		private var myUserId:Number = -1;
 		
 		public function ProtocolVerifier() {
-			setInterval(AS3_vs_AS2.delegate(this, this.checkAnimationInterval), MAX_ANIMATION_MILLISECONDS);
+			ErrorHandler.myInterval("ProtocolVerifier.checkAnimationInterval",AS3_vs_AS2.delegate(this, this.checkAnimationInterval), MAX_ANIMATION_MILLISECONDS);
 			currentPlayerIds = [];
 			nextPlayerIds = [];
 		}
@@ -29,7 +29,6 @@ import come2play_as2.api.auto_copied.*;
 				" currentCallback="+currentCallback+ 
 				" didRegisterOnServer="+didRegisterOnServer+ 
 				" currentPlayerIds="+currentPlayerIds+ 
-				" currentCallback="+currentCallback+ 
 				"";
 		}
         private function checkAnimationInterval():Void {
@@ -49,7 +48,7 @@ import come2play_as2.api.auto_copied.*;
         public function getFinishedPlayerIds():Array/*int*/ {
         	if(allPlayerIds == null) return new Array();
         	var finishedPlayerids:Array = allPlayerIds.concat();
-        	for (var i55:Number=0; i55<currentPlayerIds.length; i55++) { var playerId:Number = currentPlayerIds[i55]; 
+        	for (var i54:Number=0; i54<currentPlayerIds.length; i54++) { var playerId:Number = currentPlayerIds[i54]; 
         		var spliceIndex:Number = AS3_vs_AS2.IndexOf(finishedPlayerids,playerId);
         		finishedPlayerids.splice(spliceIndex,1);
         	}	
@@ -60,7 +59,7 @@ import come2play_as2.api.auto_copied.*;
         }
         public function isAllInPlayers(playerIds:Array/*int*/):Boolean {
         	check(playerIds.length>=1, ["isAllInPlayers was called with an empty playerIds array"]);
-        	for (var i66:Number=0; i66<playerIds.length; i66++) { var playerId:Number = playerIds[i66]; 
+        	for (var i65:Number=0; i65<playerIds.length; i65++) { var playerId:Number = playerIds[i65]; 
         		if (!isInPlayers(playerId)) return false;
         	}
         	return true;        	
@@ -70,7 +69,7 @@ import come2play_as2.api.auto_copied.*;
 			StaticFunctions.assert(false, ["ProtocolVerifier found an error: ", arr]);
 		}
 		private function checkServerEntries(serverEntries:Array/*ServerEntry*/):Void {
-			for (var i76:Number=0; i76<serverEntries.length; i76++) { var entry:ServerEntry = serverEntries[i76]; 
+			for (var i75:Number=0; i75<serverEntries.length; i75++) { var entry:ServerEntry = serverEntries[i75]; 
 				check(entry.key!=null, ["Found a null key in serverEntry=",entry]);
 			}
 		}
@@ -102,7 +101,7 @@ import come2play_as2.api.auto_copied.*;
     			// isPause is called when the game is in progress,
     			// and other info is passed before the game starts.
     			var customInfo:API_GotCustomInfo = API_GotCustomInfo(gotMsg);
-    			for (var i108:Number=0; i108<customInfo.infoEntries.length; i108++) { var infoEntry:InfoEntry = customInfo.infoEntries[i108]; 
+    			for (var i107:Number=0; i107<customInfo.infoEntries.length; i107++) { var infoEntry:InfoEntry = customInfo.infoEntries[i107]; 
     				if (infoEntry.key==API_Message.CUSTOM_INFO_KEY_myUserId)
     					myUserId = AS3_vs_AS2.as_int(infoEntry.value);
     			}
@@ -159,7 +158,7 @@ import come2play_as2.api.auto_copied.*;
 				
 				var wasStoreStateCalculation:Boolean = false;
 				var isRequestStateCalculation:Boolean = currentCallback instanceof API_GotRequestStateCalculation;
-				for (var i165:Number=0; i165<transaction.messages.length; i165++) { var doAllMsg:API_Message = transaction.messages[i165]; 
+				for (var i164:Number=0; i164<transaction.messages.length; i164++) { var doAllMsg:API_Message = transaction.messages[i164]; 
 					checkDoAll(doAllMsg);
 					if (isRequestStateCalculation) {
 						if (doAllMsg instanceof API_DoAllStoreStateCalculation)	
@@ -186,7 +185,7 @@ import come2play_as2.api.auto_copied.*;
 		}
 		private function isDeleteLegal(userEntries:Array/*UserEntry*/):Void
 		{
-			for (var i192:Number=0; i192<userEntries.length; i192++) { var userEntry:UserEntry = userEntries[i192]; 
+			for (var i191:Number=0; i191<userEntries.length; i191++) { var userEntry:UserEntry = userEntries[i191]; 
 				if (userEntry.value == null)
 					check(!userEntry.isSecret,["key deletion must be public! userEntry=",userEntry]);
 			}
@@ -253,21 +252,21 @@ import come2play_as2.api.auto_copied.*;
         private function isNullKeyExistUserEntry(userEntries:Array/*UserEntry*/):Void
         {
         	check(userEntries.length!=0, ["userEntries must have at least one UserEntry!"]);
-        	for (var i259:Number=0; i259<userEntries.length; i259++) { var userEntry:UserEntry = userEntries[i259]; 
+        	for (var i258:Number=0; i258<userEntries.length; i258++) { var userEntry:UserEntry = userEntries[i258]; 
         		check(userEntry.key != null,["UserEntry.key cannot be null ! userEntry=",userEntry]);
         	}
         }
         private function isNullKeyExistRevealEntry(revealEntries:Array/*RevealEntry*/):Void
         {
         	//check(revealEntries.length>=1, ["revealEntries must have at least one RevealEntry!"]);
-        	for (var i266:Number=0; i266<revealEntries.length; i266++) { var revealEntry:RevealEntry = revealEntries[i266]; 
+        	for (var i265:Number=0; i265<revealEntries.length; i265++) { var revealEntry:RevealEntry = revealEntries[i265]; 
         		check(revealEntry != null && revealEntry.key != null && (revealEntry.userIds==null || isAllInPlayers(revealEntry.userIds)), ["RevealEntry.key cannot be null, userIds must either be null or contain only players. revealEntry=",revealEntry]); 
         	}
         }
         private function isNullKeyExist(keys:Array/*Object*/):Void
         {
         	check(keys.length!=0,["keys must have at leasy one key!"]);        		
-        	for (var i273:Number=0; i273<keys.length; i273++) { var key:String = keys[i273]; 
+        	for (var i272:Number=0; i272<keys.length; i272++) { var key:String = keys[i272]; 
         		check(key != null,["key cannot be null ! keys=",keys]);
         	}
         }

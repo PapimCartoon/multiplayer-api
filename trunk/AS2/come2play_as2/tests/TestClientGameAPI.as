@@ -453,10 +453,6 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 		StaticFunctions.storeTrace(["storeTrace: msg=",msg]);
 		outTracesText.text +=
 			AS3_vs_AS2.getTimeString() + " " + msg + "\n";
-		//dp.addItem({Time:(new Date().toLocaleTimeString()), Dir: is_to_container ? "->" : "<-", Function:func, Arguments:args});
-	}
-	private function handleError(err:Error):Void { 
-		StaticFunctions.showError( AS3_vs_AS2.error2String(err) );
 	}
 	private function dispatchOperation(/*event:MouseEvent*/):Void {
 		try {
@@ -466,7 +462,7 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 			var instance:API_Message = API_Message(instanceMsg);
 			sendMessage(instance);
 		} catch (err:Error) { 
-			handleError(err);			
+			ErrorHandler.handleError(err,[event]);			
 		}
 	}
     /*override*/ public function sendMessage(msg:API_Message):Void {

@@ -62,7 +62,7 @@ import flash.utils.*;
 			if(loadServerEntries != null)
 				mineSweeperLogic.loadBoard(loadServerEntries);
 			if(! (T.custom(API_Message.CUSTOM_INFO_KEY_isBack,false) as Boolean) )
-				animationEnded();
+				animationEnded("gotMatchStarted");
 			if(allPlayerIds.indexOf(-1) != -1) computerMoveTimer.start();
 			allowMoves = true;
 		}
@@ -157,7 +157,7 @@ import flash.utils.*;
 				else
 				{
 					mineSweeperLogic.makeBoard(boardWidth,stageX,stageY,this.allPlayerIds,myUserId);
-					animationStarted();
+					animationStarted("gotMatchStarted");
 					startGraphic.play();
 				}
 				

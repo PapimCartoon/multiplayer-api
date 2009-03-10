@@ -57,7 +57,7 @@ import come2play_as2.api.auto_copied.*;
 		private var sInitChanel:String;
 		private var isContainer:Boolean;
 		private var randomPrefix:String;
-		private var sendPrefixIntervalId:Number;
+		private var sendPrefixInterval:MyInterval;
 		private var handShakeMade:Boolean = false;
 		public var verifier:ProtocolVerifier;
 		public var _shouldVerify:Boolean;
@@ -79,10 +79,10 @@ import come2play_as2.api.auto_copied.*;
 					sPrefix = DEFAULT_LOCALCONNECTION_PREFIX;
 				}
 				sInitChanel = getInitChanelString(sPrefix);		
-				if(MILL_AFTER_ALLOW_DOMAINS == 0){
+				if (MILL_AFTER_ALLOW_DOMAINS == 0){
 					buildConnection();
 				}else{
-					AS3_vs_AS2.myTimeout(AS3_vs_AS2.delegate(this,this.buildConnection),MILL_AFTER_ALLOW_DOMAINS);	
+					ErrorHandler.myTimeout("buildConnection",AS3_vs_AS2.delegate(this,this.buildConnection),MILL_AFTER_ALLOW_DOMAINS);	
 				}			
 		}
 		
@@ -96,9 +96,10 @@ import come2play_as2.api.auto_copied.*;
 					}
 					if(!isContainer){
 						randomPrefix = String(StaticFunctions.random(1,1000000));
-						myTrace(["Game Attempting to send the randomPrefix with which LocalConnections will communicate... randomPrefix=",randomPrefix])
+						myTrace(["Game Attempting to send the randomPrefix with which LocalConnections will communicate. . . randomPrefix=",randomPrefix])
 						localconnection_init(randomPrefix);
-						sendPrefixIntervalId = AS3_vs_AS2.myInterval(AS3_vs_AS2.delegate(this, this.sendPrefix),MILL_WAIT_BEFORE_DO_REGISTER);
+						sendPrefixInterval = new MyInterval( "sendLocalConnectionPrefix" );
+						sendPrefixInterval.start( AS3_vs_AS2.delegate(this, this.sendPrefix),MILL_WAIT_BEFORE_DO_REGISTER);
 					}else{
 						myTrace(["Container started listening to stuff on ",sInitChanel])
 						lcInit.connect(sInitChanel);	
@@ -109,7 +110,7 @@ import come2play_as2.api.auto_copied.*;
 
 			}catch (err:Error) { 
 				failedConnect = true;
-				AS3_vs_AS2.myTimeout( AS3_vs_AS2.delegate(this,this.buildConnection),1000);
+				ErrorHandler.myTimeout("buildLocalConnection", AS3_vs_AS2.delegate(this,this.buildConnection),1000);
 				//passError("Constructor",err);
 			}
 			if(!failedConnect) madeConnection();
@@ -141,7 +142,7 @@ import come2play_as2.api.auto_copied.*;
         		if ((handShakeMade) && (lcUser != null))
         			reallySendMessage(msg);
         		else
-        			AS3_vs_AS2.myTimeout(AS3_vs_AS2.delegate(this, this.sendMessage,msg),MILL_WAIT_BEFORE_DO_REGISTER);	
+        			ErrorHandler.myTimeout("SendDoRegisterOnServer",AS3_vs_AS2.delegate(this, this.sendMessage,msg),MILL_WAIT_BEFORE_DO_REGISTER);	
         	} else {
         		reallySendMessage(msg);
         	}
@@ -168,7 +169,7 @@ import come2play_as2.api.auto_copied.*;
         	try{
         		lcUser.send(sSendChanel, "localconnection_callback",API_DoRegisterOnServer.create());  
         	}catch(err:Error){
-        		AS3_vs_AS2.myTimeout( AS3_vs_AS2.delegate(this,this.sendHandShakeDoRegister),1000);
+        		ErrorHandler.myTimeout("sendHandShakeDoRegister", AS3_vs_AS2.delegate(this,this.sendHandShakeDoRegister),1000);
         	}
         }
         private function verify(msg:API_Message, isSend:Boolean):Void {
@@ -186,8 +187,8 @@ import come2play_as2.api.auto_copied.*;
 			return lc;
         }
         public function localconnection_init(sRandomPrefix:String):Void {
-        	if (StaticFunctions.DID_SHOW_ERROR) return;
-        	if(lcUser != null) return;
+        	if (ErrorHandler.didReportError) return;
+        	if (lcUser != null) return;
         	try{
         		myTrace(["Container? :",isContainer,"got sRandomPrefix=",sRandomPrefix," on sInitChanel=",sInitChanel]);
         		lcUser = createLocalConnection()
@@ -208,7 +209,7 @@ import come2play_as2.api.auto_copied.*;
         }
                    
         public function localconnection_callback(msgObj:Object):Void {
-        	if (StaticFunctions.DID_SHOW_ERROR) return;
+        	if (ErrorHandler.didReportError) return;
         	var msg:API_Message = null;
         	try{
         		var deserializedMsg:Object = SerializableClass.deserialize(msgObj);
@@ -221,7 +222,7 @@ import come2play_as2.api.auto_copied.*;
 	        		if(isContainer){	
 	        			lcInit.close();	
 	        		}else{
-	        			clearInterval(sendPrefixIntervalId);
+	        			sendPrefixInterval.clear();
 	        			return;
 	        		}
         		}
@@ -230,5 +231,13 @@ import come2play_as2.api.auto_copied.*;
 			} catch(err:Error) { 
 				passError(msg==null ? msgObj : msg, err);
 			} 
-        }
+        }        
+	
+		public static function getMsgNum(currentCallback:API_Message):Number {
+			var msgNum:Number = -666;
+	    	if (currentCallback instanceof API_GotMatchStarted) msgNum = (API_GotMatchStarted(currentCallback)).msgNum;
+	    	if (currentCallback instanceof API_GotMatchEnded) msgNum = (API_GotMatchEnded(currentCallback)).msgNum;
+	    	if (currentCallback instanceof API_GotStateChanged) msgNum = (API_GotStateChanged(currentCallback)).msgNum;
+	    	return msgNum;
+	 	}			
 	}

@@ -9,10 +9,10 @@ class come2play_as2.api.CreateGrid
 	 * The movieclips will be called:
 	 * Square_<ROW>_<COL>
 	 * For example,
-	 * Square_0_0 , Square_0_1 , Square_0_2 , ...
-	 * Square_1_0 , Square_1_1 , Square_1_2 , ...
-	 * Square_2_0 , Square_2_1 , Square_2_2 , ...
-	 * ...
+	 * Square_0_0 , Square_0_1 , Square_0_2 , . . .
+	 * Square_1_0 , Square_1_1 , Square_1_2 , . . .
+	 * Square_2_0 , Square_2_1 , Square_2_2 , . . .
+	 * . . .
 	 * 
 	 * The grid parameters are determined by gotCustomInfo via reflection:
 	 * The grid size is ROWS times COLS

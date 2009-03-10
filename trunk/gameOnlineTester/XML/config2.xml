@@ -7,8 +7,9 @@
 	- error_report_url: the url of a page to which the graphics may post errors 
 		(we POST to that page with these parametes - bug_id, errMessage, url, traces)
 		Again, we can't put it in the XML because the XML itself might have problems!
-		Note that we also submit an image of the flash (printscreen) to:
-			come2play_as3.util.SendMultipartImage.asp_page (you can also set JPG_QUALITY)
+		Note that we may also submit an image of the flash (printscreen) to that url.
+		(you can also set JPG_QUALITY of SendMultipartImage)
+
 	- override_*  - to override values in the XML
 	- reflection_*  - to override static vars in the flash (e.g., come2play_as3.util.General.isDoingTrace=true)
 	
@@ -184,11 +185,14 @@ Not used by the graphics yet (but should be displayed):
 		
 		<entry><key>override all_java_ips</key><value>'localhost:2000:socket,localhost:2000:old_xmlsocket,localhost:8083:rtmpt'</value></entry>
 
-
+		
+		
 		<!--
-		<entry><key>ARTIFICIAL_TO_JAVA_DELAY</key><value>'200-800'</value></entry>
-		<entry><key>ARTIFICIAL_FROM_JAVA_DELAY</key><value>'200-800'</value></entry>
-		-->
+		<entry><key>testThrow in timeout</key><value>true</value></entry>
+		
+		<entry><key>ARTIFICIAL_TO_JAVA_DELAY</key><value>'700-800'</value></entry>
+		<entry><key>ARTIFICIAL_FROM_JAVA_DELAY</key><value>'700-800'</value></entry>
+		 -->
 		
 		<!--
 		chatType can be FIXED,DYNAMIC_OPEN,DYNAMIC_CLOSED or NO_CHAT
@@ -247,7 +251,6 @@ Not used by the graphics yet (but should be displayed):
 		-->
 		<entry><key>come2play_as3.util::General.isDoingTrace</key><value>true</value></entry>
 		<entry><key>come2play_as3.network::MySocket.USE_HEX</key><value>false</value></entry>
-		<entry><key>come2play_as3.util::SendMultipartImage.asp_page</key><value>'http://msn.come2play.com/Shared/flex_object/flash_bugs_file_upload.asp'</value></entry>
 	</reflection>
 </customInitInfo>
 <config>
@@ -681,7 +684,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 		If any of these two parameters is less than or **equal** to 0, then you **cannot** reconnect. 
 	     -->
 	  <can_reconnect_after_seconds type="int">1</can_reconnect_after_seconds> 
-	  <wait_before_close_seconds type="int">1</wait_before_close_seconds> 
+	  <wait_before_close_seconds type="int">10</wait_before_close_seconds> 
 	  <!-- md5 is:	  
 		MD5( SECRET + 
 		'x' + config.extra_args.user_id + 

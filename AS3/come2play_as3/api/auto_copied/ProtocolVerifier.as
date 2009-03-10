@@ -10,7 +10,7 @@ package come2play_as3.api.auto_copied
 	
 	public class ProtocolVerifier
 	{
-		public static var MAX_ANIMATION_MILLISECONDS:int = 10*1000; // max 10 seconds for animations
+		public static var MAX_ANIMATION_MILLISECONDS:int = 30*1000; // max 30 seconds for animations
 
 		private var transactionStartedOn:int = -1; 
 		private var currentCallback:API_Message = null;
@@ -24,7 +24,7 @@ package come2play_as3.api.auto_copied
 		private var myUserId:int = -1;
 		
 		public function ProtocolVerifier() {
-			setInterval(AS3_vs_AS2.delegate(this, this.checkAnimationInterval), MAX_ANIMATION_MILLISECONDS);
+			ErrorHandler.myInterval("ProtocolVerifier.checkAnimationInterval",AS3_vs_AS2.delegate(this, this.checkAnimationInterval), MAX_ANIMATION_MILLISECONDS);
 			currentPlayerIds = [];
 			nextPlayerIds = [];
 		}
@@ -34,7 +34,6 @@ package come2play_as3.api.auto_copied
 				" currentCallback="+currentCallback+ 
 				" didRegisterOnServer="+didRegisterOnServer+ 
 				" currentPlayerIds="+currentPlayerIds+ 
-				" currentCallback="+currentCallback+ 
 				"";
 		}
         private function checkAnimationInterval():void {

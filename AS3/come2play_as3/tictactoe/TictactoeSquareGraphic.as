@@ -5,8 +5,6 @@ import come2play_as3.api.auto_copied.*;
 
 import flash.display.*;
 import flash.events.*;
-import flash.utils.clearInterval;
-import flash.utils.setInterval;
 
 public final class TictactoeSquareGraphic
 {
@@ -88,48 +86,52 @@ public final class TictactoeSquareGraphic
 	// when winCounter=0 it disappears, otherwise it appears, and it counts till WIN_ANIMATION_COUNT   
     public static var WIN_ANIMATION_INTERVAL_MILLI:int = 100;
     public static var WIN_ANIMATION_COUNT:int = 10;//you appear 5 times more than disappear
-    private var winAnimationIntervalId:int = -1;
+    private var winAnimationInterval:MyInterval = null;
     private var winCounter:int = 0;
     public function startWinAnimation():void {
     	clearWinAnimation();
     	winCounter = 0;
     	winAnimationStep();
-    	winAnimationIntervalId =
-    		setInterval(AS3_vs_AS2.delegate(this, this.winAnimationStep), WIN_ANIMATION_INTERVAL_MILLI);    	    	
+    	winAnimationInterval = new MyInterval("TictactoeSquareGraphic.winAnimationStep");
+    	winAnimationInterval.start(AS3_vs_AS2.delegate(this, this.winAnimationStep), WIN_ANIMATION_INTERVAL_MILLI);    	    	
     }
     private function winAnimationStep():void {
     	setVisible(winCounter!=0);
     	winCounter = (winCounter+1) % WIN_ANIMATION_COUNT;
     }
     public function clearWinAnimation():void {
-    	if (winAnimationIntervalId==-1) return;
-    	clearInterval(winAnimationIntervalId);
-    	winAnimationIntervalId = -1;
+    	if (winAnimationInterval==null) return;
+    	winAnimationInterval.clear();
+    	winAnimationInterval = null;
 		setVisible(true);    	
     }
         
     // the move animation changes the alpha from 0% to 100%, in steps of MOVE_ANIMATION_ALPHA_DELTA    
     public static var MOVE_ANIMATION_INTERVAL_MILLI:int = 50;
     public static var MOVE_ANIMATION_ALPHA_DELTA:int = 20;
+    public static var TRACE_ANIMATION_STEPS:Boolean = false;
     private var alphaPercentage:int;
-    private var moveAnimationIntervalId:int = -1;
+    private var moveAnimationInterval:MyInterval = null;
     public function startMoveAnimation():void {
-    	StaticFunctions.assert(moveAnimationIntervalId==-1, ["TictactoeSquareGraphic is already in animation mode! sqaure=", move]);
+    	StaticFunctions.assert(moveAnimationInterval==null, ["TictactoeSquareGraphic is already in animation mode! sqaure=", move]);
     	
-		graphic.animationStarted();
+		graphic.animationStarted("startMoveAnimation");
 		soundMovieClip.gotoAndPlay("MakeSound");
 		
 		alphaPercentage = 0;
 		moveAnimationStep();
-    	moveAnimationIntervalId =
-    		setInterval(AS3_vs_AS2.delegate(this, this.moveAnimationStep), MOVE_ANIMATION_INTERVAL_MILLI);		
+    	moveAnimationInterval = new MyInterval("TictactoeSquareGraphic.moveAnimationStep");
+    	moveAnimationInterval.start(AS3_vs_AS2.delegate(this, this.moveAnimationStep), MOVE_ANIMATION_INTERVAL_MILLI);		
     }
     private function moveAnimationStep():void {
+    	if (TRACE_ANIMATION_STEPS) StaticFunctions.storeTrace(["moveAnimationStep: alphaPercentage=",alphaPercentage]);
     	if (alphaPercentage>=100) {
 			alphaPercentage = 100;
-			clearInterval(moveAnimationIntervalId);
-			moveAnimationIntervalId = -1;
-			graphic.moveAnimationEnded(move,false);    				
+    		StaticFunctions.assert(moveAnimationInterval!=null, ["TictactoeSquareGraphic is not in a move animation! sqaure=", move]);
+    		moveAnimationInterval.clear();
+			moveAnimationInterval = null;			
+			graphic.moveAnimationEnded(move,false);    
+			graphic.animationEnded("startMoveAnimation");	// must be after we call all the doAll functions (and in startMove we have doAllSetTurn)			
 		}   		
 		setAlpha(alphaPercentage);
 		alphaPercentage += MOVE_ANIMATION_ALPHA_DELTA;

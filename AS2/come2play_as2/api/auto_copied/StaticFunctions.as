@@ -9,18 +9,16 @@ class come2play_as2.api.auto_copied.StaticFunctions
 		return "g="+GOOGLE_REVISION_NUMBER+",c2p="+COME2PLAY_REVISION_NUMBER;		
 	}
 	
-	public static var SHOULD_SHOW_ERRORS:Boolean = true;
 	public static var SHOULD_CALL_TRACE:Boolean = true; // in the online version we turn it off to save runtime
-	public static var someMovieClip:MovieClip; // so we can display error messages on the stage
-	public static var allTraces:Array = [];
-	public static var MAX_TRACES_NUM:Number = 50;
+	public static var someMovieClip:MovieClip; // so we can display error messages on the stage	
 	public static var ALLOW_DOMAINS:String = "*";//Specifying "*" does not include local hosts	 
 	
 	private static var LOGGED_REVISIONS:Boolean = false;
 	public static function allowDomains():Void {
 		if (!LOGGED_REVISIONS) {
-			LOGGED_REVISIONS = true;
-			StaticFunctions.storeTrace(["GOOGLE_REVISION_NUMBER=",GOOGLE_REVISION_NUMBER, " COME2PLAY_REVISION_NUMBER=",COME2PLAY_REVISION_NUMBER]);
+			LOGGED_REVISIONS = true;			
+			StaticFunctions.alwaysTrace( new ErrorHandler() );
+			storeTrace(["GOOGLE_REVISION_NUMBER=",GOOGLE_REVISION_NUMBER, " COME2PLAY_REVISION_NUMBER=",COME2PLAY_REVISION_NUMBER]);
 		}
 		
 		if (ALLOW_DOMAINS != null){
@@ -29,37 +27,79 @@ class come2play_as2.api.auto_copied.StaticFunctions
 		}
 	}
 			
-	public static function storeTrace(obj:Object):Void {
-		if (allTraces.length>=MAX_TRACES_NUM) allTraces.shift();
-		var arr:Array = ["Time: ", getTimer(), " Trace: "];
-		if (SHOULD_CALL_TRACE) trace( arr.join("")+JSON.stringify(obj) );
-		arr.push(obj);
-		allTraces.push(arr);
+	
+	// Be careful that the traces will not grow too big to send to the java (limit of 1MB, enforced in Bytes2Object)
+	public static var MAX_TRACES:Object = {TMP: 80, API:20, ALWAYS:100, MSG:20, STORE:50};
+	public static function tmpTrace(obj:Object):Void {
+		p_storeTrace("TMP",obj);
+	}	
+	public static function apiTrace(obj:Object):Void {		 		
+		p_storeTrace("API",obj);
+	}		
+	public static function alwaysTrace(obj:Object):Void { 
+		p_storeTrace("ALWAYS",obj);
+	}
+	public static function msgTrace(obj:Object):Void {
+		p_storeTrace("MSG",obj);
+	}		
+	public static function storeTrace(obj:Object):Void { 
+		p_storeTrace("STORE",obj);
+	}
+	
+	private static var keyTraces:Array = [];		
+	private static function p_getArr(key:String):Array {
+		if (keyTraces[key]==null) keyTraces[key] = new Array(); 
+		return keyTraces[key];
+	}	 
+	public static var TRACE_PREFIX:String = ""; // because in flashlog you see traces of many users and it is all mixed 
+	private static function p_storeTrace(key:String, obj:Object):Void {
+		try {
+			var arr:Array = p_getArr(key);	
+			var maxT:Number = MAX_TRACES[key];
+			limitedPush(arr, ["Time: ", getTimer(), obj] , maxT); // we discard old traces
+			if (SHOULD_CALL_TRACE) trace(TRACE_PREFIX + key+":\t" + JSON.stringifyWithNewLine(obj));
+		} catch (err:Error) {
+			if (SHOULD_CALL_TRACE) trace(TRACE_PREFIX + "\n\n\n\n\n\n\n\n\n\n\n\nERROR!!!!!!!!!!!!!!!!!!!!!!! err="+AS3_vs_AS2.error2String(err)+"\n\n\n\n\n\n\n\n\n\n\n");
+		}
 	}
 	public static function getTraces():String {
-		return (allTraces.length==0 ? '' : 
-				(allTraces.length<MAX_TRACES_NUM ? "All":"The last "+MAX_TRACES_NUM)+" stored traces are:\n"+
-				allTraces.join("\n"));
+		var res:Array = [];
+		for (var key:String in keyTraces) {
+			var tracesOfKey:Array = keyTraces[key];
+			res.push(key + " "+tracesOfKey.length+" traces:"+
+				(tracesOfKey.length<MAX_TRACES[key] ? "" : " (REACHED MAX TRACES)"));
+			res.push( arrToString(tracesOfKey,",\n") );
+			res.push("\n");
+		}		
+		var strRes:String = res.join("\n");
+		setClipboard(strRes);
+		return strRes;
+	}	
+	private static function arrToString(s:Object, sep:String):String {			
+		var arr:Array = new Array();
+		var isArr:Boolean = AS3_vs_AS2.isArray(s);			
+		for(var o:String in s) {
+			arr.push((isArr ? "" : o+"=")+JSON.stringify(s[o]));
+		}
+		return "["+arr.join(sep)+"]";
 	}
 	public static function setClipboard(msg:String):Void {
 		try {			
+			trace("Setting in clipboard message:")
+			trace(msg);
 			System.setClipboard(msg);
 		} catch (err:Error) {
 			// the flash gives an error if we try to set the clipboard not due to a user activity,
 			// e.g., if the java disconnects then setClipboard throws an error.
 		}
 	}
-	public static var DID_SHOW_ERROR:Boolean = false;
 	public static function showError(msg:String):Void {
-		if (DID_SHOW_ERROR) return;
-		DID_SHOW_ERROR = true;
-		var msg:String = "An ERRRRRRRRRRROR occurred on time "+getTimer()+":\n"+msg+"\n"+ getTraces();
-		setClipboard(msg);
-		if (SHOULD_SHOW_ERRORS) AS3_vs_AS2.showError(msg);
-		if (SHOULD_CALL_TRACE) trace("\n\n\n"+msg+"\n\n\n");
+		ErrorHandler.alwaysTraceAndSendReport(msg,"showError"); 
 	}
 	public static function throwError(msg:String):Void {
 		var err:Error = new Error(msg);
+		// I know the error should be caught, but in flash you do not always wrap everything in a catch clause
+		// so I prefer to also send the error to the container now
 		showError("Throwing the following error="+AS3_vs_AS2.error2String(err));
 		throw err;
 	}		
@@ -113,7 +153,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 				// for static properties we use describeType
 				// because o1 and o2 have the same type, it is enough to use the fields of o1.
 				var fieldsArr:Array = AS3_vs_AS2.getFieldNames(o1);
-				for (var i118:Number=0; i118<fieldsArr.length; i118++) { var field:String = fieldsArr[i118]; 
+				for (var i158:Number=0; i158<fieldsArr.length; i158++) { var field:String = fieldsArr[i158]; 
 					allFields[field] = true;
 				}
 			}
@@ -129,12 +169,23 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	
 	public static function subtractArray(arr:Array, minus:Array):Array {
 		var res:Array = arr.concat();
-		for (var i134:Number=0; i134<minus.length; i134++) { var o:Object = minus[i134]; 
+		for (var i174:Number=0; i174<minus.length; i174++) { var o:Object = minus[i174]; 
 			var indexOf:Number = AS3_vs_AS2.IndexOf(res, o);
 			StaticFunctions.assert(indexOf!=-1, ["When subtracting minus=",minus," from array=", arr, " we did not find element ",o]);				
 			res.splice(indexOf, 1);
 		}
 		return res;
+	}
+	// returns true if the element was in arr
+	public static function removeElement(arr:Array, element:Object):Boolean {
+		var index:Number = AS3_vs_AS2.IndexOf(arr,element);
+		var isContained:Boolean = index!=-1;			
+		if (isContained) arr.splice(index,1);	
+		return isContained;		
+	}
+	public static function limitedPush(arr:Array, element:Object, maxSize:Number):Void {
+		if (arr.length>=maxSize) arr.shift(); // we discard old elements (in a queue-like manner)
+		arr.push(element);
 	}
 	
 	// e.g., random(0,2) returns either 0 or 1
@@ -151,7 +202,8 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	
 	private static var REFLECTION_PREFIX:String = "REFLECTION_";
 	public static function performReflectionFromFlashVars(_someMovieClip:MovieClip):Void {		
-		var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(_someMovieClip);
+		var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(_someMovieClip);		
+		ErrorHandler.setErrorReportUrl(parameters);
 		if (SHOULD_CALL_TRACE) trace("performReflectionFromFlashVars="+JSON.stringify(parameters));
 		for (var key:String in parameters) {
 			if (startsWith(key,REFLECTION_PREFIX)) {
@@ -220,7 +272,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	}
 	public static function instance2Object(instance:Object, fields:Array/*String*/):Object {
 		var res:Object = {};
-		for (var i225:Number=0; i225<fields.length; i225++) { var field:String = fields[i225]; 
+		for (var i277:Number=0; i277<fields.length; i277++) { var field:String = fields[i277]; 
 			res[field] = instance[field];
 		}
 		return res;
@@ -234,5 +286,4 @@ class come2play_as2.api.auto_copied.StaticFunctions
 		cacheShortName[className] = res;
 		return res;		
 	}
-			
 }

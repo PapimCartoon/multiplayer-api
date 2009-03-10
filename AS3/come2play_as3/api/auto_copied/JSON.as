@@ -8,6 +8,9 @@ package come2play_as3.api.auto_copied
         private var at:int = 0;
         private var text:String;
 
+	    public static function stringifyWithNewLine(o:Object):String{
+			return StaticFunctions.replaceAll(stringify(o),"\\n","\n\t\t");
+	    }
 	    public static function stringify(arg:Object):String{
 			if (arg==null) return 'null';
 			

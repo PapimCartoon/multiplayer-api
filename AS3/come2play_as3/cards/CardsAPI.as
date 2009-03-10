@@ -45,11 +45,11 @@ package come2play_as3.cards
 		}		
 		private function startAnimation(ev:Event):void
 		{
-			animationStarted();
+			animationStarted("CardsAPI");
 		}
 		private function endAnimation(ev:Event):void
 		{
-			animationEnded();
+			animationEnded("CardsAPI");
 		}
 		private function initCardDefenitins():void
 		{

@@ -26,72 +26,124 @@ public final class StaticFunctions
 		return "g="+GOOGLE_REVISION_NUMBER+",c2p="+COME2PLAY_REVISION_NUMBER;		
 	}
 	
-	public static var SHOULD_SHOW_ERRORS:Boolean = true;
 	public static var SHOULD_CALL_TRACE:Boolean = true; // in the online version we turn it off to save runtime
-	public static var someMovieClip:DisplayObjectContainer; // so we can display error messages on the stage
-	public static var allTraces:Array = [];
-	public static var MAX_TRACES_NUM:int = 50;
+	public static var someMovieClip:DisplayObjectContainer; // so we can display error messages on the stage	
 	public static var ALLOW_DOMAINS:String = "*";//Specifying "*" does not include local hosts	 
 	
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 	private static var LOGGED_REVISIONS:Boolean = false;
 	public static function allowDomains():void {
 		if (!LOGGED_REVISIONS) {
-			LOGGED_REVISIONS = true;
-			StaticFunctions.storeTrace(["GOOGLE_REVISION_NUMBER=",GOOGLE_REVISION_NUMBER, " COME2PLAY_REVISION_NUMBER=",COME2PLAY_REVISION_NUMBER]);
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+			LOGGED_REVISIONS = true;			
+			StaticFunctions.alwaysTrace( new ErrorHandler() );
+			storeTrace(["GOOGLE_REVISION_NUMBER=",GOOGLE_REVISION_NUMBER, " COME2PLAY_REVISION_NUMBER=",COME2PLAY_REVISION_NUMBER]);
 		}
 		
 		if (ALLOW_DOMAINS != null){
 			storeTrace("Allowing all domains access to : "+ALLOW_DOMAINS+" saמdbox type :"+Security.sandboxType);
 			Security.allowDomain(ALLOW_DOMAINS);
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 		}
 	}
-			
-	public static function storeTrace(obj:Object):void {
-		if (allTraces.length>=MAX_TRACES_NUM) allTraces.shift();
-		var arr:Array = ["Time: ", getTimer(), " Trace: "];
-		if (SHOULD_CALL_TRACE) trace( arr.join("")+JSON.stringify(obj) );
-		arr.push(obj);
-		allTraces.push(arr);
-	}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			
+	
+	// Be careful that the traces will not grow too big to send to the java (limit of 1MB, enforced in Bytes2Object)
+	public static var MAX_TRACES:Object = {TMP: 80, API:20, ALWAYS:100, MSG:20, STORE:50};
+	public static function tmpTrace(obj:Object):void {
+		p_storeTrace("TMP",obj);
+	}	
+	public static function apiTrace(obj:Object):void {		 		
+		p_storeTrace("API",obj);
+	}		
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+	public static function alwaysTrace(obj:Object):void { 
+		p_storeTrace("ALWAYS",obj);
+	}
+	public static function msgTrace(obj:Object):void {
+		p_storeTrace("MSG",obj);
+	}		
+	public static function storeTrace(obj:Object):void { 
+		p_storeTrace("STORE",obj);
+	}
+	
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+	private static var keyTraces:Array = [];		
+	private static function p_getArr(key:String):Array {
+		if (keyTraces[key]==null) keyTraces[key] = new Array(); 
+		return keyTraces[key];
+	}	 
+	public static var TRACE_PREFIX:String = ""; // because in flashlog you see traces of many users and it is all mixed 
+	private static function p_storeTrace(key:String, obj:Object):void {
+		try {
+			var arr:Array = p_getArr(key);	
+			var maxT:int = MAX_TRACES[key];
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+			limitedPush(arr, ["Time: ", getTimer(), obj] , maxT); // we discard old traces
+			if (SHOULD_CALL_TRACE) trace(TRACE_PREFIX + key+":\t" + JSON.stringifyWithNewLine(obj));
+		} catch (err:Error) {
+			if (SHOULD_CALL_TRACE) trace(TRACE_PREFIX + "\n\n\n\n\n\n\n\n\n\n\n\nERROR!!!!!!!!!!!!!!!!!!!!!!! err="+AS3_vs_AS2.error2String(err)+"\n\n\n\n\n\n\n\n\n\n\n");
+		}
+	}
 	public static function getTraces():String {
-		return (allTraces.length==0 ? '' : 
-				(allTraces.length<MAX_TRACES_NUM ? "All":"The last "+MAX_TRACES_NUM)+" stored traces are:\n"+
-				allTraces.join("\n"));
+		var res:Array = [];
+		for (var key:String in keyTraces) {
+			var tracesOfKey:Array = keyTraces[key];
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+			res.push(key + " "+tracesOfKey.length+" traces:"+
+				(tracesOfKey.length<MAX_TRACES[key] ? "" : " (REACHED MAX TRACES)"));
+			res.push( arrToString(tracesOfKey,",\n") );
+			res.push("\n");
+		}		
+		var strRes:String = res.join("\n");
+		setClipboard(strRes);
+		return strRes;
+	}	
+	private static function arrToString(s:Object, sep:String):String {			
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+		var arr:Array = new Array();
+		var isArr:Boolean = AS3_vs_AS2.isArray(s);			
+		for(var o:String in s) {
+			arr.push((isArr ? "" : o+"=")+JSON.stringify(s[o]));
+		}
+		return "["+arr.join(sep)+"]";
 	}
 	public static function setClipboard(msg:String):void {
 		try {			
+			trace("Setting in clipboard message:")
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+			trace(msg);
 			System.setClipboard(msg);
 		} catch (err:Error) {
 			// the flash gives an error if we try to set the clipboard not due to a user activity,
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 			// e.g., if the java disconnects then setClipboard throws an error.
 		}
 	}
-	public static var DID_SHOW_ERROR:Boolean = false;
 	public static function showError(msg:String):void {
-		if (DID_SHOW_ERROR) return;
-		DID_SHOW_ERROR = true;
-		var msg:String = "An ERRRRRRRRRRROR occurred on time "+getTimer()+":\n"+msg+"\n"+ getTraces();
-		setClipboard(msg);
-		if (SHOULD_SHOW_ERRORS) AS3_vs_AS2.showError(msg);
+		ErrorHandler.alwaysTraceAndSendReport(msg,"showError"); 
+	}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		if (SHOULD_CALL_TRACE) trace("\n\n\n"+msg+"\n\n\n");
-	}
 	public static function throwError(msg:String):void {
 		var err:Error = new Error(msg);
+		// I know the error should be caught, but in flash you do not always wrap everything in a catch clause
+		// so I prefer to also send the error to the container now
 		showError("Throwing the following error="+AS3_vs_AS2.error2String(err));
 		throw err;
 	}		
@@ -192,6 +244,20 @@ public final class StaticFunctions
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	// returns true if the element was in arr
+	public static function removeElement(arr:Array, element:Object):Boolean {
+		var index:int = AS3_vs_AS2.IndexOf(arr,element);
+		var isContained:Boolean = index!=-1;			
+		if (isContained) arr.splice(index,1);	
+		return isContained;		
+	}
+	public static function limitedPush(arr:Array, element:Object, maxSize:int):void {
+		if (arr.length>=maxSize) arr.shift(); // we discard old elements (in a queue-like manner)
+		arr.push(element);
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+	}
 	
 	// e.g., random(0,2) returns either 0 or 1
 	public static function random(fromInclusive:int, toExclusive:int):int {
@@ -201,23 +267,24 @@ public final class StaticFunctions
 	public static function startsWith(str:String, start:String):Boolean {
 		return str.substr(0, start.length)==start;
 	}
-	public static function endsWith(str:String, suffix:String):Boolean {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	public static function endsWith(str:String, suffix:String):Boolean {
 		return str.substr(str.length-suffix.length, suffix.length)==suffix;
 	}
 	
 	private static const REFLECTION_PREFIX:String = "REFLECTION_";
 	public static function performReflectionFromFlashVars(_someMovieClip:DisplayObjectContainer):void {		
-		var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(_someMovieClip);
+		var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(_someMovieClip);		
+		ErrorHandler.setErrorReportUrl(parameters);
 		if (SHOULD_CALL_TRACE) trace("performReflectionFromFlashVars="+JSON.stringify(parameters));
 		for (var key:String in parameters) {
-			if (startsWith(key,REFLECTION_PREFIX)) {
-				var before:String = key.substr(REFLECTION_PREFIX.length);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			if (startsWith(key,REFLECTION_PREFIX)) {
+				var before:String = key.substr(REFLECTION_PREFIX.length);
 				var after:String = parameters[key];
 				performReflectionString(before, after);	
 			}			
@@ -226,11 +293,11 @@ public final class StaticFunctions
 	public static function performReflection(reflStr:String):void {		
 		var two:Array = splitInTwo(reflStr, "=", false);
 		performReflectionString(two[0], two[1]);
-	}
-	public static function performReflectionString(fullClassName:String, valStr:String):void {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	}
+	public static function performReflectionString(fullClassName:String, valStr:String):void {
 		performReflectionObject(fullClassName, SerializableClass.deserializeString(valStr));
 	}
 	public static function performReflectionObject(fullClassName:String, valObj:Object):void {
@@ -239,11 +306,11 @@ public final class StaticFunctions
 		if (SHOULD_CALL_TRACE) trace("Perform reflection for: "+fullClassName+"="+JSON.stringify(valObj));
 		var package2:Array = splitInTwo(fullClassName, "::", false);
 		var fields2:Array = splitInTwo(package2[1], ".", false);
-		var clzName:String = trim(package2[0]) + "::" + trim(fields2[0]);
-		var fieldsName:String = trim(fields2[1]);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		var clzName:String = trim(package2[0]) + "::" + trim(fields2[0]);
+		var fieldsName:String = trim(fields2[1]);
 		var classReference:Object = AS3_vs_AS2.getClassByName(clzName);
 		storeTrace("Setting field "+fieldsName+" in class "+clzName+" to val="+valObj);
 		var fieldsArr:Array = fieldsName.split(".");
@@ -252,11 +319,11 @@ public final class StaticFunctions
 			if (i<fieldsArr.length-1)
 				classReference = classReference[fieldName];
 			else
-				classReference[fieldName] = valObj;			
-		} 		
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+				classReference[fieldName] = valObj;			
+		} 		
 	}
 
 
@@ -265,11 +332,11 @@ public final class StaticFunctions
 	 * but we need to escape special characters from searchFor
 	 * e.g., 
 	 * 	StaticFunctions.replaceAll("$y'+knkjh$y'+$y'+uoiuoiu$y'+8y$y'+", "$y'+","REPLACED") ==
-	 * 							"REPLACEDknkjhREPLACEDREPLACEDuoiuoiuREPLACED8yREPLACED"		
-	 */
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	 * 							"REPLACEDknkjhREPLACEDREPLACEDuoiuoiuREPLACED8yREPLACED"		
+	 */
 	public static function replaceAll(str:String, searchFor:String, replaceWith:String):String {		
 		var index:int = 0;
 		var lastIndex:int = 0;
@@ -278,11 +345,11 @@ public final class StaticFunctions
 			res.push( str.substring(lastIndex,index) );
 			res.push( replaceWith );
 			index += searchFor.length;
-			lastIndex = index;			
-		}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			lastIndex = index;			
+		}
 		res.push( str.substring(lastIndex) );
 		return res.join("");
 	}
@@ -291,11 +358,11 @@ public final class StaticFunctions
 		if (index==-1) showError("Did not find searchFor="+searchFor+" in string="+str);
 		return [str.substring(0,index),str.substring(index+searchFor.length)];
 	}
-	public static function replaceLastOccurance(str:String, searchFor:String, replaceWith:String):String {
-		var two:Array = splitInTwo(str, searchFor, true);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	public static function replaceLastOccurance(str:String, searchFor:String, replaceWith:String):String {
+		var two:Array = splitInTwo(str, searchFor, true);
 		return two[0] + replaceWith + two[1];
 	}
 	public static function instance2Object(instance:Object, fields:Array/*String*/):Object {
@@ -304,11 +371,11 @@ public final class StaticFunctions
 			res[field] = instance[field];
 		}
 		return res;
-	}
-	
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	}
+	
 	private static var cacheShortName:Object = {};
 	public static function getShortClassName(obj:Object):String {
 		var className:String = AS3_vs_AS2.getClassName(obj);
@@ -317,9 +384,8 @@ public final class StaticFunctions
 		cacheShortName[className] = res;
 		return res;		
 	}
-			
-}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+}
 }

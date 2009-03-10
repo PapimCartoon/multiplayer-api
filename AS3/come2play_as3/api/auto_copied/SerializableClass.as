@@ -12,7 +12,7 @@ package come2play_as3.api.auto_copied
  * - serialization to String
  *   using the method "toString()".
  *   The serialized string has JSON-like syntax:
- *   {$SHORT_CLASSNAME$ field1:value1 , field2:value2 , ... }
+ *   {$SHORT_CLASSNAME$ field1:value1 , field2:value2 , . . . }
  *   For example: 
  *   {$EnumSupervisor$ name:"MiniSupervisor"}
  * - serialization to XML

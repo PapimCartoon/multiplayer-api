@@ -278,9 +278,9 @@ import come2play_as2.api.*;
 				}				 
 				queueSendMessage( API_GotMatchEnded.create(++messageNum,newlyFinishedUserIds) );
 				if (finishedUserIds.length==NUM_OF_PLAYERS) {
-					t.add( T.i18n("A new game will start in 5 seconds...\n") );
+					t.add( T.i18n("A new game will start in 5 seconds . . .\n") );
 					// game is completely over for all players
-					AS3_vs_AS2.myTimeout(AS3_vs_AS2.delegate(this, this.sendNewMatch), START_NEW_GAME_AFTER_MILLISECONDS);
+					ErrorHandler.myTimeout("SinglePlayerEmulator.sendNewMatch",AS3_vs_AS2.delegate(this, this.sendNewMatch), START_NEW_GAME_AFTER_MILLISECONDS);
 				}
 				if (SHOW_GAME_OVER_MSGS) AS3_vs_AS2.showMessage(t.join(),"gameOver");
 			} else if (msg instanceof API_DoRegisterOnServer) {
@@ -356,7 +356,7 @@ import come2play_as2.api.*;
   		}
   		private function checkExtraCallbacks():Void {
   			if (EXTRA_CALLBACKS.length==0) return;
-  			AS3_vs_AS2.myTimeout( AS3_vs_AS2.delegate(this, this.sendExtraCallback), WAIT_BETWEEN_EXTRA_CALLBACKS);
+  			ErrorHandler.myTimeout("SinglePlayerEmulator.sendExtraCallback", AS3_vs_AS2.delegate(this, this.sendExtraCallback), WAIT_BETWEEN_EXTRA_CALLBACKS);
   		}
   		private function sendExtraCallback():Void {
   			var extraCallback:API_Message = API_Message(EXTRA_CALLBACKS.shift());

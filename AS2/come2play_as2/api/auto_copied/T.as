@@ -2,11 +2,11 @@
 	 * For Translations to other languages:
 	 * The strings in your code should be passed to the translation function
 	 * like this:
-	 * 				T.i18n("...")
+	 * 				T.i18n(". . .")
 	 * or
-	 * 				T.i18n('...')
+	 * 				T.i18n('. . .')
 	 * or
-	 * 				T.i18nReplace('...$key1$...$key2$...', {key1: ..., key2:...})
+	 * 				T.i18nReplace('. . .$key1$. . .$key2$. . .', {key1: . . ., key2:. . .})
 	 * 
 	 * We have a program that goes over the source files,
 	 * finds all the above occurrences,
@@ -24,16 +24,16 @@
 	 * or like this:
 	 * 				T.i18n("bla "+i+" bla")  // BAD! use t.add to combine several strings
 	 * or like this:
-	 * 				T.i18n("bla $key$ foo", replacement)  // BAD! Because we check that the keys in replacement are identical to the $...$ in the string
+	 * 				T.i18n("bla $key$ foo", replacement)  // BAD! Because we check that the keys in replacement are identical to the $. . .$ in the string
 	 * or like this:
 	 * 		 		T.custom(key, 30)
 	 * 
 	 * Handle left-to-right or right-to-left languages
 	 * while creating long messages, like this:
 	 * 				var t:T = new T();
-	 * 				t.add(T.t("First part..."));
+	 * 				t.add(T.t("First part. . ."));
 	 * 				t.add(someName1);
-	 * 				t.add(T.t("Second part..."));
+	 * 				t.add(T.t("Second part. . ."));
 	 * 				t.add(someName2);
 	 * 				return t.join();
 	 */ 

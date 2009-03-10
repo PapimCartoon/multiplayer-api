@@ -412,8 +412,7 @@ class come2play_as2.tictactoe.TictactoeMain extends ClientGameAPI {
 		}					
 		
 		if (!isSavedGame) {
-			startMove(true);
-			animationEnded(); // must be after we call all the doAll functions (and in startMove we have doAllSetTurn) 
+			startMove(true);  
 		}
 	}
 	private function getEntryKey():Number {
@@ -427,7 +426,7 @@ class come2play_as2.tictactoe.TictactoeMain extends ClientGameAPI {
 		if (!logic.isSquareAvailable(move)) return; // already filled this square (e.g., if you press on the keyboard, you may choose a cell that is already full)
 
 		shouldSendMove = false;		
-		for (var i432:Number=0; i432<allCells.length; i432++) { var square:TictactoeSquare = allCells[i432]; 
+		for (var i431:Number=0; i431<allCells.length; i431++) { var square:TictactoeSquare = allCells[i431]; 
 			if (!logic.isSquareAvailable(square)) continue;
 			if (move.isEqual(square)) continue; // otherwise, it causes a slight blink because we show the logo and then immediately the move animation
 			var squareGraphics:TictactoeSquareGraphic = getSquareGraphic(square);
@@ -449,7 +448,7 @@ class come2play_as2.tictactoe.TictactoeMain extends ClientGameAPI {
 			doAllSetTurn(allPlayerIds[turnOfColor],-1);
 		}		
 		if (isMyTurn()) shouldSendMove = true;
-		for (var i454:Number=0; i454<allCells.length; i454++) { var square:TictactoeSquare = allCells[i454]; 
+		for (var i453:Number=0; i453<allCells.length; i453++) { var square:TictactoeSquare = allCells[i453]; 
 			if (!logic.isSquareAvailable(square)) continue;
 			var squareGraphics:TictactoeSquareGraphic = getSquareGraphic(square);
 			squareGraphics.startMove(

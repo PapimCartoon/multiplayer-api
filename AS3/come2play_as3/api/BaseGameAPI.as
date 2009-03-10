@@ -13,6 +13,7 @@ package come2play_as3.api {
 	 */ 
 	public class BaseGameAPI extends LocalConnectionUser 
 	{        
+		public static var TRACE_ANIMATIONS:Boolean = true;
 		public static var ERROR_DO_ALL:String = "You can only call a doAll* message when the server calls gotStateChanged, gotMatchStarted, gotMatchEnded, or gotRequestStateCalculation.";
 		
 		private var msgsInTransaction:Array/*API_Message*/ = null;
@@ -20,7 +21,7 @@ package come2play_as3.api {
 		private var serverStateMiror:ObjectDictionary;
 		private var currentCallback:API_Message = null;
 		private var hackerUserId:int = -1;
-		private var runningAnimationsNumber:int = 0;
+		private var runningAnimations:Array/*String*/ = [];
 		private var keys:Array;
 		private var historyEntries:Array/*HistoryEntry*/;
 		private var keyboardMessages:Array/*API_GotKeyboardEvent*/;
@@ -29,7 +30,9 @@ package come2play_as3.api {
 		
 		public function BaseGameAPI(_someMovieClip:DisplayObjectContainer) {
 			super(_someMovieClip, false, getPrefixFromFlashVars(_someMovieClip),true);
-			
+			ErrorHandler.flash_url = AS3_vs_AS2.getLoaderInfoUrl(_someMovieClip);
+			StaticFunctions.alwaysTrace(this);
+			ErrorHandler.SEND_BUG_REPORT = AS3_vs_AS2.delegate(this, this.sendBugReport);
 			keyboardMessages = [];
 			AS3_vs_AS2.addKeyboardListener(_someMovieClip,keyPressed);
 			if (getPrefixFromFlashVars(_someMovieClip)==null) 
@@ -39,30 +42,42 @@ package come2play_as3.api {
 				historyEntries = new Array();
 			//come2play_as3.api::BaseGameAPI.abc = 666
 		}
+		private function sendBugReport(bug_id:int, errMessage:String, flashTraces:String):void {
+			gotError("errMessage="+errMessage+" traces="+flashTraces, new Error("SEND_ERRORMSG_TO_CONTAINER"));
+		}
+		public function toString():String {
+			var output:String =
+				"Server State(client side) : \n\n";					
+			var serverEntries:Array/*ServerEntry*/ = new Array();
+			if(serverStateMiror!=null){
+				for each(var serverEntry:ServerEntry in serverStateMiror.allValues){
+					serverEntries.push(serverEntry);
+					output+= serverEntry.toString() + "\n";
+				}
+			}
+			if(historyEntries!=null)
+				output+="History entries :\n\n"+historyEntries.join("\n")+"\n\n";
+			
+			output+="Custom Data:\n\n"+getTAsArray().join("\n");
+			var gotMatchStarted:API_GotMatchStarted = API_GotMatchStarted.create(0,verifier.getAllPlayerIds(),verifier.getFinishedPlayerIds(),serverEntries)
+			return "\n\nBaseGameAPI:\ngotMatchStarted : \n\n"+JSON.stringify(gotMatchStarted)+"\n"+output;					
+		}
 		
 		private function keyPressed(is_key_down:Boolean, charCode:int, keyCode:int, keyLocation:int, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean):void
 		{
 			if((shiftKey) && (ctrlKey) && (altKey) && (is_key_down))
 			{
-				if(String('G').charCodeAt(0) == charCode)
-				{
-					var serverEntries:Array/*ServerEntry*/ = new Array();
-					var output:String = "Traces:\n\n"+
-					StaticFunctions.getTraces()+"\n\n"+
-					"Server State(client side) : \n\n";
-					
-					if(serverStateMiror!=null){
-						for each(var serverEntry:ServerEntry in serverStateMiror.allValues){
-							serverEntries.push(serverEntry);
-							output+= serverEntry.toString() + "\n";
-						}
-					}
-					if(historyEntries!=null)
-						output+="History entries :\n\n"+historyEntries.join("\n")+"\n\n";
-					
-					output+="Custom Data:\n\n"+getTAsArray().join("\n");
-					var gotMatchStarted:API_GotMatchStarted = API_GotMatchStarted.create(0,verifier.getAllPlayerIds(),verifier.getFinishedPlayerIds(),serverEntries)
-					AS3_vs_AS2.showMessage("gotMatchStarted : \n\n"+JSON.stringify(gotMatchStarted)+"\n"+output, "traces");
+				if('G'.charCodeAt(0) == charCode)
+				{	
+					AS3_vs_AS2.showMessage(StaticFunctions.getTraces(), "traces");
+				}
+				if('E'.charCodeAt(0) == charCode) {
+					// testing throwing an error	
+					throw new Error("Testing throwing an error!");
+				}
+				if('R'.charCodeAt(0) == charCode) {
+					// testing report mechanism
+					ErrorHandler.testSendErrorImage();
 				}
 			}
 			if (verifier.isPlayer() &&
@@ -111,7 +126,7 @@ package come2play_as3.api {
 			sendMessage( API_DoAllFoundHacker.create(hackerUserId, 
 				"Got error withObj="+JSON.stringify(withObj)+
 				"\nerr="+AS3_vs_AS2.error2String(err)+
-				"\nrunningAnimationsNumber="+runningAnimationsNumber+
+				"\nrunningAnimations="+runningAnimations+
 				"\ncurrentCallback="+currentCallback+
 				"\nmsgsInTransaction="+JSON.stringify(msgsInTransaction)+
 				"\ntraces="+StaticFunctions.getTraces() ) );
@@ -148,26 +163,28 @@ package come2play_as3.api {
 		 * 			}
 		 * 		});
 		 */		 
-        public function animationStarted():void {
+        public function animationStarted(animationName:String):void {
         	checkInsideTransaction();
-        	runningAnimationsNumber++;        	
+        	if (TRACE_ANIMATIONS) myTrace(["animationStarted:",animationName]);
+        	runningAnimations.push(animationName);        	
         }
-        public function animationEnded():void {
+        public function animationEnded(animationName:String):void {
         	checkInsideTransaction();
-        	if (runningAnimationsNumber<=0)
-        		throwError("Called animationEnded too many times!");
-        	runningAnimationsNumber--;
+        	if (TRACE_ANIMATIONS) myTrace(["animationEnded:",animationName]);
+        	var wasRemoved:Boolean = StaticFunctions.removeElement(runningAnimations,animationName);
+        	if (!wasRemoved)
+        		throwError("Called animationEnded with animationName="+animationName+" that is not a running animation!");
         	sendFinishedCallback();        	        	
         }
 		public function cacheImage(imageUrl:String, someMovieClip:MovieClip,
 					onLoaded:Function):void {		
-			animationStarted();
+			//animationStarted("cacheImage"); - loading may fail or take a long time, so I prefer not to use it as an animation
 			var thisObj:BaseGameAPI = this; // for AS2
 			var forCaching:DisplayObject =
 				AS3_vs_AS2.loadMovieIntoNewChild(someMovieClip, imageUrl, 
 					function (isSucc:Boolean):void {
 						onLoaded(isSucc);
-						thisObj.animationEnded();				
+						//thisObj.animationEnded("cacheImage");				
 					});	
 			AS3_vs_AS2.setVisible(forCaching, false);		
 		}
@@ -185,11 +202,8 @@ package come2play_as3.api {
         }
         private function sendFinishedCallback():void {
         	checkInsideTransaction();        	
-        	if (runningAnimationsNumber>0) return;
-        	var msgNum:int = -666;
-        	if (currentCallback is API_GotMatchStarted) msgNum = (/*as*/currentCallback as API_GotMatchStarted).msgNum;
-        	if (currentCallback is API_GotMatchEnded) msgNum = (/*as*/currentCallback as API_GotMatchEnded).msgNum;
-        	if (currentCallback is API_GotStateChanged) msgNum = (/*as*/currentCallback as API_GotStateChanged).msgNum; 
+        	if (runningAnimations.length>0) return;
+        	var msgNum:int = LocalConnectionUser.getMsgNum(currentCallback); 
        		super.sendMessage( API_Transaction.create(API_DoFinishedCallback.create(currentCallback.getMethodName(),msgNum), msgsInTransaction) );
     		msgsInTransaction = null;
 			currentCallback = null;
@@ -217,12 +231,12 @@ package come2play_as3.api {
         	if (isInTransaction()) {					
     			throwError("The container sent an API message without waiting for DoFinishedCallback");
 			}
-    		if (runningAnimationsNumber!=0 || currentCallback!=null)
-    			throwError("Internal error! runningAnimationsNumber="+runningAnimationsNumber+" msgsInTransaction="+msgsInTransaction+" currentCallback="+currentCallback);
+    		if (runningAnimations.length!=0 || currentCallback!=null)
+    			throwError("Internal error! runningAnimations="+runningAnimations+" msgsInTransaction="+msgsInTransaction+" currentCallback="+currentCallback);
     			
         	try {        		
 				msgsInTransaction = []; // we start a transaction
-				animationStarted();
+				animationStarted("BaseGameAPI.gotMessage");
 				currentCallback = msg;
 				
         		hackerUserId = -1;
@@ -259,6 +273,8 @@ package come2play_as3.api {
 						}
 					}		
 					T.initI18n(i18nObj, customObj); // may be called several times because we may pass different 'secondsPerMatch' every time a game starts
+					var myUserId:Object = T.custom(API_Message.CUSTOM_INFO_KEY_myUserId,null);
+					if (myUserId!=null) StaticFunctions.TRACE_PREFIX = "API myUserId="+myUserId+":";
 				}else if(msg is API_GotUserInfo){
 					var infoMessage:API_GotUserInfo =/*as*/ msg as API_GotUserInfo;
 					var userObject:Object = {};
@@ -283,7 +299,7 @@ package come2play_as3.api {
 					showError("Another error occurred when calling gotError. The new error is="+AS3_vs_AS2.error2String(err2));
 				}
     		}
-    		animationEnded();     		   	
+    		animationEnded("BaseGameAPI.gotMessage");     		   	
         }
         public function dispatchMessage(msg:API_Message):void {
         	var methodName:String = msg.getMethodName();

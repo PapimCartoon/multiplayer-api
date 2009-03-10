@@ -7,6 +7,9 @@ import come2play_as2.api.auto_copied.*;
         private var at:Number = 0;
         private var text:String;
 
+	    public static function stringifyWithNewLine(o:Object):String{
+			return StaticFunctions.replaceAll(stringify(o),"\\n","\n\t\t");
+	    }
 	    public static function stringify(arg:Object):String{
 			if (arg==null) return 'null';
 			
@@ -86,7 +89,7 @@ import come2play_as2.api.auto_copied.*;
 	    	var res:Array = [];
         	// I want deterministic output, so sort the keys
         	var keys:Array = getSortedKeys(arg);
-        	for (var i88:Number=0; i88<keys.length; i88++) { var z:String = keys[i88]; 
+        	for (var i91:Number=0; i91<keys.length; i91++) { var z:String = keys[i91]; 
                 res.push( stringify(z) + ':' + stringify(arg[z]) );
             }
             return res.join(" , ");	    	

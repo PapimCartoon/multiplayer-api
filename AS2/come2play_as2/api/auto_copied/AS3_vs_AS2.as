@@ -75,15 +75,26 @@ class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 		};
 	}
 	
-	public static function myInterval(func:Function, in_milliseconds:Number):Number {
+  	// use ErrorHandler.myTimeout and myInterval because they have proper error handling
+	public static function unwrappedSetInterval(func:Function, in_milliseconds:Number):Number {
 		return setInterval(func, in_milliseconds);
 	}
-	public static function myTimeout(func:Function, in_milliseconds:Number):Void {
+	public static function unwrappedSetTimeout(func:Function, in_milliseconds:Number):Number {
 		var res_interval_id:Number;
 		res_interval_id = setInterval( function () {
 				clearInterval(res_interval_id);
 				func();
 			}, in_milliseconds);
+		return res_interval_id;
+	}
+	public static function unwrappedClearInterval(intervalId:Number):Void {
+		clearInterval(intervalId);
+	}
+	public static function unwrappedClearTimeout(intervalId:Number):Void {
+		clearInterval(intervalId);
+	}
+	public static function myGetStackTrace(e:Error):String {
+		return null;
 	}
 	public static function error2String(e:Error):String {
 		return e.toString();//+" stacktraces="+e.getStackTrace();
@@ -94,6 +105,9 @@ class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 	
 	public static function getLoaderInfoParameters(graphics:MovieClip):Object {
 		return _root;
+	}	
+	public static function getLoaderInfoUrl(graphics:MovieClip):String {
+		return _root._url;
 	}	
 	public static function getMovieChild(graphics:MovieClip, childName:String):MovieClip {
 		return getChild(graphics, childName);
@@ -192,6 +206,22 @@ class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 		}
 	}
 	
+	public static function sendToURL(vars:Object, url:String):Void {
+		// use load vars in AS2 to send the error report (use method=POST)
+		var lv:LoadVars = new LoadVars();
+		var result:LoadVars = new LoadVars();
+		StaticFunctions.tmpTrace(["sendToURL url=",url]); //," vars=",vars
+		result.onData = function (src:String) {
+			StaticFunctions.tmpTrace(["Url returned the following result: ",src]);
+		};
+		for (var k:String in vars) {
+			lv[k] = vars[k];		
+		}
+		lv.sendAndLoad(url, result, "POST");
+	}
+	public static function sendMultipartImage(bug_id:Number):Void {
+		// to complicated to convert SendMultipartImage to AS2
+	}
 	//public static var isInterval:Boolean = false
 	public static function showError(msg:String):Void {
 		//if (!isInterval) {
@@ -221,7 +251,7 @@ class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 		trace("I finished showMessage")
 		
 		if (kind!="error") {
-			myTimeout( function ():Void {
+			unwrappedSetTimeout( function ():Void {
 				trace("removeMovieClip container="+msgMcName);
 				container.removeMovieClip();
 				}, 2000);

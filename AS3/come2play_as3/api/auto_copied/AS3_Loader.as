@@ -33,6 +33,7 @@ public final class AS3_Loader
 		loadURL(urlRequest,successHandler,failureHandler,progressHandler)
 	}	
 	public static function loadImage(imageUrl:String,successHandler:Function = null,failureHandler:Function = null,progressHandler:Function = null,context:LoaderContext = null):void {
+		StaticFunctions.assert(imageUrl!="",["can't load a blank image"]);
 		if (failureHandler==null) {
 			failureHandler = function (ev:Event):void {
 				criticalError(ev,imageUrl);

@@ -80,7 +80,16 @@ Room info:
 	    'x' + close_in_seconds + 
 	    'x' + game_kind + 
 	    'x' + game_name)
-	     
+
+User info (in <user_info>, <UnknownUserTemplate> and in other places):
+<params> is converted to XML_params.
+Java parses the following fields: supervisor, credibility, tokens
+All the fields should be url-encoded, except the above fields 
+	(it matters only for **tokens** becuase doing url-encode for supervisor or credibility doesn't change anything).
+We do this encoding because the MD5 must be done on standard ASCII characters (and the "name" always caused us problems).
+(The Java needs to know the tokens of each user so we can do a MOCK for got_all_player_match_end - without using a real DB and WEB-API) 
+
+
 Not used by the graphics yet (but should be displayed):
 •	opening_date: That date that this room was opened on.
 •	closing_date: That date that this room will be closed.
@@ -706,14 +715,15 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 			  http://msn.come2play.com/shared/avatars/1001834.jpg
 			  http://msn.come2play.com/shared/avatars/1006809.jpg
 		  - tokens
-		  	is the number of tokens in each league_stage and all other rewards.
+		  	is the number of tokens and rewards.
 		  	The format is: 	
-		  		ID:QUANTITY_NUM,ID:QUANTITY_NUM,... 
-		  		([0-9]+[:][0-9]+[,])*
+		  		ID:QUANTITY_NUM:DESCRIPTION,ID:QUANTITY_NUM:DESCRIPTION,... 
+		  	The ID and DESCRIPTION can be any string without ':' or ','.
 		  	For example:
-		  		0:100,2:20
+		  		0:100,2:20:name=viking+hat&imageURL=...&value=50,3:30
 		  		this means that the user has 100 elements of id=0 (e.g., 100 tokens in league 0)
-		  		and 20 elements of id=2.
+		  		and 20 elements of id=2 (with a description that creates RewardInfo),
+		  		and 30 elements of id=3
 		  -->
 		  <avatar_url>../images/Avatar_1.gif</avatar_url>
 		  <!-- to change my supervisor status: Admin, Supervisor, MiniSupervisor, NormalUser -->

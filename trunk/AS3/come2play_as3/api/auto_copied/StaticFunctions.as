@@ -60,8 +60,9 @@ public final class StaticFunctions
 		try {
 			var arr:Array = p_getArr(key);	
 			var maxT:int = MAX_TRACES[key];
-			limitedPush(arr, ["Time: ", getTimer(), obj] , maxT); // we discard old traces
-			if (SHOULD_CALL_TRACE) trace(TRACE_PREFIX + key+":\t" + JSON.stringifyWithNewLine(obj));
+			var traceLine:Array = ["Time: ", getTimer(), obj];
+			limitedPush(arr, traceLine , maxT); // we discard old traces
+			if (SHOULD_CALL_TRACE) trace(TRACE_PREFIX + key+":\t" + JSON.stringifyWithNewLine(traceLine));
 		} catch (err:Error) {
 			if (SHOULD_CALL_TRACE) trace(TRACE_PREFIX + "\n\n\n\n\n\n\n\n\n\n\n\nERROR!!!!!!!!!!!!!!!!!!!!!!! err="+AS3_vs_AS2.error2String(err)+"\n\n\n\n\n\n\n\n\n\n\n");
 		}

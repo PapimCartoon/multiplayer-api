@@ -75,7 +75,7 @@ public class TestClientGameAPI extends ClientGameAPI {
 	}
 	override public function doStoreState(userEntries:Array/*UserEntry*/, revealEntries:Array/*RevealEntry*//*<InAS3>*/ = null /*</InAS3>*/):void {
 		// we must delay sending doStoreState, because it cannot be inside a transaction
-		AS3_vs_AS2.myTimeout( AS3_vs_AS2.delegate(this, this.oldDoStoreState, userEntries, revealEntries), 100);
+		ErrorHandler.myTimeout("doStoreState",AS3_vs_AS2.delegate(this, this.oldDoStoreState, userEntries, revealEntries), 100);
 	}
 		 
 	override public function gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, serverEntries:Array/*ServerEntry*/):void {

@@ -230,15 +230,18 @@ class come2play_as2.api.auto_copied.StaticFunctions
 		var clzName:String = trim(package2[0]) + "::" + trim(fields2[0]);
 		var fieldsName:String = trim(fields2[1]);
 		var classReference:Object = AS3_vs_AS2.getClassByName(clzName);
-		storeTrace("Setting field "+fieldsName+" in class "+clzName+" to val="+valObj);
+		var oldVal:Object = null;
 		var fieldsArr:Array = fieldsName.split(".");
 		for (var i:Number=0; i<fieldsArr.length; i++) {
 			var fieldName:String = fieldsArr[i];
 			if (i<fieldsArr.length-1)
 				classReference = classReference[fieldName];
-			else
-				classReference[fieldName] = valObj;			
+			else {
+				oldVal = classReference[fieldName];
+				classReference[fieldName] = valObj;
+			}			
 		} 		
+		storeTrace(["Setting field ",fieldsName," in class ",clzName,": oldVal=",oldVal, " newVal=",valObj]);
 	}
 
 
@@ -273,7 +276,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	}
 	public static function instance2Object(instance:Object, fields:Array/*String*/):Object {
 		var res:Object = {};
-		var p278:Number=0; for (var i278:String in fields) { var field:String = fields[fields.length==null ? i278 : p278]; p278++;
+		var p281:Number=0; for (var i281:String in fields) { var field:String = fields[fields.length==null ? i281 : p281]; p281++;
 			res[field] = instance[field];
 		}
 		return res;

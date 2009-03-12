@@ -37,7 +37,8 @@ package come2play_as3.api.auto_copied
  * 	  registerClassAlias(shortName, classObject)
  * 	 which is similar in essense to 
  *   flash.net.registerClassAlias(aliasName, classObject):void 
- * 
+ * (we could have used ByteArray.writeObject and readObject to serialize/copy objects,
+ *  but we wanted a solution that also works in AS2)
  * 
  * Other features:
  * - fields starting with "__" are not serialized to String 

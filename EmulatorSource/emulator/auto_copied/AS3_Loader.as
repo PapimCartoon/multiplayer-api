@@ -19,7 +19,7 @@ package emulator.auto_copied
 public final class AS3_Loader
 {
 	public static function tmpTrace(...args):void {
-		StaticFunctions.tmpTrace(args);
+		StaticFunctions.tmpTrace(["AS3_Loader: ",args]);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
@@ -218,7 +218,7 @@ public final class AS3_Loader
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-        tmpTrace("traceHandler:"+e!=null && e.target!=null && e.target.hasOwnProperty("data") ? e.target.data : "No data!");
+        tmpTrace("traceHandler:", e!=null && e.target!=null && e.target.hasOwnProperty("data") ? e.target.data : "No data!");
     }
 	private static function criticalError(ev:Event,url:String):void{
 		tmpTrace(" Error loading URL: ",url)

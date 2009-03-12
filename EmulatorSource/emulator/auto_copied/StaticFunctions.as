@@ -313,7 +313,7 @@ public final class StaticFunctions
 		var clzName:String = trim(package2[0]) + "::" + trim(fields2[0]);
 		var fieldsName:String = trim(fields2[1]);
 		var classReference:Object = AS3_vs_AS2.getClassByName(clzName);
-		storeTrace("Setting field "+fieldsName+" in class "+clzName+" to val="+valObj);
+		var oldVal:Object = null;
 		var fieldsArr:Array = fieldsName.split(".");
 		for (var i:int=0; i<fieldsArr.length; i++) {
 			var fieldName:String = fieldsArr[i];
@@ -322,19 +322,22 @@ public final class StaticFunctions
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			else
-				classReference[fieldName] = valObj;			
+			else {
+				oldVal = classReference[fieldName];
+				classReference[fieldName] = valObj;
+			}			
 		} 		
+		storeTrace(["Setting field ",fieldsName," in class ",clzName,": oldVal=",oldVal, " newVal=",valObj]);
 	}
 
 
 	/**
-	 * Similar to replace with:  new RegExp(searchFor,"g")
-	 * but we need to escape special characters from searchFor
-	 * e.g., 
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	 * Similar to replace with:  new RegExp(searchFor,"g")
+	 * but we need to escape special characters from searchFor
+	 * e.g., 
 	 * 	StaticFunctions.replaceAll("$y'+knkjh$y'+$y'+uoiuoiu$y'+8y$y'+", "$y'+","REPLACED") ==
 	 * 							"REPLACEDknkjhREPLACEDREPLACEDuoiuoiuREPLACED8yREPLACED"		
 	 */
@@ -342,12 +345,12 @@ public final class StaticFunctions
 		var index:int = 0;
 		var lastIndex:int = 0;
 		var res:Array = [];
-		while ( (index = AS3_vs_AS2.stringIndexOf(str, searchFor, index)) != -1) {
-			res.push( str.substring(lastIndex,index) );
-			res.push( replaceWith );
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		while ( (index = AS3_vs_AS2.stringIndexOf(str, searchFor, index)) != -1) {
+			res.push( str.substring(lastIndex,index) );
+			res.push( replaceWith );
 			index += searchFor.length;
 			lastIndex = index;			
 		}
@@ -355,12 +358,12 @@ public final class StaticFunctions
 		return res.join("");
 	}
 	public static function splitInTwo(str:String, searchFor:String, isLast:Boolean):Array {
-		var index:int = isLast ? AS3_vs_AS2.stringLastIndexOf(str, searchFor) : AS3_vs_AS2.stringIndexOf(str, searchFor);
-		if (index==-1) showError("Did not find searchFor="+searchFor+" in string="+str);
-		return [str.substring(0,index),str.substring(index+searchFor.length)];
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		var index:int = isLast ? AS3_vs_AS2.stringLastIndexOf(str, searchFor) : AS3_vs_AS2.stringIndexOf(str, searchFor);
+		if (index==-1) showError("Did not find searchFor="+searchFor+" in string="+str);
+		return [str.substring(0,index),str.substring(index+searchFor.length)];
 	}
 	public static function replaceLastOccurance(str:String, searchFor:String, replaceWith:String):String {
 		var two:Array = splitInTwo(str, searchFor, true);
@@ -368,12 +371,12 @@ public final class StaticFunctions
 	}
 	public static function instance2Object(instance:Object, fields:Array/*String*/):Object {
 		var res:Object = {};
-		for each (var field:String in fields) {
-			res[field] = instance[field];
-		}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		for each (var field:String in fields) {
+			res[field] = instance[field];
+		}
 		return res;
 	}
 	
@@ -381,12 +384,12 @@ public final class StaticFunctions
 	public static function getShortClassName(obj:Object):String {
 		var className:String = AS3_vs_AS2.getClassName(obj);
 		if (cacheShortName[className]!=null) return cacheShortName[className];
-		var res:String = className.substr(AS3_vs_AS2.stringIndexOf(className,"::")+2);
-		cacheShortName[className] = res;
-		return res;		
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		var res:String = className.substr(AS3_vs_AS2.stringIndexOf(className,"::")+2);
+		cacheShortName[className] = res;
+		return res;		
 	}
 }
 }

@@ -56,8 +56,9 @@ class come2play_as2.api.auto_copied.StaticFunctions
 		try {
 			var arr:Array = p_getArr(key);	
 			var maxT:Number = MAX_TRACES[key];
-			limitedPush(arr, ["Time: ", getTimer(), obj] , maxT); // we discard old traces
-			if (SHOULD_CALL_TRACE) trace(TRACE_PREFIX + key+":\t" + JSON.stringifyWithNewLine(obj));
+			var traceLine:Array = ["Time: ", getTimer(), obj];
+			limitedPush(arr, traceLine , maxT); // we discard old traces
+			if (SHOULD_CALL_TRACE) trace(TRACE_PREFIX + key+":\t" + JSON.stringifyWithNewLine(traceLine));
 		} catch (err:Error) {
 			if (SHOULD_CALL_TRACE) trace(TRACE_PREFIX + "\n\n\n\n\n\n\n\n\n\n\n\nERROR!!!!!!!!!!!!!!!!!!!!!!! err="+AS3_vs_AS2.error2String(err)+"\n\n\n\n\n\n\n\n\n\n\n");
 		}
@@ -153,7 +154,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 				// for static properties we use describeType
 				// because o1 and o2 have the same type, it is enough to use the fields of o1.
 				var fieldsArr:Array = AS3_vs_AS2.getFieldNames(o1);
-				var p158:Number=0; for (var i158:String in fieldsArr) { var field:String = fieldsArr[fieldsArr.length==null ? i158 : p158]; p158++;
+				var p159:Number=0; for (var i159:String in fieldsArr) { var field:String = fieldsArr[fieldsArr.length==null ? i159 : p159]; p159++;
 					allFields[field] = true;
 				}
 			}
@@ -169,7 +170,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	
 	public static function subtractArray(arr:Array, minus:Array):Array {
 		var res:Array = arr.concat();
-		var p174:Number=0; for (var i174:String in minus) { var o:Object = minus[minus.length==null ? i174 : p174]; p174++;
+		var p175:Number=0; for (var i175:String in minus) { var o:Object = minus[minus.length==null ? i175 : p175]; p175++;
 			var indexOf:Number = AS3_vs_AS2.IndexOf(res, o);
 			StaticFunctions.assert(indexOf!=-1, ["When subtracting minus=",minus," from array=", arr, " we did not find element ",o]);				
 			res.splice(indexOf, 1);
@@ -272,7 +273,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	}
 	public static function instance2Object(instance:Object, fields:Array/*String*/):Object {
 		var res:Object = {};
-		var p277:Number=0; for (var i277:String in fields) { var field:String = fields[fields.length==null ? i277 : p277]; p277++;
+		var p278:Number=0; for (var i278:String in fields) { var field:String = fields[fields.length==null ? i278 : p278]; p278++;
 			res[field] = instance[field];
 		}
 		return res;

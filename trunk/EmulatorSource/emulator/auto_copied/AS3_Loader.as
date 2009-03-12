@@ -52,16 +52,17 @@ public final class AS3_Loader
 		loadURL(urlRequest,successHandler,failureHandler,progressHandler)
 	}	
 	public static function loadImage(imageUrl:String,successHandler:Function = null,failureHandler:Function = null,progressHandler:Function = null,context:LoaderContext = null):void {
+		StaticFunctions.assert(imageUrl!="",["can't load a blank image"]);
 		if (failureHandler==null) {
 			failureHandler = function (ev:Event):void {
 				criticalError(ev,imageUrl);
 			};			
 		}
 		if(successHandler == null){
-			successHandler = traceHandler
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			successHandler = traceHandler
 		}	
 		if(imageCache[imageUrl] == null){
 			if((context ==null) || (!context.checkPolicyFile)){
@@ -71,10 +72,10 @@ public final class AS3_Loader
 				},failureHandler,progressHandler,context);
 			}else{
 				loadURL(imageUrl,successHandler,failureHandler,progressHandler,context);
-			}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			}
 		}else{
 			handleExistingImage(imageCache[imageUrl],successHandler,failureHandler,context)
 		}
@@ -84,10 +85,10 @@ public final class AS3_Loader
 		var urlLoader:URLLoader = ev.target as URLLoader;
 		AS3_vs_AS2.myAddEventListener(ByteConverter.contentLoaderInfo,Event.COMPLETE,function(ev:Event):void{
 			 successHandler(ev);
-		});
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		});
 		AS3_vs_AS2.myAddEventListener(ByteConverter.contentLoaderInfo,IOErrorEvent.IO_ERROR,failureHandler);
 		ByteConverter.loadBytes (urlLoader.data,context);
 	}
@@ -97,10 +98,10 @@ public final class AS3_Loader
 	}
 	private static function loadURL(url:Object,successHandler:Function = null,failureHandler:Function = null,progressHandler:Function = null,context:LoaderContext = null):void{
 		if(failureHandler == null){
-			if(doLoadTrace())	tmpTrace("trying to load : ",url);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			if(doLoadTrace())	tmpTrace("trying to load : ",url);
 		}
 		if(successHandler == null){
 			successHandler = traceHandler
@@ -110,10 +111,10 @@ public final class AS3_Loader
 		var dispatcher:IEventDispatcher;
 		var loader:Loader;
 		
-		var urlloader:URLLoader;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		var urlloader:URLLoader;
 		if (url is String) {
 			if((context == null) || (!context.checkPolicyFile)){
 				urlloader = new URLLoader();	
@@ -123,10 +124,10 @@ public final class AS3_Loader
 				loader = new Loader();
 				dispatcher = loader.contentLoaderInfo
 			}
-		} else {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		} else {
 			urlloader = new URLLoader();	
 			dispatcher = urlloader;
 		}
@@ -136,10 +137,10 @@ public final class AS3_Loader
 		}	
 		AS3_vs_AS2.myAddEventListener(dispatcher,Event.COMPLETE, function(ev:Event):void{
 			if(doLoadTrace())	tmpTrace("successfully loaded",url,"Event data :",ev);
-			successHandler(ev);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			successHandler(ev);
 		});
 		if(progressHandler !=null)
 			AS3_vs_AS2.myAddEventListener(dispatcher,ProgressEvent.PROGRESS,progressHandler)
@@ -149,10 +150,10 @@ public final class AS3_Loader
 			var funcURLRequest:URLRequest = (url is String?new URLRequest(url as String):url as URLRequest)
 			var newFailFunction:Function = function(ev:Event):void{
 				doCallError(failureHandler,funcURLRequest,ev,1)		
-			}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			}
 			AS3_vs_AS2.myAddEventListener(dispatcher,IOErrorEvent.IO_ERROR, newFailFunction)
 	    	AS3_vs_AS2.myAddEventListener(dispatcher, SecurityErrorEvent.SECURITY_ERROR, newFailFunction);	
 		}else{	
@@ -162,10 +163,10 @@ public final class AS3_Loader
   		try {
 	  		if (url is String) {
 	  			if((context == null) || (!context.checkPolicyFile)){
-	  				urlloader.load(new URLRequest(url as String));
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	  				urlloader.load(new URLRequest(url as String));
 	  			}else{
 	  				loader.load(new URLRequest(url as String),context);
 	  			}
@@ -175,10 +176,10 @@ public final class AS3_Loader
      	} catch(error:Error) {
      		failureHandler( new SecurityErrorEvent(SecurityErrorEvent.SECURITY_ERROR,false, false, AS3_vs_AS2.error2String(error)));
      	}		
-	}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	}
 	private static function doCallError(failureHandler:Function,imageURLRequest:URLRequest,ev:Event,callNum:int):void{
 		if(callNum < imageLoadingRetry){
 			callNum++	
@@ -188,10 +189,10 @@ public final class AS3_Loader
 			}		
 			var dispatcher:IEventDispatcher;	
 			if(ev.target is URLLoader){
-				var urlLoader:URLLoader = new URLLoader;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+				var urlLoader:URLLoader = new URLLoader;
 				dispatcher = urlLoader;	
 			}else if(ev.target is LoaderInfo){
 				var loader:Loader = new Loader;
@@ -201,10 +202,10 @@ public final class AS3_Loader
 			AS3_vs_AS2.myAddEventListener(dispatcher,IOErrorEvent.IO_ERROR, newFailFunction)
 	    	AS3_vs_AS2.myAddEventListener(dispatcher, SecurityErrorEvent.SECURITY_ERROR, newFailFunction);	
 	    	if(ev.target is URLLoader){
-	    		urlLoader.load(imageURLRequest)
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	    		urlLoader.load(imageURLRequest)
 	    	}else if(ev.target is LoaderInfo){
 	    		loader.load(imageURLRequest)
 	    	}  	
@@ -214,10 +215,10 @@ public final class AS3_Loader
 		}		
 	}
 	private static function traceHandler(e:Event):void {
-        tmpTrace("traceHandler:"+e!=null && e.target!=null && e.target.hasOwnProperty("data") ? e.target.data : "No data!");
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+        tmpTrace("traceHandler:"+e!=null && e.target!=null && e.target.hasOwnProperty("data") ? e.target.data : "No data!");
     }
 	private static function criticalError(ev:Event,url:String):void{
 		tmpTrace(" Error loading URL: ",url)
@@ -227,10 +228,10 @@ public final class AS3_Loader
 		}else if(ev is SecurityErrorEvent){
 			msg = "critical SecurityErrorEvent" + JSON.stringify(ev as SecurityErrorEvent);	
 		}
-		ErrorHandler.alwaysTraceAndSendReport(msg, [url,ev]);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		ErrorHandler.alwaysTraceAndSendReport(msg, [url,ev]);
 		StaticFunctions.showError(msg+" in url="+url);
 	}
 

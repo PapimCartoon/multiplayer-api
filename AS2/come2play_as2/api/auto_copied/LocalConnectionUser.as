@@ -183,7 +183,7 @@ import come2play_as2.api.auto_copied.*;
         	var lc:LocalConnection = new LocalConnection();
         	if(StaticFunctions.ALLOW_DOMAINS != null)
 				lc.allowDomain(StaticFunctions.ALLOW_DOMAINS)
-			myTrace(["locoal connection Domain",lc.domain])	
+			myTrace(["local connection Domain",lc.domain])	
 			return lc;
         }
         public function localconnection_init(sRandomPrefix:String):Void {

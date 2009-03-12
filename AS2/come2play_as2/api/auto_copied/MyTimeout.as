@@ -12,7 +12,7 @@ import come2play_as2.api.auto_copied.*;
 		public function start(func:Function, milliseconds:Number):Void {
 			clear();
 			var thisObj:MyTimeout = this; // for AS2
-			timeout_id = ErrorHandler.myTimeout(name, function () {
+			timeout_id = ErrorHandler.myTimeout(name, function ():Void {
 				thisObj.clearId();
 				func();				
 			}, milliseconds);

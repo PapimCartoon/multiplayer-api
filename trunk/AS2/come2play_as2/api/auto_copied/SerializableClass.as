@@ -34,7 +34,8 @@
  * 	  registerClassAlias(shortName, classObject)
  * 	 which is similar in essense to 
  *   flash.net.registerClassAlias(aliasName, classObject):Void 
- * 
+ * (we could have used ByteArray.writeObject and readObject to serialize/copy objects,
+ *  but we wanted a solution that also works in AS2)
  * 
  * Other features:
  * - fields starting with "__" are not serialized to String 
@@ -73,7 +74,7 @@ class come2play_as2.api.auto_copied.SerializableClass /*<InAPI>extends Event</In
 	public function getFieldNames():Array/*String*/ {
 		var res:Array/*String*/ = [];
 		var fieldNames:Array/*String*/ = AS3_vs_AS2.getFieldNames(this);	
-		var p76:Number=0; for (var i76:String in fieldNames) { var key:String = fieldNames[fieldNames.length==null ? i76 : p76]; p76++;
+		var p77:Number=0; for (var i77:String in fieldNames) { var key:String = fieldNames[fieldNames.length==null ? i77 : p77]; p77++;
 			if (StaticFunctions.startsWith(key,"__")) continue;
 			if (EVENT_FIELDS!=null && AS3_vs_AS2.IndexOf(EVENT_FIELDS,key)!=-1) continue;
 			res.push(key);
@@ -84,7 +85,7 @@ class come2play_as2.api.auto_copied.SerializableClass /*<InAPI>extends Event</In
 	public function toObject():Object {
 		var values:Object = {};		
 		values[CLASS_NAME_FIELD] = __CLASS_NAME__;	
-		var p87:Number=0; for (var i87:String in getFieldNames()) { var key:String = getFieldNames()[getFieldNames().length==null ? i87 : p87]; p87++;
+		var p88:Number=0; for (var i88:String in getFieldNames()) { var key:String = getFieldNames()[getFieldNames().length==null ? i88 : p88]; p88++;
 			values[key] = serializable2Object(this[key]); 
 		}
 		return values;		
@@ -92,7 +93,7 @@ class come2play_as2.api.auto_copied.SerializableClass /*<InAPI>extends Event</In
 	/*<InAPI>public function eventToString():String { return super.toString(); }</InAPI>*/
 	/*<InAPI>override</InAPI>*/ public function toString():String {
 		var values:Object = {}; // shallow object - we do not change the inner serializables to Object		
-		var p95:Number=0; for (var i95:String in getFieldNames()) { var key:String = getFieldNames()[getFieldNames().length==null ? i95 : p95]; p95++;
+		var p96:Number=0; for (var i96:String in getFieldNames()) { var key:String = getFieldNames()[getFieldNames().length==null ? i96 : p96]; p96++;
 			values[key] = this[key]; 
 		}	
 		return JSON.instanceToString(__CLASS_NAME__, values);

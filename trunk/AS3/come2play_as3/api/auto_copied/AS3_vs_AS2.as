@@ -50,6 +50,13 @@ public final class AS3_vs_AS2
 	public static function byteArr2Str(byteArr:ByteArray):String {
 		return JSON.stringify(ByteArraySerializable.byteArr2Arr(byteArr));		
 	}
+	public static function copyObjectUsingByteArray(o:Object):Object {
+		// see also flash.net.registerClassAlias
+		var b:ByteArray = new ByteArray();
+		b.writeObject(o);
+		b.position = 0;
+		return b.readObject();
+	}
 	
 	public static function isNumber(o:Object):Boolean {
 		return o is Number;

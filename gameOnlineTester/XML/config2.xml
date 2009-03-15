@@ -764,7 +764,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
     <!-- config.game_name is prefixed to the rating, e.g., game_rating_chess . I do this to make sure the ratings of different games don't override one another -->
     <game_name>chess</game_name>
 		
-	<is_with_taunts type="boolean">true</is_with_taunts> <!--  show the taunt pop up -->
+	<is_with_taunts type="boolean">false</is_with_taunts> <!--  show the taunt pop up -->
 	<is_with_stakes type="boolean">true</is_with_stakes>
 		
 	<taunts type="list">

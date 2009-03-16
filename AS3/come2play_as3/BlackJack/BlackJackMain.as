@@ -1,5 +1,6 @@
 package come2play_as3.BlackJack
 {
+	import come2play_as3.api.auto_copied.AS3_vs_AS2;
 	import come2play_as3.cards.CardsAPI;
 	import come2play_as3.cards.events.GraphicButtonClickEvent;
 	
@@ -14,7 +15,7 @@ package come2play_as3.BlackJack
 			blackJackGraphic = new BlackJackGraphic();
 			graphics.addChild(blackJackGraphic);
 			super(blackJackGraphic);
-			blackJackGraphic.addEventListener(GraphicButtonClickEvent.GraphicButtonClick,makeAction,true);
+			AS3_vs_AS2.myAddEventListener(blackJackGraphic,GraphicButtonClickEvent.GraphicButtonClick,makeAction,true)
 			doRegisterOnServer();
 		}
 		private function makeAction(ev:GraphicButtonClickEvent):void

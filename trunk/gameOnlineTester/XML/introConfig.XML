@@ -61,5 +61,6 @@
 		<!-- put name=..
 		result=true/false
 		-->
+		<validateUserURL>http://127.0.0.1/index.asp?action=validate_name&</validateUserURL>
 	</userManagement>
 </introConfig>

@@ -1,5 +1,7 @@
 package come2play_as3.cards.graphic
 {
+	import come2play_as3.api.auto_copied.AS3_Timer;
+	import come2play_as3.api.auto_copied.AS3_vs_AS2;
 	import come2play_as3.cards.CardDefenitins;
 	import come2play_as3.cards.PlayerCard;
 	import come2play_as3.cards.caurina.transitions.Tweener;
@@ -48,11 +50,12 @@ package come2play_as3.cards.graphic
 			bouncingCards = new Array();
 			cardsToRemove = new Array();
 			bouncePosition = CardDefenitins.playerYPositions[0] - 20;
-			bounceCards.addEventListener(TimerEvent.TIMER,doBounce);
-			arrangeCardsTimer.addEventListener(TimerEvent.TIMER,moveCard);
-			cardsBack.addEventListener(TimerEvent.TIMER,cardsBackToPlace)
-			addEventListener(MouseEvent.MOUSE_MOVE,repositionCards)
-			addEventListener(CardPressedEvent.CardPressedEvent,bounceCard,true);
+			
+			AS3_vs_AS2.myAddEventListener(bounceCards,TimerEvent.TIMER,doBounce)
+			AS3_vs_AS2.myAddEventListener(arrangeCardsTimer,TimerEvent.TIMER,moveCard)
+			AS3_vs_AS2.myAddEventListener(cardsBack,TimerEvent.TIMER,cardsBackToPlace)		
+			AS3_vs_AS2.myAddEventListener(this,MouseEvent.MOUSE_MOVE,repositionCards)
+			AS3_vs_AS2.myAddEventListener(this,CardPressedEvent.CardPressedEvent,bounceCard,true)
 			cardsBack.start();
 		}
 		

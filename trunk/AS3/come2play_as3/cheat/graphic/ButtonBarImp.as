@@ -2,6 +2,7 @@ package come2play_as3.cheat.graphic
 {
 	
 	import come2play_as3.api.auto_copied.AS3_Timer;
+	import come2play_as3.api.auto_copied.AS3_vs_AS2;
 	import come2play_as3.cards.events.GraphicButtonClickEvent;
 	
 	import flash.events.TimerEvent;
@@ -23,7 +24,8 @@ package come2play_as3.cheat.graphic
 		public function ButtonBarImp()
 		{
 			cheaterTimer = new AS3_Timer("cheaterTimer",1000,0);
-			cheaterTimer.addEventListener(TimerEvent.TIMER,secondDone);
+			AS3_vs_AS2.myAddEventListener(cheaterTimer,TimerEvent.TIMER,secondDone)
+			
 			callCheaterButt = new ButtonBarButtonImp("callCheater","Call Cheater");
 			trustButt = new ButtonBarButtonImp("trust","Trust");
 			okButt = new ButtonBarButtonImp("ok","Ok");

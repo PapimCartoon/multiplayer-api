@@ -1,5 +1,6 @@
 package come2play_as3.minesweeper
 {
+	import come2play_as3.api.auto_copied.AS3_vs_AS2;
 	import come2play_as3.api.auto_copied.JSON;
 	import come2play_as3.api.auto_generated.PlayerMatchOver;
 	import come2play_as3.api.auto_generated.ServerEntry;
@@ -50,15 +51,12 @@ package come2play_as3.minesweeper
 			shift = new Shift();
 			shift.x = 250;
 			shift.y = 300;
-			
-			shift.addEventListener(MouseEvent.CLICK,pressShift);
-			shift.addEventListener(MouseEvent.ROLL_OVER,overShift);
-			shift.addEventListener(MouseEvent.ROLL_OUT,leftShift);
-			//shift.stroke_mc.visible = false;
+			AS3_vs_AS2.myAddEventListener(shift,MouseEvent.CLICK,pressShift)
+			AS3_vs_AS2.myAddEventListener(shift,MouseEvent.ROLL_OVER,overShift)
+			AS3_vs_AS2.myAddEventListener(shift,MouseEvent.ROLL_OUT,leftShift)
 			this.graphics.addChild(shift)
-			
 			mineSweeperGraphic = new MineSweeperGraphic();
-			mineSweeperGraphic.addEventListener(MouseEvent.CLICK,selectMine);
+			AS3_vs_AS2.myAddEventListener(mineSweeperGraphic,MouseEvent.CLICK,selectMine)
 			graphics.addChild(mineSweeperGraphic);
 		}
 		private function pressShift(ev:MouseEvent):void

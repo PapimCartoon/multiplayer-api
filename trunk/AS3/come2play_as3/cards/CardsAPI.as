@@ -1,8 +1,8 @@
 package come2play_as3.cards
 {
+	import come2play_as3.api.auto_copied.AS3_vs_AS2;
 	import come2play_as3.api.auto_copied.T;
 	import come2play_as3.api.auto_generated.ClientGameAPI;
-	import come2play_as3.api.auto_generated.InfoEntry;
 	import come2play_as3.api.auto_generated.RevealEntry;
 	import come2play_as3.api.auto_generated.ServerEntry;
 	import come2play_as3.api.auto_generated.UserEntry;
@@ -38,9 +38,10 @@ package come2play_as3.cards
 			(new CardTypeClass).register();	
 			initCardDefenitins();
 			this.cardGraphics = cardGraphics
-			cardGraphics.addEventListener(CardPressedEvent.CardPressedEvent,cardMarked,true);
-			cardGraphics.addEventListener(AnimationEndedEvent.AnimationEndedEvent,endAnimation);
-			cardGraphics.addEventListener(AnimationStartedEvent.AnimationStartedEvent,startAnimation);
+			
+			AS3_vs_AS2.myAddEventListener(cardGraphics,CardPressedEvent.CardPressedEvent,cardMarked,true)
+			AS3_vs_AS2.myAddEventListener(cardGraphics,AnimationEndedEvent.AnimationEndedEvent,endAnimation)
+			AS3_vs_AS2.myAddEventListener(cardGraphics,AnimationStartedEvent.AnimationStartedEvent,startAnimation)
 			super(cardGraphics);
 		}		
 		private function startAnimation(ev:Event):void

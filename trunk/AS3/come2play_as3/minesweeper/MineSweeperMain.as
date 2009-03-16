@@ -40,8 +40,8 @@ import flash.utils.*;
 			super(graphics);
 			this.graphics = graphics;
 			AS3_vs_AS2.waitForStage(graphics,constructGame);
-			computerMoveTimer = new AS3_Timer("computerMoveTimer",100,0);
-			computerMoveTimer.addEventListener(TimerEvent.TIMER,computerMakeMove)
+			computerMoveTimer = new AS3_Timer("computerMoveTimer",100,0);	
+			AS3_vs_AS2.myAddEventListener(computerMoveTimer,TimerEvent.TIMER,computerMakeMove)
 		}
 		public function constructGame():void
 		{ 
@@ -53,7 +53,7 @@ import flash.utils.*;
 			startGraphic.y=160;
 			startGraphic.stop();
 			graphics.addChild(startGraphic);
-			startGraphic.addEventListener("starterEnd",startGame);
+			AS3_vs_AS2.myAddEventListener(startGraphic,"starterEnd",startGame);
 			doRegisterOnServer();
 		}
 		

@@ -1,12 +1,13 @@
 package come2play_as3.minesweeper
 {
+	import come2play_as3.api.auto_copied.AS3_vs_AS2;
+	import come2play_as3.api.auto_copied.ErrorHandler;
 	import come2play_as3.api.auto_copied.T;
 	import come2play_as3.api.auto_generated.API_Message;
 	
 	import flash.display.MovieClip;
 	import flash.events.Event;
 	import flash.text.TextField;
-	import flash.utils.setTimeout;
 	
 	public class MineSweeperGraphic extends MovieClip
 	{
@@ -32,11 +33,9 @@ package come2play_as3.minesweeper
 			boardUnderPart.addChild(box);
 			
 			if(T.custom(API_Message.CUSTOM_INFO_KEY_isBack,false) as Boolean)
-			{
-				
-				
+			{				
 				box.gotoAndStop(30+playerNum*10);
-				box.addEventListener(Event.ENTER_FRAME,function(ev:Event):void{stopBoom(box);});
+				AS3_vs_AS2.myAddEventListener(box,Event.ENTER_FRAME,function(ev:Event):void{stopBoom(box);})
 			}
 			else
 			{
@@ -52,7 +51,7 @@ package come2play_as3.minesweeper
 			if(box.Boom != null)
 				box.Boom.gotoAndStop(61);
 			else
-				setTimeout(function():void{stopBoom(box);},10);
+				ErrorHandler.myTimeout("stop Boom",function():void{stopBoom(box);},10);
 		}
 		public function revealBox(playerNum:int,borderingMines:int,xPos:int,yPos:int,isCorrect:Boolean):void
 		{
@@ -135,6 +134,8 @@ package come2play_as3.minesweeper
 	import flash.text.TextField;
 	import flash.utils.Timer;
 	import flash.events.TimerEvent;
+	import come2play_as3.api.auto_copied.AS3_Timer;
+	import come2play_as3.api.auto_copied.AS3_vs_AS2;
 	
 class PlayerGraphicData extends MovieClip
 {
@@ -147,7 +148,7 @@ class PlayerGraphicData extends MovieClip
 	public function PlayerGraphicData(num:int,name:String):void
 	{
 		lifeUpTimer = new AS3_Timer("lifeUpTimer",1000,0);
-		lifeUpTimer.addEventListener(TimerEvent.TIMER,flicker);
+		AS3_vs_AS2.myAddEventListener(lifeUpTimer,TimerEvent.TIMER,flicker)
 		if(name.length > 10)
 			name = name.substr(0,10);
 		playerName= name;

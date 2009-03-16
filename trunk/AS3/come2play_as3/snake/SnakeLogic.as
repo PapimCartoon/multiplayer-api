@@ -1,5 +1,6 @@
 package come2play_as3.snake
 {
+	import come2play_as3.api.auto_copied.AS3_Timer;
 	import come2play_as3.api.auto_copied.RandomGenerator;
 	import come2play_as3.api.auto_generated.PlayerMatchOver;
 	import come2play_as3.api.auto_generated.ServerEntry;

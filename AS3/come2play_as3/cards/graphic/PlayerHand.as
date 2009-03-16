@@ -39,9 +39,9 @@ package come2play_as3.cards.graphic
 		public function PlayerHand()
 		{
 			isBounceUp = true;
-			cardsBack = new Timer(1000,0);
-			bounceCards = new Timer(100,0);
-			arrangeCardsTimer = new Timer(120,0);
+			cardsBack = new AS3_Timer("cardsBack",1000,0);
+			bounceCards = new AS3_Timer("bounceCards",100,0);
+			arrangeCardsTimer = new AS3_Timer("arrangeCardsTimer",120,0);
 			bounceCards.start();
 			cardsInStock = new Array();
 			cardsInHand = new Array();

@@ -393,7 +393,7 @@ public final class AS3_vs_AS2
 	}	
 	public static function waitForStage(graphics:MovieClip, gameConsructor:Function):void
 	{
-		var stageTimer:Timer = new Timer(100,0);
+		var stageTimer:Timer = new AS3_Timer("waitForStage",100,0);
 		stageTimer.start();	
 		trace('waitForStage...');
 		myAddEventListener(stageTimer,
@@ -434,6 +434,7 @@ public final class AS3_vs_AS2
 	public static function getClassName(o:Object):String {
 		return getQualifiedClassName(o);
 	}
+	// e.g., "come2play_as3.auto_copied::StaticFunctions"
 	public static function getClassByName(className:String):Class {
 		try {
 			return getDefinitionByName(className) as Class;

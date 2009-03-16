@@ -26,7 +26,8 @@ import come2play_as2.api.*;
 		
 		public function BaseGameAPI(_someMovieClip:MovieClip) {
 			super(_someMovieClip, false, getPrefixFromFlashVars(_someMovieClip),true);
-			ErrorHandler.flash_url = AS3_vs_AS2.getLoaderInfoUrl(_someMovieClip);
+			ErrorHandler.flash_url = AS3_vs_AS2.getLoaderInfoUrl(_someMovieClip);			
+			ErrorHandler.ERROR_REPORT_PREFIX = "GAME";
 			StaticFunctions.alwaysTrace(this);
 			ErrorHandler.SEND_BUG_REPORT = AS3_vs_AS2.delegate(this, this.sendBugReport);
 			keyboardMessages = [];
@@ -39,30 +40,36 @@ import come2play_as2.api.*;
 			//come2play_as2.api::BaseGameAPI.abc = 666
 		}
 		private function sendBugReport(bug_id:Number, errMessage:String, flashTraces:String):Void {
-			gotError("errMessage="+errMessage+" traces="+flashTraces, new Error("SEND_ERRORMSG_TO_CONTAINER"));
+			sendMessage( API_DoAllFoundHacker.create(hackerUserId, 
+				"Got sendBugReport errMessage="+errMessage+
+				" (see full traces online for bug_id="+bug_id+")" ) );
 		}
 		public function toString():String {
-			var output:String =
-				"Server State(client side) : \n\n";					
+			var output:Array/*String*/ = [];
+			output.push("Server State(client side) : \n\n");					
 			var serverEntries:Array/*ServerEntry*/ = new Array();
 			if(serverStateMiror!=null){
-				var p52:Number=0; for (var i52:String in serverStateMiror.allValues) { var serverEntry:ServerEntry = serverStateMiror.allValues[serverStateMiror.allValues.length==null ? i52 : p52]; p52++;
+				var p55:Number=0; for (var i55:String in serverStateMiror.allValues) { var serverEntry:ServerEntry = serverStateMiror.allValues[serverStateMiror.allValues.length==null ? i55 : p55]; p55++;
 					serverEntries.push(serverEntry);
-					output+= serverEntry.toString() + "\n";
+					output.push(serverEntry.toString() + "\n");
 				}
 			}
 			if(historyEntries!=null)
-				output+="History entries :\n\n"+historyEntries.join("\n")+"\n\n";
+				output.push("History entries :\n\n"+historyEntries.join("\n")+"\n\n");
 			
-			output+="Custom Data:\n\n"+getTAsArray().join("\n");
+			output.push("Custom Data:\n\n"+getTAsArray().join("\n"));
 			var gotMatchStarted:API_GotMatchStarted = API_GotMatchStarted.create(0,verifier.getAllPlayerIds(),verifier.getFinishedPlayerIds(),serverEntries)
-			return "\n\nBaseGameAPI:\ngotMatchStarted : \n\n"+JSON.stringify(gotMatchStarted)+"\n"+output;					
+			return "\n\nBaseGameAPI:"+
+				"\nrunningAnimations="+runningAnimations+
+				"\ncurrentCallback="+currentCallback+
+				"\nmsgsInTransaction="+JSON.stringify(msgsInTransaction)+
+				"\n\ngotMatchStarted : \n\n"+JSON.stringify(gotMatchStarted)+
+				"\n"+output.join("");					
 		}
 		
 		private function keyPressed(is_key_down:Boolean, charCode:Number, keyCode:Number, keyLocation:Number, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean):Void
 		{
-			if((shiftKey) && (ctrlKey) && (altKey) && (is_key_down))
-			{
+			if((shiftKey) && (ctrlKey) && (altKey) && (is_key_down) && T.custom("ENABLE COMMANDS",true) ) {
 				if('G'.charCodeAt(0) == charCode)
 				{	
 					AS3_vs_AS2.showMessage(StaticFunctions.getTraces(), "traces");
@@ -113,19 +120,6 @@ import come2play_as2.api.*;
 		
 		public function setMaybeHackerUserId(hackerUserId:Number):Void {
 			this.hackerUserId = hackerUserId;			
-		}
-		/**
-		 * gotError is called whenever your overriding 'got' methods
-		 * 	throw an Error.
-		 */
-		public function gotError(withObj:Object, err:Error):Void {
-			sendMessage( API_DoAllFoundHacker.create(hackerUserId, 
-				"Got error withObj="+JSON.stringify(withObj)+
-				"\nerr="+AS3_vs_AS2.error2String(err)+
-				"\nrunningAnimations="+runningAnimations+
-				"\ncurrentCallback="+currentCallback+
-				"\nmsgsInTransaction="+JSON.stringify(msgsInTransaction)+
-				"\ntraces="+StaticFunctions.getTraces() ) );
 		}
 		/** 
 		 * A transaction starts when the server calls
@@ -207,14 +201,14 @@ import come2play_as2.api.*;
 			if (verifier.isPlayer()) sendDoStoreStateEvents();
         }
         private function sendDoStoreStateEvents():Void{
-        	var p213:Number=0; for (var i213:String in doStoreQueue) { var doStoreMsg:API_DoStoreState = doStoreQueue[doStoreQueue.length==null ? i213 : p213]; p213++;
+        	var p207:Number=0; for (var i207:String in doStoreQueue) { var doStoreMsg:API_DoStoreState = doStoreQueue[doStoreQueue.length==null ? i207 : p207]; p207++;
         		super.sendMessage(doStoreMsg);
         	}
         	doStoreQueue = [];
         }
         private function updateMirorServerState(serverEntries:Array/*ServerEntry*/):Void
         {
-        	var p220:Number=0; for (var i220:String in serverEntries) { var serverEntry:ServerEntry = serverEntries[serverEntries.length==null ? i220 : p220]; p220++;
+        	var p214:Number=0; for (var i214:String in serverEntries) { var serverEntry:ServerEntry = serverEntries[serverEntries.length==null ? i214 : p214]; p214++;
         	    serverStateMiror.addEntry(serverEntry);	
         	}     	
         }
@@ -253,7 +247,7 @@ import come2play_as2.api.*;
 					var customInfo:API_GotCustomInfo = API_GotCustomInfo(msg);
 					var i18nObj:Object = {};
 					var customObj:Object = {};
-					var p259:Number=0; for (var i259:String in customInfo.infoEntries) { var entry:InfoEntry = customInfo.infoEntries[customInfo.infoEntries.length==null ? i259 : p259]; p259++;
+					var p253:Number=0; for (var i253:String in customInfo.infoEntries) { var entry:InfoEntry = customInfo.infoEntries[customInfo.infoEntries.length==null ? i253 : p253]; p253++;
 						var key:String = entry.key;
 						var value:Object = entry.value;
 						if (key==API_Message.CUSTOM_INFO_KEY_i18n) {
@@ -274,7 +268,7 @@ import come2play_as2.api.*;
 				}else if(msg instanceof API_GotUserInfo){
 					var infoMessage:API_GotUserInfo =API_GotUserInfo( msg);
 					var userObject:Object = {};
-					var p280:Number=0; for (var i280:String in infoMessage.infoEntries) { var infoEntry:InfoEntry = infoMessage.infoEntries[infoMessage.infoEntries.length==null ? i280 : p280]; p280++;
+					var p274:Number=0; for (var i274:String in infoMessage.infoEntries) { var infoEntry:InfoEntry = infoMessage.infoEntries[infoMessage.infoEntries.length==null ? i274 : p274]; p274++;
 						trace(infoEntry.key+ "="+ infoEntry.value)
 						userObject[infoEntry.key] = infoEntry.value;
 					}
@@ -289,7 +283,6 @@ import come2play_as2.api.*;
         	} catch (err:Error) {
         		try{				
         			showError(getErrorMessage(msg, err));
-					gotError(msg, err);
 				} catch (err2:Error) { 
 					// to avoid an infinite loop, I can't call passError again.
 					showError("Another error occurred when calling gotError. The new error is="+AS3_vs_AS2.error2String(err2));

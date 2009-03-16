@@ -133,13 +133,14 @@ import come2play_as2.api.auto_copied.*;
 		
 		public function msgFromGame(doMsg:API_Message):Void {
 			check(doMsg!=null, ["Send a null message!"]);
+			if (isPassThrough(doMsg)) return; //e.g., we always pass doTrace or doAllFoundHacker
+			
 			if (doMsg instanceof API_DoRegisterOnServer) {
 				check(!didRegisterOnServer, ["Call DoRegisterOnServer only once!"]);
 				didRegisterOnServer = true;
 				return;
 			} 
 			check(didRegisterOnServer, ["The first call must be DoRegisterOnServer!"]);
-			if (isPassThrough(doMsg)) return; //e.g., we always pass doTrace or doAllFoundHacker
 			
         	if (doMsg instanceof API_DoStoreState) {
         		check(isPlayer(), ["Only a player can send DoStoreState"]);
@@ -158,7 +159,7 @@ import come2play_as2.api.auto_copied.*;
 				
 				var wasStoreStateCalculation:Boolean = false;
 				var isRequestStateCalculation:Boolean = currentCallback instanceof API_GotRequestStateCalculation;
-				var p164:Number=0; for (var i164:String in transaction.messages) { var doAllMsg:API_Message = transaction.messages[transaction.messages.length==null ? i164 : p164]; p164++;
+				var p165:Number=0; for (var i165:String in transaction.messages) { var doAllMsg:API_Message = transaction.messages[transaction.messages.length==null ? i165 : p165]; p165++;
 					checkDoAll(doAllMsg);
 					if (isRequestStateCalculation) {
 						if (doAllMsg instanceof API_DoAllStoreStateCalculation)	
@@ -185,7 +186,7 @@ import come2play_as2.api.auto_copied.*;
 		}
 		private function isDeleteLegal(userEntries:Array/*UserEntry*/):Void
 		{
-			var p191:Number=0; for (var i191:String in userEntries) { var userEntry:UserEntry = userEntries[userEntries.length==null ? i191 : p191]; p191++;
+			var p192:Number=0; for (var i192:String in userEntries) { var userEntry:UserEntry = userEntries[userEntries.length==null ? i192 : p192]; p192++;
 				if (userEntry.value == null)
 					check(!userEntry.isSecret,["key deletion must be public! userEntry=",userEntry]);
 			}
@@ -252,21 +253,21 @@ import come2play_as2.api.auto_copied.*;
         private function isNullKeyExistUserEntry(userEntries:Array/*UserEntry*/):Void
         {
         	check(userEntries.length!=0, ["userEntries must have at least one UserEntry!"]);
-        	var p258:Number=0; for (var i258:String in userEntries) { var userEntry:UserEntry = userEntries[userEntries.length==null ? i258 : p258]; p258++;
+        	var p259:Number=0; for (var i259:String in userEntries) { var userEntry:UserEntry = userEntries[userEntries.length==null ? i259 : p259]; p259++;
         		check(userEntry.key != null,["UserEntry.key cannot be null ! userEntry=",userEntry]);
         	}
         }
         private function isNullKeyExistRevealEntry(revealEntries:Array/*RevealEntry*/):Void
         {
         	//check(revealEntries.length>=1, ["revealEntries must have at least one RevealEntry!"]);
-        	var p265:Number=0; for (var i265:String in revealEntries) { var revealEntry:RevealEntry = revealEntries[revealEntries.length==null ? i265 : p265]; p265++;
+        	var p266:Number=0; for (var i266:String in revealEntries) { var revealEntry:RevealEntry = revealEntries[revealEntries.length==null ? i266 : p266]; p266++;
         		check(revealEntry != null && revealEntry.key != null && (revealEntry.userIds==null || isAllInPlayers(revealEntry.userIds)), ["RevealEntry.key cannot be null, userIds must either be null or contain only players. revealEntry=",revealEntry]); 
         	}
         }
         private function isNullKeyExist(keys:Array/*Object*/):Void
         {
         	check(keys.length!=0,["keys must have at leasy one key!"]);        		
-        	var p272:Number=0; for (var i272:String in keys) { var key:String = keys[keys.length==null ? i272 : p272]; p272++;
+        	var p273:Number=0; for (var i273:String in keys) { var key:String = keys[keys.length==null ? i273 : p273]; p273++;
         		check(key != null,["key cannot be null ! keys=",keys]);
         	}
         }

@@ -65,7 +65,12 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	}
 	public static function getTraces():String {
 		var res:Array = [];
-		for (var key:String in keyTraces) {
+		// I want to sort the keys (to make the order of traces deterministic
+		var keys:Array = [];
+		for (var k:String in keyTraces) keys.push(k);
+		keys.sort();
+		
+		var p75:Number=0; for (var i75:String in keys) { var key:String = keys[keys.length==null ? i75 : p75]; p75++;
 			var tracesOfKey:Array = keyTraces[key];
 			res.push(key + " "+tracesOfKey.length+" traces:"+
 				(tracesOfKey.length<MAX_TRACES[key] ? "" : " (REACHED MAX TRACES)"));
@@ -154,7 +159,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 				// for static properties we use describeType
 				// because o1 and o2 have the same type, it is enough to use the fields of o1.
 				var fieldsArr:Array = AS3_vs_AS2.getFieldNames(o1);
-				var p159:Number=0; for (var i159:String in fieldsArr) { var field:String = fieldsArr[fieldsArr.length==null ? i159 : p159]; p159++;
+				var p164:Number=0; for (var i164:String in fieldsArr) { var field:String = fieldsArr[fieldsArr.length==null ? i164 : p164]; p164++;
 					allFields[field] = true;
 				}
 			}
@@ -170,7 +175,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	
 	public static function subtractArray(arr:Array, minus:Array):Array {
 		var res:Array = arr.concat();
-		var p175:Number=0; for (var i175:String in minus) { var o:Object = minus[minus.length==null ? i175 : p175]; p175++;
+		var p180:Number=0; for (var i180:String in minus) { var o:Object = minus[minus.length==null ? i180 : p180]; p180++;
 			var indexOf:Number = AS3_vs_AS2.IndexOf(res, o);
 			StaticFunctions.assert(indexOf!=-1, ["When subtracting minus=",minus," from array=", arr, " we did not find element ",o]);				
 			res.splice(indexOf, 1);
@@ -276,7 +281,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	}
 	public static function instance2Object(instance:Object, fields:Array/*String*/):Object {
 		var res:Object = {};
-		var p281:Number=0; for (var i281:String in fields) { var field:String = fields[fields.length==null ? i281 : p281]; p281++;
+		var p286:Number=0; for (var i286:String in fields) { var field:String = fields[fields.length==null ? i286 : p286]; p286++;
 			res[field] = instance[field];
 		}
 		return res;

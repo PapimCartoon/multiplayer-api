@@ -7,6 +7,8 @@ public final class ErrorHandler
 	}
 	public static function getOngoingTimers():String {
 		var res:Array = [];
+		res.push("ERROR REPORT FROM:");
+		res.push(ERROR_REPORT_PREFIX);
 		res.push("My stack traces:");	
 		res.push( my_stack_trace.join(",\n") );
 		res.push("\n");
@@ -133,11 +135,13 @@ public final class ErrorHandler
 		} catch (err:Error) { handleError(err, args); }		
 		return res; 			
 	}
+	public static var ERROR_REPORT_PREFIX:String = "DISTRIBUTION"; // where did the error come from?
 	public static function handleError(err:Error, obj:Object):void {
 		try {
 			var stackTraces:String = AS3_vs_AS2.myGetStackTrace(err); // null in the release version
 			var errStr:String = 
 				(stackTraces==null ? "" : "AAAA (with stack trace) ")+ // so I will easily find them in our "errors page"
+				ERROR_REPORT_PREFIX +
 				AS3_vs_AS2.error2String(err)+
 				(stackTraces==null ? "" :
 					"\n\tStackTrace="+stackTraces+
@@ -155,7 +159,10 @@ public final class ErrorHandler
 	public static var SHOULD_SHOW_ERRORS:Boolean = true;
 	public static var flash_url:String;
 	public static var didReportError:Boolean = false; // we report only 1 error (usually 1 error leads to others)
-	public static var SEND_BUG_REPORT:Function = null; // to send the bug report to the java as well
+	// When the game or container has a bug, they report to ASP and cause the other to also report its traces.
+	// If the game has a bug, then we report to ASP, and send DoAllFoundHacker (which cause the container to send a bug report)
+	// If the container has a bug, then we report to, and send to java, and pass CUSTOM_INFO_KEY_checkThrowingAnError (which cause the game to send a bug report)  
+	public static var SEND_BUG_REPORT:Function = null; 
 	private static function sendReport(errStr:String):int {
 		if (didReportError) return -1;
 		didReportError = true;

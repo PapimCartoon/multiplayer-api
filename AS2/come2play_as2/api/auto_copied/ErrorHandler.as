@@ -6,17 +6,19 @@ class come2play_as2.api.auto_copied.ErrorHandler
 	}
 	public static function getOngoingTimers():String {
 		var res:Array = [];
+		res.push("ERROR REPORT FROM:");
+		res.push(ERROR_REPORT_PREFIX);
 		res.push("My stack traces:");	
 		res.push( my_stack_trace.join(",\n") );
 		res.push("\n");
 					
 		res.push("My ongoingIntervals:");
-		var p13:Number=0; for (var i13:String in ongoingIntervals) { var arr1:Array = ongoingIntervals[ongoingIntervals.length==null ? i13 : p13]; p13++;
+		var p15:Number=0; for (var i15:String in ongoingIntervals) { var arr1:Array = ongoingIntervals[ongoingIntervals.length==null ? i15 : p15]; p15++;
 			res.push( "\t"+JSON.stringify(arr1) );
 		}
 		res.push("\n");
 		res.push("My ongoingTimeouts:\n");
-		var p18:Number=0; for (var i18:String in ongoingTimeouts) { var arr2:Array = ongoingTimeouts[ongoingTimeouts.length==null ? i18 : p18]; p18++;
+		var p20:Number=0; for (var i20:String in ongoingTimeouts) { var arr2:Array = ongoingTimeouts[ongoingTimeouts.length==null ? i20 : p20]; p20++;
 			res.push( "\t"+JSON.stringify(arr2) );
 		}
 		res.push("\n");		
@@ -132,11 +134,13 @@ class come2play_as2.api.auto_copied.ErrorHandler
 		} catch (err:Error) { handleError(err, args); }		
 		return res; 			
 	}
+	public static var ERROR_REPORT_PREFIX:String = "DISTRIBUTION"; // where did the error come from?
 	public static function handleError(err:Error, obj:Object):Void {
 		try {
 			var stackTraces:String = AS3_vs_AS2.myGetStackTrace(err); // null in the release version
 			var errStr:String = 
 				(stackTraces==null ? "" : "AAAA (with stack trace) ")+ // so I will easily find them in our "errors page"
+				ERROR_REPORT_PREFIX +
 				AS3_vs_AS2.error2String(err)+
 				(stackTraces==null ? "" :
 					"\n\tStackTrace="+stackTraces+
@@ -154,7 +158,10 @@ class come2play_as2.api.auto_copied.ErrorHandler
 	public static var SHOULD_SHOW_ERRORS:Boolean = true;
 	public static var flash_url:String;
 	public static var didReportError:Boolean = false; // we report only 1 error (usually 1 error leads to others)
-	public static var SEND_BUG_REPORT:Function = null; // to send the bug report to the java as well
+	// When the game or container has a bug, they report to ASP and cause the other to also report its traces.
+	// If the game has a bug, then we report to ASP, and send DoAllFoundHacker (which cause the container to send a bug report)
+	// If the container has a bug, then we report to, and send to java, and pass CUSTOM_INFO_KEY_checkThrowingAnError (which cause the game to send a bug report)  
+	public static var SEND_BUG_REPORT:Function = null; 
 	private static function sendReport(errStr:String):Number {
 		if (didReportError) return -1;
 		didReportError = true;

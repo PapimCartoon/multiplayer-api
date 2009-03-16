@@ -146,7 +146,7 @@ class PlayerGraphicData extends MovieClip
 	private var lifeUpTimer:Timer;
 	public function PlayerGraphicData(num:int,name:String):void
 	{
-		lifeUpTimer = new Timer(1000,0);
+		lifeUpTimer = new AS3_Timer("lifeUpTimer",1000,0);
 		lifeUpTimer.addEventListener(TimerEvent.TIMER,flicker);
 		if(name.length > 10)
 			name = name.substr(0,10);

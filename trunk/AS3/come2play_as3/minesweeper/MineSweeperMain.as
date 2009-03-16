@@ -40,7 +40,7 @@ import flash.utils.*;
 			super(graphics);
 			this.graphics = graphics;
 			AS3_vs_AS2.waitForStage(graphics,constructGame);
-			computerMoveTimer = new Timer(100,0);
+			computerMoveTimer = new AS3_Timer("computerMoveTimer",100,0);
 			computerMoveTimer.addEventListener(TimerEvent.TIMER,computerMakeMove)
 		}
 		public function constructGame():void

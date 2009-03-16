@@ -26,7 +26,7 @@ package come2play_as3.snake
 		{
 			this.graphic = graphic;
 			this.snakeMainPointer = snakeMainPointer;
-			moveTick = new Timer(snakeSpeed,0);
+			moveTick = new AS3_Timer("SnakeLogic.snakeSpeed", snakeSpeed,0);
 			moveTick.addEventListener(TimerEvent.TIMER,makeMove);
 		}
 		

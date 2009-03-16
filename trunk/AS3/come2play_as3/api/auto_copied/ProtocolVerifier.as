@@ -138,13 +138,14 @@ package come2play_as3.api.auto_copied
 		
 		public function msgFromGame(doMsg:API_Message):void {
 			check(doMsg!=null, ["Send a null message!"]);
+			if (isPassThrough(doMsg)) return; //e.g., we always pass doTrace or doAllFoundHacker
+			
 			if (doMsg is API_DoRegisterOnServer) {
 				check(!didRegisterOnServer, ["Call DoRegisterOnServer only once!"]);
 				didRegisterOnServer = true;
 				return;
 			} 
 			check(didRegisterOnServer, ["The first call must be DoRegisterOnServer!"]);
-			if (isPassThrough(doMsg)) return; //e.g., we always pass doTrace or doAllFoundHacker
 			
         	if (doMsg is API_DoStoreState) {
         		check(isPlayer(), ["Only a player can send DoStoreState"]);

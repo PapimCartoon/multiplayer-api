@@ -30,7 +30,8 @@ package come2play_as3.api {
 		
 		public function BaseGameAPI(_someMovieClip:DisplayObjectContainer) {
 			super(_someMovieClip, false, getPrefixFromFlashVars(_someMovieClip),true);
-			ErrorHandler.flash_url = AS3_vs_AS2.getLoaderInfoUrl(_someMovieClip);
+			ErrorHandler.flash_url = AS3_vs_AS2.getLoaderInfoUrl(_someMovieClip);			
+			ErrorHandler.ERROR_REPORT_PREFIX = "GAME";
 			StaticFunctions.alwaysTrace(this);
 			ErrorHandler.SEND_BUG_REPORT = AS3_vs_AS2.delegate(this, this.sendBugReport);
 			keyboardMessages = [];
@@ -43,30 +44,36 @@ package come2play_as3.api {
 			//come2play_as3.api::BaseGameAPI.abc = 666
 		}
 		private function sendBugReport(bug_id:int, errMessage:String, flashTraces:String):void {
-			gotError("errMessage="+errMessage+" traces="+flashTraces, new Error("SEND_ERRORMSG_TO_CONTAINER"));
+			sendMessage( API_DoAllFoundHacker.create(hackerUserId, 
+				"Got sendBugReport errMessage="+errMessage+
+				" (see full traces online for bug_id="+bug_id+")" ) );
 		}
 		public function toString():String {
-			var output:String =
-				"Server State(client side) : \n\n";					
+			var output:Array/*String*/ = [];
+			output.push("Server State(client side) : \n\n");					
 			var serverEntries:Array/*ServerEntry*/ = new Array();
 			if(serverStateMiror!=null){
 				for each(var serverEntry:ServerEntry in serverStateMiror.allValues){
 					serverEntries.push(serverEntry);
-					output+= serverEntry.toString() + "\n";
+					output.push(serverEntry.toString() + "\n");
 				}
 			}
 			if(historyEntries!=null)
-				output+="History entries :\n\n"+historyEntries.join("\n")+"\n\n";
+				output.push("History entries :\n\n"+historyEntries.join("\n")+"\n\n");
 			
-			output+="Custom Data:\n\n"+getTAsArray().join("\n");
+			output.push("Custom Data:\n\n"+getTAsArray().join("\n"));
 			var gotMatchStarted:API_GotMatchStarted = API_GotMatchStarted.create(0,verifier.getAllPlayerIds(),verifier.getFinishedPlayerIds(),serverEntries)
-			return "\n\nBaseGameAPI:\ngotMatchStarted : \n\n"+JSON.stringify(gotMatchStarted)+"\n"+output;					
+			return "\n\nBaseGameAPI:"+
+				"\nrunningAnimations="+runningAnimations+
+				"\ncurrentCallback="+currentCallback+
+				"\nmsgsInTransaction="+JSON.stringify(msgsInTransaction)+
+				"\n\ngotMatchStarted : \n\n"+JSON.stringify(gotMatchStarted)+
+				"\n"+output.join("");					
 		}
 		
 		private function keyPressed(is_key_down:Boolean, charCode:int, keyCode:int, keyLocation:int, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean):void
 		{
-			if((shiftKey) && (ctrlKey) && (altKey) && (is_key_down))
-			{
+			if((shiftKey) && (ctrlKey) && (altKey) && (is_key_down) && T.custom("ENABLE COMMANDS",true) ) {
 				if('G'.charCodeAt(0) == charCode)
 				{	
 					AS3_vs_AS2.showMessage(StaticFunctions.getTraces(), "traces");
@@ -117,19 +124,6 @@ package come2play_as3.api {
 		
 		public function setMaybeHackerUserId(hackerUserId:int):void {
 			this.hackerUserId = hackerUserId;			
-		}
-		/**
-		 * gotError is called whenever your overriding 'got' methods
-		 * 	throw an Error.
-		 */
-		public function gotError(withObj:Object, err:Error):void {
-			sendMessage( API_DoAllFoundHacker.create(hackerUserId, 
-				"Got error withObj="+JSON.stringify(withObj)+
-				"\nerr="+AS3_vs_AS2.error2String(err)+
-				"\nrunningAnimations="+runningAnimations+
-				"\ncurrentCallback="+currentCallback+
-				"\nmsgsInTransaction="+JSON.stringify(msgsInTransaction)+
-				"\ntraces="+StaticFunctions.getTraces() ) );
 		}
 		/** 
 		 * A transaction starts when the server calls
@@ -293,7 +287,6 @@ package come2play_as3.api {
         	} catch (err:Error) {
         		try{				
         			showError(getErrorMessage(msg, err));
-					gotError(msg, err);
 				} catch (err2:Error) { 
 					// to avoid an infinite loop, I can't call passError again.
 					showError("Another error occurred when calling gotError. The new error is="+AS3_vs_AS2.error2String(err2));

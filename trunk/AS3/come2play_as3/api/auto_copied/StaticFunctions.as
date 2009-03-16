@@ -69,7 +69,12 @@ public final class StaticFunctions
 	}
 	public static function getTraces():String {
 		var res:Array = [];
-		for (var key:String in keyTraces) {
+		// I want to sort the keys (to make the order of traces deterministic
+		var keys:Array = [];
+		for (var k:String in keyTraces) keys.push(k);
+		keys.sort();
+		
+		for each (var key:String in keys) {
 			var tracesOfKey:Array = keyTraces[key];
 			res.push(key + " "+tracesOfKey.length+" traces:"+
 				(tracesOfKey.length<MAX_TRACES[key] ? "" : " (REACHED MAX TRACES)"));

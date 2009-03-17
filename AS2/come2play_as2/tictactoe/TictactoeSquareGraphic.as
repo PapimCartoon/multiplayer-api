@@ -59,6 +59,7 @@ class come2play_as2.tictactoe.TictactoeSquareGraphic
 		allSymbolGraphics[color] = newSymbol;
 	} 
 	public function gotSymbol(color:Number, symbolUrl:String):Void {
+		
 		if (color<0 || color>=MAX_SYMBOLS) throw new Error("Illegal color="+color+" MAX_SYMBOLS="+MAX_SYMBOLS);
 		var thisObj:TictactoeSquareGraphic = this; // for AS2
 		var newSymbol:MovieClip =

@@ -160,5 +160,7 @@ var FlashObject = com.deconcept.FlashObject;
 function writeFlash(obj,fName,fWidth,fHeight,fParams,id) 
 {
     //alert("aaa");
+	//fParams=""
+	//fName="graphics/Match4.swf"
     obj.innerHTML = "<object classid=\"clsid:d27cdb6e-ae6d-11cf-96b8-444553540000\"' codebase=\"http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=7,0,0,0\" menu=\"false\" width=\""+fWidth+"\" height=\""+fHeight+"\" id=\""+id+"\" align=\"middle\"><param name=\"allowScriptAccess\" value=\"always\"/><param name=\"movie\" value=\""+fName+"\"/><param name=\"menu\" value=\"false\"><param name=\"wmode\" value=\"window\"><param name=\"quality\" value=\"high\"/><param name=\"flashvars\" value=\""+fParams+"\"/><embed src=\""+fName+"\" quality=\"high\" width=\""+fWidth+"\" height=\""+fHeight+"\" name=\""+id+"\" align=\"middle\" allowScriptAccess=\"always\" menu=\"false\" wmode=\"window\" type=\"application/x-shockwave-flash\" flashvars=\""+fParams+"\" pluginspage=\"http://www.macromedia.com/go/getflashplayer\"/></object>";
 }

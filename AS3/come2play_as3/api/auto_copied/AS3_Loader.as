@@ -31,7 +31,9 @@ public final class AS3_Loader
 	}        
 	public static function loadText(urlRequest:URLRequest,successHandler:Function = null,failureHandler:Function = null,progressHandler:Function = null):void {
 		loadURL(urlRequest,successHandler,failureHandler,progressHandler)
-	}	
+	}
+	private static var imagesInLoad:Array = new Array();
+	private static var imagesInQueue:Array = new Array();	
 	public static function loadImage(imageUrl:String,successHandler:Function = null,failureHandler:Function = null,progressHandler:Function = null,context:LoaderContext = null):void {
 		StaticFunctions.assert(imageUrl!="",["can't load a blank image"]);
 		if (failureHandler==null) {
@@ -42,15 +44,26 @@ public final class AS3_Loader
 		if(successHandler == null){
 			successHandler = traceHandler
 		}	
-		if(imageCache[imageUrl] == null){
+		if((imageCache[imageUrl] == null) && (imagesInLoad.indexOf(imageUrl)==-1)){
+			imagesInLoad.push(imageUrl)
 			if((context ==null) || (!context.checkPolicyFile)){
 				loadURL(imageUrl,function(ev:Event):void{
 				imageCache[imageUrl] = ev;
+				imagesInLoad.splice(imagesInLoad.indexOf(imagesInLoad),1);
 				handleExistingImage(ev,successHandler,failureHandler,context);
+				for(var i:int=0;i<imagesInQueue.length;i++){
+					if(imagesInQueue[i].imageUrl == imageUrl){
+						handleExistingImage(ev,imagesInQueue[i].successHandler,imagesInQueue[i].failureHandler,context);
+						imagesInQueue.splice(i,1);
+						i--;
+					}
+				}
 				},failureHandler,progressHandler,context);
 			}else{
 				loadURL(imageUrl,successHandler,failureHandler,progressHandler,context);
 			}
+		}else if(imageCache[imageUrl] == null){
+			imagesInQueue.push({successHandler:successHandler,failureHandler:failureHandler,imageUrl:imageUrl})
 		}else{
 			handleExistingImage(imageCache[imageUrl],successHandler,failureHandler,context)
 		}

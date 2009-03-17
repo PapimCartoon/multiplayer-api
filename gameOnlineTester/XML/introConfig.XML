@@ -14,13 +14,32 @@
 	</user_info>
 	<grabIt>url</grabIt>
 	<moreGrabIt><!--All the grab it links-->	
-
+		<grabIt>
+			<image>http://bingobee.com/images/oilerlogos/Logo%20Third%2030x30.JPG</image><!--The callerId of the game -->
+			<url>http://bingobee.com/images/oilerlogos/Logo%20Third%2030x30.JPG</url><!--The URL of the game-->	
+		</grabIt>
+		<grabIt>
+			<image>http://bingobee.com/images/oilerlogos/Logo%20Third%2030x30.JPG</image><!--The callerId of the game -->
+			<url>http://bingobee.com/images/oilerlogos/Logo%20Third%2030x30.JPG</url><!--The URL of the game-->	
+		</grabIt>
+		<grabIt>
+			<image>http://bingobee.com/images/oilerlogos/Logo%20Third%2030x30.JPG</image><!--The callerId of the game -->
+			<url>http://bingobee.com/images/oilerlogos/Logo%20Third%2030x30.JPG</url><!--The URL of the game-->	
+		</grabIt>
+		<grabIt>
+			<image>http://bingobee.com/images/oilerlogos/Logo%20Third%2030x30.JPG</image><!--The callerId of the game -->
+			<url>http://bingobee.com/images/oilerlogos/Logo%20Third%2030x30.JPG</url><!--The URL of the game-->	
+		</grabIt>
+		<grabIt>
+			<image>http://bingobee.com/images/oilerlogos/Logo%20Third%2030x30.JPG</image><!--The callerId of the game -->
+			<url>http://bingobee.com/images/oilerlogos/Logo%20Third%2030x30.JPG</url><!--The URL of the game-->	
+		</grabIt> 
 	</moreGrabIt>
 	<moreGames>	
 		<game>
 			<callerId>12</callerId><!--The callerId of the game -->
-			<image>http://www.notus-online.com/catalog/pics/Sexy_Satin_With_Lacework_6_Pics_Underwear_Set.jpg</image><!--The URL of the image to load for the more game-->
-			<url>http://www.notus-online.com/catalog/pics/Sexy_Satin_With_Lacework_6_Pics_Underwear_Set.jpg</url><!--The URL of the game-->	
+			<image>http://bingobee.com/images/oilerlogos/Logo%20Third%2030x30.JPG</image><!--The URL of the image to load for the more game-->
+			<url>http://bingobee.com/images/oilerlogos/Logo%20Third%2030x30.JPG</url><!--The URL of the game-->	
 		</game>
 	</moreGames>
 
@@ -28,7 +47,7 @@
 	<inviteBuddyURL>http://www.google.com/</inviteBuddyURL>
 	<moreGamesURL>http://www.google.com/</moreGamesURL>
 	<!--if this value is not empty you must popout your game to play-->
-	<popoutURL>dsf</popoutURL>
+	<popoutURL></popoutURL>
 	<!--if this value is not empty the intro screen will do the action specefied-->
 	<autoMatchType></autoMatchType>
 

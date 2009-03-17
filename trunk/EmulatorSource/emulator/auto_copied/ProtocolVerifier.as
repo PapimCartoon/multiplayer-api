@@ -187,16 +187,16 @@ package emulator.auto_copied
 		
 		public function msgFromGame(doMsg:API_Message):void {
 			check(doMsg!=null, ["Send a null message!"]);
-			if (isPassThrough(doMsg)) return; //e.g., we always pass doTrace or doAllFoundHacker
 			
+			if (doMsg is API_DoRegisterOnServer) {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			if (doMsg is API_DoRegisterOnServer) {
 				check(!didRegisterOnServer, ["Call DoRegisterOnServer only once!"]);
 				didRegisterOnServer = true;
 				return;
 			} 
+			if (isPassThrough(doMsg)) return; //e.g., we always pass doTrace or doAllFoundHacker
 			check(didRegisterOnServer, ["The first call must be DoRegisterOnServer!"]);
 			
         	if (doMsg is API_DoStoreState) {

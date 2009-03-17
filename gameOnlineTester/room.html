@@ -144,6 +144,8 @@
 		}
 		addTableParams(params,"serverTable")
 		params["chat_skin_url"]="graphics/chatGraphics.swf";
+		params["preloader_url"]="graphics/Preloader.swf";
+		
 		//shared information betweeng game and room ends here
 		if (windowParams["flash_type"] == "room"){
 		document.title = "Room Tester"
@@ -196,8 +198,8 @@
 				params["override_config.game_parameters.start_scenario"] = "SentInvitation";
 				params["override_config.game_parameters.SentInvitation.player_ids"] = windowParams["player_ids"];
 			}else if(windowParams["type"] == "AutoMatch"){
-				//params["intro_screen_url"] = "graphics/IntroScreenSkin.swf"
-				//params["intro_config_url"] = "XML/introConfig.XML"	
+				params["intro_screen_url"] = "graphics/IntroScreenSkin.swf"
+				params["intro_config_url"] = "XML/introConfig.XML"	
 				params["override_config.game_parameters.start_scenario"] = "AutoMatch";
 				params["override_config.game_parameters.AutoMatch.match_string"] = windowParams["match_string"];
 			}

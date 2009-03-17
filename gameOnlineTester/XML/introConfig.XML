@@ -1,6 +1,9 @@
 <introConfig>
 	<configURL>XML/config2.XML</configURL>
 	<graphics>
+	
+		<computerImage>http://bingobee.com/images/oilerlogos/Logo%20Third%2030x30.JPG</computerImage><!--Practise mode image-->
+	
 		<gameDisplayName>cool game</gameDisplayName><!--The name of the game that will be displayed-->
 		<bigGameThumb></bigGameThumb><!--The URL the game will load as the background for the intro screen-->
 		<smallGameThumb></smallGameThumb><!--The URL the game will load as a side image-->

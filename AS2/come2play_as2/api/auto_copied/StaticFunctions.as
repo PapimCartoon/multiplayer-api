@@ -3,6 +3,7 @@
 import come2play_as2.api.auto_copied.*;
 class come2play_as2.api.auto_copied.StaticFunctions
 {			
+	public static var LAST_RAN_JAVA_DATE:String = "1/1/1"; // when running the java it automatically replaces the date
 	public static var GOOGLE_REVISION_NUMBER:Number = 811;
 	public static var COME2PLAY_REVISION_NUMBER:Number = 1863;
 	public static function getRevision():String {
@@ -18,7 +19,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 		if (!LOGGED_REVISIONS) {
 			LOGGED_REVISIONS = true;			
 			StaticFunctions.alwaysTrace( new ErrorHandler() );
-			storeTrace(["GOOGLE_REVISION_NUMBER=",GOOGLE_REVISION_NUMBER, " COME2PLAY_REVISION_NUMBER=",COME2PLAY_REVISION_NUMBER]);
+			storeTrace(["GOOGLE_REVISION_NUMBER=",GOOGLE_REVISION_NUMBER, " COME2PLAY_REVISION_NUMBER=",COME2PLAY_REVISION_NUMBER, " LAST_RAN_JAVA_DATE=",LAST_RAN_JAVA_DATE]);
 		}
 		
 		if (ALLOW_DOMAINS != null){
@@ -58,7 +59,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 			var maxT:Number = MAX_TRACES[key];
 			var traceLine:Array = ["Time: ", getTimer(), obj];
 			limitedPush(arr, traceLine , maxT); // we discard old traces
-			if (SHOULD_CALL_TRACE) trace(TRACE_PREFIX + key+":\t" + JSON.stringifyWithNewLine(traceLine));
+			if (SHOULD_CALL_TRACE) trace(TRACE_PREFIX + key+":\t" + JSON.stringify(traceLine));
 		} catch (err:Error) {
 			if (SHOULD_CALL_TRACE) trace(TRACE_PREFIX + "\n\n\n\n\n\n\n\n\n\n\n\nERROR!!!!!!!!!!!!!!!!!!!!!!! err="+AS3_vs_AS2.error2String(err)+"\n\n\n\n\n\n\n\n\n\n\n");
 		}
@@ -70,7 +71,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 		for (var k:String in keyTraces) keys.push(k);
 		keys.sort();
 		
-		var p75:Number=0; for (var i75:String in keys) { var key:String = keys[keys.length==null ? i75 : p75]; p75++;
+		var p76:Number=0; for (var i76:String in keys) { var key:String = keys[keys.length==null ? i76 : p76]; p76++;
 			var tracesOfKey:Array = keyTraces[key];
 			res.push(key + " "+tracesOfKey.length+" traces:"+
 				(tracesOfKey.length<MAX_TRACES[key] ? "" : " (REACHED MAX TRACES)"));
@@ -89,10 +90,14 @@ class come2play_as2.api.auto_copied.StaticFunctions
 		}
 		return "["+arr.join(sep)+"]";
 	}
+	public static function cutString(str:String, toSize:Number):String {		
+		if (str.length<toSize) return str;
+		return str.substr(0,toSize)+"... (string cut)";
+	}
 	public static function setClipboard(msg:String):Void {
 		try {			
 			trace("Setting in clipboard message:")
-			trace(msg);
+			trace(cutString(msg,20));
 			System.setClipboard(msg);
 		} catch (err:Error) {
 			// the flash gives an error if we try to set the clipboard not due to a user activity,
@@ -159,7 +164,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 				// for static properties we use describeType
 				// because o1 and o2 have the same type, it is enough to use the fields of o1.
 				var fieldsArr:Array = AS3_vs_AS2.getFieldNames(o1);
-				var p164:Number=0; for (var i164:String in fieldsArr) { var field:String = fieldsArr[fieldsArr.length==null ? i164 : p164]; p164++;
+				var p169:Number=0; for (var i169:String in fieldsArr) { var field:String = fieldsArr[fieldsArr.length==null ? i169 : p169]; p169++;
 					allFields[field] = true;
 				}
 			}
@@ -175,7 +180,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	
 	public static function subtractArray(arr:Array, minus:Array):Array {
 		var res:Array = arr.concat();
-		var p180:Number=0; for (var i180:String in minus) { var o:Object = minus[minus.length==null ? i180 : p180]; p180++;
+		var p185:Number=0; for (var i185:String in minus) { var o:Object = minus[minus.length==null ? i185 : p185]; p185++;
 			var indexOf:Number = AS3_vs_AS2.IndexOf(res, o);
 			StaticFunctions.assert(indexOf!=-1, ["When subtracting minus=",minus," from array=", arr, " we did not find element ",o]);				
 			res.splice(indexOf, 1);
@@ -281,7 +286,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	}
 	public static function instance2Object(instance:Object, fields:Array/*String*/):Object {
 		var res:Object = {};
-		var p286:Number=0; for (var i286:String in fields) { var field:String = fields[fields.length==null ? i286 : p286]; p286++;
+		var p291:Number=0; for (var i291:String in fields) { var field:String = fields[fields.length==null ? i291 : p291]; p291++;
 			res[field] = instance[field];
 		}
 		return res;

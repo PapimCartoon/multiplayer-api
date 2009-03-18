@@ -1,5 +1,7 @@
 package come2play_as3.api.auto_copied
 {
+	import come2play_as3.api.auto_generated.API_Message;
+	
 	import flash.display.*;
 	import flash.system.*;
 	import flash.utils.*;
@@ -22,7 +24,7 @@ public final class StaticFunctions
 		if (!LOGGED_REVISIONS) {
 			LOGGED_REVISIONS = true;			
 			StaticFunctions.alwaysTrace( new ErrorHandler() );
-			storeTrace(["GOOGLE_REVISION_NUMBER=",GOOGLE_REVISION_NUMBER, " COME2PLAY_REVISION_NUMBER=",COME2PLAY_REVISION_NUMBER]);
+			storeTrace(["GOOGLE_REVISION_NUMBER=",GOOGLE_REVISION_NUMBER, " COME2PLAY_REVISION_NUMBER=",COME2PLAY_REVISION_NUMBER, " LAST_RAN_JAVA_DATE=",API_Message.LAST_RAN_JAVA_DATE]);
 		}
 		
 		if (ALLOW_DOMAINS != null){
@@ -62,7 +64,7 @@ public final class StaticFunctions
 			var maxT:int = MAX_TRACES[key];
 			var traceLine:Array = ["Time: ", getTimer(), obj];
 			limitedPush(arr, traceLine , maxT); // we discard old traces
-			if (SHOULD_CALL_TRACE) trace(TRACE_PREFIX + key+":\t" + JSON.stringifyWithNewLine(traceLine));
+			if (SHOULD_CALL_TRACE) trace(TRACE_PREFIX + key+":\t" + JSON.stringify(traceLine));
 		} catch (err:Error) {
 			if (SHOULD_CALL_TRACE) trace(TRACE_PREFIX + "\n\n\n\n\n\n\n\n\n\n\n\nERROR!!!!!!!!!!!!!!!!!!!!!!! err="+AS3_vs_AS2.error2String(err)+"\n\n\n\n\n\n\n\n\n\n\n");
 		}
@@ -93,10 +95,14 @@ public final class StaticFunctions
 		}
 		return "["+arr.join(sep)+"]";
 	}
+	public static function cutString(str:String, toSize:int):String {		
+		if (str.length<toSize) return str;
+		return str.substr(0,toSize)+"... (string cut)";
+	}
 	public static function setClipboard(msg:String):void {
 		try {			
 			trace("Setting in clipboard message:")
-			trace(msg);
+			trace(cutString(msg,20));
 			System.setClipboard(msg);
 		} catch (err:Error) {
 			// the flash gives an error if we try to set the clipboard not due to a user activity,

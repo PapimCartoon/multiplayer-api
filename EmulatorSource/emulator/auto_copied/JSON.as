@@ -13,17 +13,16 @@ package emulator.auto_copied
 	// The initial source code was taken from JSON.org
 	public final class JSON {
 		public static var isDoingTesting:Boolean = false;
-
+		public static var KEEP_NEWLINES:Boolean = true; // because of stack traces, I want to keep new lines
+		public static var KEEP_TABS:Boolean = true;
+		
         private var ch:String = '';
         private var at:int = 0;
         private var text:String;
 
-	    public static function stringifyWithNewLine(o:Object):String{
-			return StaticFunctions.replaceAll(stringify(o),"\\n","\n\t\t");
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	    }
 	    public static function stringify(arg:Object):String{
 			if (arg==null) return 'null';
 			
@@ -33,10 +32,10 @@ package emulator.auto_copied
 	        	return ''+arg; 	 
 	        if (AS3_vs_AS2.isArray(arg)) {
 	        	res = [];
+	       		for (i = 0; i < arg.length; ++i) {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	       		for (i = 0; i < arg.length; ++i) {
                     v = stringify(arg[i]);
                     res.push(v);
                 }
@@ -46,10 +45,10 @@ package emulator.auto_copied
 	        	 
 	        	res = [];      
 	            l = arg.length;
+	            for (i = 0; i < l; i += 1) {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	            for (i = 0; i < l; i += 1) {
 	                c = arg.charAt(i);
 	                if (c >= ' ') {
 	                    if (c == '\\' || c == '"') {
@@ -59,16 +58,17 @@ package emulator.auto_copied
 	                } else {
 	                    switch (c) {
 	                        case '\b':
+	                            res.push('\\b');
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	                            res.push('\\b');
 	                            break;
 	                        case '\f':
 	                            res.push('\\f');
 	                            break;
 	                        case '\n':
 	                            res.push('\\n');
+	                            if (KEEP_NEWLINES) res.push("\n\t\t");
 	                            break;
 	                        case '\r':
 	                            res.push('\\r');
@@ -77,6 +77,7 @@ package emulator.auto_copied
 
 	                            break;
 	                        case '\t':
+	                            if (KEEP_TABS) res.push('\t');
 	                            res.push('\\t');
 	                            break;
 	                        default:
@@ -84,10 +85,10 @@ package emulator.auto_copied
 	                            res.push( '\\u00' + Math.floor(charCode / 16).toString(16) +
 	                                (charCode % 16).toString(16) );
 	                    }
-	                }
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	                }
 	            }
 	            return '"' + res.join("") + '"';
 	        }
@@ -97,10 +98,10 @@ package emulator.auto_copied
 	        } catch(e:Error) {
 	        	if (isDoingTesting) 
 					throw e;
-				argToString = "ERROR in toString() method of "+AS3_vs_AS2.getClassName(arg)+" err="+AS3_vs_AS2.error2String(e);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+				argToString = "ERROR in toString() method of "+AS3_vs_AS2.getClassName(arg)+" err="+AS3_vs_AS2.error2String(e);
 	        }
 	        
 	        if (SerializableClass.isToStringObject(argToString)) {	        	
@@ -110,10 +111,10 @@ package emulator.auto_copied
 	        // E.g.,  { $Enum$ name:"NormalUser" , type:"come2play_as3.auto_generated::EnumSupervisor"}
 	        return argToString;                 
 	    }
-	    public static function getSortedKeys(arg:Object):Array/*String*/ {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	    public static function getSortedKeys(arg:Object):Array/*String*/ {
 	    	var keys:Array = [];
         	for (var key:String in arg) 
         		keys.push(key);
@@ -123,10 +124,10 @@ package emulator.auto_copied
 	    private static function object2JSON(arg:Object):String {
 	    	var res:Array = [];
         	// I want deterministic output, so sort the keys
-        	var keys:Array = getSortedKeys(arg);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+        	var keys:Array = getSortedKeys(arg);
         	for each (var z:String in keys) {
                 res.push( stringify(z) + ':' + stringify(arg[z]) );
             }
@@ -136,10 +137,10 @@ package emulator.auto_copied
             while (ch) {
                 if (ch <= ' ') {
                     this.next();
-                } else if (ch == '/') {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+                } else if (ch == '/') {
                     switch (this.next()) {
                         case '/':
                             while (this.next() && ch != '\n' && ch != '\r') {}
@@ -149,10 +150,10 @@ package emulator.auto_copied
                             for (;;) {
                                 if (ch) {
                                     if (ch == '*') {
-                                        if (this.next() == '/') {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+                                        if (this.next() == '/') {
                                             next();
                                             break;
                                         }
@@ -162,10 +163,10 @@ package emulator.auto_copied
                                 } else {
                                     throwError("Unterminated comment");
                                 }
-                            }
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+                            }
                             break;
                         default:
                             throwError("Syntax error");
@@ -176,8 +177,8 @@ package emulator.auto_copied
             }
         }
 
-
 // This is a AUTOMATICALLY GENERATED! Do not change!
+
 
         private function throwError(m:String):void {
             StaticFunctions.throwError('Error converting a string to a flash object: '+m + "\nError in position="+(at-1)+" containing character=' "+text.charAt(at-1)+" '\nThe entire string:\n'"+text+"'\nThe successfully parsed string:\n'"+text.substring(0,at-1)+"'\n"+"The string should be in a format that is a legal ActionScript3 literal (including Boolean, String, Array, int, or Object). For example, the following are legal strings:\n"+ 	"'I\\'m a legal, string!\\n'\n"+"['an','array',42, null, true, false, -42, 'unicode=\\u05D0']\n"+"{ an : 'object field', 'foo bar' : 'other field' }\n"   	);
@@ -188,10 +189,10 @@ package emulator.auto_copied
             return ch;
         }
         private function str():String {
-            var i:int, s:String = '', t:int, u:int;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+            var i:int, s:String = '', t:int, u:int;
             var outer:Boolean = false;
 
             if (ch == '"' || ch == "'") {
@@ -201,10 +202,10 @@ package emulator.auto_copied
                         this.next();
                         return s;
                     } else if (ch == '\\') {
-                        switch (this.next()) {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+                        switch (this.next()) {
                         case 'b':
                             s += '\b';
                             break;
@@ -214,10 +215,10 @@ package emulator.auto_copied
                         case 'n':
                             s += '\n';
                             break;
-                        case 'r':
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+                        case 'r':
                             s += '\r';
                             break;
                         case 't':
@@ -227,10 +228,10 @@ package emulator.auto_copied
                             u = 0;
                             for (i = 0; i < 4; i += 1) {
                                 t = parseInt(this.next(), 16);
-                                if (!isFinite(t)) {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+                                if (!isFinite(t)) {
                                     outer = true;
                                     break;
                                 }
@@ -240,10 +241,10 @@ package emulator.auto_copied
                                 outer = false;
                                 break;
                             }
-                            s += String.fromCharCode(u);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+                            s += String.fromCharCode(u);
                             break;
                         default:
                             s += ch;
@@ -253,10 +254,10 @@ package emulator.auto_copied
                     }
                 }
             } else {
-				// if the user didn't use apostrophies ("...") , then the string goes until we find a special symbol: ' " , : [ ] {}   
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+				// if the user didn't use apostrophies ("...") , then the string goes until we find a special symbol: ' " , : [ ] {}   
 				do {
 					if (ch==',' || ch=='"' || ch=="'" || ch=='[' || ch=="]" || ch=='{' || ch=="}" || ch==':' || ch==' ' || ch=='\b' || ch=='\f' || ch=='\n' || ch=='\r' || ch=='\t') {
 						break;
@@ -266,10 +267,10 @@ package emulator.auto_copied
 				if (s=='') throwError("Bad string: a string without \"...\" must be only alpha-numeric");
 				return s; 
 			}
-            throwError("Bad string"); // cannot happen
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+            throwError("Bad string"); // cannot happen
             return "";
         }
 
@@ -279,10 +280,10 @@ package emulator.auto_copied
             if (ch == '[') {
                 this.next();
                 this.white();
-                if (ch == ']') {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+                if (ch == ']') {
                     this.next();
                     return a;
                 }
@@ -292,10 +293,10 @@ package emulator.auto_copied
                     if (ch == ']') {
                         this.next();
                         return a;
-                    } else if (ch != ',') {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+                    } else if (ch != ',') {
                         break;
                     }
                     this.next();
@@ -306,8 +307,8 @@ package emulator.auto_copied
             return [];
         }
 
-
 // This is a AUTOMATICALLY GENERATED! Do not change!
+
 
         private function obj():Object {
             var k:String, o:Object = {};
@@ -318,10 +319,10 @@ package emulator.auto_copied
                 
 				// E.g., trace( SerializableClass.deserialize( JSON.parse("{ $API_DoStoreState$ userEntries:[{ $UserEntry$ key:0 , value:{ row:0 , col:0} , isSecret:false}]}")) );
                 if (ch == '$') {
-                	// special syntax for SerializableClass to make toString more readable                	
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+                	// special syntax for SerializableClass to make toString more readable                	
                     this.next();
                     var classNameArr:Array = [];
                     while (ch!='$') {
@@ -331,10 +332,10 @@ package emulator.auto_copied
                     var className:String = classNameArr.join("");
                     this.next();
                 	this.white();
-                    o[SerializableClass.CLASS_NAME_FIELD] = className;                    		
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+                    o[SerializableClass.CLASS_NAME_FIELD] = className;                    		
                 }
                 if (ch == '}') {
                     this.next();
@@ -344,10 +345,10 @@ package emulator.auto_copied
                     k = this.str();
                     this.white();
                     if (ch != ':') {
-                        break;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+                        break;
                     }
                     this.next();
                     o[k] = this.value();
@@ -357,10 +358,10 @@ package emulator.auto_copied
                         return o;
                     } else if (ch != ',') {
                         break;
-                    }
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+                    }
                     this.next();
                     this.white();
                 }
@@ -370,10 +371,10 @@ package emulator.auto_copied
         }
 
         private function num():Number {
-            var n:String = '';
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+            var n:String = '';
             var v:Number;
 
             if (ch == '-') {
@@ -383,10 +384,10 @@ package emulator.auto_copied
             while (ch >= '0' && ch <= '9') {
                 n += ch;
                 this.next();
-            }
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+            }
             if (ch == '.') {
                 n += '.';
                 this.next();
@@ -396,10 +397,10 @@ package emulator.auto_copied
                 }
             }
             if (ch == 'e' || ch == 'E') {
-                n += ch;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+                n += ch;
                 this.next();
                 if (ch == '-' || ch == '+') {
                     n += ch;
@@ -409,10 +410,10 @@ package emulator.auto_copied
                     n += ch;
                     this.next();
                 }
-            }
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+            }
             v = Number(n);
 			//trace("v="+v+" n="+n);
             if (!isFinite(v)) {
@@ -422,10 +423,10 @@ package emulator.auto_copied
         }
 
         private function word():Object {
-			var oldAt:int = at;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			var oldAt:int = at;
             switch (ch) {
                 case 't':
                     if (this.next() == 'r' && this.next() == 'u' &&
@@ -435,10 +436,10 @@ package emulator.auto_copied
                     }
                     break;
                 case 'f':
-                    if (this.next() == 'a' && this.next() == 'l' &&
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+                    if (this.next() == 'a' && this.next() == 'l' &&
                             this.next() == 's' && this.next() == 'e') {
                         this.next();
                         return false;
@@ -448,10 +449,10 @@ package emulator.auto_copied
                     if (this.next() == 'u' && this.next() == 'l' &&
                             this.next() == 'l') {
                         this.next();
-                        return null;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+                        return null;
                     }
                     break;
             }
@@ -461,10 +462,10 @@ package emulator.auto_copied
         }
 
         private function value():Object {
-            this.white();
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+            this.white();
             switch (ch) {
                 case '{':
                     return this.obj();
@@ -474,10 +475,10 @@ package emulator.auto_copied
                 case "'":
                     return this.str();
                 case '-':
-                    return this.num();
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+                    return this.num();
                 default:
                     return ch >= '0' && ch <= '9' ? this.num() : this.word();
             }
@@ -487,10 +488,10 @@ package emulator.auto_copied
 	        text = _text;
             at = 0;
 	        ch = ' ';
-	        var res:Object = value();
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	        var res:Object = value();
 	        this.white();
 	        if (at!=_text.length+1) throwError("Could not parse the entire string, string length="+_text.length+" and the parsing reached position="+(at-1));
 	        return res;
@@ -501,8 +502,8 @@ package emulator.auto_copied
 	    }
 	    
 
-
 // This is a AUTOMATICALLY GENERATED! Do not change!
+
 
 		public static function instanceToString(className:String, values:Object):String {			
 			return "{ $"+className+"$ " + object2JSON(values) + "}"; // see parse

@@ -81,6 +81,7 @@ public final class AS3_Loader
 	private static function doLoadTrace():Boolean{
 		return (T.custom("doLoadTrace",true) as Boolean);
 	}
+	public static var EVENT_DATA_DEBUG_LEN:int = 20;
 	private static function loadURL(url:Object,successHandler:Function = null,failureHandler:Function = null,progressHandler:Function = null,context:LoaderContext = null):void{
 		if(failureHandler == null){
 			if(doLoadTrace())	tmpTrace("trying to load : ",url);
@@ -112,7 +113,8 @@ public final class AS3_Loader
 			failureHandler = function (ev:Event):void {criticalError(ev,url as String);};			
 		}	
 		AS3_vs_AS2.myAddEventListener(dispatcher,Event.COMPLETE, function(ev:Event):void{
-			if(doLoadTrace())	tmpTrace("successfully loaded",url,"Event data :",ev);
+			if(doLoadTrace())	tmpTrace("successfully loaded",url,"Event data :",ev, 
+				ev!=null && ev.target!=null ? (ev.target.data is String ? StaticFunctions.cutString(ev.target.data as String,EVENT_DATA_DEBUG_LEN) : ev.target.data) : "no ev.target.data");
 			successHandler(ev);
 		});
 		if(progressHandler !=null)

@@ -31,6 +31,8 @@ class come2play_as2.api.auto_copied.ErrorHandler
 		StaticFunctions.alwaysTrace([msg, args]);
 		return sendReport(msg);
 	}
+	
+	// we might have errors in the XML, so I want to get <error_report_url> from the URL (not the XML)
 	private static var error_report_url:String = null; // on LocalHost I don't want to send bug reports, so I throw an error instead
 	public static function setErrorReportUrl(url_parameters:Object):Void {		
 		error_report_url = url_parameters["error_report_url"];
@@ -136,23 +138,7 @@ class come2play_as2.api.auto_copied.ErrorHandler
 	}
 	public static var ERROR_REPORT_PREFIX:String = "DISTRIBUTION"; // where did the error come from?
 	public static function handleError(err:Error, obj:Object):Void {
-		try {
-			var stackTraces:String = AS3_vs_AS2.myGetStackTrace(err); // null in the release version
-			var errStr:String = 
-				(stackTraces==null ? "" : "AAAA (with stack trace) ")+ // so I will easily find them in our "errors page"
-				ERROR_REPORT_PREFIX + " " +
-				AS3_vs_AS2.error2String(err)+
-				(stackTraces==null ? "" :
-					"\n\tStackTrace="+stackTraces+
-					"\n\tCatching point stack trace="+AS3_vs_AS2.myGetStackTrace(new Error()));
-			var errMsg:Array = ["\n\n\n\n\n\n\n\n\n\n\n\n\n\nERROR OCCURRED: catching-arguments: ",
-				obj,"\n",
-				errStr];
-			alwaysTraceAndSendReport(errStr, errMsg);
-		} catch (err:Error) {
-			if (error_report_url==null) throw err;
-			StaticFunctions.alwaysTrace(["Error occurred in handleError, err=",err]);				
-		}		
+		alwaysTraceAndSendReport("handleError: "+AS3_vs_AS2.error2String(err),[" catching-arguments=",obj]);
 	}	
 
 	public static var SHOULD_SHOW_ERRORS:Boolean = true;
@@ -163,40 +149,53 @@ class come2play_as2.api.auto_copied.ErrorHandler
 	// If the container has a bug, then we report to, and send to java, and pass CUSTOM_INFO_KEY_checkThrowingAnError (which cause the game to send a bug report)  
 	public static var SEND_BUG_REPORT:Function = null; 
 	private static function sendReport(errStr:String):Number {
+		if (error_report_url==null)
+			throw new Error("Reporting an error: "+errStr);
+			
 		if (didReportError) return -1;
 		didReportError = true;
-		StaticFunctions.alwaysTrace(["sendReport to url=",error_report_url," for error=", errStr," SEND_BUG_REPORT=",SEND_BUG_REPORT]);
-		var bug_id:Number = StaticFunctions.random(1, 10000000);
-		var errMessage:String = "Revision="+StaticFunctions.getRevision()+": "+errStr;
-		var flashTraces:String = StaticFunctions.getTraces();
-				
 		
-		// we might have errors in the XML, so I want to get <error_report_url> from the URL (not the XML)  
-		if (error_report_url==null) {
-			throw new Error("Reporting an error: "+errStr);
-		} else {
-			try {
-				AS3_vs_AS2.sendToURL( 
-						{errMessage: errMessage, 
-						 url: flash_url, 
-						 traces: flashTraces,
-						 bug_id: bug_id
-						 },
-					error_report_url);
-				if (T.custom("isSendErrorImage",false))
-					AS3_vs_AS2.sendMultipartImage(bug_id);
-			} catch (err:Error) {
-				StaticFunctions.alwaysTrace(["!!!!!ERROR!!!! in sendReport:",err]);
-			}						
-		}	
-		// we should show the error after we call sendMultipartImage (so we send the image without the error window)
-		if (SHOULD_SHOW_ERRORS) {
-			var msg:String = "ERROR "+errMessage+" traces="+flashTraces;
-			AS3_vs_AS2.showError(msg);
-			StaticFunctions.setClipboard(msg);
-		}	
-		if (SEND_BUG_REPORT!=null)
-			SEND_BUG_REPORT(bug_id, errMessage, flashTraces);	
+		var bug_id:Number = StaticFunctions.random(1, 10000000);	
+		
+		try {	
+			var err:Error = new Error();
+			var stackTraces:String = AS3_vs_AS2.myGetStackTrace(err); // null in the release version
+			if (stackTraces!=null) StaticFunctions.alwaysTrace(["Catching point stack trace=",err]);
+							
+			StaticFunctions.alwaysTrace(["sendReport to url=",error_report_url," for error=", errStr," SEND_BUG_REPORT=",SEND_BUG_REPORT]);
+			
+			var errMessage:String = 
+				(stackTraces==null ? "" : "AAAA (with stack trace) ")+ // so I will easily find them in our "errors page"
+				"Revision="+StaticFunctions.getRevision()+": "+
+				ERROR_REPORT_PREFIX + " " +
+				errStr;
+			var flashTraces:String = StaticFunctions.getTraces();
+		
+			AS3_vs_AS2.sendToURL( 
+					{errMessage: errMessage, 
+					 url: flash_url, 
+					 traces: flashTraces,
+					 bug_id: bug_id
+					 },
+				error_report_url);
+				
+			// before we show the error
+			if (T.custom("isSendErrorImage",false))
+				AS3_vs_AS2.sendMultipartImage(bug_id);
+			
+			// we should show the error after we call sendMultipartImage (so we send the image without the error window)
+			if (SHOULD_SHOW_ERRORS) {
+				var msg:String = "ERROR "+errMessage+" traces="+flashTraces;
+				AS3_vs_AS2.showError(msg);
+				StaticFunctions.setClipboard(msg);
+			}	
+			
+			if (SEND_BUG_REPORT!=null)
+				SEND_BUG_REPORT(bug_id, errMessage, flashTraces);	
+					
+		} catch (err:Error) {
+			StaticFunctions.alwaysTrace(["!!!!!ERROR!!!! in sendReport:",err]);
+		}			
 		return bug_id;
 	}
 }

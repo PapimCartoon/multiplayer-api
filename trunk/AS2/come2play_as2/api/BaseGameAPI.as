@@ -257,7 +257,7 @@ import come2play_as2.api.*;
 								StaticFunctions.performReflectionObject(reflectionKey,value[reflectionKey]);
 							}
 						} else if (key==API_Message.CUSTOM_INFO_KEY_checkThrowingAnError && value==true) {
-							throw new Error("checkThrowingAnError");
+							throw new Error("We report the Game's traces because the container had an error. We want to have the traces of both Game and Container.");
 						} else {
 							customObj[key] = value;
 						}

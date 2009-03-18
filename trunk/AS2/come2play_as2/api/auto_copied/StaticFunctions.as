@@ -1,11 +1,12 @@
+	import come2play_as2.api.auto_generated.API_Message;
+	
 	
 // Only StaticFunctions and JSON are copied to flex_utils 
 import come2play_as2.api.auto_copied.*;
 class come2play_as2.api.auto_copied.StaticFunctions
 {			
-	public static var LAST_RAN_JAVA_DATE:String = "1/1/1"; // when running the java it automatically replaces the date
-	public static var GOOGLE_REVISION_NUMBER:Number = 811;
-	public static var COME2PLAY_REVISION_NUMBER:Number = 1863;
+	public static var GOOGLE_REVISION_NUMBER:Number = 925;
+	public static var COME2PLAY_REVISION_NUMBER:Number = 2400;
 	public static function getRevision():String {
 		return "g="+GOOGLE_REVISION_NUMBER+",c2p="+COME2PLAY_REVISION_NUMBER;		
 	}
@@ -19,7 +20,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 		if (!LOGGED_REVISIONS) {
 			LOGGED_REVISIONS = true;			
 			StaticFunctions.alwaysTrace( new ErrorHandler() );
-			storeTrace(["GOOGLE_REVISION_NUMBER=",GOOGLE_REVISION_NUMBER, " COME2PLAY_REVISION_NUMBER=",COME2PLAY_REVISION_NUMBER, " LAST_RAN_JAVA_DATE=",LAST_RAN_JAVA_DATE]);
+			storeTrace(["GOOGLE_REVISION_NUMBER=",GOOGLE_REVISION_NUMBER, " COME2PLAY_REVISION_NUMBER=",COME2PLAY_REVISION_NUMBER, " LAST_RAN_JAVA_DATE=",API_Message.LAST_RAN_JAVA_DATE]);
 		}
 		
 		if (ALLOW_DOMAINS != null){
@@ -71,7 +72,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 		for (var k:String in keyTraces) keys.push(k);
 		keys.sort();
 		
-		var p76:Number=0; for (var i76:String in keys) { var key:String = keys[keys.length==null ? i76 : p76]; p76++;
+		var p77:Number=0; for (var i77:String in keys) { var key:String = keys[keys.length==null ? i77 : p77]; p77++;
 			var tracesOfKey:Array = keyTraces[key];
 			res.push(key + " "+tracesOfKey.length+" traces:"+
 				(tracesOfKey.length<MAX_TRACES[key] ? "" : " (REACHED MAX TRACES)"));
@@ -164,7 +165,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 				// for static properties we use describeType
 				// because o1 and o2 have the same type, it is enough to use the fields of o1.
 				var fieldsArr:Array = AS3_vs_AS2.getFieldNames(o1);
-				var p169:Number=0; for (var i169:String in fieldsArr) { var field:String = fieldsArr[fieldsArr.length==null ? i169 : p169]; p169++;
+				var p170:Number=0; for (var i170:String in fieldsArr) { var field:String = fieldsArr[fieldsArr.length==null ? i170 : p170]; p170++;
 					allFields[field] = true;
 				}
 			}
@@ -180,7 +181,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	
 	public static function subtractArray(arr:Array, minus:Array):Array {
 		var res:Array = arr.concat();
-		var p185:Number=0; for (var i185:String in minus) { var o:Object = minus[minus.length==null ? i185 : p185]; p185++;
+		var p186:Number=0; for (var i186:String in minus) { var o:Object = minus[minus.length==null ? i186 : p186]; p186++;
 			var indexOf:Number = AS3_vs_AS2.IndexOf(res, o);
 			StaticFunctions.assert(indexOf!=-1, ["When subtracting minus=",minus," from array=", arr, " we did not find element ",o]);				
 			res.splice(indexOf, 1);
@@ -286,7 +287,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	}
 	public static function instance2Object(instance:Object, fields:Array/*String*/):Object {
 		var res:Object = {};
-		var p291:Number=0; for (var i291:String in fields) { var field:String = fields[fields.length==null ? i291 : p291]; p291++;
+		var p292:Number=0; for (var i292:String in fields) { var field:String = fields[fields.length==null ? i292 : p292]; p292++;
 			res[field] = instance[field];
 		}
 		return res;

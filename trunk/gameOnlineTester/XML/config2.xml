@@ -185,17 +185,12 @@ Not used by the graphics yet (but should be displayed):
 		
 		<!--
 		Local:  localhost:2000:socket,localhost:2000:old_xmlsocket,localhost:8083:rtmpt
-		Java44 (for testing with Amir's ASP): 74.63.37.40:8080:socket,74.63.37.40:8080:old_xmlsocket,74.63.37.40:80:rtmpt
-		Java237 (for testing without ASP): 80.179.46.237:8080:socket,80.179.46.237:8080:old_xmlsocket,80.179.46.237:80:rtmpt
-		74.63.37.40:8080:socket
-		74.63.37.41:8080:socket
-		192.168.0.138:2000:socket
+		Java44 (for game-developer testing without ASP): 74.63.37.40:8080:socket,74.63.37.40:8080:old_xmlsocket,74.63.37.40:80:rtmpt
+		Java43 (for testing with ASP): 74.63.37.41:8080:socket,74.63.37.41:8080:old_xmlsocket,74.63.37.41:80:rtmpt
 		
-		<entry><key>override all_java_ips</key><value>'80.179.46.235:8080:socket,80.179.46.235:8080:old_xmlsocket,80.179.46.235:80:rtmpt'</value></entry>
+		<entry><key>override all_java_ips</key><value>'74.63.37.40:80:rtmpt'</value></entry>
 		-->		
-		
 		<entry><key>override all_java_ips</key><value>'localhost:2000:socket,localhost:2000:old_xmlsocket,localhost:8083:rtmpt'</value></entry>
-
 		
 		
 		<!--
@@ -487,7 +482,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 		<review_auto_jump_initial_speed type="int">0</review_auto_jump_initial_speed>
 		
 		<seconds_per_move type="int">30</seconds_per_move>
-		<seconds_per_match type="int">300</seconds_per_match>
+		<seconds_per_match type="int">0</seconds_per_match>
 		<!-- extra_match_info is for 
 					**OldBoard** games.
 			example: 

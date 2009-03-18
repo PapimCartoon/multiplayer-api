@@ -141,7 +141,7 @@ public final class ErrorHandler
 			var stackTraces:String = AS3_vs_AS2.myGetStackTrace(err); // null in the release version
 			var errStr:String = 
 				(stackTraces==null ? "" : "AAAA (with stack trace) ")+ // so I will easily find them in our "errors page"
-				ERROR_REPORT_PREFIX +
+				ERROR_REPORT_PREFIX + " " +
 				AS3_vs_AS2.error2String(err)+
 				(stackTraces==null ? "" :
 					"\n\tStackTrace="+stackTraces+

@@ -6,14 +6,15 @@
 
 import come2play_as2.api.auto_generated.*;
 	class come2play_as2.api.auto_generated.API_Message extends SerializableClass {
+		public static var LAST_RAN_JAVA_DATE:String = "Wed Mar 18 15:37:24 GMT+02:00 2009";
 		public function getFunctionId():Number { throw new Error("You must subclass API_Message!"); return 0; }
 		public function getMethodName():String { throw new Error("You must subclass API_Message!"); return null; }
 		public function setMethodParameters(parameters:Array):Void { throw new Error("You must subclass API_Message!"); }
 		public function getMethodParameters():Array { throw new Error("You must subclass API_Message!"); return null; }
-		public function getMethodParametersNum():Number { throw new Error("You must subclass API_Message!"); return -1; }
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		public function getMethodParametersNum():Number { throw new Error("You must subclass API_Message!"); return -1; }
 		public static var USER_INFO_KEY_name:String = "name";
 		public static var USER_INFO_KEY_avatar_url:String = "avatar_url";
 		public static var USER_INFO_KEY_supervisor:String = "supervisor";
@@ -23,10 +24,10 @@ import come2play_as2.api.auto_generated.*;
 		public static var CUSTOM_INFO_KEY_secondsPerMatch:String = "CONTAINER_secondsPerMatch";
 		public static var CUSTOM_INFO_KEY_secondsPerMove:String = "CONTAINER_secondsPerMove";
 		public static var CUSTOM_INFO_KEY_gameStageX:String = "CONTAINER_gameStageX";
-		public static var CUSTOM_INFO_KEY_gameStageY:String = "CONTAINER_gameStageY";
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		public static var CUSTOM_INFO_KEY_gameStageY:String = "CONTAINER_gameStageY";
 		public static var CUSTOM_INFO_KEY_gameHeight:String = "CONTAINER_gameHeight";
 		public static var CUSTOM_INFO_KEY_gameWidth:String = "CONTAINER_gameWidth";
 		public static var CUSTOM_INFO_KEY_gameFrameRate:String = "CONTAINER_gameFrameRate";
@@ -36,8 +37,8 @@ import come2play_as2.api.auto_generated.*;
 		public static var CUSTOM_INFO_KEY_i18n:String = "CONTAINER_i18n";
 		public static var CUSTOM_INFO_KEY_reflection:String = "CONTAINER_reflection";
 		public static var CUSTOM_INFO_KEY_checkThrowingAnError:String = "CONTAINER_checkThrowingAnError";
-		public static var CUSTOM_INFO_KEY_isBack:String = "CONTAINER_isBack";
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		public static var CUSTOM_INFO_KEY_isBack:String = "CONTAINER_isBack";
 	}

@@ -2,14 +2,13 @@
 import come2play_as2.api.auto_copied.*;
 	class come2play_as2.api.auto_copied.JSON {
 		public static var isDoingTesting:Boolean = false;
-
+		public static var KEEP_NEWLINES:Boolean = true; // because of stack traces, I want to keep new lines
+		public static var KEEP_TABS:Boolean = true;
+		
         private var ch:String = '';
         private var at:Number = 0;
         private var text:String;
 
-	    public static function stringifyWithNewLine(o:Object):String{
-			return StaticFunctions.replaceAll(stringify(o),"\\n","\n\t\t");
-	    }
 	    public static function stringify(arg:Object):String{
 			if (arg==null) return 'null';
 			
@@ -46,11 +45,13 @@ import come2play_as2.api.auto_copied.*;
 	                            break;
 	                        case '\n':
 	                            res.push('\\n');
+	                            if (KEEP_NEWLINES) res.push("\n\t\t");
 	                            break;
 	                        case '\r':
 	                            res.push('\\r');
 	                            break;
 	                        case '\t':
+	                            if (KEEP_TABS) res.push('\t');
 	                            res.push('\\t');
 	                            break;
 	                        default:
@@ -89,7 +90,7 @@ import come2play_as2.api.auto_copied.*;
 	    	var res:Array = [];
         	// I want deterministic output, so sort the keys
         	var keys:Array = getSortedKeys(arg);
-        	var p91:Number=0; for (var i91:String in keys) { var z:String = keys[keys.length==null ? i91 : p91]; p91++;
+        	var p92:Number=0; for (var i92:String in keys) { var z:String = keys[keys.length==null ? i92 : p92]; p92++;
                 res.push( stringify(z) + ':' + stringify(arg[z]) );
             }
             return res.join(" , ");	    	

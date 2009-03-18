@@ -3,14 +3,13 @@ package come2play_as3.api.auto_copied
 	// The initial source code was taken from JSON.org
 	public final class JSON {
 		public static var isDoingTesting:Boolean = false;
-
+		public static var KEEP_NEWLINES:Boolean = true; // because of stack traces, I want to keep new lines
+		public static var KEEP_TABS:Boolean = true;
+		
         private var ch:String = '';
         private var at:int = 0;
         private var text:String;
 
-	    public static function stringifyWithNewLine(o:Object):String{
-			return StaticFunctions.replaceAll(stringify(o),"\\n","\n\t\t");
-	    }
 	    public static function stringify(arg:Object):String{
 			if (arg==null) return 'null';
 			
@@ -47,11 +46,13 @@ package come2play_as3.api.auto_copied
 	                            break;
 	                        case '\n':
 	                            res.push('\\n');
+	                            if (KEEP_NEWLINES) res.push("\n\t\t");
 	                            break;
 	                        case '\r':
 	                            res.push('\\r');
 	                            break;
 	                        case '\t':
+	                            if (KEEP_TABS) res.push('\t');
 	                            res.push('\\t');
 	                            break;
 	                        default:

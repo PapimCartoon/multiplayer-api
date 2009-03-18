@@ -216,7 +216,6 @@ public final class AS3_vs_AS2
 		if (res==null) StaticFunctions.throwError("Missing child="+childName+" in movieclip="+graphics.name);
 		return res;
 	}	
-	private static var prevent_garbage_collection:Array = [];
 	public static var TRACE_LOADING:Boolean = false;
 	public static function loadMovieIntoNewChild(graphics:MovieClip, url:String, onLoaded:Function):DisplayObjectContainer {
 		var newMovie:DisplayObjectContainer = new Sprite();
@@ -225,31 +224,21 @@ public final class AS3_vs_AS2
 		return newMovie;
 	}
 				
+	public static var USE_LOADER_CONTEXT:Boolean = true;
+	public static var LOADER_CHECKS_POLICY_FILE:Boolean = false;
 	public static function loadMovieIntoNewChild2(newMovie:DisplayObjectContainer, url:String, onLoaded:Function):void {
-		var loader:Loader = new Loader();
-		prevent_garbage_collection.push(loader);
-		var contentLoaderInfo:LoaderInfo = loader.contentLoaderInfo;
-		// Possible events for contentLoaderInfo:
-		//Event.COMPLETE
-        //IOErrorEvent.IO_ERROR
-        //HTTPStatusEvent.HTTP_STATUS
-        //Event.INIT
-        //Event.OPEN
-        //ProgressEvent.PROGRESS
-        //Event.UNLOAD
-        myAddEventListener(contentLoaderInfo, Event.COMPLETE, function (event:Event):void {
+		// todo: use AS3_Loader (with the retry and cache mechanism)
+		if (TRACE_LOADING) StaticFunctions.storeTrace(["Loading url=",url," into a newly created child=",newMovie]);
+		var context:LoaderContext = !USE_LOADER_CONTEXT ? null : new LoaderContext(LOADER_CHECKS_POLICY_FILE,ApplicationDomain.currentDomain);
+		AS3_Loader.loadImage(url, function (event:Event):void {
 				if (TRACE_LOADING) StaticFunctions.storeTrace(["Done loading url=",url]);
-				newMovie.addChild(loader.content);
+				var loaderInfo:LoaderInfo = event.target as LoaderInfo;	
+				newMovie.addChild(loaderInfo.content);
 				if (onLoaded!=null) onLoaded(true);
-			}  );
-		var handler:Function = function (event:Event):void {
+			}, function (event:Event):void {
 		        if (TRACE_LOADING) StaticFunctions.storeTrace(["Error in loading movie from url=",url," event=",event]);
 		        if (onLoaded!=null) onLoaded(false);
-		    };
-		myAddEventListener(contentLoaderInfo, IOErrorEvent.IO_ERROR, handler);
-		myAddEventListener(contentLoaderInfo, SecurityErrorEvent.SECURITY_ERROR, handler);
-		if (TRACE_LOADING) StaticFunctions.storeTrace(["Loading url=",url," into a newly created child=",newMovie]);
-		loader.load(new URLRequest(url),new LoaderContext(true,ApplicationDomain.currentDomain));
+		    },null, context);
 	}
 	public static function scaleMovie(graphics:DisplayObject, x_percentage:int, y_percentage:int):void {
 		scaleMovieX(graphics,x_percentage);

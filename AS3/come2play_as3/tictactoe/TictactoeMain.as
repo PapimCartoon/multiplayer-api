@@ -1,4 +1,4 @@
-package come2play_as3.tictactoe 
+﻿package come2play_as3.tictactoe 
 {
 import come2play_as3.api.*;
 import come2play_as3.api.auto_copied.*;
@@ -25,11 +25,20 @@ public final class TictactoeMain extends ClientGameAPI {
 		
 		// Setting parameters for SinglePlayerEmulator
 		// We set these parameters before we apply reflection, so we can override them in the online version.
-		SinglePlayerEmulator.NUM_OF_PLAYERS = 3;
+		SinglePlayerEmulator.NUM_OF_PLAYERS = 1;
 		
 		// To test loading a game
-		//SinglePlayerEmulator.DEFAULT_MATCH_STATE = ...
-		//SinglePlayerEmulator.DEFAULT_FINISHED_USER_IDS = ...
+		if (false) {
+			var userId:int = SinglePlayerEmulator.DEFAULT_USER_IDS[0];
+			SinglePlayerEmulator.DEFAULT_MATCH_STATE = 
+				[
+				ServerEntry.create(0,TictactoeSquare.create(0,0), userId,null,1000),
+				ServerEntry.create(1,TictactoeSquare.create(1,0), userId,null,2000),
+				ServerEntry.create(2,TictactoeSquare.create(2,0), userId,null,3000)
+				];
+			//SinglePlayerEmulator.DEFAULT_FINISHED_USER_IDS = ...	
+		}
+		
 		
 		// Changing the customInfo when doing local testing
 		var customInfo:Array = SinglePlayerEmulator.DEFAULT_CUSTOM_INFO;
@@ -84,6 +93,7 @@ public final class TictactoeMain extends ClientGameAPI {
 	// for example, you can have a board of size 5x5, with winLength=4
 	public static var winLength:int = 3;
 	public static var winnerPercentage:int = 70;
+	public static var PLAYERS_NUM_IN_SINGLE_PLAYER:int = 3;
 	
 	private var logoFullUrl:String;
 	private var gameHeight:int;
@@ -112,6 +122,7 @@ public final class TictactoeMain extends ClientGameAPI {
 	}
 	
 	private function getColor(playerId:int):int {
+		StaticFunctions.assert(!isSinglePlayer(),["Cannot convert an id to color in singleplayer"]);
 		return AS3_vs_AS2.IndexOf(allPlayerIds, playerId);
 	}
 	private function getSquareGraphic(move:TictactoeSquare):TictactoeSquareGraphic {
@@ -211,7 +222,7 @@ public final class TictactoeMain extends ClientGameAPI {
 		
 		
 		this.allPlayerIds = allPlayerIds;
-		assert(allPlayerIds.length>1 && allPlayerIds.length<=TictactoeSquareGraphic.MAX_SYMBOLS, ["The graphics of TicTacToe can handle at most ",TictactoeSquareGraphic.MAX_SYMBOLS,",and at leaset 2 players. allPlayerIds=", allPlayerIds]);
+		assert(allPlayerIds.length>=1 && allPlayerIds.length<=TictactoeSquareGraphic.MAX_SYMBOLS, ["The graphics of TicTacToe can handle at most ",TictactoeSquareGraphic.MAX_SYMBOLS,". allPlayerIds=", allPlayerIds]);
 		
 		if (shouldUseAvatars) {
 			// set the player's avatars instead of the default TicTacToe symbols
@@ -238,7 +249,8 @@ public final class TictactoeMain extends ClientGameAPI {
 			ongoingColors.push(color);
 		logic = new TictactoeLogic(ROWS(),COLS(),winLength, playersNum);
 		for each (var serverEntry:ServerEntry in userStateEntries) {
-			turnOfColor = getColor(serverEntry.storedByUserId);	// some users may have disconnected in the middle of the game	
+			if (!isSinglePlayer()) 
+				turnOfColor = getColor(serverEntry.storedByUserId);	// some users may have disconnected in the middle of the game	
 			performMove(/*as*/serverEntry.value as TictactoeSquare, true);	//we should not call doAllEndMatch when loading the match	
 		}
 		if (finishedPlayerIds.length>0)
@@ -262,13 +274,13 @@ public final class TictactoeMain extends ClientGameAPI {
 		var entry:ServerEntry = serverEntries[0];
 		assert(entry.visibleToUserIds==null, ["All communication in TicTacToe is PUBLIC"]);
 		
-		var userId:int = entry.storedByUserId;
-		var colorOfUser:int = getColor(userId);
-		assert(colorOfUser!=-1, ["viewers cannot store match state in TicTacToe"]);
-
 		var expectedKey:int = getEntryKey();
 		assert(entry.key==expectedKey, ["Expecting key=",expectedKey]);
 		
+		var userId:int = entry.storedByUserId;
+		var colorOfUser:int = isSinglePlayer() ? turnOfColor : getColor(userId);
+		assert(colorOfUser!=-1, ["viewers cannot store match state in TicTacToe"]);
+
 		if (AS3_vs_AS2.IndexOf(ongoingColors, colorOfUser)==-1) return; // player already disconnected 
 		assert(turnOfColor==colorOfUser, ["Got an entry from player=",userId," of color=",colorOfUser," but expecting one from color=", turnOfColor]);
 
@@ -278,10 +290,14 @@ public final class TictactoeMain extends ClientGameAPI {
 	private function matchOverForPlayers(finishedPlayerIds:Array/*int*/):Boolean {
 		if (logic==null) return false; // match already ended
 		var colors:Array/*int*/ = [];
-		for each (var playerId:int in finishedPlayerIds) {
-			var colorOfPlayerId:int = getColor(playerId);
-			assert(colorOfPlayerId!=-1, ["Didn't find playerId=",playerId]); 
-			colors.push(colorOfPlayerId);
+		if (isSinglePlayer()) 
+			colors = arrayCopy(ongoingColors);
+		else {
+			for each (var playerId:int in finishedPlayerIds) {
+				var colorOfPlayerId:int = getColor(playerId);
+				assert(colorOfPlayerId!=-1, ["Didn't find playerId=",playerId]); 
+				colors.push(colorOfPlayerId);
+			}
 		}
 		return matchOverForColors(colors);
 	}
@@ -305,8 +321,11 @@ public final class TictactoeMain extends ClientGameAPI {
 		}		
 		return shouldChangeTurnOfColor;
 	}
+	private function isSinglePlayer():Boolean {
+		return allPlayerIds.length==1;
+	}
 	private function playersNumber():int {
-		return allPlayerIds.length;
+		return isSinglePlayer() ? PLAYERS_NUM_IN_SINGLE_PLAYER : allPlayerIds.length;
 	}
 	private function getNextTurnOfColor():int {
 		var nextTurnOfColor:int = turnOfColor;
@@ -325,6 +344,7 @@ public final class TictactoeMain extends ClientGameAPI {
 		return res;			
 	}
 	private function performMove(move:TictactoeSquare, isSavedGame:Boolean):void {
+		StaticFunctions.storeTrace(["performMove: ", move, " isSavedGame=",isSavedGame, " turnOfColor=",turnOfColor]);
 		logic.makeMove(turnOfColor, move);
 		// update the graphics
 		var square:TictactoeSquareGraphic = getSquareGraphic(move);
@@ -348,6 +368,11 @@ public final class TictactoeMain extends ClientGameAPI {
 		
 		var isBoardFull:Boolean = logic.isBoardFull();
 		if (didWin || isBoardFull) {
+			if (isSinglePlayer()) {
+				doAllEndMatch([PlayerMatchOver.create(allPlayerIds[0],0,-1)]);
+				matchOverForColors(arrayCopy(ongoingColors));
+				return;				
+			}
 			//game is over for one player (but the other players, if there are more than 2 remaining players, will continue playing)
 			var finishedPlayers:Array/*PlayerMatchOver*/ = [];
 			var isGameOver:Boolean = 
@@ -442,14 +467,14 @@ public final class TictactoeMain extends ClientGameAPI {
 		// Note that as a result, if the user presses quickly on the same button, there might be several identical calls to doStoreState.
 	}
 	private function isMyTurn():Boolean {
-		return myColor==turnOfColor;
+		return isSinglePlayer() || myColor==turnOfColor;
 	}
 	private function startMove(isInProgress:Boolean):void {
 		//trace("startMove with isInProgress="+isInProgress);
 		if (logic==null) return; 
 						
 		if (isInProgress) {
-			doAllSetTurn(allPlayerIds[turnOfColor],-1);
+			doAllSetTurn(allPlayerIds[isSinglePlayer() ? 0 : turnOfColor],-1);
 		}		
 		if (isMyTurn()) shouldSendMove = true;
 		for each (var square:TictactoeSquare in allCells) {				
@@ -459,7 +484,7 @@ public final class TictactoeMain extends ClientGameAPI {
 				T.custom(CUSTOM_INFO_KEY_isBack,false) ? TictactoeSquareGraphic.BTN_NONE : // the user pressed on back
 				!isInProgress ? TictactoeSquareGraphic.BTN_NONE : // the match was over
 				myColor==VIEWER ? TictactoeSquareGraphic.BTN_NONE : // a viewer never has the turn
-				myColor==turnOfColor ?  
+				isMyTurn() ?  
 					turnOfColor : // I have the turn
 					TictactoeSquareGraphic.BTN_NONE); // not my turn
 		}

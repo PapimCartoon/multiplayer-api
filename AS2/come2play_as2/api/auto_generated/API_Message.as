@@ -6,7 +6,7 @@
 
 import come2play_as2.api.auto_generated.*;
 	class come2play_as2.api.auto_generated.API_Message extends SerializableClass {
-		public static var LAST_RAN_JAVA_DATE:String = "Wed Mar 18 15:37:24 GMT+02:00 2009";
+		public static var LAST_RAN_JAVA_DATE:String = "Wed Mar 18 20:15:37 GMT+02:00 2009";
 		public function getFunctionId():Number { throw new Error("You must subclass API_Message!"); return 0; }
 		public function getMethodName():String { throw new Error("You must subclass API_Message!"); return null; }
 		public function setMethodParameters(parameters:Array):Void { throw new Error("You must subclass API_Message!"); }

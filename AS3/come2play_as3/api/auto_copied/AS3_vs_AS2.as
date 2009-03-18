@@ -399,8 +399,13 @@ public final class AS3_vs_AS2
 	 * XML differences between AS2 and AS3.
 	 * In AS2 I use XMLNode.
 	 */
-	public static function xml_create(str:String):XML {
-		return new XML(str);
+	public static function xml_create(str:String):XML {		
+		try {
+			return new XML(str);
+		} catch (e:Error) {
+			throw new Error("Error in createXML in str="+str);
+		}
+		return null;
 	}
 	public static function xml_getName(xml:XML):String {
 		return xml.name().toString();
@@ -550,7 +555,7 @@ class XMLSerializable extends NativeSerializable {
 		return obj is XML ? new XMLSerializable(obj as XML) : null;
 	}
 	override public function postDeserialize():Object {
-		return new XML(xmlStr);
+		return AS3_vs_AS2.xml_create(xmlStr);
 	}	
 }
 class DateSerializable extends NativeSerializable {

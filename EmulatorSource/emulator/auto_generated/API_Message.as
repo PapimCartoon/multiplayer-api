@@ -5,7 +5,7 @@ package emulator.auto_generated {
 	import emulator.*;
 	import emulator.auto_copied.*;
 	public  class API_Message extends SerializableClass {
-		public static var LAST_RAN_JAVA_DATE:String = "Wed Mar 18 15:37:25 GMT+02:00 2009";
+		public static var LAST_RAN_JAVA_DATE:String = "Wed Mar 18 20:15:37 GMT+02:00 2009";
 		public function getFunctionId():int { throw new Error("You must subclass API_Message!"); return 0; }
 		public function getMethodName():String { throw new Error("You must subclass API_Message!"); return null; }
 		public function setMethodParameters(parameters:Array):void { throw new Error("You must subclass API_Message!"); }

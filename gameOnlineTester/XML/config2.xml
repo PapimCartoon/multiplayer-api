@@ -190,6 +190,10 @@ Not used by the graphics yet (but should be displayed):
 		Java43 (for testing with ASP): 74.63.37.41:8080:socket,74.63.37.41:8080:old_xmlsocket,74.63.37.41:80:rtmpt
 		
 		<entry><key>override all_java_ips</key><value>'74.63.37.40:80:rtmpt'</value></entry>
+
+		To test the weird PROXY some users have (that returns HTTP/1.1 400)
+		use the following (with Red5 turned on):
+		localhost:8083:socket,localhost:2000:socket
 		-->		
 		<entry><key>override all_java_ips</key><value>'localhost:2000:socket,localhost:2000:old_xmlsocket,localhost:8083:rtmpt'</value></entry>
 		

@@ -760,7 +760,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
     <game_name>chess</game_name>
 		
 	<is_with_taunts type="boolean">false</is_with_taunts> <!--  show the taunt pop up -->
-	<is_with_stakes type="boolean">true</is_with_stakes>
+	<is_with_stakes type="boolean">false</is_with_stakes>
 		
 	<taunts type="list">
 		<taunt> 

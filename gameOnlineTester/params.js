@@ -123,8 +123,8 @@ rewards.push({oldStake:"3:",addData:":isToken=false&value=111&name=cool&imageURL
 
 customInit = new Array();
 customInit.push({tableName:"serverTable",key:"chatType",value:"FIXED"})
-customInit.push({tableName:"serverTable",key:"ARTIFICIAL_TO_JAVA_DELAY",value:"'1000-2000'"})
-customInit.push({tableName:"serverTable",key:"ARTIFICIAL_FROM_JAVA_DELAY",value:"'1000-2000'"})
+//customInit.push({tableName:"serverTable",key:"ARTIFICIAL_TO_JAVA_DELAY",value:"'1000-2000'"})
+//customInit.push({tableName:"serverTable",key:"ARTIFICIAL_FROM_JAVA_DELAY",value:"'1000-2000'"})
 customInit.push({tableName:"serverTable",key:"isWithTables",value:"true"})
 customInit.push({tableName:"gameTable",key:"Board Width",value:"12"})
 customInit.push({tableName:"gameTable",key:"Mine Amount",value:"20"})

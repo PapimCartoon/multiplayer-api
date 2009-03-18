@@ -2,7 +2,7 @@
 	<configURL>XML/config2.XML</configURL>
 	<graphics>
 	
-		<computerImage>http://bingobee.com/images/oilerlogos/Logo%20Third%2030x30.JPG</computerImage><!--Practise mode image-->
+		<computerImage>http://s3.amazonaws.com/basec/1197158/2684573/ComputerIcon_4.gif?AWSAccessKeyId=1RF809NDDCNB7616HJ02&Expires=1237361530&Signature=tzU1cVzWr5AFNVBnqwnCBL4xplU%3D</computerImage><!--Practise mode image-->
 	
 		<gameDisplayName>cool game</gameDisplayName><!--The name of the game that will be displayed-->
 		<bigGameThumb></bigGameThumb><!--The URL the game will load as the background for the intro screen-->
@@ -18,7 +18,7 @@
 	<grabIt>url</grabIt>
 	<moreGrabIt><!--All the grab it links-->	
 		<grabIt>
-			<image>http://bingobee.com/images/oilerlogos/Logo%20Third%2030x30.JPG</image><!--The callerId of the game -->
+			<image>http://img1.chakpak.com/se_images/1157448_50_50_true/sdf.jpg</image><!--The callerId of the game -->
 			<url>http://bingobee.com/images/oilerlogos/Logo%20Third%2030x30.JPG</url><!--The URL of the game-->	
 		</grabIt>
 		<grabIt>

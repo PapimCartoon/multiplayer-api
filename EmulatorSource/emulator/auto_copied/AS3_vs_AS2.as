@@ -289,53 +289,39 @@ public final class AS3_vs_AS2
 		if (res==null) StaticFunctions.throwError("Missing child="+childName+" in movieclip="+graphics.name);
 		return res;
 	}	
-	private static var prevent_garbage_collection:Array = [];
 	public static var TRACE_LOADING:Boolean = false;
 	public static function loadMovieIntoNewChild(graphics:MovieClip, url:String, onLoaded:Function):DisplayObjectContainer {
 		var newMovie:DisplayObjectContainer = new Sprite();
+		graphics.addChild(newMovie);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		graphics.addChild(newMovie);
 		loadMovieIntoNewChild2(newMovie,url,onLoaded);
 		return newMovie;
 	}
 				
+	public static var USE_LOADER_CONTEXT:Boolean = true;
+	public static var LOADER_CHECKS_POLICY_FILE:Boolean = false;
 	public static function loadMovieIntoNewChild2(newMovie:DisplayObjectContainer, url:String, onLoaded:Function):void {
-		var loader:Loader = new Loader();
-		prevent_garbage_collection.push(loader);
-		var contentLoaderInfo:LoaderInfo = loader.contentLoaderInfo;
-		// Possible events for contentLoaderInfo:
+		// todo: use AS3_Loader (with the retry and cache mechanism)
+		if (TRACE_LOADING) StaticFunctions.storeTrace(["Loading url=",url," into a newly created child=",newMovie]);
+		var context:LoaderContext = !USE_LOADER_CONTEXT ? null : new LoaderContext(LOADER_CHECKS_POLICY_FILE,ApplicationDomain.currentDomain);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		//Event.COMPLETE
-        //IOErrorEvent.IO_ERROR
-        //HTTPStatusEvent.HTTP_STATUS
-        //Event.INIT
-        //Event.OPEN
-        //ProgressEvent.PROGRESS
-        //Event.UNLOAD
-        myAddEventListener(contentLoaderInfo, Event.COMPLETE, function (event:Event):void {
+		AS3_Loader.loadImage(url, function (event:Event):void {
 				if (TRACE_LOADING) StaticFunctions.storeTrace(["Done loading url=",url]);
-				newMovie.addChild(loader.content);
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
+				var loaderInfo:LoaderInfo = event.target as LoaderInfo;	
+				newMovie.addChild(loaderInfo.content);
 				if (onLoaded!=null) onLoaded(true);
-			}  );
-		var handler:Function = function (event:Event):void {
+			}, function (event:Event):void {
 		        if (TRACE_LOADING) StaticFunctions.storeTrace(["Error in loading movie from url=",url," event=",event]);
 		        if (onLoaded!=null) onLoaded(false);
-		    };
-		myAddEventListener(contentLoaderInfo, IOErrorEvent.IO_ERROR, handler);
-		myAddEventListener(contentLoaderInfo, SecurityErrorEvent.SECURITY_ERROR, handler);
-		if (TRACE_LOADING) StaticFunctions.storeTrace(["Loading url=",url," into a newly created child=",newMovie]);
-		loader.load(new URLRequest(url),new LoaderContext(true,ApplicationDomain.currentDomain));
+		    },null, context);
+	}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	}
 	public static function scaleMovie(graphics:DisplayObject, x_percentage:int, y_percentage:int):void {
 		scaleMovieX(graphics,x_percentage);
 		scaleMovieY(graphics,y_percentage);		
@@ -345,10 +331,10 @@ public final class AS3_vs_AS2
 	} 	
 	public static function scaleMovieY(graphics:DisplayObject, y_percentage:int):void {
 		graphics.scaleY = Number(y_percentage)/100;		
+	} 	
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	} 	
 	public static function setVisible(graphics:DisplayObject, isVisible:Boolean):void {
 		graphics.visible = isVisible;
 	} 	
@@ -358,10 +344,10 @@ public final class AS3_vs_AS2
 	public static function setMovieXY(target:DisplayObject, x:int, y:int):void {
 		target.x = x;
 		target.y = y;		
+	} 	
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	} 	
 	
 	public static function createEmptyMovieClip(graphics:MovieClip, name:String):MovieClip {
 		var child:MovieClip = new MovieClip();
@@ -371,10 +357,10 @@ public final class AS3_vs_AS2
 	}
 	public static function createMovieInstance(graphics:DisplayObjectContainer, linkageName:String, name:String):MovieClip {
 		var _Class:Class = getClassByName(linkageName);
+		var dup:MovieClip = (new _Class()) as MovieClip;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		var dup:MovieClip = (new _Class()) as MovieClip;
 		dup.name = name;
 		graphics.addChild(dup);
 		return dup;
@@ -384,10 +370,10 @@ public final class AS3_vs_AS2
 	}
 	public static function addKeyboardListener(graphics:DisplayObjectContainer, func:Function):void {
 		var isStageReady:Boolean = graphics.stage!=null;
+		if (isStageReady)	
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		if (isStageReady)	
 			addKeyboardListenerStageReady(graphics, func);
 		else {
 			trace("Called addKeyboardListener, but stage is still null, so we set an interval until stage is ready");
@@ -397,10 +383,10 @@ public final class AS3_vs_AS2
 						trace("stage is ready, so we now call addKeyboardListener");
 						ErrorHandler.myClearInterval("addKeyboardListener",intervalId);					
 						addKeyboardListenerStageReady(graphics, func);
+					}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-					}
 				}, 200);
 		}		
 	}
@@ -410,10 +396,10 @@ public final class AS3_vs_AS2
 	}
 	private static function addKeyboardListener2(is_key_down:Boolean, graphics:DisplayObjectContainer, func:Function):void {
 		myAddEventListener(graphics.stage, 
+			is_key_down ? KeyboardEvent.KEY_DOWN : KeyboardEvent.KEY_UP, 
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			is_key_down ? KeyboardEvent.KEY_DOWN : KeyboardEvent.KEY_UP, 
 			function (event:KeyboardEvent):void {
 				var charCode:int = event.charCode;
 				var keyCode:int = event.keyCode;
@@ -423,10 +409,10 @@ public final class AS3_vs_AS2
 				var shiftKey:Boolean = event.shiftKey;
 				func(is_key_down, charCode, keyCode, keyLocation, altKey, ctrlKey, shiftKey);
 			});	
+	}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	}
 	public static function showError(msg:String):void {
 		showMessage(msg, "error");
 	}
@@ -436,10 +422,10 @@ public final class AS3_vs_AS2
 		trace("Showing message: msg="+msg+
 			" graphics="+graphics+
 			" graphics.stage="+ (graphics==null ? "null" : graphics.stage) );
+			
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			
 		if (graphics==null) return;
 		graphics = graphics.stage;
 		if (graphics==null) return;
@@ -449,10 +435,10 @@ public final class AS3_vs_AS2
 		blackBox.graphics.drawRect(0,0,500,500);
 		blackBox.graphics.endFill();
 		var child:TextField = new TextField();
+		child.text = msg;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		child.text = msg;
 		child.width = 500;
 		child.height = 500;
 		
@@ -462,10 +448,10 @@ public final class AS3_vs_AS2
 		buttonText.text = "close";
 		buttonText.setTextFormat(new TextFormat("Times New Roman",14,0x000000),0,5);
 		buttonText.selectable = false;
+		
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		
 		
 		var buttonBox:Sprite=new Sprite();
 		buttonBox.graphics.beginFill(0xffffff);
@@ -475,10 +461,10 @@ public final class AS3_vs_AS2
 		buttonBox.x = graphics.width/2;
 		buttonBox.y = graphics.height/2;
 		var closeBtn:SimpleButton = new SimpleButton(buttonBox,buttonBox,buttonBox,buttonBox);
+		blackBox.addChild(child);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		blackBox.addChild(child);
 		blackBox.addChild(closeBtn);
 
 		//child.backgroundColor = 0xFF0000; // red
@@ -488,10 +474,10 @@ public final class AS3_vs_AS2
 		graphics.addChild(blackBox);
 		myAddEventListener(closeBtn, MouseEvent.CLICK, 
 			function():void {
+				trace("close")
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-				trace("close")
 				graphics.removeChild(blackBox);
 				} 
 			);
@@ -501,10 +487,10 @@ public final class AS3_vs_AS2
 	
 	
 	public static function IndexOf(arr:Array, val:Object):int {
+		return arr.indexOf(val);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		return arr.indexOf(val);
 	}	
 	public static function LastIndexOf(arr:Array, val:Object):int {
 		return arr.lastIndexOf(val);
@@ -514,10 +500,10 @@ public final class AS3_vs_AS2
 	}	
 	public static function stringLastIndexOf(str:String, val:String, startIndex:int=0x7FFFFFFF):int {
 		return str.lastIndexOf(val,startIndex);
+	}	
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	}	
 	public static function waitForStage(graphics:MovieClip, gameConsructor:Function):void
 	{
 		var stageTimer:Timer = new AS3_Timer("waitForStage",100,0);
@@ -527,10 +513,10 @@ public final class AS3_vs_AS2
 			TimerEvent.TIMER, function():void {
 					if(graphics.stage) {
 						trace('stage loaded!');
+						stageTimer.stop();
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-						stageTimer.stop();
 						gameConsructor();
 					}
 				});
@@ -540,10 +526,10 @@ public final class AS3_vs_AS2
 	 * XML differences between AS2 and AS3.
 	 * In AS2 I use XMLNode.
 	 */
+	public static function xml_create(str:String):XML {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	public static function xml_create(str:String):XML {
 		return new XML(str);
 	}
 	public static function xml_getName(xml:XML):String {
@@ -553,10 +539,10 @@ public final class AS3_vs_AS2
 		return xml.toString();
 	}
 	public static function xml_getChildren(xml:XML):Array/*XML*/ {
+		var list:XMLList = xml.children();
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		var list:XMLList = xml.children();
 		var res:Array/*XML*/ = [];
 		for each (var child:XML in list)
 			res.push(child);
@@ -566,10 +552,10 @@ public final class AS3_vs_AS2
 
 	/**
 	 * Serialization and handling classes and classNames
+	 */
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	 */
 	public static function getClassName(o:Object):String {
 		return getQualifiedClassName(o);
 	}
@@ -579,10 +565,10 @@ public final class AS3_vs_AS2
 			return getDefinitionByName(className) as Class;
 		} catch (err:Error) {
 			throw new Error("The class named '"+className+"' was not found!");
+		}	
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		}	
 		return null;
 	}
 	public static function getClassOfInstance(instance:Object):Class {
@@ -592,10 +578,10 @@ public final class AS3_vs_AS2
 		var res:Class = getClassByName(className);
 		
 		StaticFunctions.assert(res!=null, ["Missing class for instance=",instance, " className=",className]);
+		return res;		
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		return res;		
 	}
 	private static var checkedClasses:Object = {};
 	public static function checkConstructorHasNoArgs(obj:SerializableClass):void {
@@ -605,10 +591,10 @@ public final class AS3_vs_AS2
 		//trace("Checking ctor of "+className);
 		var descriptionXML:XML = describeType(obj);
 		//trace("descriptionXML="+descriptionXML.toXMLString());
+		var constructorList:XMLList = descriptionXML.constructor;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		var constructorList:XMLList = descriptionXML.constructor;
 		if (constructorList.length()>0) {
 			var constructor:XML = constructorList[0];
 			for each (var parameter:XML in constructor.children())
@@ -618,10 +604,10 @@ public final class AS3_vs_AS2
 		// I want to check that all fields are non-static and public,
 		// but describeType only returns such fields in the first place.
 		//<variable name="col" type="int"/>
+	}	
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	}	
 	private static var name2classFields:Object = {}; // mapping class names to an array of field names
 	public static function getFieldNames(instance:Object):Array {
 		var className:String = getClassName(instance);
@@ -631,10 +617,10 @@ public final class AS3_vs_AS2
 			// we could have also used ByteArray.writeObject,
 			// but I think this is more readable
 			// Sadly, a simple for loop doesn't go over the fields of a class (like it does in AS2)
+			// For loops do not work on classes in AS3 for classes (only for dynamic properties):
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			// For loops do not work on classes in AS3 for classes (only for dynamic properties):
 			// Iterates over the dynamic properties of an object or elements in an array and executes statement for each property or element. Object properties are not kept in any particular order, so properties may appear in a seemingly random order. Fixed properties, such as variables and methods defined in a class, are not enumerated by the for..in statement. To get a list of fixed properties, use the describeType() function, which is in the flash.utils package. 
 
 			var fieldsList:XMLList = describeType(instance).variable;
@@ -644,10 +630,10 @@ public final class AS3_vs_AS2
 		}
 		return fieldNames;
 	}
+	public static function checkAllFieldsDeserialized(obj:Object, newInstance:Object):void {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	public static function checkAllFieldsDeserialized(obj:Object, newInstance:Object):void {
 		var fieldNames:Array = getFieldNames(newInstance);
 		for each (var fieldName:String in fieldNames) {
 			if (StaticFunctions.startsWith(fieldName,"__")) continue;	
@@ -657,10 +643,10 @@ public final class AS3_vs_AS2
 	}
 	public static function checkObjectIsSerializable(obj:Object):void {
 		if (obj==null) return;
+		if (obj is Boolean || obj is String || obj is Number) return;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		if (obj is Boolean || obj is String || obj is Number) return;
 		var className:String = getClassName(obj);
 		if (className!="Array" && className!="Object")
 			if (!(obj is SerializableClass))
@@ -670,10 +656,10 @@ public final class AS3_vs_AS2
 	}
 	
 	public static var JPG_QUALITY:int = 50;
+	public static function sendMultipartImage(bug_id:int):void {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	public static function sendMultipartImage(bug_id:int):void {
 		if (StaticFunctions.someMovieClip!=null && StaticFunctions.someMovieClip.stage!=null)
 			SendMultipartImage.sendMultipartImage(StaticFunctions.someMovieClip.stage,bug_id);
 	} 	
@@ -683,10 +669,10 @@ public final class AS3_vs_AS2
 	
 } // end AS3_vs_AS2
 }
+import emulator.auto_copied.SerializableClass;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-import emulator.auto_copied.SerializableClass;
 import emulator.auto_copied.AS3_vs_AS2;
 import flash.utils.ByteArray;
 import flash.utils.Dictionary;
@@ -696,10 +682,10 @@ class NativeSerializable extends SerializableClass {
 	}
 	public function fromNative(obj:Object):NativeSerializable {
 		throw new Error("Must override fromNative");
+	}	
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	}	
 	override public function postDeserialize():Object {
 		throw new Error("Must override postDeserialize");
 	}
@@ -709,10 +695,10 @@ class ErrorSerializable extends NativeSerializable {
 	public var message:String;
 	public var errorId:int;
 	public function ErrorSerializable(err:Error=null) {
+		super("Error");
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		super("Error");
 		message = err==null ? null : err.message;
 		errorId = err==null ? 0 : err.errorID;
 	}	
@@ -722,10 +708,10 @@ class ErrorSerializable extends NativeSerializable {
 	override public function postDeserialize():Object {
 		return new Error(message, errorId);
 	}	
+}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-}
 class XMLSerializable extends NativeSerializable {
 	public var xmlStr:String;
 	public function XMLSerializable(xml:XML=null) {
@@ -735,10 +721,10 @@ class XMLSerializable extends NativeSerializable {
 	override public function fromNative(obj:Object):NativeSerializable {
 		return obj is XML ? new XMLSerializable(obj as XML) : null;
 	}
+	override public function postDeserialize():Object {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	override public function postDeserialize():Object {
 		return new XML(xmlStr);
 	}	
 }
@@ -748,10 +734,10 @@ class DateSerializable extends NativeSerializable {
 	public function DateSerializable(date:Date=null) {
 		super("Date");
 		//utcDate = date==null ? null : date.toUTCString();
+		millis = date==null ? null : date.valueOf();
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		millis = date==null ? null : date.valueOf();
 	}	
 	override public function fromNative(obj:Object):NativeSerializable {
 		return obj is Date ? new DateSerializable(obj as Date) : null;
@@ -761,10 +747,10 @@ class DateSerializable extends NativeSerializable {
 	}	
 }
 class DictionarySerializable extends NativeSerializable {
+	public var keyValArr:Array = [];
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	public var keyValArr:Array = [];
 	public function DictionarySerializable(dic:Dictionary=null) {
 		super("Dictionary");
 		if (dic!=null) {
@@ -774,10 +760,10 @@ class DictionarySerializable extends NativeSerializable {
 	}	
 	override public function fromNative(obj:Object):NativeSerializable {
 		return obj is Dictionary ? new DictionarySerializable(obj as Dictionary) : null;
+	}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	}
 	override public function postDeserialize():Object {
 		var res:Dictionary = new Dictionary();
 		for each (var keyVal:Array in keyValArr)
@@ -787,10 +773,10 @@ class DictionarySerializable extends NativeSerializable {
 }
 class ByteArraySerializable extends NativeSerializable {
 	public var arr:Array/*int*/;
+	public function ByteArraySerializable(byteArr:ByteArray=null) {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	public function ByteArraySerializable(byteArr:ByteArray=null) {
 		super("ByteArray");
 		arr = byteArr==null ? null : byteArr2Arr(byteArr);
 	}	
@@ -800,10 +786,10 @@ class ByteArraySerializable extends NativeSerializable {
 	public static function byteArr2Arr(byteArr:ByteArray):Array {
 		var bytes:Array = [];
 		var oldPosition:int = byteArr.position;
+		byteArr.position = 0;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		byteArr.position = 0;
 		for (var i:int=0; i<byteArr.length; i++)
 			bytes.push(byteArr.readByte());
 		byteArr.position = oldPosition;
@@ -813,10 +799,10 @@ class ByteArraySerializable extends NativeSerializable {
 		var res:ByteArray = new ByteArray();
 		for each (var i:int in arr)
 			res.writeByte(i);
+		res.position = 0; 
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		res.position = 0; 
 		return res;
 	}	
 }
@@ -826,10 +812,10 @@ import flash.display.BitmapData;
 import flash.display.Stage;
 import flash.events.Event;
 import flash.net.URLLoader;
+import flash.net.URLRequest;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-import flash.net.URLRequest;
 import flash.net.URLRequestMethod;
 import flash.utils.ByteArray;
 import emulator.auto_copied.StaticFunctions;
@@ -839,10 +825,10 @@ class SendMultipartImage
 	public static function sendMultipartImage(stage:Stage, bug_id:int):void {
 		var jpegEncoder:JPEGEncoder = new JPEGEncoder(AS3_vs_AS2.JPG_QUALITY);
 		StaticFunctions.tmpTrace(["SendMultipartImage of dimensions=",stage.width,stage.height]);
+		var image:BitmapData = new BitmapData(stage.width, stage.height);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		var image:BitmapData = new BitmapData(stage.width, stage.height);
 		image.draw(stage);
 		var byteArr:ByteArray = jpegEncoder.encode(image);
 		trace('SendMultipartImage: byteArr.len='+byteArr.length);
@@ -852,10 +838,10 @@ class SendMultipartImage
 	public static function sendJPG(imageBytes:ByteArray, bug_id:int):void {	
 		imageBytes.position = 0;
 		
+		var boundary: String = '---------------------------7d76d1b56035e';
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		var boundary: String = '---------------------------7d76d1b56035e';
 		var header1: String  = '--'+boundary + '\r\n'
 								+'Content-Disposition: form-data; name="bug_image"; filename="bug'+bug_id+'.jpg"\r\n'
 								+'Content-Type: application/octet-stream\r\n\r\n'
@@ -865,10 +851,10 @@ class SendMultipartImage
 								+bug_id+'\r\n'
 								+'--'+boundary + '--';
 		//Encoding the two string parts of the header
+		var headerBytes1: ByteArray = new ByteArray();
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		var headerBytes1: ByteArray = new ByteArray();
 		headerBytes1.writeMultiByte(header1, "ascii");
 		
 		var headerBytes2: ByteArray = new ByteArray();
@@ -878,10 +864,10 @@ class SendMultipartImage
 		var sendBytes: ByteArray = new ByteArray();
 		sendBytes.writeBytes(headerBytes1, 0, headerBytes1.length);
 		sendBytes.writeBytes(imageBytes, 0, imageBytes.length);
+		sendBytes.writeBytes(headerBytes2, 0, headerBytes2.length);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		sendBytes.writeBytes(headerBytes2, 0, headerBytes2.length);
 		
 		var request: URLRequest = new URLRequest(ErrorHandler.getErrorReportUrl());
 		request.data = sendBytes;
@@ -891,10 +877,10 @@ class SendMultipartImage
 		trace('SendMultipartImage: sendBytes.len='+sendBytes.length);
 		
 		AS3_Loader.loadText(request);			
+	}   
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	}   
 }
 
 import flash.display.*;
@@ -904,10 +890,10 @@ import emulator.auto_copied.ErrorHandler;
 import emulator.auto_copied.AS3_Loader;
 
 
+class JPEGEncoder
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-class JPEGEncoder
 {
 
 	// Static table initialization
@@ -917,10 +903,10 @@ class JPEGEncoder
 		 2, 4, 7,13,16,26,29,42,
 		 3, 8,12,17,25,30,41,43,
 		 9,11,18,24,31,40,44,53,
+		10,19,23,32,39,45,52,54,
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		10,19,23,32,39,45,52,54,
 		20,22,33,38,46,51,55,60,
 		21,34,37,47,50,56,59,61,
 		35,36,48,49,57,58,62,63
@@ -931,8 +917,8 @@ class JPEGEncoder
 	private var fdtbl_Y:Array = new Array(64);
 	private var fdtbl_UV:Array = new Array(64);
 
-// This is a AUTOMATICALLY GENERATED! Do not change!
 
+// This is a AUTOMATICALLY GENERATED! Do not change!
 
 	private function initQuantTables(sf:int):void
 	{
@@ -943,10 +929,10 @@ class JPEGEncoder
 			12, 12, 14, 19, 26, 58, 60, 55,
 			14, 13, 16, 24, 40, 57, 69, 56,
 			14, 17, 22, 29, 51, 87, 80, 62,
+			18, 22, 37, 56, 68,109,103, 77,
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			18, 22, 37, 56, 68,109,103, 77,
 			24, 35, 55, 64, 81,104,113, 92,
 			49, 64, 78, 87,103,121,120,101,
 			72, 92, 95, 98,112,100,103, 99
@@ -956,10 +942,10 @@ class JPEGEncoder
 			if (t < 1) {
 				t = 1;
 			} else if (t > 255) {
+				t = 255;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-				t = 255;
 			}
 			YTable[ZigZag[i]] = t;
 		}
@@ -969,10 +955,10 @@ class JPEGEncoder
 			24, 26, 56, 99, 99, 99, 99, 99,
 			47, 66, 99, 99, 99, 99, 99, 99,
 			99, 99, 99, 99, 99, 99, 99, 99,
+			99, 99, 99, 99, 99, 99, 99, 99,
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			99, 99, 99, 99, 99, 99, 99, 99,
 			99, 99, 99, 99, 99, 99, 99, 99,
 			99, 99, 99, 99, 99, 99, 99, 99
 		];
@@ -982,10 +968,10 @@ class JPEGEncoder
 				t = 1;
 			} else if (t > 255) {
 				t = 255;
+			}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			}
 			UVTable[ZigZag[i]] = t;
 		}
 		var aasf:Array = [
@@ -995,10 +981,10 @@ class JPEGEncoder
 		i = 0;
 		for (var row:int = 0; row < 8; row++)
 		{
+			for (var col:int = 0; col < 8; col++)
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			for (var col:int = 0; col < 8; col++)
 			{
 				fdtbl_Y[i]  = (1.0 / (YTable [ZigZag[i]] * aasf[row] * aasf[col] * 8.0));
 				fdtbl_UV[i] = (1.0 / (UVTable[ZigZag[i]] * aasf[row] * aasf[col] * 8.0));
@@ -1008,10 +994,10 @@ class JPEGEncoder
 	}
 
 	private var YDC_HT:Array;
+	private var UVDC_HT:Array;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	private var UVDC_HT:Array;
 	private var YAC_HT:Array;
 	private var UVAC_HT:Array;
 
@@ -1021,10 +1007,10 @@ class JPEGEncoder
 		var pos_in_table:int = 0;
 		var HT:Array = new Array();
 		for (var k:int=1; k<=16; k++) {
+			for (var j:int=1; j<=nrcodes[k]; j++) {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			for (var j:int=1; j<=nrcodes[k]; j++) {
 				HT[std_table[pos_in_table]] = new BitString();
 				HT[std_table[pos_in_table]].val = codevalue;
 				HT[std_table[pos_in_table]].len = k;
@@ -1034,10 +1020,10 @@ class JPEGEncoder
 			codevalue*=2;
 		}
 		return HT;
+	}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	}
 
 	private var std_dc_luminance_nrcodes:Array = [0,0,1,5,1,1,1,1,1,1,0,0,0,0,0,0,0];
 	private var std_dc_luminance_values:Array = [0,1,2,3,4,5,6,7,8,9,10,11];
@@ -1047,10 +1033,10 @@ class JPEGEncoder
 		0x21,0x31,0x41,0x06,0x13,0x51,0x61,0x07,
 		0x22,0x71,0x14,0x32,0x81,0x91,0xa1,0x08,
 		0x23,0x42,0xb1,0xc1,0x15,0x52,0xd1,0xf0,
+		0x24,0x33,0x62,0x72,0x82,0x09,0x0a,0x16,
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		0x24,0x33,0x62,0x72,0x82,0x09,0x0a,0x16,
 		0x17,0x18,0x19,0x1a,0x25,0x26,0x27,0x28,
 		0x29,0x2a,0x34,0x35,0x36,0x37,0x38,0x39,
 		0x3a,0x43,0x44,0x45,0x46,0x47,0x48,0x49,
@@ -1060,10 +1046,10 @@ class JPEGEncoder
 		0x7a,0x83,0x84,0x85,0x86,0x87,0x88,0x89,
 		0x8a,0x92,0x93,0x94,0x95,0x96,0x97,0x98,
 		0x99,0x9a,0xa2,0xa3,0xa4,0xa5,0xa6,0xa7,
+		0xa8,0xa9,0xaa,0xb2,0xb3,0xb4,0xb5,0xb6,
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		0xa8,0xa9,0xaa,0xb2,0xb3,0xb4,0xb5,0xb6,
 		0xb7,0xb8,0xb9,0xba,0xc2,0xc3,0xc4,0xc5,
 		0xc6,0xc7,0xc8,0xc9,0xca,0xd2,0xd3,0xd4,
 		0xd5,0xd6,0xd7,0xd8,0xd9,0xda,0xe1,0xe2,
@@ -1073,10 +1059,10 @@ class JPEGEncoder
 	];
 
 	private var std_dc_chrominance_nrcodes:Array = [0,0,3,1,1,1,1,1,1,1,1,1,0,0,0,0,0];
+	private var std_dc_chrominance_values:Array = [0,1,2,3,4,5,6,7,8,9,10,11];
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	private var std_dc_chrominance_values:Array = [0,1,2,3,4,5,6,7,8,9,10,11];
 	private var std_ac_chrominance_nrcodes:Array = [0,0,2,1,2,4,4,3,4,7,5,4,4,0,1,2,0x77];
 	private var std_ac_chrominance_values:Array = [
 		0x00,0x01,0x02,0x03,0x11,0x04,0x05,0x21,
@@ -1086,10 +1072,10 @@ class JPEGEncoder
 		0x15,0x62,0x72,0xd1,0x0a,0x16,0x24,0x34,
 		0xe1,0x25,0xf1,0x17,0x18,0x19,0x1a,0x26,
 		0x27,0x28,0x29,0x2a,0x35,0x36,0x37,0x38,
+		0x39,0x3a,0x43,0x44,0x45,0x46,0x47,0x48,
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		0x39,0x3a,0x43,0x44,0x45,0x46,0x47,0x48,
 		0x49,0x4a,0x53,0x54,0x55,0x56,0x57,0x58,
 		0x59,0x5a,0x63,0x64,0x65,0x66,0x67,0x68,
 		0x69,0x6a,0x73,0x74,0x75,0x76,0x77,0x78,
@@ -1099,10 +1085,10 @@ class JPEGEncoder
 		0xa6,0xa7,0xa8,0xa9,0xaa,0xb2,0xb3,0xb4,
 		0xb5,0xb6,0xb7,0xb8,0xb9,0xba,0xc2,0xc3,
 		0xc4,0xc5,0xc6,0xc7,0xc8,0xc9,0xca,0xd2,
+		0xd3,0xd4,0xd5,0xd6,0xd7,0xd8,0xd9,0xda,
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		0xd3,0xd4,0xd5,0xd6,0xd7,0xd8,0xd9,0xda,
 		0xe2,0xe3,0xe4,0xe5,0xe6,0xe7,0xe8,0xe9,
 		0xea,0xf2,0xf3,0xf4,0xf5,0xf6,0xf7,0xf8,
 		0xf9,0xfa
@@ -1112,10 +1098,10 @@ class JPEGEncoder
 	{
 		YDC_HT = computeHuffmanTbl(std_dc_luminance_nrcodes,std_dc_luminance_values);
 		UVDC_HT = computeHuffmanTbl(std_dc_chrominance_nrcodes,std_dc_chrominance_values);
+		YAC_HT = computeHuffmanTbl(std_ac_luminance_nrcodes,std_ac_luminance_values);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		YAC_HT = computeHuffmanTbl(std_ac_luminance_nrcodes,std_ac_luminance_values);
 		UVAC_HT = computeHuffmanTbl(std_ac_chrominance_nrcodes,std_ac_chrominance_values);
 	}
 
@@ -1125,10 +1111,10 @@ class JPEGEncoder
 	private function initCategoryNumber():void
 	{
 		var nr:int;
+		var nrlower:int = 1;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		var nrlower:int = 1;
 		var nrupper:int = 2;
 		for (var cat:int=1; cat<=15; cat++) {
 			//Positive numbers
@@ -1138,10 +1124,10 @@ class JPEGEncoder
 				bitcode[32767+nr].len = cat;
 				bitcode[32767+nr].val = nr;
 			}
+			//Negative numbers
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			//Negative numbers
 			for (nr=-(nrupper-1); nr<=-nrlower; nr++) {
 				category[32767+nr] = cat;
 				bitcode[32767+nr] = new BitString();
@@ -1151,10 +1137,10 @@ class JPEGEncoder
 			nrlower <<= 1;
 			nrupper <<= 1;
 		}
+	}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	}
 
 	// IO functions
 
@@ -1164,10 +1150,10 @@ class JPEGEncoder
 
 	private function writeBits(bs:BitString):void
 	{
+		var value:int = bs.val;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		var value:int = bs.val;
 		var posval:int = bs.len-1;
 		while ( posval >= 0 ) {
 			if (value & uint(1 << posval) ) {
@@ -1177,10 +1163,10 @@ class JPEGEncoder
 			bytepos--;
 			if (bytepos < 0) {
 				if (bytenew == 0xFF) {
+					writeByte(0xFF);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-					writeByte(0xFF);
 					writeByte(0);
 				}
 				else {
@@ -1190,10 +1176,10 @@ class JPEGEncoder
 				bytenew=0;
 			}
 		}
+	}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	}
 
 	private function writeByte(value:int):void
 	{
@@ -1203,10 +1189,10 @@ class JPEGEncoder
 	private function writeWord(value:int):void
 	{
 		writeByte((value>>8)&0xFF);
+		writeByte((value   )&0xFF);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		writeByte((value   )&0xFF);
 	}
 
 	// DCT & quantization core
@@ -1216,10 +1202,10 @@ class JPEGEncoder
 		var tmp0:Number;
 		var tmp7:Number;
 		var tmp1:Number;
+		var tmp6:Number;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		var tmp6:Number;
 		var tmp2:Number;
 		var tmp5:Number;
 		var tmp3:Number;
@@ -1229,10 +1215,10 @@ class JPEGEncoder
 		var tmp13:Number;
 		var tmp11:Number;
 		var tmp12:Number;
+		var z1:Number;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		var z1:Number;
 		var z5:Number;
 		var z2:Number;			
 		var z4:Number;
@@ -1242,10 +1228,10 @@ class JPEGEncoder
 		var z13:Number;
 		
 		/* Pass 1: process rows. */
+		var dataOff:int=0;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		var dataOff:int=0;
 		var i:int;
 		for (i=0; i<8; i++) {
 			tmp0 = data[dataOff+0] + data[dataOff+7];
@@ -1255,10 +1241,10 @@ class JPEGEncoder
 			tmp2 = data[dataOff+2] + data[dataOff+5];
 			tmp5 = data[dataOff+2] - data[dataOff+5];
 			tmp3 = data[dataOff+3] + data[dataOff+4];
+			tmp4 = data[dataOff+3] - data[dataOff+4];
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			tmp4 = data[dataOff+3] - data[dataOff+4];
 
 			/* Even part */
 			tmp10 = tmp0 + tmp3;	/* phase 2 */
@@ -1269,8 +1255,8 @@ class JPEGEncoder
 			data[dataOff+0] = tmp10 + tmp11; /* phase 3 */
 			data[dataOff+4] = tmp10 - tmp11;
 
-// This is a AUTOMATICALLY GENERATED! Do not change!
 
+// This is a AUTOMATICALLY GENERATED! Do not change!
 
 			z1 = (tmp12 + tmp13) * 0.707106781; /* c4 */
 			data[dataOff+2] = tmp13 + z1; /* phase 5 */
@@ -1281,10 +1267,10 @@ class JPEGEncoder
 			tmp11 = tmp5 + tmp6;
 			tmp12 = tmp6 + tmp7;
 
+			/* The rotator is modified from fig 4-8 to avoid extra negations. */
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			/* The rotator is modified from fig 4-8 to avoid extra negations. */
 			z5 = (tmp10 - tmp12) * 0.382683433; /* c6 */
 			z2 = 0.541196100 * tmp10 + z5; /* c2-c6 */
 			z4 = 1.306562965 * tmp12 + z5; /* c2+c6 */
@@ -1294,10 +1280,10 @@ class JPEGEncoder
 			z13 = tmp7 - z3;
 
 			data[dataOff+5] = z13 + z2;	/* phase 6 */
+			data[dataOff+3] = z13 - z2;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			data[dataOff+3] = z13 - z2;
 			data[dataOff+1] = z11 + z4;
 			data[dataOff+7] = z11 - z4;
 
@@ -1307,10 +1293,10 @@ class JPEGEncoder
 		/* Pass 2: process columns. */
 		dataOff = 0;
 		for (i=0; i<8; i++) {
+			tmp0 = data[dataOff+ 0] + data[dataOff+56];
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			tmp0 = data[dataOff+ 0] + data[dataOff+56];
 			tmp7 = data[dataOff+ 0] - data[dataOff+56];
 			tmp1 = data[dataOff+ 8] + data[dataOff+48];
 			tmp6 = data[dataOff+ 8] - data[dataOff+48];
@@ -1320,10 +1306,10 @@ class JPEGEncoder
 			tmp4 = data[dataOff+24] - data[dataOff+32];
 
 			/* Even part */
+			tmp10 = tmp0 + tmp3;	/* phase 2 */
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			tmp10 = tmp0 + tmp3;	/* phase 2 */
 			tmp13 = tmp0 - tmp3;
 			tmp11 = tmp1 + tmp2;
 			tmp12 = tmp1 - tmp2;
@@ -1333,10 +1319,10 @@ class JPEGEncoder
 
 			z1 = (tmp12 + tmp13) * 0.707106781; /* c4 */
 			data[dataOff+16] = tmp13 + z1; /* phase 5 */
+			data[dataOff+48] = tmp13 - z1;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			data[dataOff+48] = tmp13 - z1;
 
 			/* Odd part */
 			tmp10 = tmp4 + tmp5; /* phase 2 */
@@ -1346,10 +1332,10 @@ class JPEGEncoder
 			/* The rotator is modified from fig 4-8 to avoid extra negations. */
 			z5 = (tmp10 - tmp12) * 0.382683433; /* c6 */
 			z2 = 0.541196100 * tmp10 + z5; /* c2-c6 */
+			z4 = 1.306562965 * tmp12 + z5; /* c2+c6 */
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			z4 = 1.306562965 * tmp12 + z5; /* c2+c6 */
 			z3= tmp11 * 0.707106781; /* c4 */
 
 			z11 = tmp7 + z3;	/* phase 5 */
@@ -1360,8 +1346,8 @@ class JPEGEncoder
 			data[dataOff+ 8] = z11 + z4;
 			data[dataOff+56] = z11 - z4;
 
-// This is a AUTOMATICALLY GENERATED! Do not change!
 
+// This is a AUTOMATICALLY GENERATED! Do not change!
 
 			dataOff++; /* advance pointer to next column */
 		}
@@ -1372,10 +1358,10 @@ class JPEGEncoder
 			data[i] = Math.round((data[i]*fdtbl[i]));
 		}
 		return data;
+	}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	}
 
 	// Chunk writing
 
@@ -1385,10 +1371,10 @@ class JPEGEncoder
 		writeWord(16); // length
 		writeByte(0x4A); // J
 		writeByte(0x46); // F
+		writeByte(0x49); // I
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		writeByte(0x49); // I
 		writeByte(0x46); // F
 		writeByte(0); // = "JFIF",'\0'
 		writeByte(1); // versionhi
@@ -1398,10 +1384,10 @@ class JPEGEncoder
 		writeWord(1); // ydensity
 		writeByte(0); // thumbnwidth
 		writeByte(0); // thumbnheight
+	}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	}
 
 	private function writeSOF0(width:int, height:int):void
 	{
@@ -1411,10 +1397,10 @@ class JPEGEncoder
 		writeWord(height);
 		writeWord(width);
 		writeByte(3);    // nrofcomponents
+		writeByte(1);    // IdY
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		writeByte(1);    // IdY
 		writeByte(0x11); // HVY
 		writeByte(0);    // QTY
 		writeByte(2);    // IdU
@@ -1425,8 +1411,8 @@ class JPEGEncoder
 		writeByte(1);    // QTV
 	}
 
-// This is a AUTOMATICALLY GENERATED! Do not change!
 
+// This is a AUTOMATICALLY GENERATED! Do not change!
 
 	private function writeDQT():void
 	{
@@ -1437,10 +1423,10 @@ class JPEGEncoder
 		for (i=0; i<64; i++) {
 			writeByte(YTable[i]);
 		}
+		writeByte(1);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		writeByte(1);
 		for (i=0; i<64; i++) {
 			writeByte(UVTable[i]);
 		}
@@ -1450,10 +1436,10 @@ class JPEGEncoder
 	{
 		var i:int;
 		writeWord(0xFFC4); // marker
+		writeWord(0x01A2); // length
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		writeWord(0x01A2); // length
 
 		writeByte(0); // HTYDCinfo
 		for (i=0; i<16; i++) {
@@ -1463,10 +1449,10 @@ class JPEGEncoder
 			writeByte(std_dc_luminance_values[i]);
 		}
 
+		writeByte(0x10); // HTYACinfo
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		writeByte(0x10); // HTYACinfo
 		for (i=0; i<16; i++) {
 			writeByte(std_ac_luminance_nrcodes[i+1]);
 		}
@@ -1476,10 +1462,10 @@ class JPEGEncoder
 
 		writeByte(1); // HTUDCinfo
 		for (i=0; i<16; i++) {
+			writeByte(std_dc_chrominance_nrcodes[i+1]);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			writeByte(std_dc_chrominance_nrcodes[i+1]);
 		}
 		for (i=0; i<=11; i++) {
 			writeByte(std_dc_chrominance_values[i]);
@@ -1489,10 +1475,10 @@ class JPEGEncoder
 		for (i=0; i<16; i++) {
 			writeByte(std_ac_chrominance_nrcodes[i+1]);
 		}
+		for (i=0; i<=161; i++) {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		for (i=0; i<=161; i++) {
 			writeByte(std_ac_chrominance_values[i]);
 		}
 	}
@@ -1502,10 +1488,10 @@ class JPEGEncoder
 		writeWord(0xFFDA); // marker
 		writeWord(12); // length
 		writeByte(3); // nrofcomponents
+		writeByte(1); // IdY
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		writeByte(1); // IdY
 		writeByte(0); // HTY
 		writeByte(2); // IdU
 		writeByte(0x11); // HTU
@@ -1516,8 +1502,8 @@ class JPEGEncoder
 		writeByte(0); // Bf
 	}
 
-// This is a AUTOMATICALLY GENERATED! Do not change!
 
+// This is a AUTOMATICALLY GENERATED! Do not change!
 
 	// Core processing
 	private var DU:Array = new Array(64);
@@ -1528,10 +1514,10 @@ class JPEGEncoder
 		var EOB:BitString = HTAC[0x00];
 		var M16zeroes:BitString = HTAC[0xF0];
 
+		var DU_DCT:Array = fDCTQuant(CDU, fdtbl);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		var DU_DCT:Array = fDCTQuant(CDU, fdtbl);
 		//ZigZag reorder
 		for (i=0;i<64;i++) {
 			DU[ZigZag[i]]=DU_DCT[i];
@@ -1541,10 +1527,10 @@ class JPEGEncoder
 		if (Diff==0) {
 			writeBits(HTDC[0]); // Diff might be 0
 		} else {
+			writeBits(HTDC[category[32767+Diff]]);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			writeBits(HTDC[category[32767+Diff]]);
 			writeBits(bitcode[32767+Diff]);
 		}
 		//Encode ACs
@@ -1554,10 +1540,10 @@ class JPEGEncoder
 		//end0pos = first element in reverse order !=0
 		if ( end0pos == 0) {
 			writeBits(EOB);
+			return DC;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			return DC;
 		}
 		i = 1;
 		while ( i <= end0pos ) {
@@ -1567,10 +1553,10 @@ class JPEGEncoder
 			var nrzeroes:int = i-startpos;
 			if ( nrzeroes >= 16 ) {
 				for (var nrmarker:int=1; nrmarker <= nrzeroes/16; nrmarker++) {
+					writeBits(M16zeroes);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-					writeBits(M16zeroes);
 				}
 				nrzeroes = int(nrzeroes&0xF);
 			}
@@ -1580,10 +1566,10 @@ class JPEGEncoder
 		}
 		if ( end0pos != 63 ) {
 			writeBits(EOB);
+		}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		}
 		return DC;
 	}
 
@@ -1593,10 +1579,10 @@ class JPEGEncoder
 
 	private function RGB2YUV(img:BitmapData, xpos:int, ypos:int):void
 	{
+		var pos:int=0;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		var pos:int=0;
 		for (var y:int=0; y<8; y++) {
 			for (var x:int=0; x<8; x++) {
 				var P:uint = img.getPixel32(xpos+x,ypos+y);
@@ -1606,10 +1592,10 @@ class JPEGEncoder
 				YDU[pos]=((( 0.29900)*R+( 0.58700)*G+( 0.11400)*B))-128;
 				UDU[pos]=(((-0.16874)*R+(-0.33126)*G+( 0.50000)*B));
 				VDU[pos]=((( 0.50000)*R+(-0.41869)*G+(-0.08131)*B));
+				pos++;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-				pos++;
 			}
 		}
 	}
@@ -1619,10 +1605,10 @@ class JPEGEncoder
 		if (quality <= 0) {
 			quality = 1;
 		}
+		if (quality > 100) {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		if (quality > 100) {
 			quality = 100;
 		}
 		var sf:int = 0;
@@ -1632,10 +1618,10 @@ class JPEGEncoder
 			sf = int(200 - quality*2);
 		}
 		// Create tables
+		initHuffmanTbl();
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		initHuffmanTbl();
 		initCategoryNumber();
 		initQuantTables(sf);
 	}
@@ -1645,10 +1631,10 @@ class JPEGEncoder
 		// Initialize bit writer
 		byteout = new ByteArray();
 		bytenew=0;
+		bytepos=7;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		bytepos=7;
 
 		// Add JPEG headers
 		writeWord(0xFFD8); // SOI
@@ -1658,10 +1644,10 @@ class JPEGEncoder
 		writeDHT();
 		writeSOS();
 
+		// Encode 8x8 macroblocks
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		// Encode 8x8 macroblocks
 		var DCY:Number=0;
 		var DCU:Number=0;
 		var DCV:Number=0;
@@ -1671,10 +1657,10 @@ class JPEGEncoder
 			for (var xpos:int=0; xpos<image.width; xpos+=8) {
 				RGB2YUV(image, xpos, ypos);
 				DCY = processDU(YDU, fdtbl_Y, DCY, YDC_HT, YAC_HT);
+				DCU = processDU(UDU, fdtbl_UV, DCU, UVDC_HT, UVAC_HT);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-				DCU = processDU(UDU, fdtbl_UV, DCU, UVDC_HT, UVAC_HT);
 				DCV = processDU(VDU, fdtbl_UV, DCV, UVDC_HT, UVAC_HT);
 			}
 		}
@@ -1684,10 +1670,10 @@ class JPEGEncoder
 			var fillbits:BitString = new BitString();
 			fillbits.len = bytepos+1;
 			fillbits.val = (1<<(bytepos+1))-1;
+			writeBits(fillbits);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			writeBits(fillbits);
 		}
 
 		writeWord(0xFFD9); //EOI
@@ -1697,7 +1683,4 @@ class JPEGEncoder
 class BitString {
 	public var len:int = 0;
 	public var val:int = 0;
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 };

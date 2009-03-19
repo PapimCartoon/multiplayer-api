@@ -157,7 +157,7 @@ public final class AS3_Loader
 		}	
 		AS3_vs_AS2.myAddEventListener(dispatcher,Event.COMPLETE, function(ev:Event):void{
 			if(doLoadTrace())	tmpTrace("successfully loaded",url,"Event data :",ev, 
-				ev!=null && ev.target!=null ? (ev.target.data is String ? StaticFunctions.cutString(ev.target.data as String,EVENT_DATA_DEBUG_LEN) : ev.target.data) : "no ev.target.data");
+				ev!=null && ev.target!=null && ev.target.hasOwnProperty("data") ? (ev.target.data is String ? StaticFunctions.cutString(ev.target.data as String,EVENT_DATA_DEBUG_LEN) : ev.target.data) : "no ev.target.data");
 			successHandler(ev);
 		});
 		if(progressHandler !=null)

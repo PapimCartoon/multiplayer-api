@@ -37,6 +37,7 @@ import flash.utils.*;
 		{ 
 			(new PlayerMove).register();
 			(new ServerBox).register();
+			(new ComputerMove).register();
 			super(graphics);
 			this.graphics = graphics;
 			AS3_vs_AS2.waitForStage(graphics,constructGame);

@@ -145,14 +145,14 @@
 		addTableParams(params,"serverTable")
 		params["chat_skin_url"]="graphics/chatGraphics.swf";
 		params["preloader_url"]="graphics/Preloader.swf";
-		
+		params["swf_url"]=  "framework/FlashCode.swf";
 		//shared information betweeng game and room ends here
 		if (windowParams["flash_type"] == "room"){
 		document.title = "Room Tester"
 			if(windowParams["isYoavContainer"] == "true")
 				params["swf_url"]=  "framework/MxmlRoomGraphics.swf";
 			else
-				params["swf_url"]=  "framework/RoomGraphicsNoMXML.swf";
+				params["is_game"]=  "false";
 				
 			params["skin_url"]="graphics/RoomGraphics.swf";		
 			params["config_url"]=windowParams["roomXML"];
@@ -172,7 +172,7 @@
 			if(windowParams["isYoavContainer"] == "true")
 				params["swf_url"] = "framework/MxmlGameGraphics.swf";
 			else
-				params["swf_url"] = "framework/GameGraphicsNoMXML.swf";
+				params["is_game"]=  "true";
 			params["skin_url"]="graphics/GameGraphics.swf";	
 			params["config_url"]=windowParams["gameXML"];	
 			

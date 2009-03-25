@@ -2,7 +2,7 @@
 	<configURL>XML/config2.XML</configURL>
 	<graphics>
 	
-		<computerImage>http://s3.amazonaws.com/basec/1197158/2684573/ComputerIcon_4.gif?AWSAccessKeyId=1RF809NDDCNB7616HJ02&Expires=1237361530&Signature=tzU1cVzWr5AFNVBnqwnCBL4xplU%3D</computerImage><!--Practise mode image-->
+		<computerImage>images/Avatar_1.gif</computerImage><!--Practise mode image-->
 	
 		<gameDisplayName>cool game</gameDisplayName><!--The name of the game that will be displayed-->
 		<bigGameThumb></bigGameThumb><!--The URL the game will load as the background for the intro screen-->

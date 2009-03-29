@@ -16,16 +16,8 @@ package come2play_as3.api.auto_generated {
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
 		}
-		override public function setMethodParameters(parameters:Array):void { 
-			var pos:int = 0;
-			this.keys = parameters[pos++];
-		}
-		override public function getFunctionId():int { return -110; }
-		override public function getMethodName():String { return 'doAllRequestStateCalculation'; }
-		override public function getMethodParameters():Array { return [keys]; }
-		override public function getMethodParametersNum():int { return 1; }
+		public static var FUNCTION_ID:int = -110;
+		public static var METHOD_NAME:String = 'doAllRequestStateCalculation';
+		public static var METHOD_PARAMS:Array = ['keys'];
 	}
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 }

@@ -14,16 +14,8 @@ package emulator.auto_generated {
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
 		}
-		override public function setMethodParameters(parameters:Array):void { 
-			var pos:int = 0;
-			this.userId = parameters[pos++];
-		}
-		override public function getFunctionId():int { return -122; }
-		override public function getMethodName():String { return 'gotUserDisconnected'; }
-		override public function getMethodParameters():Array { return [userId]; }
-		override public function getMethodParametersNum():int { return 1; }
+		public static var FUNCTION_ID:int = -122;
+		public static var METHOD_NAME:String = 'gotUserDisconnected';
+		public static var METHOD_PARAMS:Array = ['userId'];
 	}
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 }

@@ -9,15 +9,11 @@ package emulator.auto_generated {
 			var res:API_DoAllSetMove = new API_DoAllSetMove();
 			return res;
 		}
-		override public function setMethodParameters(parameters:Array):void { 
+		public static var FUNCTION_ID:int = 4;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			var pos:int = 0;
-		}
-		override public function getFunctionId():int { return 4; }
-		override public function getMethodName():String { return 'doAllSetMove'; }
-		override public function getMethodParameters():Array { return []; }
-		override public function getMethodParametersNum():int { return 0; }
+		public static var METHOD_NAME:String = 'doAllSetMove';
+		public static var METHOD_PARAMS:Array = [];
 	}
 }

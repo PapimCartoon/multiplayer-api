@@ -16,17 +16,8 @@ package emulator.auto_generated {
 			res.finishedPlayerIds = finishedPlayerIds;
 			return res;
 		}
-		override public function setMethodParameters(parameters:Array):void { 
-			var pos:int = 0;
-			this.msgNum = parameters[pos++];
-			this.finishedPlayerIds = parameters[pos++];
-		}
-		override public function getFunctionId():int { return -120; }
-		override public function getMethodName():String { return 'gotMatchEnded'; }
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
-		override public function getMethodParameters():Array { return [msgNum, finishedPlayerIds]; }
-		override public function getMethodParametersNum():int { return 2; }
+		public static var FUNCTION_ID:int = -120;
+		public static var METHOD_NAME:String = 'gotMatchEnded';
+		public static var METHOD_PARAMS:Array = ['msgNum', 'finishedPlayerIds'];
 	}
 }

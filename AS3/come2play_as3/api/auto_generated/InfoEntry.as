@@ -18,17 +18,8 @@ package come2play_as3.api.auto_generated {
 			res.value = value;
 			return res;
 		}
-		override public function setMethodParameters(parameters:Array):void { 
-			var pos:int = 0;
-			this.key = parameters[pos++];
-			this.value = parameters[pos++];
-		}
-		override public function getFunctionId():int { return -89; }
-		override public function getMethodName():String { return 'infoEntry'; }
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
-		override public function getMethodParameters():Array { return [key, value]; }
-		override public function getMethodParametersNum():int { return 2; }
+		public static var FUNCTION_ID:int = -89;
+		public static var METHOD_NAME:String = 'infoEntry';
+		public static var METHOD_PARAMS:Array = ['key', 'value'];
 	}
 }

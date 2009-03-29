@@ -123,9 +123,13 @@ public final class AS3_vs_AS2
 		
 	private static var listener2dispatcher2type2wrapper:Dictionary = new Dictionary(true); // weak keys! when the listener is garbaged-collected, the wrapper is deleted	 		
 	public static function isDictionaryEmpty(dic:Dictionary):Boolean {
+		return dictionarySize(dic)==0;
+	}
+	public static function dictionarySize(dic:Dictionary):int {
+		var size:int = 0;
 		for (var key:Object in dic)
-			return false;
-		return true;
+			size++;
+		return size;
 	}
 	public static function myRemoveEventListener(dispatcher:IEventDispatcher, type:String, listener:Function):void {
 		var dic1:Dictionary = listener2dispatcher2type2wrapper[listener];
@@ -140,7 +144,7 @@ public final class AS3_vs_AS2
 		dispatcher.removeEventListener(type, func);
 	}			
 	public static function myAddEventListener(dispatcher:IEventDispatcher, type:String, listener:Function, useCapture:Boolean=false, priority:int=0, weakReference:Boolean=false):Function {		
-		var func:Function = ErrorHandler.wrapWithCatch("myAddEventListener."+type, listener);		
+		var func:Function = ErrorHandler.wrapWithCatch("myAddEventListener."+type+" for "+getQualifiedClassName(dispatcher), listener);		
 		if (listener2dispatcher2type2wrapper[listener] == null)
 			listener2dispatcher2type2wrapper[listener] = new Dictionary (true);			
 		if (listener2dispatcher2type2wrapper[listener][dispatcher] == null)
@@ -148,8 +152,7 @@ public final class AS3_vs_AS2
 		listener2dispatcher2type2wrapper[listener][dispatcher][type] = func;		
 		dispatcher.addEventListener(type, func, useCapture, priority, weakReference);
 		return func; // use General.myRemoveEventListener to remove
-	}
-	
+	}	
 	
 	
 	//the reason we have a functions Array is because un AS2 we can't use the client object

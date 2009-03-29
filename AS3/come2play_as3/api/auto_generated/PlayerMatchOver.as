@@ -20,18 +20,8 @@ package come2play_as3.api.auto_generated {
 			res.potPercentage = potPercentage;
 			return res;
 		}
-		override public function setMethodParameters(parameters:Array):void { 
-			var pos:int = 0;
-			this.playerId = parameters[pos++];
-			this.score = parameters[pos++];
-			this.potPercentage = parameters[pos++];
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
-		}
-		override public function getFunctionId():int { return -90; }
-		override public function getMethodName():String { return 'playerMatchOver'; }
-		override public function getMethodParameters():Array { return [playerId, score, potPercentage]; }
-		override public function getMethodParametersNum():int { return 3; }
+		public static var FUNCTION_ID:int = -90;
+		public static var METHOD_NAME:String = 'playerMatchOver';
+		public static var METHOD_PARAMS:Array = ['playerId', 'score', 'potPercentage'];
 	}
 }

@@ -1,5 +1,6 @@
 package come2play_as3.api
 {
+	import come2play_as3.api.auto_copied.AS3_vs_AS2;
 	import come2play_as3.api.auto_generated.API_Message;
 	import come2play_as3.api.auto_generated.ClientGameAPI;
 	
@@ -24,7 +25,7 @@ package come2play_as3.api
 		}
 		public function addEventListener(type:String,listener:Function,useCapture:Boolean = false,priority:int = 0,useWeakReference:Boolean = false ):void
 		{
-			dispatcher.addEventListener(type,listener,useCapture,priority,useWeakReference);
+			AS3_vs_AS2.myAddEventListener(dispatcher, type,listener,useCapture,priority,useWeakReference);
 		}
 		override public function dispatchMessage(msg:API_Message):void
 		{

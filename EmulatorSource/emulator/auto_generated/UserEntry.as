@@ -19,18 +19,11 @@ package emulator.auto_generated {
 			res.isSecret = isSecret;
 			return res;
 		}
-		override public function setMethodParameters(parameters:Array):void { 
-			var pos:int = 0;
-			this.key = parameters[pos++];
-			this.value = parameters[pos++];
+		public static var FUNCTION_ID:int = -87;
+		public static var METHOD_NAME:String = 'userEntry';
+		public static var METHOD_PARAMS:Array = ['key', 'value', 'isSecret'];
+	}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			this.isSecret = parameters[pos++];
-		}
-		override public function getFunctionId():int { return -87; }
-		override public function getMethodName():String { return 'userEntry'; }
-		override public function getMethodParameters():Array { return [key, value, isSecret]; }
-		override public function getMethodParametersNum():int { return 3; }
-	}
 }

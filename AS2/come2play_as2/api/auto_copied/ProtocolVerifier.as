@@ -5,7 +5,8 @@
 import come2play_as2.api.auto_copied.*;
 	class come2play_as2.api.auto_copied.ProtocolVerifier
 	{
-		public static var MAX_ANIMATION_MILLISECONDS:Number = 30*1000; // max 30 seconds for animations
+		public static var MAX_ANIMATION_MILLISECONDS:Number = 60*1000; // max 60 seconds for animations
+		public static var WARN_ANIMATION_MILLISECONDS:Number = 30*1000; // if an animation finished after 30 seconds we report an error (for us to know that it can happen!)
 
 		private var transactionStartedOn:Number = -1; 
 		private var currentCallback:API_Message = null;
@@ -31,12 +32,15 @@ import come2play_as2.api.auto_copied.*;
 				" currentPlayerIds="+currentPlayerIds+ 
 				"";
 		}
+		private function transactionRunningTime():Number {
+			return getTimer() - transactionStartedOn;
+		}
         private function checkAnimationInterval():Void {
         	if (transactionStartedOn==-1) return; // animation is not running
-        	var now:Number = getTimer();
-        	if (now - transactionStartedOn < MAX_ANIMATION_MILLISECONDS) return; // animation is running for a short time
+        	var delta:Number = transactionRunningTime();
+        	if (delta< MAX_ANIMATION_MILLISECONDS) return; // animation is running for a short time
         	// animation is running for too long
-        	StaticFunctions.throwError("An transaction is running for more than MAX_ANIMATION_MILLISECONDS="+MAX_ANIMATION_MILLISECONDS+". It started "+transactionStartedOn+" milliseconds after the script started, and now="+now+". ProtocolVerifier="+this);         	
+        	StaticFunctions.throwError("An transaction is running for more than MAX_ANIMATION_MILLISECONDS="+MAX_ANIMATION_MILLISECONDS+". It is running for="+delta+". ProtocolVerifier="+this);         	
         }
         public function isPlayer():Boolean {
         	// I can't use T.custom(API_Message.CUSTOM_INFO_KEY_myUserId,0), because ProtocolVerifier is used in emulator that runs multiple clients (thus static memory will cause a conflict)
@@ -48,7 +52,7 @@ import come2play_as2.api.auto_copied.*;
         public function getFinishedPlayerIds():Array/*int*/ {
         	if(allPlayerIds == null) return new Array();
         	var finishedPlayerids:Array = allPlayerIds.concat();
-        	var p54:Number=0; for (var i54:String in currentPlayerIds) { var playerId:Number = currentPlayerIds[currentPlayerIds.length==null ? i54 : p54]; p54++;
+        	var p58:Number=0; for (var i58:String in currentPlayerIds) { var playerId:Number = currentPlayerIds[currentPlayerIds.length==null ? i58 : p58]; p58++;
         		var spliceIndex:Number = AS3_vs_AS2.IndexOf(finishedPlayerids,playerId);
         		finishedPlayerids.splice(spliceIndex,1);
         	}	
@@ -59,7 +63,7 @@ import come2play_as2.api.auto_copied.*;
         }
         public function isAllInPlayers(playerIds:Array/*int*/):Boolean {
         	check(playerIds.length>=1, ["isAllInPlayers was called with an empty playerIds array"]);
-        	var p65:Number=0; for (var i65:String in playerIds) { var playerId:Number = playerIds[playerIds.length==null ? i65 : p65]; p65++;
+        	var p69:Number=0; for (var i69:String in playerIds) { var playerId:Number = playerIds[playerIds.length==null ? i69 : p69]; p69++;
         		if (!isInPlayers(playerId)) return false;
         	}
         	return true;        	
@@ -69,7 +73,7 @@ import come2play_as2.api.auto_copied.*;
 			StaticFunctions.assert(false, ["ProtocolVerifier found an error: ", arr]);
 		}
 		private function checkServerEntries(serverEntries:Array/*ServerEntry*/):Void {
-			var p75:Number=0; for (var i75:String in serverEntries) { var entry:ServerEntry = serverEntries[serverEntries.length==null ? i75 : p75]; p75++;
+			var p79:Number=0; for (var i79:String in serverEntries) { var entry:ServerEntry = serverEntries[serverEntries.length==null ? i79 : p79]; p79++;
 				check(entry.key!=null, ["Found a null key in serverEntry=",entry]);
 			}
 		}
@@ -101,7 +105,7 @@ import come2play_as2.api.auto_copied.*;
     			// isPause is called when the game is in progress,
     			// and other info is passed before the game starts.
     			var customInfo:API_GotCustomInfo = API_GotCustomInfo(gotMsg);
-    			var p107:Number=0; for (var i107:String in customInfo.infoEntries) { var infoEntry:InfoEntry = customInfo.infoEntries[customInfo.infoEntries.length==null ? i107 : p107]; p107++;
+    			var p111:Number=0; for (var i111:String in customInfo.infoEntries) { var infoEntry:InfoEntry = customInfo.infoEntries[customInfo.infoEntries.length==null ? i111 : p111]; p111++;
     				if (infoEntry.key==API_Message.CUSTOM_INFO_KEY_myUserId)
     					myUserId = AS3_vs_AS2.as_int(infoEntry.value);
     			}
@@ -119,7 +123,7 @@ import come2play_as2.api.auto_copied.*;
 			}
 		}
 		public static function isOldBoard(msg:API_Message):Boolean {
-			var name:String = msg.getMethodName();
+			var name:String = StaticFunctions.getMethodName(msg);
 			return StaticFunctions.startsWith(name, "do_") || StaticFunctions.startsWith(name, "got_");
 		}
 		public static function isPassThrough(doMsg:API_Message):Boolean {
@@ -128,7 +132,7 @@ import come2play_as2.api.auto_copied.*;
         		isOldBoard(doMsg);
 		}
 		public function isDoAll(doMsg:API_Message):Boolean {
-			return StaticFunctions.startsWith(doMsg.getMethodName(), "doAll");
+			return StaticFunctions.startsWith(StaticFunctions.getMethodName(doMsg), "doAll");
 		}
 		
 		public function msgFromGame(doMsg:API_Message):Void {
@@ -150,7 +154,7 @@ import come2play_as2.api.auto_copied.*;
         		isDeleteLegal(doStoreStateMessage.userEntries)
 			} else if (doMsg instanceof API_Transaction) {
 				var transaction:API_Transaction = API_Transaction(doMsg);
-				check(currentCallback!=null && currentCallback.getMethodName()==transaction.callback.callbackName, ["Illegal callbackName!"]);
+				check(currentCallback!=null && StaticFunctions.getMethodName(currentCallback)==transaction.callback.callbackName, ["Illegal callbackName!"]);
 				// The game may perform doAllFoundHacker (in a transaction) even after the game is over,
 				// because: The container may pass gotStateChanged after the game sends doAllEndMatch,
 				//			because the game should verify every doStoreState (to prevent hackers from polluting the state after they know the game will be over).
@@ -159,7 +163,7 @@ import come2play_as2.api.auto_copied.*;
 				
 				var wasStoreStateCalculation:Boolean = false;
 				var isRequestStateCalculation:Boolean = currentCallback instanceof API_GotRequestStateCalculation;
-				var p165:Number=0; for (var i165:String in transaction.messages) { var doAllMsg:API_Message = transaction.messages[transaction.messages.length==null ? i165 : p165]; p165++;
+				var p169:Number=0; for (var i169:String in transaction.messages) { var doAllMsg:API_Message = transaction.messages[transaction.messages.length==null ? i169 : p169]; p169++;
 					checkDoAll(doAllMsg);
 					if (isRequestStateCalculation) {
 						if (doAllMsg instanceof API_DoAllStoreStateCalculation)	
@@ -178,6 +182,9 @@ import come2play_as2.api.auto_copied.*;
 					check(wasStoreStateCalculation, ["When the server calls gotRequestStateCalculation, you must call doAllStoreStateCalculation"]);
 				
 				currentCallback = null;
+				
+				if (transactionRunningTime()>WARN_ANIMATION_MILLISECONDS) // for us to know it can happen (so we should increase our bound)
+					ErrorHandler.alwaysTraceAndSendReport("A transaction finished after WARN_ANIMATION_MILLISECONDS",this);
         		transactionStartedOn = -1;
 			} else {
 				check(false, ["Forgot to verify message type=",AS3_vs_AS2.getClassName(doMsg), " doMsg=",doMsg]);
@@ -186,7 +193,7 @@ import come2play_as2.api.auto_copied.*;
 		}
 		private function isDeleteLegal(userEntries:Array/*UserEntry*/):Void
 		{
-			var p192:Number=0; for (var i192:String in userEntries) { var userEntry:UserEntry = userEntries[userEntries.length==null ? i192 : p192]; p192++;
+			var p199:Number=0; for (var i199:String in userEntries) { var userEntry:UserEntry = userEntries[userEntries.length==null ? i199 : p199]; p199++;
 				if (userEntry.value == null)
 					check(!userEntry.isSecret,["key deletion must be public! userEntry=",userEntry]);
 			}
@@ -253,21 +260,21 @@ import come2play_as2.api.auto_copied.*;
         private function isNullKeyExistUserEntry(userEntries:Array/*UserEntry*/):Void
         {
         	check(userEntries.length!=0, ["userEntries must have at least one UserEntry!"]);
-        	var p259:Number=0; for (var i259:String in userEntries) { var userEntry:UserEntry = userEntries[userEntries.length==null ? i259 : p259]; p259++;
+        	var p266:Number=0; for (var i266:String in userEntries) { var userEntry:UserEntry = userEntries[userEntries.length==null ? i266 : p266]; p266++;
         		check(userEntry.key != null,["UserEntry.key cannot be null ! userEntry=",userEntry]);
         	}
         }
         private function isNullKeyExistRevealEntry(revealEntries:Array/*RevealEntry*/):Void
         {
         	//check(revealEntries.length>=1, ["revealEntries must have at least one RevealEntry!"]);
-        	var p266:Number=0; for (var i266:String in revealEntries) { var revealEntry:RevealEntry = revealEntries[revealEntries.length==null ? i266 : p266]; p266++;
+        	var p273:Number=0; for (var i273:String in revealEntries) { var revealEntry:RevealEntry = revealEntries[revealEntries.length==null ? i273 : p273]; p273++;
         		check(revealEntry != null && revealEntry.key != null && (revealEntry.userIds==null || isAllInPlayers(revealEntry.userIds)), ["RevealEntry.key cannot be null, userIds must either be null or contain only players. revealEntry=",revealEntry]); 
         	}
         }
         private function isNullKeyExist(keys:Array/*Object*/):Void
         {
         	check(keys.length!=0,["keys must have at leasy one key!"]);        		
-        	var p273:Number=0; for (var i273:String in keys) { var key:String = keys[keys.length==null ? i273 : p273]; p273++;
+        	var p280:Number=0; for (var i280:String in keys) { var key:String = keys[keys.length==null ? i280 : p280]; p280++;
         		check(key != null,["key cannot be null ! keys=",keys]);
         	}
         }

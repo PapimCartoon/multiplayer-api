@@ -19,7 +19,7 @@ package come2play_as3.pseudoCode
 	  	super(new MovieClip());
 	  }
 	  public function require(condition:Boolean):void {
-	    if (!condition) throw new Error();
+	    if (!condition) throw new Error("SimplifiedClientGameAPI.require failed");
 	  }
 
 	  override public function gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, serverEntries:Array/*ServerEntry*/):void {

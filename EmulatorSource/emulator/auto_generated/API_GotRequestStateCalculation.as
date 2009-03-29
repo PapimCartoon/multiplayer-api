@@ -16,17 +16,8 @@ package emulator.auto_generated {
 			res.serverEntries = serverEntries;
 			return res;
 		}
-		override public function setMethodParameters(parameters:Array):void { 
-			var pos:int = 0;
-			this.requestId = parameters[pos++];
-			this.serverEntries = parameters[pos++];
-		}
-		override public function getFunctionId():int { return -109; }
-		override public function getMethodName():String { return 'gotRequestStateCalculation'; }
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
-		override public function getMethodParameters():Array { return [requestId, serverEntries]; }
-		override public function getMethodParametersNum():int { return 2; }
+		public static var FUNCTION_ID:int = -109;
+		public static var METHOD_NAME:String = 'gotRequestStateCalculation';
+		public static var METHOD_PARAMS:Array = ['requestId', 'serverEntries'];
 	}
 }

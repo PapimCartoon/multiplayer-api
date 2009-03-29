@@ -17,16 +17,7 @@ import come2play_as2.api.auto_generated.*;
 			res.gotTimeInMilliSeconds = gotTimeInMilliSeconds;
 			return res;
 		}
-		/*override*/ public function setMethodParameters(parameters:Array):Void { 
-			var pos:Number = 0;
-			this.message = parameters[pos++];
-			this.gotTimeInMilliSeconds = parameters[pos++];
-		}
-		/*override*/ public function getFunctionId():Number { return -85; }
-		/*override*/ public function getMethodName():String { return 'historyEntry'; }
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
-		/*override*/ public function getMethodParameters():Array { return [message, gotTimeInMilliSeconds]; }
-		/*override*/ public function getMethodParametersNum():Number { return 2; }
+		public static var FUNCTION_ID:Number = -85;
+		public static var METHOD_NAME:String = 'historyEntry';
+		public static var METHOD_PARAMS:Array = ['message', 'gotTimeInMilliSeconds'];
 	}

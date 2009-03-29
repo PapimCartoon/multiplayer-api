@@ -10,7 +10,8 @@ package come2play_as3.api.auto_copied
 	
 	public class ProtocolVerifier
 	{
-		public static var MAX_ANIMATION_MILLISECONDS:int = 30*1000; // max 30 seconds for animations
+		public static var MAX_ANIMATION_MILLISECONDS:int = 60*1000; // max 60 seconds for animations
+		public static var WARN_ANIMATION_MILLISECONDS:int = 30*1000; // if an animation finished after 30 seconds we report an error (for us to know that it can happen!)
 
 		private var transactionStartedOn:int = -1; 
 		private var currentCallback:API_Message = null;
@@ -36,12 +37,15 @@ package come2play_as3.api.auto_copied
 				" currentPlayerIds="+currentPlayerIds+ 
 				"";
 		}
+		private function transactionRunningTime():int {
+			return getTimer() - transactionStartedOn;
+		}
         private function checkAnimationInterval():void {
         	if (transactionStartedOn==-1) return; // animation is not running
-        	var now:int = getTimer();
-        	if (now - transactionStartedOn < MAX_ANIMATION_MILLISECONDS) return; // animation is running for a short time
+        	var delta:int = transactionRunningTime();
+        	if (delta< MAX_ANIMATION_MILLISECONDS) return; // animation is running for a short time
         	// animation is running for too long
-        	StaticFunctions.throwError("An transaction is running for more than MAX_ANIMATION_MILLISECONDS="+MAX_ANIMATION_MILLISECONDS+". It started "+transactionStartedOn+" milliseconds after the script started, and now="+now+". ProtocolVerifier="+this);         	
+        	StaticFunctions.throwError("An transaction is running for more than MAX_ANIMATION_MILLISECONDS="+MAX_ANIMATION_MILLISECONDS+". It is running for="+delta+". ProtocolVerifier="+this);         	
         }
         public function isPlayer():Boolean {
         	// I can't use T.custom(API_Message.CUSTOM_INFO_KEY_myUserId,0), because ProtocolVerifier is used in emulator that runs multiple clients (thus static memory will cause a conflict)
@@ -124,7 +128,7 @@ package come2play_as3.api.auto_copied
 			}
 		}
 		public static function isOldBoard(msg:API_Message):Boolean {
-			var name:String = msg.getMethodName();
+			var name:String = StaticFunctions.getMethodName(msg);
 			return StaticFunctions.startsWith(name, "do_") || StaticFunctions.startsWith(name, "got_");
 		}
 		public static function isPassThrough(doMsg:API_Message):Boolean {
@@ -133,7 +137,7 @@ package come2play_as3.api.auto_copied
         		isOldBoard(doMsg);
 		}
 		public function isDoAll(doMsg:API_Message):Boolean {
-			return StaticFunctions.startsWith(doMsg.getMethodName(), "doAll");
+			return StaticFunctions.startsWith(StaticFunctions.getMethodName(doMsg), "doAll");
 		}
 		
 		public function msgFromGame(doMsg:API_Message):void {
@@ -155,7 +159,7 @@ package come2play_as3.api.auto_copied
         		isDeleteLegal(doStoreStateMessage.userEntries)
 			} else if (doMsg is API_Transaction) {
 				var transaction:API_Transaction = /*as*/doMsg as API_Transaction;
-				check(currentCallback!=null && currentCallback.getMethodName()==transaction.callback.callbackName, ["Illegal callbackName!"]);
+				check(currentCallback!=null && StaticFunctions.getMethodName(currentCallback)==transaction.callback.callbackName, ["Illegal callbackName!"]);
 				// The game may perform doAllFoundHacker (in a transaction) even after the game is over,
 				// because: The container may pass gotStateChanged after the game sends doAllEndMatch,
 				//			because the game should verify every doStoreState (to prevent hackers from polluting the state after they know the game will be over).
@@ -183,6 +187,9 @@ package come2play_as3.api.auto_copied
 					check(wasStoreStateCalculation, ["When the server calls gotRequestStateCalculation, you must call doAllStoreStateCalculation"]);
 				
 				currentCallback = null;
+				
+				if (transactionRunningTime()>WARN_ANIMATION_MILLISECONDS) // for us to know it can happen (so we should increase our bound)
+					ErrorHandler.alwaysTraceAndSendReport("A transaction finished after WARN_ANIMATION_MILLISECONDS",this);
         		transactionStartedOn = -1;
 			} else {
 				check(false, ["Forgot to verify message type=",AS3_vs_AS2.getClassName(doMsg), " doMsg=",doMsg]);

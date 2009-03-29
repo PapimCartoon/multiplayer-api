@@ -19,18 +19,11 @@ package emulator.auto_generated {
 			res.depth = depth;
 			return res;
 		}
-		override public function setMethodParameters(parameters:Array):void { 
-			var pos:int = 0;
-			this.key = parameters[pos++];
-			this.userIds = parameters[pos++];
+		public static var FUNCTION_ID:int = -88;
+		public static var METHOD_NAME:String = 'revealEntry';
+		public static var METHOD_PARAMS:Array = ['key', 'userIds', 'depth'];
+	}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			this.depth = parameters[pos++];
-		}
-		override public function getFunctionId():int { return -88; }
-		override public function getMethodName():String { return 'revealEntry'; }
-		override public function getMethodParameters():Array { return [key, userIds, depth]; }
-		override public function getMethodParametersNum():int { return 3; }
-	}
 }

@@ -21,18 +21,10 @@ import come2play_as2.api.auto_generated.*;
 			res.serverEntries = serverEntries;
 			return res;
 		}
-		/*override*/ public function setMethodParameters(parameters:Array):Void { 
-			var pos:Number = 0;
-			this.msgNum = parameters[pos++];
+		public static var FUNCTION_ID:Number = -121;
+		public static var METHOD_NAME:String = 'gotMatchStarted';
+		public static var METHOD_PARAMS:Array = ['msgNum', 'allPlayerIds', 'finishedPlayerIds', 'serverEntries'];
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			this.allPlayerIds = parameters[pos++];
-			this.finishedPlayerIds = parameters[pos++];
-			this.serverEntries = parameters[pos++];
-		}
-		/*override*/ public function getFunctionId():Number { return -121; }
-		/*override*/ public function getMethodName():String { return 'gotMatchStarted'; }
-		/*override*/ public function getMethodParameters():Array { return [msgNum, allPlayerIds, finishedPlayerIds, serverEntries]; }
-		/*override*/ public function getMethodParametersNum():Number { return 4; }
 	}

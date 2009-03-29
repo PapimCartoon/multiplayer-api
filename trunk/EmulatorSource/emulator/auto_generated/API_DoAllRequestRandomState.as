@@ -17,17 +17,8 @@ package emulator.auto_generated {
 			res.isSecret = isSecret;
 			return res;
 		}
-		override public function setMethodParameters(parameters:Array):void { 
-			var pos:int = 0;
-			this.key = parameters[pos++];
-			this.isSecret = parameters[pos++];
-		}
-		override public function getFunctionId():int { return -112; }
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
-		override public function getMethodName():String { return 'doAllRequestRandomState'; }
-		override public function getMethodParameters():Array { return [key, isSecret]; }
-		override public function getMethodParametersNum():int { return 2; }
+		public static var FUNCTION_ID:int = -112;
+		public static var METHOD_NAME:String = 'doAllRequestRandomState';
+		public static var METHOD_PARAMS:Array = ['key', 'isSecret'];
 	}
 }

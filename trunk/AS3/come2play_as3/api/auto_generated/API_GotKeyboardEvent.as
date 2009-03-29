@@ -31,22 +31,8 @@ package come2play_as3.api.auto_generated {
 			res.shiftKey = shiftKey;
 			return res;
 		}
-		override public function setMethodParameters(parameters:Array):void { 
-			var pos:int = 0;
-			this.isKeyDown = parameters[pos++];
-			this.charCode = parameters[pos++];
-			this.keyCode = parameters[pos++];
-			this.keyLocation = parameters[pos++];
-			this.altKey = parameters[pos++];
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
-			this.ctrlKey = parameters[pos++];
-			this.shiftKey = parameters[pos++];
-		}
-		override public function getFunctionId():int { return -125; }
-		override public function getMethodName():String { return 'gotKeyboardEvent'; }
-		override public function getMethodParameters():Array { return [isKeyDown, charCode, keyCode, keyLocation, altKey, ctrlKey, shiftKey]; }
-		override public function getMethodParametersNum():int { return 7; }
+		public static var FUNCTION_ID:int = -125;
+		public static var METHOD_NAME:String = 'gotKeyboardEvent';
+		public static var METHOD_PARAMS:Array = ['isKeyDown', 'charCode', 'keyCode', 'keyLocation', 'altKey', 'ctrlKey', 'shiftKey'];
 	}
 }

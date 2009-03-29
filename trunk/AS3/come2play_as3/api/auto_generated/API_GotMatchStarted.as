@@ -22,19 +22,11 @@ package come2play_as3.api.auto_generated {
 			res.serverEntries = serverEntries;
 			return res;
 		}
-		override public function setMethodParameters(parameters:Array):void { 
-			var pos:int = 0;
-			this.msgNum = parameters[pos++];
+		public static var FUNCTION_ID:int = -121;
+		public static var METHOD_NAME:String = 'gotMatchStarted';
+		public static var METHOD_PARAMS:Array = ['msgNum', 'allPlayerIds', 'finishedPlayerIds', 'serverEntries'];
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			this.allPlayerIds = parameters[pos++];
-			this.finishedPlayerIds = parameters[pos++];
-			this.serverEntries = parameters[pos++];
-		}
-		override public function getFunctionId():int { return -121; }
-		override public function getMethodName():String { return 'gotMatchStarted'; }
-		override public function getMethodParameters():Array { return [msgNum, allPlayerIds, finishedPlayerIds, serverEntries]; }
-		override public function getMethodParametersNum():int { return 4; }
 	}
 }

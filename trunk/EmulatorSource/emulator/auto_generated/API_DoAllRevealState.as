@@ -14,16 +14,8 @@ package emulator.auto_generated {
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
 		}
-		override public function setMethodParameters(parameters:Array):void { 
-			var pos:int = 0;
-			this.revealEntries = parameters[pos++];
-		}
-		override public function getFunctionId():int { return -114; }
-		override public function getMethodName():String { return 'doAllRevealState'; }
-		override public function getMethodParameters():Array { return [revealEntries]; }
-		override public function getMethodParametersNum():int { return 1; }
+		public static var FUNCTION_ID:int = -114;
+		public static var METHOD_NAME:String = 'doAllRevealState';
+		public static var METHOD_PARAMS:Array = ['revealEntries'];
 	}
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 }

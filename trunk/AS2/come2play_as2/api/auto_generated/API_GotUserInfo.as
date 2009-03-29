@@ -17,16 +17,7 @@ import come2play_as2.api.auto_generated.*;
 			res.infoEntries = infoEntries;
 			return res;
 		}
-		/*override*/ public function setMethodParameters(parameters:Array):Void { 
-			var pos:Number = 0;
-			this.userId = parameters[pos++];
-			this.infoEntries = parameters[pos++];
-		}
-		/*override*/ public function getFunctionId():Number { return -123; }
-		/*override*/ public function getMethodName():String { return 'gotUserInfo'; }
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
-		/*override*/ public function getMethodParameters():Array { return [userId, infoEntries]; }
-		/*override*/ public function getMethodParametersNum():Number { return 2; }
+		public static var FUNCTION_ID:Number = -123;
+		public static var METHOD_NAME:String = 'gotUserInfo';
+		public static var METHOD_PARAMS:Array = ['userId', 'infoEntries'];
 	}

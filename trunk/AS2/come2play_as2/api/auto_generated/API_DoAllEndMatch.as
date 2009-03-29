@@ -15,15 +15,7 @@ import come2play_as2.api.auto_generated.*;
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
 		}
-		/*override*/ public function setMethodParameters(parameters:Array):Void { 
-			var pos:Number = 0;
-			this.finishedPlayers = parameters[pos++];
-		}
-		/*override*/ public function getFunctionId():Number { return -116; }
-		/*override*/ public function getMethodName():String { return 'doAllEndMatch'; }
-		/*override*/ public function getMethodParameters():Array { return [finishedPlayers]; }
-		/*override*/ public function getMethodParametersNum():Number { return 1; }
+		public static var FUNCTION_ID:Number = -116;
+		public static var METHOD_NAME:String = 'doAllEndMatch';
+		public static var METHOD_PARAMS:Array = ['finishedPlayers'];
 	}
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-

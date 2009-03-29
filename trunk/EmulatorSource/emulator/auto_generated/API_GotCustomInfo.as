@@ -14,16 +14,8 @@ package emulator.auto_generated {
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
 		}
-		override public function setMethodParameters(parameters:Array):void { 
-			var pos:int = 0;
-			this.infoEntries = parameters[pos++];
-		}
-		override public function getFunctionId():int { return -124; }
-		override public function getMethodName():String { return 'gotCustomInfo'; }
-		override public function getMethodParameters():Array { return [infoEntries]; }
-		override public function getMethodParametersNum():int { return 1; }
+		public static var FUNCTION_ID:int = -124;
+		public static var METHOD_NAME:String = 'gotCustomInfo';
+		public static var METHOD_PARAMS:Array = ['infoEntries'];
 	}
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 }

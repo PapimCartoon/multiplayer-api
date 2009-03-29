@@ -17,17 +17,8 @@ package emulator.auto_generated {
 			res.milliSecondsInTurn = milliSecondsInTurn;
 			return res;
 		}
-		override public function setMethodParameters(parameters:Array):void { 
-			var pos:int = 0;
-			this.userId = parameters[pos++];
-			this.milliSecondsInTurn = parameters[pos++];
-		}
-		override public function getFunctionId():int { return -115; }
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
-		override public function getMethodName():String { return 'doAllSetTurn'; }
-		override public function getMethodParameters():Array { return [userId, milliSecondsInTurn]; }
-		override public function getMethodParametersNum():int { return 2; }
+		public static var FUNCTION_ID:int = -115;
+		public static var METHOD_NAME:String = 'doAllSetTurn';
+		public static var METHOD_PARAMS:Array = ['userId', 'milliSecondsInTurn'];
 	}
 }

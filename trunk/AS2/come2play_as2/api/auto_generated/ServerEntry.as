@@ -23,22 +23,10 @@ import come2play_as2.api.auto_generated.*;
 			res.changedTimeInMilliSeconds = changedTimeInMilliSeconds;
 			return res;
 		}
-		/*override*/ public function setMethodParameters(parameters:Array):Void { 
+		public static var FUNCTION_ID:Number = -86;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			var pos:Number = 0;
-			this.key = parameters[pos++];
-			this.value = parameters[pos++];
-			this.storedByUserId = parameters[pos++];
-			this.visibleToUserIds = parameters[pos++];
-			this.changedTimeInMilliSeconds = parameters[pos++];
-		}
-		/*override*/ public function getFunctionId():Number { return -86; }
-		/*override*/ public function getMethodName():String { return 'serverEntry'; }
-		/*override*/ public function getMethodParameters():Array { return [key, value, storedByUserId, visibleToUserIds, changedTimeInMilliSeconds]; }
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
-		/*override*/ public function getMethodParametersNum():Number { return 5; }
+		public static var METHOD_NAME:String = 'serverEntry';
+		public static var METHOD_PARAMS:Array = ['key', 'value', 'storedByUserId', 'visibleToUserIds', 'changedTimeInMilliSeconds'];
 	}

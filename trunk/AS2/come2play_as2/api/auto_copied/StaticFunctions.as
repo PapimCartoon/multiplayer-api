@@ -5,8 +5,8 @@
 import come2play_as2.api.auto_copied.*;
 class come2play_as2.api.auto_copied.StaticFunctions
 {			
-	public static var GOOGLE_REVISION_NUMBER:Number = 936;
-	public static var COME2PLAY_REVISION_NUMBER:Number = 2520;
+	public static var GOOGLE_REVISION_NUMBER:Number = 938;
+	public static var COME2PLAY_REVISION_NUMBER:Number = 2535;
 	public static function getRevision():String {
 		return "g="+GOOGLE_REVISION_NUMBER+",c2p="+COME2PLAY_REVISION_NUMBER;		
 	}
@@ -53,6 +53,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 		if (keyTraces[key]==null) keyTraces[key] = new Array(); 
 		return keyTraces[key];
 	}	 
+	public static var RANDOM_PREFIX:String = "Rnd"+int(100+Math.random()*900)+": "; 
 	public static var TRACE_PREFIX:String = ""; // because in flashlog you see traces of many users and it is all mixed 
 	private static function p_storeTrace(key:String, obj:Object):Void {
 		try {
@@ -60,9 +61,9 @@ class come2play_as2.api.auto_copied.StaticFunctions
 			var maxT:Number = MAX_TRACES[key];
 			var traceLine:Array = ["Time: ", getTimer(), obj];
 			limitedPush(arr, traceLine , maxT); // we discard old traces
-			if (SHOULD_CALL_TRACE) trace(TRACE_PREFIX + key+":\t" + JSON.stringify(traceLine));
+			if (SHOULD_CALL_TRACE) trace(RANDOM_PREFIX+TRACE_PREFIX + key+":\t" + JSON.stringify(traceLine));
 		} catch (err:Error) {
-			if (SHOULD_CALL_TRACE) trace(TRACE_PREFIX + "\n\n\n\n\n\n\n\n\n\n\n\nERROR!!!!!!!!!!!!!!!!!!!!!!! err="+AS3_vs_AS2.error2String(err)+"\n\n\n\n\n\n\n\n\n\n\n");
+			if (SHOULD_CALL_TRACE) trace(RANDOM_PREFIX+TRACE_PREFIX + "\n\n\n\n\n\n\n\n\n\n\n\nERROR!!!!!!!!!!!!!!!!!!!!!!! err="+AS3_vs_AS2.error2String(err)+"\n\n\n\n\n\n\n\n\n\n\n");
 		}
 	}
 	public static function getTraces():String {
@@ -72,7 +73,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 		for (var k:String in keyTraces) keys.push(k);
 		keys.sort();
 		
-		var p77:Number=0; for (var i77:String in keys) { var key:String = keys[keys.length==null ? i77 : p77]; p77++;
+		var p78:Number=0; for (var i78:String in keys) { var key:String = keys[keys.length==null ? i78 : p78]; p78++;
 			var tracesOfKey:Array = keyTraces[key];
 			res.push(key + " "+tracesOfKey.length+" traces:"+
 				(tracesOfKey.length<MAX_TRACES[key] ? "" : " (REACHED MAX TRACES)"));
@@ -165,7 +166,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 				// for static properties we use describeType
 				// because o1 and o2 have the same type, it is enough to use the fields of o1.
 				var fieldsArr:Array = AS3_vs_AS2.getFieldNames(o1);
-				var p170:Number=0; for (var i170:String in fieldsArr) { var field:String = fieldsArr[fieldsArr.length==null ? i170 : p170]; p170++;
+				var p171:Number=0; for (var i171:String in fieldsArr) { var field:String = fieldsArr[fieldsArr.length==null ? i171 : p171]; p171++;
 					allFields[field] = true;
 				}
 			}
@@ -181,7 +182,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	
 	public static function subtractArray(arr:Array, minus:Array):Array {
 		var res:Array = arr.concat();
-		var p186:Number=0; for (var i186:String in minus) { var o:Object = minus[minus.length==null ? i186 : p186]; p186++;
+		var p187:Number=0; for (var i187:String in minus) { var o:Object = minus[minus.length==null ? i187 : p187]; p187++;
 			var indexOf:Number = AS3_vs_AS2.IndexOf(res, o);
 			StaticFunctions.assert(indexOf!=-1, ["When subtracting minus=",minus," from array=", arr, " we did not find element ",o]);				
 			res.splice(indexOf, 1);
@@ -287,7 +288,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	}
 	public static function instance2Object(instance:Object, fields:Array/*String*/):Object {
 		var res:Object = {};
-		var p292:Number=0; for (var i292:String in fields) { var field:String = fields[fields.length==null ? i292 : p292]; p292++;
+		var p293:Number=0; for (var i293:String in fields) { var field:String = fields[fields.length==null ? i293 : p293]; p293++;
 			res[field] = instance[field];
 		}
 		return res;
@@ -300,5 +301,39 @@ class come2play_as2.api.auto_copied.StaticFunctions
 		var res:String = className.substr(AS3_vs_AS2.stringIndexOf(className,"::")+2);
 		cacheShortName[className] = res;
 		return res;		
+	}
+	
+	
+	
+	// The Java auto generates all classes
+	private static function getClassFromMsg(msg:API_Message):Object/*Class*/ {
+		return AS3_vs_AS2.getClassOfInstance(msg);
+	}
+	private static function getParamNames(msg:API_Message):Array/*String*/ {
+		return getClassFromMsg(msg)["METHOD_PARAMS"];
+	}
+	public static function getFunctionId(msg:API_Message):Number { 
+		return getClassFromMsg(msg)["FUNCTION_ID"];
+	}
+	public static function getMethodName(msg:API_Message):String {
+		return getClassFromMsg(msg)["METHOD_NAME"];		 
+	} 	
+	public static function getMethodParametersNum(msg:API_Message):Number { 
+		return getParamNames(msg).length;
+	}
+	public static function setMethodParameters(msg:API_Message, parameters:Array):Void { 
+		var names:Array = getParamNames(msg); 
+		var pos:Number = 0;
+		var p329:Number=0; for (var i329:String in names) { var name:String = names[names.length==null ? i329 : p329]; p329++;
+			msg[name] = parameters[pos++];
+		}
+	}
+	public static function getMethodParameters(msg:API_Message):Array { 
+		var names:Array = getParamNames(msg);
+		var res:Array = [];
+		var p336:Number=0; for (var i336:String in names) { var name:String = names[names.length==null ? i336 : p336]; p336++;
+			res.push(msg[name]);
+		}
+		return res;
 	}
 }

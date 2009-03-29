@@ -14,16 +14,8 @@ package emulator.auto_generated {
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
 		}
-		override public function setMethodParameters(parameters:Array):void { 
-			var pos:int = 0;
-			this.userEntries = parameters[pos++];
-		}
-		override public function getFunctionId():int { return -117; }
-		override public function getMethodName():String { return 'doAllStoreState'; }
-		override public function getMethodParameters():Array { return [userEntries]; }
-		override public function getMethodParametersNum():int { return 1; }
+		public static var FUNCTION_ID:int = -117;
+		public static var METHOD_NAME:String = 'doAllStoreState';
+		public static var METHOD_PARAMS:Array = ['userEntries'];
 	}
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 }

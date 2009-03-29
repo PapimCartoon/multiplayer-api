@@ -22,23 +22,11 @@ package emulator.auto_generated {
 			res.changedTimeInMilliSeconds = changedTimeInMilliSeconds;
 			return res;
 		}
-		override public function setMethodParameters(parameters:Array):void { 
+		public static var FUNCTION_ID:int = -86;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			var pos:int = 0;
-			this.key = parameters[pos++];
-			this.value = parameters[pos++];
-			this.storedByUserId = parameters[pos++];
-			this.visibleToUserIds = parameters[pos++];
-			this.changedTimeInMilliSeconds = parameters[pos++];
-		}
-		override public function getFunctionId():int { return -86; }
-		override public function getMethodName():String { return 'serverEntry'; }
-		override public function getMethodParameters():Array { return [key, value, storedByUserId, visibleToUserIds, changedTimeInMilliSeconds]; }
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
-		override public function getMethodParametersNum():int { return 5; }
+		public static var METHOD_NAME:String = 'serverEntry';
+		public static var METHOD_PARAMS:Array = ['key', 'value', 'storedByUserId', 'visibleToUserIds', 'changedTimeInMilliSeconds'];
 	}
 }

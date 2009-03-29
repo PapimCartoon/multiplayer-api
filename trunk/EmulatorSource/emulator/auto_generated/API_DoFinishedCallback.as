@@ -16,17 +16,8 @@ package emulator.auto_generated {
 			res.msgNum = msgNum;
 			return res;
 		}
-		override public function setMethodParameters(parameters:Array):void { 
-			var pos:int = 0;
-			this.callbackName = parameters[pos++];
-			this.msgNum = parameters[pos++];
-		}
-		override public function getFunctionId():int { return -128; }
-		override public function getMethodName():String { return 'doFinishedCallback'; }
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
-		override public function getMethodParameters():Array { return [callbackName, msgNum]; }
-		override public function getMethodParametersNum():int { return 2; }
+		public static var FUNCTION_ID:int = -128;
+		public static var METHOD_NAME:String = 'doFinishedCallback';
+		public static var METHOD_PARAMS:Array = ['callbackName', 'msgNum'];
 	}
 }

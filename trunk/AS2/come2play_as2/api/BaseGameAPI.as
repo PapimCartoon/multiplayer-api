@@ -194,7 +194,7 @@ import come2play_as2.api.*;
         	checkInsideTransaction();        	
         	if (runningAnimations.length>0) return;
         	var msgNum:Number = LocalConnectionUser.getMsgNum(currentCallback); 
-       		super.sendMessage( API_Transaction.create(API_DoFinishedCallback.create(currentCallback.getMethodName(),msgNum), msgsInTransaction) );
+       		super.sendMessage( API_Transaction.create(API_DoFinishedCallback.create(StaticFunctions.getMethodName(currentCallback),msgNum), msgsInTransaction) );
     		msgsInTransaction = null;
 			currentCallback = null;
 			sendKeyboardEvents();
@@ -291,11 +291,11 @@ import come2play_as2.api.*;
     		animationEnded("BaseGameAPI.gotMessage");     		   	
         }
         public function dispatchMessage(msg:API_Message):Void {
-        	var methodName:String = msg.getMethodName();
+        	var methodName:String = StaticFunctions.getMethodName(msg);
 			if (AS3_vs_AS2.isAS3 && !this.hasOwnProperty(methodName)) return;
 			var func:Function = Function(this[methodName]);
 			if (func==null) return;
-			var params:Array = msg.getMethodParameters();
+			var params:Array = StaticFunctions.getMethodParameters(msg);
 			if (msg instanceof API_GotMatchStarted || msg instanceof API_GotMatchEnded || msg instanceof API_GotStateChanged) {
 				// removes the msgNum:Number
 				params.shift();

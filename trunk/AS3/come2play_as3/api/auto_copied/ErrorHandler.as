@@ -10,7 +10,7 @@ public final class ErrorHandler
 		res.push("ERROR REPORT FROM:");
 		res.push(ERROR_REPORT_PREFIX);
 		res.push("My stack traces:");	
-		res.push( my_stack_trace.join(",\n") );
+		res.push( getStackTraces() );
 		res.push("\n");
 					
 		res.push("My ongoingIntervals:");
@@ -24,6 +24,9 @@ public final class ErrorHandler
 		}
 		res.push("\n");		
 		return res.join("\n");
+	}
+	public static function getStackTraces():String {
+		return "\t"+my_stack_trace.join(",\n\t");
 	}
 	
 	
@@ -108,7 +111,7 @@ public final class ErrorHandler
 		var res:Object = null;			
 		
 		var stack_trace_len:int = my_stack_trace.length;
-		my_stack_trace.push([zoneName, args]); // I couldn't find a way to get the function name (describeType(func) only returns that the method is a closure)
+		my_stack_trace.push(["args=",args," zoneName=",zoneName]); // I couldn't find a way to get the function name (describeType(func) only returns that the method is a closure)
 		
 		var wasError:Boolean = false;
 		res = func.apply(null, args); 
@@ -123,8 +126,9 @@ public final class ErrorHandler
 		return res;		
 	}			
 	public static function wrapWithCatch(zoneName:String, func:Function):Function {
+		var longerName:String = zoneName+" with traces: {\n"+getStackTraces()+"\n}";
 		return function (/*<InAS3>*/...args/*</InAS3>*/):void { 
-			catchErrors(zoneName, func, 
+			catchErrors(longerName, func, 
 					/*<InAS3>*/args/*</InAS3>*/
 					/*<InAS2>arguments</InAS2>*/
 				);

@@ -57,6 +57,7 @@ public final class StaticFunctions
 		if (keyTraces[key]==null) keyTraces[key] = new Array(); 
 		return keyTraces[key];
 	}	 
+	public static var RANDOM_PREFIX:String = "Rnd"+int(100+Math.random()*900)+": "; 
 	public static var TRACE_PREFIX:String = ""; // because in flashlog you see traces of many users and it is all mixed 
 	private static function p_storeTrace(key:String, obj:Object):void {
 		try {
@@ -64,9 +65,9 @@ public final class StaticFunctions
 			var maxT:int = MAX_TRACES[key];
 			var traceLine:Array = ["Time: ", getTimer(), obj];
 			limitedPush(arr, traceLine , maxT); // we discard old traces
-			if (SHOULD_CALL_TRACE) trace(TRACE_PREFIX + key+":\t" + JSON.stringify(traceLine));
+			if (SHOULD_CALL_TRACE) trace(RANDOM_PREFIX+TRACE_PREFIX + key+":\t" + JSON.stringify(traceLine));
 		} catch (err:Error) {
-			if (SHOULD_CALL_TRACE) trace(TRACE_PREFIX + "\n\n\n\n\n\n\n\n\n\n\n\nERROR!!!!!!!!!!!!!!!!!!!!!!! err="+AS3_vs_AS2.error2String(err)+"\n\n\n\n\n\n\n\n\n\n\n");
+			if (SHOULD_CALL_TRACE) trace(RANDOM_PREFIX+TRACE_PREFIX + "\n\n\n\n\n\n\n\n\n\n\n\nERROR!!!!!!!!!!!!!!!!!!!!!!! err="+AS3_vs_AS2.error2String(err)+"\n\n\n\n\n\n\n\n\n\n\n");
 		}
 	}
 	public static function getTraces():String {
@@ -304,6 +305,40 @@ public final class StaticFunctions
 		var res:String = className.substr(AS3_vs_AS2.stringIndexOf(className,"::")+2);
 		cacheShortName[className] = res;
 		return res;		
+	}
+	
+	
+	
+	// The Java auto generates all classes
+	private static function getClassFromMsg(msg:API_Message):Class {
+		return AS3_vs_AS2.getClassOfInstance(msg);
+	}
+	private static function getParamNames(msg:API_Message):Array/*String*/ {
+		return getClassFromMsg(msg)["METHOD_PARAMS"];
+	}
+	public static function getFunctionId(msg:API_Message):int { 
+		return getClassFromMsg(msg)["FUNCTION_ID"];
+	}
+	public static function getMethodName(msg:API_Message):String {
+		return getClassFromMsg(msg)["METHOD_NAME"];		 
+	} 	
+	public static function getMethodParametersNum(msg:API_Message):int { 
+		return getParamNames(msg).length;
+	}
+	public static function setMethodParameters(msg:API_Message, parameters:Array):void { 
+		var names:Array = getParamNames(msg); 
+		var pos:int = 0;
+		for each (var name:String in names) {
+			msg[name] = parameters[pos++];
+		}
+	}
+	public static function getMethodParameters(msg:API_Message):Array { 
+		var names:Array = getParamNames(msg);
+		var res:Array = [];
+		for each (var name:String in names) {
+			res.push(msg[name]);
+		}
+		return res;
 	}
 }
 }

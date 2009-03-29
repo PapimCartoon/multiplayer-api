@@ -15,15 +15,7 @@ import come2play_as2.api.auto_generated.*;
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
 		}
-		/*override*/ public function setMethodParameters(parameters:Array):Void { 
-			var pos:Number = 0;
-			this.userId = parameters[pos++];
-		}
-		/*override*/ public function getFunctionId():Number { return -122; }
-		/*override*/ public function getMethodName():String { return 'gotUserDisconnected'; }
-		/*override*/ public function getMethodParameters():Array { return [userId]; }
-		/*override*/ public function getMethodParametersNum():Number { return 1; }
+		public static var FUNCTION_ID:Number = -122;
+		public static var METHOD_NAME:String = 'gotUserDisconnected';
+		public static var METHOD_PARAMS:Array = ['userId'];
 	}
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-

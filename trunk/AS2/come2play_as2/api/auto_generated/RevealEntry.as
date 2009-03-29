@@ -20,17 +20,10 @@ import come2play_as2.api.auto_generated.*;
 			res.depth = depth;
 			return res;
 		}
-		/*override*/ public function setMethodParameters(parameters:Array):Void { 
-			var pos:Number = 0;
-			this.key = parameters[pos++];
-			this.userIds = parameters[pos++];
+		public static var FUNCTION_ID:Number = -88;
+		public static var METHOD_NAME:String = 'revealEntry';
+		public static var METHOD_PARAMS:Array = ['key', 'userIds', 'depth'];
+	}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			this.depth = parameters[pos++];
-		}
-		/*override*/ public function getFunctionId():Number { return -88; }
-		/*override*/ public function getMethodName():String { return 'revealEntry'; }
-		/*override*/ public function getMethodParameters():Array { return [key, userIds, depth]; }
-		/*override*/ public function getMethodParametersNum():Number { return 3; }
-	}

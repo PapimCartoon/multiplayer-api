@@ -19,17 +19,7 @@ import come2play_as2.api.auto_generated.*;
 			res.potPercentage = potPercentage;
 			return res;
 		}
-		/*override*/ public function setMethodParameters(parameters:Array):Void { 
-			var pos:Number = 0;
-			this.playerId = parameters[pos++];
-			this.score = parameters[pos++];
-			this.potPercentage = parameters[pos++];
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
-		}
-		/*override*/ public function getFunctionId():Number { return -90; }
-		/*override*/ public function getMethodName():String { return 'playerMatchOver'; }
-		/*override*/ public function getMethodParameters():Array { return [playerId, score, potPercentage]; }
-		/*override*/ public function getMethodParametersNum():Number { return 3; }
+		public static var FUNCTION_ID:Number = -90;
+		public static var METHOD_NAME:String = 'playerMatchOver';
+		public static var METHOD_PARAMS:Array = ['playerId', 'score', 'potPercentage'];
 	}

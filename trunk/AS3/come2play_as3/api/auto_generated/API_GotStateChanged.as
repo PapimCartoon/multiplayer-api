@@ -18,17 +18,8 @@ package come2play_as3.api.auto_generated {
 			res.serverEntries = serverEntries;
 			return res;
 		}
-		override public function setMethodParameters(parameters:Array):void { 
-			var pos:int = 0;
-			this.msgNum = parameters[pos++];
-			this.serverEntries = parameters[pos++];
-		}
-		override public function getFunctionId():int { return -119; }
-		override public function getMethodName():String { return 'gotStateChanged'; }
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
-		override public function getMethodParameters():Array { return [msgNum, serverEntries]; }
-		override public function getMethodParametersNum():int { return 2; }
+		public static var FUNCTION_ID:int = -119;
+		public static var METHOD_NAME:String = 'gotStateChanged';
+		public static var METHOD_PARAMS:Array = ['msgNum', 'serverEntries'];
 	}
 }

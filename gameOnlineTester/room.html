@@ -39,7 +39,7 @@
 	    }
 	    return flash_arr.join("&");
 	}
-	function openJavaScriptPopup(type, url, windowTarget, windowParams){
+	function openJavaScriptPopup(type, url, windowTarget, windowCreateParams){
 		var paramsToSend = new Array();
 		var obj;
 		for(var i=0;i<paramArr.length;i++){
@@ -48,7 +48,7 @@
 				paramsToSend[obj.htmlName] = windowParams[obj.htmlName]
 		}
 		paramsToSend = parametersToUrl(paramsToSend);
-		openWindows.push(single_popup=window.open(url+"&"+paramsToSend+"&flash_type=game&type="+type, windowTarget, windowParams))
+		openWindows.push(single_popup=window.open(url+"&"+paramsToSend+"&flash_type=game&type="+type, windowTarget, windowCreateParams))
 	}
 	function getParametersFromURL() {
 	    var res = new Array();

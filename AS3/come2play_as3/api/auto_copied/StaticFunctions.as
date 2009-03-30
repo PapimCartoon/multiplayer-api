@@ -9,8 +9,8 @@ package come2play_as3.api.auto_copied
 // Only StaticFunctions and JSON are copied to flex_utils 
 public final class StaticFunctions
 {			
-	public static var GOOGLE_REVISION_NUMBER:int = 938;
-	public static var COME2PLAY_REVISION_NUMBER:int = 2535;
+	public static var GOOGLE_REVISION_NUMBER:int = 943;
+	public static var COME2PLAY_REVISION_NUMBER:int = 2627;
 	public static function getRevision():String {
 		return "g="+GOOGLE_REVISION_NUMBER+",c2p="+COME2PLAY_REVISION_NUMBER;		
 	}
@@ -309,18 +309,21 @@ public final class StaticFunctions
 	
 	
 	
-	// The Java auto generates all classes
-	private static function getClassFromMsg(msg:API_Message):Class {
-		return AS3_vs_AS2.getClassOfInstance(msg);
+	// The Java auto generates all classes	
+	private static function getClassFromMsg(msg:API_Message, fieldName:String):Object {
+		var xlass:Class = AS3_vs_AS2.getClassOfInstance(msg);
+		var res:Object = xlass[fieldName];
+		assert(res!=null, ["Missing ",fieldName," in msg=",msg, " xlass=",xlass]);
+		return res;
 	}
 	private static function getParamNames(msg:API_Message):Array/*String*/ {
-		return getClassFromMsg(msg)["METHOD_PARAMS"];
+		return getClassFromMsg(msg,"METHOD_PARAMS") as Array;
 	}
 	public static function getFunctionId(msg:API_Message):int { 
-		return getClassFromMsg(msg)["FUNCTION_ID"];
+		return getClassFromMsg(msg,"FUNCTION_ID") as int;
 	}
 	public static function getMethodName(msg:API_Message):String {
-		return getClassFromMsg(msg)["METHOD_NAME"];		 
+		return getClassFromMsg(msg,"METHOD_NAME") as String;		 
 	} 	
 	public static function getMethodParametersNum(msg:API_Message):int { 
 		return getParamNames(msg).length;

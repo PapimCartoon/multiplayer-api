@@ -168,6 +168,8 @@ Not used by the graphics yet (but should be displayed):
 		<entry><key>tokenFolderURL</key><value>"graphics/rewards/"</value></entry>
 		<entry><key>noUserPic</key><value>"images/noOne.png"</value></entry>
 		<entry><key>tokenSet</key><value>[[0,"0.swf"],[1,"1.swf"],[5,"5.swf"],[10,"10.swf"],[50,"50.swf"],[100,"100.swf"],[500,"500.swf"],[1000,"1000.swf"],["x","x.swf"]]</value></entry>
+		<entry><key>ratings</key><value>[0,1200,1400,1600,1800,2000,2200,2400]</value></entry>
+		
 		<entry><key>rewardPageLink</key><value>"www.google.com/aaa.asp?"</value></entry>
 		
 		<entry><key>banned_words_regexp</key><value>"fuck|suck|ass"</value></entry>
@@ -496,8 +498,8 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 		<!-- in Sudoku and Match4, 
 			we use seconds_per_move to limit the time for the entire match 
 		-->
-		<seconds_per_move type="int">300</seconds_per_move>
-		<seconds_per_match type="int">300</seconds_per_match>
+		<seconds_per_move type="int">0</seconds_per_move>
+		<seconds_per_match type="int">0</seconds_per_match>
 		<!-- extra_match_info is for 
 					**OldBoard** games.
 			example: 

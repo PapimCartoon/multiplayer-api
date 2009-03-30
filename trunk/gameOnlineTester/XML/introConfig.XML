@@ -9,18 +9,17 @@
 		<smallGameThumb></smallGameThumb><!--The URL the game will load as a side image-->
 		<introLogoURL></introLogoURL><!--The URL of the logo that is connected to the owner-->
 	</graphics>
+	<league_stage_id>1</league_stage_id>
 	<user_info>
 	  <name>ofir the cool</name>
-	  <avatar_url>ofir.jpg</avatar_url>
-	  <is_guest>true</is_guest>
-	  <user_statistics_url>http://www.google.com</user_statistics_url>
+	  <avatar_url>images/Avatar_4.gif</avatar_url>
+	  <is_guest>false</is_guest>
+	  <user_statistics_url>http://www.google.com</user_statistics_url>  
+      <game_rating>1500</game_rating>	
+	  <tokens>1:100:isToken=true</tokens>  
 	</user_info>
 	<grabIt>url</grabIt>
 	<moreGrabIt><!--All the grab it links-->	
-		<grabIt>
-			<image>http://img1.chakpak.com/se_images/1157448_50_50_true/sdf.jpg</image><!--The callerId of the game -->
-			<url>http://bingobee.com/images/oilerlogos/Logo%20Third%2030x30.JPG</url><!--The URL of the game-->	
-		</grabIt>
 		<grabIt>
 			<image>http://bingobee.com/images/oilerlogos/Logo%20Third%2030x30.JPG</image><!--The callerId of the game -->
 			<url>http://bingobee.com/images/oilerlogos/Logo%20Third%2030x30.JPG</url><!--The URL of the game-->	
@@ -52,7 +51,7 @@
 	<!--if this value is not empty you must popout your game to play-->
 	<popoutURL></popoutURL>
 	<!--if this value is not empty the intro screen will do the action specefied-->
-	<autoMatchType></autoMatchType>
+	<autoMatchType>quickStart</autoMatchType>
 
 
 	<inviteAutoMatch>
@@ -85,4 +84,15 @@
 		-->
 		<validateUserURL>http://127.0.0.1/index.asp?action=validate_name&</validateUserURL>
 	</userManagement>
+	<customInitInfo>
+		<custom>
+			<entry><key>ratings</key><value>[0,1200,1400,1600,1800,2000,2200,2400]</value></entry>
+			<entry><key>tokenFolderURL</key><value>"graphics/rewards/"</value></entry>
+			<entry><key>tokenSet</key><value>[[0,"0.swf"],[1,"1.swf"],[5,"5.swf"],[10,"10.swf"],[50,"50.swf"],[100,"100.swf"],[500,"500.swf"],[1000,"1000.swf"],["x","x.swf"]]</value></entry>
+		</custom>
+		<i18n>			
+		</i18n>
+		<reflection>
+		</reflection>		
+	</customInitInfo>
 </introConfig>

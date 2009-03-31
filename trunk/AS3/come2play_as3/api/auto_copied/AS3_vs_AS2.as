@@ -132,24 +132,40 @@ public final class AS3_vs_AS2
 		return size;
 	}
 	public static function myRemoveEventListener(dispatcher:IEventDispatcher, type:String, listener:Function):void {
-		var dic1:Dictionary = listener2dispatcher2type2wrapper[listener];
+		var dic1:Dictionary = listener2dispatcher2type2wrapper[dispatcher];
 		if (dic1==null) return;
-		var dic2:Dictionary = dic1[dispatcher];
+		var dic2:Dictionary = dic1[listener];
 		if (dic2==null) return;
 		var func:Function = dic2[type];
 		if (func==null) return;
 		delete dic2[type];
-		if (isDictionaryEmpty(dic2)) delete dic1[dispatcher];
-		if (isDictionaryEmpty(dic1)) delete listener2dispatcher2type2wrapper[listener];
+		if (isDictionaryEmpty(dic2)) delete dic1[listener];
+		if (isDictionaryEmpty(dic1)) delete listener2dispatcher2type2wrapper[dispatcher];
 		dispatcher.removeEventListener(type, func);
 	}			
+	public static function myRemoveAllEventListeners(dispatcher:IEventDispatcher):void {
+		var dic1:Dictionary = listener2dispatcher2type2wrapper[dispatcher];
+		var dic2:Dictionary;
+		var listener:Function;
+		if (dic1==null) return;
+		for(var listenerObj:Object in dic1){
+			listener = listenerObj as Function;
+			dic2 = dic1[listener];
+			if(dic2 == null)	continue;
+			for(var type:String in dic2){
+				dispatcher.removeEventListener(type, listener);
+			}
+		}
+		delete listener2dispatcher2type2wrapper[dispatcher];
+	}
 	public static function myAddEventListener(dispatcher:IEventDispatcher, type:String, listener:Function, useCapture:Boolean=false, priority:int=0, weakReference:Boolean=false):Function {		
 		var func:Function = ErrorHandler.wrapWithCatch("myAddEventListener."+type+" for "+getQualifiedClassName(dispatcher), listener);		
-		if (listener2dispatcher2type2wrapper[listener] == null)
-			listener2dispatcher2type2wrapper[listener] = new Dictionary (true);			
-		if (listener2dispatcher2type2wrapper[listener][dispatcher] == null)
-			listener2dispatcher2type2wrapper[listener][dispatcher] = new Dictionary (false);			
-		listener2dispatcher2type2wrapper[listener][dispatcher][type] = func;		
+		if (listener2dispatcher2type2wrapper[dispatcher] == null)
+			listener2dispatcher2type2wrapper[dispatcher] = new Dictionary(true); // with weak keys	
+		var dic1:Dictionary = listener2dispatcher2type2wrapper[dispatcher];		
+		if (dic1[listener] == null)
+			dic1[listener] = new Dictionary(false);	// with strong keys		
+		dic1[listener][type] = func;		
 		dispatcher.addEventListener(type, func, useCapture, priority, weakReference);
 		return func; // use General.myRemoveEventListener to remove
 	}	

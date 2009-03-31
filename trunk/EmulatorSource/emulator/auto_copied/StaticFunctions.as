@@ -19,11 +19,11 @@ package emulator.auto_copied
 // Only StaticFunctions and JSON are copied to flex_utils 
 public final class StaticFunctions
 {			
-	public static var GOOGLE_REVISION_NUMBER:int = 938;
+	public static var GOOGLE_REVISION_NUMBER:int = 943;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	public static var COME2PLAY_REVISION_NUMBER:int = 2535;
+	public static var COME2PLAY_REVISION_NUMBER:int = 2627;
 	public static function getRevision():String {
 		return "g="+GOOGLE_REVISION_NUMBER+",c2p="+COME2PLAY_REVISION_NUMBER;		
 	}
@@ -409,36 +409,39 @@ public final class StaticFunctions
 	
 	
 	
-	// The Java auto generates all classes
+	// The Java auto generates all classes	
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	private static function getClassFromMsg(msg:API_Message):Class {
-		return AS3_vs_AS2.getClassOfInstance(msg);
+	private static function getClassFromMsg(msg:API_Message, fieldName:String):Object {
+		var xlass:Class = AS3_vs_AS2.getClassOfInstance(msg);
+		var res:Object = xlass[fieldName];
+		assert(res!=null, ["Missing ",fieldName," in msg=",msg, " xlass=",xlass]);
+		return res;
 	}
 	private static function getParamNames(msg:API_Message):Array/*String*/ {
-		return getClassFromMsg(msg)["METHOD_PARAMS"];
+		return getClassFromMsg(msg,"METHOD_PARAMS") as Array;
 	}
 	public static function getFunctionId(msg:API_Message):int { 
-		return getClassFromMsg(msg)["FUNCTION_ID"];
-	}
-	public static function getMethodName(msg:API_Message):String {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		return getClassFromMsg(msg)["METHOD_NAME"];		 
+		return getClassFromMsg(msg,"FUNCTION_ID") as int;
+	}
+	public static function getMethodName(msg:API_Message):String {
+		return getClassFromMsg(msg,"METHOD_NAME") as String;		 
 	} 	
 	public static function getMethodParametersNum(msg:API_Message):int { 
 		return getParamNames(msg).length;
 	}
 	public static function setMethodParameters(msg:API_Message, parameters:Array):void { 
 		var names:Array = getParamNames(msg); 
-		var pos:int = 0;
-		for each (var name:String in names) {
-			msg[name] = parameters[pos++];
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		var pos:int = 0;
+		for each (var name:String in names) {
+			msg[name] = parameters[pos++];
 		}
 	}
 	public static function getMethodParameters(msg:API_Message):Array { 
@@ -446,11 +449,11 @@ public final class StaticFunctions
 		var res:Array = [];
 		for each (var name:String in names) {
 			res.push(msg[name]);
-		}
-		return res;
-	}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		}
+		return res;
+	}
 }
 }

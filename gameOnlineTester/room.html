@@ -143,6 +143,7 @@
 				
 		}
 		addTableParams(params,"serverTable")
+		loadSwf = "framework/distrabutionSwf.swf"
 		params["chat_skin_url"]="graphics/chatGraphics.swf";
 		params["preloader_url"]="graphics/Preloader.swf";
 		params["swf_url"]=  "framework/FlashCode.swf";
@@ -174,13 +175,9 @@
 			else
 				params["is_game"]=  "true";
 			params["skin_url"]="graphics/GameGraphics.swf";	
-			params["config_url"]=windowParams["gameXML"];	
-			
+			params["config_url"]=windowParams["gameXML"];			
 			params["override_config.game_parameters.prefix_local_connection_id"] = "100"+params["override_config.extra_args.user_id"];
-			params["override_config.game_parameters.game_room.room_id"] = windowParams["room_id"];
-			
-				
-			
+			params["override_config.game_parameters.game_room.room_id"] = windowParams["room_id"];	
 			if(windowParams["oldBoard"] != null){
 				params["override_config.game_parameters.board_swf_url"] = getOldBoard(windowParams["oldBoard"])
 				params["override_config.game_parameters.game_room.game_kind"] = "OldBoard";
@@ -190,6 +187,8 @@
 			params["override_config.game_parameters.play_type"] = "MultiPlayer";
 			params["override_config.flash_type"] = "game";
 			if(windowParams["type"] == "start_game_from_table_url"){
+				loadSwf = "graphics/Preloader.swf"
+				params["IGNORE_skip_distrabution"] = "true";
 				params["override_config.game_parameters.start_scenario"] = "FromTable";
 				params["override_config.game_parameters.FromTable.table_id"] = windowParams["table_id"];
 				params["override_config.game_parameters.FromTable.player_ids"] = windowParams["player_ids"];		
@@ -209,7 +208,7 @@
 		if(windowParams["isYoavContainer"] == "true"){
 			loadSWF(params["swf_url"],parametersToUrl(params),windowParams["swfWidth"],windowParams["swfHeight"])
 		}else{
-			loadSWF("framework/distrabutionSwf.swf",parametersToUrl(params),windowParams["swfWidth"],windowParams["swfHeight"])
+			loadSWF(loadSwf,parametersToUrl(params),windowParams["swfWidth"],windowParams["swfHeight"])
 		}
 	</script>
 </BODY>

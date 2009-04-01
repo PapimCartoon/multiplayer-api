@@ -38,12 +38,12 @@ public final class AS3_Loader
 
 		return vars;			
 	}
-	public static function sendToURL(vars:Object, method:String, url:String):void {
+	public static function sendToURL(vars:Object, method:String, url:String, successHandler:Function = null,failureHandler:Function = null):void {
 		tmpTrace("sendToURL=",url);
 		var request:URLRequest = new URLRequest(url);
 		request.data = object2URLVariables(vars);
 		request.method = method;
-		loadText(request)
+		loadText(request, successHandler, failureHandler)
 	}        
 	public static function loadText(urlRequest:URLRequest,successHandler:Function = null,failureHandler:Function = null,progressHandler:Function = null):void {
 
@@ -235,10 +235,10 @@ public final class AS3_Loader
 			return
 		}		
 	}
-	private static function traceHandler(e:Event):void {
+	public static function traceHandler(e:Event):void {
         tmpTrace("traceHandler:", e!=null && e.target!=null && e.target.hasOwnProperty("data") ? e.target.data : "No data!");
     }
-	private static function criticalError(ev:Event,url:String):void{
+	public static function criticalError(ev:Event,url:String):void{
 		tmpTrace(" Error loading URL: ",url)
 		var msg:String;
 

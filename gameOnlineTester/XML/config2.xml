@@ -990,7 +990,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 			</waiting_screen>
 			
 			<ads>
-				<is_show_pre_add type="boolean">false</is_show_pre_add>
+				<is_show_pre_add type="boolean">true</is_show_pre_add>
 				<is_show_post_add type="boolean">true</is_show_post_add>
 			</ads>
 			

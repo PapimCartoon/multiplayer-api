@@ -208,16 +208,17 @@ public final class ErrorHandler
 	// If the game has a bug, then we report to ASP, and send DoAllFoundHacker (which cause the container to send a bug report)
 	// If the container has a bug, then we report to, and send to java, and pass CUSTOM_INFO_KEY_checkThrowingAnError (which cause the game to send a bug report)  
 	public static var SEND_BUG_REPORT:Function = null; 
+	public static var REPORTING_AN_ERROR_STR:String = "Reporting an error: ";
 	private static function sendReport(errStr:String):int {
 		if (error_report_url==null)
-			throw new Error("Reporting an error: "+errStr);
+			throw new Error(REPORTING_AN_ERROR_STR+errStr);
 			
 		if (didReportError) return -1;
 		didReportError = true;
-		
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		
 		var bug_id:int = StaticFunctions.random(1, 10000000);	
 		
 		try {	
@@ -227,10 +228,10 @@ public final class ErrorHandler
 							
 			StaticFunctions.alwaysTrace(["sendReport to url=",error_report_url," for error=", errStr," SEND_BUG_REPORT=",SEND_BUG_REPORT]);
 			
-			var errMessage:String = 
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			var errMessage:String = 
 				(stackTraces==null ? "" : "AAAA (with stack trace) ")+ // so I will easily find them in our "errors page"
 				"Revision="+StaticFunctions.getRevision()+": "+
 				ERROR_REPORT_PREFIX + " " +
@@ -240,10 +241,10 @@ public final class ErrorHandler
 			AS3_vs_AS2.sendToURL( 
 					{errMessage: errMessage, 
 					 url: flash_url, 
-					 traces: flashTraces,
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+					 traces: flashTraces,
 					 bug_id: bug_id
 					 },
 				error_report_url);
@@ -253,10 +254,10 @@ public final class ErrorHandler
 				AS3_vs_AS2.sendMultipartImage(bug_id);
 			
 			// we should show the error after we call sendMultipartImage (so we send the image without the error window)
-			if (SHOULD_SHOW_ERRORS) {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			if (SHOULD_SHOW_ERRORS) {
 				var msg:String = "ERROR "+errMessage+" traces="+flashTraces;
 				AS3_vs_AS2.showError(msg);
 				StaticFunctions.setClipboard(msg);
@@ -266,10 +267,10 @@ public final class ErrorHandler
 				SEND_BUG_REPORT(bug_id, errMessage, flashTraces);	
 					
 		} catch (err:Error) {
-			StaticFunctions.alwaysTrace(["!!!!!ERROR!!!! in sendReport:",err]);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			StaticFunctions.alwaysTrace(["!!!!!ERROR!!!! in sendReport:",err]);
 		}			
 		return bug_id;
 	}

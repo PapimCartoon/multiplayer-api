@@ -44,7 +44,7 @@ public final class StaticFunctions
 		}
 		
 		if (ALLOW_DOMAINS != null){
-			storeTrace("Allowing all domains access to : "+ALLOW_DOMAINS+" saמdbox type :"+Security.sandboxType);
+			storeTrace(["Allowing all domains access to : ",ALLOW_DOMAINS," saמdbox type :",Security.sandboxType]);
 			Security.allowDomain(ALLOW_DOMAINS);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
@@ -420,16 +420,16 @@ public final class StaticFunctions
 		return res;
 	}
 	private static function getParamNames(msg:API_Message):Array/*String*/ {
-		return getClassFromMsg(msg,"METHOD_PARAMS") as Array;
+		return AS3_vs_AS2.asArray(getClassFromMsg(msg,"METHOD_PARAMS"));
 	}
 	public static function getFunctionId(msg:API_Message):int { 
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		return getClassFromMsg(msg,"FUNCTION_ID") as int;
+		return AS3_vs_AS2.as_int(getClassFromMsg(msg,"FUNCTION_ID"));
 	}
 	public static function getMethodName(msg:API_Message):String {
-		return getClassFromMsg(msg,"METHOD_NAME") as String;		 
+		return getClassFromMsg(msg,"METHOD_NAME").toString();		 
 	} 	
 	public static function getMethodParametersNum(msg:API_Message):int { 
 		return getParamNames(msg).length;

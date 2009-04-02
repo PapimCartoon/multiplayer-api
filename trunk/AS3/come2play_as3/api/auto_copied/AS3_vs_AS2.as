@@ -30,11 +30,9 @@ public final class AS3_vs_AS2
 	}
 	
 	public static function getDisplayObjectDesc(movie:DisplayObject):String {
-		return getDisplayObjectPath(movie)+(movie is MovieClip ? " in frame="+(movie as MovieClip).currentLabel : "");
-	}
-	public static function getDisplayObjectPath(movie:DisplayObject):String {
 		if (movie==null || movie.name==null || movie==StaticFunctions.someMovieClip) return '';
-		return getDisplayObjectPath(movie.parent)+"."+movie.name;		
+		return getDisplayObjectDesc(movie.parent)+"."+movie.name +
+			(movie is MovieClip ? "[frame="+(movie as MovieClip).currentLabel +"]" : "");		
 	}
 	public static function specialToString(o:Object):String {
 		if (o is DisplayObject) return getDisplayObjectDesc(o as DisplayObject); // instead of the default toString which returns "[object peshka2_15]", I want to return the fullname and current keyframe (if it is a movieclip)

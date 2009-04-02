@@ -13,14 +13,12 @@ import come2play_as2.api.*;
 		public static var ERROR_DO_ALL:String = "You can only call a doAll* message when the server calls gotStateChanged, gotMatchStarted, gotMatchEnded, or gotRequestStateCalculation.";
 		
 		private var msgsInTransaction:Array/*API_Message*/ = null;
-		private var doStoreQueue:Array/*API_DoStoreState*/ = new Array;
 		private var serverStateMiror:ObjectDictionary;
 		private var currentCallback:API_Message = null;
 		private var hackerUserId:Number = -1;
 		private var runningAnimations:Array/*String*/ = [];
 		private var keys:Array;
 		private var historyEntries:Array/*HistoryEntry*/;
-		private var keyboardMessages:Array/*API_GotKeyboardEvent*/;
 		private var singlePlayerEmulator:SinglePlayerEmulator;
 		public static var HISTORY_LENGTH:Number = 100;
 		
@@ -30,7 +28,6 @@ import come2play_as2.api.*;
 			ErrorHandler.ERROR_REPORT_PREFIX = "GAME";
 			StaticFunctions.alwaysTrace(this);
 			ErrorHandler.SEND_BUG_REPORT = AS3_vs_AS2.delegate(this, this.sendBugReport);
-			keyboardMessages = [];
 			AS3_vs_AS2.addKeyboardListener(_someMovieClip, ErrorHandler.wrapWithCatch("keyPressed",AS3_vs_AS2.delegate(this,this.keyPressed)));
 			if (getPrefixFromFlashVars(_someMovieClip)==null) 
 				singlePlayerEmulator = new SinglePlayerEmulator(_someMovieClip); // to prevent garbage collection
@@ -49,7 +46,7 @@ import come2play_as2.api.*;
 			output.push("Server State(client side) : \n\n");					
 			var serverEntries:Array/*ServerEntry*/ = new Array();
 			if(serverStateMiror!=null){
-				var p55:Number=0; for (var i55:String in serverStateMiror.allValues) { var serverEntry:ServerEntry = serverStateMiror.allValues[serverStateMiror.allValues.length==null ? i55 : p55]; p55++;
+				var p52:Number=0; for (var i52:String in serverStateMiror.allValues) { var serverEntry:ServerEntry = serverStateMiror.allValues[serverStateMiror.allValues.length==null ? i52 : p52]; p52++;
 					serverEntries.push(serverEntry);
 					output.push(serverEntry.toString() + "\n");
 				}
@@ -83,16 +80,11 @@ import come2play_as2.api.*;
 					ErrorHandler.testSendErrorImage();
 				}
 			}
-			if (verifier.isPlayer() &&
-				!T.custom(API_Message.CUSTOM_INFO_KEY_isFocusInChat,false) &&
+			if (!T.custom(API_Message.CUSTOM_INFO_KEY_isFocusInChat,false) &&
 				!T.custom(API_Message.CUSTOM_INFO_KEY_isPause,false))
 				 {				 	
-					var keyBoardEvent:API_GotKeyboardEvent = API_GotKeyboardEvent.create(is_key_down, charCode, keyCode, keyLocation, altKey, ctrlKey, shiftKey)	
-				 	keyboardMessages.push(keyBoardEvent)
-				 	if(!isInTransaction())
-				 	{
-				 		sendKeyboardEvents();
-				 	}
+					var keyBoardEvent:API_GotKeyboardEvent = API_GotKeyboardEvent.create(is_key_down, charCode, keyCode, keyLocation, altKey, ctrlKey, shiftKey)					
+					dispatchMessage(keyBoardEvent);
 				 }
 				
 		}
@@ -103,11 +95,6 @@ import come2play_as2.api.*;
 			for(var str:String in custom)
 				infoEntries.push(InfoEntry.create(str,custom[str]))
 			return infoEntries;
-		}
-		private function sendKeyboardEvents():Void
-		{
-			while (keyboardMessages.length > 0 )
-				dispatchMessage(API_Message(keyboardMessages.shift()));			
 		}
 		/**
 		 * If your overriding 'got' methods will throw an Error,
@@ -194,21 +181,15 @@ import come2play_as2.api.*;
         	checkInsideTransaction();        	
         	if (runningAnimations.length>0) return;
         	var msgNum:Number = LocalConnectionUser.getMsgNum(currentCallback); 
-       		super.sendMessage( API_Transaction.create(API_DoFinishedCallback.create(StaticFunctions.getMethodName(currentCallback),msgNum), msgsInTransaction) );
+        	var transaction:API_Transaction = API_Transaction.create(API_DoFinishedCallback.create(StaticFunctions.getMethodName(currentCallback),msgNum), msgsInTransaction);
+    		
     		msgsInTransaction = null;
 			currentCallback = null;
-			sendKeyboardEvents();
-			if (verifier.isPlayer()) sendDoStoreStateEvents();
-        }
-        private function sendDoStoreStateEvents():Void{
-        	var p207:Number=0; for (var i207:String in doStoreQueue) { var doStoreMsg:API_DoStoreState = doStoreQueue[doStoreQueue.length==null ? i207 : p207]; p207++;
-        		super.sendMessage(doStoreMsg);
-        	}
-        	doStoreQueue = [];
+       		super.sendMessage(transaction);
         }
         private function updateMirorServerState(serverEntries:Array/*ServerEntry*/):Void
         {
-        	var p214:Number=0; for (var i214:String in serverEntries) { var serverEntry:ServerEntry = serverEntries[serverEntries.length==null ? i214 : p214]; p214++;
+        	var p195:Number=0; for (var i195:String in serverEntries) { var serverEntry:ServerEntry = serverEntries[serverEntries.length==null ? i195 : p195]; p195++;
         	    serverStateMiror.addEntry(serverEntry);	
         	}     	
         }
@@ -239,7 +220,6 @@ import come2play_as2.api.*;
 		    			hackerUserId = serverEntry.storedByUserId;
 		    		}
 	    		} else if (msg instanceof API_GotMatchStarted) {
-	    			doStoreQueue = [];
 	    			serverStateMiror = new ObjectDictionary();
 					var matchStarted:API_GotMatchStarted = API_GotMatchStarted(msg);
 					updateMirorServerState(matchStarted.serverEntries);
@@ -247,7 +227,7 @@ import come2play_as2.api.*;
 					var customInfo:API_GotCustomInfo = API_GotCustomInfo(msg);
 					var i18nObj:Object = {};
 					var customObj:Object = {};
-					var p253:Number=0; for (var i253:String in customInfo.infoEntries) { var entry:InfoEntry = customInfo.infoEntries[customInfo.infoEntries.length==null ? i253 : p253]; p253++;
+					var p233:Number=0; for (var i233:String in customInfo.infoEntries) { var entry:InfoEntry = customInfo.infoEntries[customInfo.infoEntries.length==null ? i233 : p233]; p233++;
 						var key:String = entry.key;
 						var value:Object = entry.value;
 						if (key==API_Message.CUSTOM_INFO_KEY_i18n) {
@@ -268,8 +248,7 @@ import come2play_as2.api.*;
 				}else if(msg instanceof API_GotUserInfo){
 					var infoMessage:API_GotUserInfo =API_GotUserInfo( msg);
 					var userObject:Object = {};
-					var p274:Number=0; for (var i274:String in infoMessage.infoEntries) { var infoEntry:InfoEntry = infoMessage.infoEntries[infoMessage.infoEntries.length==null ? i274 : p274]; p274++;
-						trace(infoEntry.key+ "="+ infoEntry.value)
+					var p254:Number=0; for (var i254:String in infoMessage.infoEntries) { var infoEntry:InfoEntry = infoMessage.infoEntries[infoMessage.infoEntries.length==null ? i254 : p254]; p254++;
 						userObject[infoEntry.key] = infoEntry.value;
 					}
 					T.updateUser(infoMessage.userId, userObject);
@@ -308,13 +287,7 @@ import come2play_as2.api.*;
         		return;
         	}
         	if (doMsg instanceof API_DoStoreState) {
-        		if (isInTransaction()){
-        			trace("push message")
-        			doStoreQueue.push(doMsg)
-        		}else{
-        			trace("send message")
-        			super.sendMessage(doMsg);
-        		}
+        		super.sendMessage(doMsg);
         		return;
         	}        	
 			      	

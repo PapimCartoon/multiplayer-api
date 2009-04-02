@@ -16,7 +16,7 @@ public final class XMLSerializer
 		var test:Object = [1,2,"c",true,null, -4,"<&&boo>",{a:null,x: new SerializableClass(), b:["","b"]}];
 		var xml:XML = XMLSerializer.toXML(test);
 		var test2:Object = SerializableClass.deserialize(XMLSerializer.xml2Object(xml));
-		trace("XMLSerializer xml=\n"+xml+" test2="+JSON.stringify(test2));
+		StaticFunctions.storeTrace("XMLSerializer xml=\n"+xml+" test2="+JSON.stringify(test2));
 		StaticFunctions.assert(StaticFunctions.areEqual(test,test2),[test,test2]);		
 	}
 	public static function xml2Object(xml:XML):Object {

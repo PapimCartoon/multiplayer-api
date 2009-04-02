@@ -470,7 +470,6 @@ public final class TictactoeMain extends ClientGameAPI {
 		return isSinglePlayer() || myColor==turnOfColor;
 	}
 	private function startMove(isInProgress:Boolean):void {
-		//trace("startMove with isInProgress="+isInProgress);
 		if (logic==null) return; 
 						
 		if (isInProgress) {

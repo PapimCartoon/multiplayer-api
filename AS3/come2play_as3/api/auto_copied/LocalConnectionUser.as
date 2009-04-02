@@ -10,8 +10,10 @@ package come2play_as3.api.auto_copied
 	{
 		public static var REVIEW_USER_ID:int = -1; // special userId that is used for reviewing games
 		public static var IS_LOCAL_CONNECTION_UDERSCORE:Boolean = false;		
-		public static var DEFAULT_LOCALCONNECTION_PREFIX:String = ""+StaticFunctions.random(1,10000);
+		public static var DEFAULT_LOCALCONNECTION_PREFIX:String = ""+AS3_vs_AS2.convertToInt(10000*Math.random());
 		public static var MILL_WAIT_BEFORE_DO_REGISTER:int = 500;
+		public static var TRACE_RETRY:Boolean = false;	
+		
 		public static var MILL_AFTER_ALLOW_DOMAINS:int = 500;
 		public static var DO_TRACE:Boolean = true;
 		public static var AGREE_ON_PREFIX:Boolean = true;
@@ -42,6 +44,9 @@ package come2play_as3.api.auto_copied
 				return "_INIT_CHANEL_"+sPrefix;
 			return "INIT_CHANEL_"+sPrefix;
 		}
+		public static function getLoaderInfoParameter(_someMovieClip:DisplayObjectContainer, param:String):String {
+			return AS3_vs_AS2.getLoaderInfoParameters(_someMovieClip)[param];
+		}
 		public static function getPrefixFromFlashVars(_someMovieClip:DisplayObjectContainer):String {
 			var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(_someMovieClip);
 			var sPrefix:String = parameters["prefix"];
@@ -51,6 +56,36 @@ package come2play_as3.api.auto_copied
 		public static function getPrefixFromString(sPrefix:String):String {			
 			return sPrefix;
 		}
+		
+		
+		/**
+		 * In AS3 it is more efficient to use direct method calls then to use LocalConnection.
+		 * If the game is loaded with the parameter "prefix=usingAS3"
+		 * using method calls instead of LocalConnection in AS3.
+		 * We still must serialize and deserialize because the API_* classes are different.
+		 */ 
+		public static var SINGLETON:LocalConnectionUser = null;
+		public static var USING_AS3_PREFIX:String = "usingAS3";
+		public static var AS3_RECEIVER_CLASS_NAME:String = "come2play_as3.auto_copied::LocalConnectionUser"; // set using reflection
+		public function trySendMessageUsingAS3(msg:Object):String {
+			var xlass:Class;
+			try {
+				xlass = AS3_vs_AS2.getClassByName(AS3_RECEIVER_CLASS_NAME);
+			} catch (e:Error) {
+				// , because container or game were not loaded yet
+				return "class not found";
+			}
+			var singleton:Object = xlass["SINGLETON"];
+			if (singleton==null) return "singleton is null"; 
+			// NOTE that singleton of the other class is not 
+			// 	come2play_as3.api.auto_copied.LocalConnectionUser
+			// but it is
+			// 	come2play_as3.auto_copied.LocalConnectionUser
+			// So you cannot cast it to LocalConnectionUser
+			singleton.localconnection_callback(msg);	
+			return null;
+		}
+		
 				
 		
 		// we use a LocalConnection to communicate with the container
@@ -64,12 +99,21 @@ package come2play_as3.api.auto_copied
 		private var handShakeMade:Boolean = false;
 		public var verifier:ProtocolVerifier;
 		public var _shouldVerify:Boolean;
+		private var isUsingAS3:Boolean;
 		//Constructor
 		public function LocalConnectionUser(_someMovieClip:DisplayObjectContainer, isContainer:Boolean, sPrefix:String,shouldVerify:Boolean) {
-			
+			try {
+				this.isUsingAS3 = sPrefix==USING_AS3_PREFIX;
+				if (isUsingAS3) {
+					// in AS3 we prefer to use direct method calls (using the static SINGLETON member), 
+					// instead of LocalConnection (which has size limitations)
+					StaticFunctions.assert(SINGLETON==null,["You can create a LocalConnectionUser only once!"]);
+					SINGLETON = this;
+				}
+				
 				if (!isContainer) // in the container we apply the reflection in RoomLogic (e.g., for a room we do not have a localconnection) 
 					StaticFunctions.performReflectionFromFlashVars(_someMovieClip);
-				StaticFunctions.allowDomains();	
+				StaticFunctions.allowDomains();
 				_shouldVerify=shouldVerify;
 				AS3_vs_AS2.registerNativeSerializers();
 				API_LoadMessages.useAll();	
@@ -77,16 +121,25 @@ package come2play_as3.api.auto_copied
 				this.isContainer = isContainer;
 				StaticFunctions.storeTrace(["ProtocolVerifier=",verifier]);
 				StaticFunctions.someMovieClip = _someMovieClip;
+				
 				if (sPrefix==null) {
 					myTrace(["WARNING: didn't find 'prefix' in the loader info parameters. Probably because you are doing testing locally."]);
 					sPrefix = DEFAULT_LOCALCONNECTION_PREFIX;
 				}
-				sInitChanel = getInitChanelString(sPrefix);		
-				if (MILL_AFTER_ALLOW_DOMAINS == 0){
-					buildConnection();
-				}else{
-					ErrorHandler.myTimeout("buildConnection",AS3_vs_AS2.delegate(this,this.buildConnection),MILL_AFTER_ALLOW_DOMAINS);	
-				}			
+				
+				if (!isUsingAS3) {			
+					sInitChanel = getInitChanelString(sPrefix);		
+					if (MILL_AFTER_ALLOW_DOMAINS == 0){
+						buildConnection();
+					}else{
+						ErrorHandler.myTimeout("buildConnection",AS3_vs_AS2.delegate(this,this.buildConnection),MILL_AFTER_ALLOW_DOMAINS);	
+					}					
+				} else {
+					madeConnection();
+				}
+			} catch (err:Error) {
+				ErrorHandler.handleError(err, this);
+			}	
 		}
 		
 		private function buildConnection():void{
@@ -114,7 +167,6 @@ package come2play_as3.api.auto_copied
 			}catch (err:Error) { 
 				failedConnect = true;
 				ErrorHandler.myTimeout("buildLocalConnection", AS3_vs_AS2.delegate(this,this.buildConnection),1000);
-				//passError("Constructor",err);
 			}
 			if(!failedConnect) madeConnection();
 			
@@ -133,39 +185,46 @@ package come2play_as3.api.auto_copied
         protected function getErrorMessage(withObj:Object, err:Error):String {
         	return "Error occurred when passing "+JSON.stringify(withObj)+", the error is=\n\t\t"+AS3_vs_AS2.error2String(err);
         }
-        private function passError(withObj:Object, err:Error):void {
-        	showError(getErrorMessage(withObj,err));        	
-        }
         
-        public function gotMessage(msg:API_Message):void{}
+        public function gotMessage(msg:API_Message):void {}
         
        
         public function sendMessage(msg:API_Message):void {
-        	if (msg is API_DoRegisterOnServer){
-        		if ((handShakeMade) && (lcUser != null))
-        			reallySendMessage(msg);
-        		else
-        			ErrorHandler.myTimeout("SendDoRegisterOnServer",AS3_vs_AS2.delegate(this, this.sendMessage,msg),MILL_WAIT_BEFORE_DO_REGISTER);	
-        	} else {
-        		reallySendMessage(msg);
-        	}
+        	myTrace(['sendMessage: ',msg]);      		
+			AS3_vs_AS2.checkObjectIsSerializable(msg);
+    		verify(msg, true);    		     	
+			retrySendMsg(msg);
+        }
+        private function retrySendMsg(msg:API_Message):void {
+    		var serializedMsg:Object = msg.toObject();
+        	var res:String = trySendMessage( serializedMsg );
+        	if (res==null) return;
+        	if (TRACE_RETRY) 
+				StaticFunctions.storeTrace(["sendMessageUsing failed because:",res]);
+			assert(/*is*/msg is API_DoRegisterOnServer, ["Only DoRegisterOnServer can fail! res=",res," msg=", msg]);
+			ErrorHandler.myTimeout("RetrySendDoRegisterOnServer", AS3_vs_AS2.delegate(this,this.retrySendMsg, msg), MILL_WAIT_BEFORE_DO_REGISTER);			        	
+        }
+        private function trySendMessage(msg:Object):String { 
+        	return isUsingAS3 ?	
+        		trySendMessageUsingAS3(msg) : 
+        		trySendMessageUsingLocalConnection(msg);
+        }
+        private function trySendMessageUsingLocalConnection(msg:Object):String {  
+        	if (!handShakeMade) return "Did not finish handshake yet"; 
+        	if (lcUser == null)	return "lcUser is still null";			  
+			try{        			
+				lcUser.send(sSendChanel, "localconnection_callback", msg);  
+			}catch(err:Error) { 
+				ErrorHandler.handleError(err,msg);
+			}        	
+			return null;
         }
         private function sendPrefix():void {  				  
 			try{
 				myTrace(["sent randomPrefix on ",sInitChanel," randomPrefix sent is:",randomPrefix," Is server: ",isContainer]);	
 				lcInit.send(sInitChanel, "localconnection_init", randomPrefix);  
 			}catch(err:Error) { 				
-				passError("prefix error,prefix :"+randomPrefix, err);
-			}        	
-        }
-        private function reallySendMessage(msg:API_Message):void {  				  
-			try{
-        		myTrace(['sendMessage: ',msg]);      		
-				AS3_vs_AS2.checkObjectIsSerializable(msg);
-        		verify(msg, true);     		
-				lcUser.send(sSendChanel, "localconnection_callback", msg.toObject());  
-			}catch(err:Error) { 
-				passError(msg, err);
+				ErrorHandler.handleError(err, ["prefix error,prefix :",randomPrefix]);
 			}        	
         }
         private function sendHandShakeDoRegister():void{
@@ -207,34 +266,36 @@ package come2play_as3.api.auto_copied
 				lcUser.connect(sListenChannel);
 				if(isContainer)	sendHandShakeDoRegister();
 			} catch(err:Error) { 
-				passError("local connection init",err);
+				ErrorHandler.handleError(err,"local connection init");
 			} 
         }
                    
         public function localconnection_callback(msgObj:Object):void {
         	if (ErrorHandler.didReportError) return;
         	var msg:API_Message = null;
-        	try{
+        	try {
         		var deserializedMsg:Object = SerializableClass.deserialize(msgObj);
         		msg = /*as*/deserializedMsg as API_Message;
         		if (msg==null) throwError("msgObj="+JSON.stringify(msgObj)+" is not an API_Message");
         		
-        		myTrace(['gotMessage: ',msg]);
-        		if((msg is API_DoRegisterOnServer) && (!handShakeMade)){
-        			handShakeMade = true;
-	        		if(isContainer){	
-	        			lcInit.close();	
-	        		}else{
-	        			sendPrefixInterval.clear();
-	        			return;
+        		if (!isUsingAS3) {
+	        		if((msg is API_DoRegisterOnServer) && (!handShakeMade)){
+	        			handShakeMade = true;
+		        		if(isContainer){	
+		        			lcInit.close();	
+		        		}else{
+		        			sendPrefixInterval.clear();
+		        			return;
+		        		}
 	        		}
-        		}
-        		verify(msg, false);
-        		gotMessage(msg);
+	        	}
+	    		myTrace(['gotMessage: ',msg]);
+	    		verify(msg, false);
+	    		gotMessage(msg);
 			} catch(err:Error) { 
-				passError(msg==null ? msgObj : msg, err);
+				ErrorHandler.handleError(err, msg==null ? msgObj : msg);
 			} 
-        }        
+        }  
 	
 		public static function getMsgNum(currentCallback:API_Message):int {
 			var msgNum:int = -666;

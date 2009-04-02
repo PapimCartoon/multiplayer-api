@@ -273,6 +273,11 @@ Not used by the graphics yet (but should be displayed):
 		-->
 		<entry><key>come2play_as3.util::General.isDoingTrace</key><value>true</value></entry>
 		<entry><key>come2play_as3.network::MySocket.USE_HEX</key><value>false</value></entry>
+		
+		<!-- for efficiency we avoid traces in the online version 
+		<entry><key>come2play_as3.auto_copied::LocalConnectionUser.DO_TRACE</key><value>false</value></entry>
+		<entry><key>come2play_as3.auto_copied::StaticFunctions.SHOULD_CALL_TRACE</key><value>false</value></entry>
+		-->
 	</reflection>
 </customInitInfo>
 <config>
@@ -365,26 +370,7 @@ Not used by the graphics yet (but should be displayed):
 		
 		<play_type type="EnumPlayType">MultiPlayer</play_type>
 	
-		<!--		
-		prefix_local_connection_id is either a number or the name of a javascript function.
-		If it is a function, then we call that function, and it should return a number.
-
-		The javascript function should randomly choose a positive number (but it should be the same number for all invocations):
-
-		var prefix_random_number = 1+ Math.ceil(1000000*Math.random());
-		function javascript_get_prefix_method() {
-			return prefix_random_number;
-		}
-
-		The reason we use a function name (instead of a number) is to allow the browser to cache the SWF file.
-		If we had used a different number then the browser won't cache the SWF file.
-
-		The board passes on the LocalConnection "FRAMEWORK_SWF"+prefix a randomly choosen
-			channel_number, and all communication between the framework and board is done 
-			on two LocalConnection:			
-				"DO_CHANEL"  + prefix + "_" + channel_number
-				"GOT_CHANEL" + prefix + "_" + channel_number
-				
+		<!--						
 		For old API boards, you use the OldContainer and add the board name as a parameter 'oldgame'.
 				
 Old board:	
@@ -435,7 +421,13 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 		<gameStageY type="int">100</gameStageY>
 		<board_height type="int">250</board_height>
 		<board_width type="int">250</board_width>
-		<prefix_local_connection_id type="int">100</prefix_local_connection_id>
+		
+		<!--
+			prefix_local_connection_id can be either 
+			"usingAS3" - for AS3 games (instead of using LocalConnection we use direct method calls)
+			a number - for AS2 games
+		-->
+		<prefix_local_connection_id type="string">usingAS3</prefix_local_connection_id>
 		
 		<!-- logoFullUrl is a logo in a SWF or JPEG file of size 70x70 pixels -->
 		<logoFullUrl>../images/logoFullUrl.jpg</logoFullUrl>	
@@ -468,6 +460,11 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 			</i18n>
 			<reflection>
 				<entry><key>come2play_as3.api.auto_copied::StaticFunctions.MAX_TRACES_NUM</key><value>100</value></entry>
+				
+				<!-- for efficiency we avoid traces in the online version 
+				<entry><key>come2play_as3.api.auto_copied::LocalConnectionUser.DO_TRACE</key><value>false</value></entry>
+				<entry><key>come2play_as3.api.auto_copied::StaticFunctions.SHOULD_CALL_TRACE</key><value>false</value></entry>
+				-->
 			</reflection>		
 		</customInitInfo>
 			

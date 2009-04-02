@@ -20,14 +20,11 @@ package come2play_as3.api.auto_copied
 		private var allPlayerIds:Array/*int*/;
 		// Imagine ProtocolVerifier on the container, and the container sends GotMatchEnded for my player.
 		// The game may send doStoreState up until it sends the transaction for GotMatchEnded
-		// therefore we update currentPlayerIds only after we get the transaction.
-		private var nextPlayerIds:Array/*int*/; 
-		private var myUserId:int = -1;
+		// We do not queue those doStoreState anymore (the java will throw away doStore of a viewer)
 		
 		public function ProtocolVerifier() {
 			ErrorHandler.myInterval("ProtocolVerifier.checkAnimationInterval",AS3_vs_AS2.delegate(this, this.checkAnimationInterval), MAX_ANIMATION_MILLISECONDS);
 			currentPlayerIds = [];
-			nextPlayerIds = [];
 		}
 		public function toString():String {
 			return "ProtocolVerifier:"+
@@ -46,10 +43,6 @@ package come2play_as3.api.auto_copied
         	if (delta< MAX_ANIMATION_MILLISECONDS) return; // animation is running for a short time
         	// animation is running for too long
         	StaticFunctions.throwError("An transaction is running for more than MAX_ANIMATION_MILLISECONDS="+MAX_ANIMATION_MILLISECONDS+". It is running for="+delta+". ProtocolVerifier="+this);         	
-        }
-        public function isPlayer():Boolean {
-        	// I can't use T.custom(API_Message.CUSTOM_INFO_KEY_myUserId,0), because ProtocolVerifier is used in emulator that runs multiple clients (thus static memory will cause a conflict)
-        	return isInPlayers(myUserId);        	
         }
         public function getAllPlayerIds():Array/*int*/{
         	return currentPlayerIds;
@@ -101,19 +94,14 @@ package come2play_as3.api.auto_copied
 				var matchStarted:API_GotMatchStarted = /*as*/gotMsg as API_GotMatchStarted;
 				checkServerEntries(matchStarted.serverEntries);
 				allPlayerIds = matchStarted.allPlayerIds.concat();
-				nextPlayerIds = StaticFunctions.subtractArray(matchStarted.allPlayerIds, matchStarted.finishedPlayerIds);
+				currentPlayerIds = StaticFunctions.subtractArray(matchStarted.allPlayerIds, matchStarted.finishedPlayerIds);
     		} else if (gotMsg is API_GotMatchEnded) {	    			
     			checkInProgress(true,gotMsg);
 				var matchEnded:API_GotMatchEnded = /*as*/gotMsg as API_GotMatchEnded;
-				nextPlayerIds = StaticFunctions.subtractArray(currentPlayerIds, matchEnded.finishedPlayerIds);
+				currentPlayerIds = StaticFunctions.subtractArray(currentPlayerIds, matchEnded.finishedPlayerIds);
 			} else if (gotMsg is API_GotCustomInfo) {	 					    			
     			// isPause is called when the game is in progress,
     			// and other info is passed before the game starts.
-    			var customInfo:API_GotCustomInfo = /*as*/gotMsg as API_GotCustomInfo;
-    			for each (var infoEntry:InfoEntry in customInfo.infoEntries) {
-    				if (infoEntry.key==API_Message.CUSTOM_INFO_KEY_myUserId)
-    					myUserId = AS3_vs_AS2.as_int(infoEntry.value);
-    			}
 			} else if (gotMsg is API_GotKeyboardEvent) {						    			
     			checkInProgress(true,gotMsg);
     			
@@ -152,7 +140,8 @@ package come2play_as3.api.auto_copied
 			check(didRegisterOnServer, ["The first call must be DoRegisterOnServer!"]);
 			
         	if (doMsg is API_DoStoreState) {
-        		check(isPlayer(), ["Only a player can send DoStoreState"]);
+        		// The game might send DoStoreState for a player, but the verifier already send GotMatchEnded for that player
+        		// check(isPlayer(), ["Only a player can send DoStoreState"]);
         		var doStoreStateMessage:API_DoStoreState = /*as*/doMsg as API_DoStoreState;
         		isNullKeyExistUserEntry(doStoreStateMessage.userEntries);
         		isNullKeyExistRevealEntry(doStoreStateMessage.revealEntries)
@@ -163,8 +152,7 @@ package come2play_as3.api.auto_copied
 				// The game may perform doAllFoundHacker (in a transaction) even after the game is over,
 				// because: The container may pass gotStateChanged after the game sends doAllEndMatch,
 				//			because the game should verify every doStoreState (to prevent hackers from polluting the state after they know the game will be over).
-				//if (transaction.messages.length>0) check(currentPlayerIds.length>0 || nextPlayerIds.length>0);
-				currentPlayerIds = nextPlayerIds; // we do this before calling checkDoAll
+				//if (transaction.messages.length>0) check(currentPlayerIds.length>0);
 				
 				var wasStoreStateCalculation:Boolean = false;
 				var isRequestStateCalculation:Boolean = currentCallback is API_GotRequestStateCalculation;

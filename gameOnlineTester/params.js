@@ -1,4 +1,4 @@
-﻿function getRandomNum(){
+function getRandomNum(){
 	return Math.ceil(3000*Math.random())
 }
 function getRandomsupervisor(){
@@ -23,10 +23,11 @@ function getPlayerAvatar(){
 }
 
 
-
+var default_javaToConnect = "80.179.46.238:8080:socket,80.179.46.238:8080:old_xmlsocket,80.179.46.238:80:rtmpt";
+var local_javaToConnect = "localhost:2000:socket,localhost:2000:old_xmlsocket,localhost:8083:rtmpt";
 
 var supervisorLevels = new Array("Admin","Supervisor","MiniSupervisor","NormalUser");
-var playerInitial = new Array("player","שחקן","播放器","usuário","Hráč")
+var playerInitial = new Array("player","שחקן","???","usu?rio","Hr??")
 var oldBoardValues = new Array();
 oldBoardValues.push({type:"gameName",gameName:"Sudoku"})
 oldBoardValues.push({type:"variant",gameName:"Sudoku",variant:"9_Easy"})
@@ -157,6 +158,11 @@ paramArr.push( {htmlName:"gameStageX",xmlName:"override_config.game_parameters.g
 paramArr.push( {htmlName:"gameStageY",xmlName:"override_config.game_parameters.gameStageY",type:"int"});
 
 paramArr.push( {htmlName:"gameSwf",xmlName:"override_config.game_parameters.board_swf_url",type:"string"});
+
+
+
+paramArr.push( {htmlName:"javaToConnect",type:"string"});
+paramArr.push( {htmlName:"isSmartAutoMatch",type:"string"});
 
 
 paramArr.push( {htmlName:"swfWidth",type:"string"});

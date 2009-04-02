@@ -145,7 +145,7 @@ public final class TictactoeSquareGraphic
     }
     
 	public function setColor(color:int):void {	
-		trace("Changing square "+move+" to setColor="+color);
+		StaticFunctions.storeTrace(["Changing square ",move," to setColor=",color]);
 		currentTurnForMouseOver = BTN_NONE;
 		AS3_vs_AS2.setAlpha(symbolsContainer, 100);
 		setSymbol(color);
@@ -154,7 +154,7 @@ public final class TictactoeSquareGraphic
 	}
 	public static var BUTTON_SYMBOL_ALPHA:int = 40;
 	public function startMove(currentTurn:int):void {
-		trace("Changing square "+move+" to startMove="+currentTurn);
+		StaticFunctions.storeTrace(["Changing square ",move," to startMove=",currentTurn]);
 		AS3_vs_AS2.setAlpha(symbolsContainer, BUTTON_SYMBOL_ALPHA);
 		currentTurnForMouseOver = currentTurn;
 		setSymbol(BTN_NONE);

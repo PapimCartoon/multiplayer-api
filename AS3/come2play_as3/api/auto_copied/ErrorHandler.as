@@ -153,9 +153,10 @@ public final class ErrorHandler
 	// If the game has a bug, then we report to ASP, and send DoAllFoundHacker (which cause the container to send a bug report)
 	// If the container has a bug, then we report to, and send to java, and pass CUSTOM_INFO_KEY_checkThrowingAnError (which cause the game to send a bug report)  
 	public static var SEND_BUG_REPORT:Function = null; 
+	public static var REPORTING_AN_ERROR_STR:String = "Reporting an error: ";
 	private static function sendReport(errStr:String):int {
 		if (error_report_url==null)
-			throw new Error("Reporting an error: "+errStr);
+			throw new Error(REPORTING_AN_ERROR_STR+errStr);
 			
 		if (didReportError) return -1;
 		didReportError = true;

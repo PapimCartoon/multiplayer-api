@@ -466,14 +466,13 @@ class come2play_as2.tictactoe.TictactoeMain extends ClientGameAPI {
 		return isSinglePlayer() || myColor==turnOfColor;
 	}
 	private function startMove(isInProgress:Boolean):Void {
-		//trace("startMove with isInProgress="+isInProgress);
 		if (logic==null) return; 
 						
 		if (isInProgress) {
 			doAllSetTurn(allPlayerIds[isSinglePlayer() ? 0 : turnOfColor],-1);
 		}		
 		if (isMyTurn()) shouldSendMove = true;
-		var p478:Number=0; for (var i478:String in allCells) { var square:TictactoeSquare = allCells[allCells.length==null ? i478 : p478]; p478++;
+		var p477:Number=0; for (var i477:String in allCells) { var square:TictactoeSquare = allCells[allCells.length==null ? i477 : p477]; p477++;
 			if (!logic.isSquareAvailable(square)) continue;
 			var squareGraphics:TictactoeSquareGraphic = getSquareGraphic(square);
 			squareGraphics.startMove(

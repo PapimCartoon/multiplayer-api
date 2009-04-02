@@ -17,14 +17,12 @@ package come2play_as3.api {
 		public static var ERROR_DO_ALL:String = "You can only call a doAll* message when the server calls gotStateChanged, gotMatchStarted, gotMatchEnded, or gotRequestStateCalculation.";
 		
 		private var msgsInTransaction:Array/*API_Message*/ = null;
-		private var doStoreQueue:Array/*API_DoStoreState*/ = new Array;
 		private var serverStateMiror:ObjectDictionary;
 		private var currentCallback:API_Message = null;
 		private var hackerUserId:int = -1;
 		private var runningAnimations:Array/*String*/ = [];
 		private var keys:Array;
 		private var historyEntries:Array/*HistoryEntry*/;
-		private var keyboardMessages:Array/*API_GotKeyboardEvent*/;
 		private var singlePlayerEmulator:SinglePlayerEmulator;
 		public static var HISTORY_LENGTH:int = 100;
 		
@@ -34,7 +32,6 @@ package come2play_as3.api {
 			ErrorHandler.ERROR_REPORT_PREFIX = "GAME";
 			StaticFunctions.alwaysTrace(this);
 			ErrorHandler.SEND_BUG_REPORT = AS3_vs_AS2.delegate(this, this.sendBugReport);
-			keyboardMessages = [];
 			AS3_vs_AS2.addKeyboardListener(_someMovieClip, ErrorHandler.wrapWithCatch("keyPressed",AS3_vs_AS2.delegate(this,this.keyPressed)));
 			if (getPrefixFromFlashVars(_someMovieClip)==null) 
 				singlePlayerEmulator = new SinglePlayerEmulator(_someMovieClip); // to prevent garbage collection
@@ -87,16 +84,11 @@ package come2play_as3.api {
 					ErrorHandler.testSendErrorImage();
 				}
 			}
-			if (verifier.isPlayer() &&
-				!T.custom(API_Message.CUSTOM_INFO_KEY_isFocusInChat,false) &&
+			if (!T.custom(API_Message.CUSTOM_INFO_KEY_isFocusInChat,false) &&
 				!T.custom(API_Message.CUSTOM_INFO_KEY_isPause,false))
 				 {				 	
-					var keyBoardEvent:API_GotKeyboardEvent = API_GotKeyboardEvent.create(is_key_down, charCode, keyCode, keyLocation, altKey, ctrlKey, shiftKey)	
-				 	keyboardMessages.push(keyBoardEvent)
-				 	if(!isInTransaction())
-				 	{
-				 		sendKeyboardEvents();
-				 	}
+					var keyBoardEvent:API_GotKeyboardEvent = API_GotKeyboardEvent.create(is_key_down, charCode, keyCode, keyLocation, altKey, ctrlKey, shiftKey)					
+					dispatchMessage(keyBoardEvent);
 				 }
 				
 		}
@@ -107,11 +99,6 @@ package come2play_as3.api {
 			for(var str:String in custom)
 				infoEntries.push(InfoEntry.create(str,custom[str]))
 			return infoEntries;
-		}
-		private function sendKeyboardEvents():void
-		{
-			while (keyboardMessages.length > 0 )
-				dispatchMessage(/*as*/keyboardMessages.shift() as API_Message);			
 		}
 		/**
 		 * If your overriding 'got' methods will throw an Error,
@@ -198,17 +185,11 @@ package come2play_as3.api {
         	checkInsideTransaction();        	
         	if (runningAnimations.length>0) return;
         	var msgNum:int = LocalConnectionUser.getMsgNum(currentCallback); 
-       		super.sendMessage( API_Transaction.create(API_DoFinishedCallback.create(StaticFunctions.getMethodName(currentCallback),msgNum), msgsInTransaction) );
+        	var transaction:API_Transaction = API_Transaction.create(API_DoFinishedCallback.create(StaticFunctions.getMethodName(currentCallback),msgNum), msgsInTransaction);
+    		
     		msgsInTransaction = null;
 			currentCallback = null;
-			sendKeyboardEvents();
-			if (verifier.isPlayer()) sendDoStoreStateEvents();
-        }
-        private function sendDoStoreStateEvents():void{
-        	for each(var doStoreMsg:API_DoStoreState in doStoreQueue){
-        		super.sendMessage(doStoreMsg);
-        	}
-        	doStoreQueue = [];
+       		super.sendMessage(transaction);
         }
         private function updateMirorServerState(serverEntries:Array/*ServerEntry*/):void
         {
@@ -243,7 +224,6 @@ package come2play_as3.api {
 		    			hackerUserId = serverEntry.storedByUserId;
 		    		}
 	    		} else if (msg is API_GotMatchStarted) {
-	    			doStoreQueue = [];
 	    			serverStateMiror = new ObjectDictionary();
 					var matchStarted:API_GotMatchStarted = /*as*/msg as API_GotMatchStarted;
 					updateMirorServerState(matchStarted.serverEntries);
@@ -273,7 +253,6 @@ package come2play_as3.api {
 					var infoMessage:API_GotUserInfo =/*as*/ msg as API_GotUserInfo;
 					var userObject:Object = {};
 					for each(var infoEntry:InfoEntry  in infoMessage.infoEntries){
-						trace(infoEntry.key+ "="+ infoEntry.value)
 						userObject[infoEntry.key] = infoEntry.value;
 					}
 					T.updateUser(infoMessage.userId, userObject);
@@ -312,13 +291,7 @@ package come2play_as3.api {
         		return;
         	}
         	if (doMsg is API_DoStoreState) {
-        		if (isInTransaction()){
-        			trace("push message")
-        			doStoreQueue.push(doMsg)
-        		}else{
-        			trace("send message")
-        			super.sendMessage(doMsg);
-        		}
+        		super.sendMessage(doMsg);
         		return;
         	}        	
 			      	

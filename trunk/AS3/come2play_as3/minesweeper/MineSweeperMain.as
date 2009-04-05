@@ -120,7 +120,10 @@ import flash.utils.*;
 		{
 
 		}
+		private var canSendMove:Boolean = false;
 		private function computerMakeMove(ev:TimerEvent):void{
+			if(!canSendMove)	return;
+			canSendMove = false;
 			var computerMove:ComputerMove = mineSweeperLogic.getComputerMove();
 			if(computerMove == null) return;
 			var key:Object ={xPos:computerMove.xPos,yPos:computerMove.yPos,playerId:-1}
@@ -240,6 +243,7 @@ import flash.utils.*;
 				}
 				doAllStoreState([UserEntry.create(serverEntry.key,null,false)]);
 			}else if (serverEntry.value is ComputerMove){
+				canSendMove = true;
 				if(allPlayerIds.indexOf(-1) == -1) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" stored a computer move and not a player move")
 				var computerMove:ComputerMove = serverEntry.value as ComputerMove;
 				newMove = mineSweeperLogic.addComputerMove(computerMove);

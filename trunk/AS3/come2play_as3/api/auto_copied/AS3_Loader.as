@@ -113,8 +113,11 @@ public final class AS3_Loader
 			failureHandler = function (ev:Event):void {criticalError(ev,url as String);};			
 		}	
 		AS3_vs_AS2.myAddEventListener(dispatcher,Event.COMPLETE, function(ev:Event):void{
-			if(doLoadTrace())	tmpTrace("successfully loaded",url,"Event data :",ev, 
-				ev!=null && ev.target!=null && ev.target.hasOwnProperty("data") ? (ev.target.data is String ? StaticFunctions.cutString(ev.target.data as String,EVENT_DATA_DEBUG_LEN) : ev.target.data) : "no ev.target.data");
+			if (doLoadTrace())	
+				tmpTrace("successfully loaded",url,"Event data :",ev, 
+					ev!=null && ev.target!=null && ev.target.hasOwnProperty("data") &&
+					// if you load a SWF, then .data is a very long $ByteArray$ "arr":[67,87...] 
+					ev.target.data is String ? StaticFunctions.cutString(ev.target.data as String,EVENT_DATA_DEBUG_LEN)  : "no String ev.target.data");
 			successHandler(ev);
 		});
 		if(progressHandler !=null)

@@ -910,8 +910,8 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 			chat properties
 		-->
 		<chat>
-			<total_chat_height type="int">150</total_chat_height>
-			<chat_output_height type="int">90</chat_output_height> 	<!-- there has to be at least 55 px difference -->
+			<total_chat_height type="int">100</total_chat_height>
+			<chat_output_height type="int">45</chat_output_height> 	<!-- there has to be at least 55 px difference -->
 			<user_list_width type="int">150</user_list_width>
 			
 			<max_content_height type="int">1000</max_content_height>   <!-- this makes sure the actual graphics that is
@@ -966,7 +966,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 			
 			<ui>
 				<is_hide_avatar_in_chat_list type="boolean">false</is_hide_avatar_in_chat_list>
-				<is_align_vertical type="boolean">true</is_align_vertical>
+				<is_align_vertical type="boolean">false</is_align_vertical>
 				<is_with_emoticons type="boolean">true</is_with_emoticons>
 			</ui>
 			

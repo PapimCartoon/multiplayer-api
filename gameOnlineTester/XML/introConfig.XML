@@ -52,7 +52,7 @@
 	<!--if this value is not empty you must popout your game to play-->
 	<popoutURL></popoutURL>
 	<!--if this value is not empty the intro screen will do the action specefied-->
-	<autoMatchType></autoMatchType>
+	<autoMatchType>quickStart</autoMatchType>
 
 
 	<inviteAutoMatch>

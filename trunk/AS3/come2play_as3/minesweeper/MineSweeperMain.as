@@ -89,7 +89,7 @@ import flash.utils.*;
 			myUserId = T.custom(CUSTOM_INFO_KEY_myUserId, null) as int;
 			stageX = T.custom(CUSTOM_INFO_KEY_gameStageX, null) as int;
 			stageY = T.custom(CUSTOM_INFO_KEY_gameStageY, null) as int;
-			computerMoveTimer.delay = T.custom("ComputerSpeed",2500) as int;
+			computerMoveTimer.delay = T.custom("ComputerSpeed",2000) as int;
 			for each(var info:InfoEntry in infoEntries){
 				if(info.key == CUSTOM_INFO_KEY_gameWidth){
 					graphics.width = T.custom(CUSTOM_INFO_KEY_gameWidth,int(graphics.width)) as int;
@@ -123,17 +123,18 @@ import flash.utils.*;
 		private var canSendMove:Boolean = false;
 		private function computerMakeMove(ev:TimerEvent):void{
 			if(!canSendMove)	return;
-			canSendMove = false;
 			var computerMove:ComputerMove = mineSweeperLogic.getComputerMove();
 			if(computerMove == null) return;
 			var key:Object ={xPos:computerMove.xPos,yPos:computerMove.yPos,playerId:-1}
 			var serverKey:Object = {xPos:computerMove.xPos,yPos:computerMove.yPos}
 			if(allowMoves){
+				canSendMove = false;
 				doStoreState([UserEntry.create(key,computerMove,false)],[RevealEntry.create(serverKey,null,1)]);
 			}
 		}
 		override public function gotMatchStarted(allPlayerIds:Array, finishedPlayerIds:Array, serverEntries:Array):void
 		{
+			canSendMove = true;
 			isPlaying = true;
 			this.allPlayerIds = allPlayerIds.concat();
 			loadServerEntries = null;

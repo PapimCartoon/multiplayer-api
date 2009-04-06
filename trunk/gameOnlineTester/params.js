@@ -158,11 +158,11 @@ paramArr.push( {htmlName:"gameStageX",xmlName:"override_config.game_parameters.g
 paramArr.push( {htmlName:"gameStageY",xmlName:"override_config.game_parameters.gameStageY",type:"int"});
 
 paramArr.push( {htmlName:"gameSwf",xmlName:"override_config.game_parameters.board_swf_url",type:"string"});
-
-
+paramArr.push( {htmlName:"prefix",xmlName:"override_config.game_parameters.prefix_local_connection_id",type:"string"});
 
 paramArr.push( {htmlName:"javaToConnect",type:"string"});
 paramArr.push( {htmlName:"isSmartAutoMatch",type:"string"});
+
 
 
 paramArr.push( {htmlName:"swfWidth",type:"string"});

@@ -143,20 +143,7 @@ public final class TictactoeMain extends ClientGameAPI {
 			userMadeHisMove( TictactoeSquare.create(row, col) );
 		}
 	}
-
-	private function loadLogo():void {
-		for each (var square:TictactoeSquare in allCells) {
-			getSquareGraphic(square).gotLogo(logoFullUrl);
-		}	
-	}	
-	private function replaceSymbol(color:int, symbolUrl:String):void {		
-		var thisObj:TictactoeMain = this; // for AS2
-		cacheImage(symbolUrl, graphics,
-			function (isSucc:Boolean):void {
-				if (isSucc) thisObj.replaceCachedSymbol(color, symbolUrl);
-			});
-	}
-	private function replaceCachedSymbol(color:int, symbolUrl:String):void {
+	private function replaceSymbol(color:int, symbolUrl:String):void {
 		for each (var cell:TictactoeSquare in allCells) {
 			getSquareGraphic(cell).gotSymbol(color,symbolUrl);
 		}		
@@ -198,12 +185,10 @@ public final class TictactoeMain extends ClientGameAPI {
 		var newLogoFullUrl:String = 
 			AS3_vs_AS2.asString(T.custom(CUSTOM_INFO_KEY_logoFullUrl, null));
 		if (logoFullUrl!=newLogoFullUrl) {
-			logoFullUrl = newLogoFullUrl;
-			var thisObj:TictactoeMain = this; // for AS2
-			cacheImage(logoFullUrl, graphics,
-				function (isSucc:Boolean):void { 
-					if (isSucc) thisObj.loadLogo(); 
-				});
+			logoFullUrl = newLogoFullUrl;			
+			for each (var square:TictactoeSquare in allCells) {
+				getSquareGraphic(square).gotLogo(logoFullUrl);
+			}	
 		}
 			
 		

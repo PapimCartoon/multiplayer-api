@@ -117,24 +117,6 @@ import come2play_as2.api.*;
 		 * and doStoreState if and only if you are not inside a transaction.
 		 * 
 		 * Animations may be displayed only inside a transaction.
-		 * 
-		 * About loading images:
-		 * Flash caches loaded images, but only after loading is completed.
-		 * So, if you want to use the same image in many places
-		 * (e.g., place some custom image on all the pieces)
-		 * then you should first call cacheImage,
-		 * and only in the  onLoaded  function load the image to all the pieces.
-		 * Function cacheImage starts an animation, and when the image is loaded 
-		 * (or failed to load) then the animation is ended.
-		 * The image will be stored in some 
-		 * newly created invisible child in someMovieClip. 
-		 * E.g.,
-		 * cacheImage( imageUrl, someMovieClip, 
-		 * 		function (isSuccess:Boolean):Void {
-		 * 			if (isSuccess) {
-		 * 				// load the image in all the pieces
-		 * 			}
-		 * 		});
 		 */		 
         public function animationStarted(animationName:String):Void {
         	checkInsideTransaction();
@@ -148,20 +130,7 @@ import come2play_as2.api.*;
         	if (!wasRemoved)
         		throwError("Called animationEnded with animationName="+animationName+" that is not a running animation!");
         	sendFinishedCallback();        	        	
-        }
-		public function cacheImage(imageUrl:String, someMovieClip:MovieClip,
-					onLoaded:Function):Void {		
-			//animationStarted("cacheImage"); - loading may fail or take a long time, so I prefer not to use it as an animation
-			var thisObj:BaseGameAPI = this; // for AS2
-			var forCaching:MovieClip =
-				AS3_vs_AS2.loadMovieIntoNewChild(someMovieClip, imageUrl, 
-					function (isSucc:Boolean):Void {
-						onLoaded(isSucc);
-						//thisObj.animationEnded("cacheImage");				
-					});	
-			AS3_vs_AS2.setVisible(forCaching, false);		
-		}
-		
+        }		
 		
 		/****************************
 		 * Below this line we only have private and overriding methods.
@@ -185,7 +154,7 @@ import come2play_as2.api.*;
         }
         private function updateMirorServerState(serverEntries:Array/*ServerEntry*/):Void
         {
-        	var p191:Number=0; for (var i191:String in serverEntries) { var serverEntry:ServerEntry = serverEntries[serverEntries.length==null ? i191 : p191]; p191++;
+        	var p160:Number=0; for (var i160:String in serverEntries) { var serverEntry:ServerEntry = serverEntries[serverEntries.length==null ? i160 : p160]; p160++;
         	    serverStateMiror.addEntry(serverEntry);	
         	}     	
         }
@@ -223,7 +192,7 @@ import come2play_as2.api.*;
 					var customInfo:API_GotCustomInfo = API_GotCustomInfo(msg);
 					var i18nObj:Object = {};
 					var customObj:Object = {};
-					var p229:Number=0; for (var i229:String in customInfo.infoEntries) { var entry:InfoEntry = customInfo.infoEntries[customInfo.infoEntries.length==null ? i229 : p229]; p229++;
+					var p198:Number=0; for (var i198:String in customInfo.infoEntries) { var entry:InfoEntry = customInfo.infoEntries[customInfo.infoEntries.length==null ? i198 : p198]; p198++;
 						var key:String = entry.key;
 						var value:Object = entry.value;
 						if (key==API_Message.CUSTOM_INFO_KEY_i18n) {
@@ -244,7 +213,7 @@ import come2play_as2.api.*;
 				}else if(msg instanceof API_GotUserInfo){
 					var infoMessage:API_GotUserInfo =API_GotUserInfo( msg);
 					var userObject:Object = {};
-					var p250:Number=0; for (var i250:String in infoMessage.infoEntries) { var infoEntry:InfoEntry = infoMessage.infoEntries[infoMessage.infoEntries.length==null ? i250 : p250]; p250++;
+					var p219:Number=0; for (var i219:String in infoMessage.infoEntries) { var infoEntry:InfoEntry = infoMessage.infoEntries[infoMessage.infoEntries.length==null ? i219 : p219]; p219++;
 						userObject[infoEntry.key] = infoEntry.value;
 					}
 					T.updateUser(infoMessage.userId, userObject);

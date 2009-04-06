@@ -121,24 +121,6 @@ package come2play_as3.api {
 		 * and doStoreState if and only if you are not inside a transaction.
 		 * 
 		 * Animations may be displayed only inside a transaction.
-		 * 
-		 * About loading images:
-		 * Flash caches loaded images, but only after loading is completed.
-		 * So, if you want to use the same image in many places
-		 * (e.g., place some custom image on all the pieces)
-		 * then you should first call cacheImage,
-		 * and only in the  onLoaded  function load the image to all the pieces.
-		 * Function cacheImage starts an animation, and when the image is loaded 
-		 * (or failed to load) then the animation is ended.
-		 * The image will be stored in some 
-		 * newly created invisible child in someMovieClip. 
-		 * E.g.,
-		 * cacheImage( imageUrl, someMovieClip, 
-		 * 		function (isSuccess:Boolean):void {
-		 * 			if (isSuccess) {
-		 * 				// load the image in all the pieces
-		 * 			}
-		 * 		});
 		 */		 
         public function animationStarted(animationName:String):void {
         	checkInsideTransaction();
@@ -152,20 +134,7 @@ package come2play_as3.api {
         	if (!wasRemoved)
         		throwError("Called animationEnded with animationName="+animationName+" that is not a running animation!");
         	sendFinishedCallback();        	        	
-        }
-		public function cacheImage(imageUrl:String, someMovieClip:MovieClip,
-					onLoaded:Function):void {		
-			//animationStarted("cacheImage"); - loading may fail or take a long time, so I prefer not to use it as an animation
-			var thisObj:BaseGameAPI = this; // for AS2
-			var forCaching:DisplayObject =
-				AS3_vs_AS2.loadMovieIntoNewChild(someMovieClip, imageUrl, 
-					function (isSucc:Boolean):void {
-						onLoaded(isSucc);
-						//thisObj.animationEnded("cacheImage");				
-					});	
-			AS3_vs_AS2.setVisible(forCaching, false);		
-		}
-		
+        }		
 		
 		/****************************
 		 * Below this line we only have private and overriding methods.

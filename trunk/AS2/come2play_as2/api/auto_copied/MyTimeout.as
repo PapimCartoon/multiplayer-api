@@ -1,7 +1,7 @@
 import come2play_as2.api.auto_copied.*;
 	class come2play_as2.api.auto_copied.MyTimeout 
 	{
-		private var timeout_id:Number = -1;
+		private var timeout_id:Object = null;
 		public var name:String;
 		public function MyTimeout(name:String)	{
 			this.name = name;
@@ -18,10 +18,10 @@ import come2play_as2.api.auto_copied.*;
 			}, milliseconds);
 		}
 		private function clearId():Void {
-			timeout_id = -1;			
+			timeout_id = null;			
 		}
 		public function clear():Void {
-			if (timeout_id!=-1) {
+			if (timeout_id!=null) {
 				ErrorHandler.myClearTimeout(name, timeout_id);
 				clearId()
 			}	

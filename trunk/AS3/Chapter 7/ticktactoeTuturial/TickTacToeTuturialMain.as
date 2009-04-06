@@ -75,19 +75,6 @@
 			doAllEndMatch(finishedPlayers);
 		}
 		/**
-		*if the image did not cache successfully,it removes it from the loading
-		*
-		*@param loaded was the image cached successfully
-		*/
-		private function imageLoaded(loaded:Boolean):void
-		{
-			if(!loaded)
-			{
-				gameLogic.LogoUrl = "";
-				userDataArray = new Array();
-			}
-		}
-		/**
 		*A function triggered by a server message passing custom info to the game
 		*
 		*@param infoEntries an Array of InfoEntry elements
@@ -98,7 +85,6 @@
 			{
 				if(infoEntry.key == USER_INFO_KEY_avatar_url)
 				{
-					cacheImage(infoEntry.value as String,graphics,imageLoaded);
 					userDataArray.push(new UserData(infoEntry.value as String,userId))
 				}
 			}
@@ -116,7 +102,6 @@
 			gameLogic.stageHeight = T.custom(CUSTOM_INFO_KEY_gameHeight,0) as int;
 			gameLogic.LogoUrl = T.custom(CUSTOM_INFO_KEY_logoFullUrl,"") as String;
 			myUserId = T.custom(CUSTOM_INFO_KEY_myUserId,null) as int;
-			cacheImage(T.custom(CUSTOM_INFO_KEY_logoFullUrl,"") as String,graphics,imageLoaded);
 			
 		}
 		/**

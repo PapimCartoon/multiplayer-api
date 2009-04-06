@@ -1,5 +1,7 @@
 package come2play_as3.api.auto_copied
-{	
+{
+	import flash.utils.Dictionary;
+		
 public final class ErrorHandler
 {
 	public function toString():String { // we put in the traces new ErrorHandler()
@@ -49,10 +51,10 @@ public final class ErrorHandler
 	 * If your code has try&catch, then in the catch use handleError.
 	 * 
 	 */ 
-	private static var ongoingIntervals:Object = {};//also printed in traces
-	private static var ongoingTimeouts:Object = {};//also printed in traces	
-	public static function myTimeout(zoneName:String, func:Function, milliseconds:int):uint {
-		var timeout_id:uint;
+	private static var ongoingIntervals:Dictionary = new Dictionary();//also printed in traces
+	private static var ongoingTimeouts:Dictionary = new Dictionary();//also printed in traces	
+	public static function myTimeout(zoneName:String, func:Function, milliseconds:int):Object {
+		var timeout_id:Object;
 		var newFunc:Function = wrapWithCatch(zoneName, 
 				function (/*<InAS3>*/...args/*</InAS3>*/):void  { 
 					modifyOngoing(false, true, zoneName, timeout_id, "myTimeout ticked",milliseconds);
@@ -65,21 +67,21 @@ public final class ErrorHandler
 		modifyOngoing(true, true, zoneName, timeout_id, "myTimeout set", milliseconds);
 		return timeout_id;			
 	}
-	public static function myInterval(zoneName:String, func:Function, milliseconds:int):uint {
-		var interval_id:uint = AS3_vs_AS2.unwrappedSetInterval(wrapWithCatch(zoneName, func), milliseconds);
+	public static function myInterval(zoneName:String, func:Function, milliseconds:int):Object {
+		var interval_id:Object = AS3_vs_AS2.unwrappedSetInterval(wrapWithCatch(zoneName, func), milliseconds);
 		modifyOngoing(true, false, zoneName, interval_id, "myInterval set", milliseconds);
 		return interval_id;		
 	}
-	public static function myClearTimeout(zoneName:String, id:uint):void {
+	public static function myClearTimeout(zoneName:String, id:Object):void {
 		modifyOngoing(false, true, zoneName, id, "myTimeout cleared", -1);
 		AS3_vs_AS2.unwrappedClearTimeout(id);			
 	}
-	public static function myClearInterval(zoneName:String, id:uint):void {
+	public static function myClearInterval(zoneName:String, id:Object):void {
 		modifyOngoing(false, false, zoneName, id, "myInterval cleared", -1);
 		AS3_vs_AS2.unwrappedClearInterval(id);			
 	}		
 	public static var TRACE_TIMERS:Boolean = true;
-	private static function modifyOngoing(isAdd:Boolean, isTimeout:Boolean, zoneName:String, id:uint, reason:String, milliseconds:int):void {
+	private static function modifyOngoing(isAdd:Boolean, isTimeout:Boolean, zoneName:String, id:Object, reason:String, milliseconds:int):void {
 		var arr:Object = isTimeout ? ongoingTimeouts : ongoingIntervals;
 		if (isAdd) {
 			StaticFunctions.assert(arr[id]==null, ["Internal error! already added id=",id]);

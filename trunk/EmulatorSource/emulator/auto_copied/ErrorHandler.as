@@ -6,10 +6,12 @@
 // We do not share the code because the flash goes crazy if it loads to SWFs files with classes of identical names and packages.
 // So we changed the package name when we copied the directory 'auto_copied'
 package emulator.auto_copied
-{	
+{
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	import flash.utils.Dictionary;
+		
 public final class ErrorHandler
 {
 	public function toString():String { // we put in the traces new ErrorHandler()
@@ -18,11 +20,11 @@ public final class ErrorHandler
 	public static function getOngoingTimers():String {
 		var res:Array = [];
 		res.push("ERROR REPORT FROM:");
-		res.push(ERROR_REPORT_PREFIX);
-		res.push("My stack traces:");	
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		res.push(ERROR_REPORT_PREFIX);
+		res.push("My stack traces:");	
 		res.push( getStackTraces() );
 		res.push("\n");
 					
@@ -31,11 +33,11 @@ public final class ErrorHandler
 			res.push( "\t"+JSON.stringify(arr1) );
 		}
 		res.push("\n");
-		res.push("My ongoingTimeouts:\n");
-		for each (var arr2:Array in ongoingTimeouts) {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		res.push("My ongoingTimeouts:\n");
+		for each (var arr2:Array in ongoingTimeouts) {
 			res.push( "\t"+JSON.stringify(arr2) );
 		}
 		res.push("\n");		
@@ -44,11 +46,11 @@ public final class ErrorHandler
 	public static function getStackTraces():String {
 		return "\t"+my_stack_trace.join(",\n\t");
 	}
-	
-	
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	
+	
 	// returns the bug_id (or -1 if we already reported an error)
 	public static function alwaysTraceAndSendReport(msg:String, args:Object):int {
 		StaticFunctions.alwaysTrace([msg, args]);
@@ -57,11 +59,11 @@ public final class ErrorHandler
 	
 	/**
 	 * Error handling should be done in one central place.
-	 * In flash however there is a lot of asynchronous code in:
-	 *  setTimeout
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	 * In flash however there is a lot of asynchronous code in:
+	 *  setTimeout
 	 *  setInterval
 	 *  addEventListener and removeEventListener
 	 *  and if you have code on keyframes.
@@ -70,50 +72,50 @@ public final class ErrorHandler
 	 * 
 	 * If your code has try&catch, then in the catch use handleError.
 	 * 
-	 */ 
-	private static var ongoingIntervals:Object = {};//also printed in traces
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	private static var ongoingTimeouts:Object = {};//also printed in traces	
-	public static function myTimeout(zoneName:String, func:Function, milliseconds:int):uint {
-		var timeout_id:uint;
+	 */ 
+	private static var ongoingIntervals:Dictionary = new Dictionary();//also printed in traces
+	private static var ongoingTimeouts:Dictionary = new Dictionary();//also printed in traces	
+	public static function myTimeout(zoneName:String, func:Function, milliseconds:int):Object {
+		var timeout_id:Object;
 		var newFunc:Function = wrapWithCatch(zoneName, 
 				function (/*<InAS3>*/...args/*</InAS3>*/):void  { 
 					modifyOngoing(false, true, zoneName, timeout_id, "myTimeout ticked",milliseconds);
 					func.apply(null, 
 						/*<InAS3>*/args/*</InAS3>*/
-						/*<InAS2>arguments</InAS2>*/
-					);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+						/*<InAS2>arguments</InAS2>*/
+					);
 				});
 		timeout_id = AS3_vs_AS2.unwrappedSetTimeout(newFunc, milliseconds);
 		modifyOngoing(true, true, zoneName, timeout_id, "myTimeout set", milliseconds);
 		return timeout_id;			
 	}
-	public static function myInterval(zoneName:String, func:Function, milliseconds:int):uint {
-		var interval_id:uint = AS3_vs_AS2.unwrappedSetInterval(wrapWithCatch(zoneName, func), milliseconds);
+	public static function myInterval(zoneName:String, func:Function, milliseconds:int):Object {
+		var interval_id:Object = AS3_vs_AS2.unwrappedSetInterval(wrapWithCatch(zoneName, func), milliseconds);
 		modifyOngoing(true, false, zoneName, interval_id, "myInterval set", milliseconds);
-		return interval_id;		
-	}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	public static function myClearTimeout(zoneName:String, id:uint):void {
+		return interval_id;		
+	}
+	public static function myClearTimeout(zoneName:String, id:Object):void {
 		modifyOngoing(false, true, zoneName, id, "myTimeout cleared", -1);
 		AS3_vs_AS2.unwrappedClearTimeout(id);			
 	}
-	public static function myClearInterval(zoneName:String, id:uint):void {
+	public static function myClearInterval(zoneName:String, id:Object):void {
 		modifyOngoing(false, false, zoneName, id, "myInterval cleared", -1);
 		AS3_vs_AS2.unwrappedClearInterval(id);			
 	}		
-	public static var TRACE_TIMERS:Boolean = true;
-	private static function modifyOngoing(isAdd:Boolean, isTimeout:Boolean, zoneName:String, id:uint, reason:String, milliseconds:int):void {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	public static var TRACE_TIMERS:Boolean = true;
+	private static function modifyOngoing(isAdd:Boolean, isTimeout:Boolean, zoneName:String, id:Object, reason:String, milliseconds:int):void {
 		var arr:Object = isTimeout ? ongoingTimeouts : ongoingIntervals;
 		if (isAdd) {
 			StaticFunctions.assert(arr[id]==null, ["Internal error! already added id=",id]);
@@ -122,11 +124,11 @@ public final class ErrorHandler
 			var info:Array = arr[id];
 			StaticFunctions.assert(info!=null && info[0]==zoneName, ["Trying to ",reason, " zoneName=",zoneName," but there is no such zoneName! info=", info]);
 			milliseconds = info[1];
-			delete arr[id];
-		}			
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			delete arr[id];
+		}			
 		if (TRACE_TIMERS) StaticFunctions.tmpTrace([reason, zoneName, id, milliseconds]);
 	}
 				
@@ -135,11 +137,11 @@ public final class ErrorHandler
 	private static function stackTrace(zoneName:String, func:Function, args:Array):Object {
 		var res:Object = null;			
 		
-		var stack_trace_len:int = my_stack_trace.length;
-		my_stack_trace.push(["args=",args," zoneName=",zoneName]); // I couldn't find a way to get the function name (describeType(func) only returns that the method is a closure)
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		var stack_trace_len:int = my_stack_trace.length;
+		my_stack_trace.push(["args=",args," zoneName=",zoneName]); // I couldn't find a way to get the function name (describeType(func) only returns that the method is a closure)
 		
 		var wasError:Boolean = false;
 		res = func.apply(null, args); 
@@ -148,11 +150,11 @@ public final class ErrorHandler
 			//but I got "undefined" errors:
 			//		undefined
 			//			at come2play_as3.util::General$/stackTrace()
-			//			at come2play_as3.util::General$/catchErrors() 
-		if (!didReportError && my_stack_trace.length!=stack_trace_len) 
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			//			at come2play_as3.util::General$/catchErrors() 
+		if (!didReportError && my_stack_trace.length!=stack_trace_len) 
 			alwaysTraceAndSendReport("BAD stack behaviour", my_stack_trace);
 		return res;		
 	}			
@@ -161,11 +163,11 @@ public final class ErrorHandler
 		return function (/*<InAS3>*/...args/*</InAS3>*/):void { 
 			catchErrors(longerName, func, 
 					/*<InAS3>*/args/*</InAS3>*/
-					/*<InAS2>arguments</InAS2>*/
-				);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+					/*<InAS2>arguments</InAS2>*/
+				);
 		};
 	}	
 	public static function catchErrors(zoneName:String, func:Function, args:Array):Object {
@@ -174,11 +176,11 @@ public final class ErrorHandler
 			res = stackTrace(zoneName, func, args);
 		} catch (err:Error) { handleError(err, args); }		
 		return res; 			
-	}
-	public static var ERROR_REPORT_PREFIX:String = "DISTRIBUTION"; // where did the error come from?
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	}
+	public static var ERROR_REPORT_PREFIX:String = "DISTRIBUTION"; // where did the error come from?
 	public static function handleError(err:Error, obj:Object):void {
 		alwaysTraceAndSendReport("handleError: "+AS3_vs_AS2.error2String(err),[" catching-arguments=",obj]);
 	}	
@@ -187,11 +189,11 @@ public final class ErrorHandler
 	public static var didReportError:Boolean = false; // we report only 1 error (usually 1 error leads to others)
 	// If the container has a bug, then it adds the traces of the game, reports to ASP, and send to java. 
 	// If the game has a bug, then it sends DoAllFoundHacker (which cause the container to send a bug report)  
-	public static var SEND_BUG_REPORT:Function = null; 
-	private static function sendReport(errStr:String):int {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	public static var SEND_BUG_REPORT:Function = null; 
+	private static function sendReport(errStr:String):int {
 		if (didReportError) return -1;
 		didReportError = true;
 		
@@ -200,11 +202,11 @@ public final class ErrorHandler
 		try {	
 			var err:Error = new Error();
 			var stackTraces:String = AS3_vs_AS2.myGetStackTrace(err); // null in the release version
-			if (stackTraces!=null) StaticFunctions.alwaysTrace(["Catching point stack trace=",err]);
-							
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			if (stackTraces!=null) StaticFunctions.alwaysTrace(["Catching point stack trace=",err]);
+							
 			StaticFunctions.alwaysTrace(["sendReport for error=", errStr," SEND_BUG_REPORT=",SEND_BUG_REPORT]);
 			
 			var errMessage:String = 
@@ -213,11 +215,11 @@ public final class ErrorHandler
 				ERROR_REPORT_PREFIX + " " +
 				errStr;
 			
-			if (SEND_BUG_REPORT!=null)
-				SEND_BUG_REPORT(bug_id, errMessage);	
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			if (SEND_BUG_REPORT!=null)
+				SEND_BUG_REPORT(bug_id, errMessage);	
 				
 			// we should show the error after we call sendMultipartImage (so we send the image without the error window)
 			if (SHOULD_SHOW_ERRORS) {
@@ -226,11 +228,11 @@ public final class ErrorHandler
 				StaticFunctions.setClipboard(msg);
 			}		
 		} catch (err:Error) {
-			AS3_vs_AS2.showError("!!!!!ERROR!!!! in sendReport:"+AS3_vs_AS2.error2String(err));
-		}			
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			AS3_vs_AS2.showError("!!!!!ERROR!!!! in sendReport:"+AS3_vs_AS2.error2String(err));
+		}			
 		return bug_id;
 	}
 }

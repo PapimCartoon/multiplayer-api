@@ -195,18 +195,30 @@ public final class AS3_vs_AS2
 	 			StaticFunctions.showError("LocalConnection.onStatus error="+event+" client="+client+" client's class="+getClassName(client)+". Are you sure you are running this game inside the emulator?)");		
  		}
   	}
-  	// use ErrorHandler.myTimeout and myInterval because they have proper error handling
-	public static function unwrappedSetTimeout(func:Function, in_milliseconds:int):int {	
-		return setTimeout(func,in_milliseconds);
+  	// use ErrorHandler.myTimeout and myInterval because they have proper error handling  	
+	public static function unwrappedSetTimeout(func:Function, in_milliseconds:int):Object {
+		return createTimer(func, in_milliseconds,1);
+		//return setTimeout(func,in_milliseconds);
 	}
-	public static function unwrappedSetInterval(func:Function, in_milliseconds:int):int {	
-		return setInterval(func,in_milliseconds);
+	public static function unwrappedSetInterval(func:Function, in_milliseconds:int):Object {
+		return createTimer(func, in_milliseconds,0);	
+		//return setInterval(func,in_milliseconds);
 	}
-	public static function unwrappedClearInterval(intervalId:int):void {
-		clearInterval(intervalId);
+	private static function createTimer(func:Function, in_milliseconds:int, repeat:int):Object {
+		var t:Timer = new Timer(in_milliseconds,repeat);
+		myAddEventListener(t,TimerEvent.TIMER, function (ev:TimerEvent):void { func(); });
+		t.start();
+		return t;		
 	}
-	public static function unwrappedClearTimeout(timeoutId:int):void {
-		clearTimeout(timeoutId);
+	public static function unwrappedClearInterval(intervalId:Object):void {
+		var t:Timer = intervalId as Timer;
+		StaticFunctions.assert(t!=null,["You must pass a Timer object: ",intervalId]);
+		t.stop();
+		//clearInterval(intervalId);
+	}
+	public static function unwrappedClearTimeout(timeoutId:Object):void {
+		unwrappedClearInterval(timeoutId);
+		//clearTimeout(timeoutId);
 	}
 	public static function myGetStackTrace(err:Error):String {
 		return err.getStackTrace();
@@ -250,11 +262,12 @@ public final class AS3_vs_AS2
 		AS3_Loader.loadImage(url, function (event:Event):void {
 				if (TRACE_LOADING) StaticFunctions.storeTrace(["Done loading url=",url]);
 				var loaderInfo:LoaderInfo = event.target as LoaderInfo;	
-				newMovie.addChild(loaderInfo.content);
-				if (onLoaded!=null) onLoaded(true);
+				var newChild:DisplayObject = loaderInfo.content;
+				newMovie.addChild(newChild);
+				if (onLoaded!=null) onLoaded(true, newChild);
 			}, function (event:Event):void {
 		        if (TRACE_LOADING) StaticFunctions.storeTrace(["Error in loading movie from url=",url," event=",event]);
-		        if (onLoaded!=null) onLoaded(false);
+		        if (onLoaded!=null) onLoaded(false, null);
 		    },null, context);
 	}
 	public static function scaleMovie(graphics:DisplayObject, x_percentage:int, y_percentage:int):void {
@@ -300,7 +313,7 @@ public final class AS3_vs_AS2
 			addKeyboardListenerStageReady(graphics, func);
 		else {
 			trace("Called addKeyboardListener, but stage is still null, so we set an interval until stage is ready");
-			var intervalId:int = ErrorHandler.myInterval("addKeyboardListener", 
+			var intervalId:Object = ErrorHandler.myInterval("addKeyboardListener", 
 				function ():void {
 					if (graphics.stage!=null) {
 						trace("stage is ready, so we now call addKeyboardListener");

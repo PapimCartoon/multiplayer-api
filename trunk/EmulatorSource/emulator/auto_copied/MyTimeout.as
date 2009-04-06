@@ -12,7 +12,7 @@ package emulator.auto_copied
 
 	public final class MyTimeout 
 	{
-		private var timeout_id:int = -1;
+		private var timeout_id:Object = null;
 		public var name:String;
 		public function MyTimeout(name:String)	{
 			this.name = name;
@@ -32,13 +32,13 @@ package emulator.auto_copied
 			}, milliseconds);
 		}
 		private function clearId():void {
-			timeout_id = -1;			
+			timeout_id = null;			
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
 		}
 		public function clear():void {
-			if (timeout_id!=-1) {
+			if (timeout_id!=null) {
 				ErrorHandler.myClearTimeout(name, timeout_id);
 				clearId()
 			}	

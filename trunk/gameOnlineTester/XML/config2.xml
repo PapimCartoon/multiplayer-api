@@ -172,7 +172,7 @@ Not used by the graphics yet (but should be displayed):
 		
 		<entry><key>rewardPageLink</key><value>"www.google.com/aaa.asp?"</value></entry>
 		
-		<entry><key>banned_words_regexp</key><value>"fuck|suck|ass"</value></entry>
+		<entry><key>banned_words_regexp</key><value>"&#102;uck|suck|ass"</value></entry>
 		
 		<!-- when doing local testing, I don't want popups, or msgs when I press Control		
 		<entry><key>enablePopUps</key><value>false</value></entry>

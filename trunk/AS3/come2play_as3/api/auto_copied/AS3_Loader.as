@@ -12,7 +12,8 @@ public final class AS3_Loader
 		StaticFunctions.tmpTrace(["AS3_Loader: ",args]);
 	}
 	
-	private static var imageCache:Dictionary = new Dictionary();
+	private static var imageCache:Dictionary/*imageUrl->ByteArray*/ = new Dictionary();
+	private static var url2RequestArray:Dictionary/*imageUrl->ImageLoadRequest[]*/ = new Dictionary();
 	public static var imageLoadingRetry:int = 1;
 	
 	
@@ -32,8 +33,6 @@ public final class AS3_Loader
 	public static function loadText(urlRequest:URLRequest,successHandler:Function = null,failureHandler:Function = null,progressHandler:Function = null):void {
 		loadURL(urlRequest,successHandler,failureHandler,progressHandler)
 	}
-	private static var imagesInLoad:Array = new Array();
-	private static var imagesInQueue:Array = new Array();	
 	public static function loadImage(imageUrl:String,successHandler:Function = null,failureHandler:Function = null,progressHandler:Function = null,context:LoaderContext = null):void {
 		StaticFunctions.assert(imageUrl!="",["can't load a blank image"]);
 		if (failureHandler==null) {
@@ -44,38 +43,60 @@ public final class AS3_Loader
 		if(successHandler == null){
 			successHandler = traceHandler
 		}	
-		if((imageCache[imageUrl] == null) && (imagesInLoad.indexOf(imageUrl)==-1)){
-			imagesInLoad.push(imageUrl)
-			if((context ==null) || (!context.checkPolicyFile)){
-				loadURL(imageUrl,function(ev:Event):void{
-				imageCache[imageUrl] = ev;
-				imagesInLoad.splice(imagesInLoad.indexOf(imagesInLoad),1);
-				handleExistingImage(ev,successHandler,failureHandler,context);
-				for(var i:int=0;i<imagesInQueue.length;i++){
-					if(imagesInQueue[i].imageUrl == imageUrl){
-						handleExistingImage(ev,imagesInQueue[i].successHandler,imagesInQueue[i].failureHandler,context);
-						imagesInQueue.splice(i,1);
-						i--;
-					}
-				}
-				},failureHandler,progressHandler,context);
-			}else{
-				loadURL(imageUrl,successHandler,failureHandler,progressHandler,context);
+		
+		
+		if (context!=null && context.checkPolicyFile) {
+			// we do not cache graphics and game
+			loadURL(imageUrl,successHandler,failureHandler,progressHandler,context);
+			return;
+		}
+		
+		// caching mechanism
+		if (imageCache[imageUrl] != null) {
+			// image already finished loading			
+			handleExistingImage(imageCache[imageUrl],successHandler,failureHandler,context);
+		} else {
+			// image not loaded yet
+			var loadRequest:ImageLoadRequest = new ImageLoadRequest();
+			loadRequest.successHandler = successHandler;
+			loadRequest.failureHandler = failureHandler;
+			loadRequest.context = context;
+			
+			var requestArray:Array/*ImageLoadRequest*/ = url2RequestArray[imageUrl];
+			if (requestArray==null) {
+				// the first time we try to load imageUrl
+				requestArray = [];
+				url2RequestArray[imageUrl] = requestArray;		
+				loadURL(imageUrl,
+					// success function
+					function(ev:Event):void {
+						var loadedImage:URLLoader = ev.target as URLLoader;					
+						StaticFunctions.assert(loadedImage!=null, ["loadedImage is null", imageUrl, ev]);
+						var byteArray:ByteArray = loadedImage.data as ByteArray;
+						StaticFunctions.assert(byteArray!=null && byteArray.length>0, ["ByteArray of loadedImage is null or empty", imageUrl, ev]);
+						imageCache[imageUrl] = byteArray;
+						
+						for each (var req:ImageLoadRequest in requestArray) {
+							handleExistingImage(byteArray,req.successHandler,req.failureHandler,req.context);						
+						}
+						delete url2RequestArray[imageUrl];
+					},
+					// failure function
+					function(ev:Event):void {
+						for each (var req:ImageLoadRequest in requestArray) {
+							req.failureHandler(ev);						
+						}
+						delete url2RequestArray[imageUrl];
+					},progressHandler,context);		
 			}
-		}else if(imageCache[imageUrl] == null){
-			imagesInQueue.push({successHandler:successHandler,failureHandler:failureHandler,imageUrl:imageUrl})
-		}else{
-			handleExistingImage(imageCache[imageUrl],successHandler,failureHandler,context)
+			requestArray.push(loadRequest);
 		}
 	}
-	private static function handleExistingImage(ev:Event,successHandler:Function,failureHandler:Function,context:LoaderContext):void{	
-		var ByteConverter:Loader = new Loader();
-		var urlLoader:URLLoader = ev.target as URLLoader;
-		AS3_vs_AS2.myAddEventListener(ByteConverter.contentLoaderInfo,Event.COMPLETE,function(ev:Event):void{
-			 successHandler(ev);
-		});
-		AS3_vs_AS2.myAddEventListener(ByteConverter.contentLoaderInfo,IOErrorEvent.IO_ERROR,failureHandler);
-		ByteConverter.loadBytes (urlLoader.data,context);
+	private static function handleExistingImage(data:ByteArray,successHandler:Function,failureHandler:Function,context:LoaderContext):void{	
+		var byteConverter:Loader = new Loader();
+		AS3_vs_AS2.myAddEventListener(byteConverter.contentLoaderInfo,Event.COMPLETE, successHandler);
+		AS3_vs_AS2.myAddEventListener(byteConverter.contentLoaderInfo,IOErrorEvent.IO_ERROR, failureHandler);
+		byteConverter.loadBytes(data,context);
 	}
 
 	private static function doLoadTrace():Boolean{
@@ -128,7 +149,7 @@ public final class AS3_Loader
 		if(imageLoadingRetry > 1){
 			var funcURLRequest:URLRequest = (url is String?new URLRequest(url as String):url as URLRequest)
 			var newFailFunction:Function = function(ev:Event):void{
-				doCallError(failureHandler,funcURLRequest,ev,1)		
+				retryLoadImage(failureHandler,funcURLRequest,ev,1)		
 			}
 			AS3_vs_AS2.myAddEventListener(dispatcher,IOErrorEvent.IO_ERROR, newFailFunction)
 	    	AS3_vs_AS2.myAddEventListener(dispatcher, SecurityErrorEvent.SECURITY_ERROR, newFailFunction);	
@@ -150,12 +171,12 @@ public final class AS3_Loader
      		failureHandler( new SecurityErrorEvent(SecurityErrorEvent.SECURITY_ERROR,false, false, AS3_vs_AS2.error2String(error)));
      	}		
 	}
-	private static function doCallError(failureHandler:Function,imageURLRequest:URLRequest,ev:Event,callNum:int):void{
+	private static function retryLoadImage(failureHandler:Function,imageURLRequest:URLRequest,ev:Event,callNum:int):void{
 		if(callNum < imageLoadingRetry){
 			callNum++	
 			tmpTrace("do another try to load",imageURLRequest.url)
 			var newFailFunction:Function = function(ev:Event):void{
-				doCallError(failureHandler,imageURLRequest,ev,callNum)		
+				retryLoadImage(failureHandler,imageURLRequest,ev,callNum)		
 			}		
 			var dispatcher:IEventDispatcher;	
 			if(ev.target is URLLoader){
@@ -194,4 +215,10 @@ public final class AS3_Loader
 	}
 
 }
+}
+import flash.system.LoaderContext;
+class ImageLoadRequest {
+	public var context:LoaderContext;
+	public var successHandler:Function
+	public var failureHandler:Function;
 }

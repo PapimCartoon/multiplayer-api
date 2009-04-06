@@ -19,11 +19,11 @@ package emulator.auto_copied
 // Only StaticFunctions and JSON are copied to flex_utils 
 public final class StaticFunctions
 {			
-	public static var GOOGLE_REVISION_NUMBER:int = 956;
+	public static var GOOGLE_REVISION_NUMBER:int = 960;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	public static var COME2PLAY_REVISION_NUMBER:int = 2681;
+	public static var COME2PLAY_REVISION_NUMBER:int = 2685;
 	public static function getRevision():String {
 		return "g="+GOOGLE_REVISION_NUMBER+",c2p="+COME2PLAY_REVISION_NUMBER;		
 	}
@@ -292,7 +292,7 @@ public final class StaticFunctions
 	
 	private static const REFLECTION_PREFIX:String = "REFLECTION_";
 	public static function performReflectionFromFlashVars(_someMovieClip:DisplayObjectContainer):void {		
-		var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(_someMovieClip);
+		var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(_someMovieClip);		
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 

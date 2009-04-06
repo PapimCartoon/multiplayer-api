@@ -35,18 +35,6 @@ class come2play_as2.api.auto_copied.ErrorHandler
 		return sendReport(msg);
 	}
 	
-	// we might have errors in the XML, so I want to get <error_report_url> from the URL (not the XML)
-	private static var error_report_url:String = null; // on LocalHost I don't want to send bug reports, so I throw an error instead
-	public static function setErrorReportUrl(url_parameters:Object):Void {		
-		error_report_url = url_parameters["error_report_url"];
-	}
-	public static function getErrorReportUrl():String { return error_report_url; }
-	public static function testSendErrorImage():Void {	
-		// I want to test reporting an error even on localhost
-		T.initI18n({},{isSendErrorImage:true});
-		ErrorHandler.setErrorReportUrl({error_report_url: "http://facebook.come2play.com/shared/flex_object/error_report.asp"});
-    	ErrorHandler.alwaysTraceAndSendReport("User chose to send BugReport!", "BUG DESCRIPTION");
-	}	
 	/**
 	 * Error handling should be done in one central place.
 	 * In flash however there is a lot of asynchronous code in:
@@ -146,17 +134,11 @@ class come2play_as2.api.auto_copied.ErrorHandler
 	}	
 
 	public static var SHOULD_SHOW_ERRORS:Boolean = true;
-	public static var flash_url:String;
 	public static var didReportError:Boolean = false; // we report only 1 error (usually 1 error leads to others)
-	// When the game or container has a bug, they report to ASP and cause the other to also report its traces.
-	// If the game has a bug, then we report to ASP, and send DoAllFoundHacker (which cause the container to send a bug report)
-	// If the container has a bug, then we report to, and send to java, and pass CUSTOM_INFO_KEY_checkThrowingAnError (which cause the game to send a bug report)  
+	// If the container has a bug, then it adds the traces of the game, reports to ASP, and send to java. 
+	// If the game has a bug, then it sends DoAllFoundHacker (which cause the container to send a bug report)  
 	public static var SEND_BUG_REPORT:Function = null; 
-	public static var REPORTING_AN_ERROR_STR:String = "Reporting an error: ";
 	private static function sendReport(errStr:String):Number {
-		if (error_report_url==null)
-			throw new Error(REPORTING_AN_ERROR_STR+errStr);
-			
 		if (didReportError) return -1;
 		didReportError = true;
 		
@@ -167,39 +149,25 @@ class come2play_as2.api.auto_copied.ErrorHandler
 			var stackTraces:String = AS3_vs_AS2.myGetStackTrace(err); // null in the release version
 			if (stackTraces!=null) StaticFunctions.alwaysTrace(["Catching point stack trace=",err]);
 							
-			StaticFunctions.alwaysTrace(["sendReport to url=",error_report_url," for error=", errStr," SEND_BUG_REPORT=",SEND_BUG_REPORT]);
+			StaticFunctions.alwaysTrace(["sendReport for error=", errStr," SEND_BUG_REPORT=",SEND_BUG_REPORT]);
 			
 			var errMessage:String = 
 				(stackTraces==null ? "" : "AAAA (with stack trace) ")+ // so I will easily find them in our "errors page"
 				"Revision="+StaticFunctions.getRevision()+": "+
 				ERROR_REPORT_PREFIX + " " +
 				errStr;
-			var flashTraces:String = StaticFunctions.getTraces();
-		
-			AS3_vs_AS2.sendToURL( 
-					{errMessage: errMessage, 
-					 url: flash_url, 
-					 traces: flashTraces,
-					 bug_id: bug_id
-					 },
-				error_report_url);
-				
-			// before we show the error
-			if (T.custom("isSendErrorImage",false))
-				AS3_vs_AS2.sendMultipartImage(bug_id);
-			
-			// we should show the error after we call sendMultipartImage (so we send the image without the error window)
-			if (SHOULD_SHOW_ERRORS) {
-				var msg:String = "ERROR "+errMessage+" traces="+flashTraces;
-				AS3_vs_AS2.showError(msg);
-				StaticFunctions.setClipboard(msg);
-			}	
 			
 			if (SEND_BUG_REPORT!=null)
-				SEND_BUG_REPORT(bug_id, errMessage, flashTraces);	
-					
+				SEND_BUG_REPORT(bug_id, errMessage);	
+				
+			// we should show the error after we call sendMultipartImage (so we send the image without the error window)
+			if (SHOULD_SHOW_ERRORS) {
+				var msg:String = "ERROR "+errMessage+" traces="+StaticFunctions.getTraces();
+				AS3_vs_AS2.showError(msg);
+				StaticFunctions.setClipboard(msg);
+			}		
 		} catch (err:Error) {
-			StaticFunctions.alwaysTrace(["!!!!!ERROR!!!! in sendReport:",err]);
+			AS3_vs_AS2.showError("!!!!!ERROR!!!! in sendReport:"+AS3_vs_AS2.error2String(err));
 		}			
 		return bug_id;
 	}

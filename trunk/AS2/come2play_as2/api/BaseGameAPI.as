@@ -23,8 +23,7 @@ import come2play_as2.api.*;
 		public static var HISTORY_LENGTH:Number = 100;
 		
 		public function BaseGameAPI(_someMovieClip:MovieClip) {
-			super(_someMovieClip, false, getPrefixFromFlashVars(_someMovieClip),true);
-			ErrorHandler.flash_url = AS3_vs_AS2.getLoaderInfoUrl(_someMovieClip);			
+			super(_someMovieClip, false, getPrefixFromFlashVars(_someMovieClip),true);	
 			ErrorHandler.ERROR_REPORT_PREFIX = "GAME";
 			StaticFunctions.alwaysTrace(this);
 			ErrorHandler.SEND_BUG_REPORT = AS3_vs_AS2.delegate(this, this.sendBugReport);
@@ -36,10 +35,11 @@ import come2play_as2.api.*;
 				historyEntries = new Array();
 			//come2play_as2.api::BaseGameAPI.abc = 666
 		}
-		private function sendBugReport(bug_id:Number, errMessage:String, flashTraces:String):Void {
+		private function sendBugReport(bug_id:Number, errMessage:String):Void {
 			sendMessage( API_DoAllFoundHacker.create(hackerUserId, 
 				"Got sendBugReport errMessage="+errMessage+
-				" (see full traces online for bug_id="+bug_id+")" ) );
+				" bug_id="+bug_id+
+				" (flashTraces are too long)" ) ); // we take the traces in the container using AS3 reflection by calling come2play_as2.api::StaticFunctions.getTraces()
 		}
 		public function toString():String {
 			var output:Array/*String*/ = [];
@@ -74,10 +74,6 @@ import come2play_as2.api.*;
 				if('E'.charCodeAt(0) == charCode) {
 					// testing throwing an error	
 					throw new Error("Testing throwing an error!");
-				}
-				if('R'.charCodeAt(0) == charCode) {
-					// testing report mechanism
-					ErrorHandler.testSendErrorImage();
 				}
 			}
 			if (!T.custom(API_Message.CUSTOM_INFO_KEY_isFocusInChat,false) &&
@@ -189,7 +185,7 @@ import come2play_as2.api.*;
         }
         private function updateMirorServerState(serverEntries:Array/*ServerEntry*/):Void
         {
-        	var p195:Number=0; for (var i195:String in serverEntries) { var serverEntry:ServerEntry = serverEntries[serverEntries.length==null ? i195 : p195]; p195++;
+        	var p191:Number=0; for (var i191:String in serverEntries) { var serverEntry:ServerEntry = serverEntries[serverEntries.length==null ? i191 : p191]; p191++;
         	    serverStateMiror.addEntry(serverEntry);	
         	}     	
         }
@@ -227,7 +223,7 @@ import come2play_as2.api.*;
 					var customInfo:API_GotCustomInfo = API_GotCustomInfo(msg);
 					var i18nObj:Object = {};
 					var customObj:Object = {};
-					var p233:Number=0; for (var i233:String in customInfo.infoEntries) { var entry:InfoEntry = customInfo.infoEntries[customInfo.infoEntries.length==null ? i233 : p233]; p233++;
+					var p229:Number=0; for (var i229:String in customInfo.infoEntries) { var entry:InfoEntry = customInfo.infoEntries[customInfo.infoEntries.length==null ? i229 : p229]; p229++;
 						var key:String = entry.key;
 						var value:Object = entry.value;
 						if (key==API_Message.CUSTOM_INFO_KEY_i18n) {
@@ -237,7 +233,7 @@ import come2play_as2.api.*;
 								StaticFunctions.performReflectionObject(reflectionKey,value[reflectionKey]);
 							}
 						} else if (key==API_Message.CUSTOM_INFO_KEY_checkThrowingAnError && value==true) {
-							throw new Error("We report the Game's traces because the container had an error. We want to have the traces of both Game and Container.");
+							throw new Error("We check throwing an error.");
 						} else {
 							customObj[key] = value;
 						}
@@ -248,7 +244,7 @@ import come2play_as2.api.*;
 				}else if(msg instanceof API_GotUserInfo){
 					var infoMessage:API_GotUserInfo =API_GotUserInfo( msg);
 					var userObject:Object = {};
-					var p254:Number=0; for (var i254:String in infoMessage.infoEntries) { var infoEntry:InfoEntry = infoMessage.infoEntries[infoMessage.infoEntries.length==null ? i254 : p254]; p254++;
+					var p250:Number=0; for (var i250:String in infoMessage.infoEntries) { var infoEntry:InfoEntry = infoMessage.infoEntries[infoMessage.infoEntries.length==null ? i250 : p250]; p250++;
 						userObject[infoEntry.key] = infoEntry.value;
 					}
 					T.updateUser(infoMessage.userId, userObject);

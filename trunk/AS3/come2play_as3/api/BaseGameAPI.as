@@ -27,8 +27,7 @@ package come2play_as3.api {
 		public static var HISTORY_LENGTH:int = 100;
 		
 		public function BaseGameAPI(_someMovieClip:DisplayObjectContainer) {
-			super(_someMovieClip, false, getPrefixFromFlashVars(_someMovieClip),true);
-			ErrorHandler.flash_url = AS3_vs_AS2.getLoaderInfoUrl(_someMovieClip);			
+			super(_someMovieClip, false, getPrefixFromFlashVars(_someMovieClip),true);	
 			ErrorHandler.ERROR_REPORT_PREFIX = "GAME";
 			StaticFunctions.alwaysTrace(this);
 			ErrorHandler.SEND_BUG_REPORT = AS3_vs_AS2.delegate(this, this.sendBugReport);
@@ -40,10 +39,11 @@ package come2play_as3.api {
 				historyEntries = new Array();
 			//come2play_as3.api::BaseGameAPI.abc = 666
 		}
-		private function sendBugReport(bug_id:int, errMessage:String, flashTraces:String):void {
+		private function sendBugReport(bug_id:int, errMessage:String):void {
 			sendMessage( API_DoAllFoundHacker.create(hackerUserId, 
 				"Got sendBugReport errMessage="+errMessage+
-				" (see full traces online for bug_id="+bug_id+")" ) );
+				" bug_id="+bug_id+
+				" (flashTraces are too long)" ) ); // we take the traces in the container using AS3 reflection by calling come2play_as3.api::StaticFunctions.getTraces()
 		}
 		public function toString():String {
 			var output:Array/*String*/ = [];
@@ -78,10 +78,6 @@ package come2play_as3.api {
 				if('E'.charCodeAt(0) == charCode) {
 					// testing throwing an error	
 					throw new Error("Testing throwing an error!");
-				}
-				if('R'.charCodeAt(0) == charCode) {
-					// testing report mechanism
-					ErrorHandler.testSendErrorImage();
 				}
 			}
 			if (!T.custom(API_Message.CUSTOM_INFO_KEY_isFocusInChat,false) &&
@@ -241,7 +237,7 @@ package come2play_as3.api {
 								StaticFunctions.performReflectionObject(reflectionKey,value[reflectionKey]);
 							}
 						} else if (key==API_Message.CUSTOM_INFO_KEY_checkThrowingAnError && value==true) {
-							throw new Error("We report the Game's traces because the container had an error. We want to have the traces of both Game and Container.");
+							throw new Error("We check throwing an error.");
 						} else {
 							customObj[key] = value;
 						}

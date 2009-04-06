@@ -83,6 +83,7 @@ public final class AS3_Loader
 	}
 	public static var EVENT_DATA_DEBUG_LEN:int = 20;
 	private static function loadURL(url:Object,successHandler:Function = null,failureHandler:Function = null,progressHandler:Function = null,context:LoaderContext = null):void{
+		StaticFunctions.assert(url!=null,["loadURL was given a null url"]);
 		if(failureHandler == null){
 			if(doLoadTrace())	tmpTrace("trying to load : ",url);
 		}

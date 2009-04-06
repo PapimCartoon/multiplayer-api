@@ -5,8 +5,8 @@
 import come2play_as2.api.auto_copied.*;
 class come2play_as2.api.auto_copied.StaticFunctions
 {			
-	public static var GOOGLE_REVISION_NUMBER:Number = 943;
-	public static var COME2PLAY_REVISION_NUMBER:Number = 2627;
+	public static var GOOGLE_REVISION_NUMBER:Number = 956;
+	public static var COME2PLAY_REVISION_NUMBER:Number = 2681;
 	public static function getRevision():String {
 		return "g="+GOOGLE_REVISION_NUMBER+",c2p="+COME2PLAY_REVISION_NUMBER;		
 	}
@@ -215,8 +215,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	
 	private static var REFLECTION_PREFIX:String = "REFLECTION_";
 	public static function performReflectionFromFlashVars(_someMovieClip:MovieClip):Void {		
-		var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(_someMovieClip);		
-		ErrorHandler.setErrorReportUrl(parameters);
+		var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(_someMovieClip);
 		if (SHOULD_CALL_TRACE) trace("performReflectionFromFlashVars="+JSON.stringify(parameters));
 		for (var key:String in parameters) {
 			if (startsWith(key,REFLECTION_PREFIX)) {
@@ -288,7 +287,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	}
 	public static function instance2Object(instance:Object, fields:Array/*String*/):Object {
 		var res:Object = {};
-		var p293:Number=0; for (var i293:String in fields) { var field:String = fields[fields.length==null ? i293 : p293]; p293++;
+		var p292:Number=0; for (var i292:String in fields) { var field:String = fields[fields.length==null ? i292 : p292]; p292++;
 			res[field] = instance[field];
 		}
 		return res;
@@ -327,14 +326,14 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	public static function setMethodParameters(msg:API_Message, parameters:Array):Void { 
 		var names:Array = getParamNames(msg); 
 		var pos:Number = 0;
-		var p332:Number=0; for (var i332:String in names) { var name:String = names[names.length==null ? i332 : p332]; p332++;
+		var p331:Number=0; for (var i331:String in names) { var name:String = names[names.length==null ? i331 : p331]; p331++;
 			msg[name] = parameters[pos++];
 		}
 	}
 	public static function getMethodParameters(msg:API_Message):Array { 
 		var names:Array = getParamNames(msg);
 		var res:Array = [];
-		var p339:Number=0; for (var i339:String in names) { var name:String = names[names.length==null ? i339 : p339]; p339++;
+		var p338:Number=0; for (var i338:String in names) { var name:String = names[names.length==null ? i338 : p338]; p338++;
 			res.push(msg[name]);
 		}
 		return res;

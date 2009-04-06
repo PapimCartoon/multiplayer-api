@@ -270,9 +270,13 @@ Not used by the graphics yet (but should be displayed):
 			You can also pass "reflection_1=..." in the flashvars/url to achieve the same purpose
 			(it is better to pass them in the url if you want to do modifications before the XML loads) 
 			Examples: come2play_as3.room::RoomLogic.LOCALHOST_all_java_ips
+			
+			If you want to test the error report mechanism:
+			<entry><key>come2play_as3.network::ServerConnection.error_report_url</key><value>'http://www.come2play.com/shared/flex_object/error_report.asp'</value></entry>
 		-->
-		<entry><key>come2play_as3.util::General.isDoingTrace</key><value>true</value></entry>
 		<entry><key>come2play_as3.network::MySocket.USE_HEX</key><value>false</value></entry>
+		
+		
 		
 		<!-- for efficiency we avoid traces in the online version 
 		<entry><key>come2play_as3.auto_copied::LocalConnectionUser.DO_TRACE</key><value>false</value></entry>

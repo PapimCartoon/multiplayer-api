@@ -1,3 +1,4 @@
+		
 import come2play_as2.api.auto_copied.*;
 class come2play_as2.api.auto_copied.ErrorHandler
 {
@@ -13,12 +14,12 @@ class come2play_as2.api.auto_copied.ErrorHandler
 		res.push("\n");
 					
 		res.push("My ongoingIntervals:");
-		var p15:Number=0; for (var i15:String in ongoingIntervals) { var arr1:Array = ongoingIntervals[ongoingIntervals.length==null ? i15 : p15]; p15++;
+		var p17:Number=0; for (var i17:String in ongoingIntervals) { var arr1:Array = ongoingIntervals[ongoingIntervals.length==null ? i17 : p17]; p17++;
 			res.push( "\t"+JSON.stringify(arr1) );
 		}
 		res.push("\n");
 		res.push("My ongoingTimeouts:\n");
-		var p20:Number=0; for (var i20:String in ongoingTimeouts) { var arr2:Array = ongoingTimeouts[ongoingTimeouts.length==null ? i20 : p20]; p20++;
+		var p22:Number=0; for (var i22:String in ongoingTimeouts) { var arr2:Array = ongoingTimeouts[ongoingTimeouts.length==null ? i22 : p22]; p22++;
 			res.push( "\t"+JSON.stringify(arr2) );
 		}
 		res.push("\n");		
@@ -48,10 +49,10 @@ class come2play_as2.api.auto_copied.ErrorHandler
 	 * If your code has try&catch, then in the catch use handleError.
 	 * 
 	 */ 
-	private static var ongoingIntervals:Object = {};//also printed in traces
-	private static var ongoingTimeouts:Object = {};//also printed in traces	
-	public static function myTimeout(zoneName:String, func:Function, milliseconds:Number):Number {
-		var timeout_id:Number;
+	private static var ongoingIntervals:Object/*Dictionary*/ = {};//also printed in traces
+	private static var ongoingTimeouts:Object/*Dictionary*/ = {};//also printed in traces	
+	public static function myTimeout(zoneName:String, func:Function, milliseconds:Number):Object {
+		var timeout_id:Object;
 		var newFunc:Function = wrapWithCatch(zoneName, 
 				function (/*<InAS3>...args</InAS3>*/):Void  { 
 					modifyOngoing(false, true, zoneName, timeout_id, "myTimeout ticked",milliseconds);
@@ -64,21 +65,21 @@ class come2play_as2.api.auto_copied.ErrorHandler
 		modifyOngoing(true, true, zoneName, timeout_id, "myTimeout set", milliseconds);
 		return timeout_id;			
 	}
-	public static function myInterval(zoneName:String, func:Function, milliseconds:Number):Number {
-		var interval_id:Number = AS3_vs_AS2.unwrappedSetInterval(wrapWithCatch(zoneName, func), milliseconds);
+	public static function myInterval(zoneName:String, func:Function, milliseconds:Number):Object {
+		var interval_id:Object = AS3_vs_AS2.unwrappedSetInterval(wrapWithCatch(zoneName, func), milliseconds);
 		modifyOngoing(true, false, zoneName, interval_id, "myInterval set", milliseconds);
 		return interval_id;		
 	}
-	public static function myClearTimeout(zoneName:String, id:Number):Void {
+	public static function myClearTimeout(zoneName:String, id:Object):Void {
 		modifyOngoing(false, true, zoneName, id, "myTimeout cleared", -1);
 		AS3_vs_AS2.unwrappedClearTimeout(id);			
 	}
-	public static function myClearInterval(zoneName:String, id:Number):Void {
+	public static function myClearInterval(zoneName:String, id:Object):Void {
 		modifyOngoing(false, false, zoneName, id, "myInterval cleared", -1);
 		AS3_vs_AS2.unwrappedClearInterval(id);			
 	}		
 	public static var TRACE_TIMERS:Boolean = true;
-	private static function modifyOngoing(isAdd:Boolean, isTimeout:Boolean, zoneName:String, id:Number, reason:String, milliseconds:Number):Void {
+	private static function modifyOngoing(isAdd:Boolean, isTimeout:Boolean, zoneName:String, id:Object, reason:String, milliseconds:Number):Void {
 		var arr:Object = isTimeout ? ongoingTimeouts : ongoingIntervals;
 		if (isAdd) {
 			StaticFunctions.assert(arr[id]==null, ["Internal error! already added id=",id]);

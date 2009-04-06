@@ -59,21 +59,12 @@ package come2play_as3.ticktactoeTuturial
 			
 			doAllEndMatch(finishedPlayers);
 		}
-		private function imageLoaded(loaded:Boolean):void
-		{
-			if(!loaded)
-			{
-				gameLogic.LogoUrl = "";
-				userDataArray = new Array();
-			}
-		}
 		override public function gotUserInfo(userId:int, infoEntries:Array):void
 		{
 			for each(var infoEntry:InfoEntry in infoEntries)
 			{
 				if(infoEntry.key == USER_INFO_KEY_avatar_url)
 				{
-					cacheImage(infoEntry.value as String,graphics,imageLoaded);
 					userDataArray.push(new UserData(infoEntry.value as String,userId))
 				}
 			}
@@ -87,7 +78,6 @@ package come2play_as3.ticktactoeTuturial
 			gameLogic.stageHeight = T.custom(CUSTOM_INFO_KEY_gameHeight,0) as int;
 			gameLogic.LogoUrl = T.custom(CUSTOM_INFO_KEY_logoFullUrl,"") as String;
 			myUserId = T.custom(CUSTOM_INFO_KEY_myUserId,null) as int;
-			cacheImage(T.custom(CUSTOM_INFO_KEY_logoFullUrl,"") as String,graphics,imageLoaded);
 			
 		}
 		

@@ -5,8 +5,8 @@
 import come2play_as2.api.auto_copied.*;
 class come2play_as2.api.auto_copied.StaticFunctions
 {			
-	public static var GOOGLE_REVISION_NUMBER:Number = 956;
-	public static var COME2PLAY_REVISION_NUMBER:Number = 2681;
+	public static var GOOGLE_REVISION_NUMBER:Number = 960;
+	public static var COME2PLAY_REVISION_NUMBER:Number = 2685;
 	public static function getRevision():String {
 		return "g="+GOOGLE_REVISION_NUMBER+",c2p="+COME2PLAY_REVISION_NUMBER;		
 	}
@@ -215,7 +215,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	
 	private static var REFLECTION_PREFIX:String = "REFLECTION_";
 	public static function performReflectionFromFlashVars(_someMovieClip:MovieClip):Void {		
-		var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(_someMovieClip);
+		var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(_someMovieClip);		
 		if (SHOULD_CALL_TRACE) trace("performReflectionFromFlashVars="+JSON.stringify(parameters));
 		for (var key:String in parameters) {
 			if (startsWith(key,REFLECTION_PREFIX)) {

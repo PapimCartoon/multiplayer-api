@@ -5,6 +5,7 @@ import come2play_as3.api.auto_copied.*;
 
 import flash.display.*;
 import flash.events.*;
+import flash.utils.getTimer;
 
 public final class TictactoeSquareGraphic
 {
@@ -67,7 +68,7 @@ public final class TictactoeSquareGraphic
 		var thisObj:TictactoeSquareGraphic = this; // for AS2
 		var newSymbol:DisplayObjectContainer =
 			AS3_vs_AS2.loadMovieIntoNewChild(allSymbols[color], symbolUrl,
-				function(isSuccess:Boolean):void { 
+				function(isSuccess:Boolean, newChild:DisplayObject):void { 
 					if (isSuccess) {
 						AS3_vs_AS2.removeMovie(thisObj.allSymbolGraphics[color]);
 						AS3_vs_AS2.createMovieInstance(newSymbol,"SmallSymbol_"+color,"symbolGraphics");
@@ -113,6 +114,7 @@ public final class TictactoeSquareGraphic
     public static var TRACE_ANIMATION_STEPS:Boolean = false;
     private var alphaPercentage:int;
     private var moveAnimationInterval:MyInterval = null;
+    private var animationStartedOn:int = -1;
     public function startMoveAnimation():void {
     	StaticFunctions.assert(moveAnimationInterval==null, ["TictactoeSquareGraphic is already in animation mode! sqaure=", move]);
     	
@@ -120,13 +122,16 @@ public final class TictactoeSquareGraphic
 		soundMovieClip.gotoAndPlay("MakeSound");
 		
 		alphaPercentage = 0;
-		moveAnimationStep();
+		animationStartedOn = getTimer();
     	moveAnimationInterval = new MyInterval("TictactoeSquareGraphic.moveAnimationStep");
-    	moveAnimationInterval.start(AS3_vs_AS2.delegate(this, this.moveAnimationStep), MOVE_ANIMATION_INTERVAL_MILLI);		
+    	moveAnimationInterval.start(AS3_vs_AS2.delegate(this, this.moveAnimationStep), MOVE_ANIMATION_INTERVAL_MILLI);    	
+		moveAnimationStep();		
     }
     private function moveAnimationStep():void {
     	if (TRACE_ANIMATION_STEPS) StaticFunctions.storeTrace(["moveAnimationStep: alphaPercentage=",alphaPercentage]);
-    	if (alphaPercentage>=100) {
+    	if (alphaPercentage>=100 ||
+    		// after 1 second I end the animation (if the flash is overloaded) 
+    		(getTimer()-animationStartedOn>=1000)) {
 			alphaPercentage = 100;
     		StaticFunctions.assert(moveAnimationInterval!=null, ["TictactoeSquareGraphic is not in a move animation! sqaure=", move]);
     		moveAnimationInterval.clear();

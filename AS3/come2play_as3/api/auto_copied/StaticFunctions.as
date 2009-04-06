@@ -220,7 +220,6 @@ public final class StaticFunctions
 	private static const REFLECTION_PREFIX:String = "REFLECTION_";
 	public static function performReflectionFromFlashVars(_someMovieClip:DisplayObjectContainer):void {		
 		var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(_someMovieClip);		
-		ErrorHandler.setErrorReportUrl(parameters);
 		if (SHOULD_CALL_TRACE) trace("performReflectionFromFlashVars="+JSON.stringify(parameters));
 		for (var key:String in parameters) {
 			if (startsWith(key,REFLECTION_PREFIX)) {

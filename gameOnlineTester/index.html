@@ -137,7 +137,7 @@
 					autoMatchParams["flash_type"] = "game";
 					autoMatchParams["type"] = "AutoMatch"
 					autoMatchParams["match_string"] = "dogs";
-					autoMatchParams["room_id"] = 999//2+ Math.ceil(1000*Math.random());
+					autoMatchParams["room_id"] = 999
 				}else{
 					autoMatchParams["flash_type"] = "room";
 				}
@@ -418,6 +418,15 @@
 				</TD>
 			</TR>
 			<TR>
+				<TD>game programed in:</TD>
+				<TD>
+				<select name="prefix" id="prefix">
+					<option value="usingAS3">Action Script 3</option>
+					<option value="999">Action Script 2</option>
+				</select>
+				</TD>
+			</TR>
+			<TR>
 				<TD>SWF Width:</TD>
 				<TD><input type="text" id="swfWidth" value="500"></TD>
 			</TR>
@@ -434,13 +443,15 @@
 				<TD><input type="text" id="gameStageY" value="0"></TD>
 			</TR>
 			<TR>
-				<TD>Board Height:</TD>
-				<TD><input type="text" id="boardHeight" value="400"></TD>
-			</TR>
-			<TR>
 				<TD>Board Width:</TD>
 				<TD><input type="text" id="boardWidth" value="400"></TD>
 			</TR>
+			<TR>
+				<TD>Board Height:</TD>
+				<TD><input type="text" id="boardHeight" value="400"></TD>
+			</TR>
+			
+			
 			<TR>
 				<TD>Number of Players to simulate:</TD>
 				<TD><input type="text" onchange="PlayerNumChanged();" id="PlayersNumSim" value="1"></TD>

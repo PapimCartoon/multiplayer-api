@@ -49,8 +49,8 @@ class come2play_as2.api.auto_copied.ErrorHandler
 	 * If your code has try&catch, then in the catch use handleError.
 	 * 
 	 */ 
-	private static var ongoingIntervals:Object/*Dictionary*/ = {};//also printed in traces
-	private static var ongoingTimeouts:Object/*Dictionary*/ = {};//also printed in traces	
+	private static var ongoingIntervals:Dictionary = new Dictionary();//also printed in traces
+	private static var ongoingTimeouts:Dictionary = new Dictionary();//also printed in traces	
 	public static function myTimeout(zoneName:String, func:Function, milliseconds:Number):Object {
 		var timeout_id:Object;
 		var newFunc:Function = wrapWithCatch(zoneName, 

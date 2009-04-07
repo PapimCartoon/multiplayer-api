@@ -15,7 +15,24 @@ public final class AS3_Loader
 	private static var imageCache:Dictionary/*imageUrl->ByteArray*/ = new Dictionary();
 	private static var url2RequestArray:Dictionary/*imageUrl->ImageLoadRequest[]*/ = new Dictionary();
 	public static var imageLoadingRetry:int = 1;
-	
+	{
+		StaticFunctions.alwaysTrace(["AS3_Loader=",new AS3_Loader()]);
+	}
+	public function toString():String {
+		var res:Array = [];
+		res.push("Images cached: ");
+		var url:String
+		for (url in imageCache) {	
+			var byteArr:ByteArray = imageCache[url];
+			res.push(url+" (size="+(byteArr.length)+")");
+		}
+		res.push("Images in queue:");
+		for (url in url2RequestArray) {
+			var arr:Array = url2RequestArray[url];
+			res.push(url+" #queue="+arr.length); 
+		}
+		return res.join("\n\t\t\t");
+	}
 	
 	public static function object2URLVariables(msg:Object):URLVariables {
 		var vars:URLVariables = new URLVariables();
@@ -53,6 +70,7 @@ public final class AS3_Loader
 		
 		// caching mechanism
 		if (imageCache[imageUrl] != null) {
+			StaticFunctions.assert(url2RequestArray[imageUrl]==null,["url2RequestArray must be empty: ",imageUrl]);
 			// image already finished loading			
 			handleExistingImage(imageCache[imageUrl],successHandler,failureHandler,context);
 		} else {
@@ -66,7 +84,10 @@ public final class AS3_Loader
 			if (requestArray==null) {
 				// the first time we try to load imageUrl
 				requestArray = [];
-				url2RequestArray[imageUrl] = requestArray;		
+				url2RequestArray[imageUrl] = requestArray;
+			}
+			requestArray.push(loadRequest);
+			if (requestArray.length==1) {		
 				loadURL(imageUrl,
 					// success function
 					function(ev:Event):void {
@@ -74,22 +95,22 @@ public final class AS3_Loader
 						StaticFunctions.assert(loadedImage!=null, ["loadedImage is null", imageUrl, ev]);
 						var byteArray:ByteArray = loadedImage.data as ByteArray;
 						StaticFunctions.assert(byteArray!=null && byteArray.length>0, ["ByteArray of loadedImage is null or empty", imageUrl, ev]);
-						imageCache[imageUrl] = byteArray;
 						
-						for each (var req:ImageLoadRequest in requestArray) {
+						for each (var req:ImageLoadRequest in url2RequestArray[imageUrl]) {
 							handleExistingImage(byteArray,req.successHandler,req.failureHandler,req.context);						
 						}
+						StaticFunctions.assert(imageCache[imageUrl]==null,["imageCache must be empty: ",imageUrl]);
+						imageCache[imageUrl] = byteArray;
 						delete url2RequestArray[imageUrl];
 					},
 					// failure function
 					function(ev:Event):void {
-						for each (var req:ImageLoadRequest in requestArray) {
+						for each (var req:ImageLoadRequest in url2RequestArray[imageUrl]) {
 							req.failureHandler(ev);						
 						}
 						delete url2RequestArray[imageUrl];
 					},progressHandler,context);		
 			}
-			requestArray.push(loadRequest);
 		}
 	}
 	private static function handleExistingImage(data:ByteArray,successHandler:Function,failureHandler:Function,context:LoaderContext):void{	

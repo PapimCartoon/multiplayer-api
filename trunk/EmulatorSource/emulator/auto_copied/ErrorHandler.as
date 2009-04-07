@@ -134,106 +134,102 @@ public final class ErrorHandler
 				
 	
 	private static var my_stack_trace:Array = [];
-	private static function stackTrace(zoneName:String, func:Function, args:Array):Object {
-		var res:Object = null;			
-		
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
-		var stack_trace_len:int = my_stack_trace.length;
-		my_stack_trace.push(["args=",args," zoneName=",zoneName]); // I couldn't find a way to get the function name (describeType(func) only returns that the method is a closure)
-		
-		var wasError:Boolean = false;
-		res = func.apply(null, args); 
-		my_stack_trace.pop(); 
-			// I tried to do the pop inside a "finally" clause (to handle correctly cases with exceptions), 
-			//but I got "undefined" errors:
-			//		undefined
-			//			at come2play_as3.util::General$/stackTrace()
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
-			//			at come2play_as3.util::General$/catchErrors() 
-		if (!didReportError && my_stack_trace.length!=stack_trace_len) 
-			alwaysTraceAndSendReport("BAD stack behaviour", my_stack_trace);
-		return res;		
-	}			
 	public static function wrapWithCatch(zoneName:String, func:Function):Function {
-		var longerName:String = zoneName+" with traces: {\n"+getStackTraces()+"\n}";
+		var longerName:String = zoneName+(my_stack_trace.length==0 ? "" : " with first stacktrace: {\n"+my_stack_trace[0]+"\n}");
 		return function (/*<InAS3>*/...args/*</InAS3>*/):void { 
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			catchErrors(longerName, func, 
 					/*<InAS3>*/args/*</InAS3>*/
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 					/*<InAS2>arguments</InAS2>*/
 				);
 		};
 	}	
 	public static function catchErrors(zoneName:String, func:Function, args:Array):Object {
-		var res:Object = null;			
-		try {
-			res = stackTrace(zoneName, func, args);
-		} catch (err:Error) { handleError(err, args); }		
-		return res; 			
+		var res:Object = null;		
+		
+		var stack_trace_len:int = my_stack_trace.length;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		my_stack_trace.push(["args=",args," zoneName=",zoneName]); // I couldn't find a way to get the function name (describeType(func) only returns that the method is a closure)
+		
+		var wasError:Boolean = false;			
+		try {		
+			res = func.apply(null, args); 
+		} catch (err:Error) { handleError(err, args); }	
+			
+		my_stack_trace.pop(); 
+			// I tried to do the pop inside a "finally" clause (to handle correctly cases with exceptions), 
+			//but I got "undefined" errors:
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+			//		undefined
+			//			at come2play_as3.util::General$/stackTrace()
+			//			at come2play_as3.util::General$/catchErrors() 
+		if (!didReportError && my_stack_trace.length!=stack_trace_len) 
+			alwaysTraceAndSendReport("BAD stack behaviour", my_stack_trace);
+		return res;				
 	}
 	public static var ERROR_REPORT_PREFIX:String = "DISTRIBUTION"; // where did the error come from?
 	public static function handleError(err:Error, obj:Object):void {
 		alwaysTraceAndSendReport("handleError: "+AS3_vs_AS2.error2String(err),[" catching-arguments=",obj]);
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 	}	
 
 	public static var SHOULD_SHOW_ERRORS:Boolean = true;
 	public static var didReportError:Boolean = false; // we report only 1 error (usually 1 error leads to others)
 	// If the container has a bug, then it adds the traces of the game, reports to ASP, and send to java. 
 	// If the game has a bug, then it sends DoAllFoundHacker (which cause the container to send a bug report)  
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 	public static var SEND_BUG_REPORT:Function = null; 
 	private static function sendReport(errStr:String):int {
 		if (didReportError) return -1;
 		didReportError = true;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		
 		var bug_id:int = StaticFunctions.random(1, 10000000);	
 		
 		try {	
 			var err:Error = new Error();
 			var stackTraces:String = AS3_vs_AS2.myGetStackTrace(err); // null in the release version
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 			if (stackTraces!=null) StaticFunctions.alwaysTrace(["Catching point stack trace=",err]);
 							
 			StaticFunctions.alwaysTrace(["sendReport for error=", errStr," SEND_BUG_REPORT=",SEND_BUG_REPORT]);
 			
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			var errMessage:String = 
 				(stackTraces==null ? "" : "AAAA (with stack trace) ")+ // so I will easily find them in our "errors page"
 				"Revision="+StaticFunctions.getRevision()+": "+
 				ERROR_REPORT_PREFIX + " " +
 				errStr;
 			
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 			if (SEND_BUG_REPORT!=null)
 				SEND_BUG_REPORT(bug_id, errMessage);	
 				
 			// we should show the error after we call sendMultipartImage (so we send the image without the error window)
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			if (SHOULD_SHOW_ERRORS) {
 				var msg:String = "ERROR "+errMessage+" traces="+StaticFunctions.getTraces();
 				AS3_vs_AS2.showError(msg);
 				StaticFunctions.setClipboard(msg);
 			}		
 		} catch (err:Error) {
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 			AS3_vs_AS2.showError("!!!!!ERROR!!!! in sendReport:"+AS3_vs_AS2.error2String(err));
 		}			
 		return bug_id;
 	}
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 }
 }

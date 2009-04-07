@@ -82,17 +82,21 @@ public final class AS3_Loader
 			return;
 		}
 		
+		var loadRequest:ImageLoadRequest = new ImageLoadRequest();
+		loadRequest.imageUrl = imageUrl;
+		loadRequest.successHandler = successHandler;
+		loadRequest.failureHandler = failureHandler;
+		loadRequest.context = context;
+		
+		if (TRACE_IMAGE_CACHE) StaticFunctions.tmpTrace(["Started handling image: ", imageUrl, "reqId=", loadRequest.reqId]); 
+		
 		// caching mechanism
 		if (imageCache[imageUrl] != null) {
 			StaticFunctions.assert(url2RequestArray[imageUrl]==null,["url2RequestArray must be empty: ",imageUrl]);
 			// image already finished loading			
-			handleExistingImage(imageCache[imageUrl],successHandler,failureHandler,context);
+			handleExistingImage(imageCache[imageUrl],loadRequest);
 		} else {
 			// image not loaded yet
-			var loadRequest:ImageLoadRequest = new ImageLoadRequest();
-			loadRequest.successHandler = successHandler;
-			loadRequest.failureHandler = failureHandler;
-			loadRequest.context = context;
 			
 			var requestArray:Array/*ImageLoadRequest*/ = url2RequestArray[imageUrl];
 			if (requestArray==null) {
@@ -105,13 +109,14 @@ public final class AS3_Loader
 				loadURL(imageUrl,
 					// success function
 					function(ev:Event):void {
+						if (TRACE_IMAGE_CACHE) StaticFunctions.tmpTrace(["Request queue length ",requestArray.length," imageUrl=",imageUrl]);
 						var loadedImage:URLLoader = ev.target as URLLoader;					
 						StaticFunctions.assert(loadedImage!=null, ["loadedImage is null", imageUrl, ev]);
 						var byteArray:ByteArray = loadedImage.data as ByteArray;
 						StaticFunctions.assert(byteArray!=null && byteArray.length>0, ["ByteArray of loadedImage is null or empty", imageUrl, ev]);
 						
 						for each (var req:ImageLoadRequest in url2RequestArray[imageUrl]) {
-							handleExistingImage(byteArray,req.successHandler,req.failureHandler,req.context);						
+							handleExistingImage(byteArray,req);						
 						}
 						StaticFunctions.assert(imageCache[imageUrl]==null,["imageCache must be empty: ",imageUrl]);
 						imageCache[imageUrl] = byteArray;
@@ -119,6 +124,7 @@ public final class AS3_Loader
 					},
 					// failure function
 					function(ev:Event):void {
+						if (TRACE_IMAGE_CACHE) StaticFunctions.tmpTrace(["Request failed: queue length ",requestArray.length," imageUrl=",imageUrl]);
 						for each (var req:ImageLoadRequest in url2RequestArray[imageUrl]) {
 							req.failureHandler(ev);						
 						}
@@ -127,11 +133,17 @@ public final class AS3_Loader
 			}
 		}
 	}
-	private static function handleExistingImage(data:ByteArray,successHandler:Function,failureHandler:Function,context:LoaderContext):void{
+	public static var TRACE_IMAGE_CACHE:Boolean = true;
+	private static function handleExistingImage(data:ByteArray,req:ImageLoadRequest):void{		
+		if (TRACE_IMAGE_CACHE) StaticFunctions.tmpTrace(["Loaded image: ", req.imageUrl, "reqId=", req.reqId, " size=",data.length]);
 		var byteConverter:Loader = new Loader();
-		AS3_vs_AS2.myAddEventListener(byteConverter.contentLoaderInfo,Event.COMPLETE, successHandler);
-		AS3_vs_AS2.myAddEventListener(byteConverter.contentLoaderInfo,IOErrorEvent.IO_ERROR, failureHandler);
-		byteConverter.loadBytes(data,context);
+		AS3_vs_AS2.myAddEventListener(byteConverter.contentLoaderInfo,Event.COMPLETE, function (ev:Event):void {
+			if (TRACE_IMAGE_CACHE) StaticFunctions.tmpTrace(["COMPLETED handling image: ", req.imageUrl, "reqId=", req.reqId, " res=",byteConverter.content]);
+			req.successHandler(ev);
+		});
+		AS3_vs_AS2.myAddEventListener(byteConverter.contentLoaderInfo, IOErrorEvent.IO_ERROR, req.failureHandler);
+    	AS3_vs_AS2.myAddEventListener(byteConverter.contentLoaderInfo, SecurityErrorEvent.SECURITY_ERROR, req.failureHandler);
+		byteConverter.loadBytes(data,req.context);
 	}
 
 	private static function doLoadTrace():Boolean{
@@ -254,6 +266,10 @@ public final class AS3_Loader
 }
 import flash.system.LoaderContext;
 class ImageLoadRequest {
+	public static var CURR_REQ_ID:int = 1; 
+	public var reqId:int = CURR_REQ_ID++;
+	
+	public var imageUrl:String;
 	public var context:LoaderContext;
 	public var successHandler:Function
 	public var failureHandler:Function;

@@ -97,26 +97,8 @@ public final class ErrorHandler
 				
 	
 	private static var my_stack_trace:Array = [];
-	private static function stackTrace(zoneName:String, func:Function, args:Array):Object {
-		var res:Object = null;			
-		
-		var stack_trace_len:int = my_stack_trace.length;
-		my_stack_trace.push(["args=",args," zoneName=",zoneName]); // I couldn't find a way to get the function name (describeType(func) only returns that the method is a closure)
-		
-		var wasError:Boolean = false;
-		res = func.apply(null, args); 
-		my_stack_trace.pop(); 
-			// I tried to do the pop inside a "finally" clause (to handle correctly cases with exceptions), 
-			//but I got "undefined" errors:
-			//		undefined
-			//			at come2play_as3.util::General$/stackTrace()
-			//			at come2play_as3.util::General$/catchErrors() 
-		if (!didReportError && my_stack_trace.length!=stack_trace_len) 
-			alwaysTraceAndSendReport("BAD stack behaviour", my_stack_trace);
-		return res;		
-	}			
 	public static function wrapWithCatch(zoneName:String, func:Function):Function {
-		var longerName:String = zoneName+" with traces: {\n"+getStackTraces()+"\n}";
+		var longerName:String = zoneName+(my_stack_trace.length==0 ? "" : " with first stacktrace: {\n"+my_stack_trace[0]+"\n}");
 		return function (/*<InAS3>*/...args/*</InAS3>*/):void { 
 			catchErrors(longerName, func, 
 					/*<InAS3>*/args/*</InAS3>*/
@@ -125,11 +107,25 @@ public final class ErrorHandler
 		};
 	}	
 	public static function catchErrors(zoneName:String, func:Function, args:Array):Object {
-		var res:Object = null;			
-		try {
-			res = stackTrace(zoneName, func, args);
-		} catch (err:Error) { handleError(err, args); }		
-		return res; 			
+		var res:Object = null;		
+		
+		var stack_trace_len:int = my_stack_trace.length;
+		my_stack_trace.push(["args=",args," zoneName=",zoneName]); // I couldn't find a way to get the function name (describeType(func) only returns that the method is a closure)
+		
+		var wasError:Boolean = false;			
+		try {		
+			res = func.apply(null, args); 
+		} catch (err:Error) { handleError(err, args); }	
+			
+		my_stack_trace.pop(); 
+			// I tried to do the pop inside a "finally" clause (to handle correctly cases with exceptions), 
+			//but I got "undefined" errors:
+			//		undefined
+			//			at come2play_as3.util::General$/stackTrace()
+			//			at come2play_as3.util::General$/catchErrors() 
+		if (!didReportError && my_stack_trace.length!=stack_trace_len) 
+			alwaysTraceAndSendReport("BAD stack behaviour", my_stack_trace);
+		return res;				
 	}
 	public static var ERROR_REPORT_PREFIX:String = "DISTRIBUTION"; // where did the error come from?
 	public static function handleError(err:Error, obj:Object):void {

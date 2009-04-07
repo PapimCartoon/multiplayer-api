@@ -205,7 +205,7 @@ public final class AS3_vs_AS2
 		//return setInterval(func,in_milliseconds);
 	}
 	private static function createTimer(func:Function, in_milliseconds:int, repeat:int):Object {
-		var t:Timer = new Timer(in_milliseconds,repeat);
+		var t:Timer = new AS3_Timer(repeat==0?"MyInterval":"MyTimeout",in_milliseconds,repeat);
 		myAddEventListener(t,TimerEvent.TIMER, function (ev:TimerEvent):void { func(); });
 		t.start();
 		return t;		

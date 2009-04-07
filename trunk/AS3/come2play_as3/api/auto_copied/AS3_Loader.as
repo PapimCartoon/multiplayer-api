@@ -6,6 +6,17 @@ package come2play_as3.api.auto_copied
 	import flash.system.*;
 	import flash.utils.*;
 	
+/**
+ * todo: if the image loaded is a BitMap, 
+ * then we should use Loader instead of URLLoader,
+ * and cache the bitmapData and return a new BitMap:
+ * var loader:Loader = new Loader();
+   when loaded:
+ 	var loadedImage:Bitmap = loader.getChildAt(0) as Bitmap;
+	var copyImage:DisplayObject = new Bitmap(loadedImage.bitmapData);
+   This will save a lot of space if the image is used many times on the stage
+   (or if you have a memory leak) 
+ */
 public final class AS3_Loader
 {
 	public static function tmpTrace(...args):void {
@@ -50,6 +61,9 @@ public final class AS3_Loader
 	public static function loadText(urlRequest:URLRequest,successHandler:Function = null,failureHandler:Function = null,progressHandler:Function = null):void {
 		loadURL(urlRequest,successHandler,failureHandler,progressHandler)
 	}
+	public static function isNoCache(context:LoaderContext):Boolean {
+		return context!=null && context.checkPolicyFile;
+	}
 	public static function loadImage(imageUrl:String,successHandler:Function = null,failureHandler:Function = null,progressHandler:Function = null,context:LoaderContext = null):void {
 		StaticFunctions.assert(imageUrl!="",["can't load a blank image"]);
 		if (failureHandler==null) {
@@ -62,7 +76,7 @@ public final class AS3_Loader
 		}	
 		
 		
-		if (context!=null && context.checkPolicyFile) {
+		if (isNoCache(context)) {
 			// we do not cache graphics and game
 			loadURL(imageUrl,successHandler,failureHandler,progressHandler,context);
 			return;
@@ -113,7 +127,7 @@ public final class AS3_Loader
 			}
 		}
 	}
-	private static function handleExistingImage(data:ByteArray,successHandler:Function,failureHandler:Function,context:LoaderContext):void{	
+	private static function handleExistingImage(data:ByteArray,successHandler:Function,failureHandler:Function,context:LoaderContext):void{
 		var byteConverter:Loader = new Loader();
 		AS3_vs_AS2.myAddEventListener(byteConverter.contentLoaderInfo,Event.COMPLETE, successHandler);
 		AS3_vs_AS2.myAddEventListener(byteConverter.contentLoaderInfo,IOErrorEvent.IO_ERROR, failureHandler);
@@ -138,8 +152,9 @@ public final class AS3_Loader
 		var loader:Loader;
 		
 		var urlloader:URLLoader;
+		var useCache:Boolean = isNoCache(context);
 		if (url is String) {
-			if((context == null) || (!context.checkPolicyFile)){
+			if(!useCache){
 				urlloader = new URLLoader();	
 				urlloader.dataFormat = URLLoaderDataFormat.BINARY;
 				dispatcher = urlloader;
@@ -180,7 +195,7 @@ public final class AS3_Loader
  		} 		
   		try {
 	  		if (url is String) {
-	  			if((context == null) || (!context.checkPolicyFile)){
+	  			if(!useCache){
 	  				urlloader.load(new URLRequest(url as String));
 	  			}else{
 	  				loader.load(new URLRequest(url as String),context);

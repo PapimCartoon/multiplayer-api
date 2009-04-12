@@ -1,9 +1,6 @@
 <introConfig>
 	<configURL>XML/config2.XML</configURL>
 	<graphics>
-	
-		<computerImage>images/Avatar_1.gif</computerImage><!--Practise mode image-->
-	
 		<gameDisplayName>cool game</gameDisplayName><!--The name of the game that will be displayed-->
 		<bigGameThumb></bigGameThumb><!--The URL the game will load as the background for the intro screen-->
 		<smallGameThumb></smallGameThumb><!--The URL the game will load as a side image-->
@@ -14,7 +11,7 @@
 	<user_info>
 	  <name>This is the longest name ever</name>
 	  <avatar_url>images/Avatar_4.gif</avatar_url>
-	  <is_guest>false</is_guest>
+	  <is_guest>true</is_guest>
 	  <user_statistics_url>http://www.google.com</user_statistics_url>  
       <game_rating>2000</game_rating>	
 	  <tokens>1:5000000:isToken=true</tokens>  
@@ -87,6 +84,7 @@
 	</userManagement>
 	<customInitInfo>
 		<custom>
+			<entry><key>computerImage</key><value>"images/Avatar_1.gif"</value></entry>
 			<entry><key>ratings</key><value>[0,1200,1400,1600,1800,2000,2200,2400]</value></entry>
 			<entry><key>tokenFolderURL</key><value>"graphics/rewards/"</value></entry>
 			<entry><key>tokenSet</key><value>[[0,"0.swf"],[1,"1.swf"],[5,"5.swf"],[10,"10.swf"],[50,"50.swf"],[100,"100.swf"],[500,"500.swf"],[1000,"1000.swf"],["x","x.swf"]]</value></entry>

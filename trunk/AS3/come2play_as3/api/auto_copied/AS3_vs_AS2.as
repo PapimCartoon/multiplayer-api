@@ -95,7 +95,9 @@ public final class AS3_vs_AS2
 		return o as SerializableClass;
 	}
 	
-	public static function delegate(thisObj:Object, handler:Function, ... args):Function {
+	public static function delegate(thisObj:Object, handler:Function, ... args):Function { 
+		if (args.length==0)
+			return handler;  // I rely on the fact that I get the same function everytime in TicTacToe in addOnPress (otherwise I have event-listeners leak)
 		return function (...otherArgs):Object { 
 				return handler.apply(thisObj, otherArgs.concat(args) ); 
 			};
@@ -103,23 +105,27 @@ public final class AS3_vs_AS2
 	public static var TRACE_ONPRESS:Boolean = true;;
 	public static function addOnPress(movie:IEventDispatcher, func:Function, isActive:Boolean):void {
 		//function (event:MouseEvent):void {
-		myRemoveEventListener(movie, MouseEvent.MOUSE_DOWN , func);
+		if (myHasEventListener("as3_vs_as2", movie, MouseEvent.MOUSE_DOWN , func))
+			myRemoveEventListener("as3_vs_as2", movie, MouseEvent.MOUSE_DOWN , func);
+			
 		if (isActive) {
 			if (TRACE_ONPRESS) StaticFunctions.storeTrace(["Added on MOUSE_DOWN to movie=",movie]);
-			myAddEventListener(movie, MouseEvent.MOUSE_DOWN , func);
+			myAddEventListener("as3_vs_as2", movie, MouseEvent.MOUSE_DOWN , func);
 		}
 	}
 	public static function addOnMouseOver(movie:IEventDispatcher, mouseOverFunc:Function, mouseOutFunc:Function, isActive:Boolean):void {		
 		//function (event:MouseEvent):void { 		
-		myRemoveEventListener(movie, MouseEvent.MOUSE_OVER , mouseOverFunc);		
-		myRemoveEventListener(movie, MouseEvent.MOUSE_OUT , mouseOutFunc);
+		if (myHasEventListener("as3_vs_as2", movie, MouseEvent.MOUSE_OVER , mouseOverFunc))
+			myRemoveEventListener("as3_vs_as2", movie, MouseEvent.MOUSE_OVER , mouseOverFunc);
+			
+		if (myHasEventListener("as3_vs_as2", movie, MouseEvent.MOUSE_OUT , mouseOutFunc))		
+			myRemoveEventListener("as3_vs_as2", movie, MouseEvent.MOUSE_OUT , mouseOutFunc);
+			
 		if (isActive) {
-			myAddEventListener(movie, MouseEvent.MOUSE_OVER , mouseOverFunc);		
-			myAddEventListener(movie, MouseEvent.MOUSE_OUT , mouseOutFunc);
+			myAddEventListener("as3_vs_as2", movie, MouseEvent.MOUSE_OVER , mouseOverFunc);		
+			myAddEventListener("as3_vs_as2", movie, MouseEvent.MOUSE_OUT , mouseOutFunc);
 		}
 	}	
-		
-	private static var listener2dispatcher2type2wrapper:Dictionary = new Dictionary(true); // weak keys! when the listener is garbaged-collected, the wrapper is deleted	 		
 	public static function isDictionaryEmpty(dic:Dictionary):Boolean {
 		return dictionarySize(dic)==0;
 	}
@@ -129,43 +135,91 @@ public final class AS3_vs_AS2
 			size++;
 		return size;
 	}
-	public static function myRemoveEventListener(dispatcher:IEventDispatcher, type:String, listener:Function):void {
-		var dic1:Dictionary = listener2dispatcher2type2wrapper[dispatcher];
-		if (dic1==null) return;
-		var dic2:Dictionary = dic1[listener];
-		if (dic2==null) return;
-		var func:Function = dic2[type];
-		if (func==null) return;
-		delete dic2[type];
-		if (isDictionaryEmpty(dic2)) delete dic1[listener];
-		if (isDictionaryEmpty(dic1)) delete listener2dispatcher2type2wrapper[dispatcher];
+		
+	private static var dispatchersInfo:Dictionary/*IEventDispatcher -> DispatcherInfo*/;	 		
+	private static function getEventListenersTrace():Object {
+		// an object with toString for our traces
+		return new AS3_vs_AS2();
+	}
+	public function toString():String {
+		var res:Array = [];
+		for each (var info:DispatcherInfo in dispatchersInfo) {
+			var listeners:Array = [];
+			for (var type:String in info.type2listner2func) {
+				listeners.push(type);
+			} 			
+			res.push(info.name+" with listeners: "+listeners.join(", "));
+		}
+		res.sort();
+		return "all event listeners info:\n\t\t\t" + res.join("\n\t\t\t");
+	}
+	
+	public static function myHasEventListener(dispatcherName:String, dispatcher:IEventDispatcher, type:String, listener:Function):Boolean {
+		var info:DispatcherInfo = dispatchersInfo[dispatcher];
+		if (info==null) return false; 
+		var dic2:Dictionary = info.type2listner2func[type];
+		if (dic2==null) return false;
+		return dic2[listener]!=null;
+	}
+	public static function myRemoveEventListener(dispatcherName:String, dispatcher:IEventDispatcher, type:String, listener:Function):void {
+		var info:DispatcherInfo = getDispatcherInfo(dispatcherName,dispatcher);
+		var dic1:Dictionary = info.type2listner2func;
+		var dic2:Dictionary = dic1[type];
+		var errInfo:Array = ["myRemoveEventListener: dispatcherName=",dispatcherName," dispatcher=",dispatcher," type=",type];
+		StaticFunctions.assert(dic2!=null,errInfo);
+		var func:Function = dic2[listener];
+		StaticFunctions.assert(func!=null,errInfo);
+		delete dic2[listener];
+		if (isDictionaryEmpty(dic2)) delete dic1[type];
+		if (isDictionaryEmpty(dic1)) delete dispatchersInfo[dispatcher];
 		dispatcher.removeEventListener(type, func);
 	}			
-	public static function myRemoveAllEventListeners(dispatcher:IEventDispatcher):void {
-		var dic1:Dictionary = listener2dispatcher2type2wrapper[dispatcher];
-		var dic2:Dictionary;
+	public static function myRemoveAllEventListeners(dispatcherName:String, dispatcher:IEventDispatcher):void {
+		var info:DispatcherInfo = getDispatcherInfo(dispatcherName,dispatcher);
+		var dic1:Dictionary = info.type2listner2func;
+		
 		var listener:Function;
-		if (dic1==null) return;
-		for(var listenerObj:Object in dic1){
-			listener = listenerObj as Function;
-			dic2 = dic1[listener];
-			if(dic2 == null)	continue;
-			for(var type:String in dic2){
-				dispatcher.removeEventListener(type, listener);
+		StaticFunctions.assert(dic1!=null, ["Internal err"]);
+		for (var type:String in dic1){
+			var dic2:Dictionary = dic1[type];
+			for each (var newListener:Function in dic2) {
+				dispatcher.removeEventListener(type, newListener);
 			}
 		}
-		delete listener2dispatcher2type2wrapper[dispatcher];
+		delete dispatchersInfo[dispatcher];
 	}
-	public static function myAddEventListener(dispatcher:IEventDispatcher, type:String, listener:Function, useCapture:Boolean=false, priority:int=0, weakReference:Boolean=false):Function {		
+	public static function myWeakAddEventListener(dispatcherName:String, dispatcher:IEventDispatcher, type:String, listener:Function, useCapture:Boolean=false, priority:int=0):void {
+		p_myAddEventListener(dispatcherName,dispatcher,type,listener,useCapture,priority,true);
+	}
+	public static function myAddEventListener(dispatcherName:String, dispatcher:IEventDispatcher, type:String, listener:Function, useCapture:Boolean=false, priority:int=0):void {
+		p_myAddEventListener(dispatcherName,dispatcher,type,listener,useCapture,priority,false);
+	}
+	private static function getDispatcherInfo(dispatcherName:String, dispatcher:IEventDispatcher):DispatcherInfo {
+		var info:DispatcherInfo = dispatchersInfo[dispatcher];
+		StaticFunctions.assert(info!=null, ["getDispatcherInfo: No event listeners to remove! dispatcherName=",dispatcherName," dispatcher=",dispatcher]);
+		StaticFunctions.assert(info.name==dispatcherName, ["getDispatcherInfo: You used the same dispatcher with different dispatcherName! dispatcher=",dispatcher," new dispatcherName=",dispatcherName, " old dispatcherName=",info.name]);
+		return info;
+	}
+	private static function p_myAddEventListener(dispatcherName:String, dispatcher:IEventDispatcher, type:String, listener:Function, useCapture:Boolean, priority:int, weakReference:Boolean):void {
+		if (dispatchersInfo==null) {
+			dispatchersInfo = new Dictionary(true); // weak keys! when the listener is garbaged-collected, the wrapper is deleted
+			StaticFunctions.alwaysTrace( getEventListenersTrace() );
+		}
+		 		
 		var func:Function = ErrorHandler.wrapWithCatch("myAddEventListener."+type+" for "+getQualifiedClassName(dispatcher), listener);		
-		if (listener2dispatcher2type2wrapper[dispatcher] == null)
-			listener2dispatcher2type2wrapper[dispatcher] = new Dictionary(true); // with weak keys	
-		var dic1:Dictionary = listener2dispatcher2type2wrapper[dispatcher];		
-		if (dic1[listener] == null)
-			dic1[listener] = new Dictionary(false);	// with strong keys		
-		dic1[listener][type] = func;		
+		if (dispatchersInfo[dispatcher] == null)
+			dispatchersInfo[dispatcher] = new DispatcherInfo(dispatcherName,weakReference); 
+		var info:DispatcherInfo = getDispatcherInfo(dispatcherName,dispatcher);
+		
+		StaticFunctions.assert(info.isWeakRef==weakReference, ["myAddEventListener: You used both true and false for weakReference! dispatcherName=",dispatcherName]);
+		
+		var dic1:Dictionary = info.type2listner2func;		
+		if (dic1[type] == null)
+			dic1[type] = new Dictionary(false);
+		var dic2:Dictionary = dic1[type];
+		StaticFunctions.assert(dic2[listener]==null,["myAddEventListener: you added the same listener twice! dispatcherName=",dispatcherName," type=",type]);	
+		dic2[listener] = func;		
 		dispatcher.addEventListener(type, func, useCapture, priority, weakReference);
-		return func; // use General.myRemoveEventListener to remove
 	}	
 	
 	
@@ -173,8 +227,8 @@ public final class AS3_vs_AS2
 	public static var DO_TRACE:Boolean = false;
 	public static function addStatusListener(conn:LocalConnection, client:Object, functions:Array, handlerFunc:Function = null):void {
 		conn.client = client;
-		myAddEventListener(conn, StatusEvent.STATUS,function (ev:Event):void{localConnectionFailed(ev,client, handlerFunc)});	
-		myAddEventListener(conn, SecurityErrorEvent.SECURITY_ERROR,function (ev:Event):void{localConnectionFailed(ev,client, handlerFunc)});			
+		myAddEventListener("LocalConnection",conn, StatusEvent.STATUS,function (ev:Event):void{localConnectionFailed(ev,client, handlerFunc)});	
+		myAddEventListener("LocalConnection",conn, SecurityErrorEvent.SECURITY_ERROR,function (ev:Event):void{localConnectionFailed(ev,client, handlerFunc)});			
 	}
 	private static function localConnectionFailed(event:Event,client:Object, handlerFunc:Function = null):void {
 		if(DO_TRACE){
@@ -196,28 +250,32 @@ public final class AS3_vs_AS2
  		}
   	}
   	// use ErrorHandler.myTimeout and myInterval because they have proper error handling  	
-	public static function unwrappedSetTimeout(func:Function, in_milliseconds:int):Object {
-		return createTimer(func, in_milliseconds,1);
+	public static function unwrappedSetTimeout(zoneName:String, func:Function, in_milliseconds:int):Object {
+		return createTimer(zoneName, func, in_milliseconds,1);
 		//return setTimeout(func,in_milliseconds);
 	}
-	public static function unwrappedSetInterval(func:Function, in_milliseconds:int):Object {
-		return createTimer(func, in_milliseconds,0);	
+	public static function unwrappedSetInterval(zoneName:String, func:Function, in_milliseconds:int):Object {
+		return createTimer(zoneName, func, in_milliseconds,0);	
 		//return setInterval(func,in_milliseconds);
 	}
-	private static function createTimer(func:Function, in_milliseconds:int, repeat:int):Object {
-		var t:Timer = new AS3_Timer(repeat==0?"MyInterval":"MyTimeout",in_milliseconds,repeat);
-		myAddEventListener(t,TimerEvent.TIMER, function (ev:TimerEvent):void { func(); });
+	private static function createTimer(zoneName:String, func:Function, in_milliseconds:int, repeat:int):Object {
+		var t:Timer = new AS3_Timer(zoneName,in_milliseconds,repeat);
+		myAddEventListener(zoneName,t,TimerEvent.TIMER, function (ev:TimerEvent):void { 
+			if (repeat==1) myRemoveAllEventListeners(zoneName,t);
+			func(); 
+		});
 		t.start();
 		return t;		
 	}
-	public static function unwrappedClearInterval(intervalId:Object):void {
-		var t:Timer = intervalId as Timer;
-		StaticFunctions.assert(t!=null,["You must pass a Timer object: ",intervalId]);
+	public static function unwrappedClearInterval(zoneName:String, intervalId:Object):void {
+		var t:AS3_Timer = intervalId as AS3_Timer;
+		StaticFunctions.assert(t!=null,["You must pass an AS3_Timer object: ",intervalId]);
 		t.stop();
+		myRemoveAllEventListeners(zoneName,t);
 		//clearInterval(intervalId);
 	}
-	public static function unwrappedClearTimeout(timeoutId:Object):void {
-		unwrappedClearInterval(timeoutId);
+	public static function unwrappedClearTimeout(zoneName:String, timeoutId:Object):void {
+		unwrappedClearInterval(zoneName, timeoutId);
 		//clearTimeout(timeoutId);
 	}
 	public static function myGetStackTrace(err:Error):String {
@@ -328,7 +386,7 @@ public final class AS3_vs_AS2
 		addKeyboardListener2(false, graphics, func);
 	}
 	private static function addKeyboardListener2(is_key_down:Boolean, graphics:DisplayObjectContainer, func:Function):void {
-		myAddEventListener(graphics.stage, 
+		myAddEventListener("keyboard-stage",graphics.stage, 
 			is_key_down ? KeyboardEvent.KEY_DOWN : KeyboardEvent.KEY_UP, 
 			function (event:KeyboardEvent):void {
 				var charCode:int = event.charCode;
@@ -387,7 +445,7 @@ public final class AS3_vs_AS2
 		
 		
 		graphics.addChild(blackBox);
-		myAddEventListener(closeBtn, MouseEvent.CLICK, 
+		myWeakAddEventListener("closeBtn",closeBtn, MouseEvent.CLICK, 
 			function():void {
 				trace("close")
 				graphics.removeChild(blackBox);
@@ -410,19 +468,18 @@ public final class AS3_vs_AS2
 	public static function stringLastIndexOf(str:String, val:String, startIndex:int=0x7FFFFFFF):int {
 		return str.lastIndexOf(val,startIndex);
 	}	
+	public static var CHECK_STAGE_EVERY_MILLI:int = 100;
 	public static function waitForStage(graphics:MovieClip, gameConsructor:Function):void
 	{
-		var stageTimer:Timer = new AS3_Timer("waitForStage",100,0);
-		stageTimer.start();	
+		var stageTimer:MyInterval = new MyInterval("waitForStage");
 		trace('waitForStage...');
-		myAddEventListener(stageTimer,
-			TimerEvent.TIMER, function():void {
+		stageTimer.start(function():void {
 					if(graphics.stage) {
 						trace('stage loaded!');
-						stageTimer.stop();
+						stageTimer.clear();
 						gameConsructor();
 					}
-				});
+				},CHECK_STAGE_EVERY_MILLI);
 	}
 
 	/**
@@ -542,6 +599,16 @@ import come2play_as3.api.auto_copied.SerializableClass;
 import come2play_as3.api.auto_copied.AS3_vs_AS2;
 import flash.utils.*;
 
+class DispatcherInfo {
+	public var type2listner2func:Dictionary = new Dictionary();
+	public var name:String; 
+	public var isWeakRef:Boolean;
+	
+	public function DispatcherInfo(name:String, isWeakRef:Boolean) {
+		this.name = name;
+		this.isWeakRef = isWeakRef;
+	}
+}
 class NativeSerializable extends SerializableClass {
 	public function NativeSerializable(shortName:String=null) {
 		super(shortName);

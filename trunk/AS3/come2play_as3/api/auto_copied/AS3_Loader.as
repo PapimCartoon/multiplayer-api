@@ -26,23 +26,33 @@ public final class AS3_Loader
 	private static var imageCache:Dictionary/*imageUrl->ByteArray*/ = new Dictionary();
 	private static var url2RequestArray:Dictionary/*imageUrl->ImageLoadRequest[]*/ = new Dictionary();
 	public static var imageLoadingRetry:int = 1;
+	
 	{
 		StaticFunctions.alwaysTrace(["AS3_Loader=",new AS3_Loader()]);
-	}
-	public function toString():String {
-		var res:Array = [];
-		res.push("Images cached: ");
+	}	
+	public function toString():String {		
 		var url:String
+		
+		var cachedRes:Array = [];
 		for (url in imageCache) {	
 			var byteArr:ByteArray = imageCache[url];
-			res.push(url+" (size="+(byteArr.length)+")");
+			cachedRes.push(url+" (size="+(byteArr.length)+")");
 		}
-		res.push("Images in queue:");
+		cachedRes.sort();
+		
+		var requestRes:Array = [];
 		for (url in url2RequestArray) {
 			var arr:Array = url2RequestArray[url];
-			res.push(url+" #queue="+arr.length); 
+			requestRes.push(url+" #queue="+arr.length); 
 		}
-		return res.join("\n\t\t\t");
+		requestRes.sort();
+		
+		var res:Array = [];
+		res.push("Images cached:");
+		res.push.apply(null,cachedRes);
+		res.push("\tImages in queue:");
+		res.push.apply(null,requestRes);
+		return  res.join("\n\t\t\t");
 	}
 	
 	public static function object2URLVariables(msg:Object):URLVariables {
@@ -109,55 +119,72 @@ public final class AS3_Loader
 				loadURL(imageUrl,
 					// success function
 					function(ev:Event):void {
-						if (TRACE_IMAGE_CACHE) StaticFunctions.tmpTrace(["Request queue length ",requestArray.length," imageUrl=",imageUrl]);
-						var loadedImage:URLLoader = ev.target as URLLoader;					
-						StaticFunctions.assert(loadedImage!=null, ["loadedImage is null", imageUrl, ev]);
-						var byteArray:ByteArray = loadedImage.data as ByteArray;
-						StaticFunctions.assert(byteArray!=null && byteArray.length>0, ["ByteArray of loadedImage is null or empty", imageUrl, ev]);
-						
-						for each (var req:ImageLoadRequest in url2RequestArray[imageUrl]) {
-							handleExistingImage(byteArray,req);						
-						}
-						StaticFunctions.assert(imageCache[imageUrl]==null,["imageCache must be empty: ",imageUrl]);
-						imageCache[imageUrl] = byteArray;
-						delete url2RequestArray[imageUrl];
+						loadedImageUrl(false, imageUrl,ev);						
 					},
 					// failure function
 					function(ev:Event):void {
-						if (TRACE_IMAGE_CACHE) StaticFunctions.tmpTrace(["Request failed: queue length ",requestArray.length," imageUrl=",imageUrl]);
-						for each (var req:ImageLoadRequest in url2RequestArray[imageUrl]) {
-							req.failureHandler(ev);						
-						}
-						delete url2RequestArray[imageUrl];
+						loadedImageUrl(false, imageUrl,ev);						
 					},progressHandler,context);		
 			}
 		}
 	}
+	private static function loadedImageUrl(isFailure:Boolean, imageUrl:String, ev:Event):void {
+		if (TRACE_IMAGE_CACHE) StaticFunctions.tmpTrace(["loadedImageUrl isFailure=",isFailure," imageUrl=",imageUrl, " event=",ev]);
+		var loadedImage:URLLoader = ev.target as URLLoader;					
+		StaticFunctions.assert(loadedImage!=null, ["loadedImage is null", imageUrl, ev]);
+		var byteArray:ByteArray = loadedImage.data as ByteArray;
+		if (!isFailure) StaticFunctions.assert(byteArray!=null && byteArray.length>0, ["ByteArray of loadedImage is null or empty", imageUrl, ev]);
+		
+		for each (var req:ImageLoadRequest in url2RequestArray[imageUrl]) {
+			if (isFailure)
+				req.failureHandler(ev);
+			else				
+				handleExistingImage(byteArray,req);		
+		}
+		
+		StaticFunctions.assert(imageCache[imageUrl]==null,["imageCache must be empty: ",imageUrl]);
+		imageCache[imageUrl] = byteArray;
+		delete url2RequestArray[imageUrl];
+	}
+	
 	public static var TRACE_IMAGE_CACHE:Boolean = true;
 	private static function handleExistingImage(data:ByteArray,req:ImageLoadRequest):void{		
 		if (TRACE_IMAGE_CACHE) StaticFunctions.tmpTrace(["Loaded image: ", req.imageUrl, "reqId=", req.reqId, " size=",data.length]);
 		var byteConverter:Loader = new Loader();
-		AS3_vs_AS2.myAddEventListener(byteConverter.contentLoaderInfo,Event.COMPLETE, function (ev:Event):void {
-			if (TRACE_IMAGE_CACHE) StaticFunctions.tmpTrace(["COMPLETED handling image: ", req.imageUrl, "reqId=", req.reqId, " res=",byteConverter.content]);
-			req.successHandler(ev);
-		});
-		AS3_vs_AS2.myAddEventListener(byteConverter.contentLoaderInfo, IOErrorEvent.IO_ERROR, req.failureHandler);
-    	AS3_vs_AS2.myAddEventListener(byteConverter.contentLoaderInfo, SecurityErrorEvent.SECURITY_ERROR, req.failureHandler);
+		var dispatcher:IEventDispatcher = byteConverter.contentLoaderInfo;
+		// IMPORTANT - there was a garbage collection issue here (if I remove the anonymous function and replace it with req.successHandler)
+		// therefore the event listener must refer to byteConverter to prevent it from being garbage-collected
+		AS3_vs_AS2.myAddEventListener("handleExistingImage", dispatcher,Event.COMPLETE, function (ev:Event):void { removeImageLoaderListeners(byteConverter,req,ev,false); });
+		AS3_vs_AS2.myAddEventListener("handleExistingImage", dispatcher, IOErrorEvent.IO_ERROR, function (ev:Event):void { removeImageLoaderListeners(byteConverter,req,ev,true); });
 		byteConverter.loadBytes(data,req.context);
+	}
+	private static function removeImageLoaderListeners(byteConverter:Loader, req:ImageLoadRequest, ev:Event, isFailure:Boolean):void {
+		var dispatcher:IEventDispatcher = byteConverter.contentLoaderInfo;
+		AS3_vs_AS2.myRemoveAllEventListeners("handleExistingImage", dispatcher);
+		if (TRACE_IMAGE_CACHE) StaticFunctions.tmpTrace(["COMPLETED handling image: ", req.imageUrl, "reqId=", req.reqId, " res=",byteConverter.content, " isFailure=",isFailure, "event=",ev]);
+		if (isFailure)
+			req.failureHandler(ev);
+		else
+			req.successHandler(ev);
 	}
 
 	private static function doLoadTrace():Boolean{
 		return (T.custom("doLoadTrace",true) as Boolean);
 	}
 	public static var EVENT_DATA_DEBUG_LEN:int = 20;
-	private static function loadURL(url:Object,successHandler:Function = null,failureHandler:Function = null,progressHandler:Function = null,context:LoaderContext = null):void{
+	private static function loadURL(url:Object,successHandler:Function = null,failureHandler:Function = null,progressHandler:Function = null,context:LoaderContext = null, retryCount:int=0):void{
+		StaticFunctions.assert( retryCount<imageLoadingRetry, ["Internal error in loadURL"]);
+		
 		StaticFunctions.assert(url!=null,["loadURL was given a null url"]);
 		if(failureHandler == null){
-			if(doLoadTrace())	tmpTrace("trying to load : ",url);
+			if(doLoadTrace())	tmpTrace("trying to load : ",url, " retryCount=",retryCount);
 		}
-		if(successHandler == null){
+		if (successHandler == null){
 			successHandler = traceHandler
 		}
+		if (failureHandler==null) {
+			failureHandler = function (ev:Event):void {criticalError(ev,url as String);};			
+		}	
 		//The Loader class is used to load SWF files or image (JPG, PNG, or GIF) files.  
 		//Use the URLLoader class to load text or binary data.
 		var dispatcher:IEventDispatcher;
@@ -179,32 +206,16 @@ public final class AS3_Loader
 			dispatcher = urlloader;
 		}
 				
-		if (failureHandler==null) {
-			failureHandler = function (ev:Event):void {criticalError(ev,url as String);};			
-		}	
-		AS3_vs_AS2.myAddEventListener(dispatcher,Event.COMPLETE, function(ev:Event):void{
-			if (doLoadTrace())	
-				tmpTrace("successfully loaded",url,"Event data :",ev, 
-					ev!=null && ev.target!=null && ev.target.hasOwnProperty("data") &&
-					// if you load a SWF, then .data is a very long $ByteArray$ "arr":[67,87...] 
-					ev.target.data is String ? StaticFunctions.cutString(ev.target.data as String,EVENT_DATA_DEBUG_LEN)  : "no String ev.target.data");
-			successHandler(ev);
-		});
+		var newSuccFunction:Function = function (ev:Event):void { removeLoadUrlListeners(false , url,dispatcher,ev,successHandler, failureHandler,progressHandler, context, retryCount); };
+		var newFailFunction:Function = function (ev:Event):void { removeLoadUrlListeners(true, url,dispatcher,ev,successHandler, failureHandler,progressHandler, context, retryCount); };
+			
+		AS3_vs_AS2.myAddEventListener("loadURL",dispatcher,Event.COMPLETE, newSuccFunction); 
+		AS3_vs_AS2.myAddEventListener("loadURL",dispatcher,IOErrorEvent.IO_ERROR, newFailFunction);
+    	AS3_vs_AS2.myAddEventListener("loadURL",dispatcher, SecurityErrorEvent.SECURITY_ERROR, newFailFunction);
+    	    	    	
 		if(progressHandler !=null)
-			AS3_vs_AS2.myAddEventListener(dispatcher,ProgressEvent.PROGRESS,progressHandler)
-		
-		
-		if(imageLoadingRetry > 1){
-			var funcURLRequest:URLRequest = (url is String?new URLRequest(url as String):url as URLRequest)
-			var newFailFunction:Function = function(ev:Event):void{
-				retryLoadImage(failureHandler,funcURLRequest,ev,1)		
-			}
-			AS3_vs_AS2.myAddEventListener(dispatcher,IOErrorEvent.IO_ERROR, newFailFunction)
-	    	AS3_vs_AS2.myAddEventListener(dispatcher, SecurityErrorEvent.SECURITY_ERROR, newFailFunction);	
-		}else{	
-			AS3_vs_AS2.myAddEventListener(dispatcher,IOErrorEvent.IO_ERROR, failureHandler)
-	    	AS3_vs_AS2.myAddEventListener(dispatcher, SecurityErrorEvent.SECURITY_ERROR, failureHandler);	
- 		} 		
+			AS3_vs_AS2.myAddEventListener("loadURL",dispatcher,ProgressEvent.PROGRESS,progressHandler)
+			
   		try {
 	  		if (url is String) {
 	  			if(!useCache){
@@ -216,37 +227,41 @@ public final class AS3_Loader
 				urlloader.load(url as URLRequest);
 			}
      	} catch(error:Error) {
-     		failureHandler( new SecurityErrorEvent(SecurityErrorEvent.SECURITY_ERROR,false, false, AS3_vs_AS2.error2String(error)));
+     		var ev:Event = new SecurityErrorEvent(SecurityErrorEvent.SECURITY_ERROR,false, false, AS3_vs_AS2.error2String(error));
+     		removeLoadUrlListeners(true, url,dispatcher,ev,successHandler, failureHandler,progressHandler, context, retryCount);
      	}		
 	}
-	private static function retryLoadImage(failureHandler:Function,imageURLRequest:URLRequest,ev:Event,callNum:int):void{
-		if(callNum < imageLoadingRetry){
-			callNum++	
-			tmpTrace("do another try to load",imageURLRequest.url)
-			var newFailFunction:Function = function(ev:Event):void{
-				retryLoadImage(failureHandler,imageURLRequest,ev,callNum)		
-			}		
-			var dispatcher:IEventDispatcher;	
-			if(ev.target is URLLoader){
-				var urlLoader:URLLoader = new URLLoader;
-				dispatcher = urlLoader;	
-			}else if(ev.target is LoaderInfo){
-				var loader:Loader = new Loader;
-				dispatcher = loader.contentLoaderInfo;
-				
+	private static function removeLoadUrlListeners(isFailure:Boolean, url:Object,dispatcher:IEventDispatcher, ev:Event, successHandler:Function,failureHandler:Function, progressHandler:Function,context:LoaderContext, retryCount:int):void {
+		AS3_vs_AS2.myRemoveAllEventListeners("loadURL", dispatcher);
+		var data:Object	= null;
+		if (ev!=null && ev.target!=null && ev.target.hasOwnProperty("data")) data = ev.target.data;
+		if (data is ByteArray && (data==null || (data as ByteArray).length==0)) {
+			tmpTrace("We loaded an empty ByteArray! so we retry to load the image again");
+			isFailure = true;
+		}
+					
+		if (doLoadTrace()) {			
+			tmpTrace("loaded url=",url," isFailure=",isFailure," event=",ev, " event.data=", 
+				// if you load a SWF, then .data is a very long $ByteArray$ "arr":[67,87...] 
+				data==null ? 			"no ev.target.data" :
+				data is String ? 		StaticFunctions.cutString(data as String,EVENT_DATA_DEBUG_LEN)  : 
+				data is ByteArray ?  	["ByteArray.len=",(data as ByteArray).length] :
+										"data is not String or ByteArray");
+		}
+		
+		if (!isFailure) {
+			successHandler(ev);
+		} else {
+			if (retryCount+1<imageLoadingRetry) {
+				tmpTrace("We retry to load the url=",url);
+				loadURL(url,successHandler,failureHandler,progressHandler,context,retryCount+1);
+			} else {
+				failureHandler(ev);
 			}
-			AS3_vs_AS2.myAddEventListener(dispatcher,IOErrorEvent.IO_ERROR, newFailFunction)
-	    	AS3_vs_AS2.myAddEventListener(dispatcher, SecurityErrorEvent.SECURITY_ERROR, newFailFunction);	
-	    	if(ev.target is URLLoader){
-	    		urlLoader.load(imageURLRequest)
-	    	}else if(ev.target is LoaderInfo){
-	    		loader.load(imageURLRequest)
-	    	}  	
-		}else{
-			failureHandler(ev);
-			return
-		}		
+		}
 	}
+	
+	
 	public static function traceHandler(e:Event):void {
         tmpTrace("traceHandler:", e!=null && e.target!=null && e.target.hasOwnProperty("data") ? e.target.data : "No data!");
     }

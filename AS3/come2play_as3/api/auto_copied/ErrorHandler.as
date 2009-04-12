@@ -63,22 +63,22 @@ public final class ErrorHandler
 						/*<InAS2>arguments</InAS2>*/
 					);
 				});
-		timeout_id = AS3_vs_AS2.unwrappedSetTimeout(newFunc, milliseconds);
+		timeout_id = AS3_vs_AS2.unwrappedSetTimeout(zoneName, newFunc, milliseconds);
 		modifyOngoing(true, true, zoneName, timeout_id, "myTimeout set", milliseconds);
 		return timeout_id;			
 	}
 	public static function myInterval(zoneName:String, func:Function, milliseconds:int):Object {
-		var interval_id:Object = AS3_vs_AS2.unwrappedSetInterval(wrapWithCatch(zoneName, func), milliseconds);
+		var interval_id:Object = AS3_vs_AS2.unwrappedSetInterval(zoneName, wrapWithCatch(zoneName, func), milliseconds);
 		modifyOngoing(true, false, zoneName, interval_id, "myInterval set", milliseconds);
 		return interval_id;		
 	}
 	public static function myClearTimeout(zoneName:String, id:Object):void {
 		modifyOngoing(false, true, zoneName, id, "myTimeout cleared", -1);
-		AS3_vs_AS2.unwrappedClearTimeout(id);			
+		AS3_vs_AS2.unwrappedClearTimeout(zoneName, id);			
 	}
 	public static function myClearInterval(zoneName:String, id:Object):void {
 		modifyOngoing(false, false, zoneName, id, "myInterval cleared", -1);
-		AS3_vs_AS2.unwrappedClearInterval(id);			
+		AS3_vs_AS2.unwrappedClearInterval(zoneName, id);			
 	}		
 	public static var TRACE_TIMERS:Boolean = true;
 	private static function modifyOngoing(isAdd:Boolean, isTimeout:Boolean, zoneName:String, id:Object, reason:String, milliseconds:int):void {

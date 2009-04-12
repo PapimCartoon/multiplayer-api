@@ -76,10 +76,10 @@ class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 	}
 	
   	// use ErrorHandler.myTimeout and myInterval because they have proper error handling
-	public static function unwrappedSetInterval(func:Function, in_milliseconds:Number):Object {
+	public static function unwrappedSetInterval(zoneName:String, func:Function, in_milliseconds:Number):Object {
 		return setInterval(func, in_milliseconds);
 	}
-	public static function unwrappedSetTimeout(func:Function, in_milliseconds:Number):Object {
+	public static function unwrappedSetTimeout(zoneName:String, func:Function, in_milliseconds:Number):Object {
 		var res_interval_id:Number;
 		res_interval_id = setInterval( function () {
 				clearInterval(res_interval_id);
@@ -87,11 +87,11 @@ class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 			}, in_milliseconds);
 		return res_interval_id;
 	}
-	public static function unwrappedClearInterval(intervalId:Object):Void {
+	public static function unwrappedClearInterval(zoneName:String, intervalId:Object):Void {
 		clearInterval(Number(intervalId));
 	}
-	public static function unwrappedClearTimeout(intervalId:Object):Void {
-		unwrappedClearInterval(intervalId);
+	public static function unwrappedClearTimeout(zoneName:String, intervalId:Object):Void {
+		unwrappedClearInterval(zoneName, intervalId);
 	}
 	public static function myGetStackTrace(e:Error):String {
 		return null;
@@ -251,7 +251,7 @@ class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 		trace("I finished showMessage")
 		
 		if (kind!="error") {
-			unwrappedSetTimeout( function ():Void {
+			unwrappedSetTimeout("showMessage", function ():Void {
 				trace("removeMovieClip container="+msgMcName);
 				container.removeMovieClip();
 				}, 2000);

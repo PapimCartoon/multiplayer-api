@@ -5,8 +5,8 @@
 import come2play_as2.api.auto_copied.*;
 class come2play_as2.api.auto_copied.StaticFunctions
 {			
-	public static var GOOGLE_REVISION_NUMBER:Number = 958;
-	public static var COME2PLAY_REVISION_NUMBER:Number = 2750;
+	public static var GOOGLE_REVISION_NUMBER:Number = 960;
+	public static var COME2PLAY_REVISION_NUMBER:Number = 2764;
 	public static function getRevision():String {
 		return "g="+GOOGLE_REVISION_NUMBER+",c2p="+COME2PLAY_REVISION_NUMBER;		
 	}

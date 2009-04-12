@@ -49,8 +49,8 @@ class come2play_as2.api.auto_copied.ErrorHandler
 	 * If your code has try&catch, then in the catch use handleError.
 	 * 
 	 */ 
-	private static var ongoingIntervals:Dictionary = new Dictionary();//also printed in traces
-	private static var ongoingTimeouts:Dictionary = new Dictionary();//also printed in traces	
+	private static var ongoingIntervals:Object/*Dictionary*/ = {};//also printed in traces
+	private static var ongoingTimeouts:Object/*Dictionary*/ = {};//also printed in traces	
 	public static function myTimeout(zoneName:String, func:Function, milliseconds:Number):Object {
 		var timeout_id:Object;
 		var newFunc:Function = wrapWithCatch(zoneName, 
@@ -61,22 +61,22 @@ class come2play_as2.api.auto_copied.ErrorHandler
 						/*<InAS2>*/arguments/*</InAS2>*/
 					);
 				});
-		timeout_id = AS3_vs_AS2.unwrappedSetTimeout(newFunc, milliseconds);
+		timeout_id = AS3_vs_AS2.unwrappedSetTimeout(zoneName, newFunc, milliseconds);
 		modifyOngoing(true, true, zoneName, timeout_id, "myTimeout set", milliseconds);
 		return timeout_id;			
 	}
 	public static function myInterval(zoneName:String, func:Function, milliseconds:Number):Object {
-		var interval_id:Object = AS3_vs_AS2.unwrappedSetInterval(wrapWithCatch(zoneName, func), milliseconds);
+		var interval_id:Object = AS3_vs_AS2.unwrappedSetInterval(zoneName, wrapWithCatch(zoneName, func), milliseconds);
 		modifyOngoing(true, false, zoneName, interval_id, "myInterval set", milliseconds);
 		return interval_id;		
 	}
 	public static function myClearTimeout(zoneName:String, id:Object):Void {
 		modifyOngoing(false, true, zoneName, id, "myTimeout cleared", -1);
-		AS3_vs_AS2.unwrappedClearTimeout(id);			
+		AS3_vs_AS2.unwrappedClearTimeout(zoneName, id);			
 	}
 	public static function myClearInterval(zoneName:String, id:Object):Void {
 		modifyOngoing(false, false, zoneName, id, "myInterval cleared", -1);
-		AS3_vs_AS2.unwrappedClearInterval(id);			
+		AS3_vs_AS2.unwrappedClearInterval(zoneName, id);			
 	}		
 	public static var TRACE_TIMERS:Boolean = true;
 	private static function modifyOngoing(isAdd:Boolean, isTimeout:Boolean, zoneName:String, id:Object, reason:String, milliseconds:Number):Void {

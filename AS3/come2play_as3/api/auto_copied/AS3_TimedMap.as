@@ -1,7 +1,6 @@
 package come2play_as3.api.auto_copied
 {
 import flash.utils.Dictionary;
-import flash.utils.getTimer;
 	
 public final class AS3_TimedMap 
 	extends SerializableClass { // just for toString()
@@ -13,16 +12,16 @@ public final class AS3_TimedMap
 		this.maxMillisStayInMap = 1000*maxSecondsStayInMap;
 		ErrorHandler.myInterval("AS3_TimedMap with maxMillisStayInMap="+maxMillisStayInMap, ticked, maxMillisStayInMap);			
 	}
-	private function ticked():void {		
-		var now:int = getTimer();
+	private function ticked():void {
 		for each (var debug:DebugInfo in dic) {			
-			StaticFunctions.assert( (now-debug.time) < maxMillisStayInMap, ["AS3_TimedMap: an entry stayed more than ",maxMillisStayInMap, " entry=",debug, " now=",now, this]);
+			StaticFunctions.assert( !debug.time.havePassed(maxMillisStayInMap), ["AS3_TimedMap: an entry stayed more than ",maxMillisStayInMap, " entry=",debug, this]);
 		}
 	}
 	public function add(key:Object, val:Object):void {
 		StaticFunctions.assert( dic[key]==null, ["AS3_TimedMap: key already exists! key=",key,this]);
 		var debug:DebugInfo = new DebugInfo();		
-		debug.time = getTimer();
+		debug.time = new TimeMeasure();
+		debug.time.setTime();
 		debug.val = val;
 		dic[key] = debug;
 	}
@@ -45,8 +44,9 @@ public final class AS3_TimedMap
 }
 }
 
-import come2play_as3.api.auto_copied.SerializableClass;	
+import come2play_as3.api.auto_copied.SerializableClass;
+import come2play_as3.api.auto_copied.TimeMeasure;	
 class DebugInfo extends SerializableClass {
-	public var time:int;
+	public var time:TimeMeasure;
 	public var val:Object;
 }

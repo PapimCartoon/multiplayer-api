@@ -22,7 +22,7 @@ package come2play_as3.api {
 		private var hackerUserId:int = -1;
 		private var runningAnimations:Array/*String*/ = [];
 		private var keys:Array;
-		private var historyEntries:Array/*HistoryEntry*/;
+		private var historyEntries:Array/*HistoryEntry*/ = [];
 		private var singlePlayerEmulator:SinglePlayerEmulator;
 		public static var HISTORY_LENGTH:int = 100;
 		
@@ -34,9 +34,6 @@ package come2play_as3.api {
 			AS3_vs_AS2.addKeyboardListener(_someMovieClip, ErrorHandler.wrapWithCatch("keyPressed",AS3_vs_AS2.delegate(this,this.keyPressed)));
 			if (getPrefixFromFlashVars(_someMovieClip)==null) 
 				singlePlayerEmulator = new SinglePlayerEmulator(_someMovieClip); // to prevent garbage collection
-				
-			if(HISTORY_LENGTH > 0)
-				historyEntries = new Array();
 			//come2play_as3.api::BaseGameAPI.abc = 666
 		}
 		private function sendBugReport(bug_id:int, errMessage:String):void {
@@ -55,8 +52,7 @@ package come2play_as3.api {
 					output.push(serverEntry.toString() + "\n");
 				}
 			}
-			if(historyEntries!=null)
-				output.push("History entries :\n\n"+historyEntries.join("\n")+"\n\n");
+			output.push("History entries :\n\n"+historyEntries.join("\n")+"\n\n");
 			
 			output.push("Custom Data:\n\n"+getTAsArray().join("\n"));
 			var gotMatchStarted:API_GotMatchStarted = API_GotMatchStarted.create(0,verifier.getAllPlayerIds(),verifier.getFinishedPlayerIds(),serverEntries)
@@ -223,9 +219,7 @@ package come2play_as3.api {
 					T.updateUser(infoMessage.userId, userObject);
 					
 				}
-				if(historyEntries != null)
-					if(historyEntries.length < HISTORY_LENGTH)
-						historyEntries.push(HistoryEntry.create(/*as*/SerializableClass.deserialize(msg.toObject()) as API_Message,getTimer()))
+				StaticFunctions.limitedPush(historyEntries,HistoryEntry.create(/*as*/SerializableClass.deserialize(msg.toObject()) as API_Message,getTimer()),HISTORY_LENGTH);
 				dispatchMessage(msg)
 
         	} catch (err:Error) {

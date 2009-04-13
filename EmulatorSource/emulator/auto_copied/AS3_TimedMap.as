@@ -11,7 +11,6 @@ package emulator.auto_copied
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
 import flash.utils.Dictionary;
-import flash.utils.getTimer;
 	
 public final class AS3_TimedMap 
 	extends SerializableClass { // just for toString()
@@ -20,25 +19,25 @@ public final class AS3_TimedMap
 	public var dic:Dictionary = new Dictionary(); // mapping key -> DebugInfo
 	
 	public function AS3_TimedMap(maxSecondsStayInMap:int=0) {
+		this.maxMillisStayInMap = 1000*maxSecondsStayInMap;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		this.maxMillisStayInMap = 1000*maxSecondsStayInMap;
 		ErrorHandler.myInterval("AS3_TimedMap with maxMillisStayInMap="+maxMillisStayInMap, ticked, maxMillisStayInMap);			
 	}
-	private function ticked():void {		
-		var now:int = getTimer();
+	private function ticked():void {
 		for each (var debug:DebugInfo in dic) {			
-			StaticFunctions.assert( (now-debug.time) < maxMillisStayInMap, ["AS3_TimedMap: an entry stayed more than ",maxMillisStayInMap, " entry=",debug, " now=",now, this]);
+			StaticFunctions.assert( !debug.time.havePassed(maxMillisStayInMap), ["AS3_TimedMap: an entry stayed more than ",maxMillisStayInMap, " entry=",debug, this]);
 		}
 	}
 	public function add(key:Object, val:Object):void {
+		StaticFunctions.assert( dic[key]==null, ["AS3_TimedMap: key already exists! key=",key,this]);
+		var debug:DebugInfo = new DebugInfo();		
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		StaticFunctions.assert( dic[key]==null, ["AS3_TimedMap: key already exists! key=",key,this]);
-		var debug:DebugInfo = new DebugInfo();		
-		debug.time = getTimer();
+		debug.time = new TimeMeasure();
+		debug.time.setTime();
 		debug.val = val;
 		dic[key] = debug;
 	}
@@ -46,10 +45,10 @@ public final class AS3_TimedMap
 	public function remove(key:Object):Object {
 		var debug:DebugInfo = dic[key];
 		StaticFunctions.assert(debug!=null, ["AS3_TimedMap: missing key=",key, this]);		
+		delete dic[key];
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		delete dic[key];
 		return debug.val;
 	}
 	public function contains(key:Object):Boolean {
@@ -59,16 +58,17 @@ public final class AS3_TimedMap
 		dic = new Dictionary();
 	}
 	public function size():int {
+		return AS3_vs_AS2.dictionarySize(dic);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		return AS3_vs_AS2.dictionarySize(dic);
 	}
 }
 }
 
-import emulator.auto_copied.SerializableClass;	
+import emulator.auto_copied.SerializableClass;
+import emulator.auto_copied.TimeMeasure;	
 class DebugInfo extends SerializableClass {
-	public var time:int;
+	public var time:TimeMeasure;
 	public var val:Object;
 }

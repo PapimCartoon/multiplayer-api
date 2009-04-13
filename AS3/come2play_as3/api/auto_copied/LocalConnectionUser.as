@@ -104,13 +104,7 @@ package come2play_as3.api.auto_copied
 		public function LocalConnectionUser(_someMovieClip:DisplayObjectContainer, isContainer:Boolean, sPrefix:String,shouldVerify:Boolean) {
 			try {
 				this.isUsingAS3 = sPrefix==USING_AS3_PREFIX;
-				if (isUsingAS3) {
-					// in AS3 we prefer to use direct method calls (using the static SINGLETON member), 
-					// instead of LocalConnection (which has size limitations)
-					StaticFunctions.assert(SINGLETON==null,["You can create a LocalConnectionUser only once!"]);
-					SINGLETON = this;
-				}
-				
+							
 				if (!isContainer) // in the container we apply the reflection in RoomLogic (e.g., for a room we do not have a localconnection) 
 					StaticFunctions.performReflectionFromFlashVars(_someMovieClip);
 				StaticFunctions.allowDomains();
@@ -135,8 +129,15 @@ package come2play_as3.api.auto_copied
 						ErrorHandler.myTimeout("buildConnection",AS3_vs_AS2.delegate(this,this.buildConnection),MILL_AFTER_ALLOW_DOMAINS);	
 					}					
 				} else {
+					// in AS3 we prefer to use direct method calls (using the static SINGLETON member), 
+					// instead of LocalConnection (which has size limitations)
+					// putting a value in SINGLETON means that the init is done (so it must be done after API_LoadMessages) 
+					StaticFunctions.assert(SINGLETON==null,["You can create a LocalConnectionUser only once!"]);
+					SINGLETON = this;
+					
 					madeConnection();
 				}
+
 			} catch (err:Error) {
 				ErrorHandler.handleError(err, this);
 			}	

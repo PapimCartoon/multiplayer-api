@@ -110,7 +110,7 @@ class come2play_as2.tictactoe.TictactoeSquareGraphic
     public static var TRACE_ANIMATION_STEPS:Boolean = false;
     private var alphaPercentage:Number;
     private var moveAnimationInterval:MyInterval = null;
-    private var animationStartedOn:Number = -1;
+    private var animationStartedOn:TimeMeasure = new TimeMeasure();
     public function startMoveAnimation():Void {
     	StaticFunctions.assert(moveAnimationInterval==null, ["TictactoeSquareGraphic is already in animation mode! sqaure=", move]);
     	
@@ -118,16 +118,19 @@ class come2play_as2.tictactoe.TictactoeSquareGraphic
 		soundMovieClip.gotoAndPlay("MakeSound");
 		
 		alphaPercentage = 0;
-		animationStartedOn = getTimer();
+		animationStartedOn.setTime();
     	moveAnimationInterval = new MyInterval("TictactoeSquareGraphic.moveAnimationStep");
     	moveAnimationInterval.start(AS3_vs_AS2.delegate(this, this.moveAnimationStep), MOVE_ANIMATION_INTERVAL_MILLI);    	
 		moveAnimationStep();		
     }
     private function moveAnimationStep():Void {
     	if (TRACE_ANIMATION_STEPS) StaticFunctions.storeTrace(["moveAnimationStep: alphaPercentage=",alphaPercentage]);
+    	var didTimePassed:Boolean = false;
     	if (alphaPercentage>=100 ||
     		// after 1 second I end the animation (if the flash is overloaded) 
-    		(getTimer()-animationStartedOn>=1000)) {
+    		(didTimePassed = animationStartedOn.havePassed(1000))) {
+    		if (didTimePassed) StaticFunctions.tmpTrace(animationStartedOn);
+    		animationStartedOn.clearTime();
 			alphaPercentage = 100;
     		StaticFunctions.assert(moveAnimationInterval!=null, ["TictactoeSquareGraphic is not in a move animation! sqaure=", move]);
     		moveAnimationInterval.clear();

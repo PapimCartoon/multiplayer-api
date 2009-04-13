@@ -154,6 +154,9 @@ public final class AS3_vs_AS2
 		return "all event listeners info:\n\t\t\t" + res.join("\n\t\t\t");
 	}
 	
+	public static function myHasAnyEventListener(dispatcherName:String, dispatcher:IEventDispatcher):Boolean {
+		return dispatchersInfo[dispatcher]!=null;
+	}
 	public static function myHasEventListener(dispatcherName:String, dispatcher:IEventDispatcher, type:String, listener:Function):Boolean {
 		var info:DispatcherInfo = dispatchersInfo[dispatcher];
 		if (info==null) return false; 

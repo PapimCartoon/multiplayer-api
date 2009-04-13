@@ -270,7 +270,7 @@ public final class AS3_vs_AS2
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		StaticFunctions.assert(info.name==dispatcherName, ["getDispatcherInfo: You used the same dispatcher with different dispatcherName! dispatcher=",dispatcher," new dispatcherName=",dispatcherName, " old dispatcherName=",info.name]);
+		StaticFunctions.assert(dispatcherName==null || info.name==dispatcherName, ["getDispatcherInfo: You used the same dispatcher with different dispatcherName! dispatcher=",dispatcher," new dispatcherName=",dispatcherName, " old dispatcherName=",info.name]);
 		return info;
 	}
 	private static function p_myAddEventListener(dispatcherName:String, dispatcher:IEventDispatcher, type:String, listener:Function, useCapture:Boolean, priority:int, weakReference:Boolean):void {

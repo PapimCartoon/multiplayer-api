@@ -1,5 +1,3 @@
-	import come2play_as2.auto_copied.TimeMeasure;
-	
 import come2play_as2.api.auto_copied.*;
 	class come2play_as2.api.auto_copied.ShouldUpdate
 	{

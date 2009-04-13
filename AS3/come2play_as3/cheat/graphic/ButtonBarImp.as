@@ -24,7 +24,7 @@ package come2play_as3.cheat.graphic
 		public function ButtonBarImp()
 		{
 			cheaterTimer = new AS3_Timer("cheaterTimer",1000,0);
-			AS3_vs_AS2.myAddEventListener(cheaterTimer,TimerEvent.TIMER,secondDone)
+			AS3_vs_AS2.myWeakAddEventListener("cheaterTimer",cheaterTimer,TimerEvent.TIMER,secondDone)
 			
 			callCheaterButt = new ButtonBarButtonImp("callCheater","Call Cheater");
 			trustButt = new ButtonBarButtonImp("trust","Trust");

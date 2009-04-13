@@ -35,7 +35,7 @@ package come2play_as3.minesweeper
 			if(T.custom(API_Message.CUSTOM_INFO_KEY_isBack,false) as Boolean)
 			{				
 				box.gotoAndStop(30+playerNum*10);
-				AS3_vs_AS2.myAddEventListener(box,Event.ENTER_FRAME,function(ev:Event):void{stopBoom(box);})
+				AS3_vs_AS2.myWeakAddEventListener("box",box,Event.ENTER_FRAME,function(ev:Event):void{stopBoom(box);})
 			}
 			else
 			{
@@ -148,7 +148,7 @@ class PlayerGraphicData extends MovieClip
 	public function PlayerGraphicData(num:int,name:String):void
 	{
 		lifeUpTimer = new AS3_Timer("lifeUpTimer",1000,0);
-		AS3_vs_AS2.myAddEventListener(lifeUpTimer,TimerEvent.TIMER,flicker)
+		AS3_vs_AS2.myWeakAddEventListener("lifeUpTimer",lifeUpTimer,TimerEvent.TIMER,flicker)
 		if(name.length > 10)
 			name = name.substr(0,10);
 		playerName= name;

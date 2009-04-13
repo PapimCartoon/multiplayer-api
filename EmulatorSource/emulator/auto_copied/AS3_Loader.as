@@ -169,7 +169,7 @@ public final class AS3_Loader
 					},
 					// failure function
 					function(ev:Event):void {
-						loadedImageUrl(false, imageUrl,ev);						
+						loadedImageUrl(true, imageUrl,ev);						
 					},progressHandler,context);		
 			}
 		}

@@ -200,7 +200,7 @@ public final class AS3_vs_AS2
 	private static function getDispatcherInfo(dispatcherName:String, dispatcher:IEventDispatcher):DispatcherInfo {
 		var info:DispatcherInfo = dispatchersInfo[dispatcher];
 		StaticFunctions.assert(info!=null, ["getDispatcherInfo: No event listeners to remove! dispatcherName=",dispatcherName," dispatcher=",dispatcher]);
-		StaticFunctions.assert(info.name==dispatcherName, ["getDispatcherInfo: You used the same dispatcher with different dispatcherName! dispatcher=",dispatcher," new dispatcherName=",dispatcherName, " old dispatcherName=",info.name]);
+		StaticFunctions.assert(dispatcherName==null || info.name==dispatcherName, ["getDispatcherInfo: You used the same dispatcher with different dispatcherName! dispatcher=",dispatcher," new dispatcherName=",dispatcherName, " old dispatcherName=",info.name]);
 		return info;
 	}
 	private static function p_myAddEventListener(dispatcherName:String, dispatcher:IEventDispatcher, type:String, listener:Function, useCapture:Boolean, priority:int, weakReference:Boolean):void {

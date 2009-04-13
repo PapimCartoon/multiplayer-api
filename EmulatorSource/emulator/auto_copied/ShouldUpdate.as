@@ -5,13 +5,11 @@
 // and then run the java program that automatically copies and changes the as file.
 // We do not share the code because the flash goes crazy if it loads to SWFs files with classes of identical names and packages.
 // So we changed the package name when we copied the directory 'auto_copied'
-package emulator.auto_copied
-{
+﻿package emulator.auto_copied
+{	
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	import come2play_as3.auto_copied.TimeMeasure;
-	
 	public class ShouldUpdate
 	{
 	    private var updatedOn:TimeMeasure = new TimeMeasure();
@@ -20,11 +18,11 @@ package emulator.auto_copied
 	        everyMilliSec = milli;
 	        if (!doNow) updatedOn.setTime();
 	    }
+	    public function toString():String {
+	        return "ShouldUpdate updatedOn="+ (updatedOn)+" everyMilliSec="+everyMilliSec;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	    public function toString():String {
-	        return "ShouldUpdate updatedOn="+ (updatedOn)+" everyMilliSec="+everyMilliSec;
 	    }	
 	    public function shouldUpdate():Boolean {
 	        if (!havePassed(everyMilliSec)) return false;
@@ -33,9 +31,9 @@ package emulator.auto_copied
 	    }
 	    public function havePassed(milli:int):Boolean {
 	        return updatedOn.havePassed(milli);
+	    }
+	}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	    }
-	}
 }

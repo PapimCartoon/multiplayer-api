@@ -18,7 +18,7 @@ import come2play_as2.api.*;
 		private var hackerUserId:Number = -1;
 		private var runningAnimations:Array/*String*/ = [];
 		private var keys:Array;
-		private var historyEntries:Array/*HistoryEntry*/;
+		private var historyEntries:Array/*HistoryEntry*/ = [];
 		private var singlePlayerEmulator:SinglePlayerEmulator;
 		public static var HISTORY_LENGTH:Number = 100;
 		
@@ -30,9 +30,6 @@ import come2play_as2.api.*;
 			AS3_vs_AS2.addKeyboardListener(_someMovieClip, ErrorHandler.wrapWithCatch("keyPressed",AS3_vs_AS2.delegate(this,this.keyPressed)));
 			if (getPrefixFromFlashVars(_someMovieClip)==null) 
 				singlePlayerEmulator = new SinglePlayerEmulator(_someMovieClip); // to prevent garbage collection
-				
-			if(HISTORY_LENGTH > 0)
-				historyEntries = new Array();
 			//come2play_as2.api::BaseGameAPI.abc = 666
 		}
 		private function sendBugReport(bug_id:Number, errMessage:String):Void {
@@ -46,13 +43,12 @@ import come2play_as2.api.*;
 			output.push("Server State(client side) : \n\n");					
 			var serverEntries:Array/*ServerEntry*/ = new Array();
 			if(serverStateMiror!=null){
-				var p52:Number=0; for (var i52:String in serverStateMiror.allValues) { var serverEntry:ServerEntry = serverStateMiror.allValues[serverStateMiror.allValues.length==null ? i52 : p52]; p52++;
+				var p49:Number=0; for (var i49:String in serverStateMiror.allValues) { var serverEntry:ServerEntry = serverStateMiror.allValues[serverStateMiror.allValues.length==null ? i49 : p49]; p49++;
 					serverEntries.push(serverEntry);
 					output.push(serverEntry.toString() + "\n");
 				}
 			}
-			if(historyEntries!=null)
-				output.push("History entries :\n\n"+historyEntries.join("\n")+"\n\n");
+			output.push("History entries :\n\n"+historyEntries.join("\n")+"\n\n");
 			
 			output.push("Custom Data:\n\n"+getTAsArray().join("\n"));
 			var gotMatchStarted:API_GotMatchStarted = API_GotMatchStarted.create(0,verifier.getAllPlayerIds(),verifier.getFinishedPlayerIds(),serverEntries)
@@ -154,7 +150,7 @@ import come2play_as2.api.*;
         }
         private function updateMirorServerState(serverEntries:Array/*ServerEntry*/):Void
         {
-        	var p160:Number=0; for (var i160:String in serverEntries) { var serverEntry:ServerEntry = serverEntries[serverEntries.length==null ? i160 : p160]; p160++;
+        	var p156:Number=0; for (var i156:String in serverEntries) { var serverEntry:ServerEntry = serverEntries[serverEntries.length==null ? i156 : p156]; p156++;
         	    serverStateMiror.addEntry(serverEntry);	
         	}     	
         }
@@ -192,7 +188,7 @@ import come2play_as2.api.*;
 					var customInfo:API_GotCustomInfo = API_GotCustomInfo(msg);
 					var i18nObj:Object = {};
 					var customObj:Object = {};
-					var p198:Number=0; for (var i198:String in customInfo.infoEntries) { var entry:InfoEntry = customInfo.infoEntries[customInfo.infoEntries.length==null ? i198 : p198]; p198++;
+					var p194:Number=0; for (var i194:String in customInfo.infoEntries) { var entry:InfoEntry = customInfo.infoEntries[customInfo.infoEntries.length==null ? i194 : p194]; p194++;
 						var key:String = entry.key;
 						var value:Object = entry.value;
 						if (key==API_Message.CUSTOM_INFO_KEY_i18n) {
@@ -213,15 +209,13 @@ import come2play_as2.api.*;
 				}else if(msg instanceof API_GotUserInfo){
 					var infoMessage:API_GotUserInfo =API_GotUserInfo( msg);
 					var userObject:Object = {};
-					var p219:Number=0; for (var i219:String in infoMessage.infoEntries) { var infoEntry:InfoEntry = infoMessage.infoEntries[infoMessage.infoEntries.length==null ? i219 : p219]; p219++;
+					var p215:Number=0; for (var i215:String in infoMessage.infoEntries) { var infoEntry:InfoEntry = infoMessage.infoEntries[infoMessage.infoEntries.length==null ? i215 : p215]; p215++;
 						userObject[infoEntry.key] = infoEntry.value;
 					}
 					T.updateUser(infoMessage.userId, userObject);
 					
 				}
-				if(historyEntries != null)
-					if(historyEntries.length < HISTORY_LENGTH)
-						historyEntries.push(HistoryEntry.create(API_Message(SerializableClass.deserialize(msg.toObject())),getTimer()))
+				StaticFunctions.limitedPush(historyEntries,HistoryEntry.create(API_Message(SerializableClass.deserialize(msg.toObject())),getTimer()),HISTORY_LENGTH);
 				dispatchMessage(msg)
 
         	} catch (err:Error) {

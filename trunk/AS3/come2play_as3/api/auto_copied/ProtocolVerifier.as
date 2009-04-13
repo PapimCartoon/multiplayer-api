@@ -10,10 +10,13 @@ package come2play_as3.api.auto_copied
 	
 	public class ProtocolVerifier
 	{
-		public static var MAX_ANIMATION_MILLISECONDS:int = 60*1000; // max 60 seconds for animations
-		public static var WARN_ANIMATION_MILLISECONDS:int = 30*1000; // if an animation finished after 30 seconds we report an error (for us to know that it can happen!)
+		// I had normal cases that took more than 30 seconds!
+		//["Time: ",63516,["myInterval set","TictactoeSquareGraphic.moveAnimationStep",MyInterval x50 not running,50]],
+		//["Time: ",99063,["myInterval cleared","TictactoeSquareGraphic.moveAnimationStep",MyInterval x50 not running,50]]]
+		public static var MAX_ANIMATION_MILLISECONDS:int = 120*1000; // max seconds for animations
+		public static var WARN_ANIMATION_MILLISECONDS:int = 60*1000; // if an animation finished after X seconds, we report an error (for us to know that it can happen!)
 
-		private var transactionStartedOn:int = -1; 
+		private var transactionStartedOn:TimeMeasure = new TimeMeasure(); 
 		private var currentCallback:API_Message = null;
 		private var didRegisterOnServer:Boolean = false;
 		private var currentPlayerIds:Array/*int*/;
@@ -35,14 +38,14 @@ package come2play_as3.api.auto_copied
 				"";
 		}
 		private function transactionRunningTime():int {
-			return getTimer() - transactionStartedOn;
+			return transactionStartedOn.milliPassed();
 		}
         private function checkAnimationInterval():void {
-        	if (transactionStartedOn==-1) return; // animation is not running
+        	if (!transactionStartedOn.isTimeSet()) return; // animation is not running
         	var delta:int = transactionRunningTime();
         	if (delta< MAX_ANIMATION_MILLISECONDS) return; // animation is running for a short time
         	// animation is running for too long
-        	StaticFunctions.throwError("An transaction is running for more than MAX_ANIMATION_MILLISECONDS="+MAX_ANIMATION_MILLISECONDS+". It is running for="+delta+". ProtocolVerifier="+this);         	
+        	StaticFunctions.throwError("An transaction is running for more than MAX_ANIMATION_MILLISECONDS="+MAX_ANIMATION_MILLISECONDS+". transactionStartedOn="+transactionStartedOn+". It is running for="+delta+". ProtocolVerifier="+this);         	
         }
         public function getAllPlayerIds():Array/*int*/{
         	return currentPlayerIds;
@@ -83,7 +86,7 @@ package come2play_as3.api.auto_copied
 			check(currentCallback==null, ["Container sent two messages without waiting! oldCallback=", currentCallback, " newCallback=",gotMsg]);
 			//check(didRegisterOnServer, [T.i18n("Container sent a message before getting doRegisterOnServer")]); 
 			currentCallback = gotMsg;
-			transactionStartedOn = getTimer();   
+			transactionStartedOn.setTime();   
 			if (isOldBoard(gotMsg)) {
 			} else if (gotMsg is API_GotStateChanged) {
     			checkInProgress(true,gotMsg);
@@ -177,8 +180,8 @@ package come2play_as3.api.auto_copied
 				currentCallback = null;
 				
 				if (transactionRunningTime()>WARN_ANIMATION_MILLISECONDS) // for us to know it can happen (so we should increase our bound)
-					ErrorHandler.alwaysTraceAndSendReport("A transaction finished after WARN_ANIMATION_MILLISECONDS",this);
-        		transactionStartedOn = -1;
+					ErrorHandler.alwaysTraceAndSendReport("A transaction finished after WARN_ANIMATION_MILLISECONDS",transactionStartedOn);
+        		transactionStartedOn.clearTime();
 			} else {
 				check(false, ["Forgot to verify message type=",AS3_vs_AS2.getClassName(doMsg), " doMsg=",doMsg]);
 			}

@@ -245,11 +245,13 @@ package come2play_as3.api {
 			func.apply(this, params);
         }
         override public function sendMessage(doMsg:API_Message):void {
-        	if (ProtocolVerifier.isPassThrough(doMsg)) {
-        		super.sendMessage(doMsg);
-        		return;
+        	if (doMsg is API_DoAllFoundHacker) {
+        		var stackTraces:String = AS3_vs_AS2.myGetStackTrace(new Error());
+        		if (stackTraces!=null)
+        			(doMsg as API_DoAllFoundHacker).errorDescription += "\n\nStack traces when sending DoAllFoundHacker:\n"+stackTraces;        		
         	}
-        	if (doMsg is API_DoStoreState) {
+        	
+        	if (ProtocolVerifier.isPassThrough(doMsg) || doMsg is API_DoStoreState) {
         		super.sendMessage(doMsg);
         		return;
         	}        	

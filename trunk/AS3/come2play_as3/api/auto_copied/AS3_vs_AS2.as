@@ -281,7 +281,8 @@ public final class AS3_vs_AS2
 		unwrappedClearInterval(zoneName, timeoutId);
 		//clearTimeout(timeoutId);
 	}
-	public static function myGetStackTrace(err:Error):String {
+	public static function myGetStackTrace(err:Error):String { 
+		// in AS2 or in a release player (not a debugger) it returns null
 		return err.getStackTrace();
 	}
 	public static function error2String(err:Error):String {

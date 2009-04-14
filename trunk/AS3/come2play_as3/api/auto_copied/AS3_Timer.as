@@ -13,6 +13,7 @@ package come2play_as3.api.auto_copied
 		private var name:String;
 		public function AS3_Timer(name:String, delay:Number, repeatCount:int=0)
 		{
+			StaticFunctions.assert(delay>0, ["AS3_Timer: illegal delay=",delay," name=",name, " repeatCount=",repeatCount]);
 			super(delay, repeatCount);
 			this.name = name;
 			if (ALL_TIMERS==null) {

@@ -23,7 +23,18 @@ public final class AS3_Loader
 		StaticFunctions.tmpTrace(["AS3_Loader: ",args]);
 	}
 	
-	private static var imageCache:Dictionary/*imageUrl->ByteArray*/ = new Dictionary();
+	private static var imageCache:Dictionary/*imageUrl->Event (if loading failed, then the ev.data is an empty ByteArray)*/ = new Dictionary();	
+	public static function getImageLoadByteArray(ev:Event):ByteArray {
+		var loadedImage:URLLoader = ev.target as URLLoader;
+		StaticFunctions.assert(loadedImage!=null, ["loadedImage is null", ev]);	
+		var res:ByteArray = loadedImage.data;
+		StaticFunctions.assert(res!=null, ["getImageLoadByteArray: ev=",ev]);
+		return res;
+	}
+	public static function isImageLoadFailed(ev:Event):Boolean {
+		return getImageLoadByteArray(ev).length==0; 
+	}
+	
 	private static var url2RequestArray:Dictionary/*imageUrl->ImageLoadRequest[]*/ = new Dictionary();
 	public static var imageLoadingRetry:int = 1;
 	
@@ -35,8 +46,9 @@ public final class AS3_Loader
 		
 		var cachedRes:Array = [];
 		for (url in imageCache) {	
-			var byteArr:ByteArray = imageCache[url];
-			cachedRes.push(url+" (size="+(byteArr.length)+")");
+			var ev:Event = imageCache[url];
+			cachedRes.push(url+
+				(!isImageLoadFailed(ev) ? " (size="+(getImageLoadByteArray(ev).length)+")" : " (FAILED: "+ev+")"));
 		}
 		cachedRes.sort();
 		
@@ -130,33 +142,36 @@ public final class AS3_Loader
 	}
 	private static function loadedImageUrl(isFailure:Boolean, imageUrl:String, ev:Event):void {
 		if (TRACE_IMAGE_CACHE) StaticFunctions.tmpTrace(["loadedImageUrl isFailure=",isFailure," imageUrl=",imageUrl, " event=",ev]);
-		var loadedImage:URLLoader = ev.target as URLLoader;					
-		StaticFunctions.assert(loadedImage!=null, ["loadedImage is null", imageUrl, ev]);
-		var byteArray:ByteArray = loadedImage.data as ByteArray;
-		if (!isFailure) StaticFunctions.assert(byteArray!=null && byteArray.length>0, ["ByteArray of loadedImage is null or empty", imageUrl, ev]);
-		
+						
+				
+		StaticFunctions.assert(isFailure==isImageLoadFailed(ev), ["loadedImageUrl: isFailure=", isFailure, imageUrl, ev]);
 		for each (var req:ImageLoadRequest in url2RequestArray[imageUrl]) {
-			if (isFailure)
-				req.failureHandler(ev);
-			else				
-				handleExistingImage(byteArray,req);		
+			handleExistingImage(ev,req);		
 		}
 		
 		StaticFunctions.assert(imageCache[imageUrl]==null,["imageCache must be empty: ",imageUrl]);
-		imageCache[imageUrl] = byteArray;
+		// even if loading failed, 
+		// we put the event to prevent future attempts to load the image again
+		imageCache[imageUrl] = ev;
 		delete url2RequestArray[imageUrl];
 	}
 	
 	public static var TRACE_IMAGE_CACHE:Boolean = true;
-	private static function handleExistingImage(data:ByteArray,req:ImageLoadRequest):void{		
-		if (TRACE_IMAGE_CACHE) StaticFunctions.tmpTrace(["Loaded image: ", req.imageUrl, "reqId=", req.reqId, " size=",data.length]);
-		var byteConverter:Loader = new Loader();
-		var dispatcher:IEventDispatcher = byteConverter.contentLoaderInfo;
-		// IMPORTANT - there was a garbage collection issue here (if I remove the anonymous function and replace it with req.successHandler)
-		// therefore the event listener must refer to byteConverter to prevent it from being garbage-collected
-		AS3_vs_AS2.myAddEventListener("handleExistingImage", dispatcher,Event.COMPLETE, function (ev:Event):void { removeImageLoaderListeners(byteConverter,req,ev,false); });
-		AS3_vs_AS2.myAddEventListener("handleExistingImage", dispatcher, IOErrorEvent.IO_ERROR, function (ev:Event):void { removeImageLoaderListeners(byteConverter,req,ev,true); });
-		byteConverter.loadBytes(data,req.context);
+	private static function handleExistingImage(ev:Event,req:ImageLoadRequest):void{		
+		if (TRACE_IMAGE_CACHE) StaticFunctions.tmpTrace(["Loaded image: ", req.imageUrl, "reqId=", req.reqId, "ev=",ev]);
+		if (isImageLoadFailed(ev)) {
+			// previous loading failed 
+			req.failureHandler(ev);
+		} else {
+			var data:ByteArray = getImageLoadByteArray(ev);
+			var byteConverter:Loader = new Loader();
+			var dispatcher:IEventDispatcher = byteConverter.contentLoaderInfo;
+			// IMPORTANT - there was a garbage collection issue here (if I remove the anonymous function and replace it with req.successHandler)
+			// therefore the event listener must refer to byteConverter to prevent it from being garbage-collected
+			AS3_vs_AS2.myAddEventListener("handleExistingImage", dispatcher,Event.COMPLETE, function (ev:Event):void { removeImageLoaderListeners(byteConverter,req,ev,false); });
+			AS3_vs_AS2.myAddEventListener("handleExistingImage", dispatcher, IOErrorEvent.IO_ERROR, function (ev:Event):void { removeImageLoaderListeners(byteConverter,req,ev,true); });
+			byteConverter.loadBytes(data,req.context);
+		}
 	}
 	private static function removeImageLoaderListeners(byteConverter:Loader, req:ImageLoadRequest, ev:Event, isFailure:Boolean):void {
 		var dispatcher:IEventDispatcher = byteConverter.contentLoaderInfo;

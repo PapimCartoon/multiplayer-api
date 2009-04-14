@@ -311,7 +311,10 @@ package come2play_as3.api
 					queueSendMessage( API_GotMatchStarted.create(++messageNum,getPlayerIds(), finishedUserIds, serverStateMiror.getValues() ) );
         		}
         		
-			} else if (msg is API_DoFinishedCallback) {
+			}else if(msg is API_DoAllFoundHacker){
+				var foundHacker:API_DoAllFoundHacker = /*as*/msg as API_DoAllFoundHacker;
+				AS3_vs_AS2.showMessage("\n User "+foundHacker.userId+" called \n"+foundHacker.errorDescription,"Found Hacker");
+			}else if (msg is API_DoFinishedCallback) {
 				if (apiMsgsQueue.length==0) throwError("Game sent too many DoFinishedCallback");
 				apiMsgsQueue.shift();
 				if (apiMsgsQueue.length>0) sendTopQueue();

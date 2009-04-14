@@ -308,7 +308,10 @@ import come2play_as2.api.*;
 					queueSendMessage( API_GotMatchStarted.create(++messageNum,getPlayerIds(), finishedUserIds, serverStateMiror.getValues() ) );
         		}
         		
-			} else if (msg instanceof API_DoFinishedCallback) {
+			}else if(msg instanceof API_DoAllFoundHacker){
+				var foundHacker:API_DoAllFoundHacker = API_DoAllFoundHacker(msg);
+				AS3_vs_AS2.showMessage("\n User "+foundHacker.userId+" called \n"+foundHacker.errorDescription,"Found Hacker");
+			}else if (msg instanceof API_DoFinishedCallback) {
 				if (apiMsgsQueue.length==0) throwError("Game sent too many DoFinishedCallback");
 				apiMsgsQueue.shift();
 				if (apiMsgsQueue.length>0) sendTopQueue();
@@ -331,7 +334,7 @@ import come2play_as2.api.*;
   			
   			if (DEFAULT_USERS_INFO.length>0) {
 	  			var pos:Number = 0;
-	  			var p335:Number=0; for (var i335:String in getPlayerIds()) { var curUserId:Number = getPlayerIds()[getPlayerIds().length==null ? i335 : p335]; p335++;
+	  			var p338:Number=0; for (var i338:String in getPlayerIds()) { var curUserId:Number = getPlayerIds()[getPlayerIds().length==null ? i338 : p338]; p338++;
 	  				queueSendMessage(API_GotUserInfo.create(curUserId, pos<DEFAULT_USERS_INFO.length ? DEFAULT_USERS_INFO[pos++] : DEFAULT_USERS_INFO[pos-1]) );
 				}
 	  		}
@@ -341,13 +344,13 @@ import come2play_as2.api.*;
 	  		setCurUserId( getFirstPlayerId() );
 	  		
   			serverStateMiror = new ObjectDictionary();	
-  			var p345:Number=0; for (var i345:String in DEFAULT_MATCH_STATE) { var serverEntry:ServerEntry = DEFAULT_MATCH_STATE[DEFAULT_MATCH_STATE.length==null ? i345 : p345]; p345++;
+  			var p348:Number=0; for (var i348:String in DEFAULT_MATCH_STATE) { var serverEntry:ServerEntry = DEFAULT_MATCH_STATE[DEFAULT_MATCH_STATE.length==null ? i348 : p348]; p348++;
   				serverStateMiror.addEntry(serverEntry);
 			}
 			finishedUserIds = DEFAULT_FINISHED_USER_IDS.concat(); // to create a copy
   			queueSendMessage(API_GotMatchStarted.create(++messageNum,getPlayerIds(), finishedUserIds, serverStateMiror.getValues() ) );
   			if (WAIT_BETWEEN_EXTRA_CALLBACKS==0) {
-	  			var p351:Number=0; for (var i351:String in EXTRA_CALLBACKS) { var extraCallback:API_Message = EXTRA_CALLBACKS[EXTRA_CALLBACKS.length==null ? i351 : p351]; p351++;
+	  			var p354:Number=0; for (var i354:String in EXTRA_CALLBACKS) { var extraCallback:API_Message = EXTRA_CALLBACKS[EXTRA_CALLBACKS.length==null ? i354 : p354]; p354++;
 	  				trace("Passing extraCallback="+extraCallback);
 	  				queueSendMessage( extraCallback );
 	  			}

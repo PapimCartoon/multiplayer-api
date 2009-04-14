@@ -821,14 +821,16 @@ class NativeSerializable extends SerializableClass {
 }	
 
 class ErrorSerializable extends NativeSerializable {
+	public var stackTraces:String;
 	public var message:String;
 	public var errorId:int;
 	public function ErrorSerializable(err:Error=null) {
 		super("Error");
-		message = err==null ? null : err.message;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		message = err==null ? null : err.message;
+		stackTraces = err==null ? null : err.getStackTrace();
 		errorId = err==null ? 0 : err.errorID;
 	}	
 	override public function fromNative(obj:Object):NativeSerializable {
@@ -837,11 +839,11 @@ class ErrorSerializable extends NativeSerializable {
 	override public function postDeserialize():Object {
 		return new Error(message, errorId);
 	}	
-}
-class XMLSerializable extends NativeSerializable {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+}
+class XMLSerializable extends NativeSerializable {
 	public var xmlStr:String;
 	public function XMLSerializable(xml:XML=null) {
 		super("XML");
@@ -850,11 +852,11 @@ class XMLSerializable extends NativeSerializable {
 	override public function fromNative(obj:Object):NativeSerializable {
 		return obj is XML ? new XMLSerializable(obj as XML) : null;
 	}
-	override public function postDeserialize():Object {
-		return AS3_vs_AS2.xml_create(xmlStr);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	override public function postDeserialize():Object {
+		return AS3_vs_AS2.xml_create(xmlStr);
 	}	
 }
 class DateSerializable extends NativeSerializable {
@@ -863,11 +865,11 @@ class DateSerializable extends NativeSerializable {
 	public function DateSerializable(date:Date=null) {
 		super("Date");
 		//utcDate = date==null ? null : date.toUTCString();
-		millis = date==null ? null : date.valueOf();
-	}	
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		millis = date==null ? null : date.valueOf();
+	}	
 	override public function fromNative(obj:Object):NativeSerializable {
 		return obj is Date ? new DateSerializable(obj as Date) : null;
 	}
@@ -876,11 +878,11 @@ class DateSerializable extends NativeSerializable {
 	}	
 }
 class DictionarySerializable extends NativeSerializable {
-	public var keyValArr:Array = [];
-	public function DictionarySerializable(dic:Dictionary=null) {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	public var keyValArr:Array = [];
+	public function DictionarySerializable(dic:Dictionary=null) {
 		super("Dictionary");
 		if (dic!=null) {
 			for (var k:Object in dic) 
@@ -889,11 +891,11 @@ class DictionarySerializable extends NativeSerializable {
 	}	
 	override public function fromNative(obj:Object):NativeSerializable {
 		return obj is Dictionary ? new DictionarySerializable(obj as Dictionary) : null;
-	}
-	override public function postDeserialize():Object {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	}
+	override public function postDeserialize():Object {
 		var res:Dictionary = new Dictionary();
 		for each (var keyVal:Array in keyValArr)
 			res[ keyVal[0] ] = keyVal[1];
@@ -902,11 +904,11 @@ class DictionarySerializable extends NativeSerializable {
 }
 class ByteArraySerializable extends NativeSerializable {
 	public var arr:Array/*int*/;
-	public function ByteArraySerializable(byteArr:ByteArray=null) {
-		super("ByteArray");
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	public function ByteArraySerializable(byteArr:ByteArray=null) {
+		super("ByteArray");
 		arr = byteArr==null ? null : byteArr2Arr(byteArr);
 	}	
 	override public function fromNative(obj:Object):NativeSerializable {
@@ -915,11 +917,11 @@ class ByteArraySerializable extends NativeSerializable {
 	public static function byteArr2Arr(byteArr:ByteArray):Array {
 		var bytes:Array = [];
 		var oldPosition:int = byteArr.position;
-		byteArr.position = 0;
-		for (var i:int=0; i<byteArr.length; i++)
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		byteArr.position = 0;
+		for (var i:int=0; i<byteArr.length; i++)
 			bytes.push(byteArr.readByte());
 		byteArr.position = oldPosition;
 		return bytes;
@@ -928,10 +930,10 @@ class ByteArraySerializable extends NativeSerializable {
 		var res:ByteArray = new ByteArray();
 		for each (var i:int in arr)
 			res.writeByte(i);
-		res.position = 0; 
-		return res;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		res.position = 0; 
+		return res;
 	}	
 }

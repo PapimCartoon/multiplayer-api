@@ -626,11 +626,13 @@ class NativeSerializable extends SerializableClass {
 }	
 
 class ErrorSerializable extends NativeSerializable {
+	public var stackTraces:String;
 	public var message:String;
 	public var errorId:int;
 	public function ErrorSerializable(err:Error=null) {
 		super("Error");
 		message = err==null ? null : err.message;
+		stackTraces = err==null ? null : err.getStackTrace();
 		errorId = err==null ? 0 : err.errorID;
 	}	
 	override public function fromNative(obj:Object):NativeSerializable {

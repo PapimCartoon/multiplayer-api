@@ -197,6 +197,7 @@ class PlayerGraphicData extends MovieClip
 	private function flicker(ev:TimerEvent):void
 	{
 		var life:PlayerLife = playerLives[currentLives -1];
+		if(life == null)	return;
 		if(contains(life))
 			removeChild(life)
 		else

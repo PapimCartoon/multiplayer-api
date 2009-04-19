@@ -1,5 +1,6 @@
 package come2play_as3.api.auto_copied
 {
+	import flash.system.System;
 	import flash.utils.Dictionary;
 	import flash.utils.Timer;
 	/**
@@ -21,6 +22,18 @@ package come2play_as3.api.auto_copied
 				StaticFunctions.alwaysTrace(["ALL_TIMERS=",ALL_TIMERS]);
 			}
 			ALL_TIMERS[this] = true;
+		}
+		override public function start():void{
+			StaticFunctions.tmpTrace(["TIMER=",name,"started"]);
+			super.start();
+		}
+		override public function stop():void{
+			StaticFunctions.tmpTrace(["TIMER=",name,"stoped"]);
+			super.stop();
+		}
+		override public function reset():void{
+			StaticFunctions.tmpTrace(["TIMER=",name,"reset"]);
+			super.reset();
 		}
 		override public function toString():String {
 			return name+" x"+delay+

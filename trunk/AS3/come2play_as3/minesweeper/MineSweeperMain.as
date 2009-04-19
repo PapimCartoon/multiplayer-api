@@ -29,9 +29,9 @@ import flash.utils.*;
 		private var allPlayerIds:Array; //playing user ids
 		private var isPlaying:Boolean;
 		private var allowMoves:Boolean;
-		private var computerMoveTimer:Timer;
+		private var computerMoveTimer:AS3_Timer;
 	/** 
-	 * Written by: Ofir Vainshtein (ofirvins@yahoo.com)
+	 * Written by: Ofir Vainshtein (ofir@come2play.com)
  	**/
 		public function MineSweeperMain(graphics:MovieClip)
 		{ 
@@ -64,7 +64,7 @@ import flash.utils.*;
 				mineSweeperLogic.loadBoard(loadServerEntries);
 			if(! (T.custom(API_Message.CUSTOM_INFO_KEY_isBack,false) as Boolean) )
 				animationEnded("startGraphicAnimation");
-			if(allPlayerIds.indexOf(-1) != -1) computerMoveTimer.start();
+			if((allPlayerIds.indexOf(-1) != -1) && isPlaying) computerMoveTimer.start();
 			allowMoves = true;
 		}
 		public function gameOver(playerMatchOverArr:Array/*PlayerMatchOver*/):void
@@ -89,7 +89,7 @@ import flash.utils.*;
 			myUserId = T.custom(CUSTOM_INFO_KEY_myUserId, null) as int;
 			stageX = T.custom(CUSTOM_INFO_KEY_gameStageX, null) as int;
 			stageY = T.custom(CUSTOM_INFO_KEY_gameStageY, null) as int;
-			computerMoveTimer.delay = T.custom("ComputerSpeed",2000) as int;
+			if(!computerMoveTimer.running)	computerMoveTimer.delay = T.custom("ComputerSpeed",2000) as int;
 			for each(var info:InfoEntry in infoEntries){
 				if(info.key == CUSTOM_INFO_KEY_gameWidth){
 					graphics.width = T.custom(CUSTOM_INFO_KEY_gameWidth,int(graphics.width)) as int;

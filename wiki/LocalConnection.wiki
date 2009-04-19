@@ -1,6 +1,6 @@
 #summary An AS class used for communication between two SWF files
 
-See [http://www.adobe.com/support/flash/action_scripts/actionscript_dictionary/actionscript_dictionary437.html Macromedia Flash - ActionScript Dictionary].
+See [http://www.adobe.com/support/flash/action_scripts/actionscript_dictionary/actionscript_dictionary437.html Macromedia Flash - ActionScript Dictionary for LocalConnection].
 
 The API uses LocalConnection as the channel for passing commands between the _game_ and the _container_. 
 

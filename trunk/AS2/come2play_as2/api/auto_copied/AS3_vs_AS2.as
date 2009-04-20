@@ -1,4 +1,4 @@
-﻿import come2play_as2.api.auto_copied.*;
+import come2play_as2.api.auto_copied.*;
 
 class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 	public static var isAS3:Boolean = false;
@@ -77,14 +77,14 @@ class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 	
   	// use ErrorHandler.myTimeout and myInterval because they have proper error handling
 	public static function unwrappedSetInterval(zoneName:String, func:Function, in_milliseconds:Number):Object {
-		return setInterval(func, in_milliseconds);
+		return setInterval(ErrorHandler.wrapWithCatch(zoneName,func), in_milliseconds);
 	}
 	public static function unwrappedSetTimeout(zoneName:String, func:Function, in_milliseconds:Number):Object {
 		var res_interval_id:Number;
-		res_interval_id = setInterval( function () {
+		res_interval_id = setInterval( ErrorHandler.wrapWithCatch(zoneName,function () {
 				clearInterval(res_interval_id);
 				func();
-			}, in_milliseconds);
+			}), in_milliseconds);
 		return res_interval_id;
 	}
 	public static function unwrappedClearInterval(zoneName:String, intervalId:Object):Void {

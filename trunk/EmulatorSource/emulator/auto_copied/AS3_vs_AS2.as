@@ -283,7 +283,7 @@ public final class AS3_vs_AS2
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		var func:Function = ErrorHandler.wrapWithCatch("myAddEventListener."+type+" for "+getQualifiedClassName(dispatcher), listener);		
+		var func:Function = ErrorHandler.wrapWithCatch(dispatcherName+" for event "+type, listener);		
 		if (dispatchersInfo[dispatcher] == null)
 			dispatchersInfo[dispatcher] = new DispatcherInfo(dispatcherName,weakReference); 
 		var info:DispatcherInfo = getDispatcherInfo(dispatcherName,dispatcher);

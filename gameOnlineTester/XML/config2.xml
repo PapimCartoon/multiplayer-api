@@ -146,6 +146,9 @@ Not used by the graphics yet (but should be displayed):
 			VARIANT is for OldBoard games.
 			For example:
 			LOCALTEST_Beatles-10_4-2-MultiPlayer
+			
+				come2play_as3.api.auto_copied::AS3_vs_AS2. = false
+				come2play_as3.auto_copied::AS3_vs_AS2. = false
 		 -->
 		
 		
@@ -170,10 +173,6 @@ Not used by the graphics yet (but should be displayed):
 		
 		-->
 		
-		
-		
-		
-		<entry><key>rewardFolderURL</key><value>"graphics/rewards/"</value></entry>
 		<entry><key>rewardFolderURL</key><value>"graphics/rewards/"</value></entry>
 		<entry><key>tokenFolderURL</key><value>"graphics/rewards/"</value></entry>
 		<entry><key>noUserPic</key><value>"images/noOne.png"</value></entry>
@@ -213,13 +212,14 @@ Not used by the graphics yet (but should be displayed):
 		Java43 (for testing with ASP): 74.63.37.41:8080:socket,74.63.37.41:8080:old_xmlsocket,74.63.37.41:80:rtmpt
 		
 		<entry><key>override all_java_ips</key><value>'80.179.46.238:80:rtmpt'</value></entry>
+		<entry><key>override all_java_ips</key><value>'74.63.37.38:8080:socket'</value></entry>
 
 		To test the weird PROXY some users have (that returns HTTP/1.1 400)
 		use the following (with Red5 turned on):
 		localhost:8083:socket,localhost:2000:socket
-		
-		-->		
-		<entry><key>override all_java_ips</key><value>'localhost:2000:socket,localhost:2000:old_xmlsocket,localhost:8083:rtmpt'</value></entry>
+				
+		-->
+		<entry><key>override all_java_ips</key><value>'localhost:2000:socket,localhost:2000:old_xmlsocket,localhost:8083:rtmpt'</value></entry>		
 		
 		
 		<!--
@@ -236,7 +236,7 @@ Not used by the graphics yet (but should be displayed):
 		<!--
 		chatType can be FIXED,DYNAMIC_OPEN,DYNAMIC_CLOSED,NO_CHAT_WITH_USERS_LIST or NO_CHAT
 		 -->
-		<entry><key>chatType</key><value>"NO_CHAT_WITH_USERS_LIST"</value></entry>
+		<entry><key>chatType</key><value>"FIXED"</value></entry>
 		<!--
 		logoUrl - url where end game logo is placed
 		logoLink - url clicking the logo will lead
@@ -323,7 +323,7 @@ Not used by the graphics yet (but should be displayed):
 			  <site_name>facebook</site_name>
 			  <name>Unknown #user_id#</name>
 			  <avatar_url>../images/Avatar_4.gif</avatar_url>
-			  <supervisor>NormalUser</supervisor>
+			  <supervisor>Supervisor</supervisor>
 			  <credibility>0</credibility>
 			  <tokens>0:100:</tokens>
 			  <votes_sum>0</votes_sum>
@@ -645,7 +645,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 		--> 		
 		<rooms type="list"> 
 			<room>
-				<room_id>999</room_id>
+				<room_id>382</room_id>
 				<all_java_ips></all_java_ips> 		
 				<room_name>Chess room</room_name> 
 				<cur_users>5</cur_users> 
@@ -761,8 +761,8 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 		  		and 30 elements of id=3
 		  -->
 		  <avatar_url>images/Avatar_1.gif</avatar_url>
-		  <!-- to change my supervisor status: Admin, Supervisor, MiniSupervisor, NormalUser -->
-		  <supervisor>NormalUser</supervisor>
+		  <!-- to change my supervisor status: Admin, Supervisor, MiniSupervisor, Supervisor -->
+		  <supervisor>Supervisor</supervisor>
 		  <credibility>100</credibility>
 		  <tokens>0:5000</tokens>
 		  <votes_sum>9</votes_sum>
@@ -959,7 +959,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 			<blocked_selected_color type="uint">0xCB2565</blocked_selected_color> 			<!-- color of the highlight -->
 		</user_info_pref>
     
-		<default_room_id>-1</default_room_id>
+		<default_room_id>382</default_room_id>
 		
 		<is_show_viewers type="boolean">true</is_show_viewers>
 			

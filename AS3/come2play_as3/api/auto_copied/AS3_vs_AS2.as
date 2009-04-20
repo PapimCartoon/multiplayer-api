@@ -538,8 +538,10 @@ public final class AS3_vs_AS2
 		StaticFunctions.assert(res!=null, "Missing class for instance=",[instance, " className=",className]);
 		return res;		
 	}
-	private static var checkedClasses:Object = {};
+	private static var checkedClasses:Object = {}; 
 	public static function checkConstructorHasNoArgs(obj:SerializableClass):void {
+		// describeType is really expensive (for 225 calls, it took 51 milliseconds)
+		// but we only do this once at startup!		
 		var className:String = obj.__CLASS_NAME__;
 		if (checkedClasses[className]!=null) return;
 		checkedClasses[className] = true;

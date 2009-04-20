@@ -331,7 +331,7 @@
 		
 		var row = document.getElementById("containerData");
 		var cell = row.insertCell(0);
-
+		var invisibleData=""
 		if(come2playCookie == "come2play"){
 			
 			
@@ -340,8 +340,10 @@
 			cell.innerHTML = "is Yoav Container ? ";
 			cell = row.insertCell(0);
 			addOldBoard();
+		}else{
+			invisibleData = "<input type='hidden' name='isSmartAutoMatch' id='isSmartAutoMatch' value='true'>"
 		}
-		cell.innerHTML = "<input type=\"text\" id=\"gameSwf\" value=\"../AS3/SWFs/MinesweeperAS3.swf?\">";
+		cell.innerHTML = invisibleData+"<input type=\"text\" id=\"gameSwf\" value=\"../AS3/SWFs/MinesweeperAS3.swf?\">";
 		cell = row.insertCell(0);
 		cell.innerHTML = "Game SWF :";
 		

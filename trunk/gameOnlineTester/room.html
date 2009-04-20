@@ -6,8 +6,8 @@
 	<script language="javascript" src="params.js"></script>
 	<script type="text/javascript">
 	var openWindows = new Array();
-	//var javaToConnect = "<entry><key>override all_java_ips</key><value>'localhost:2000:socket,localhost:2000:old_xmlsocket,localhost:8083:rtmpt'</value></entry>"
-	var javaToConnect = "<entry><key>override all_java_ips</key><value>'80.179.46.238:8080:socket,80.179.46.238:8080:old_xmlsocket,80.179.46.238:80:rtmpt'</value></entry>"
+	//var javaToConnect ='localhost:2000:socket,localhost:2000:old_xmlsocket,localhost:8083:rtmpt'
+	var javaToConnect = '80.179.46.238:8080:socket,80.179.46.238:8080:old_xmlsocket,80.179.46.238:80:rtmpt'
 
 	var prefix_random_number = 2+ Math.ceil(1000000*Math.random());
 	function gotMatchStatus(state){
@@ -42,6 +42,9 @@
 	        flash_arr[flash_arr.length] = key + "=" + encodeURIComponent(val);
 	    }
 	    return flash_arr.join("&");
+	}
+	function flashPlayerInfo(is_debugger, capabilities){
+	
 	}
 	function openJavaScriptPopup(type, url, windowTarget, windowCreateParams){
 		/*var paramsToSend = new Array();
@@ -101,7 +104,13 @@
 			params[putCustomIn+"_"+tableName+"_"+i] = "<entry><key>"+windowParams[tableName+"_"+i]+"</key><value>"+windowParams[windowParams[tableName+"_"+i]]+"</value></entry>"
 			i++;
 		}
-		if(tableName == "serverTable")	params[putCustomIn+"_"+tableName+"_"+i] = javaToConnect;
+		if(tableName == "serverTable"){	
+		var valueToPut = windowParams["javaToConnect"] != undefined?windowParams["javaToConnect"]:javaToConnect
+			params[putCustomIn+"_"+tableName+"_"+i] = "<entry><key>override all_java_ips</key><value>'"+valueToPut+"'</value></entry>";
+			i++
+			valueToPut = windowParams["isSmartAutoMatch"]
+			params[putCustomIn+"_"+tableName+"_"+i] = "<entry><key>isSmartAutoMatch</key><value>"+valueToPut+"</value></entry>"
+		}
 	}
 	
 	function thisMovie(name) {

@@ -164,6 +164,7 @@ public final class AS3_Loader
 			req.failureHandler(ev);
 		} else {
 			var data:ByteArray = getImageLoadByteArray(ev);
+			StaticFunctions.assert(data.length>0, ["Internal error: image loading did not fail, so data.length>0!"])
 			var byteConverter:Loader = new Loader();
 			var dispatcher:IEventDispatcher = byteConverter.contentLoaderInfo;
 			// IMPORTANT - there was a garbage collection issue here (if I remove the anonymous function and replace it with req.successHandler)

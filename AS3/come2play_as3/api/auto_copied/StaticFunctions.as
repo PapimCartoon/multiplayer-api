@@ -15,7 +15,7 @@ public final class StaticFunctions
 		return "g="+GOOGLE_REVISION_NUMBER+",c2p="+COME2PLAY_REVISION_NUMBER;		
 	}
 	
-	public static var SHOULD_CALL_TRACE:Boolean = true; // in the online version we turn it off to save runtime
+	public static var SHOULD_CALL_TRACE:Boolean = false; // in the online version we turn it off to save runtime
 	public static var someMovieClip:DisplayObjectContainer; // so we can display error messages on the stage	
 	public static var ALLOW_DOMAINS:String = "*";//Specifying "*" does not include local hosts	 
 	
@@ -183,9 +183,10 @@ public final class StaticFunctions
 	}
 	
 	private static const REFLECTION_PREFIX:String = "REFLECTION_";
+	private static var REFLECTION_LOG:Logger = new Logger("REFLECTION",10);
 	public static function performReflectionFromFlashVars(_someMovieClip:DisplayObjectContainer):void {		
 		var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(_someMovieClip);		
-		if (SHOULD_CALL_TRACE) trace("performReflectionFromFlashVars="+JSON.stringify(parameters));
+		REFLECTION_LOG.log(["performReflectionFromFlashVars=",parameters]);
 		for (var key:String in parameters) {
 			if (startsWith(key,REFLECTION_PREFIX)) {
 				var before:String = key.substr(REFLECTION_PREFIX.length);
@@ -204,7 +205,7 @@ public final class StaticFunctions
 	public static function performReflectionObject(fullClassName:String, valObj:Object):void {
 		//fullClassName = come2play_as3.util::EnumMessage.CouldNotConnect.__minDelayMilli 
 		//after = 2000
-		if (SHOULD_CALL_TRACE) trace("Perform reflection for: "+fullClassName+"="+JSON.stringify(valObj));
+		REFLECTION_LOG.log(["Perform reflection for: ",fullClassName,"=",valObj]);
 		var package2:Array = splitInTwo(fullClassName, "::", false);
 		var fields2:Array = splitInTwo(package2[1], ".", false);
 		var clzName:String = trim(package2[0]) + "::" + trim(fields2[0]);

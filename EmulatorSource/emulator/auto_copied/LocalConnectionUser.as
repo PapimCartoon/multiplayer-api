@@ -364,43 +364,42 @@ package emulator.auto_copied
                    
 		private static var GOT_LOG:Logger = new Logger("GOT_MSG",50);
         public function localconnection_callback(msgObj:Object):void {
+        	ErrorHandler.catchErrors("GotAPI_Msg",AS3_vs_AS2.delegate(this,this.p_localconnection_callback),[msgObj]);        	
+        }
+        private function p_localconnection_callback(msgObj:Object):void {
         	if (ErrorHandler.didReportError) return;
         	var msg:API_Message = null;
-        	try {
-        		var deserializedMsg:Object = SerializableClass.deserialize(msgObj);
-        		msg = /*as*/deserializedMsg as API_Message;
-        		if (msg==null) throwError("msgObj="+JSON.stringify(msgObj)+" is not an API_Message");
-        		
+    		var deserializedMsg:Object = SerializableClass.deserialize(msgObj);
+    		msg = /*as*/deserializedMsg as API_Message;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-        		if (!isUsingAS3) {
-	        		if((msg is API_DoRegisterOnServer) && (!handShakeMade)){
-	        			handShakeMade = true;
-		        		if(isContainer){	
-		        			lcInit.close();	
-		        		}else{
-		        			sendPrefixInterval.clear();
-		        			return;
-		        		}
+    		if (msg==null) throwError("msgObj="+JSON.stringify(msgObj)+" is not an API_Message");
+    		
+    		if (!isUsingAS3) {
+        		if((msg is API_DoRegisterOnServer) && (!handShakeMade)){
+        			handShakeMade = true;
+	        		if(isContainer){	
+	        			lcInit.close();	
+	        		}else{
+	        			sendPrefixInterval.clear();
+	        			return;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 	        		}
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
-	        	}
-	    		GOT_LOG.log(msg);
-	    		verify(msg, false);
-	    		gotMessage(msg);
-			} catch(err:Error) { 
-				ErrorHandler.handleError(err, msg==null ? msgObj : msg);
-			} 
+        		}
+        	}
+    		GOT_LOG.log(msg);
+    		verify(msg, false);
+    		gotMessage(msg);
         }  
 	
 		public static function getMsgNum(currentCallback:API_Message):int {
+			var msgNum:int = -666;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			var msgNum:int = -666;
 	    	if (currentCallback is API_GotMatchStarted) msgNum = (/*as*/currentCallback as API_GotMatchStarted).msgNum;
 	    	if (currentCallback is API_GotMatchEnded) msgNum = (/*as*/currentCallback as API_GotMatchEnded).msgNum;
 	    	if (currentCallback is API_GotStateChanged) msgNum = (/*as*/currentCallback as API_GotStateChanged).msgNum;

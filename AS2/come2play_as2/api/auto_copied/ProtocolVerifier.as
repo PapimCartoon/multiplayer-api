@@ -11,7 +11,7 @@ import come2play_as2.api.auto_copied.*;
 		public static var MAX_ANIMATION_MILLISECONDS:Number = 120*1000; // max seconds for animations
 		public static var WARN_ANIMATION_MILLISECONDS:Number = 60*1000; // if an animation finished after X seconds, we report an error (for us to know that it can happen!)
 
-		private var transactionStartedOn:TimeMeasure = new TimeMeasure(); 
+		private var transactionStartedOn:TimeMeasure; 
 		private var currentCallback:API_Message = null;
 		private var didRegisterOnServer:Boolean = false;
 		private var currentPlayerIds:Array/*int*/;
@@ -21,6 +21,7 @@ import come2play_as2.api.auto_copied.*;
 		// We do not queue those doStoreState anymore (the java will throw away doStore of a viewer)
 		
 		public function ProtocolVerifier() {
+			transactionStartedOn = new TimeMeasure();
 			ErrorHandler.myInterval("ProtocolVerifier.checkAnimationInterval",AS3_vs_AS2.delegate(this, this.checkAnimationInterval), MAX_ANIMATION_MILLISECONDS);
 			currentPlayerIds = [];
 		}
@@ -48,7 +49,7 @@ import come2play_as2.api.auto_copied.*;
         public function getFinishedPlayerIds():Array/*int*/ {
         	if(allPlayerIds == null) return new Array();
         	var finishedPlayerids:Array = allPlayerIds.concat();
-        	var p54:Number=0; for (var i54:String in currentPlayerIds) { var playerId:Number = currentPlayerIds[currentPlayerIds.length==null ? i54 : p54]; p54++;
+        	var p55:Number=0; for (var i55:String in currentPlayerIds) { var playerId:Number = currentPlayerIds[currentPlayerIds.length==null ? i55 : p55]; p55++;
         		var spliceIndex:Number = AS3_vs_AS2.IndexOf(finishedPlayerids,playerId);
         		finishedPlayerids.splice(spliceIndex,1);
         	}	
@@ -59,7 +60,7 @@ import come2play_as2.api.auto_copied.*;
         }
         public function isAllInPlayers(playerIds:Array/*int*/):Boolean {
         	check(playerIds.length>=1, ["isAllInPlayers was called with an empty playerIds array"]);
-        	var p65:Number=0; for (var i65:String in playerIds) { var playerId:Number = playerIds[playerIds.length==null ? i65 : p65]; p65++;
+        	var p66:Number=0; for (var i66:String in playerIds) { var playerId:Number = playerIds[playerIds.length==null ? i66 : p66]; p66++;
         		if (!isInPlayers(playerId)) return false;
         	}
         	return true;        	
@@ -69,7 +70,7 @@ import come2play_as2.api.auto_copied.*;
 			StaticFunctions.assert(false, "ProtocolVerifier found an error: ", [arr]);
 		}
 		private function checkServerEntries(serverEntries:Array/*ServerEntry*/):Void {
-			var p75:Number=0; for (var i75:String in serverEntries) { var entry:ServerEntry = serverEntries[serverEntries.length==null ? i75 : p75]; p75++;
+			var p76:Number=0; for (var i76:String in serverEntries) { var entry:ServerEntry = serverEntries[serverEntries.length==null ? i76 : p76]; p76++;
 				check(entry.key!=null, ["Found a null key in serverEntry=",entry]);
 			}
 		}
@@ -154,7 +155,7 @@ import come2play_as2.api.auto_copied.*;
 				
 				var wasStoreStateCalculation:Boolean = false;
 				var isRequestStateCalculation:Boolean = currentCallback instanceof API_GotRequestStateCalculation;
-				var p160:Number=0; for (var i160:String in transaction.messages) { var doAllMsg:API_Message = transaction.messages[transaction.messages.length==null ? i160 : p160]; p160++;
+				var p161:Number=0; for (var i161:String in transaction.messages) { var doAllMsg:API_Message = transaction.messages[transaction.messages.length==null ? i161 : p161]; p161++;
 					checkDoAll(doAllMsg);
 					if (isRequestStateCalculation) {
 						if (doAllMsg instanceof API_DoAllStoreStateCalculation)	
@@ -184,7 +185,7 @@ import come2play_as2.api.auto_copied.*;
 		}
 		private function isDeleteLegal(userEntries:Array/*UserEntry*/):Void
 		{
-			var p190:Number=0; for (var i190:String in userEntries) { var userEntry:UserEntry = userEntries[userEntries.length==null ? i190 : p190]; p190++;
+			var p191:Number=0; for (var i191:String in userEntries) { var userEntry:UserEntry = userEntries[userEntries.length==null ? i191 : p191]; p191++;
 				if (userEntry.value == null)
 					check(!userEntry.isSecret,["key deletion must be public! userEntry=",userEntry]);
 			}
@@ -251,21 +252,21 @@ import come2play_as2.api.auto_copied.*;
         private function isNullKeyExistUserEntry(userEntries:Array/*UserEntry*/):Void
         {
         	check(userEntries.length!=0, ["userEntries must have at least one UserEntry!"]);
-        	var p257:Number=0; for (var i257:String in userEntries) { var userEntry:UserEntry = userEntries[userEntries.length==null ? i257 : p257]; p257++;
+        	var p258:Number=0; for (var i258:String in userEntries) { var userEntry:UserEntry = userEntries[userEntries.length==null ? i258 : p258]; p258++;
         		check(userEntry.key != null,["UserEntry.key cannot be null ! userEntry=",userEntry]);
         	}
         }
         private function isNullKeyExistRevealEntry(revealEntries:Array/*RevealEntry*/):Void
         {
         	//check(revealEntries.length>=1, ["revealEntries must have at least one RevealEntry!"]);
-        	var p264:Number=0; for (var i264:String in revealEntries) { var revealEntry:RevealEntry = revealEntries[revealEntries.length==null ? i264 : p264]; p264++;
+        	var p265:Number=0; for (var i265:String in revealEntries) { var revealEntry:RevealEntry = revealEntries[revealEntries.length==null ? i265 : p265]; p265++;
         		check(revealEntry != null && revealEntry.key != null && (revealEntry.userIds==null || isAllInPlayers(revealEntry.userIds)), ["RevealEntry.key cannot be null, userIds must either be null or contain only players. revealEntry=",revealEntry]); 
         	}
         }
         private function isNullKeyExist(keys:Array/*Object*/):Void
         {
         	check(keys.length!=0,["keys must have at leasy one key!"]);        		
-        	var p271:Number=0; for (var i271:String in keys) { var key:String = keys[keys.length==null ? i271 : p271]; p271++;
+        	var p272:Number=0; for (var i272:String in keys) { var key:String = keys[keys.length==null ? i272 : p272]; p272++;
         		check(key != null,["key cannot be null ! keys=",keys]);
         	}
         }

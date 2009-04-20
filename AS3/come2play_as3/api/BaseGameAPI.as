@@ -246,7 +246,7 @@ package come2play_as3.api {
         	if (doMsg is API_DoAllFoundHacker) {
         		var stackTraces:String = AS3_vs_AS2.myGetStackTrace(new Error());
         		if (stackTraces!=null)
-        			(doMsg as API_DoAllFoundHacker).errorDescription += "\n\nStack traces when sending DoAllFoundHacker:\n"+stackTraces;        		
+        			(/*as*/doMsg as API_DoAllFoundHacker).errorDescription += "\n\nStack traces when sending DoAllFoundHacker:\n"+stackTraces;        		
         	}
         	
         	if (ProtocolVerifier.isPassThrough(doMsg) || doMsg is API_DoStoreState) {

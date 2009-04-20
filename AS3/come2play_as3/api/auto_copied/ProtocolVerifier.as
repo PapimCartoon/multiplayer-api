@@ -16,7 +16,7 @@ package come2play_as3.api.auto_copied
 		public static var MAX_ANIMATION_MILLISECONDS:int = 120*1000; // max seconds for animations
 		public static var WARN_ANIMATION_MILLISECONDS:int = 60*1000; // if an animation finished after X seconds, we report an error (for us to know that it can happen!)
 
-		private var transactionStartedOn:TimeMeasure = new TimeMeasure(); 
+		private var transactionStartedOn:TimeMeasure; 
 		private var currentCallback:API_Message = null;
 		private var didRegisterOnServer:Boolean = false;
 		private var currentPlayerIds:Array/*int*/;
@@ -26,6 +26,7 @@ package come2play_as3.api.auto_copied
 		// We do not queue those doStoreState anymore (the java will throw away doStore of a viewer)
 		
 		public function ProtocolVerifier() {
+			transactionStartedOn = new TimeMeasure();
 			ErrorHandler.myInterval("ProtocolVerifier.checkAnimationInterval",AS3_vs_AS2.delegate(this, this.checkAnimationInterval), MAX_ANIMATION_MILLISECONDS);
 			currentPlayerIds = [];
 		}

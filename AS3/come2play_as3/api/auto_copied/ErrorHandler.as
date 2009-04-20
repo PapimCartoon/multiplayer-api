@@ -108,20 +108,26 @@ public final class ErrorHandler
 				);
 		};
 	}
-	private static var CATCH_LOG:Logger = new Logger("CATCH_LOG",50);
+	public static var ZONE_LOGGER_SIZE:int = 5;
+	private static var ZONE_LOGGERS:Object/*String->Logger*/ = {};
 	public static function catchErrors(zoneName:String, func:Function, args:Array):Object {
 		var res:Object = null;		
 		
 		var toInsert:Object = [zoneName,"t:",getTimer(),"args=",args]; // I couldn't find a way to get the function name (describeType(func) only returns that the method is a closure)
 		my_stack_trace.push(toInsert);
-		CATCH_LOG.log(["ENTERED",zoneName,args]);
+		var logger:Logger = ZONE_LOGGERS[zoneName];
+		if (logger==null) {
+			logger = new Logger("CATCH-"+zoneName,ZONE_LOGGER_SIZE);
+			ZONE_LOGGERS[zoneName] = logger;
+		}
+		logger.log("ENTERED");
 		
 		var wasError:Boolean = false;			
 		try {		
 			res = func.apply(null, args); 
 		} catch (err:Error) { handleError(err, args); }
 			
-		CATCH_LOG.log(["EXITED",zoneName]);
+		logger.log("EXITED");
 			
 		var poped:Object = my_stack_trace.pop(); 
 			// I tried to do the pop inside a "finally" clause (to handle correctly cases with exceptions), 

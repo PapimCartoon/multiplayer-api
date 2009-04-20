@@ -18,14 +18,14 @@ import come2play_as2.api.*;
 		private var hackerUserId:Number = -1;
 		private var runningAnimations:Array/*String*/ = [];
 		private var keys:Array;
-		private var historyEntries:Array/*HistoryEntry*/ = [];
 		private var singlePlayerEmulator:SinglePlayerEmulator;
-		public static var HISTORY_LENGTH:Number = 100;
+		
+		private static var ALL_LOG:Logger = new Logger("BaseGameAPI",10);
 		
 		public function BaseGameAPI(_someMovieClip:MovieClip) {
 			super(_someMovieClip, false, getPrefixFromFlashVars(_someMovieClip),true);	
 			ErrorHandler.ERROR_REPORT_PREFIX = "GAME";
-			StaticFunctions.alwaysTrace(this);
+			ALL_LOG.log(this);
 			ErrorHandler.SEND_BUG_REPORT = AS3_vs_AS2.delegate(this, this.sendBugReport);
 			AS3_vs_AS2.addKeyboardListener(_someMovieClip, ErrorHandler.wrapWithCatch("keyPressed",AS3_vs_AS2.delegate(this,this.keyPressed)));
 			if (getPrefixFromFlashVars(_someMovieClip)==null) 
@@ -48,7 +48,6 @@ import come2play_as2.api.*;
 					output.push(serverEntry.toString() + "\n");
 				}
 			}
-			output.push("History entries :\n\n"+historyEntries.join("\n")+"\n\n");
 			
 			output.push("Custom Data:\n\n"+getTAsArray().join("\n"));
 			var gotMatchStarted:API_GotMatchStarted = API_GotMatchStarted.create(0,verifier.getAllPlayerIds(),verifier.getFinishedPlayerIds(),serverEntries)
@@ -106,7 +105,7 @@ import come2play_as2.api.*;
 		 * The transaction normally ends when your overriding 'got' method returns.
 		 * However, if you start animations, 
 		 * 	then the transaction continues until all the animation will end.
-		 * A transaction must be ended after 10 seconds (see ProtocolVerifier.MAX_ANIMATION_MILLISECONDS),
+		 * A transaction must be ended after X seconds (see ProtocolVerifier.MAX_ANIMATION_MILLISECONDS),
 		 * so make sure your animations are short (less than 5 seconds).
 		 * 
 		 * You may call doAll methods if and only if you are inside a transaction,
@@ -150,7 +149,7 @@ import come2play_as2.api.*;
         }
         private function updateMirorServerState(serverEntries:Array/*ServerEntry*/):Void
         {
-        	var p156:Number=0; for (var i156:String in serverEntries) { var serverEntry:ServerEntry = serverEntries[serverEntries.length==null ? i156 : p156]; p156++;
+        	var p155:Number=0; for (var i155:String in serverEntries) { var serverEntry:ServerEntry = serverEntries[serverEntries.length==null ? i155 : p155]; p155++;
         	    serverStateMiror.addEntry(serverEntry);	
         	}     	
         }
@@ -188,7 +187,7 @@ import come2play_as2.api.*;
 					var customInfo:API_GotCustomInfo = API_GotCustomInfo(msg);
 					var i18nObj:Object = {};
 					var customObj:Object = {};
-					var p194:Number=0; for (var i194:String in customInfo.infoEntries) { var entry:InfoEntry = customInfo.infoEntries[customInfo.infoEntries.length==null ? i194 : p194]; p194++;
+					var p193:Number=0; for (var i193:String in customInfo.infoEntries) { var entry:InfoEntry = customInfo.infoEntries[customInfo.infoEntries.length==null ? i193 : p193]; p193++;
 						var key:String = entry.key;
 						var value:Object = entry.value;
 						if (key==API_Message.CUSTOM_INFO_KEY_i18n) {
@@ -205,17 +204,16 @@ import come2play_as2.api.*;
 					}		
 					T.initI18n(i18nObj, customObj); // may be called several times because we may pass different 'secondsPerMatch' every time a game starts
 					var myUserId:Object = T.custom(API_Message.CUSTOM_INFO_KEY_myUserId,null);
-					if (myUserId!=null) StaticFunctions.TRACE_PREFIX = "API myUserId="+myUserId+":";
+					if (myUserId!=null) Logger.TRACE_PREFIX = "API myUserId="+myUserId+":";
 				}else if(msg instanceof API_GotUserInfo){
 					var infoMessage:API_GotUserInfo =API_GotUserInfo( msg);
 					var userObject:Object = {};
-					var p215:Number=0; for (var i215:String in infoMessage.infoEntries) { var infoEntry:InfoEntry = infoMessage.infoEntries[infoMessage.infoEntries.length==null ? i215 : p215]; p215++;
+					var p214:Number=0; for (var i214:String in infoMessage.infoEntries) { var infoEntry:InfoEntry = infoMessage.infoEntries[infoMessage.infoEntries.length==null ? i214 : p214]; p214++;
 						userObject[infoEntry.key] = infoEntry.value;
 					}
 					T.updateUser(infoMessage.userId, userObject);
 					
 				}
-				StaticFunctions.limitedPush(historyEntries,HistoryEntry.create(API_Message(SerializableClass.deserialize(msg.toObject())),getTimer()),HISTORY_LENGTH);
 				dispatchMessage(msg)
 
         	} catch (err:Error) {
@@ -241,11 +239,13 @@ import come2play_as2.api.*;
 			func.apply(this, params);
         }
         /*override*/ public function sendMessage(doMsg:API_Message):Void {
-        	if (ProtocolVerifier.isPassThrough(doMsg)) {
-        		super.sendMessage(doMsg);
-        		return;
+        	if (doMsg instanceof API_DoAllFoundHacker) {
+        		var stackTraces:String = AS3_vs_AS2.myGetStackTrace(new Error());
+        		if (stackTraces!=null)
+        			(doMsg as API_DoAllFoundHacker).errorDescription += "\n\nStack traces when sending DoAllFoundHacker:\n"+stackTraces;        		
         	}
-        	if (doMsg instanceof API_DoStoreState) {
+        	
+        	if (ProtocolVerifier.isPassThrough(doMsg) || doMsg instanceof API_DoStoreState) {
         		super.sendMessage(doMsg);
         		return;
         	}        	

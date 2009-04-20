@@ -363,7 +363,7 @@ import come2play_as2.api.*;
   		}
   		private function sendExtraCallback():Void {
   			var extraCallback:API_Message = API_Message(EXTRA_CALLBACKS.shift());
-  			StaticFunctions.assert(extraCallback!=null,["Error in sendExtraCallback! EXTRA_CALLBACKS=",EXTRA_CALLBACKS]);
+  			StaticFunctions.assert(extraCallback!=null,"Error in sendExtraCallback! EXTRA_CALLBACKS=",[EXTRA_CALLBACKS]);
   			queueSendMessage( extraCallback );
   			checkExtraCallbacks();  			
   		}

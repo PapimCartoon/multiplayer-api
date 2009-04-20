@@ -75,23 +75,23 @@ public final class AS3_vs_AS2
 		return int(o);
 	}
 	public static function as_int(o:Object):int {
-		StaticFunctions.assert(o is int,["Argument to as_int must be an integer! o=",o]);
+		StaticFunctions.assert(o is int,"Argument to as_int must be an integer! o=",[o]);
 		return o as int;
 	}
 	public static function asBoolean(o:Object):Boolean {
-		StaticFunctions.assert(o is Boolean,["Argument to asBoolean must be an Boolean! o=",o]);
+		StaticFunctions.assert(o is Boolean,"Argument to asBoolean must be an Boolean! o=",[o]);
 		return o as Boolean;
 	}
 	public static function asString(o:Object):String {
-		StaticFunctions.assert(o is String,["Argument to asString must be an String! o=",o]);
+		StaticFunctions.assert(o is String,"Argument to asString must be an String! o=",[o]);
 		return o as String;
 	}
 	public static function asArray(o:Object):Array {
-		StaticFunctions.assert(o is Array,["Argument to asArray must be an Array! o=",o]);
+		StaticFunctions.assert(o is Array,"Argument to asArray must be an Array! o=",[o]);
 		return o as Array;
 	}
 	public static function asSerializableClass(o:Object):SerializableClass {
-		StaticFunctions.assert(o is SerializableClass,["Argument to asSerializableClass must be an SerializableClass! o=",o]);
+		StaticFunctions.assert(o is SerializableClass,"Argument to asSerializableClass must be an SerializableClass! o=",[o]);
 		return o as SerializableClass;
 	}
 	
@@ -168,10 +168,10 @@ public final class AS3_vs_AS2
 		var info:DispatcherInfo = getDispatcherInfo(dispatcherName,dispatcher);
 		var dic1:Dictionary = info.type2listner2func;
 		var dic2:Dictionary = dic1[type];
-		var errInfo:Array = ["myRemoveEventListener: dispatcherName=",dispatcherName," dispatcher=",dispatcher," type=",type];
-		StaticFunctions.assert(dic2!=null,errInfo);
+		var errInfo:Array = ["dispatcherName=",dispatcherName," dispatcher=",dispatcher," type=",type];
+		StaticFunctions.assert(dic2!=null,"myRemoveEventListener1",errInfo);
 		var func:Function = dic2[listener];
-		StaticFunctions.assert(func!=null,errInfo);
+		StaticFunctions.assert(func!=null,"myRemoveEventListener2",errInfo);
 		delete dic2[listener];
 		if (isDictionaryEmpty(dic2)) delete dic1[type];
 		if (isDictionaryEmpty(dic1)) delete dispatchersInfo[dispatcher];
@@ -182,7 +182,7 @@ public final class AS3_vs_AS2
 		var dic1:Dictionary = info.type2listner2func;
 		
 		var listener:Function;
-		StaticFunctions.assert(dic1!=null, ["Internal err"]);
+		StaticFunctions.assert(dic1!=null, "Internal err",[]);
 		for (var type:String in dic1){
 			var dic2:Dictionary = dic1[type];
 			for each (var newListener:Function in dic2) {
@@ -199,14 +199,15 @@ public final class AS3_vs_AS2
 	}
 	private static function getDispatcherInfo(dispatcherName:String, dispatcher:IEventDispatcher):DispatcherInfo {
 		var info:DispatcherInfo = dispatchersInfo[dispatcher];
-		StaticFunctions.assert(info!=null, ["getDispatcherInfo: No event listeners to remove! dispatcherName=",dispatcherName," dispatcher=",dispatcher]);
-		StaticFunctions.assert(dispatcherName==null || info.name==dispatcherName, ["getDispatcherInfo: You used the same dispatcher with different dispatcherName! dispatcher=",dispatcher," new dispatcherName=",dispatcherName, " old dispatcherName=",info.name]);
+		StaticFunctions.assert(info!=null, "getDispatcherInfo: No event listeners to remove! dispatcherName=",[dispatcherName," dispatcher=",dispatcher]);
+		StaticFunctions.assert(dispatcherName==null || info.name==dispatcherName, "getDispatcherInfo: You used the same dispatcher with different dispatcherName! dispatcher=",[dispatcher," new dispatcherName=",dispatcherName, " old dispatcherName=",info.name]);
 		return info;
 	}
+	private static var ALL_Event_LOG:Logger = new Logger("ALL_EVENT_LISTENERS",10);
 	private static function p_myAddEventListener(dispatcherName:String, dispatcher:IEventDispatcher, type:String, listener:Function, useCapture:Boolean, priority:int, weakReference:Boolean):void {
 		if (dispatchersInfo==null) {
 			dispatchersInfo = new Dictionary(true); // weak keys! when the listener is garbaged-collected, the wrapper is deleted
-			StaticFunctions.alwaysTrace( getEventListenersTrace() );
+			ALL_Event_LOG.log( getEventListenersTrace() );
 		}
 		 		
 		var func:Function = ErrorHandler.wrapWithCatch("myAddEventListener."+type+" for "+getQualifiedClassName(dispatcher), listener);		
@@ -214,13 +215,13 @@ public final class AS3_vs_AS2
 			dispatchersInfo[dispatcher] = new DispatcherInfo(dispatcherName,weakReference); 
 		var info:DispatcherInfo = getDispatcherInfo(dispatcherName,dispatcher);
 		
-		StaticFunctions.assert(info.isWeakRef==weakReference, ["myAddEventListener: You used both true and false for weakReference! dispatcherName=",dispatcherName]);
+		StaticFunctions.assert(info.isWeakRef==weakReference, "myAddEventListener: You used both true and false for weakReference! dispatcherName=",[dispatcherName]);
 		
 		var dic1:Dictionary = info.type2listner2func;		
 		if (dic1[type] == null)
 			dic1[type] = new Dictionary(false);
 		var dic2:Dictionary = dic1[type];
-		StaticFunctions.assert(dic2[listener]==null,["myAddEventListener: you added the same listener twice! dispatcherName=",dispatcherName," type=",type]);	
+		StaticFunctions.assert(dic2[listener]==null,"myAddEventListener: you added the same listener twice! dispatcherName=",[dispatcherName," type=",type]);	
 		dic2[listener] = func;		
 		dispatcher.addEventListener(type, func, useCapture, priority, weakReference);
 	}	
@@ -272,7 +273,7 @@ public final class AS3_vs_AS2
 	}
 	public static function unwrappedClearInterval(zoneName:String, intervalId:Object):void {
 		var t:AS3_Timer = intervalId as AS3_Timer;
-		StaticFunctions.assert(t!=null,["You must pass an AS3_Timer object: ",intervalId]);
+		StaticFunctions.assert(t!=null,"You must pass an AS3_Timer object: ",[intervalId]);
 		t.stop();
 		myRemoveAllEventListeners(zoneName,t);
 		//clearInterval(intervalId);
@@ -534,7 +535,7 @@ public final class AS3_vs_AS2
 		var className:String = getClassName(instance);
 		var res:Class = getClassByName(className);
 		
-		StaticFunctions.assert(res!=null, ["Missing class for instance=",instance, " className=",className]);
+		StaticFunctions.assert(res!=null, "Missing class for instance=",[instance, " className=",className]);
 		return res;		
 	}
 	private static var checkedClasses:Object = {};

@@ -122,7 +122,7 @@ public final class TictactoeMain extends ClientGameAPI {
 	}
 	
 	private function getColor(playerId:int):int {
-		StaticFunctions.assert(!isSinglePlayer(),["Cannot convert an id to color in singleplayer"]);
+		StaticFunctions.assert(!isSinglePlayer(),"Cannot convert an id to color in singleplayer",[playerId]);
 		return AS3_vs_AS2.IndexOf(allPlayerIds, playerId);
 	}
 	private function getSquareGraphic(move:TictactoeSquare):TictactoeSquareGraphic {
@@ -169,8 +169,8 @@ public final class TictactoeMain extends ClientGameAPI {
 			}		
 		}
 		
-		assert(winLength>1 && winLength<=5 && winLength<=ROWS() && winLength<=COLS(), ["Illegal winLength=",winLength]);
-		assert(winnerPercentage>0 && winnerPercentage<=100, ["Illegal winnerPercentage=",winnerPercentage]);
+		assert(winLength>1 && winLength<=5 && winLength<=ROWS() && winLength<=COLS(), "Illegal winLength=",[winLength]);
+		assert(winnerPercentage>0 && winnerPercentage<=100, "Illegal winnerPercentage=",[winnerPercentage]);
 		
 		
 		
@@ -195,7 +195,7 @@ public final class TictactoeMain extends ClientGameAPI {
 		// we scale the TicTacToe size according to the grid size
 		var newHeight:int = AS3_vs_AS2.as_int(T.custom(CUSTOM_INFO_KEY_gameHeight, 400));
 		var newWidth:int = AS3_vs_AS2.as_int(T.custom(CUSTOM_INFO_KEY_gameWidth, 400));
-		assert(newHeight>10 && newWidth>10, ["Illegal gameHeight or gameWidth"]);	
+		assert(newHeight>10 && newWidth>10, "Illegal gameHeight or gameWidth",[newHeight,newWidth]);	
 		if (gameWidth!=newWidth || gameHeight!=newHeight) {
 			gameWidth = newWidth;
 			gameHeight = newHeight;			
@@ -207,7 +207,7 @@ public final class TictactoeMain extends ClientGameAPI {
 		
 		
 		this.allPlayerIds = allPlayerIds;
-		assert(allPlayerIds.length>=1 && allPlayerIds.length<=TictactoeSquareGraphic.MAX_SYMBOLS, ["The graphics of TicTacToe can handle at most ",TictactoeSquareGraphic.MAX_SYMBOLS,". allPlayerIds=", allPlayerIds]);
+		assert(allPlayerIds.length>=1 && allPlayerIds.length<=TictactoeSquareGraphic.MAX_SYMBOLS, "The graphics of TicTacToe can handle at most ",[TictactoeSquareGraphic.MAX_SYMBOLS,". allPlayerIds=", allPlayerIds]);
 		
 		if (shouldUseAvatars) {
 			// set the player's avatars instead of the default TicTacToe symbols
@@ -255,19 +255,19 @@ public final class TictactoeMain extends ClientGameAPI {
 	}	
 	override public function gotStateChanged(serverEntries:Array/*ServerEntry*/):void {
 		// the moves are done in alternating turns: color 0, then color 1 (in a round robin)	
-		assert(serverEntries.length==1, ["there is one entry per move in TicTacToe"]);	
+		assert(serverEntries.length==1, "there is one entry per move in TicTacToe",[serverEntries]);	
 		var entry:ServerEntry = serverEntries[0];
-		assert(entry.visibleToUserIds==null, ["All communication in TicTacToe is PUBLIC"]);
+		assert(entry.visibleToUserIds==null, "All communication in TicTacToe is PUBLIC",[entry]);
 		
 		var expectedKey:int = getEntryKey();
-		assert(entry.key==expectedKey, ["Expecting key=",expectedKey]);
+		assert(entry.key==expectedKey, "Expecting key=",[expectedKey]);
 		
 		var userId:int = entry.storedByUserId;
 		var colorOfUser:int = isSinglePlayer() ? turnOfColor : getColor(userId);
-		assert(colorOfUser!=-1, ["viewers cannot store match state in TicTacToe"]);
+		assert(colorOfUser!=-1, "viewers cannot store match state in TicTacToe",[]);
 
 		if (AS3_vs_AS2.IndexOf(ongoingColors, colorOfUser)==-1) return; // player already disconnected 
-		assert(turnOfColor==colorOfUser, ["Got an entry from player=",userId," of color=",colorOfUser," but expecting one from color=", turnOfColor]);
+		assert(turnOfColor==colorOfUser, "Got an entry from player=",[userId," of color=",colorOfUser," but expecting one from color=", turnOfColor]);
 
 		performMove(/*as*/entry.value as TictactoeSquare, false);
 	}
@@ -280,7 +280,7 @@ public final class TictactoeMain extends ClientGameAPI {
 		else {
 			for each (var playerId:int in finishedPlayerIds) {
 				var colorOfPlayerId:int = getColor(playerId);
-				assert(colorOfPlayerId!=-1, ["Didn't find playerId=",playerId]); 
+				assert(colorOfPlayerId!=-1, "Didn't find playerId=",[playerId]); 
 				colors.push(colorOfPlayerId);
 			}
 		}

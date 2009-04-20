@@ -5,6 +5,8 @@ import come2play_as2.api.auto_copied.*;
 import come2play_as2.tictactoe.*;
 class come2play_as2.tictactoe.TictactoeSquareGraphic
 {
+	private static var LOG:Logger = new Logger("TictactoeSquareGraphic",10);
+	
 	public static var BTN_NONE:Number = -2; 
 	public static var MAX_SYMBOLS:Number = 4; 	
 	
@@ -112,7 +114,7 @@ class come2play_as2.tictactoe.TictactoeSquareGraphic
     private var moveAnimationInterval:MyInterval = null;
     private var animationStartedOn:TimeMeasure = new TimeMeasure();
     public function startMoveAnimation():Void {
-    	StaticFunctions.assert(moveAnimationInterval==null, ["TictactoeSquareGraphic is already in animation mode! sqaure=", move]);
+    	StaticFunctions.assert(moveAnimationInterval==null, "TictactoeSquareGraphic is already in animation mode!",[" sqaure=", move]);
     	
 		graphic.animationStarted("startMoveAnimation");
 		soundMovieClip.gotoAndPlay("MakeSound");
@@ -124,15 +126,15 @@ class come2play_as2.tictactoe.TictactoeSquareGraphic
 		moveAnimationStep();		
     }
     private function moveAnimationStep():Void {
-    	if (TRACE_ANIMATION_STEPS) StaticFunctions.storeTrace(["moveAnimationStep: alphaPercentage=",alphaPercentage]);
+    	LOG.log(["moveAnimationStep: alphaPercentage=",alphaPercentage]);
     	var didTimePassed:Boolean = false;
     	if (alphaPercentage>=100 ||
     		// after 1 second I end the animation (if the flash is overloaded) 
     		(didTimePassed = animationStartedOn.havePassed(1000))) {
-    		if (didTimePassed) StaticFunctions.tmpTrace(animationStartedOn);
+    		if (didTimePassed) LOG.log(["animationStartedOn=",animationStartedOn]);
     		animationStartedOn.clearTime();
 			alphaPercentage = 100;
-    		StaticFunctions.assert(moveAnimationInterval!=null, ["TictactoeSquareGraphic is not in a move animation! sqaure=", move]);
+    		StaticFunctions.assert(moveAnimationInterval!=null, "TictactoeSquareGraphic is not in a move animation!",["sqaure=", move]);
     		moveAnimationInterval.clear();
 			moveAnimationInterval = null;			
 			graphic.moveAnimationEnded(move,false);    
@@ -149,7 +151,7 @@ class come2play_as2.tictactoe.TictactoeSquareGraphic
     }
     
 	public function setColor(color:Number):Void {	
-		StaticFunctions.storeTrace(["Changing square ",move," to setColor=",color]);
+		LOG.log(["Changing square ",move," to setColor=",color]);
 		currentTurnForMouseOver = BTN_NONE;
 		AS3_vs_AS2.setAlpha(symbolsContainer, 100);
 		setSymbol(color);
@@ -158,7 +160,7 @@ class come2play_as2.tictactoe.TictactoeSquareGraphic
 	}
 	public static var BUTTON_SYMBOL_ALPHA:Number = 40;
 	public function startMove(currentTurn:Number):Void {
-		StaticFunctions.storeTrace(["Changing square ",move," to startMove=",currentTurn]);
+		LOG.log(["Changing square ",move," to startMove=",currentTurn]);
 		AS3_vs_AS2.setAlpha(symbolsContainer, BUTTON_SYMBOL_ALPHA);
 		currentTurnForMouseOver = currentTurn;
 		setSymbol(BTN_NONE);

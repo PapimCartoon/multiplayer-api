@@ -20,82 +20,47 @@ public final class StaticFunctions
 	public static var ALLOW_DOMAINS:String = "*";//Specifying "*" does not include local hosts	 
 	
 	private static var LOGGED_REVISIONS:Boolean = false;
+	private static var REVISIONS_LOG:Logger = new Logger("REVISIONS",5);
 	public static function allowDomains():void {
 		if (!LOGGED_REVISIONS) {
 			LOGGED_REVISIONS = true;			
-			StaticFunctions.alwaysTrace( new ErrorHandler() );
-			storeTrace(["GOOGLE_REVISION_NUMBER=",GOOGLE_REVISION_NUMBER, " COME2PLAY_REVISION_NUMBER=",COME2PLAY_REVISION_NUMBER, " LAST_RAN_JAVA_DATE=",API_Message.LAST_RAN_JAVA_DATE]);
-		}
-		
-		if (ALLOW_DOMAINS != null){
-			storeTrace(["Allowing all domains access to : ",ALLOW_DOMAINS," saמdbox type :",Security.sandboxType]);
-			Security.allowDomain(ALLOW_DOMAINS);
+			REVISIONS_LOG.log( new ErrorHandler() );
+			REVISIONS_LOG.log(["GOOGLE_REVISION_NUMBER=",GOOGLE_REVISION_NUMBER, " c2p=COME2PLAY_REVISION_NUMBER=",COME2PLAY_REVISION_NUMBER, " LAST_RAN_JAVA_DATE=",API_Message.LAST_RAN_JAVA_DATE]);
+			if (ALLOW_DOMAINS != null){
+				REVISIONS_LOG.log(["Allowing all domains access to : ",ALLOW_DOMAINS," saמdbox type :",Security.sandboxType]);
+				Security.allowDomain(ALLOW_DOMAINS);
+			}
 		}
 	}
 			
-	
-	// Be careful that the traces will not grow too big to send to the java (limit of 1MB, enforced in Bytes2Object)
-	public static var MAX_TRACES:Object = {TMP: 80, API:20, ALWAYS:100, MSG:20, STORE:50};
+	private static var TMP_LOGGER:Logger = new Logger("TMP",80);
+	private static var API_LOGGER:Logger = new Logger("API",20);
+	private static var ALWAYS_LOGGER:Logger = new Logger("ALWAYS",100);
+	private static var MSG_LOGGER:Logger = new Logger("MSG",20);
+	private static var STORE_LOGGER:Logger = new Logger("STORE",50);
 	public static function tmpTrace(obj:Object):void {
-		p_storeTrace("TMP",obj);
+		TMP_LOGGER.log(obj);
 	}	
-	public static function apiTrace(obj:Object):void {		 		
-		p_storeTrace("API",obj);
+	public static function apiTrace(obj:Object):void {
+		API_LOGGER.log(obj);
 	}		
 	public static function alwaysTrace(obj:Object):void { 
-		p_storeTrace("ALWAYS",obj);
+		ALWAYS_LOGGER.log(obj);
 	}
 	public static function msgTrace(obj:Object):void {
-		p_storeTrace("MSG",obj);
+		MSG_LOGGER.log(obj);
 	}		
 	public static function storeTrace(obj:Object):void { 
-		p_storeTrace("STORE",obj);
+		STORE_LOGGER.log(obj);
 	}
 	
-	private static var keyTraces:Array = [];		
-	private static function p_getArr(key:String):Array {
-		if (keyTraces[key]==null) keyTraces[key] = new Array(); 
-		return keyTraces[key];
-	}	 
-	public static var RANDOM_PREFIX:String = "Rnd"+int(100+Math.random()*900)+": "; 
-	public static var TRACE_PREFIX:String = ""; // because in flashlog you see traces of many users and it is all mixed 
-	private static function p_storeTrace(key:String, obj:Object):void {
-		try {
-			var arr:Array = p_getArr(key);	
-			var maxT:int = MAX_TRACES[key];
-			var traceLine:Array = ["Time: ", getTimer(), obj];
-			limitedPush(arr, traceLine , maxT); // we discard old traces
-			if (SHOULD_CALL_TRACE) trace(RANDOM_PREFIX+TRACE_PREFIX + key+":\t" + JSON.stringify(traceLine));
-		} catch (err:Error) {
-			if (SHOULD_CALL_TRACE) trace(RANDOM_PREFIX+TRACE_PREFIX + "\n\n\n\n\n\n\n\n\n\n\n\nERROR!!!!!!!!!!!!!!!!!!!!!!! err="+AS3_vs_AS2.error2String(err)+"\n\n\n\n\n\n\n\n\n\n\n");
-		}
-	}
-	public static function getTraces():String {
-		var res:Array = [];
-		// I want to sort the keys (to make the order of traces deterministic
-		var keys:Array = [];
-		for (var k:String in keyTraces) keys.push(k);
-		keys.sort();
-		
-		for each (var key:String in keys) {
-			var tracesOfKey:Array = keyTraces[key];
-			res.push(key + " "+tracesOfKey.length+" traces:"+
-				(tracesOfKey.length<MAX_TRACES[key] ? "" : " (REACHED MAX TRACES)"));
-			res.push( arrToString(tracesOfKey,",\n") );
-			res.push("\n");
-		}		
-		var strRes:String = res.join("\n");
+	 
+	
+	public static function getTraces():String {		
+		var strRes:String = Logger.getTraces();
 		setClipboard(strRes);
 		return strRes;
 	}	
-	private static function arrToString(s:Object, sep:String):String {			
-		var arr:Array = new Array();
-		var isArr:Boolean = AS3_vs_AS2.isArray(s);			
-		for(var o:String in s) {
-			arr.push((isArr ? "" : o+"=")+JSON.stringify(s[o]));
-		}
-		return "["+arr.join(sep)+"]";
-	}
 	public static function cutString(str:String, toSize:int):String {		
 		if (str.length<toSize) return str;
 		return str.substr(0,toSize)+"... (string cut)";
@@ -120,8 +85,8 @@ public final class StaticFunctions
 		showError("Throwing the following error="+AS3_vs_AS2.error2String(err));
 		throw err;
 	}		
-	public static function assert(val:Boolean, args:Array):void {
-		if (!val) throwError("An assertion failed with the following arguments="+JSON.stringify(args));
+	public static function assert(val:Boolean, name:String, args:Array):void {
+		if (!val) throwError("An assertion failed! name="+name+" arguments="+JSON.stringify(args));
 	}
 	
 	public static function isEmptyChar(str:String):Boolean {
@@ -188,7 +153,7 @@ public final class StaticFunctions
 		var res:Array = arr.concat();
 		for each (var o:Object in minus) {
 			var indexOf:int = AS3_vs_AS2.IndexOf(res, o);
-			StaticFunctions.assert(indexOf!=-1, ["When subtracting minus=",minus," from array=", arr, " we did not find element ",o]);				
+			StaticFunctions.assert(indexOf!=-1, "When subtracting minus=",[minus," from array=", arr, " we did not find element ",o]);				
 			res.splice(indexOf, 1);
 		}
 		return res;
@@ -312,7 +277,7 @@ public final class StaticFunctions
 	private static function getClassFromMsg(msg:API_Message, fieldName:String):Object {
 		var xlass:Class = AS3_vs_AS2.getClassOfInstance(msg);
 		var res:Object = xlass[fieldName];
-		assert(res!=null, ["Missing ",fieldName," in msg=",msg, " xlass=",xlass]);
+		assert(res!=null, "getClassFromMsg",["Missing ",fieldName," in msg=",msg, " xlass=",xlass]);
 		return res;
 	}
 	private static function getParamNames(msg:API_Message):Array/*String*/ {

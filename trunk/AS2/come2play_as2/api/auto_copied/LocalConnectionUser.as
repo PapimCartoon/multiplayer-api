@@ -12,7 +12,6 @@ import come2play_as2.api.auto_copied.*;
 		public static var TRACE_RETRY:Boolean = false;	
 		
 		public static var MILL_AFTER_ALLOW_DOMAINS:Number = 500;
-		public static var DO_TRACE:Boolean = true;
 		public static var AGREE_ON_PREFIX:Boolean = true;
 		public static var ALLOW_DOMAIN:String = "*";
 		public static function showError(msg:String):Void {
@@ -21,8 +20,8 @@ import come2play_as2.api.auto_copied.*;
 		public static function throwError(msg:String):Void {
 			StaticFunctions.throwError(msg);
 		}		
-		public static function assert(val:Boolean, args:Array):Void {
-			if (!val) StaticFunctions.assert(false, args);
+		public static function assert(val:Boolean, name:String, args:Array):Void {
+			if (!val) StaticFunctions.assert(false, name, args);
 		}
 
 		// I added the "_" on purpose because of different domains issues, see: http://livedocs.adobe.com/flex/gumbo/langref/flash/net/LocalConnection.html
@@ -79,7 +78,7 @@ import come2play_as2.api.auto_copied.*;
 			// but it is
 			// 	come2play_as2.auto_copied.LocalConnectionUser
 			// So you cannot cast it to LocalConnectionUser
-			singleton.localconnection_callback(msg);	
+			ErrorHandler.catchErrors("trySendMessageUsingAS3", singleton.localconnection_callback, [msg]);
 			return null;
 		}
 		
@@ -129,7 +128,7 @@ import come2play_as2.api.auto_copied.*;
 					// in AS3 we prefer to use direct method calls (using the static SINGLETON member), 
 					// instead of LocalConnection (which has size limitations)
 					// putting a value in SINGLETON means that the init is done (so it must be done after API_LoadMessages) 
-					StaticFunctions.assert(SINGLETON==null,["You can create a LocalConnectionUser only once!"]);
+					StaticFunctions.assert(SINGLETON==null,"You can create a LocalConnectionUser only once!",[]);
 					SINGLETON = this;
 					
 					madeConnection();
@@ -175,9 +174,9 @@ import come2play_as2.api.auto_copied.*;
 			myTrace(["Depracated connectionHandler sending random prefix isSuccess: "+isSuccess,"my_user_prefix ",sInitChanel]);
 		}
 
+		private static var LC_LOG:Logger = new Logger("LocalConnection",10);
 		public function myTrace(msg:Array):Void {	
-			if(DO_TRACE)			
-				StaticFunctions.storeTrace([AS3_vs_AS2.getClassName(this),": ",msg]);
+			LC_LOG.log([AS3_vs_AS2.getClassName(this),": ",msg]);
 		}
 		
         private function getErrorMessage(withObj:Object, err:Error):String {
@@ -187,8 +186,9 @@ import come2play_as2.api.auto_copied.*;
         public function gotMessage(msg:API_Message):Void {}
         
        
+		private static var SENT_LOG:Logger = new Logger("SENT_MSG",50);
         public function sendMessage(msg:API_Message):Void {
-        	myTrace(['sendMessage: ',msg]);      		
+        	SENT_LOG.log(msg);      		
 			AS3_vs_AS2.checkObjectIsSerializable(msg);
     		verify(msg, true);    		     	
 			retrySendMsg(msg);
@@ -199,7 +199,7 @@ import come2play_as2.api.auto_copied.*;
         	if (res==null) return;
         	if (TRACE_RETRY) 
 				StaticFunctions.storeTrace(["sendMessageUsing failed because:",res]);
-			assert(/*is*/msg instanceof API_DoRegisterOnServer, ["Only DoRegisterOnServer can fail! res=",res," msg=", msg]);
+			assert(/*is*/msg instanceof API_DoRegisterOnServer, "Only DoRegisterOnServer can fail! res=",[res," msg=", msg]);
 			ErrorHandler.myTimeout("RetrySendDoRegisterOnServer", AS3_vs_AS2.delegate(this,this.retrySendMsg, msg), MILL_WAIT_BEFORE_DO_REGISTER);			        	
         }
         private function trySendMessage(msg:Object):String { 
@@ -268,6 +268,7 @@ import come2play_as2.api.auto_copied.*;
 			} 
         }
                    
+		private static var GOT_LOG:Logger = new Logger("GOT_MSG",50);
         public function localconnection_callback(msgObj:Object):Void {
         	if (ErrorHandler.didReportError) return;
         	var msg:API_Message = null;
@@ -287,7 +288,7 @@ import come2play_as2.api.auto_copied.*;
 		        		}
 	        		}
 	        	}
-	    		myTrace(['gotMessage: ',msg]);
+	    		GOT_LOG.log(msg);
 	    		verify(msg, false);
 	    		gotMessage(msg);
 			} catch(err:Error) { 

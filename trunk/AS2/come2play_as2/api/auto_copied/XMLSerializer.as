@@ -6,7 +6,7 @@ class come2play_as2.api.auto_copied.XMLSerializer
 		var xml:XMLNode = XMLSerializer.toXML(test);
 		var test2:Object = SerializableClass.deserialize(XMLSerializer.xml2Object(xml));
 		StaticFunctions.storeTrace("XMLSerializer xml=\n"+xml+" test2="+JSON.stringify(test2));
-		StaticFunctions.assert(StaticFunctions.areEqual(test,test2),[test,test2]);		
+		StaticFunctions.assert(StaticFunctions.areEqual(test,test2),"XMLSerializer",[test,test2]);		
 	}
 	public static function xml2Object(xml:XMLNode):Object {
 		var name:String = AS3_vs_AS2.xml_getName(xml);
@@ -36,7 +36,7 @@ class come2play_as2.api.auto_copied.XMLSerializer
 			var p35:Number=0; for (var i35:String in children) { var child:XMLNode = children[children.length==null ? i35 : p35]; p35++;
 				var singleGrandChild:Array = 
 					AS3_vs_AS2.xml_getChildren(child);
-				StaticFunctions.assert(singleGrandChild.length==1, ["A field should have a single value! Illegal child=",child]);
+				StaticFunctions.assert(singleGrandChild.length==1, "A field should have a single value! Illegal child=",[child]);
 				obj[ AS3_vs_AS2.xml_getName(child) ] =
 					xml2Object( singleGrandChild[0] );
 			}
@@ -100,7 +100,7 @@ class come2play_as2.api.auto_copied.XMLSerializer
     			if (serObj!=null) childrenKeys.sort();	
     		}
     	}
-    	StaticFunctions.assert(elementType!=null, ["Internal error! missing elementType"]);
+    	StaticFunctions.assert(elementType!=null, "Internal error! missing elementType",[]);
     	
     	if (childrenKeys==null) {
     		var simpleContent:String = arg==null ? "" : escapeXML(arg.toString());

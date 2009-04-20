@@ -22,14 +22,14 @@ package come2play_as3.api {
 		private var hackerUserId:int = -1;
 		private var runningAnimations:Array/*String*/ = [];
 		private var keys:Array;
-		private var historyEntries:Array/*HistoryEntry*/ = [];
 		private var singlePlayerEmulator:SinglePlayerEmulator;
-		public static var HISTORY_LENGTH:int = 100;
+		
+		private static var ALL_LOG:Logger = new Logger("BaseGameAPI",10);
 		
 		public function BaseGameAPI(_someMovieClip:DisplayObjectContainer) {
 			super(_someMovieClip, false, getPrefixFromFlashVars(_someMovieClip),true);	
 			ErrorHandler.ERROR_REPORT_PREFIX = "GAME";
-			StaticFunctions.alwaysTrace(this);
+			ALL_LOG.log(this);
 			ErrorHandler.SEND_BUG_REPORT = AS3_vs_AS2.delegate(this, this.sendBugReport);
 			AS3_vs_AS2.addKeyboardListener(_someMovieClip, ErrorHandler.wrapWithCatch("keyPressed",AS3_vs_AS2.delegate(this,this.keyPressed)));
 			if (getPrefixFromFlashVars(_someMovieClip)==null) 
@@ -52,7 +52,6 @@ package come2play_as3.api {
 					output.push(serverEntry.toString() + "\n");
 				}
 			}
-			output.push("History entries :\n\n"+historyEntries.join("\n")+"\n\n");
 			
 			output.push("Custom Data:\n\n"+getTAsArray().join("\n"));
 			var gotMatchStarted:API_GotMatchStarted = API_GotMatchStarted.create(0,verifier.getAllPlayerIds(),verifier.getFinishedPlayerIds(),serverEntries)
@@ -110,7 +109,7 @@ package come2play_as3.api {
 		 * The transaction normally ends when your overriding 'got' method returns.
 		 * However, if you start animations, 
 		 * 	then the transaction continues until all the animation will end.
-		 * A transaction must be ended after 10 seconds (see ProtocolVerifier.MAX_ANIMATION_MILLISECONDS),
+		 * A transaction must be ended after X seconds (see ProtocolVerifier.MAX_ANIMATION_MILLISECONDS),
 		 * so make sure your animations are short (less than 5 seconds).
 		 * 
 		 * You may call doAll methods if and only if you are inside a transaction,
@@ -209,7 +208,7 @@ package come2play_as3.api {
 					}		
 					T.initI18n(i18nObj, customObj); // may be called several times because we may pass different 'secondsPerMatch' every time a game starts
 					var myUserId:Object = T.custom(API_Message.CUSTOM_INFO_KEY_myUserId,null);
-					if (myUserId!=null) StaticFunctions.TRACE_PREFIX = "API myUserId="+myUserId+":";
+					if (myUserId!=null) Logger.TRACE_PREFIX = "API myUserId="+myUserId+":";
 				}else if(msg is API_GotUserInfo){
 					var infoMessage:API_GotUserInfo =/*as*/ msg as API_GotUserInfo;
 					var userObject:Object = {};
@@ -219,7 +218,6 @@ package come2play_as3.api {
 					T.updateUser(infoMessage.userId, userObject);
 					
 				}
-				StaticFunctions.limitedPush(historyEntries,HistoryEntry.create(/*as*/SerializableClass.deserialize(msg.toObject()) as API_Message,getTimer()),HISTORY_LENGTH);
 				dispatchMessage(msg)
 
         	} catch (err:Error) {

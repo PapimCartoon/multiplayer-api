@@ -80,7 +80,7 @@ package come2play_as3.api.auto_copied
 			if (defaultValue==null || res==null) return;
 			var typeD:String = AS3_vs_AS2.getClassName(defaultValue);
 			var typeR:String = AS3_vs_AS2.getClassName(res);
-			StaticFunctions.assert(typeD==typeR, ["In T.custom and the T.getUserValue the type of defaultValue and the return value must be identical! DefaultValue=",defaultValue," type of DefaultValue=",typeD," result=",res," type of result=",typeR]); 
+			StaticFunctions.assert(typeD==typeR, "In T.custom and the T.getUserValue the type of defaultValue and the return value must be identical! DefaultValue=",[defaultValue," type of DefaultValue=",typeD," result=",res," type of result=",typeR]); 
 		}
 		public static function custom(key:String, defaultValue:Object/*Type*/):Object/*Type*/ {
 			var res:Object = _custom[key];

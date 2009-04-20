@@ -38,9 +38,9 @@ import come2play_as2.api.auto_copied.*;
         private function checkAnimationInterval():Void {
         	if (!transactionStartedOn.isTimeSet()) return; // animation is not running
         	var delta:Number = transactionRunningTime();
-        	if (delta< MAX_ANIMATION_MILLISECONDS) return; // animation is running for a short time
+        	if (delta<MAX_ANIMATION_MILLISECONDS) return; // animation is running for a short time
         	// animation is running for too long
-        	StaticFunctions.throwError("An transaction is running for more than MAX_ANIMATION_MILLISECONDS="+MAX_ANIMATION_MILLISECONDS+". transactionStartedOn="+transactionStartedOn+". It is running for="+delta+". ProtocolVerifier="+this);         	
+        	StaticFunctions.throwError("An transaction is running for more than MAX_ANIMATION_MILLISECONDS="+MAX_ANIMATION_MILLISECONDS);         	
         }
         public function getAllPlayerIds():Array/*int*/{
         	return currentPlayerIds;
@@ -66,7 +66,7 @@ import come2play_as2.api.auto_copied.*;
         }
 		private function check(cond:Boolean, arr:Array):Void {
 			if (cond) return;
-			StaticFunctions.assert(false, ["ProtocolVerifier found an error: ", arr]);
+			StaticFunctions.assert(false, "ProtocolVerifier found an error: ", [arr]);
 		}
 		private function checkServerEntries(serverEntries:Array/*ServerEntry*/):Void {
 			var p75:Number=0; for (var i75:String in serverEntries) { var entry:ServerEntry = serverEntries[serverEntries.length==null ? i75 : p75]; p75++;
@@ -74,7 +74,7 @@ import come2play_as2.api.auto_copied.*;
 			}
 		}
 		private function checkInProgress(inProgress:Boolean, msg:API_Message):Void {
-			StaticFunctions.assert(inProgress == (currentPlayerIds.length>0), ["The game must ",inProgress?"" : "not"," be in progress when passing msg=",msg]); 
+			StaticFunctions.assert(inProgress == (currentPlayerIds.length>0), "checkInProgress",["The game must ",inProgress?"" : "not"," be in progress when passing msg=",msg]); 
 		}
 		public function msgToGame(gotMsg:API_Message):Void {
 			check(gotMsg!=null, ["Got a null message!"]);

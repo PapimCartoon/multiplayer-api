@@ -34,8 +34,8 @@ class come2play_as2.api.CreateGrid
 	public static var squareDeltaY:Number = 84;
 		
 	public function CreateGrid() {
-		StaticFunctions.assert(ROWS>1, ["Illegal ROWS=",ROWS]);
-		StaticFunctions.assert(COLS>1, ["Illegal COLS=",COLS]);
+		StaticFunctions.assert(ROWS>1, "Illegal ROWS=",[ROWS]);
+		StaticFunctions.assert(COLS>1, "Illegal COLS=",[COLS]);
 	}
 	public function createMovieClips(graphics:MovieClip, squareLinkageName:String):Void {
 		for (var row:Number=0; row<ROWS; row++)

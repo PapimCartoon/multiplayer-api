@@ -366,7 +366,7 @@ package come2play_as3.api
   		}
   		private function sendExtraCallback():void {
   			var extraCallback:API_Message = /*as*/EXTRA_CALLBACKS.shift() as API_Message;
-  			StaticFunctions.assert(extraCallback!=null,["Error in sendExtraCallback! EXTRA_CALLBACKS=",EXTRA_CALLBACKS]);
+  			StaticFunctions.assert(extraCallback!=null,"Error in sendExtraCallback! EXTRA_CALLBACKS=",[EXTRA_CALLBACKS]);
   			queueSendMessage( extraCallback );
   			checkExtraCallbacks();  			
   		}

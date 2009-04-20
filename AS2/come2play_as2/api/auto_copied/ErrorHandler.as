@@ -14,12 +14,12 @@ class come2play_as2.api.auto_copied.ErrorHandler
 		res.push("\n");
 					
 		res.push("My ongoingIntervals:");
-		var p17:Number=0; for (var i17:String in ongoingIntervals) { var arr1:Array = ongoingIntervals[ongoingIntervals.length==null ? i17 : p17]; p17++;
+		var p18:Number=0; for (var i18:String in ongoingIntervals) { var arr1:Array = ongoingIntervals[ongoingIntervals.length==null ? i18 : p18]; p18++;
 			res.push( "\t"+JSON.stringify(arr1) );
 		}
 		res.push("\n");
 		res.push("My ongoingTimeouts:\n");
-		var p22:Number=0; for (var i22:String in ongoingTimeouts) { var arr2:Array = ongoingTimeouts[ongoingTimeouts.length==null ? i22 : p22]; p22++;
+		var p23:Number=0; for (var i23:String in ongoingTimeouts) { var arr2:Array = ongoingTimeouts[ongoingTimeouts.length==null ? i23 : p23]; p23++;
 			res.push( "\t"+JSON.stringify(arr2) );
 		}
 		res.push("\n");		
@@ -31,8 +31,9 @@ class come2play_as2.api.auto_copied.ErrorHandler
 	
 	
 	// returns the bug_id (or -1 if we already reported an error)
+	private static var ErrorReport_LOG:Logger = new Logger("ErrorReport",10);
 	public static function alwaysTraceAndSendReport(msg:String, args:Object):Number {
-		StaticFunctions.alwaysTrace([msg, args]);
+		ErrorReport_LOG.log([msg, args]);
 		return sendReport(msg);
 	}
 	
@@ -49,8 +50,8 @@ class come2play_as2.api.auto_copied.ErrorHandler
 	 * If your code has try&catch, then in the catch use handleError.
 	 * 
 	 */ 
-	private static var ongoingIntervals:Dictionary = new Dictionary();//also printed in traces
-	private static var ongoingTimeouts:Dictionary = new Dictionary();//also printed in traces	
+	private static var ongoingIntervals:Object/*Dictionary*/ = {};//also printed in traces
+	private static var ongoingTimeouts:Object/*Dictionary*/ = {};//also printed in traces	
 	public static function myTimeout(zoneName:String, func:Function, milliseconds:Number):Object {
 		var timeout_id:Object;
 		var newFunc:Function = wrapWithCatch(zoneName, 
@@ -78,19 +79,19 @@ class come2play_as2.api.auto_copied.ErrorHandler
 		modifyOngoing(false, false, zoneName, id, "myInterval cleared", -1);
 		AS3_vs_AS2.unwrappedClearInterval(zoneName, id);			
 	}		
-	public static var TRACE_TIMERS:Boolean = true;
+	private static var LOG:Logger = new Logger("myTimeouts",10);
 	private static function modifyOngoing(isAdd:Boolean, isTimeout:Boolean, zoneName:String, id:Object, reason:String, milliseconds:Number):Void {
 		var arr:Object = isTimeout ? ongoingTimeouts : ongoingIntervals;
 		if (isAdd) {
-			StaticFunctions.assert(arr[id]==null, ["Internal error! already added id=",id]);
+			StaticFunctions.assert(arr[id]==null, "Internal error! already added id=",[id]);
 			arr[id] = [zoneName, milliseconds];
 		} else {
 			var info:Array = arr[id];
-			StaticFunctions.assert(info!=null && info[0]==zoneName, ["Trying to ",reason, " zoneName=",zoneName," but there is no such zoneName! info=", info]);
+			StaticFunctions.assert(info!=null && info[0]==zoneName, "there is no such zoneName!",["reason=",reason, " zoneName=",zoneName," info=", info]);
 			milliseconds = info[1];
 			delete arr[id];
 		}			
-		if (TRACE_TIMERS) StaticFunctions.tmpTrace([reason, zoneName, id, milliseconds]);
+		LOG.log([reason, zoneName, id, milliseconds]);
 	}
 				
 	
@@ -103,26 +104,30 @@ class come2play_as2.api.auto_copied.ErrorHandler
 					/*<InAS2>*/arguments/*</InAS2>*/
 				);
 		};
-	}	
+	}
+	private static var CATCH_LOG:Logger = new Logger("CATCH_LOG",50);
 	public static function catchErrors(zoneName:String, func:Function, args:Array):Object {
 		var res:Object = null;		
 		
-		var stack_trace_len:Number = my_stack_trace.length;
-		my_stack_trace.push(["args=",args," zoneName=",zoneName]); // I couldn't find a way to get the function name (describeType(func) only returns that the method is a closure)
+		var toInsert:Object = [zoneName,"t:",getTimer(),"args=",args]; // I couldn't find a way to get the function name (describeType(func) only returns that the method is a closure)
+		my_stack_trace.push(toInsert);
+		CATCH_LOG.log(["ENTERED",zoneName,args]);
 		
 		var wasError:Boolean = false;			
 		try {		
 			res = func.apply(null, args); 
-		} catch (err:Error) { handleError(err, args); }	
+		} catch (err:Error) { handleError(err, args); }
 			
-		my_stack_trace.pop(); 
+		CATCH_LOG.log(["EXITED",zoneName]);
+			
+		var poped:Object = my_stack_trace.pop(); 
 			// I tried to do the pop inside a "finally" clause (to handle correctly cases with exceptions), 
 			//but I got "undefined" errors:
 			//		undefined
 			//			at come2play_as2.util::General$/stackTrace()
 			//			at come2play_as2.util::General$/catchErrors() 
-		if (!didReportError && my_stack_trace.length!=stack_trace_len) 
-			alwaysTraceAndSendReport("BAD stack behaviour", my_stack_trace);
+		if (!didReportError && toInsert!=poped) 
+			alwaysTraceAndSendReport("BAD stack behaviour (multithreaded flash?)", [my_stack_trace, toInsert, poped]);
 		return res;				
 	}
 	public static var ERROR_REPORT_PREFIX:String = "DISTRIBUTION"; // where did the error come from?
@@ -144,9 +149,9 @@ class come2play_as2.api.auto_copied.ErrorHandler
 		try {	
 			var err:Error = new Error();
 			var stackTraces:String = AS3_vs_AS2.myGetStackTrace(err); // null in the release version
-			if (stackTraces!=null) StaticFunctions.alwaysTrace(["Catching point stack trace=",err]);
+			if (stackTraces!=null) ErrorReport_LOG.log(["Catching point stack trace=",err]);
 							
-			StaticFunctions.alwaysTrace(["sendReport for error=", errStr," SEND_BUG_REPORT=",SEND_BUG_REPORT]);
+			ErrorReport_LOG.log(["sendReport for error=", errStr," SEND_BUG_REPORT=",SEND_BUG_REPORT]);
 			
 			var errMessage:String = 
 				(stackTraces==null ? "" : "AAAA (with stack trace) ")+ // so I will easily find them in our "errors page"
@@ -159,7 +164,7 @@ class come2play_as2.api.auto_copied.ErrorHandler
 				
 			// we should show the error after we call sendMultipartImage (so we send the image without the error window)
 			if (SHOULD_SHOW_ERRORS) {
-				var msg:String = "ERROR "+errMessage+" traces="+StaticFunctions.getTraces();
+				var msg:String = "ERROR "+errMessage+"\n\ntraces:\n\n"+StaticFunctions.getTraces();
 				AS3_vs_AS2.showError(msg);
 				StaticFunctions.setClipboard(msg);
 			}		

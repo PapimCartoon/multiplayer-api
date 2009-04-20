@@ -21,7 +21,7 @@ public final class TimeMeasure
 		/*<InAS3>*/happenedOnDate = null;/*</InAS3>*/		
 	}
 	public function milliPassed():int {
-		StaticFunctions.assert(happenedOn!=-1,["TimeMeasure: happenedOn was not set!", this]);
+		StaticFunctions.assert(happenedOn!=-1,"TimeMeasure: happenedOn was not set!", [this]);
 		return getTimer()-happenedOn;
 	}
 	public function havePassed(milli:int):Boolean {

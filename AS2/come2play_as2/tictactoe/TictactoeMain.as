@@ -118,7 +118,7 @@ class come2play_as2.tictactoe.TictactoeMain extends ClientGameAPI {
 	}
 	
 	private function getColor(playerId:Number):Number {
-		StaticFunctions.assert(!isSinglePlayer(),["Cannot convert an id to color in singleplayer"]);
+		StaticFunctions.assert(!isSinglePlayer(),"Cannot convert an id to color in singleplayer",[playerId]);
 		return AS3_vs_AS2.IndexOf(allPlayerIds, playerId);
 	}
 	private function getSquareGraphic(move:TictactoeSquare):TictactoeSquareGraphic {
@@ -165,8 +165,8 @@ class come2play_as2.tictactoe.TictactoeMain extends ClientGameAPI {
 			}		
 		}
 		
-		assert(winLength>1 && winLength<=5 && winLength<=ROWS() && winLength<=COLS(), ["Illegal winLength=",winLength]);
-		assert(winnerPercentage>0 && winnerPercentage<=100, ["Illegal winnerPercentage=",winnerPercentage]);
+		assert(winLength>1 && winLength<=5 && winLength<=ROWS() && winLength<=COLS(), "Illegal winLength=",[winLength]);
+		assert(winnerPercentage>0 && winnerPercentage<=100, "Illegal winnerPercentage=",[winnerPercentage]);
 		
 		
 		
@@ -191,7 +191,7 @@ class come2play_as2.tictactoe.TictactoeMain extends ClientGameAPI {
 		// we scale the TicTacToe size according to the grid size
 		var newHeight:Number = AS3_vs_AS2.as_int(T.custom(CUSTOM_INFO_KEY_gameHeight, 400));
 		var newWidth:Number = AS3_vs_AS2.as_int(T.custom(CUSTOM_INFO_KEY_gameWidth, 400));
-		assert(newHeight>10 && newWidth>10, ["Illegal gameHeight or gameWidth"]);	
+		assert(newHeight>10 && newWidth>10, "Illegal gameHeight or gameWidth",[newHeight,newWidth]);	
 		if (gameWidth!=newWidth || gameHeight!=newHeight) {
 			gameWidth = newWidth;
 			gameHeight = newHeight;			
@@ -203,7 +203,7 @@ class come2play_as2.tictactoe.TictactoeMain extends ClientGameAPI {
 		
 		
 		this.allPlayerIds = allPlayerIds;
-		assert(allPlayerIds.length>=1 && allPlayerIds.length<=TictactoeSquareGraphic.MAX_SYMBOLS, ["The graphics of TicTacToe can handle at most ",TictactoeSquareGraphic.MAX_SYMBOLS,". allPlayerIds=", allPlayerIds]);
+		assert(allPlayerIds.length>=1 && allPlayerIds.length<=TictactoeSquareGraphic.MAX_SYMBOLS, "The graphics of TicTacToe can handle at most ",[TictactoeSquareGraphic.MAX_SYMBOLS,". allPlayerIds=", allPlayerIds]);
 		
 		if (shouldUseAvatars) {
 			// set the player's avatars instead of the default TicTacToe symbols
@@ -251,19 +251,19 @@ class come2play_as2.tictactoe.TictactoeMain extends ClientGameAPI {
 	}	
 	/*override*/ public function gotStateChanged(serverEntries:Array/*ServerEntry*/):Void {
 		// the moves are done in alternating turns: color 0, then color 1 (in a round robin)	
-		assert(serverEntries.length==1, ["there is one entry per move in TicTacToe"]);	
+		assert(serverEntries.length==1, "there is one entry per move in TicTacToe",[serverEntries]);	
 		var entry:ServerEntry = serverEntries[0];
-		assert(entry.visibleToUserIds==null, ["All communication in TicTacToe is PUBLIC"]);
+		assert(entry.visibleToUserIds==null, "All communication in TicTacToe is PUBLIC",[entry]);
 		
 		var expectedKey:Number = getEntryKey();
-		assert(entry.key==expectedKey, ["Expecting key=",expectedKey]);
+		assert(entry.key==expectedKey, "Expecting key=",[expectedKey]);
 		
 		var userId:Number = entry.storedByUserId;
 		var colorOfUser:Number = isSinglePlayer() ? turnOfColor : getColor(userId);
-		assert(colorOfUser!=-1, ["viewers cannot store match state in TicTacToe"]);
+		assert(colorOfUser!=-1, "viewers cannot store match state in TicTacToe",[]);
 
 		if (AS3_vs_AS2.IndexOf(ongoingColors, colorOfUser)==-1) return; // player already disconnected 
-		assert(turnOfColor==colorOfUser, ["Got an entry from player=",userId," of color=",colorOfUser," but expecting one from color=", turnOfColor]);
+		assert(turnOfColor==colorOfUser, "Got an entry from player=",[userId," of color=",colorOfUser," but expecting one from color=", turnOfColor]);
 
 		performMove(TictactoeSquare(entry.value), false);
 	}
@@ -276,7 +276,7 @@ class come2play_as2.tictactoe.TictactoeMain extends ClientGameAPI {
 		else {
 			var p279:Number=0; for (var i279:String in finishedPlayerIds) { var playerId:Number = finishedPlayerIds[finishedPlayerIds.length==null ? i279 : p279]; p279++;
 				var colorOfPlayerId:Number = getColor(playerId);
-				assert(colorOfPlayerId!=-1, ["Didn't find playerId=",playerId]); 
+				assert(colorOfPlayerId!=-1, "Didn't find playerId=",[playerId]); 
 				colors.push(colorOfPlayerId);
 			}
 		}

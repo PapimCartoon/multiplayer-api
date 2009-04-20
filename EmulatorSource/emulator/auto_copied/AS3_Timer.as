@@ -10,6 +10,7 @@ package emulator.auto_copied
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	import flash.events.Event;
 	import flash.utils.Dictionary;
 	import flash.utils.Timer;
 	/**
@@ -18,29 +19,49 @@ package emulator.auto_copied
 	 */
 	public final class AS3_Timer extends Timer
 	{
-		private static var ALL_TIMERS:Dictionary;
-		
+		private static var ALL_LOG:Logger = new Logger("ALL_TIMERS",5);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		private static var LOG:Logger = new Logger("TIMERS",50);
+		private static var ALL_TIMERS:Dictionary;
+		
 		private var name:String;
-		public function AS3_Timer(name:String, delay:Number, repeatCount:int=0)
-		{
+		public function AS3_Timer(name:String, delay:Number, repeatCount:int=0)	{
+			StaticFunctions.assert(delay>0, "AS3_Timer: illegal delay=",[delay," name=",name, " repeatCount=",repeatCount]);
 			super(delay, repeatCount);
 			this.name = name;
 			if (ALL_TIMERS==null) {
 				ALL_TIMERS = new Dictionary(true); // weak keys (to allow garbage-collection)
-				StaticFunctions.alwaysTrace(["ALL_TIMERS=",ALL_TIMERS]);
-			}
-			ALL_TIMERS[this] = true;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+				ALL_LOG.log(ALL_TIMERS);
+			}
+			ALL_TIMERS[this] = true;
+		}
+		override public function start():void {
+			LOG.log([name,"started"]);
+			super.start();
+		}
+		override public function stop():void {
+			LOG.log([name,"stoped"]);
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+			super.stop();
+		}
+		override public function reset():void {
+			LOG.log([name,"reset"]);
+			super.reset();
 		}
 		override public function toString():String {
 			return name+" x"+delay+
 				(!running?" not running" : 
 					" RUNNING"+ 
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 					(repeatCount==0 ? "" : " "+this.currentCount+"/"+repeatCount));
 		}
 	}

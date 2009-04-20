@@ -8,6 +8,8 @@ import flash.events.*;
 
 public final class TictactoeSquareGraphic
 {
+	private static var LOG:Logger = new Logger("TictactoeSquareGraphic",10);
+	
 	public static const BTN_NONE:int = -2; 
 	public static const MAX_SYMBOLS:int = 4; 	
 	
@@ -115,7 +117,7 @@ public final class TictactoeSquareGraphic
     private var moveAnimationInterval:MyInterval = null;
     private var animationStartedOn:TimeMeasure = new TimeMeasure();
     public function startMoveAnimation():void {
-    	StaticFunctions.assert(moveAnimationInterval==null, ["TictactoeSquareGraphic is already in animation mode! sqaure=", move]);
+    	StaticFunctions.assert(moveAnimationInterval==null, "TictactoeSquareGraphic is already in animation mode!",[" sqaure=", move]);
     	
 		graphic.animationStarted("startMoveAnimation");
 		soundMovieClip.gotoAndPlay("MakeSound");
@@ -127,15 +129,15 @@ public final class TictactoeSquareGraphic
 		moveAnimationStep();		
     }
     private function moveAnimationStep():void {
-    	if (TRACE_ANIMATION_STEPS) StaticFunctions.storeTrace(["moveAnimationStep: alphaPercentage=",alphaPercentage]);
+    	LOG.log(["moveAnimationStep: alphaPercentage=",alphaPercentage]);
     	var didTimePassed:Boolean = false;
     	if (alphaPercentage>=100 ||
     		// after 1 second I end the animation (if the flash is overloaded) 
     		(didTimePassed = animationStartedOn.havePassed(1000))) {
-    		if (didTimePassed) StaticFunctions.tmpTrace(animationStartedOn);
+    		if (didTimePassed) LOG.log(["animationStartedOn=",animationStartedOn]);
     		animationStartedOn.clearTime();
 			alphaPercentage = 100;
-    		StaticFunctions.assert(moveAnimationInterval!=null, ["TictactoeSquareGraphic is not in a move animation! sqaure=", move]);
+    		StaticFunctions.assert(moveAnimationInterval!=null, "TictactoeSquareGraphic is not in a move animation!",["sqaure=", move]);
     		moveAnimationInterval.clear();
 			moveAnimationInterval = null;			
 			graphic.moveAnimationEnded(move,false);    
@@ -152,7 +154,7 @@ public final class TictactoeSquareGraphic
     }
     
 	public function setColor(color:int):void {	
-		StaticFunctions.storeTrace(["Changing square ",move," to setColor=",color]);
+		LOG.log(["Changing square ",move," to setColor=",color]);
 		currentTurnForMouseOver = BTN_NONE;
 		AS3_vs_AS2.setAlpha(symbolsContainer, 100);
 		setSymbol(color);
@@ -161,7 +163,7 @@ public final class TictactoeSquareGraphic
 	}
 	public static var BUTTON_SYMBOL_ALPHA:int = 40;
 	public function startMove(currentTurn:int):void {
-		StaticFunctions.storeTrace(["Changing square ",move," to startMove=",currentTurn]);
+		LOG.log(["Changing square ",move," to startMove=",currentTurn]);
 		AS3_vs_AS2.setAlpha(symbolsContainer, BUTTON_SYMBOL_ALPHA);
 		currentTurnForMouseOver = currentTurn;
 		setSymbol(BTN_NONE);

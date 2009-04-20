@@ -5,8 +5,8 @@
 import come2play_as2.api.auto_copied.*;
 class come2play_as2.api.auto_copied.StaticFunctions
 {			
-	public static var GOOGLE_REVISION_NUMBER:Number = 970;
-	public static var COME2PLAY_REVISION_NUMBER:Number = 2777;
+	public static var GOOGLE_REVISION_NUMBER:Number = 971;
+	public static var COME2PLAY_REVISION_NUMBER:Number = 2778;
 	public static function getRevision():String {
 		return "g="+GOOGLE_REVISION_NUMBER+",c2p="+COME2PLAY_REVISION_NUMBER;		
 	}
@@ -16,82 +16,47 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	public static var ALLOW_DOMAINS:String = "*";//Specifying "*" does not include local hosts	 
 	
 	private static var LOGGED_REVISIONS:Boolean = false;
+	private static var REVISIONS_LOG:Logger = new Logger("REVISIONS",5);
 	public static function allowDomains():Void {
 		if (!LOGGED_REVISIONS) {
 			LOGGED_REVISIONS = true;			
-			StaticFunctions.alwaysTrace( new ErrorHandler() );
-			storeTrace(["GOOGLE_REVISION_NUMBER=",GOOGLE_REVISION_NUMBER, " COME2PLAY_REVISION_NUMBER=",COME2PLAY_REVISION_NUMBER, " LAST_RAN_JAVA_DATE=",API_Message.LAST_RAN_JAVA_DATE]);
-		}
-		
-		if (ALLOW_DOMAINS != null){
-			storeTrace(["Allowing all domains access to : ",ALLOW_DOMAINS," saמdbox type :",System.security.sandboxType]);
-			System.security.allowDomain(ALLOW_DOMAINS);
+			REVISIONS_LOG.log( new ErrorHandler() );
+			REVISIONS_LOG.log(["GOOGLE_REVISION_NUMBER=",GOOGLE_REVISION_NUMBER, " c2p=COME2PLAY_REVISION_NUMBER=",COME2PLAY_REVISION_NUMBER, " LAST_RAN_JAVA_DATE=",API_Message.LAST_RAN_JAVA_DATE]);
+			if (ALLOW_DOMAINS != null){
+				REVISIONS_LOG.log(["Allowing all domains access to : ",ALLOW_DOMAINS," saמdbox type :",System.security.sandboxType]);
+				System.security.allowDomain(ALLOW_DOMAINS);
+			}
 		}
 	}
 			
-	
-	// Be careful that the traces will not grow too big to send to the java (limit of 1MB, enforced in Bytes2Object)
-	public static var MAX_TRACES:Object = {TMP: 80, API:20, ALWAYS:100, MSG:20, STORE:50};
+	private static var TMP_LOGGER:Logger = new Logger("TMP",80);
+	private static var API_LOGGER:Logger = new Logger("API",20);
+	private static var ALWAYS_LOGGER:Logger = new Logger("ALWAYS",100);
+	private static var MSG_LOGGER:Logger = new Logger("MSG",20);
+	private static var STORE_LOGGER:Logger = new Logger("STORE",50);
 	public static function tmpTrace(obj:Object):Void {
-		p_storeTrace("TMP",obj);
+		TMP_LOGGER.log(obj);
 	}	
-	public static function apiTrace(obj:Object):Void {		 		
-		p_storeTrace("API",obj);
+	public static function apiTrace(obj:Object):Void {
+		API_LOGGER.log(obj);
 	}		
 	public static function alwaysTrace(obj:Object):Void { 
-		p_storeTrace("ALWAYS",obj);
+		ALWAYS_LOGGER.log(obj);
 	}
 	public static function msgTrace(obj:Object):Void {
-		p_storeTrace("MSG",obj);
+		MSG_LOGGER.log(obj);
 	}		
 	public static function storeTrace(obj:Object):Void { 
-		p_storeTrace("STORE",obj);
+		STORE_LOGGER.log(obj);
 	}
 	
-	private static var keyTraces:Array = [];		
-	private static function p_getArr(key:String):Array {
-		if (keyTraces[key]==null) keyTraces[key] = new Array(); 
-		return keyTraces[key];
-	}	 
-	public static var RANDOM_PREFIX:String = "Rnd"+int(100+Math.random()*900)+": "; 
-	public static var TRACE_PREFIX:String = ""; // because in flashlog you see traces of many users and it is all mixed 
-	private static function p_storeTrace(key:String, obj:Object):Void {
-		try {
-			var arr:Array = p_getArr(key);	
-			var maxT:Number = MAX_TRACES[key];
-			var traceLine:Array = ["Time: ", getTimer(), obj];
-			limitedPush(arr, traceLine , maxT); // we discard old traces
-			if (SHOULD_CALL_TRACE) trace(RANDOM_PREFIX+TRACE_PREFIX + key+":\t" + JSON.stringify(traceLine));
-		} catch (err:Error) {
-			if (SHOULD_CALL_TRACE) trace(RANDOM_PREFIX+TRACE_PREFIX + "\n\n\n\n\n\n\n\n\n\n\n\nERROR!!!!!!!!!!!!!!!!!!!!!!! err="+AS3_vs_AS2.error2String(err)+"\n\n\n\n\n\n\n\n\n\n\n");
-		}
-	}
-	public static function getTraces():String {
-		var res:Array = [];
-		// I want to sort the keys (to make the order of traces deterministic
-		var keys:Array = [];
-		for (var k:String in keyTraces) keys.push(k);
-		keys.sort();
-		
-		var p78:Number=0; for (var i78:String in keys) { var key:String = keys[keys.length==null ? i78 : p78]; p78++;
-			var tracesOfKey:Array = keyTraces[key];
-			res.push(key + " "+tracesOfKey.length+" traces:"+
-				(tracesOfKey.length<MAX_TRACES[key] ? "" : " (REACHED MAX TRACES)"));
-			res.push( arrToString(tracesOfKey,",\n") );
-			res.push("\n");
-		}		
-		var strRes:String = res.join("\n");
+	 
+	
+	public static function getTraces():String {		
+		var strRes:String = Logger.getTraces();
 		setClipboard(strRes);
 		return strRes;
 	}	
-	private static function arrToString(s:Object, sep:String):String {			
-		var arr:Array = new Array();
-		var isArr:Boolean = AS3_vs_AS2.isArray(s);			
-		for(var o:String in s) {
-			arr.push((isArr ? "" : o+"=")+JSON.stringify(s[o]));
-		}
-		return "["+arr.join(sep)+"]";
-	}
 	public static function cutString(str:String, toSize:Number):String {		
 		if (str.length<toSize) return str;
 		return str.substr(0,toSize)+"... (string cut)";
@@ -116,8 +81,8 @@ class come2play_as2.api.auto_copied.StaticFunctions
 		showError("Throwing the following error="+AS3_vs_AS2.error2String(err));
 		throw err;
 	}		
-	public static function assert(val:Boolean, args:Array):Void {
-		if (!val) throwError("An assertion failed with the following arguments="+JSON.stringify(args));
+	public static function assert(val:Boolean, name:String, args:Array):Void {
+		if (!val) throwError("An assertion failed! name="+name+" arguments="+JSON.stringify(args));
 	}
 	
 	public static function isEmptyChar(str:String):Boolean {
@@ -166,7 +131,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 				// for static properties we use describeType
 				// because o1 and o2 have the same type, it is enough to use the fields of o1.
 				var fieldsArr:Array = AS3_vs_AS2.getFieldNames(o1);
-				var p171:Number=0; for (var i171:String in fieldsArr) { var field:String = fieldsArr[fieldsArr.length==null ? i171 : p171]; p171++;
+				var p136:Number=0; for (var i136:String in fieldsArr) { var field:String = fieldsArr[fieldsArr.length==null ? i136 : p136]; p136++;
 					allFields[field] = true;
 				}
 			}
@@ -182,9 +147,9 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	
 	public static function subtractArray(arr:Array, minus:Array):Array {
 		var res:Array = arr.concat();
-		var p187:Number=0; for (var i187:String in minus) { var o:Object = minus[minus.length==null ? i187 : p187]; p187++;
+		var p152:Number=0; for (var i152:String in minus) { var o:Object = minus[minus.length==null ? i152 : p152]; p152++;
 			var indexOf:Number = AS3_vs_AS2.IndexOf(res, o);
-			StaticFunctions.assert(indexOf!=-1, ["When subtracting minus=",minus," from array=", arr, " we did not find element ",o]);				
+			StaticFunctions.assert(indexOf!=-1, "When subtracting minus=",[minus," from array=", arr, " we did not find element ",o]);				
 			res.splice(indexOf, 1);
 		}
 		return res;
@@ -287,7 +252,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	}
 	public static function instance2Object(instance:Object, fields:Array/*String*/):Object {
 		var res:Object = {};
-		var p292:Number=0; for (var i292:String in fields) { var field:String = fields[fields.length==null ? i292 : p292]; p292++;
+		var p257:Number=0; for (var i257:String in fields) { var field:String = fields[fields.length==null ? i257 : p257]; p257++;
 			res[field] = instance[field];
 		}
 		return res;
@@ -308,7 +273,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	private static function getClassFromMsg(msg:API_Message, fieldName:String):Object {
 		var xlass:Object/*Class*/ = AS3_vs_AS2.getClassOfInstance(msg);
 		var res:Object = xlass[fieldName];
-		assert(res!=null, ["Missing ",fieldName," in msg=",msg, " xlass=",xlass]);
+		assert(res!=null, "getClassFromMsg",["Missing ",fieldName," in msg=",msg, " xlass=",xlass]);
 		return res;
 	}
 	private static function getParamNames(msg:API_Message):Array/*String*/ {
@@ -326,14 +291,14 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	public static function setMethodParameters(msg:API_Message, parameters:Array):Void { 
 		var names:Array = getParamNames(msg); 
 		var pos:Number = 0;
-		var p331:Number=0; for (var i331:String in names) { var name:String = names[names.length==null ? i331 : p331]; p331++;
+		var p296:Number=0; for (var i296:String in names) { var name:String = names[names.length==null ? i296 : p296]; p296++;
 			msg[name] = parameters[pos++];
 		}
 	}
 	public static function getMethodParameters(msg:API_Message):Array { 
 		var names:Array = getParamNames(msg);
 		var res:Array = [];
-		var p338:Number=0; for (var i338:String in names) { var name:String = names[names.length==null ? i338 : p338]; p338++;
+		var p303:Number=0; for (var i303:String in names) { var name:String = names[names.length==null ? i303 : p303]; p303++;
 			res.push(msg[name]);
 		}
 		return res;

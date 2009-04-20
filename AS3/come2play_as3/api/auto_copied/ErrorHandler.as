@@ -1,6 +1,7 @@
 package come2play_as3.api.auto_copied
 {
 	import flash.utils.Dictionary;
+	import flash.utils.getTimer;
 		
 public final class ErrorHandler
 {
@@ -33,8 +34,9 @@ public final class ErrorHandler
 	
 	
 	// returns the bug_id (or -1 if we already reported an error)
+	private static var ErrorReport_LOG:Logger = new Logger("ErrorReport",10);
 	public static function alwaysTraceAndSendReport(msg:String, args:Object):int {
-		StaticFunctions.alwaysTrace([msg, args]);
+		ErrorReport_LOG.log([msg, args]);
 		return sendReport(msg);
 	}
 	
@@ -80,51 +82,55 @@ public final class ErrorHandler
 		modifyOngoing(false, false, zoneName, id, "myInterval cleared", -1);
 		AS3_vs_AS2.unwrappedClearInterval(zoneName, id);			
 	}		
-	public static var TRACE_TIMERS:Boolean = true;
+	private static var LOG:Logger = new Logger("myTimeouts",10);
 	private static function modifyOngoing(isAdd:Boolean, isTimeout:Boolean, zoneName:String, id:Object, reason:String, milliseconds:int):void {
 		var arr:Object = isTimeout ? ongoingTimeouts : ongoingIntervals;
 		if (isAdd) {
-			StaticFunctions.assert(arr[id]==null, ["Internal error! already added id=",id]);
+			StaticFunctions.assert(arr[id]==null, "Internal error! already added id=",[id]);
 			arr[id] = [zoneName, milliseconds];
 		} else {
 			var info:Array = arr[id];
-			StaticFunctions.assert(info!=null && info[0]==zoneName, ["Trying to ",reason, " zoneName=",zoneName," but there is no such zoneName! info=", info]);
+			StaticFunctions.assert(info!=null && info[0]==zoneName, "there is no such zoneName!",["reason=",reason, " zoneName=",zoneName," info=", info]);
 			milliseconds = info[1];
 			delete arr[id];
 		}			
-		if (TRACE_TIMERS) StaticFunctions.tmpTrace([reason, zoneName, id, milliseconds]);
+		LOG.log([reason, zoneName, id, milliseconds]);
 	}
 				
 	
 	private static var my_stack_trace:Array = [];
 	public static function wrapWithCatch(zoneName:String, func:Function):Function {
-		var longerName:String = zoneName+(my_stack_trace.length==0 ? "" : " with first stacktrace: {\n"+my_stack_trace[0]+"\n}");
+		var longerName:String = zoneName; //Extra stack traces are not needed because we use zoneName for all events:  +(my_stack_trace.length==0 ? "" : " with first stacktrace: {\n"+my_stack_trace[0]+"\n}");
 		return function (/*<InAS3>*/...args/*</InAS3>*/):void { 
 			catchErrors(longerName, func, 
 					/*<InAS3>*/args/*</InAS3>*/
 					/*<InAS2>arguments</InAS2>*/
 				);
 		};
-	}	
+	}
+	private static var CATCH_LOG:Logger = new Logger("CATCH_LOG",50);
 	public static function catchErrors(zoneName:String, func:Function, args:Array):Object {
 		var res:Object = null;		
 		
-		var stack_trace_len:int = my_stack_trace.length;
-		my_stack_trace.push(["args=",args," zoneName=",zoneName]); // I couldn't find a way to get the function name (describeType(func) only returns that the method is a closure)
+		var toInsert:Object = [zoneName,"t:",getTimer(),"args=",args]; // I couldn't find a way to get the function name (describeType(func) only returns that the method is a closure)
+		my_stack_trace.push(toInsert);
+		CATCH_LOG.log(["ENTERED",zoneName,args]);
 		
 		var wasError:Boolean = false;			
 		try {		
 			res = func.apply(null, args); 
-		} catch (err:Error) { handleError(err, args); }	
+		} catch (err:Error) { handleError(err, args); }
 			
-		my_stack_trace.pop(); 
+		CATCH_LOG.log(["EXITED",zoneName]);
+			
+		var poped:Object = my_stack_trace.pop(); 
 			// I tried to do the pop inside a "finally" clause (to handle correctly cases with exceptions), 
 			//but I got "undefined" errors:
 			//		undefined
 			//			at come2play_as3.util::General$/stackTrace()
 			//			at come2play_as3.util::General$/catchErrors() 
-		if (!didReportError && my_stack_trace.length!=stack_trace_len) 
-			alwaysTraceAndSendReport("BAD stack behaviour", my_stack_trace);
+		if (!didReportError && toInsert!=poped) 
+			alwaysTraceAndSendReport("BAD stack behaviour (multithreaded flash?)", [my_stack_trace, toInsert, poped]);
 		return res;				
 	}
 	public static var ERROR_REPORT_PREFIX:String = "DISTRIBUTION"; // where did the error come from?
@@ -146,9 +152,9 @@ public final class ErrorHandler
 		try {	
 			var err:Error = new Error();
 			var stackTraces:String = AS3_vs_AS2.myGetStackTrace(err); // null in the release version
-			if (stackTraces!=null) StaticFunctions.alwaysTrace(["Catching point stack trace=",err]);
+			if (stackTraces!=null) ErrorReport_LOG.log(["Catching point stack trace=",err]);
 							
-			StaticFunctions.alwaysTrace(["sendReport for error=", errStr," SEND_BUG_REPORT=",SEND_BUG_REPORT]);
+			ErrorReport_LOG.log(["sendReport for error=", errStr," SEND_BUG_REPORT=",SEND_BUG_REPORT]);
 			
 			var errMessage:String = 
 				(stackTraces==null ? "" : "AAAA (with stack trace) ")+ // so I will easily find them in our "errors page"
@@ -161,7 +167,7 @@ public final class ErrorHandler
 				
 			// we should show the error after we call sendMultipartImage (so we send the image without the error window)
 			if (SHOULD_SHOW_ERRORS) {
-				var msg:String = "ERROR "+errMessage+" traces="+StaticFunctions.getTraces();
+				var msg:String = "ERROR "+errMessage+"\n\ntraces:\n\n"+StaticFunctions.getTraces();
 				AS3_vs_AS2.showError(msg);
 				StaticFunctions.setClipboard(msg);
 			}		

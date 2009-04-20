@@ -69,8 +69,8 @@ public class SerializableClass /*<InAPI>*/extends Event/*</InAPI>*/
 			) {
 		__CLASS_NAME__ = shortName==null ? StaticFunctions.getShortClassName(this) : shortName;
 		/*<InAPI>*/super(__CLASS_NAME__,bubbles, cancelable);/*</InAPI>*/
-		StaticFunctions.assert(!XMLSerializer.isReserved(__CLASS_NAME__),["The shortName=",__CLASS_NAME__," is a reserved word, please use another shortName."]); 
-		StaticFunctions.assert(AS3_vs_AS2.stringIndexOf(__CLASS_NAME__,"$")==-1,["Illegal shortName in SerializableClass! shortName=",shortName]);
+		StaticFunctions.assert(!XMLSerializer.isReserved(__CLASS_NAME__),"The shortName=",[__CLASS_NAME__," is a reserved word, please use another shortName."]); 
+		StaticFunctions.assert(AS3_vs_AS2.stringIndexOf(__CLASS_NAME__,"$")==-1,"Illegal shortName in SerializableClass! shortName=",[shortName]);
 		register();
 	}	
 	public function getFieldNames():Array/*String*/ {
@@ -109,7 +109,7 @@ public class SerializableClass /*<InAPI>*/extends Event/*</InAPI>*/
 	public static function registerClassAlias(shortName:String, classObject:Class):void {
 		var oldClass:Class = SHORTNAME_TO_CLASS[shortName];
 		if (oldClass!=null) {
-			StaticFunctions.assert(oldClass==classObject, ["You called registerClassAlias twice with shortName=",shortName," with two different classObjects! classObject1=",oldClass," classObject2=",classObject]);
+			StaticFunctions.assert(oldClass==classObject, "You called registerClassAlias twice with shortName=",[shortName," with two different classObjects! classObject1=",oldClass," classObject2=",classObject]);
 			return;
 		}
 		if (IS_TRACE_REGISTER) 
@@ -127,7 +127,7 @@ public class SerializableClass /*<InAPI>*/extends Event/*</InAPI>*/
     		if (IS_TESTING_SAME_REGISTER) {
 	    		var newXlass:String = AS3_vs_AS2.getClassName(this);
 		    	var oldXlass:String = AS3_vs_AS2.getClassName(oldInstance);
-	    		StaticFunctions.assert(oldXlass==newXlass, ["Previously added shortName=",shortName, " with oldXlass=",oldXlass," and now with newXlass=",newXlass]);
+	    		StaticFunctions.assert(oldXlass==newXlass, "Previously added shortName=",[shortName, " with oldXlass=",oldXlass," and now with newXlass=",newXlass]);
 	    	}
     		return;
     	}
@@ -163,7 +163,7 @@ public class SerializableClass /*<InAPI>*/extends Event/*</InAPI>*/
  		var classObject:Class = SHORTNAME_TO_CLASS[shortName];
     	if (classObject!=null)  return classObject;
  		var instance:SerializableClass = SHORTNAME_TO_INSTANCE[shortName];
- 		StaticFunctions.assert(instance!=null, ["You forgot to call SerializableClass.register for shortName=",shortName]); 
+ 		StaticFunctions.assert(instance!=null, "You forgot to call SerializableClass.register for shortName=",[shortName]); 
  		return getClassOfInstance(instance); 		
  	}
 	private static function createInstance(shortName:String):SerializableClass {

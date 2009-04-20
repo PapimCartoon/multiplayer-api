@@ -36,8 +36,8 @@ public final class CreateGrid
 	public static var squareDeltaY:int = 84;
 		
 	public function CreateGrid() {
-		StaticFunctions.assert(ROWS>1, ["Illegal ROWS=",ROWS]);
-		StaticFunctions.assert(COLS>1, ["Illegal COLS=",COLS]);
+		StaticFunctions.assert(ROWS>1, "Illegal ROWS=",[ROWS]);
+		StaticFunctions.assert(COLS>1, "Illegal COLS=",[COLS]);
 	}
 	public function createMovieClips(graphics:MovieClip, squareLinkageName:String):void {
 		for (var row:int=0; row<ROWS; row++)

@@ -43,9 +43,9 @@ package come2play_as3.api.auto_copied
         private function checkAnimationInterval():void {
         	if (!transactionStartedOn.isTimeSet()) return; // animation is not running
         	var delta:int = transactionRunningTime();
-        	if (delta< MAX_ANIMATION_MILLISECONDS) return; // animation is running for a short time
+        	if (delta<MAX_ANIMATION_MILLISECONDS) return; // animation is running for a short time
         	// animation is running for too long
-        	StaticFunctions.throwError("An transaction is running for more than MAX_ANIMATION_MILLISECONDS="+MAX_ANIMATION_MILLISECONDS+". transactionStartedOn="+transactionStartedOn+". It is running for="+delta+". ProtocolVerifier="+this);         	
+        	StaticFunctions.throwError("An transaction is running for more than MAX_ANIMATION_MILLISECONDS="+MAX_ANIMATION_MILLISECONDS);         	
         }
         public function getAllPlayerIds():Array/*int*/{
         	return currentPlayerIds;
@@ -71,7 +71,7 @@ package come2play_as3.api.auto_copied
         }
 		private function check(cond:Boolean, arr:Array):void {
 			if (cond) return;
-			StaticFunctions.assert(false, ["ProtocolVerifier found an error: ", arr]);
+			StaticFunctions.assert(false, "ProtocolVerifier found an error: ", [arr]);
 		}
 		private function checkServerEntries(serverEntries:Array/*ServerEntry*/):void {
 			for each (var entry:ServerEntry in serverEntries) {
@@ -79,7 +79,7 @@ package come2play_as3.api.auto_copied
 			}
 		}
 		private function checkInProgress(inProgress:Boolean, msg:API_Message):void {
-			StaticFunctions.assert(inProgress == (currentPlayerIds.length>0), ["The game must ",inProgress?"" : "not"," be in progress when passing msg=",msg]); 
+			StaticFunctions.assert(inProgress == (currentPlayerIds.length>0), "checkInProgress",["The game must ",inProgress?"" : "not"," be in progress when passing msg=",msg]); 
 		}
 		public function msgToGame(gotMsg:API_Message):void {
 			check(gotMsg!=null, ["Got a null message!"]);

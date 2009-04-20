@@ -40,7 +40,7 @@ public final class Logger
 	}
 	public function toString():String { return "Logger "+name; }
 	
-	public function log(/*<InAS3>*/...obj/*</InAS3>*/  /*<InAS2>*obj:Object*</InAS2>*/):void {
+	public function log(/*<InAS3>*/...obj/*</InAS3>*/  /*<InAS2>obj:Object</InAS2>*/):void {
 		try {
 			if (maxTraces<=0) return;
 			 

@@ -22,7 +22,7 @@ class come2play_as2.api.auto_copied.Logger
 	}
 	public function toString():String { return "Logger "+name; }
 	
-	public function log(/*<InAS3>...obj</InAS3>*/  /*<InAS2>*/*obj:Object*/*</InAS2>*/):Void {
+	public function log(/*<InAS3>...obj</InAS3>*/  /*<InAS2>*/obj:Object/*</InAS2>*/):Void {
 		try {
 			if (maxTraces<=0) return;
 			 

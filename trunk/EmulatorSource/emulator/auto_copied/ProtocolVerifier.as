@@ -29,7 +29,7 @@ package emulator.auto_copied
 		public static var MAX_ANIMATION_MILLISECONDS:int = 120*1000; // max seconds for animations
 		public static var WARN_ANIMATION_MILLISECONDS:int = 60*1000; // if an animation finished after X seconds, we report an error (for us to know that it can happen!)
 
-		private var transactionStartedOn:TimeMeasure = new TimeMeasure(); 
+		private var transactionStartedOn:TimeMeasure; 
 		private var currentCallback:API_Message = null;
 		private var didRegisterOnServer:Boolean = false;
 		private var currentPlayerIds:Array/*int*/;
@@ -42,13 +42,14 @@ package emulator.auto_copied
 		// We do not queue those doStoreState anymore (the java will throw away doStore of a viewer)
 		
 		public function ProtocolVerifier() {
+			transactionStartedOn = new TimeMeasure();
 			ErrorHandler.myInterval("ProtocolVerifier.checkAnimationInterval",AS3_vs_AS2.delegate(this, this.checkAnimationInterval), MAX_ANIMATION_MILLISECONDS);
 			currentPlayerIds = [];
 		}
-		public function toString():String {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		public function toString():String {
 			return "ProtocolVerifier:"+
 				" transactionStartedOn="+transactionStartedOn+
 				" currentCallback="+currentCallback+ 
@@ -58,10 +59,10 @@ package emulator.auto_copied
 		}
 		private function transactionRunningTime():int {
 			return transactionStartedOn.milliPassed();
-		}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		}
         private function checkAnimationInterval():void {
         	if (!transactionStartedOn.isTimeSet()) return; // animation is not running
         	var delta:int = transactionRunningTime();
@@ -71,10 +72,10 @@ package emulator.auto_copied
         }
         public function getAllPlayerIds():Array/*int*/{
         	return currentPlayerIds;
-        }
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+        }
         public function getFinishedPlayerIds():Array/*int*/ {
         	if(allPlayerIds == null) return new Array();
         	var finishedPlayerids:Array = allPlayerIds.concat();
@@ -84,10 +85,10 @@ package emulator.auto_copied
         	}	
         	return finishedPlayerids;
         }
-        public function isInPlayers(playerId:int):Boolean {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+        public function isInPlayers(playerId:int):Boolean {
         	return AS3_vs_AS2.IndexOf(currentPlayerIds, playerId)!=-1;        	
         }
         public function isAllInPlayers(playerIds:Array/*int*/):Boolean {
@@ -97,10 +98,10 @@ package emulator.auto_copied
         	}
         	return true;        	
         }
-		private function check(cond:Boolean, arr:Array):void {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		private function check(cond:Boolean, arr:Array):void {
 			if (cond) return;
 			StaticFunctions.assert(false, "ProtocolVerifier found an error: ", [arr]);
 		}
@@ -110,10 +111,10 @@ package emulator.auto_copied
 			}
 		}
 		private function checkInProgress(inProgress:Boolean, msg:API_Message):void {
-			StaticFunctions.assert(inProgress == (currentPlayerIds.length>0), "checkInProgress",["The game must ",inProgress?"" : "not"," be in progress when passing msg=",msg]); 
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			StaticFunctions.assert(inProgress == (currentPlayerIds.length>0), "checkInProgress",["The game must ",inProgress?"" : "not"," be in progress when passing msg=",msg]); 
 		}
 		public function msgToGame(gotMsg:API_Message):void {
 			check(gotMsg!=null, ["Got a null message!"]);
@@ -123,10 +124,10 @@ package emulator.auto_copied
 			transactionStartedOn.setTime();   
 			if (isOldBoard(gotMsg)) {
 			} else if (gotMsg is API_GotStateChanged) {
-    			checkInProgress(true,gotMsg);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+    			checkInProgress(true,gotMsg);
     			var stateChanged:API_GotStateChanged = /*as*/gotMsg as API_GotStateChanged;
     			checkServerEntries(stateChanged.serverEntries);
     		} else if (gotMsg is API_GotMatchStarted) {
@@ -136,10 +137,10 @@ package emulator.auto_copied
 				allPlayerIds = matchStarted.allPlayerIds.concat();
 				currentPlayerIds = StaticFunctions.subtractArray(matchStarted.allPlayerIds, matchStarted.finishedPlayerIds);
     		} else if (gotMsg is API_GotMatchEnded) {	    			
-    			checkInProgress(true,gotMsg);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+    			checkInProgress(true,gotMsg);
 				var matchEnded:API_GotMatchEnded = /*as*/gotMsg as API_GotMatchEnded;
 				currentPlayerIds = StaticFunctions.subtractArray(currentPlayerIds, matchEnded.finishedPlayerIds);
 			} else if (gotMsg is API_GotCustomInfo) {	 					    			
@@ -149,10 +150,10 @@ package emulator.auto_copied
     			checkInProgress(true,gotMsg);
     			
 				// can be sent whether the game is in progress or not
-			} else if (gotMsg is API_GotUserInfo) { 
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			} else if (gotMsg is API_GotUserInfo) { 
 			} else if (gotMsg is API_GotUserDisconnected) {
 			} else if (gotMsg is API_GotRequestStateCalculation){
 				
@@ -162,10 +163,10 @@ package emulator.auto_copied
 			}
 		}
 		public static function isOldBoard(msg:API_Message):Boolean {
-			var name:String = StaticFunctions.getMethodName(msg);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			var name:String = StaticFunctions.getMethodName(msg);
 			return StaticFunctions.startsWith(name, "do_") || StaticFunctions.startsWith(name, "got_");
 		}
 		public static function isPassThrough(doMsg:API_Message):Boolean {
@@ -175,10 +176,10 @@ package emulator.auto_copied
 		}
 		public function isDoAll(doMsg:API_Message):Boolean {
 			return StaticFunctions.startsWith(StaticFunctions.getMethodName(doMsg), "doAll");
-		}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		}
 		
 		public function msgFromGame(doMsg:API_Message):void {
 			check(doMsg!=null, ["Send a null message!"]);
@@ -188,10 +189,10 @@ package emulator.auto_copied
 				didRegisterOnServer = true;
 				return;
 			} 
-			if (isPassThrough(doMsg)) return; //e.g., we always pass doTrace or doAllFoundHacker
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			if (isPassThrough(doMsg)) return; //e.g., we always pass doTrace or doAllFoundHacker
 			check(didRegisterOnServer, ["The first call must be DoRegisterOnServer!"]);
 			
         	if (doMsg is API_DoStoreState) {
@@ -201,10 +202,10 @@ package emulator.auto_copied
         		isNullKeyExistUserEntry(doStoreStateMessage.userEntries);
         		isNullKeyExistRevealEntry(doStoreStateMessage.revealEntries)
         		isDeleteLegal(doStoreStateMessage.userEntries)
-			} else if (doMsg is API_Transaction) {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			} else if (doMsg is API_Transaction) {
 				var transaction:API_Transaction = /*as*/doMsg as API_Transaction;
 				check(currentCallback!=null && StaticFunctions.getMethodName(currentCallback)==transaction.callback.callbackName, ["Illegal callbackName!"]);
 				// The game may perform doAllFoundHacker (in a transaction) even after the game is over,
@@ -214,10 +215,10 @@ package emulator.auto_copied
 				
 				var wasStoreStateCalculation:Boolean = false;
 				var isRequestStateCalculation:Boolean = currentCallback is API_GotRequestStateCalculation;
-				for each (var doAllMsg:API_Message in transaction.messages) {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+				for each (var doAllMsg:API_Message in transaction.messages) {
 					checkDoAll(doAllMsg);
 					if (isRequestStateCalculation) {
 						if (doAllMsg is API_DoAllStoreStateCalculation)	
@@ -227,10 +228,10 @@ package emulator.auto_copied
 					}					
 				}
 				if (transaction.messages.length>0)
-					check(isRequestStateCalculation ||
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+					check(isRequestStateCalculation ||
 						  currentCallback is API_GotMatchStarted || 
 						  currentCallback is API_GotMatchEnded ||
 						  currentCallback is API_GotStateChanged, ["You can change the state with a doAll message only in a transaction that corresponds to GotMatchStarted, GotMatchEnded or GotStateChanged. doAllMsg=",doAllMsg," currentCallback=",currentCallback]);
@@ -240,10 +241,10 @@ package emulator.auto_copied
 				
 				currentCallback = null;
 				
-				if (transactionRunningTime()>WARN_ANIMATION_MILLISECONDS) // for us to know it can happen (so we should increase our bound)
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+				if (transactionRunningTime()>WARN_ANIMATION_MILLISECONDS) // for us to know it can happen (so we should increase our bound)
 					ErrorHandler.alwaysTraceAndSendReport("A transaction finished after WARN_ANIMATION_MILLISECONDS",transactionStartedOn);
         		transactionStartedOn.clearTime();
 			} else {
@@ -253,10 +254,10 @@ package emulator.auto_copied
 		}
 		private function isDeleteLegal(userEntries:Array/*UserEntry*/):void
 		{
-			for each(var userEntry:UserEntry in userEntries) {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			for each(var userEntry:UserEntry in userEntries) {
 				if (userEntry.value == null)
 					check(!userEntry.isSecret,["key deletion must be public! userEntry=",userEntry]);
 			}
@@ -266,10 +267,10 @@ package emulator.auto_copied
         	if (msg is API_DoAllFoundHacker) {        		
 			}
 			else if (msg is API_DoAllStoreStateCalculation) 
-			{
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			{
 				var doAllStoreStateCalculations:API_DoAllStoreStateCalculation = /*as*/msg as API_DoAllStoreStateCalculation;
         		isNullKeyExistUserEntry(doAllStoreStateCalculations.userEntries);
 				isDeleteLegal(doAllStoreStateCalculations.userEntries)
@@ -279,10 +280,10 @@ package emulator.auto_copied
 				var doAllStoreStateMessage:API_DoAllStoreState = /*as*/msg as API_DoAllStoreState;
         		isNullKeyExistUserEntry(doAllStoreStateMessage.userEntries);
 				isDeleteLegal(doAllStoreStateMessage.userEntries)
-			}   
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			}   
 			else if (msg is API_DoAllEndMatch)
 			{
 				var doAllEndMatchMessage:API_DoAllEndMatch = /*as*/msg as API_DoAllEndMatch;
@@ -292,10 +293,10 @@ package emulator.auto_copied
 				// because the game should verify every doStoreState (to prevent hackers from polluting the state after they know the game will be over). 
 			} 
 			else if (msg is API_DoAllRevealState) 
-			{
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			{
 				var doAllRevealState:API_DoAllRevealState = /*as*/msg as API_DoAllRevealState;
         		isNullKeyExistRevealEntry(doAllRevealState.revealEntries);
 			} 
@@ -305,10 +306,10 @@ package emulator.auto_copied
         		isNullKeyExist(doAllRequestStateCalculation.keys);
 			}
 			else if	(msg is API_DoAllRequestRandomState)
-			{
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			{
 				var doAllRequestRandomState:API_DoAllRequestRandomState = /*as*/msg as API_DoAllRequestRandomState;	
 				check(doAllRequestRandomState.key != null,["You have to call doAllRequestRandomState with a non null key !"]);
 			}	
@@ -318,10 +319,10 @@ package emulator.auto_copied
         		check(isInPlayers(doAllSetTurn.userId), ["You have to call doAllSetTurn with a playerId!"]);
 			}
 			else if (msg is API_DoAllSetMove) 
-			{				
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			{				
 				// nothing to check
 			}
 			else if (msg is API_DoAllShuffleState) 
@@ -331,10 +332,10 @@ package emulator.auto_copied
 			}
 			else
 			{
-				check(false, ["Unknown doAll message=",msg]);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+				check(false, ["Unknown doAll message=",msg]);
 			}
         }
 		
@@ -344,10 +345,10 @@ package emulator.auto_copied
         	for each (var userEntry:UserEntry in userEntries) {
         		check(userEntry.key != null,["UserEntry.key cannot be null ! userEntry=",userEntry]);
         	}
-        }
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+        }
         private function isNullKeyExistRevealEntry(revealEntries:Array/*RevealEntry*/):void
         {
         	//check(revealEntries.length>=1, ["revealEntries must have at least one RevealEntry!"]);
@@ -357,10 +358,10 @@ package emulator.auto_copied
         }
         private function isNullKeyExist(keys:Array/*Object*/):void
         {
-        	check(keys.length!=0,["keys must have at leasy one key!"]);        		
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+        	check(keys.length!=0,["keys must have at leasy one key!"]);        		
         	for each (var key:String in keys) {
         		check(key != null,["key cannot be null ! keys=",keys]);
         	}

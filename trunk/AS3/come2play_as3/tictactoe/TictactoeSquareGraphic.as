@@ -27,6 +27,7 @@ public final class TictactoeSquareGraphic
 	private var logoContainer:MovieClip;
 		
 	public function TictactoeSquareGraphic(graphic:TictactoeMain, square:MovieClip, move:TictactoeSquare) {
+    	this.animationStartedOn = new TimeMeasure();
 		this.graphic = graphic;
 		this.buttonContainer = AS3_vs_AS2.getMovieChild(square,"buttonContainer");
 		this.logoContainer = AS3_vs_AS2.getMovieChild(square,"logoContainer");
@@ -115,10 +116,9 @@ public final class TictactoeSquareGraphic
     public static var TRACE_ANIMATION_STEPS:Boolean = false;
     private var alphaPercentage:int;
     private var moveAnimationInterval:MyInterval = null;
-    private var animationStartedOn:TimeMeasure = new TimeMeasure();
+    private var animationStartedOn:TimeMeasure = null;
     public function startMoveAnimation():void {
     	StaticFunctions.assert(moveAnimationInterval==null, "TictactoeSquareGraphic is already in animation mode!",[" sqaure=", move]);
-    	
 		graphic.animationStarted("startMoveAnimation");
 		soundMovieClip.gotoAndPlay("MakeSound");
 		

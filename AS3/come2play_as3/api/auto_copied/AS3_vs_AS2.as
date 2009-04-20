@@ -210,7 +210,7 @@ public final class AS3_vs_AS2
 			ALL_Event_LOG.log( getEventListenersTrace() );
 		}
 		 		
-		var func:Function = ErrorHandler.wrapWithCatch("myAddEventListener."+type+" for "+getQualifiedClassName(dispatcher), listener);		
+		var func:Function = ErrorHandler.wrapWithCatch(dispatcherName+" for event "+type, listener);		
 		if (dispatchersInfo[dispatcher] == null)
 			dispatchersInfo[dispatcher] = new DispatcherInfo(dispatcherName,weakReference); 
 		var info:DispatcherInfo = getDispatcherInfo(dispatcherName,dispatcher);

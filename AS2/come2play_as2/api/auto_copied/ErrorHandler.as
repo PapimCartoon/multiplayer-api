@@ -54,20 +54,20 @@ class come2play_as2.api.auto_copied.ErrorHandler
 	private static var ongoingTimeouts:Object/*Dictionary*/ = {};//also printed in traces	
 	public static function myTimeout(zoneName:String, func:Function, milliseconds:Number):Object {
 		var timeout_id:Object;
-		var newFunc:Function = wrapWithCatch(zoneName, 
+		var newFunc:Function = 
 				function (/*<InAS3>...args</InAS3>*/):Void  { 
 					modifyOngoing(false, true, zoneName, timeout_id, "myTimeout ticked",milliseconds);
 					func.apply(null, 
 						/*<InAS3>args</InAS3>*/
 						/*<InAS2>*/arguments/*</InAS2>*/
 					);
-				});
+				};
 		timeout_id = AS3_vs_AS2.unwrappedSetTimeout(zoneName, newFunc, milliseconds);
 		modifyOngoing(true, true, zoneName, timeout_id, "myTimeout set", milliseconds);
 		return timeout_id;			
 	}
 	public static function myInterval(zoneName:String, func:Function, milliseconds:Number):Object {
-		var interval_id:Object = AS3_vs_AS2.unwrappedSetInterval(zoneName, wrapWithCatch(zoneName, func), milliseconds);
+		var interval_id:Object = AS3_vs_AS2.unwrappedSetInterval(zoneName, func, milliseconds);
 		modifyOngoing(true, false, zoneName, interval_id, "myInterval set", milliseconds);
 		return interval_id;		
 	}
@@ -97,7 +97,7 @@ class come2play_as2.api.auto_copied.ErrorHandler
 	
 	private static var my_stack_trace:Array = [];
 	public static function wrapWithCatch(zoneName:String, func:Function):Function {
-		var longerName:String = zoneName+(my_stack_trace.length==0 ? "" : " with first stacktrace: {\n"+my_stack_trace[0]+"\n}");
+		var longerName:String = zoneName; //Extra stack traces are not needed because we use zoneName for all events:  +(my_stack_trace.length==0 ? "" : " with first stacktrace: {\n"+my_stack_trace[0]+"\n}");
 		return function (/*<InAS3>...args</InAS3>*/):Void { 
 			catchErrors(longerName, func, 
 					/*<InAS3>args</InAS3>*/

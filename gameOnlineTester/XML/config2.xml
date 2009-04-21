@@ -153,7 +153,6 @@ Not used by the graphics yet (but should be displayed):
 		
 		
 		
-		<entry><key>domainURL</key><value>"file:///X:/come2play/API_GoogleCodeSVN/gameOnlineTester/"</value></entry>	
 		<entry><key>disableGameRating</key><value>true</value></entry>		
 		<entry><key>disableStatisticsPage</key><value>true</value></entry>	
 		

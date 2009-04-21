@@ -1,5 +1,7 @@
 package come2play_as3.api.auto_copied
 {
+import come2play_as3.api.auto_copied.AS3_ErrorMessage;
+
 import flash.display.*;
 import flash.events.*;
 import flash.net.*;
@@ -407,6 +409,7 @@ public final class AS3_vs_AS2
 		showMessage(msg, "error");
 	}
 	// possible kinds are: error, traces, newTurn, gameOver
+	private static var errorMessage:AS3_ErrorMessage = new AS3_ErrorMessage();
 	public static function showMessage(msg:String, kind:String):void {
 		var graphics:DisplayObjectContainer = StaticFunctions.someMovieClip;
 		trace("Showing message: msg kind="+kind+
@@ -416,46 +419,9 @@ public final class AS3_vs_AS2
 		if (graphics==null) return;
 		graphics = graphics.stage;
 		if (graphics==null) return;
+		graphics.addChild(errorMessage);
+		errorMessage.addText(msg);
 		
-		var blackBox:Sprite=new Sprite();
-		blackBox.graphics.beginFill(0x000000);
-		blackBox.graphics.drawRect(0,0,500,500);
-		blackBox.graphics.endFill();
-		var child:TextField = new TextField();
-		child.text = msg;
-		child.width = 500;
-		child.height = 500;
-		
-		var buttonText:TextField = new TextField();
-		
-		//buttonText.textColor = 0x000000;
-		buttonText.text = "close";
-		buttonText.setTextFormat(new TextFormat("Times New Roman",14,0x000000),0,5);
-		buttonText.selectable = false;
-		
-		
-		var buttonBox:Sprite=new Sprite();
-		buttonBox.graphics.beginFill(0xffffff);
-		buttonBox.graphics.drawRect(0,0,40,20);
-		buttonBox.graphics.endFill();
-		buttonBox.addChild(buttonText);
-		buttonBox.x = graphics.width/2;
-		buttonBox.y = graphics.height/2;
-		var closeBtn:SimpleButton = new SimpleButton(buttonBox,buttonBox,buttonBox,buttonBox);
-		blackBox.addChild(child);
-		blackBox.addChild(closeBtn);
-
-		//child.backgroundColor = 0xFF0000; // red
-		child.textColor = 0xFF0000; // red
-		
-		
-		graphics.addChild(blackBox);
-		myWeakAddEventListener("closeBtn",closeBtn, MouseEvent.CLICK, 
-			function():void {
-				trace("close")
-				graphics.removeChild(blackBox);
-				} 
-			);
 		trace("Finished showing message");
 	}
 	

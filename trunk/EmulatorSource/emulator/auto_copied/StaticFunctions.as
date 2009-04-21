@@ -19,16 +19,16 @@ package emulator.auto_copied
 // Only StaticFunctions and JSON are copied to flex_utils 
 public final class StaticFunctions
 {			
-	public static var GOOGLE_REVISION_NUMBER:int = 971;
+	public static var GOOGLE_REVISION_NUMBER:int = 972;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	public static var COME2PLAY_REVISION_NUMBER:int = 2778;
+	public static var COME2PLAY_REVISION_NUMBER:int = 2780;
 	public static function getRevision():String {
 		return "g="+GOOGLE_REVISION_NUMBER+",c2p="+COME2PLAY_REVISION_NUMBER;		
 	}
 	
-	public static var SHOULD_CALL_TRACE:Boolean = true; // in the online version we turn it off to save runtime
+	public static var SHOULD_CALL_TRACE:Boolean = false; // in the online version we turn it off to save runtime
 	public static var someMovieClip:DisplayObjectContainer; // so we can display error messages on the stage	
 	public static var ALLOW_DOMAINS:String = "*";//Specifying "*" does not include local hosts	 
 	
@@ -247,16 +247,17 @@ public final class StaticFunctions
 	}
 	
 	private static const REFLECTION_PREFIX:String = "REFLECTION_";
+	private static var REFLECTION_LOG:Logger = new Logger("REFLECTION",10);
 	public static function performReflectionFromFlashVars(_someMovieClip:DisplayObjectContainer):void {		
 		var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(_someMovieClip);		
-		if (SHOULD_CALL_TRACE) trace("performReflectionFromFlashVars="+JSON.stringify(parameters));
+		REFLECTION_LOG.log(["performReflectionFromFlashVars=",parameters]);
 		for (var key:String in parameters) {
 			if (startsWith(key,REFLECTION_PREFIX)) {
 				var before:String = key.substr(REFLECTION_PREFIX.length);
-				var after:String = parameters[key];
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+				var after:String = parameters[key];
 				performReflectionString(before, after);	
 			}			
 		}
@@ -266,23 +267,23 @@ public final class StaticFunctions
 		performReflectionString(two[0], two[1]);
 	}
 	public static function performReflectionString(fullClassName:String, valStr:String):void {
-		performReflectionObject(fullClassName, SerializableClass.deserializeString(valStr));
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		performReflectionObject(fullClassName, SerializableClass.deserializeString(valStr));
 	}
 	public static function performReflectionObject(fullClassName:String, valObj:Object):void {
 		//fullClassName = come2play_as3.util::EnumMessage.CouldNotConnect.__minDelayMilli 
 		//after = 2000
-		if (SHOULD_CALL_TRACE) trace("Perform reflection for: "+fullClassName+"="+JSON.stringify(valObj));
+		REFLECTION_LOG.log(["Perform reflection for: ",fullClassName,"=",valObj]);
 		var package2:Array = splitInTwo(fullClassName, "::", false);
 		var fields2:Array = splitInTwo(package2[1], ".", false);
 		var clzName:String = trim(package2[0]) + "::" + trim(fields2[0]);
 		var fieldsName:String = trim(fields2[1]);
-		var classReference:Object = AS3_vs_AS2.getClassByName(clzName);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		var classReference:Object = AS3_vs_AS2.getClassByName(clzName);
 		var oldVal:Object = null;
 		var fieldsArr:Array = fieldsName.split(".");
 		for (var i:int=0; i<fieldsArr.length; i++) {
@@ -292,10 +293,10 @@ public final class StaticFunctions
 			else {
 				oldVal = classReference[fieldName];
 				classReference[fieldName] = valObj;
-			}			
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			}			
 		} 		
 		storeTrace(["Setting field ",fieldsName," in class ",clzName,": oldVal=",oldVal, " newVal=",valObj]);
 	}
@@ -305,10 +306,10 @@ public final class StaticFunctions
 	 * Similar to replace with:  new RegExp(searchFor,"g")
 	 * but we need to escape special characters from searchFor
 	 * e.g., 
-	 * 	StaticFunctions.replaceAll("$y'+knkjh$y'+$y'+uoiuoiu$y'+8y$y'+", "$y'+","REPLACED") ==
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	 * 	StaticFunctions.replaceAll("$y'+knkjh$y'+$y'+uoiuoiu$y'+8y$y'+", "$y'+","REPLACED") ==
 	 * 							"REPLACEDknkjhREPLACEDREPLACEDuoiuoiuREPLACED8yREPLACED"		
 	 */
 	public static function replaceAll(str:String, searchFor:String, replaceWith:String):String {		
@@ -318,10 +319,10 @@ public final class StaticFunctions
 		while ( (index = AS3_vs_AS2.stringIndexOf(str, searchFor, index)) != -1) {
 			res.push( str.substring(lastIndex,index) );
 			res.push( replaceWith );
-			index += searchFor.length;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			index += searchFor.length;
 			lastIndex = index;			
 		}
 		res.push( str.substring(lastIndex) );
@@ -331,10 +332,10 @@ public final class StaticFunctions
 		var index:int = isLast ? AS3_vs_AS2.stringLastIndexOf(str, searchFor) : AS3_vs_AS2.stringIndexOf(str, searchFor);
 		if (index==-1) showError("Did not find searchFor="+searchFor+" in string="+str);
 		return [str.substring(0,index),str.substring(index+searchFor.length)];
-	}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	}
 	public static function replaceLastOccurance(str:String, searchFor:String, replaceWith:String):String {
 		var two:Array = splitInTwo(str, searchFor, true);
 		return two[0] + replaceWith + two[1];
@@ -344,10 +345,10 @@ public final class StaticFunctions
 		for each (var field:String in fields) {
 			res[field] = instance[field];
 		}
-		return res;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		return res;
 	}
 	
 	private static var cacheShortName:Object = {};
@@ -357,10 +358,10 @@ public final class StaticFunctions
 		var res:String = className.substr(AS3_vs_AS2.stringIndexOf(className,"::")+2);
 		cacheShortName[className] = res;
 		return res;		
-	}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	}
 	
 	
 	
@@ -370,10 +371,10 @@ public final class StaticFunctions
 		var res:Object = xlass[fieldName];
 		assert(res!=null, "getClassFromMsg",["Missing ",fieldName," in msg=",msg, " xlass=",xlass]);
 		return res;
-	}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	}
 	private static function getParamNames(msg:API_Message):Array/*String*/ {
 		return AS3_vs_AS2.asArray(getClassFromMsg(msg,"METHOD_PARAMS"));
 	}
@@ -383,10 +384,10 @@ public final class StaticFunctions
 	public static function getMethodName(msg:API_Message):String {
 		return getClassFromMsg(msg,"METHOD_NAME").toString();		 
 	} 	
-	public static function getMethodParametersNum(msg:API_Message):int { 
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	public static function getMethodParametersNum(msg:API_Message):int { 
 		return getParamNames(msg).length;
 	}
 	public static function setMethodParameters(msg:API_Message, parameters:Array):void { 
@@ -396,10 +397,10 @@ public final class StaticFunctions
 			msg[name] = parameters[pos++];
 		}
 	}
-	public static function getMethodParameters(msg:API_Message):Array { 
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	public static function getMethodParameters(msg:API_Message):Array { 
 		var names:Array = getParamNames(msg);
 		var res:Array = [];
 		for each (var name:String in names) {

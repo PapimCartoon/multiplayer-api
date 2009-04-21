@@ -5,13 +5,13 @@
 import come2play_as2.api.auto_copied.*;
 class come2play_as2.api.auto_copied.StaticFunctions
 {			
-	public static var GOOGLE_REVISION_NUMBER:Number = 971;
-	public static var COME2PLAY_REVISION_NUMBER:Number = 2778;
+	public static var GOOGLE_REVISION_NUMBER:Number = 972;
+	public static var COME2PLAY_REVISION_NUMBER:Number = 2780;
 	public static function getRevision():String {
 		return "g="+GOOGLE_REVISION_NUMBER+",c2p="+COME2PLAY_REVISION_NUMBER;		
 	}
 	
-	public static var SHOULD_CALL_TRACE:Boolean = true; // in the online version we turn it off to save runtime
+	public static var SHOULD_CALL_TRACE:Boolean = false; // in the online version we turn it off to save runtime
 	public static var someMovieClip:MovieClip; // so we can display error messages on the stage	
 	public static var ALLOW_DOMAINS:String = "*";//Specifying "*" does not include local hosts	 
 	
@@ -179,9 +179,10 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	}
 	
 	private static var REFLECTION_PREFIX:String = "REFLECTION_";
+	private static var REFLECTION_LOG:Logger = new Logger("REFLECTION",10);
 	public static function performReflectionFromFlashVars(_someMovieClip:MovieClip):Void {		
 		var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(_someMovieClip);		
-		if (SHOULD_CALL_TRACE) trace("performReflectionFromFlashVars="+JSON.stringify(parameters));
+		REFLECTION_LOG.log(["performReflectionFromFlashVars=",parameters]);
 		for (var key:String in parameters) {
 			if (startsWith(key,REFLECTION_PREFIX)) {
 				var before:String = key.substr(REFLECTION_PREFIX.length);
@@ -200,7 +201,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	public static function performReflectionObject(fullClassName:String, valObj:Object):Void {
 		//fullClassName = come2play_as2.util::EnumMessage.CouldNotConnect.__minDelayMilli 
 		//after = 2000
-		if (SHOULD_CALL_TRACE) trace("Perform reflection for: "+fullClassName+"="+JSON.stringify(valObj));
+		REFLECTION_LOG.log(["Perform reflection for: ",fullClassName,"=",valObj]);
 		var package2:Array = splitInTwo(fullClassName, "::", false);
 		var fields2:Array = splitInTwo(package2[1], ".", false);
 		var clzName:String = trim(package2[0]) + "::" + trim(fields2[0]);
@@ -252,7 +253,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	}
 	public static function instance2Object(instance:Object, fields:Array/*String*/):Object {
 		var res:Object = {};
-		var p257:Number=0; for (var i257:String in fields) { var field:String = fields[fields.length==null ? i257 : p257]; p257++;
+		var p258:Number=0; for (var i258:String in fields) { var field:String = fields[fields.length==null ? i258 : p258]; p258++;
 			res[field] = instance[field];
 		}
 		return res;
@@ -291,14 +292,14 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	public static function setMethodParameters(msg:API_Message, parameters:Array):Void { 
 		var names:Array = getParamNames(msg); 
 		var pos:Number = 0;
-		var p296:Number=0; for (var i296:String in names) { var name:String = names[names.length==null ? i296 : p296]; p296++;
+		var p297:Number=0; for (var i297:String in names) { var name:String = names[names.length==null ? i297 : p297]; p297++;
 			msg[name] = parameters[pos++];
 		}
 	}
 	public static function getMethodParameters(msg:API_Message):Array { 
 		var names:Array = getParamNames(msg);
 		var res:Array = [];
-		var p303:Number=0; for (var i303:String in names) { var name:String = names[names.length==null ? i303 : p303]; p303++;
+		var p304:Number=0; for (var i304:String in names) { var name:String = names[names.length==null ? i304 : p304]; p304++;
 			res.push(msg[name]);
 		}
 		return res;

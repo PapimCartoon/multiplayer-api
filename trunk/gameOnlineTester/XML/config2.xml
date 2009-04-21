@@ -153,7 +153,7 @@ Not used by the graphics yet (but should be displayed):
 		
 		
 		
-		
+		<entry><key>domainURL</key><value>"file:///X:/come2play/API_GoogleCodeSVN/gameOnlineTester/"</value></entry>	
 		<entry><key>disableGameRating</key><value>true</value></entry>		
 		<entry><key>disableStatisticsPage</key><value>true</value></entry>	
 		
@@ -236,7 +236,7 @@ Not used by the graphics yet (but should be displayed):
 		<!--
 		chatType can be FIXED,DYNAMIC_OPEN,DYNAMIC_CLOSED,NO_CHAT_WITH_USERS_LIST or NO_CHAT
 		 -->
-		<entry><key>chatType</key><value>"FIXED"</value></entry>
+		<entry><key>chatType</key><value>"DYNAMIC_OPEN"</value></entry>
 		<!--
 		logoUrl - url where end game logo is placed
 		logoLink - url clicking the logo will lead
@@ -268,9 +268,6 @@ Not used by the graphics yet (but should be displayed):
 		<entry><key>MochiCode</key><value>'53c06abe662b2907'</value></entry>
 		<entry><key>CPMStarSubPoolID</key><value>1</value></entry>
 		<entry><key>CPMStarPoolID</key><value>1910</value></entry>
-		
-		<entry><key>MessageButton_Back To Main_color</key><value>"0x9DC641"</value></entry>
-		<entry><key>MessageButton_Play Alone_color</key><value>"0xDD1D67"</value></entry>
 	</custom>
 		<!--
 		Stuff that will need to be translated:
@@ -279,9 +276,23 @@ Not used by the graphics yet (but should be displayed):
 			all i18n strings
 			-->
 	<i18n>
-		<entry><key>Close</key><value>סגור</value></entry>
+		<entry><key>Close</key><value>סגור</value></entry>	
+		
 	</i18n>
 	<reflection>
+	<entry><key>come2play_as3.auto_copied::AS3_Loader.domainURL</key><value>""</value></entry>
+		<!-- 
+		domainURL represents the base path to start from.
+		this base path can be used with other image url in the following 3 ways
+		1)in case the url to load starts with http:// , the base path is diregarded
+		2)in case the url to load starts with / , the base path domain is used,but not it's subdirectories,such
+		as in the case of using http://www.come2play.com/shared/ as a base path,loading the image url /images/pink.swf
+		will give the resualt of laoding http://www.come2play.com/images/pink.swf
+		3)in case non of the above applies,both urls will be connected togther
+		
+		-->
+		
+	
 		<!-- 
 			I use reflection to modify **public** static variables in the flash.
 			You can also pass "reflection_1=..." in the flashvars/url to achieve the same purpose

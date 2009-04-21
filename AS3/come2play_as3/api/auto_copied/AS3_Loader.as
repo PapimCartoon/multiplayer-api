@@ -88,7 +88,18 @@ public final class AS3_Loader
 	public static function isNoCache(context:LoaderContext):Boolean {
 		return context!=null && context.checkPolicyFile;
 	}
+	public static var domainURL:String = "";
+	public static function getURL(url:String):String{
+		if(url.substr(0,1) == "/"){
+			var cutIndex:int = domainURL.indexOf("/",8);
+			return domainURL.substring(0,cutIndex) + url
+		}else if(url.substr(0,1) == "http://"){
+			return url
+		}
+		return domainURL + url
+	}
 	public static function loadImage(imageUrl:String,successHandler:Function = null,failureHandler:Function = null,progressHandler:Function = null,context:LoaderContext = null):void {
+		imageUrl = getURL(imageUrl);
 		StaticFunctions.assert(imageUrl!="","can't load a blank image",[]);
 		if (failureHandler==null) {
 			failureHandler = function (ev:Event):void {

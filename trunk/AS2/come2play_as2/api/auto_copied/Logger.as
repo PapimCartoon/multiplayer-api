@@ -1,9 +1,15 @@
 	
+/**
+ * Important: a logger is never garbage-collected!!!
+ * After you created a logger, it is put in a static array,
+ * and when getTraces is called, all the traces from all the loggers
+ * are combined into a single time-line.
+ */ 
 import come2play_as2.api.auto_copied.*;
 class come2play_as2.api.auto_copied.Logger
 {
 	private static var ALL_LOGGERS:Array = [];
-	public static var MAX_LOGGERS_NUM:Number = 200;
+	public static var MAX_LOGGERS_NUM:Number = 500;
 	public static var TRACE_PREFIX:String = ""; // because in flashlog you see traces of many users and it is all mixed 
 		
 	// Be careful that the traces will not grow too big to send to the java (limit of 1MB, enforced in Bytes2Object)
@@ -18,7 +24,7 @@ class come2play_as2.api.auto_copied.Logger
 		this.name = name;
 		this.maxTraces = MAX_TRACES[name]!=null ? int(MAX_TRACES[name]) : maxTraces;
 		ALL_LOGGERS.push(this);
-		if (ALL_LOGGERS.length>MAX_LOGGERS_NUM) throw new Error("Passed MAX_LOGGERS_NUM!");
+		if (ALL_LOGGERS.length>MAX_LOGGERS_NUM) throw new Error("Passed MAX_LOGGERS_NUM! ALL_LOGGERS="+ALL_LOGGERS);
 	}
 	public function toString():String { return "Logger "+name; }
 	
@@ -33,27 +39,41 @@ class come2play_as2.api.auto_copied.Logger
 			if (StaticFunctions.SHOULD_CALL_TRACE) trace(RANDOM_PREFIX+TRACE_PREFIX + "\n\n\n\n\n\n\n\n\n\n\n\nERROR!!!!!!!!!!!!!!!!!!!!!!! err="+AS3_vs_AS2.error2String(err)+"\n\n\n\n\n\n\n\n\n\n\n");
 		}
 	}
+	public function getMyTraces():String {
+		return arrToString(traces,MAX_PER_STRING,MAX_TOTAL);
+	}
 	
 	private static var keyTraces:Array = [];	
 	public static var RANDOM_PREFIX:String = "Rnd"+int(100+Math.random()*900)+": ";
+	
 	public static function getTraces():String {
+		return getTracesOfLoggers(ALL_LOGGERS,MAX_PER_STRING,MAX_TOTAL);
+	}
+	public static function getTracesOfLoggers(loggers:Array/*Logger*/, maxPerString:Number, maxTotal:Number):String {		
 		var res:Array = [];
-		var p41:Number=0; for (var i41:String in ALL_LOGGERS) { var logger:Logger = ALL_LOGGERS[ALL_LOGGERS.length==null ? i41 : p41]; p41++;
+		var p54:Number=0; for (var i54:String in loggers) { var logger:Logger = loggers[loggers.length==null ? i54 : p54]; p54++;
 			res.push.apply(null,logger.traces);
 		}		
 		// I sort the traces		
 		res.sort(function (arg1:Array, arg2:Array):Number {
 			return arg1[0] - arg2[0];
 		});
-		return arrToString(res,",\n");
+		return arrToString(res, maxPerString, maxTotal);
 	}
-	private static function arrToString(s:Object, sep:String):String {			
-		var arr:Array = new Array();
-		var isArr:Boolean = AS3_vs_AS2.isArray(s);			
-		for(var o:String in s) {
-			arr.push((isArr ? "" : o+"=")+JSON.stringify(s[o]));
+	public static var MAX_PER_STRING:Number 	= 20000;	//20KB
+	public static var MAX_TOTAL:Number 		= 2000000;	//2000KB
+	private static function arrToString(arr:Array, maxPerString:Number, maxTotal:Number):String {			
+		var res:Array = new Array();
+		var len:Number = 0;
+		// the latest traces are the most important
+		for (var i:Number = arr.length-1; i>=0; i--) {
+			var s:String = StaticFunctions.cutString(JSON.stringify(arr[i]), maxPerString);
+			len += s.length;
+			if (len>=maxTotal) break;
+			res.push(s); 
 		}
-		return "["+arr.join(sep)+"]";
+		res.reverse();
+		return "["+res.join(",\n")+"]";
 	}
 
 }

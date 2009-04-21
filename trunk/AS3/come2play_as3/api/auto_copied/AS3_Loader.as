@@ -7,6 +7,8 @@ package come2play_as3.api.auto_copied
 	import flash.utils.*;
 	
 /**
+ * We use a pause mechanism in case the flash is overloaded.
+ * 
  * todo: if the image loaded is a BitMap, 
  * then we should use Loader instead of URLLoader,
  * and cache the bitmapData and return a new BitMap:
@@ -24,19 +26,21 @@ public final class AS3_Loader
 		LOG.log(args);
 	}
 	
-	private static var imageCache:Dictionary/*imageUrl->Event (if loading failed, then the ev.data is an empty ByteArray)*/ = new Dictionary();	
+	private static var EMPTY_BYTE_ARRAY:ByteArray = new ByteArray();	
 	public static function getImageLoadByteArray(ev:Event):ByteArray {
 		var loadedImage:URLLoader = ev.target as URLLoader;
 		StaticFunctions.assert(loadedImage!=null, "loadedImage is null", [ev]);	
 		var res:ByteArray = loadedImage.data;
-		StaticFunctions.assert(res!=null, "getImageLoadByteArray null result",[ev]);
-		return res;
+		// res can be null for 2032 Stream Error.
+		return res==null ? EMPTY_BYTE_ARRAY : res;
 	}
 	public static function isImageLoadFailed(ev:Event):Boolean {
 		return getImageLoadByteArray(ev).length==0; 
 	}
 	
+	private static var imageCache:Dictionary/*imageUrl->Event (if loading failed, then the ev.data is an empty ByteArray)*/ = new Dictionary();
 	private static var url2RequestArray:Dictionary/*imageUrl->ImageLoadRequest[]*/ = new Dictionary();
+	private static var pauseQueue:Array/*ImageLoadRequest*/ = null;
 	public static var imageLoadingRetry:int = 1;
 	
 	private static var AS3_Loader_LOG:Logger = new Logger("AS3_Loader",5);	
@@ -66,7 +70,9 @@ public final class AS3_Loader
 		res.push.apply(null,cachedRes);
 		res.push("\tImages in queue:");
 		res.push.apply(null,requestRes);
-		return  res.join("\n\t\t\t");
+		return  res.join("\n\t\t\t")+
+			// pauseQueue might be null
+			"\npauseQueue="+pauseQueue;
 	}
 	
 	public static function object2URLVariables(msg:Object):URLVariables {
@@ -88,15 +94,29 @@ public final class AS3_Loader
 	public static function isNoCache(context:LoaderContext):Boolean {
 		return context!=null && context.checkPolicyFile;
 	}
-	public static var domainURL:String = "";
+	public static var domainURL:String = "";	
 	public static function getURL(url:String):String{
-		if(url.substr(0,1) == "/"){
+		if (url.substr(0,1) == "/"){
 			var cutIndex:int = domainURL.indexOf("/",8);
-			return domainURL.substring(0,cutIndex) + url
-		}else if(url.substr(0,1) == "http://"){
-			return url
+			StaticFunctions.assert(cutIndex>=8, "Illegal url or domain!",[url,domainURL]);
+			return domainURL.substring(0,cutIndex) + url;
 		}
-		return domainURL + url
+		if (url.substr(0,7) == "http://") {
+			return url;
+		}
+		return domainURL + url;
+	}
+	public static function enterPause():void {
+		if (pauseQueue!=null) return;
+		tmpTrace("enterPause");
+		pauseQueue = [];
+	}
+	public static function exitPause():void {
+		if (pauseQueue==null) return;
+		tmpTrace(["exitPause. #pauseQueue=",pauseQueue.length]);
+		for each (var req:ImageLoadRequest in pauseQueue)
+			loadImageReq(req);
+		pauseQueue = null;		
 	}
 	public static function loadImage(imageUrl:String,successHandler:Function = null,failureHandler:Function = null,progressHandler:Function = null,context:LoaderContext = null):void {
 		imageUrl = getURL(imageUrl);
@@ -106,7 +126,7 @@ public final class AS3_Loader
 				criticalError(ev,imageUrl);
 			};			
 		}
-		if(successHandler == null){
+		if(successHandler == null) {
 			successHandler = traceHandler
 		}	
 		
@@ -121,8 +141,18 @@ public final class AS3_Loader
 		loadRequest.imageUrl = imageUrl;
 		loadRequest.successHandler = successHandler;
 		loadRequest.failureHandler = failureHandler;
+		loadRequest.progressHandler = progressHandler;
 		loadRequest.context = context;
 		
+		if (pauseQueue==null)
+			loadImageReq(loadRequest);
+		else
+			pauseQueue.push(loadRequest);		
+	}
+	private static function loadImageReq(loadRequest:ImageLoadRequest):void {
+		var imageUrl:String = loadRequest.imageUrl;
+		var progressHandler:Function = loadRequest.progressHandler;
+		var context:LoaderContext = loadRequest.context; 
 		tmpTrace(["Started handling image: ", imageUrl, "reqId=", loadRequest.reqId]); 
 		
 		// caching mechanism
@@ -151,7 +181,7 @@ public final class AS3_Loader
 						loadedImageUrl(true, imageUrl,ev);						
 					},progressHandler,context);		
 			}
-		}
+		}		
 	}
 	private static function loadedImageUrl(isFailure:Boolean, imageUrl:String, ev:Event):void {
 		tmpTrace(["loadedImageUrl isFailure=",isFailure," imageUrl=",imageUrl, " event=",ev]);
@@ -314,6 +344,11 @@ class ImageLoadRequest {
 	
 	public var imageUrl:String;
 	public var context:LoaderContext;
-	public var successHandler:Function
+	public var successHandler:Function;
+	public var progressHandler:Function;
 	public var failureHandler:Function;
+	
+	public function toString():String {
+		return imageUrl;
+	}
 }

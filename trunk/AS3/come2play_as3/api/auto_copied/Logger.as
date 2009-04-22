@@ -34,7 +34,7 @@ public final class Logger
 		try {
 			if (maxTraces<=0) return;
 			 
-			var traceLine:Array = [++CURR_TRACE_ID, "t:", getTimer(), name, obj];
+			var traceLine:Array = ["id:",++CURR_TRACE_ID, "t:", getTimer(), name, obj];
 			StaticFunctions.limitedPush(traces, traceLine , maxTraces); // we discard old traces
 			if (StaticFunctions.SHOULD_CALL_TRACE) trace(RANDOM_PREFIX+TRACE_PREFIX + " " + name+":\t" + JSON.stringify(traceLine));
 		} catch (err:Error) {
@@ -62,7 +62,7 @@ public final class Logger
 		});
 		return arrToString(res, maxPerString, maxTotal);
 	}
-	public static var MAX_PER_STRING:int 	= 20000;	//20KB
+	public static var MAX_PER_STRING:int 	= 100000;	//100KB
 	public static var MAX_TOTAL:int 		= 2000000;	//2000KB
 	private static function arrToString(arr:Array, maxPerString:int, maxTotal:int):String {			
 		var res:Array = new Array();

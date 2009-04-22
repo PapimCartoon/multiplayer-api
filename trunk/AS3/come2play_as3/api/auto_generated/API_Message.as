@@ -7,7 +7,7 @@ package come2play_as3.api.auto_generated {
 	import come2play_as3.api.auto_generated.*;
 
 	public  class API_Message extends SerializableClass {
-		public static var LAST_RAN_JAVA_DATE:String = "Tue Apr 21 16:28:28 IDT 2009";
+		public static var LAST_RAN_JAVA_DATE:String = "Tue Apr 21 17:09:03 IDT 2009";
 		public static const USER_INFO_KEY_name:String = "name";
 		public static const USER_INFO_KEY_avatar_url:String = "avatar_url";
 		public static const USER_INFO_KEY_supervisor:String = "supervisor";

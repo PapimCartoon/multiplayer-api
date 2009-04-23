@@ -83,27 +83,24 @@ public final class ErrorHandler
 	public static function myTimeout(zoneName:String, func:Function, milliseconds:int):Object {
 		var timeout_id:Object;
 		var newFunc:Function = 
-				function (/*<InAS3>*/...args/*</InAS3>*/):void  { 
+				function (...args):void { 
 					modifyOngoing(false, true, zoneName, timeout_id, "myTimeout ticked",milliseconds);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-					func.apply(null, 
-						/*<InAS3>*/args/*</InAS3>*/
-						/*<InAS2>arguments</InAS2>*/
-					);
+					func.apply(null,args);
 				};
 		timeout_id = AS3_vs_AS2.unwrappedSetTimeout(zoneName, newFunc, milliseconds);
 		modifyOngoing(true, true, zoneName, timeout_id, "myTimeout set", milliseconds);
 		return timeout_id;			
 	}
 	public static function myInterval(zoneName:String, func:Function, milliseconds:int):Object {
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 		var interval_id:Object = AS3_vs_AS2.unwrappedSetInterval(zoneName, func, milliseconds);
 		modifyOngoing(true, false, zoneName, interval_id, "myInterval set", milliseconds);
 		return interval_id;		
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 	}
 	public static function myClearTimeout(zoneName:String, id:Object):void {
 		modifyOngoing(false, true, zoneName, id, "myTimeout cleared", -1);
@@ -111,12 +108,12 @@ public final class ErrorHandler
 	}
 	public static function myClearInterval(zoneName:String, id:Object):void {
 		modifyOngoing(false, false, zoneName, id, "myInterval cleared", -1);
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 		AS3_vs_AS2.unwrappedClearInterval(zoneName, id);			
 	}		
 	private static var LOG:Logger = new Logger("myTimeouts",10);
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 	private static function modifyOngoing(isAdd:Boolean, isTimeout:Boolean, zoneName:String, id:Object, reason:String, milliseconds:int):void {
 		var arr:Object = isTimeout ? ongoingTimeouts : ongoingIntervals;
 		if (isAdd) {
@@ -124,12 +121,12 @@ public final class ErrorHandler
 			arr[id] = [zoneName, milliseconds];
 		} else {
 			var info:Array = arr[id];
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 			StaticFunctions.assert(info!=null && info[0]==zoneName, "there is no such zoneName!",["reason=",reason, " zoneName=",zoneName," info=", info]);
 			milliseconds = info[1];
 			delete arr[id];
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		}			
 		LOG.log([reason, zoneName, id, milliseconds]);
 	}
@@ -137,113 +134,107 @@ public final class ErrorHandler
 	
 	private static var my_stack_trace:Array = [];
 	public static function wrapWithCatch(zoneName:String, func:Function):Function {
+		var longerName:String = zoneName; //Extra stack traces are not needed because we use zoneName for all events:  +(my_stack_trace.length==0 ? "" : " with first stacktrace: {\n"+my_stack_trace[0]+"\n}");
+		return function (...args):void { 
+			catchErrors(longerName,func,args);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		var longerName:String = zoneName; //Extra stack traces are not needed because we use zoneName for all events:  +(my_stack_trace.length==0 ? "" : " with first stacktrace: {\n"+my_stack_trace[0]+"\n}");
-		return function (/*<InAS3>*/...args/*</InAS3>*/):void { 
-			catchErrors(longerName, func, 
-					/*<InAS3>*/args/*</InAS3>*/
-					/*<InAS2>arguments</InAS2>*/
-				);
 		};
 	}
 	public static var ZONE_LOGGER_SIZE:int = 5;
 	private static var ZONE_LOGGERS:Object/*String->Logger*/ = {};
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 	public static function catchErrors(zoneName:String, func:Function, args:Array):Object {
 		var res:Object = null;		
 		
 		var toInsert:Object = [zoneName,"t:",getTimer(),"args=",args]; // I couldn't find a way to get the function name (describeType(func) only returns that the method is a closure)
 		my_stack_trace.push(toInsert);
 		var logger:Logger = ZONE_LOGGERS[zoneName];
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		if (logger==null) {
 			logger = new Logger("CATCH-"+zoneName,ZONE_LOGGER_SIZE);
 			ZONE_LOGGERS[zoneName] = logger;
 		}
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 		logger.log("ENTERED");
 		
 		var wasError:Boolean = false;			
 		try {		
 			res = func.apply(null, args); 
 		} catch (err:Error) { handleError(err, args); }
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			
 		logger.log("EXITED");
 			
 		var poped:Object = my_stack_trace.pop(); 
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 			// I tried to do the pop inside a "finally" clause (to handle correctly cases with exceptions), 
 			//but I got "undefined" errors:
 			//		undefined
 			//			at come2play_as3.util::General$/stackTrace()
 			//			at come2play_as3.util::General$/catchErrors() 
 		if (!didReportError && toInsert!=poped) 
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			alwaysTraceAndSendReport("BAD stack behaviour (multithreaded flash?)", [my_stack_trace, toInsert, poped]);
 		return res;				
 	}
 	public static var ERROR_REPORT_PREFIX:String = "DISTRIBUTION"; // where did the error come from?
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 	public static function handleError(err:Error, obj:Object):void {
 		alwaysTraceAndSendReport("handleError: "+AS3_vs_AS2.error2String(err),[" catching-arguments=",obj]);
 	}	
 
 	public static var SHOULD_SHOW_ERRORS:Boolean = true;
 	public static var didReportError:Boolean = false; // we report only 1 error (usually 1 error leads to others)
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 	// If the container has a bug, then it adds the traces of the game, reports to ASP, and send to java. 
 	// If the game has a bug, then it sends DoAllFoundHacker (which cause the container to send a bug report)  
 	public static var SEND_BUG_REPORT:Function = null; 
 	private static function sendReport(errStr:String):int {
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 		if (didReportError) return -1;
 		didReportError = true;
 		
 		var bug_id:int = StaticFunctions.random(1, 10000000);	
 		
 		try {	
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			var err:Error = new Error();
 			var stackTraces:String = AS3_vs_AS2.myGetStackTrace(err); // null in the release version
 			if (stackTraces!=null) ErrorReport_LOG.log(["Catching point stack trace=",err]);
 							
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 			ErrorReport_LOG.log(["sendReport for error=", errStr," SEND_BUG_REPORT=",SEND_BUG_REPORT]);
 			
 			var errMessage:String = 
 				(stackTraces==null ? "" : "AAAA (with stack trace) ")+ // so I will easily find them in our "errors page"
 				"Revision="+StaticFunctions.getRevision()+": "+
 				ERROR_REPORT_PREFIX + " " +
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 				errStr;
 			
 			if (SEND_BUG_REPORT!=null)
 				SEND_BUG_REPORT(bug_id, errMessage);	
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 				
 			// we should show the error after we call sendMultipartImage (so we send the image without the error window)
 			if (SHOULD_SHOW_ERRORS) {
 				var msg:String = "ERROR "+errMessage+"\n\ntraces:\n\n"+StaticFunctions.getTraces();
 				AS3_vs_AS2.showError(msg);
 				StaticFunctions.setClipboard(msg);
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			}		
 		} catch (err:Error) {
 			AS3_vs_AS2.showError("!!!!!ERROR!!!! in sendReport:"+AS3_vs_AS2.error2String(err));
 		}			
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 		return bug_id;
 	}
 }

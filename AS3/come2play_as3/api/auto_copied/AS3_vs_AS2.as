@@ -310,30 +310,18 @@ public final class AS3_vs_AS2
 		if (res==null) StaticFunctions.throwError("Missing child="+childName+" in movieclip="+graphics.name);
 		return res;
 	}	
-	public static var TRACE_LOADING:Boolean = false;
 	public static function loadMovieIntoNewChild(graphics:MovieClip, url:String, onLoaded:Function):DisplayObjectContainer {
 		var newMovie:DisplayObjectContainer = new Sprite();
-		graphics.addChild(newMovie);
-		loadMovieIntoNewChild2(newMovie,url,onLoaded);
-		return newMovie;
-	}
-				
-	public static var USE_LOADER_CONTEXT:Boolean = true;
-	public static var LOADER_CHECKS_POLICY_FILE:Boolean = false;
-	public static function loadMovieIntoNewChild2(newMovie:DisplayObjectContainer, url:String, onLoaded:Function):void {
-		// todo: use AS3_Loader (with the retry and cache mechanism)
-		if (TRACE_LOADING) StaticFunctions.storeTrace(["Loading url=",url," into a newly created child=",newMovie]);
-		var context:LoaderContext = !USE_LOADER_CONTEXT ? null : new LoaderContext(LOADER_CHECKS_POLICY_FILE,ApplicationDomain.currentDomain);
+		graphics.addChild(newMovie);		
 		AS3_Loader.loadImage(url, function (event:Event):void {
-				if (TRACE_LOADING) StaticFunctions.storeTrace(["Done loading url=",url]);
 				var loaderInfo:LoaderInfo = event.target as LoaderInfo;	
 				var newChild:DisplayObject = loaderInfo.content;
 				newMovie.addChild(newChild);
 				if (onLoaded!=null) onLoaded(true, newChild);
 			}, function (event:Event):void {
-		        if (TRACE_LOADING) StaticFunctions.storeTrace(["Error in loading movie from url=",url," event=",event]);
 		        if (onLoaded!=null) onLoaded(false, null);
-		    },null, context);
+		    });		   
+		return newMovie;
 	}
 	public static function scaleMovie(graphics:DisplayObject, x_percentage:int, y_percentage:int):void {
 		scaleMovieX(graphics,x_percentage);

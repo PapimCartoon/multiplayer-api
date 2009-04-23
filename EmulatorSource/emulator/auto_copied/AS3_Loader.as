@@ -50,7 +50,7 @@ public final class AS3_Loader
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
 		var res:ByteArray = loadedImage.data;
-		// res can be null for 2032 Stream Error.
+		// res can be null for 2032 Stream Error or for 2048 securityError
 		return res==null ? EMPTY_BYTE_ARRAY : res;
 	}
 	public static function isImageLoadFailed(ev:Event):Boolean {
@@ -168,7 +168,7 @@ public final class AS3_Loader
 
 		StaticFunctions.assert(imageUrl!="","can't load a blank image",[]);
 		if (failureHandler==null) {
-			failureHandler = function (ev:Event):void {
+			failureHandler = function(ev:Event):void {
 				criticalError(ev,imageUrl);
 			};			
 		}

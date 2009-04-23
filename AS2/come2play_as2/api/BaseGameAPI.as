@@ -9,7 +9,7 @@
 import come2play_as2.api.*;
 	class come2play_as2.api.BaseGameAPI extends LocalConnectionUser 
 	{        
-		public static var TRACE_ANIMATIONS:Boolean = true;
+		private static var ANIMATIONS_LOG:Logger = new Logger("ANIMATIONS",20);
 		public static var ERROR_DO_ALL:String = "You can only call a doAll* message when the server calls gotStateChanged, gotMatchStarted, gotMatchEnded, or gotRequestStateCalculation.";
 		
 		private var msgsInTransaction:Array/*API_Message*/ = null;
@@ -50,7 +50,8 @@ import come2play_as2.api.*;
 			}
 			
 			output.push("Custom Data:\n\n"+getTAsArray().join("\n"));
-			var gotMatchStarted:API_GotMatchStarted = API_GotMatchStarted.create(0,verifier.getAllPlayerIds(),verifier.getFinishedPlayerIds(),serverEntries)
+			var currentPlayers:CurrentPlayers = verifier.getCurrentPlayers();
+			var gotMatchStarted:API_GotMatchStarted = API_GotMatchStarted.create(0,currentPlayers.getAllPlayerIds(),currentPlayers.getFinishedPlayerIds(),serverEntries)
 			return "\n\nBaseGameAPI:"+
 				"\nrunningAnimations="+runningAnimations+
 				"\ncurrentCallback="+currentCallback+
@@ -115,12 +116,12 @@ import come2play_as2.api.*;
 		 */		 
         public function animationStarted(animationName:String):Void {
         	checkInsideTransaction();
-        	if (TRACE_ANIMATIONS) myTrace(["animationStarted:",animationName]);
+        	ANIMATIONS_LOG.log(["Started:",animationName]);
         	runningAnimations.push(animationName);        	
         }
         public function animationEnded(animationName:String):Void {
         	checkInsideTransaction();
-        	if (TRACE_ANIMATIONS) myTrace(["animationEnded:",animationName]);
+        	ANIMATIONS_LOG.log(["Ended:",animationName]);
         	var wasRemoved:Boolean = StaticFunctions.removeElement(runningAnimations,animationName);
         	if (!wasRemoved)
         		throwError("Called animationEnded with animationName="+animationName+" that is not a running animation!");
@@ -149,7 +150,7 @@ import come2play_as2.api.*;
         }
         private function updateMirorServerState(serverEntries:Array/*ServerEntry*/):Void
         {
-        	var p155:Number=0; for (var i155:String in serverEntries) { var serverEntry:ServerEntry = serverEntries[serverEntries.length==null ? i155 : p155]; p155++;
+        	var p156:Number=0; for (var i156:String in serverEntries) { var serverEntry:ServerEntry = serverEntries[serverEntries.length==null ? i156 : p156]; p156++;
         	    serverStateMiror.addEntry(serverEntry);	
         	}     	
         }
@@ -187,7 +188,7 @@ import come2play_as2.api.*;
 					var customInfo:API_GotCustomInfo = API_GotCustomInfo(msg);
 					var i18nObj:Object = {};
 					var customObj:Object = {};
-					var p193:Number=0; for (var i193:String in customInfo.infoEntries) { var entry:InfoEntry = customInfo.infoEntries[customInfo.infoEntries.length==null ? i193 : p193]; p193++;
+					var p194:Number=0; for (var i194:String in customInfo.infoEntries) { var entry:InfoEntry = customInfo.infoEntries[customInfo.infoEntries.length==null ? i194 : p194]; p194++;
 						var key:String = entry.key;
 						var value:Object = entry.value;
 						if (key==API_Message.CUSTOM_INFO_KEY_i18n) {
@@ -208,7 +209,7 @@ import come2play_as2.api.*;
 				}else if(msg instanceof API_GotUserInfo){
 					var infoMessage:API_GotUserInfo =API_GotUserInfo( msg);
 					var userObject:Object = {};
-					var p214:Number=0; for (var i214:String in infoMessage.infoEntries) { var infoEntry:InfoEntry = infoMessage.infoEntries[infoMessage.infoEntries.length==null ? i214 : p214]; p214++;
+					var p215:Number=0; for (var i215:String in infoMessage.infoEntries) { var infoEntry:InfoEntry = infoMessage.infoEntries[infoMessage.infoEntries.length==null ? i215 : p215]; p215++;
 						userObject[infoEntry.key] = infoEntry.value;
 					}
 					T.updateUser(infoMessage.userId, userObject);

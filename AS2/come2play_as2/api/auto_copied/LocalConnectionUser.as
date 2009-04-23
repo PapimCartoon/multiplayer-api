@@ -20,8 +20,8 @@ import come2play_as2.api.auto_copied.*;
 		public static function throwError(msg:String):Void {
 			StaticFunctions.throwError(msg);
 		}		
-		public static function assert(val:Boolean, name:String, args:Array):Void {
-			if (!val) StaticFunctions.assert(false, name, args);
+		public static function assert(val:Boolean, name:String/*InAS3: ...args*/):Void { var args:Array = arguments.slice(2); 
+			StaticFunctions.assert(val, name, args);
 		}
 
 		// I added the "_" on purpose because of different domains issues, see: http://livedocs.adobe.com/flex/gumbo/langref/flash/net/LocalConnection.html
@@ -113,7 +113,7 @@ import come2play_as2.api.auto_copied.*;
 				StaticFunctions.someMovieClip = _someMovieClip;
 				
 				if (sPrefix==null) {
-					myTrace(["WARNING: didn't find 'prefix' in the loader info parameters. Probably because you are doing testing locally."]);
+					lcTrace(["WARNING: didn't find 'prefix' in the loader info parameters. Probably because you are doing testing locally."]);
 					sPrefix = DEFAULT_LOCALCONNECTION_PREFIX;
 				}
 				
@@ -149,12 +149,12 @@ import come2play_as2.api.auto_copied.*;
 					}
 					if(!isContainer){
 						randomPrefix = String(StaticFunctions.random(1,1000000));
-						myTrace(["Game Attempting to send the randomPrefix with which LocalConnections will communicate. . . randomPrefix=",randomPrefix])
+						lcTrace(["Game Attempting to send the randomPrefix with which LocalConnections will communicate. . . randomPrefix=",randomPrefix])
 						localconnection_init(randomPrefix);
 						sendPrefixInterval = new MyInterval( "sendLocalConnectionPrefix" );
 						sendPrefixInterval.start( AS3_vs_AS2.delegate(this, this.sendPrefix),MILL_WAIT_BEFORE_DO_REGISTER);
 					}else{
-						myTrace(["Container started listening to stuff on ",sInitChanel])
+						lcTrace(["Container started listening to stuff on ",sInitChanel])
 						lcInit.connect(sInitChanel);	
 					}	
 				}else{
@@ -171,11 +171,11 @@ import come2play_as2.api.auto_copied.*;
 		private function madeConnection():Void {}
 		
 		private function connectionHandler(isSuccess:Boolean):Void {
-			myTrace(["Depracated connectionHandler sending random prefix isSuccess: "+isSuccess,"my_user_prefix ",sInitChanel]);
+			lcTrace(["Depracated connectionHandler sending random prefix isSuccess: "+isSuccess,"my_user_prefix ",sInitChanel]);
 		}
 
 		private static var LC_LOG:Logger = new Logger("LocalConnection",10);
-		public function myTrace(msg:Array):Void {	
+		private function lcTrace(msg:Array):Void {	
 			LC_LOG.log([AS3_vs_AS2.getClassName(this),": ",msg]);
 		}
 		
@@ -219,7 +219,7 @@ import come2play_as2.api.auto_copied.*;
         }
         private function sendPrefix():Void {  				  
 			try{
-				myTrace(["sent randomPrefix on ",sInitChanel," randomPrefix sent is:",randomPrefix," Is server: ",isContainer]);	
+				lcTrace(["sent randomPrefix on ",sInitChanel," randomPrefix sent is:",randomPrefix," Is server: ",isContainer]);	
 				lcInit.send(sInitChanel, "localconnection_init", randomPrefix);  
 			}catch(err:Error) { 				
 				ErrorHandler.handleError(err, ["prefix error,prefix :",randomPrefix]);
@@ -243,14 +243,14 @@ import come2play_as2.api.auto_copied.*;
         	var lc:LocalConnection = new LocalConnection();
         	if(StaticFunctions.ALLOW_DOMAINS != null)
 				lc.allowDomain(StaticFunctions.ALLOW_DOMAINS)
-			myTrace(["local connection Domain",lc.domain])	
+			lcTrace(["local connection Domain",lc.domain])	
 			return lc;
         }
         public function localconnection_init(sRandomPrefix:String):Void {
         	if (ErrorHandler.didReportError) return;
         	if (lcUser != null) return;
         	try{
-        		myTrace(["Container? :",isContainer,"got sRandomPrefix=",sRandomPrefix," on sInitChanel=",sInitChanel]);
+        		lcTrace(["Container? :",isContainer,"got sRandomPrefix=",sRandomPrefix," on sInitChanel=",sInitChanel]);
         		lcUser = createLocalConnection()
 				AS3_vs_AS2.addStatusListener(lcUser, this, ["localconnection_callback"]);
 				
@@ -260,7 +260,7 @@ import come2play_as2.api.auto_copied.*;
 					isContainer ? sDoChanel : sGotChanel;
 				sSendChanel = 
 					!isContainer ? sDoChanel : sGotChanel;				
-				myTrace(["Container? :",isContainer,"LocalConnection listens on channel=",sListenChannel," and sends on ",sSendChanel]);
+				lcTrace(["Container? :",isContainer,"LocalConnection listens on channel=",sListenChannel," and sends on ",sSendChanel]);
 				lcUser.connect(sListenChannel);
 				if(isContainer)	sendHandShakeDoRegister();
 			} catch(err:Error) { 

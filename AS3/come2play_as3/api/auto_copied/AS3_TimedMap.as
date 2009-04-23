@@ -14,11 +14,11 @@ public final class AS3_TimedMap
 	}
 	private function ticked():void {
 		for each (var debug:DebugInfo in dic) {			
-			StaticFunctions.assert( !debug.time.havePassed(maxMillisStayInMap), ["AS3_TimedMap: an entry stayed more than ",maxMillisStayInMap, " entry=",debug, this]);
+			StaticFunctions.assert( !debug.time.havePassed(maxMillisStayInMap), "AS3_TimedMap: an entry stayed more than ",[maxMillisStayInMap, " entry=",debug, this]);
 		}
 	}
 	public function add(key:Object, val:Object):void {
-		StaticFunctions.assert( dic[key]==null, ["AS3_TimedMap: key already exists! key=",key,this]);
+		StaticFunctions.assert( dic[key]==null, "AS3_TimedMap: key already exists! key=",[key,this]);
 		var debug:DebugInfo = new DebugInfo();		
 		debug.time = new TimeMeasure();
 		debug.time.setTime();
@@ -28,7 +28,7 @@ public final class AS3_TimedMap
 	// returns the val
 	public function remove(key:Object):Object {
 		var debug:DebugInfo = dic[key];
-		StaticFunctions.assert(debug!=null, ["AS3_TimedMap: missing key=",key, this]);		
+		StaticFunctions.assert(debug!=null, "AS3_TimedMap: missing key=",[key, this]);		
 		delete dic[key];
 		return debug.val;
 	}

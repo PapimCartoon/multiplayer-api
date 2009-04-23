@@ -17,11 +17,10 @@ public final class Logger
 	// Be careful that the traces will not grow too big to send to the java (limit of 1MB, enforced in Bytes2Object)
 	public static var MAX_TRACES:Object = {};
 	
-	private static var CURR_TRACE_ID:int = 0;
 	
 	private var name:String;
 	private var maxTraces:int;
-	private var traces:Array = [];
+	private var traces:Array/*LoggerLine*/ = [];
 	public function Logger(name:String, maxTraces:int) {
 		this.name = name;
 		this.maxTraces = MAX_TRACES[name]!=null ? int(MAX_TRACES[name]) : maxTraces;
@@ -30,46 +29,58 @@ public final class Logger
 	}
 	public function toString():String { return "Logger "+name; }
 	
-	public function log(/*<InAS3>*/...obj/*</InAS3>*/  /*<InAS2>obj:Object</InAS2>*/):void {
+	// todo: add "unlimitedTrace" or add the size of each trace line
+	public static var MAX_TRACE_LEN:int = 10000;	//10KB
+	public static var MAX_HUGE_LEN:int 	= 500000;	//500KB
+	public static var MAX_TOTAL:int 	= 2000000;	//2000KB
+	
+	// the game traces are a single huge traceline
+	public function hugeLog(...args):void {
+		limitedLog(MAX_HUGE_LEN,args);		
+	}
+	public function log(...args):void {
+		limitedLog(MAX_TRACE_LEN,args);
+	}
+	public function limitedLog(maxTraceLen:int, obj:Object):void {
 		try {
 			if (maxTraces<=0) return;
 			 
-			var traceLine:Array = ["id:",++CURR_TRACE_ID, "t:", getTimer(), name, obj];
+			var traceLine:LoggerLine = new LoggerLine(maxTraceLen,name,obj);
 			StaticFunctions.limitedPush(traces, traceLine , maxTraces); // we discard old traces
-			if (StaticFunctions.SHOULD_CALL_TRACE) trace(RANDOM_PREFIX+TRACE_PREFIX + " " + name+":\t" + JSON.stringify(traceLine));
+			if (StaticFunctions.SHOULD_CALL_TRACE) trace(RANDOM_PREFIX+TRACE_PREFIX + " " + name+":\t" + traceLine.toString());
 		} catch (err:Error) {
 			if (StaticFunctions.SHOULD_CALL_TRACE) trace(RANDOM_PREFIX+TRACE_PREFIX + "\n\n\n\n\n\n\n\n\n\n\n\nERROR!!!!!!!!!!!!!!!!!!!!!!! err="+AS3_vs_AS2.error2String(err)+"\n\n\n\n\n\n\n\n\n\n\n");
 		}
 	}
 	public function getMyTraces():String {
-		return arrToString(traces,MAX_PER_STRING,MAX_TOTAL);
+		return arrToString(traces,MAX_TOTAL);
 	}
 	
 	private static var keyTraces:Array = [];	
 	public static var RANDOM_PREFIX:String = "Rnd"+int(100+Math.random()*900)+": ";
 	
 	public static function getTraces():String {
-		return getTracesOfLoggers(ALL_LOGGERS,MAX_PER_STRING,MAX_TOTAL);
+		return getTracesOfLoggers(ALL_LOGGERS,MAX_TOTAL);
 	}
-	public static function getTracesOfLoggers(loggers:Array/*Logger*/, maxPerString:int, maxTotal:int):String {		
-		var res:Array = [];
+	public static function getTracesOfLoggers(loggers:Array/*Logger*/, maxTotal:int):String {		
+		var res:Array/*LoggerLine*/ = [];
 		for each (var logger:Logger in loggers) {
 			res.push.apply(null,logger.traces);
 		}		
 		// I sort the traces		
-		res.sort(function (arg1:Array, arg2:Array):int {
-			return arg1[0] - arg2[0];
+		res.sort(function (arg1:LoggerLine, arg2:LoggerLine):int {
+			return arg1.traceId - arg2.traceId;
 		});
-		return arrToString(res, maxPerString, maxTotal);
+		return arrToString(res, maxTotal);
 	}
-	public static var MAX_PER_STRING:int 	= 100000;	//100KB
-	public static var MAX_TOTAL:int 		= 2000000;	//2000KB
-	private static function arrToString(arr:Array, maxPerString:int, maxTotal:int):String {			
+
+	private static function arrToString(arr:Array/*LoggerLine*/, maxTotal:int):String {			
 		var res:Array = new Array();
 		var len:int = 0;
 		// the latest traces are the most important
 		for (var i:int = arr.length-1; i>=0; i--) {
-			var s:String = StaticFunctions.cutString(JSON.stringify(arr[i]), maxPerString);
+			var line:LoggerLine = arr[i];
+			var s:String = line.toString();
 			len += s.length;
 			if (len>=maxTotal) break;
 			res.push(s); 

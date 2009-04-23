@@ -464,7 +464,7 @@ public class TestClientGameAPI extends ClientGameAPI {
 			var instance:API_Message = /*as*/instanceMsg as API_Message;
 			sendMessage(instance);
 		} catch (err:Error) { 
-			ErrorHandler.handleError(err,[event]);			
+			ErrorHandler.handleError(err,[]);			
 		}
 	}
     override public function sendMessage(msg:API_Message):void {

@@ -19,23 +19,20 @@ package come2play_as3.api.auto_copied
 		private var transactionStartedOn:TimeMeasure; 
 		private var currentCallback:API_Message = null;
 		private var didRegisterOnServer:Boolean = false;
-		private var currentPlayerIds:Array/*int*/;
-		private var allPlayerIds:Array/*int*/;
-		// Imagine ProtocolVerifier on the container, and the container sends GotMatchEnded for my player.
-		// The game may send doStoreState up until it sends the transaction for GotMatchEnded
-		// We do not queue those doStoreState anymore (the java will throw away doStore of a viewer)
+		
+		private var currentPlayers:CurrentPlayers;
 		
 		public function ProtocolVerifier() {
 			transactionStartedOn = new TimeMeasure();
 			ErrorHandler.myInterval("ProtocolVerifier.checkAnimationInterval",AS3_vs_AS2.delegate(this, this.checkAnimationInterval), MAX_ANIMATION_MILLISECONDS);
-			currentPlayerIds = [];
+			currentPlayers = new CurrentPlayers();
 		}
 		public function toString():String {
 			return "ProtocolVerifier:"+
 				" transactionStartedOn="+transactionStartedOn+
 				" currentCallback="+currentCallback+ 
 				" didRegisterOnServer="+didRegisterOnServer+ 
-				" currentPlayerIds="+currentPlayerIds+ 
+				" currentPlayers="+currentPlayers+
 				"";
 		}
 		private function transactionRunningTime():int {
@@ -48,27 +45,8 @@ package come2play_as3.api.auto_copied
         	// animation is running for too long
         	StaticFunctions.throwError("An transaction is running for more than MAX_ANIMATION_MILLISECONDS="+MAX_ANIMATION_MILLISECONDS);         	
         }
-        public function getAllPlayerIds():Array/*int*/{
-        	return currentPlayerIds;
-        }
-        public function getFinishedPlayerIds():Array/*int*/ {
-        	if(allPlayerIds == null) return new Array();
-        	var finishedPlayerids:Array = allPlayerIds.concat();
-        	for each (var playerId:int in currentPlayerIds) {
-        		var spliceIndex:int = AS3_vs_AS2.IndexOf(finishedPlayerids,playerId);
-        		finishedPlayerids.splice(spliceIndex,1);
-        	}	
-        	return finishedPlayerids;
-        }
-        public function isInPlayers(playerId:int):Boolean {
-        	return AS3_vs_AS2.IndexOf(currentPlayerIds, playerId)!=-1;        	
-        }
-        public function isAllInPlayers(playerIds:Array/*int*/):Boolean {
-        	check(playerIds.length>=1, ["isAllInPlayers was called with an empty playerIds array"]);
-        	for each (var playerId:int in playerIds) {
-        		if (!isInPlayers(playerId)) return false;
-        	}
-        	return true;        	
+        public function getCurrentPlayers():CurrentPlayers {
+        	return currentPlayers;
         }
 		private function check(cond:Boolean, arr:Array):void {
 			if (cond) return;
@@ -80,29 +58,27 @@ package come2play_as3.api.auto_copied
 			}
 		}
 		private function checkInProgress(inProgress:Boolean, msg:API_Message):void {
-			StaticFunctions.assert(inProgress == (currentPlayerIds.length>0), "checkInProgress",["The game must ",inProgress?"" : "not"," be in progress when passing msg=",msg]); 
+			currentPlayers.assertInProgress(inProgress,msg); 
 		}
 		public function msgToGame(gotMsg:API_Message):void {
 			check(gotMsg!=null, ["Got a null message!"]);
 			check(currentCallback==null, ["Container sent two messages without waiting! oldCallback=", currentCallback, " newCallback=",gotMsg]);
 			//check(didRegisterOnServer, [T.i18n("Container sent a message before getting doRegisterOnServer")]); 
 			currentCallback = gotMsg;
-			transactionStartedOn.setTime();   
+			transactionStartedOn.setTime();  
+			currentPlayers.gotMessage(gotMsg); 
 			if (isOldBoard(gotMsg)) {
 			} else if (gotMsg is API_GotStateChanged) {
     			checkInProgress(true,gotMsg);
     			var stateChanged:API_GotStateChanged = /*as*/gotMsg as API_GotStateChanged;
     			checkServerEntries(stateChanged.serverEntries);
-    		} else if (gotMsg is API_GotMatchStarted) {
-    			checkInProgress(false,gotMsg);
+    			
+			} else if (gotMsg is API_GotMatchStarted) {
 				var matchStarted:API_GotMatchStarted = /*as*/gotMsg as API_GotMatchStarted;
-				checkServerEntries(matchStarted.serverEntries);
-				allPlayerIds = matchStarted.allPlayerIds.concat();
-				currentPlayerIds = StaticFunctions.subtractArray(matchStarted.allPlayerIds, matchStarted.finishedPlayerIds);
-    		} else if (gotMsg is API_GotMatchEnded) {	    			
-    			checkInProgress(true,gotMsg);
-				var matchEnded:API_GotMatchEnded = /*as*/gotMsg as API_GotMatchEnded;
-				currentPlayerIds = StaticFunctions.subtractArray(currentPlayerIds, matchEnded.finishedPlayerIds);
+				checkServerEntries(matchStarted.serverEntries);				
+			} else if (gotMsg is API_GotMatchEnded) {
+				// handled by currentPlayers
+    					
 			} else if (gotMsg is API_GotCustomInfo) {	 					    			
     			// isPause is called when the game is in progress,
     			// and other info is passed before the game starts.
@@ -156,7 +132,6 @@ package come2play_as3.api.auto_copied
 				// The game may perform doAllFoundHacker (in a transaction) even after the game is over,
 				// because: The container may pass gotStateChanged after the game sends doAllEndMatch,
 				//			because the game should verify every doStoreState (to prevent hackers from polluting the state after they know the game will be over).
-				//if (transaction.messages.length>0) check(currentPlayerIds.length>0);
 				
 				var wasStoreStateCalculation:Boolean = false;
 				var isRequestStateCalculation:Boolean = currentCallback is API_GotRequestStateCalculation;
@@ -214,8 +189,8 @@ package come2play_as3.api.auto_copied
 			else if (msg is API_DoAllEndMatch)
 			{
 				var doAllEndMatchMessage:API_DoAllEndMatch = /*as*/msg as API_DoAllEndMatch;
-				isAllInPlayers(doAllEndMatchMessage.finishedPlayers);
-				// IMPORTANT Note: I do not update currentPlayerIds, because the container still needs to pass gotMatchEnded
+				currentPlayers.isAllInPlayers(doAllEndMatchMessage.finishedPlayers);
+				// IMPORTANT Note: I do not update currentPlayers, because the container still needs to pass gotMatchEnded
 				// Also, the container may pass gotStateChanged after the game sends DoAllEndMatch,
 				// because the game should verify every doStoreState (to prevent hackers from polluting the state after they know the game will be over). 
 			} 
@@ -237,7 +212,7 @@ package come2play_as3.api.auto_copied
 			else if (msg is API_DoAllSetTurn) 
 			{
 				var doAllSetTurn:API_DoAllSetTurn = /*as*/msg as API_DoAllSetTurn;
-        		check(isInPlayers(doAllSetTurn.userId), ["You have to call doAllSetTurn with a playerId!"]);
+        		check(currentPlayers.isInPlayers(doAllSetTurn.userId), ["You have to call doAllSetTurn with a playerId!"]);
 			}
 			else if (msg is API_DoAllSetMove) 
 			{				
@@ -265,7 +240,7 @@ package come2play_as3.api.auto_copied
         {
         	//check(revealEntries.length>=1, ["revealEntries must have at least one RevealEntry!"]);
         	for each (var revealEntry:RevealEntry in revealEntries) {
-        		check(revealEntry != null && revealEntry.key != null && (revealEntry.userIds==null || isAllInPlayers(revealEntry.userIds)), ["RevealEntry.key cannot be null, userIds must either be null or contain only players. revealEntry=",revealEntry]); 
+        		check(revealEntry != null && revealEntry.key != null && (revealEntry.userIds==null || currentPlayers.isAllInPlayers(revealEntry.userIds)), ["RevealEntry.key cannot be null, userIds must either be null or contain only players. revealEntry=",revealEntry]); 
         	}
         }
         private function isNullKeyExist(keys:Array/*Object*/):void

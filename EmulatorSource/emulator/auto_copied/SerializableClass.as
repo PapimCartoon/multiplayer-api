@@ -81,7 +81,7 @@ public class SerializableClass /*<InAPI>*/extends Event/*</InAPI>*/
 		/*<InAPI>*/ = ["type", "bubbles", "cancelable", "currentTarget", "eventPhase", "target"]/*</InAPI>*/;
 	public static var IS_THROWING_EXCEPTIONS:Boolean = true; // in the online version we set it to false. (Consider the case that a hacker stores secret data which is illegal values)
 	public static var IS_TESTING_SAME_REGISTER:Boolean = true; // for efficiency the online version turns it off
-	public static var IS_TRACE_REGISTER:Boolean = false;
+	public static var REGISTER_LOG:Logger = new Logger("SerializableClass",10);
 	
 	// this code changes when the java auto-copies the code (we replace emulator with the new package name, which is either come2play_as3 or emulator)
 	public static var IS_IN_GAME:Boolean = "emulator" == "come2play_as3" + ".api";
@@ -155,18 +155,17 @@ public class SerializableClass /*<InAPI>*/extends Event/*</InAPI>*/
 
 			return;
 		}
-		if (IS_TRACE_REGISTER) 
-    		StaticFunctions.storeTrace(["SerializableClass.registerClassAlias: Registered classObject=",classObject," with shortName=",shortName]);    		
+		REGISTER_LOG.log("registerClassAlias: Registered classObject=",classObject," with shortName=",shortName);    		
 		SHORTNAME_TO_CLASS[shortName] = classObject;	
 		testCreateInstance(shortName);
 	}
 	public function register():void {
     	// In Enum classes in $cinit(), we call register in the ctor, and the class have not yet loaded.
     	// var xlass:Class = getClassOfInstance(this); 
+    	var shortName:String = __CLASS_NAME__;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-    	var shortName:String = __CLASS_NAME__;
     	var oldInstance:Object = SHORTNAME_TO_INSTANCE[shortName];
     	if (oldInstance!=null) {
     		// already entered this short name  
@@ -176,24 +175,23 @@ public class SerializableClass /*<InAPI>*/extends Event/*</InAPI>*/
 	    		StaticFunctions.assert(oldXlass==newXlass, "Previously added shortName=",[shortName, " with oldXlass=",oldXlass," and now with newXlass=",newXlass]);
 	    	}
     		return;
+    	}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-    	}
     	SHORTNAME_TO_INSTANCE[shortName] = this; 
     	
     	AS3_vs_AS2.checkConstructorHasNoArgs(this);    	
-    	if (IS_TRACE_REGISTER) 
-    		StaticFunctions.storeTrace(["SerializableClass.register: Registered class with shortName=",shortName," with exampleInstance=",this]);
+    	REGISTER_LOG.log("register: Registered class with shortName=",shortName," with exampleInstance=",this);
     		
     	// testing createInstance (to make sure that if the user called registerClassAlias, then it creates legal objects)
     	testCreateInstance(shortName);
     }
+    private static function testCreateInstance(shortName:String):void {
+    	// There are two scenarios "problematic" scenarios:
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-    private static function testCreateInstance(shortName:String):void {
-    	// There are two scenarios "problematic" scenarios:
     	// 1) You created an instance of inner class and then called registerClassAlias
     	//		Because this we check that SHORTNAME_TO_CLASS[shortName]!=null
     	// 2) You called registerClassAlias in the class static code, and therefore trying to create a new instance will throw an exception.
@@ -202,11 +200,11 @@ public class SerializableClass /*<InAPI>*/extends Event/*</InAPI>*/
     		createInstance(shortName).register();    	
     }
 
+	/**
+	 * Static methods and variables.
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	/**
-	 * Static methods and variables.
 	 */
  	private static var SHORTNAME_TO_INSTANCE:Object = {};
  	private static var SHORTNAME_TO_CLASS:Object = {};
@@ -215,11 +213,11 @@ public class SerializableClass /*<InAPI>*/extends Event/*</InAPI>*/
  		return AS3_vs_AS2.getClassOfInstance(instance);
  	}
  	private static function getClassOfShortName(shortName:String):Class {
+ 		var classObject:Class = SHORTNAME_TO_CLASS[shortName];
+    	if (classObject!=null)  return classObject;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
- 		var classObject:Class = SHORTNAME_TO_CLASS[shortName];
-    	if (classObject!=null)  return classObject;
  		var instance:SerializableClass = SHORTNAME_TO_INSTANCE[shortName];
  		StaticFunctions.assert(instance!=null, "You forgot to call SerializableClass.register for shortName=",[shortName]); 
  		return getClassOfInstance(instance); 		
@@ -228,11 +226,11 @@ public class SerializableClass /*<InAPI>*/extends Event/*</InAPI>*/
 		var xlass:Class = getClassOfShortName(shortName);		
 		return xlass==null ? null : new xlass();
 	}    
+ 	
+	//todo: public static function deserializeXML(xml:String):Object {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
- 	
-	//todo: public static function deserializeXML(xml:String):Object {
 	//	return deserialize( JSON.parse(str) );
 	//}
 	public static function deserializeString(str:String):Object {
@@ -241,11 +239,11 @@ public class SerializableClass /*<InAPI>*/extends Event/*</InAPI>*/
 	
 	public static function serializable2Object(object:Object):Object {	
 		if (object==null) return null;	
+		if (AS3_vs_AS2.isSerializableClass(object)) 
+			return AS3_vs_AS2.asSerializableClass(object).toObject();
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		if (AS3_vs_AS2.isSerializableClass(object)) 
-			return AS3_vs_AS2.asSerializableClass(object).toObject();
 		var isArray:Boolean = AS3_vs_AS2.isArray(object);
 		var isObj:Boolean = isObject(object);
 		var res:Object = object;
@@ -254,11 +252,11 @@ public class SerializableClass /*<InAPI>*/extends Event/*</InAPI>*/
 			for (var key:String in object)
 				res[key] = serializable2Object(object[key]);
 		}
+		return res;
+	}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		return res;
-	}
 	public static function shallowDeserialize(object:Object):Object {
 		var shortName:String = 
 					object.hasOwnProperty(CLASS_NAME_FIELD) ? 
@@ -267,11 +265,11 @@ public class SerializableClass /*<InAPI>*/extends Event/*</InAPI>*/
 			(IS_IN_GAME || SHORTNAME_TO_INSTANCE[shortName]!=null)) {				
 			var newObject:SerializableClass = createInstance(shortName);
 			if (newObject!=null) {
+				for (var key:String in object)
+					newObject[key] = object[key]; // might throw an illegal assignment (due to type mismatch)
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-				for (var key:String in object)
-					newObject[key] = object[key]; // might throw an illegal assignment (due to type mismatch)
 
 				AS3_vs_AS2.checkAllFieldsDeserialized(object, newObject);
 
@@ -280,11 +278,11 @@ public class SerializableClass /*<InAPI>*/extends Event/*</InAPI>*/
 		}
 		return object;
 	}
+	public static function deserialize(object:Object):Object {
+		try {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	public static function deserialize(object:Object):Object {
-		try {
 			if (object==null) return null;
 			var isArray:Boolean = AS3_vs_AS2.isArray(object);
 			var isObj:Boolean = isObject(object);
@@ -293,11 +291,11 @@ public class SerializableClass /*<InAPI>*/extends Event/*</InAPI>*/
 				
 				res = isArray ? [] : {}; // we create a new copy
 		
+				for (var key:String in object)
+					res[key] = deserialize(object[key]); 
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-				for (var key:String in object)
-					res[key] = deserialize(object[key]); 
 				
 				res = shallowDeserialize(res);						
 			}
@@ -306,11 +304,11 @@ public class SerializableClass /*<InAPI>*/extends Event/*</InAPI>*/
 		} catch (err:Error) {
 			// I can't throw an exception, because if a hacker stored illegal value in shortName, 
 			//	then it will cause an error (that may be discovered only in the reveal stage)
+			// instead the client should call setMaybeHackerUserId before processing secret data.
+			REGISTER_LOG.log("Exception thrown in deserialize:",err);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			// instead the client should call setMaybeHackerUserId before processing secret data.
-			StaticFunctions.storeTrace("Exception thrown in deserialize:"+AS3_vs_AS2.error2String(err));
 			if (IS_THROWING_EXCEPTIONS)
 				throw err;
 		}
@@ -319,11 +317,11 @@ public class SerializableClass /*<InAPI>*/extends Event/*</InAPI>*/
 	public static function isToStringObject(str:String):Boolean {
 		return str=="[object Object]";
 	}
+	public static function isObject(o:Object):Boolean {
+		return isToStringObject(o.toString());	
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	public static function isObject(o:Object):Boolean {
-		return isToStringObject(o.toString());	
 	}
 }
 }

@@ -462,7 +462,7 @@ class come2play_as2.tests.TestClientGameAPI extends ClientGameAPI {
 			var instance:API_Message = API_Message(instanceMsg);
 			sendMessage(instance);
 		} catch (err:Error) { 
-			ErrorHandler.handleError(err,[event]);			
+			ErrorHandler.handleError(err,[]);			
 		}
 	}
     /*override*/ public function sendMessage(msg:API_Message):Void {

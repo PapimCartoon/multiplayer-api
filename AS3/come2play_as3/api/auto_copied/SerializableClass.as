@@ -56,7 +56,7 @@ public class SerializableClass /*<InAPI>*/extends Event/*</InAPI>*/
 		/*<InAPI>*/ = ["type", "bubbles", "cancelable", "currentTarget", "eventPhase", "target"]/*</InAPI>*/;
 	public static var IS_THROWING_EXCEPTIONS:Boolean = true; // in the online version we set it to false. (Consider the case that a hacker stores secret data which is illegal values)
 	public static var IS_TESTING_SAME_REGISTER:Boolean = true; // for efficiency the online version turns it off
-	public static var IS_TRACE_REGISTER:Boolean = false;
+	public static var REGISTER_LOG:Logger = new Logger("SerializableClass",10);
 	
 	// this code changes when the java auto-copies the code (we replace come2play_as3.api with the new package name, which is either come2play_as3 or emulator)
 	public static var IS_IN_GAME:Boolean = "come2play_as3.api" == "come2play_as3" + ".api";
@@ -112,8 +112,7 @@ public class SerializableClass /*<InAPI>*/extends Event/*</InAPI>*/
 			StaticFunctions.assert(oldClass==classObject, "You called registerClassAlias twice with shortName=",[shortName," with two different classObjects! classObject1=",oldClass," classObject2=",classObject]);
 			return;
 		}
-		if (IS_TRACE_REGISTER) 
-    		StaticFunctions.storeTrace(["SerializableClass.registerClassAlias: Registered classObject=",classObject," with shortName=",shortName]);    		
+		REGISTER_LOG.log("registerClassAlias: Registered classObject=",classObject," with shortName=",shortName);    		
 		SHORTNAME_TO_CLASS[shortName] = classObject;	
 		testCreateInstance(shortName);
 	}
@@ -134,8 +133,7 @@ public class SerializableClass /*<InAPI>*/extends Event/*</InAPI>*/
     	SHORTNAME_TO_INSTANCE[shortName] = this; 
     	
     	AS3_vs_AS2.checkConstructorHasNoArgs(this);    	
-    	if (IS_TRACE_REGISTER) 
-    		StaticFunctions.storeTrace(["SerializableClass.register: Registered class with shortName=",shortName," with exampleInstance=",this]);
+    	REGISTER_LOG.log("register: Registered class with shortName=",shortName," with exampleInstance=",this);
     		
     	// testing createInstance (to make sure that if the user called registerClassAlias, then it creates legal objects)
     	testCreateInstance(shortName);
@@ -231,7 +229,7 @@ public class SerializableClass /*<InAPI>*/extends Event/*</InAPI>*/
 			// I can't throw an exception, because if a hacker stored illegal value in shortName, 
 			//	then it will cause an error (that may be discovered only in the reveal stage)
 			// instead the client should call setMaybeHackerUserId before processing secret data.
-			StaticFunctions.storeTrace("Exception thrown in deserialize:"+AS3_vs_AS2.error2String(err));
+			REGISTER_LOG.log("Exception thrown in deserialize:",err);
 			if (IS_THROWING_EXCEPTIONS)
 				throw err;
 		}

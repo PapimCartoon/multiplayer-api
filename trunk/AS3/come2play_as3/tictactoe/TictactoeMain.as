@@ -454,6 +454,7 @@ public final class TictactoeMain extends ClientGameAPI {
 	private function isMyTurn():Boolean {
 		return isSinglePlayer() || myColor==turnOfColor;
 	}
+	private static var LOG:Logger = new Logger("TictactoeStartMove",10);
 	private function startMove(isInProgress:Boolean):void {
 		if (logic==null) return; 
 						
@@ -461,16 +462,27 @@ public final class TictactoeMain extends ClientGameAPI {
 			doAllSetTurn(allPlayerIds[isSinglePlayer() ? 0 : turnOfColor],-1);
 		}		
 		if (isMyTurn()) shouldSendMove = true;
+		
+		var isBack:Boolean = T.custom(CUSTOM_INFO_KEY_isBack,false) as Boolean;
+		var isViewer:Boolean = myColor==VIEWER;
+		var _isMyTurn:Boolean = isMyTurn();
+		LOG.log("isInProgress=",isInProgress, 
+			"isBack=",isBack, 
+			"isViewer=",isViewer,
+			"isMyTurn=",_isMyTurn); 
+		
 		for each (var square:TictactoeSquare in allCells) {				
 			if (!logic.isSquareAvailable(square)) continue;
 			var squareGraphics:TictactoeSquareGraphic = getSquareGraphic(square);
 			squareGraphics.startMove(
-				T.custom(CUSTOM_INFO_KEY_isBack,false) ? TictactoeSquareGraphic.BTN_NONE : // the user pressed on back
-				!isInProgress ? TictactoeSquareGraphic.BTN_NONE : // the match was over
-				myColor==VIEWER ? TictactoeSquareGraphic.BTN_NONE : // a viewer never has the turn
-				isMyTurn() ?  
-					turnOfColor : // I have the turn
-					TictactoeSquareGraphic.BTN_NONE); // not my turn
+				// the user pressed on back
+				// the match was over
+				// a viewer never has the turn
+				// not my turn
+				isBack || !isInProgress || isViewer || !_isMyTurn ? 
+					TictactoeSquareGraphic.BTN_NONE :
+				// I have the turn 
+				 	turnOfColor); 
 		}
 	}
 }

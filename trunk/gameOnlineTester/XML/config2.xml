@@ -229,6 +229,7 @@ Not used by the graphics yet (but should be displayed):
 		
 		<entry><key>ARTIFICIAL_TO_JAVA_DELAY</key><value>'700-8000'</value></entry>
 		<entry><key>ARTIFICIAL_FROM_JAVA_DELAY</key><value>'700-8000'</value></entry>
+		
 		<entry><key>ARTIFICIAL_TO_JAVA_DELAY</key><value>'500-1000'</value></entry>
 		<entry><key>ARTIFICIAL_FROM_JAVA_DELAY</key><value>'500-1000'</value></entry>
 		 -->
@@ -334,7 +335,7 @@ Not used by the graphics yet (but should be displayed):
 			  <is_guest>true</is_guest>
 			  <site_name>facebook</site_name>
 			  <name>Unknown #user_id#</name>
-			  <avatar_url>../images/Avatar_4.gif</avatar_url>
+			  <avatar_url>images/Avatar_4.gif</avatar_url>
 			  <supervisor>Supervisor</supervisor>
 			  <credibility>0</credibility>
 			  <tokens>0:100:</tokens>
@@ -463,7 +464,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 		<prefix_local_connection_id type="string">usingAS3</prefix_local_connection_id>
 		
 		<!-- logoFullUrl is a logo in a SWF or JPEG file of size 70x70 pixels -->
-		<logoFullUrl>../images/logoFullUrl.jpg</logoFullUrl>	
+		<logoFullUrl>images/logoFullUrl.jpg</logoFullUrl>	
 			<!-- 
 				CustomInfo for GameAPI:
 				Pass here custom variables for each game.

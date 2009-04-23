@@ -31,7 +31,7 @@ public final class AS3_Loader
 		var loadedImage:URLLoader = ev.target as URLLoader;
 		StaticFunctions.assert(loadedImage!=null, "loadedImage is null", [ev]);	
 		var res:ByteArray = loadedImage.data;
-		// res can be null for 2032 Stream Error.
+		// res can be null for 2032 Stream Error or for 2048 securityError
 		return res==null ? EMPTY_BYTE_ARRAY : res;
 	}
 	public static function isImageLoadFailed(ev:Event):Boolean {

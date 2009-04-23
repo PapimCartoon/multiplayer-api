@@ -14,23 +14,20 @@ import come2play_as2.api.auto_copied.*;
 		private var transactionStartedOn:TimeMeasure; 
 		private var currentCallback:API_Message = null;
 		private var didRegisterOnServer:Boolean = false;
-		private var currentPlayerIds:Array/*int*/;
-		private var allPlayerIds:Array/*int*/;
-		// Imagine ProtocolVerifier on the container, and the container sends GotMatchEnded for my player.
-		// The game may send doStoreState up until it sends the transaction for GotMatchEnded
-		// We do not queue those doStoreState anymore (the java will throw away doStore of a viewer)
+		
+		private var currentPlayers:CurrentPlayers;
 		
 		public function ProtocolVerifier() {
 			transactionStartedOn = new TimeMeasure();
 			ErrorHandler.myInterval("ProtocolVerifier.checkAnimationInterval",AS3_vs_AS2.delegate(this, this.checkAnimationInterval), MAX_ANIMATION_MILLISECONDS);
-			currentPlayerIds = [];
+			currentPlayers = new CurrentPlayers();
 		}
 		public function toString():String {
 			return "ProtocolVerifier:"+
 				" transactionStartedOn="+transactionStartedOn+
 				" currentCallback="+currentCallback+ 
 				" didRegisterOnServer="+didRegisterOnServer+ 
-				" currentPlayerIds="+currentPlayerIds+ 
+				" currentPlayers="+currentPlayers+
 				"";
 		}
 		private function transactionRunningTime():Number {
@@ -43,61 +40,40 @@ import come2play_as2.api.auto_copied.*;
         	// animation is running for too long
         	StaticFunctions.throwError("An transaction is running for more than MAX_ANIMATION_MILLISECONDS="+MAX_ANIMATION_MILLISECONDS);         	
         }
-        public function getAllPlayerIds():Array/*int*/{
-        	return currentPlayerIds;
-        }
-        public function getFinishedPlayerIds():Array/*int*/ {
-        	if(allPlayerIds == null) return new Array();
-        	var finishedPlayerids:Array = allPlayerIds.concat();
-        	var p55:Number=0; for (var i55:String in currentPlayerIds) { var playerId:Number = currentPlayerIds[currentPlayerIds.length==null ? i55 : p55]; p55++;
-        		var spliceIndex:Number = AS3_vs_AS2.IndexOf(finishedPlayerids,playerId);
-        		finishedPlayerids.splice(spliceIndex,1);
-        	}	
-        	return finishedPlayerids;
-        }
-        public function isInPlayers(playerId:Number):Boolean {
-        	return AS3_vs_AS2.IndexOf(currentPlayerIds, playerId)!=-1;        	
-        }
-        public function isAllInPlayers(playerIds:Array/*int*/):Boolean {
-        	check(playerIds.length>=1, ["isAllInPlayers was called with an empty playerIds array"]);
-        	var p66:Number=0; for (var i66:String in playerIds) { var playerId:Number = playerIds[playerIds.length==null ? i66 : p66]; p66++;
-        		if (!isInPlayers(playerId)) return false;
-        	}
-        	return true;        	
+        public function getCurrentPlayers():CurrentPlayers {
+        	return currentPlayers;
         }
 		private function check(cond:Boolean, arr:Array):Void {
 			if (cond) return;
 			StaticFunctions.assert(false, "ProtocolVerifier found an error: ", [arr]);
 		}
 		private function checkServerEntries(serverEntries:Array/*ServerEntry*/):Void {
-			var p76:Number=0; for (var i76:String in serverEntries) { var entry:ServerEntry = serverEntries[serverEntries.length==null ? i76 : p76]; p76++;
+			var p54:Number=0; for (var i54:String in serverEntries) { var entry:ServerEntry = serverEntries[serverEntries.length==null ? i54 : p54]; p54++;
 				check(entry.key!=null, ["Found a null key in serverEntry=",entry]);
 			}
 		}
 		private function checkInProgress(inProgress:Boolean, msg:API_Message):Void {
-			StaticFunctions.assert(inProgress == (currentPlayerIds.length>0), "checkInProgress",["The game must ",inProgress?"" : "not"," be in progress when passing msg=",msg]); 
+			currentPlayers.assertInProgress(inProgress,msg); 
 		}
 		public function msgToGame(gotMsg:API_Message):Void {
 			check(gotMsg!=null, ["Got a null message!"]);
 			check(currentCallback==null, ["Container sent two messages without waiting! oldCallback=", currentCallback, " newCallback=",gotMsg]);
 			//check(didRegisterOnServer, [T.i18n("Container sent a message before getting doRegisterOnServer")]); 
 			currentCallback = gotMsg;
-			transactionStartedOn.setTime();   
+			transactionStartedOn.setTime();  
+			currentPlayers.gotMessage(gotMsg); 
 			if (isOldBoard(gotMsg)) {
 			} else if (gotMsg instanceof API_GotStateChanged) {
     			checkInProgress(true,gotMsg);
     			var stateChanged:API_GotStateChanged = API_GotStateChanged(gotMsg);
     			checkServerEntries(stateChanged.serverEntries);
-    		} else if (gotMsg instanceof API_GotMatchStarted) {
-    			checkInProgress(false,gotMsg);
+    			
+			} else if (gotMsg instanceof API_GotMatchStarted) {
 				var matchStarted:API_GotMatchStarted = API_GotMatchStarted(gotMsg);
-				checkServerEntries(matchStarted.serverEntries);
-				allPlayerIds = matchStarted.allPlayerIds.concat();
-				currentPlayerIds = StaticFunctions.subtractArray(matchStarted.allPlayerIds, matchStarted.finishedPlayerIds);
-    		} else if (gotMsg instanceof API_GotMatchEnded) {	    			
-    			checkInProgress(true,gotMsg);
-				var matchEnded:API_GotMatchEnded = API_GotMatchEnded(gotMsg);
-				currentPlayerIds = StaticFunctions.subtractArray(currentPlayerIds, matchEnded.finishedPlayerIds);
+				checkServerEntries(matchStarted.serverEntries);				
+			} else if (gotMsg instanceof API_GotMatchEnded) {
+				// handled by currentPlayers
+    					
 			} else if (gotMsg instanceof API_GotCustomInfo) {	 					    			
     			// isPause is called when the game is in progress,
     			// and other info is passed before the game starts.
@@ -151,11 +127,10 @@ import come2play_as2.api.auto_copied.*;
 				// The game may perform doAllFoundHacker (in a transaction) even after the game is over,
 				// because: The container may pass gotStateChanged after the game sends doAllEndMatch,
 				//			because the game should verify every doStoreState (to prevent hackers from polluting the state after they know the game will be over).
-				//if (transaction.messages.length>0) check(currentPlayerIds.length>0);
 				
 				var wasStoreStateCalculation:Boolean = false;
 				var isRequestStateCalculation:Boolean = currentCallback instanceof API_GotRequestStateCalculation;
-				var p161:Number=0; for (var i161:String in transaction.messages) { var doAllMsg:API_Message = transaction.messages[transaction.messages.length==null ? i161 : p161]; p161++;
+				var p136:Number=0; for (var i136:String in transaction.messages) { var doAllMsg:API_Message = transaction.messages[transaction.messages.length==null ? i136 : p136]; p136++;
 					checkDoAll(doAllMsg);
 					if (isRequestStateCalculation) {
 						if (doAllMsg instanceof API_DoAllStoreStateCalculation)	
@@ -185,7 +160,7 @@ import come2play_as2.api.auto_copied.*;
 		}
 		private function isDeleteLegal(userEntries:Array/*UserEntry*/):Void
 		{
-			var p191:Number=0; for (var i191:String in userEntries) { var userEntry:UserEntry = userEntries[userEntries.length==null ? i191 : p191]; p191++;
+			var p166:Number=0; for (var i166:String in userEntries) { var userEntry:UserEntry = userEntries[userEntries.length==null ? i166 : p166]; p166++;
 				if (userEntry.value == null)
 					check(!userEntry.isSecret,["key deletion must be public! userEntry=",userEntry]);
 			}
@@ -209,8 +184,8 @@ import come2play_as2.api.auto_copied.*;
 			else if (msg instanceof API_DoAllEndMatch)
 			{
 				var doAllEndMatchMessage:API_DoAllEndMatch = API_DoAllEndMatch(msg);
-				isAllInPlayers(doAllEndMatchMessage.finishedPlayers);
-				// IMPORTANT Note: I do not update currentPlayerIds, because the container still needs to pass gotMatchEnded
+				currentPlayers.isAllInPlayers(doAllEndMatchMessage.finishedPlayers);
+				// IMPORTANT Note: I do not update currentPlayers, because the container still needs to pass gotMatchEnded
 				// Also, the container may pass gotStateChanged after the game sends DoAllEndMatch,
 				// because the game should verify every doStoreState (to prevent hackers from polluting the state after they know the game will be over). 
 			} 
@@ -232,7 +207,7 @@ import come2play_as2.api.auto_copied.*;
 			else if (msg instanceof API_DoAllSetTurn) 
 			{
 				var doAllSetTurn:API_DoAllSetTurn = API_DoAllSetTurn(msg);
-        		check(isInPlayers(doAllSetTurn.userId), ["You have to call doAllSetTurn with a playerId!"]);
+        		check(currentPlayers.isInPlayers(doAllSetTurn.userId), ["You have to call doAllSetTurn with a playerId!"]);
 			}
 			else if (msg instanceof API_DoAllSetMove) 
 			{				
@@ -252,21 +227,21 @@ import come2play_as2.api.auto_copied.*;
         private function isNullKeyExistUserEntry(userEntries:Array/*UserEntry*/):Void
         {
         	check(userEntries.length!=0, ["userEntries must have at least one UserEntry!"]);
-        	var p258:Number=0; for (var i258:String in userEntries) { var userEntry:UserEntry = userEntries[userEntries.length==null ? i258 : p258]; p258++;
+        	var p233:Number=0; for (var i233:String in userEntries) { var userEntry:UserEntry = userEntries[userEntries.length==null ? i233 : p233]; p233++;
         		check(userEntry.key != null,["UserEntry.key cannot be null ! userEntry=",userEntry]);
         	}
         }
         private function isNullKeyExistRevealEntry(revealEntries:Array/*RevealEntry*/):Void
         {
         	//check(revealEntries.length>=1, ["revealEntries must have at least one RevealEntry!"]);
-        	var p265:Number=0; for (var i265:String in revealEntries) { var revealEntry:RevealEntry = revealEntries[revealEntries.length==null ? i265 : p265]; p265++;
-        		check(revealEntry != null && revealEntry.key != null && (revealEntry.userIds==null || isAllInPlayers(revealEntry.userIds)), ["RevealEntry.key cannot be null, userIds must either be null or contain only players. revealEntry=",revealEntry]); 
+        	var p240:Number=0; for (var i240:String in revealEntries) { var revealEntry:RevealEntry = revealEntries[revealEntries.length==null ? i240 : p240]; p240++;
+        		check(revealEntry != null && revealEntry.key != null && (revealEntry.userIds==null || currentPlayers.isAllInPlayers(revealEntry.userIds)), ["RevealEntry.key cannot be null, userIds must either be null or contain only players. revealEntry=",revealEntry]); 
         	}
         }
         private function isNullKeyExist(keys:Array/*Object*/):Void
         {
         	check(keys.length!=0,["keys must have at leasy one key!"]);        		
-        	var p272:Number=0; for (var i272:String in keys) { var key:String = keys[keys.length==null ? i272 : p272]; p272++;
+        	var p247:Number=0; for (var i247:String in keys) { var key:String = keys[keys.length==null ? i247 : p247]; p247++;
         		check(key != null,["key cannot be null ! keys=",keys]);
         	}
         }

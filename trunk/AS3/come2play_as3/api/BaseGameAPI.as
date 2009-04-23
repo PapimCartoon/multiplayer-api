@@ -13,7 +13,7 @@ package come2play_as3.api {
 	 */ 
 	public class BaseGameAPI extends LocalConnectionUser 
 	{        
-		public static var TRACE_ANIMATIONS:Boolean = true;
+		private static var ANIMATIONS_LOG:Logger = new Logger("ANIMATIONS",20);
 		public static var ERROR_DO_ALL:String = "You can only call a doAll* message when the server calls gotStateChanged, gotMatchStarted, gotMatchEnded, or gotRequestStateCalculation.";
 		
 		private var msgsInTransaction:Array/*API_Message*/ = null;
@@ -54,7 +54,8 @@ package come2play_as3.api {
 			}
 			
 			output.push("Custom Data:\n\n"+getTAsArray().join("\n"));
-			var gotMatchStarted:API_GotMatchStarted = API_GotMatchStarted.create(0,verifier.getAllPlayerIds(),verifier.getFinishedPlayerIds(),serverEntries)
+			var currentPlayers:CurrentPlayers = verifier.getCurrentPlayers();
+			var gotMatchStarted:API_GotMatchStarted = API_GotMatchStarted.create(0,currentPlayers.getAllPlayerIds(),currentPlayers.getFinishedPlayerIds(),serverEntries)
 			return "\n\nBaseGameAPI:"+
 				"\nrunningAnimations="+runningAnimations+
 				"\ncurrentCallback="+currentCallback+
@@ -119,12 +120,12 @@ package come2play_as3.api {
 		 */		 
         public function animationStarted(animationName:String):void {
         	checkInsideTransaction();
-        	if (TRACE_ANIMATIONS) myTrace(["animationStarted:",animationName]);
+        	ANIMATIONS_LOG.log(["Started:",animationName]);
         	runningAnimations.push(animationName);        	
         }
         public function animationEnded(animationName:String):void {
         	checkInsideTransaction();
-        	if (TRACE_ANIMATIONS) myTrace(["animationEnded:",animationName]);
+        	ANIMATIONS_LOG.log(["Ended:",animationName]);
         	var wasRemoved:Boolean = StaticFunctions.removeElement(runningAnimations,animationName);
         	if (!wasRemoved)
         		throwError("Called animationEnded with animationName="+animationName+" that is not a running animation!");

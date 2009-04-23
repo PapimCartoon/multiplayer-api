@@ -85,7 +85,8 @@ public final class StaticFunctions
 		showError("Throwing the following error="+AS3_vs_AS2.error2String(err));
 		throw err;
 	}		
-	public static function assert(val:Boolean, name:String, args:Array):void {
+	public static function assert(val:Boolean, name:String, ...args):void {
+		if (name==null || name=='') throwError("When calling assert you must pass a non empty name! args="+JSON.stringify(args)); 
 		if (!val) throwError("An assertion failed! name="+name+" arguments="+JSON.stringify(args));
 	}
 	

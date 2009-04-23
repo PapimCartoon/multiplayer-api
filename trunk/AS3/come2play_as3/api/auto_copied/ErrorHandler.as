@@ -58,12 +58,9 @@ public final class ErrorHandler
 	public static function myTimeout(zoneName:String, func:Function, milliseconds:int):Object {
 		var timeout_id:Object;
 		var newFunc:Function = 
-				function (/*<InAS3>*/...args/*</InAS3>*/):void  { 
+				function (...args):void { 
 					modifyOngoing(false, true, zoneName, timeout_id, "myTimeout ticked",milliseconds);
-					func.apply(null, 
-						/*<InAS3>*/args/*</InAS3>*/
-						/*<InAS2>arguments</InAS2>*/
-					);
+					func.apply(null,args);
 				};
 		timeout_id = AS3_vs_AS2.unwrappedSetTimeout(zoneName, newFunc, milliseconds);
 		modifyOngoing(true, true, zoneName, timeout_id, "myTimeout set", milliseconds);
@@ -101,14 +98,11 @@ public final class ErrorHandler
 	private static var my_stack_trace:Array = [];
 	public static function wrapWithCatch(zoneName:String, func:Function):Function {
 		var longerName:String = zoneName; //Extra stack traces are not needed because we use zoneName for all events:  +(my_stack_trace.length==0 ? "" : " with first stacktrace: {\n"+my_stack_trace[0]+"\n}");
-		return function (/*<InAS3>*/...args/*</InAS3>*/):void { 
-			catchErrors(longerName, func, 
-					/*<InAS3>*/args/*</InAS3>*/
-					/*<InAS2>arguments</InAS2>*/
-				);
+		return function (...args):void { 
+			catchErrors(longerName,func,args);
 		};
 	}
-	public static var ZONE_LOGGER_SIZE:int = 5;
+	public static var ZONE_LOGGER_SIZE:int = 6;
 	private static var ZONE_LOGGERS:Object/*String->Logger*/ = {};
 	public static function catchErrors(zoneName:String, func:Function, args:Array):Object {
 		var res:Object = null;		

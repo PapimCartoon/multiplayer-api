@@ -5,8 +5,8 @@
 import come2play_as2.api.auto_copied.*;
 class come2play_as2.api.auto_copied.StaticFunctions
 {			
-	public static var GOOGLE_REVISION_NUMBER:Number = 972;
-	public static var COME2PLAY_REVISION_NUMBER:Number = 2780;
+	public static var GOOGLE_REVISION_NUMBER:Number = 973;
+	public static var COME2PLAY_REVISION_NUMBER:Number = 2781;
 	public static function getRevision():String {
 		return "g="+GOOGLE_REVISION_NUMBER+",c2p="+COME2PLAY_REVISION_NUMBER;		
 	}
@@ -81,7 +81,8 @@ class come2play_as2.api.auto_copied.StaticFunctions
 		showError("Throwing the following error="+AS3_vs_AS2.error2String(err));
 		throw err;
 	}		
-	public static function assert(val:Boolean, name:String, args:Array):Void {
+	public static function assert(val:Boolean, name:String/*InAS3: ...args*/):Void { var args:Array = arguments.slice(2); 
+		if (name==null || name=='') throwError("When calling assert you must pass a non empty name! args="+JSON.stringify(args)); 
 		if (!val) throwError("An assertion failed! name="+name+" arguments="+JSON.stringify(args));
 	}
 	
@@ -131,7 +132,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 				// for static properties we use describeType
 				// because o1 and o2 have the same type, it is enough to use the fields of o1.
 				var fieldsArr:Array = AS3_vs_AS2.getFieldNames(o1);
-				var p136:Number=0; for (var i136:String in fieldsArr) { var field:String = fieldsArr[fieldsArr.length==null ? i136 : p136]; p136++;
+				var p137:Number=0; for (var i137:String in fieldsArr) { var field:String = fieldsArr[fieldsArr.length==null ? i137 : p137]; p137++;
 					allFields[field] = true;
 				}
 			}
@@ -147,7 +148,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	
 	public static function subtractArray(arr:Array, minus:Array):Array {
 		var res:Array = arr.concat();
-		var p152:Number=0; for (var i152:String in minus) { var o:Object = minus[minus.length==null ? i152 : p152]; p152++;
+		var p153:Number=0; for (var i153:String in minus) { var o:Object = minus[minus.length==null ? i153 : p153]; p153++;
 			var indexOf:Number = AS3_vs_AS2.IndexOf(res, o);
 			StaticFunctions.assert(indexOf!=-1, "When subtracting minus=",[minus," from array=", arr, " we did not find element ",o]);				
 			res.splice(indexOf, 1);
@@ -253,7 +254,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	}
 	public static function instance2Object(instance:Object, fields:Array/*String*/):Object {
 		var res:Object = {};
-		var p258:Number=0; for (var i258:String in fields) { var field:String = fields[fields.length==null ? i258 : p258]; p258++;
+		var p259:Number=0; for (var i259:String in fields) { var field:String = fields[fields.length==null ? i259 : p259]; p259++;
 			res[field] = instance[field];
 		}
 		return res;
@@ -292,14 +293,14 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	public static function setMethodParameters(msg:API_Message, parameters:Array):Void { 
 		var names:Array = getParamNames(msg); 
 		var pos:Number = 0;
-		var p297:Number=0; for (var i297:String in names) { var name:String = names[names.length==null ? i297 : p297]; p297++;
+		var p298:Number=0; for (var i298:String in names) { var name:String = names[names.length==null ? i298 : p298]; p298++;
 			msg[name] = parameters[pos++];
 		}
 	}
 	public static function getMethodParameters(msg:API_Message):Array { 
 		var names:Array = getParamNames(msg);
 		var res:Array = [];
-		var p304:Number=0; for (var i304:String in names) { var name:String = names[names.length==null ? i304 : p304]; p304++;
+		var p305:Number=0; for (var i305:String in names) { var name:String = names[names.length==null ? i305 : p305]; p305++;
 			res.push(msg[name]);
 		}
 		return res;

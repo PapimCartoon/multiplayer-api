@@ -55,7 +55,7 @@ class come2play_as2.api.auto_copied.ErrorHandler
 	public static function myTimeout(zoneName:String, func:Function, milliseconds:Number):Object {
 		var timeout_id:Object;
 		var newFunc:Function = 
-				function (/*InAS3: ...args*/):Void { var args:Array = arguments.slice(0);  
+				function (...args):Void { 
 					modifyOngoing(false, true, zoneName, timeout_id, "myTimeout ticked",milliseconds);
 					func.apply(null,args);
 				};
@@ -95,11 +95,11 @@ class come2play_as2.api.auto_copied.ErrorHandler
 	private static var my_stack_trace:Array = [];
 	public static function wrapWithCatch(zoneName:String, func:Function):Function {
 		var longerName:String = zoneName; //Extra stack traces are not needed because we use zoneName for all events:  +(my_stack_trace.length==0 ? "" : " with first stacktrace: {\n"+my_stack_trace[0]+"\n}");
-		return function (/*InAS3: ...args*/):Void { var args:Array = arguments.slice(0);  
+		return function (...args):Void { 
 			catchErrors(longerName,func,args);
 		};
 	}
-	public static var ZONE_LOGGER_SIZE:Number = 5;
+	public static var ZONE_LOGGER_SIZE:Number = 6;
 	private static var ZONE_LOGGERS:Object/*String->Logger*/ = {};
 	public static function catchErrors(zoneName:String, func:Function, args:Array):Object {
 		var res:Object = null;		

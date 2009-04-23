@@ -142,7 +142,7 @@ public final class ErrorHandler
 
 		};
 	}
-	public static var ZONE_LOGGER_SIZE:int = 5;
+	public static var ZONE_LOGGER_SIZE:int = 6;
 	private static var ZONE_LOGGERS:Object/*String->Logger*/ = {};
 	public static function catchErrors(zoneName:String, func:Function, args:Array):Object {
 		var res:Object = null;		

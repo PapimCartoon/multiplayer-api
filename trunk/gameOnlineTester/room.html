@@ -30,6 +30,7 @@
 				brokenStake[j] = currnetStake;
 			}			
 		}
+
 		return brokenStake.join(",");
 	}
     function javascript_get_prefix_method() {
@@ -140,7 +141,7 @@
 			if((obj.fromTable) && (windowParams["type"] != "start_game_from_table_url")) continue;
 			if(obj.isUser == true){	
 				if(obj.htmlName == "tokens"){
-						params[obj.xmlName]=addStake(windowParams[obj.htmlName]);		
+					params[obj.xmlName]=addStake(windowParams[obj.htmlName]);		
 				}else
 					params[obj.xmlName]=encodeURIComponent(windowParams[obj.htmlName]);
 			}else if(obj.xmlName != null){
@@ -184,8 +185,7 @@
 			params["config_url"]=windowParams["roomXML"];
 			params["override_config.game_parameters"] = "DELETE";
 			params["override_config.flash_type"] = "room";	
-		}
-		else if(windowParams["flash_type"] == "game"){
+		}else if(windowParams["flash_type"] == "game"){
 		var lastGameChar =params["override_config.game_parameters.board_swf_url"].charAt(params["override_config.game_parameters.board_swf_url"].length -1);
 		if((lastGameChar != "?") && (lastGameChar !="&") ){
 			params["override_config.game_parameters.board_swf_url"]+="?";

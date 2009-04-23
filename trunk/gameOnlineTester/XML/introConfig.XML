@@ -14,7 +14,7 @@
 	  <is_guest>true</is_guest>
 	  <user_statistics_url>http://www.google.com</user_statistics_url>  
       <game_rating>2000</game_rating>	
-	  <tokens>1:5000000:isToken=true</tokens>  
+	  <tokens>1:1:isToken=true</tokens>  
 	</user_info>
 	<grabIt>url</grabIt>
 	<moreGrabIt><!--All the grab it links-->	

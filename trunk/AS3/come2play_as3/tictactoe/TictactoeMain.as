@@ -463,7 +463,7 @@ public final class TictactoeMain extends ClientGameAPI {
 		}		
 		if (isMyTurn()) shouldSendMove = true;
 		
-		var isBack:Boolean = T.custom(CUSTOM_INFO_KEY_isBack,false) as Boolean;
+		var isBack:Boolean = AS3_vs_AS2.asBoolean(T.custom(CUSTOM_INFO_KEY_isBack,false));
 		var isViewer:Boolean = myColor==VIEWER;
 		var _isMyTurn:Boolean = isMyTurn();
 		LOG.log("isInProgress=",isInProgress, 

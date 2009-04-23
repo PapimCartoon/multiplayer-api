@@ -115,7 +115,7 @@ package emulator.auto_copied
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
 			mailData["subject"] = "An Error in the distribution file"
-			mailData["body"] = errorReportText.substr(0,5000) +"\n\n\n...................\n\n\n"+ errorReportText.substr(errorReportText.length-5000);
+			mailData["body"] = errorReportText.substr(0,2500) +"\n\n\n...................\n\n\n"+ errorReportText.substr(errorReportText.length-2500);
 			navigateToURL(new URLRequest("mailto:support@come2play.com&"+mailData.toString()));
 		}
 	}

@@ -155,7 +155,7 @@ Not used by the graphics yet (but should be displayed):
 		
 		
 		
-		<entry><key>disableGameRating</key><value>true</value></entry>		
+		<entry><key>disableGameRating</key><value>false</value></entry>		
 		<entry><key>disableStatisticsPage</key><value>true</value></entry>	
 		
 		<entry><key>isSmartAutoMatch</key><value>false</value></entry>		
@@ -183,9 +183,9 @@ Not used by the graphics yet (but should be displayed):
 		<entry><key>tokenSet</key><value>[[0,"0.swf"],[1,"1.swf"],[5,"5.swf"],[10,"10.swf"],[50,"50.swf"],[100,"100.swf"],[500,"500.swf"],[1000,"1000.swf"],["x","x.swf"]]</value></entry>
 		<entry><key>ratings</key><value>[0,1200,1400,1600,1800,2000,2200,2400]</value></entry>
 		
-		
+		<!--
 		<entry><key>tokenReward</key><value>"header=congrats%26message=yowon%26isToken=true%26id=1%26quantity=100"</value></entry>
-		
+		 -->
 		 
 		<entry><key>rewardPageLink</key><value>"www.google.com/aaa.asp?"</value></entry>
 		
@@ -992,7 +992,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 		</language>
 		
 		<!-- ads -->
-		<is_show_ad type="boolean">false</is_show_ad>
+		<is_show_ad type="boolean">true</is_show_ad>
 		<inline_ad_url>images/ad_stub.swf</inline_ad_url>
 		
 		<framework>
@@ -1001,7 +1001,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 			</waiting_screen>
 			
 			<ads>
-				<is_show_pre_add type="boolean">false</is_show_pre_add>
+				<is_show_pre_add type="boolean">true</is_show_pre_add>
 				<is_show_post_add type="boolean">true</is_show_post_add>
 			</ads>
 			

@@ -41,7 +41,7 @@ public final class AS3_Loader
 	private static var imageCache:Dictionary/*imageUrl->Event (if loading failed, then the ev.data is an empty ByteArray)*/ = new Dictionary();
 	private static var url2RequestArray:Dictionary/*imageUrl->ImageLoadRequest[]*/ = new Dictionary();
 	private static var pauseQueue:Array/*ImageLoadRequest*/ = null;
-	public static var imageLoadingRetry:int = 1;
+	public static var imageLoadingRetry:int = 2;
 	
 	private static var AS3_Loader_LOG:Logger = new Logger("AS3_Loader",5);	
 	{

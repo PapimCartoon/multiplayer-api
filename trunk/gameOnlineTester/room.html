@@ -177,7 +177,7 @@
 		if (windowParams["flash_type"] == "room"){
 		document.title = "Room Tester"
 			if(windowParams["isYoavContainer"] == "true")
-				params["swf_url"]=  "framework/MxmlRoomGraphics.swf";
+				params["swf_url"]=  "MxmlRoomGraphics.swf";
 			else
 				params["is_game"]=  "false";
 				
@@ -195,7 +195,7 @@
 		params["override_config.room_parameters"] = "DELETE";
 		addTableParams(params,"gameTable")
 			if(windowParams["isYoavContainer"] == "true")
-				params["swf_url"] = "framework/MxmlGameGraphics.swf";
+				params["swf_url"] = "MxmlGameGraphics.swf";
 			else
 				params["is_game"]=  "true";
 			params["skin_url"]="graphics/GameGraphics.swf";	

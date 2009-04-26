@@ -19,9 +19,5 @@ package come2play_as3.api.auto_copied
 			this.loggerName = loggerName;
 			this.obj = obj;
 		}
-		public function toString():String {
-			var line:String = "id="+traceId+"\tt="+traceTime+"\t"+loggerName+"\t"+JSON.stringify(obj);
-			return StaticFunctions.cutString(line, maxLen); 
-		}
 	}
 }

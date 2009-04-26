@@ -36,14 +36,16 @@ import come2play_as2.api.*;
 			sendMessage( API_DoAllFoundHacker.create(hackerUserId, 
 				"Got sendBugReport errMessage="+errMessage+
 				" bug_id="+bug_id+
-				" (flashTraces are too long)" ) ); // we take the traces in the container using AS3 reflection by calling come2play_as2.api::StaticFunctions.getTraces()
+				// we take the traces in the container in AS3 by calling come2play_as2.api::StaticFunctions.getTraces()
+				// in AS2, I limit the traces to 10KB because LocalConnection has a limit of 40KB for messages.
+				(AS3_vs_AS2.isAS3 ? " (flashTraces are too long)" : StaticFunctions.cutString(StaticFunctions.getTraces(),10000) ) ) ); 
 		}
 		public function toString():String {
 			var output:Array/*String*/ = [];
 			output.push("Server State(client side) : \n\n");					
 			var serverEntries:Array/*ServerEntry*/ = new Array();
 			if(serverStateMiror!=null){
-				var p49:Number=0; for (var i49:String in serverStateMiror.allValues) { var serverEntry:ServerEntry = serverStateMiror.allValues[serverStateMiror.allValues.length==null ? i49 : p49]; p49++;
+				var p51:Number=0; for (var i51:String in serverStateMiror.allValues) { var serverEntry:ServerEntry = serverStateMiror.allValues[serverStateMiror.allValues.length==null ? i51 : p51]; p51++;
 					serverEntries.push(serverEntry);
 					output.push(serverEntry.toString() + "\n");
 				}
@@ -150,7 +152,7 @@ import come2play_as2.api.*;
         }
         private function updateMirorServerState(serverEntries:Array/*ServerEntry*/):Void
         {
-        	var p156:Number=0; for (var i156:String in serverEntries) { var serverEntry:ServerEntry = serverEntries[serverEntries.length==null ? i156 : p156]; p156++;
+        	var p158:Number=0; for (var i158:String in serverEntries) { var serverEntry:ServerEntry = serverEntries[serverEntries.length==null ? i158 : p158]; p158++;
         	    serverStateMiror.addEntry(serverEntry);	
         	}     	
         }
@@ -188,7 +190,7 @@ import come2play_as2.api.*;
 					var customInfo:API_GotCustomInfo = API_GotCustomInfo(msg);
 					var i18nObj:Object = {};
 					var customObj:Object = {};
-					var p194:Number=0; for (var i194:String in customInfo.infoEntries) { var entry:InfoEntry = customInfo.infoEntries[customInfo.infoEntries.length==null ? i194 : p194]; p194++;
+					var p196:Number=0; for (var i196:String in customInfo.infoEntries) { var entry:InfoEntry = customInfo.infoEntries[customInfo.infoEntries.length==null ? i196 : p196]; p196++;
 						var key:String = entry.key;
 						var value:Object = entry.value;
 						if (key==API_Message.CUSTOM_INFO_KEY_i18n) {
@@ -209,7 +211,7 @@ import come2play_as2.api.*;
 				}else if(msg instanceof API_GotUserInfo){
 					var infoMessage:API_GotUserInfo =API_GotUserInfo( msg);
 					var userObject:Object = {};
-					var p215:Number=0; for (var i215:String in infoMessage.infoEntries) { var infoEntry:InfoEntry = infoMessage.infoEntries[infoMessage.infoEntries.length==null ? i215 : p215]; p215++;
+					var p217:Number=0; for (var i217:String in infoMessage.infoEntries) { var infoEntry:InfoEntry = infoMessage.infoEntries[infoMessage.infoEntries.length==null ? i217 : p217]; p217++;
 						userObject[infoEntry.key] = infoEntry.value;
 					}
 					T.updateUser(infoMessage.userId, userObject);

@@ -40,7 +40,9 @@ package come2play_as3.api {
 			sendMessage( API_DoAllFoundHacker.create(hackerUserId, 
 				"Got sendBugReport errMessage="+errMessage+
 				" bug_id="+bug_id+
-				" (flashTraces are too long)" ) ); // we take the traces in the container using AS3 reflection by calling come2play_as3.api::StaticFunctions.getTraces()
+				// we take the traces in the container in AS3 by calling come2play_as3.api::StaticFunctions.getTraces()
+				// in AS2, I limit the traces to 10KB because LocalConnection has a limit of 40KB for messages.
+				(AS3_vs_AS2.isAS3 ? " (flashTraces are too long)" : StaticFunctions.cutString(StaticFunctions.getTraces(),10000) ) ) ); 
 		}
 		public function toString():String {
 			var output:Array/*String*/ = [];

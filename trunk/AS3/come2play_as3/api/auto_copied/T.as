@@ -69,13 +69,16 @@ package come2play_as3.api.auto_copied
 				return defaultValue;
 			isSameType(res,defaultValue);
 			return res;
+		}		
+		public static function getUsersInfo():Object {
+			return _usersInfo;
 		}
-		// for customization, e.g., the frame-rate of the game.
-		// If defaultValue is not null, then we require that the **type** of the return value
-		// will be identical to the **type** of the defaultValue.		
 		public static function getCustom():Object {
 			return _custom;
 		}
+		// for customization, e.g., the frame-rate of the game.
+		// If defaultValue is not null, then we require that the **type** of the return value
+		// will be identical to the **type** of the defaultValue.
 		public static function isSameType(res:Object,defaultValue:Object):void{
 			if (defaultValue==null || res==null) return;
 			var typeD:String = AS3_vs_AS2.getClassName(defaultValue);

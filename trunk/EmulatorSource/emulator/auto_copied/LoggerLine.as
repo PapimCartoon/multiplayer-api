@@ -32,12 +32,8 @@ package emulator.auto_copied
 			this.loggerName = loggerName;
 			this.obj = obj;
 		}
-		public function toString():String {
+	}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			var line:String = "id="+traceId+"\tt="+traceTime+"\t"+loggerName+"\t"+JSON.stringify(obj);
-			return StaticFunctions.cutString(line, maxLen); 
-		}
-	}
 }

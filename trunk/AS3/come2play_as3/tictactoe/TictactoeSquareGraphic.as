@@ -64,19 +64,18 @@ public final class TictactoeSquareGraphic
 	private function addSymbol(color:int, newSymbol:DisplayObject):void {
 		allSymbolGraphics[color] = newSymbol;
 	} 
-	public function gotSymbol(color:int, symbolUrl:String):void {
-		
+	private static var SYMBOL_LOG:Logger = new Logger("TictactoeSymbol",10);
+	public function gotSymbol(color:int, symbolUrl:String):void {		
 		if (color<0 || color>=MAX_SYMBOLS) throw new Error("Illegal color="+color+" MAX_SYMBOLS="+MAX_SYMBOLS);
-		var thisObj:TictactoeSquareGraphic = this; // for AS2
 		var newSymbol:DisplayObjectContainer =
 			AS3_vs_AS2.loadMovieIntoNewChild(allSymbols[color], symbolUrl,
 				function(isSuccess:Boolean, newChild:DisplayObject):void { 
-					if (isSuccess) {
-						AS3_vs_AS2.removeMovie(thisObj.allSymbolGraphics[color]);
-						AS3_vs_AS2.createMovieInstance(newSymbol,"SmallSymbol_"+color,"symbolGraphics");
-						thisObj.addSymbol(color, newSymbol);
-					} 
-				} );		
+					if (!isSuccess)
+						SYMBOL_LOG.log("Couldn't load symbolUrl=",symbolUrl," into newSymbol=",newSymbol);
+				} );
+		AS3_vs_AS2.removeMovie(allSymbolGraphics[color]);
+		AS3_vs_AS2.createMovieInstance(newSymbol,"SmallSymbol_"+color,"symbolGraphics");
+		addSymbol(color, newSymbol);
 	}
 	public function gotLogo(logo:String):void {
 		AS3_vs_AS2.loadMovieIntoNewChild(logoContainer, logo, null);		

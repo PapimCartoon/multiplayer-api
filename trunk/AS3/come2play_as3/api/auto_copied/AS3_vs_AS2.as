@@ -1,7 +1,5 @@
 package come2play_as3.api.auto_copied
 {
-import come2play_as3.api.auto_copied.AS3_ErrorMessage;
-
 import flash.display.*;
 import flash.events.*;
 import flash.net.*;
@@ -144,15 +142,22 @@ public final class AS3_vs_AS2
 		return new AS3_vs_AS2();
 	}
 	public function toString():String {
-		var res:Array = [];
-		for each (var info:DispatcherInfo in dispatchersInfo) {
+		var res:Array/*String*/ = [];
+		for (var dispatcher:Object in dispatchersInfo) {
+			var onStage:String = "";
+			if (dispatcher is DisplayObject) {
+				var display:DisplayObject = dispatcher as DisplayObject;
+				onStage = (display.stage==null ? "NOT on " : "ON ")+"stage: ";
+			}
+			var info:DispatcherInfo = dispatchersInfo[dispatcher];
 			var listeners:Array = [];
 			for (var type:String in info.type2listner2func) {
 				listeners.push(type);
 			} 			
-			res.push(info.name+" with listeners: "+listeners.join(", "));
+			listeners.sort();
+			res.push(onStage+info.name+" with listeners: "+listeners.join(", "));
 		}
-		res.sort();
+		res = StaticFunctions.sortAndCountOccurrences(res); 
 		return "all event listeners info:\n\t\t\t" + res.join("\n\t\t\t");
 	}
 	

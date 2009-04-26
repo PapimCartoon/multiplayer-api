@@ -1,6 +1,5 @@
 package come2play_as3.api.auto_copied
 {
-	import flash.events.Event;
 	import flash.utils.Dictionary;
 	import flash.utils.Timer;
 	/**
@@ -11,7 +10,15 @@ package come2play_as3.api.auto_copied
 	{
 		private static var ALL_LOG:Logger = new Logger("ALL_TIMERS",5);
 		private static var LOG:Logger = new Logger("TIMERS",50);
-		private static var ALL_TIMERS:Dictionary;
+		private static var ALL_TIMERS:Dictionary/*AS3_Timer->Boolean*/;
+		
+		public static function getTimersLog():String {
+			var res:Array/*String*/ = [];
+			for (var t:Object in ALL_TIMERS)
+				res.push(t.toString());
+			res = StaticFunctions.sortAndCountOccurrences(res); 
+			return "all timers info:\n\t\t\t" + res.join("\n\t\t\t");
+		}
 		
 		private var name:String;
 		public function AS3_Timer(name:String, delay:Number, repeatCount:int=0)	{
@@ -20,7 +27,7 @@ package come2play_as3.api.auto_copied
 			this.name = name;
 			if (ALL_TIMERS==null) {
 				ALL_TIMERS = new Dictionary(true); // weak keys (to allow garbage-collection)
-				ALL_LOG.log(ALL_TIMERS);
+				ALL_LOG.log(new ForTraces());
 			}
 			ALL_TIMERS[this] = true;
 		}
@@ -37,10 +44,18 @@ package come2play_as3.api.auto_copied
 			super.reset();
 		}
 		override public function toString():String {
-			return name+" x"+delay+
+			return name+" every "+delay+" millis, "+ 
+				(AS3_vs_AS2.myHasAnyEventListener(null,this) ? "WITH listeners" : "without listeners")+ 
 				(!running?" not running" : 
 					" RUNNING"+ 
 					(repeatCount==0 ? "" : " "+this.currentCount+"/"+repeatCount));
 		}
+	}
+}
+
+import come2play_as3.api.auto_copied.AS3_Timer;
+class ForTraces {
+	public function toString():String {
+		return AS3_Timer.getTimersLog();
 	}
 }

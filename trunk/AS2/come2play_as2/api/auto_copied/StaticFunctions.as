@@ -11,19 +11,21 @@ class come2play_as2.api.auto_copied.StaticFunctions
 		return "g="+GOOGLE_REVISION_NUMBER+",c2p="+COME2PLAY_REVISION_NUMBER;		
 	}
 	
-	public static var SHOULD_CALL_TRACE:Boolean = false; // in the online version we turn it off to save runtime
 	public static var someMovieClip:MovieClip; // so we can display error messages on the stage	
-	public static var ALLOW_DOMAINS:String = "*";//Specifying "*" does not include local hosts	 
-	
+	public static var ALLOW_DOMAINS:String = "*";//Specifying "*" does not include local hosts
+	public static function allowDomainForLc(lc:LocalConnection):Void {
+		if (ALLOW_DOMAINS != null)
+			lc.allowDomain(ALLOW_DOMAINS)	 
+	}
 	private static var LOGGED_REVISIONS:Boolean = false;
 	private static var REVISIONS_LOG:Logger = new Logger("REVISIONS",5);
 	public static function allowDomains():Void {
 		if (!LOGGED_REVISIONS) {
 			LOGGED_REVISIONS = true;			
 			REVISIONS_LOG.log( new ErrorHandler() );
-			REVISIONS_LOG.log(["GOOGLE_REVISION_NUMBER=",GOOGLE_REVISION_NUMBER, " c2p=COME2PLAY_REVISION_NUMBER=",COME2PLAY_REVISION_NUMBER, " LAST_RAN_JAVA_DATE=",API_Message.LAST_RAN_JAVA_DATE]);
+			REVISIONS_LOG.log("GOOGLE_REVISION_NUMBER=",GOOGLE_REVISION_NUMBER, " c2p=COME2PLAY_REVISION_NUMBER=",COME2PLAY_REVISION_NUMBER, " LAST_RAN_JAVA_DATE=",API_Message.LAST_RAN_JAVA_DATE);
 			if (ALLOW_DOMAINS != null){
-				REVISIONS_LOG.log(["Allowing all domains access to : ",ALLOW_DOMAINS," saמdbox type :",System.security.sandboxType]);
+				REVISIONS_LOG.log("Allowing all domains access to : ",ALLOW_DOMAINS," saמdbox type :",System.security.sandboxType);
 				System.security.allowDomain(ALLOW_DOMAINS);
 			}
 		}
@@ -51,12 +53,39 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	}
 	
 	 
-	
+	public static function getTracesOfLoggers(loggers:Array/*Logger*/, maxTotal:Number):String {		
+		var res:Array/*LoggerLine*/ = [];
+		var p61:Number=0; for (var i61:String in loggers) { var logger:Logger = loggers[loggers.length==null ? i61 : p61]; p61++;
+			res.push.apply(null,logger.getMyTraces());
+		}		
+		// I sort the traces		
+		res.sort(function (arg1:LoggerLine, arg2:LoggerLine):Number {
+			return arg1.traceId - arg2.traceId;
+		});
+		return arrToString(res, maxTotal);
+	}
+	private static function arrToString(arr:Array/*LoggerLine*/, maxTotal:Number):String {			
+		var res:Array = new Array();
+		var len:Number = 0;
+		// the latest traces are the most important
+		for (var i:Number = arr.length-1; i>=0; i--) {
+			var l:LoggerLine = arr[i];
+			var line:String = "id="+l.traceId+"\tt="+l.traceTime+"\t"+l.loggerName+"\t"+JSON.stringify(l.obj);
+			var s:String = StaticFunctions.cutString(line, l.maxLen);
+			len += s.length;
+			if (len>=maxTotal) break;
+			res.push(s); 
+		}
+		res.reverse();
+		return "["+res.join(",\n")+"]";
+	}
+	public static var MAX_TOTAL:Number 	= 2000000;	//2000KB
 	public static function getTraces():String {		
-		var strRes:String = Logger.getTraces();
+		var strRes:String = getTracesOfLoggers(Logger.ALL_LOGGERS,MAX_TOTAL);
 		setClipboard(strRes);
 		return strRes;
-	}	
+	}
+	
 	public static function cutString(str:String, toSize:Number):String {		
 		if (str.length<toSize) return str;
 		return str.substr(0,toSize)+"... (string cut)";
@@ -81,7 +110,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 		showError("Throwing the following error="+AS3_vs_AS2.error2String(err));
 		throw err;
 	}		
-	public static function assert(val:Boolean, name:String, ...args):Void {
+	public static function assert(val:Boolean, name:String/*InAS3: ...args*/):Void { var args:Array = arguments.slice(2); 
 		if (name==null || name=='') throwError("When calling assert you must pass a non empty name! args="+JSON.stringify(args)); 
 		if (!val) throwError("An assertion failed! name="+name+" arguments="+JSON.stringify(args));
 	}
@@ -132,7 +161,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 				// for static properties we use describeType
 				// because o1 and o2 have the same type, it is enough to use the fields of o1.
 				var fieldsArr:Array = AS3_vs_AS2.getFieldNames(o1);
-				var p137:Number=0; for (var i137:String in fieldsArr) { var field:String = fieldsArr[fieldsArr.length==null ? i137 : p137]; p137++;
+				var p167:Number=0; for (var i167:String in fieldsArr) { var field:String = fieldsArr[fieldsArr.length==null ? i167 : p167]; p167++;
 					allFields[field] = true;
 				}
 			}
@@ -146,9 +175,33 @@ class come2play_as2.api.auto_copied.StaticFunctions
 		}
 	}
 	
+	public static function sortAndCountOccurrences(arr:Array/*String*/):Array/*String*/ {
+		arr.sort();
+		if (arr.length>0) arr.push(""); // to handle the last string in arr
+		var res:Array/*String[]*/ = [];
+		var lastStr:String = null;
+		var lastCount:Number = 0;
+		var p187:Number=0; for (var i187:String in arr) { var str:String = arr[arr.length==null ? i187 : p187]; p187++;
+			if (lastStr!=str) {
+				if (lastStr!=null) res.push([lastCount, lastCount+" occurrences of: "+lastStr]);
+				lastCount = 1;
+				lastStr = str;
+			} else {
+				lastCount++;
+			}			
+		}
+		res.sort(function (arr1:Array,arr2:Array):Number {
+			return arr2[0] - arr1[0]; // DESC order
+		});
+		var res2:Array/*String*/ = [];
+		var p200:Number=0; for (var i200:String in res) { var countArr:Array = res[res.length==null ? i200 : p200]; p200++;
+			res2.push(countArr[1]);
+		}
+		return res2;
+	}
 	public static function subtractArray(arr:Array, minus:Array):Array {
 		var res:Array = arr.concat();
-		var p153:Number=0; for (var i153:String in minus) { var o:Object = minus[minus.length==null ? i153 : p153]; p153++;
+		var p207:Number=0; for (var i207:String in minus) { var o:Object = minus[minus.length==null ? i207 : p207]; p207++;
 			var indexOf:Number = AS3_vs_AS2.IndexOf(res, o);
 			StaticFunctions.assert(indexOf!=-1, "When subtracting minus=",[minus," from array=", arr, " we did not find element ",o]);				
 			res.splice(indexOf, 1);
@@ -163,8 +216,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 		return isContained;		
 	}
 	public static function limitedPush(arr:Array, element:Object, maxSize:Number):Void {
-		if (arr.length>=maxSize) arr.shift(); // we discard old elements (in a queue-like manner)
-		arr.push(element);
+		Logger.limitedPush(arr,element,maxSize);
 	}
 	
 	// e.g., random(0,2) returns either 0 or 1
@@ -183,7 +235,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	private static var REFLECTION_LOG:Logger = new Logger("REFLECTION",10);
 	public static function performReflectionFromFlashVars(_someMovieClip:MovieClip):Void {		
 		var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(_someMovieClip);		
-		REFLECTION_LOG.log(["performReflectionFromFlashVars=",parameters]);
+		REFLECTION_LOG.log("performReflectionFromFlashVars=",parameters);
 		for (var key:String in parameters) {
 			if (startsWith(key,REFLECTION_PREFIX)) {
 				var before:String = key.substr(REFLECTION_PREFIX.length);
@@ -202,24 +254,28 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	public static function performReflectionObject(fullClassName:String, valObj:Object):Void {
 		//fullClassName = come2play_as2.util::EnumMessage.CouldNotConnect.__minDelayMilli 
 		//after = 2000
-		REFLECTION_LOG.log(["Perform reflection for: ",fullClassName,"=",valObj]);
-		var package2:Array = splitInTwo(fullClassName, "::", false);
-		var fields2:Array = splitInTwo(package2[1], ".", false);
-		var clzName:String = trim(package2[0]) + "::" + trim(fields2[0]);
-		var fieldsName:String = trim(fields2[1]);
-		var classReference:Object = AS3_vs_AS2.getClassByName(clzName);
-		var oldVal:Object = null;
-		var fieldsArr:Array = fieldsName.split(".");
-		for (var i:Number=0; i<fieldsArr.length; i++) {
-			var fieldName:String = fieldsArr[i];
-			if (i<fieldsArr.length-1)
-				classReference = classReference[fieldName];
-			else {
-				oldVal = classReference[fieldName];
-				classReference[fieldName] = valObj;
-			}			
-		} 		
-		storeTrace(["Setting field ",fieldsName," in class ",clzName,": oldVal=",oldVal, " newVal=",valObj]);
+		REFLECTION_LOG.log("Perform reflection for: ",fullClassName,"=",valObj);
+		try {
+			var package2:Array = splitInTwo(fullClassName, "::", false);
+			var fields2:Array = splitInTwo(package2[1], ".", false);
+			var clzName:String = trim(package2[0]) + "::" + trim(fields2[0]);
+			var fieldsName:String = trim(fields2[1]);
+			var classReference:Object = AS3_vs_AS2.getClassByName(clzName);
+			var oldVal:Object = null;
+			var fieldsArr:Array = fieldsName.split(".");
+			for (var i:Number=0; i<fieldsArr.length; i++) {
+				var fieldName:String = fieldsArr[i];
+				if (i<fieldsArr.length-1)
+					classReference = classReference[fieldName];
+				else {
+					oldVal = classReference[fieldName];
+					classReference[fieldName] = valObj;
+				}			
+			} 		
+			REFLECTION_LOG.log("Setting field ",fieldsName," in class ",clzName,": oldVal=",oldVal, " newVal=",valObj);
+		} catch (e:Error) {
+			REFLECTION_LOG.log("An error occurred while doing reflection:",e);			
+		}
 	}
 
 
@@ -254,7 +310,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	}
 	public static function instance2Object(instance:Object, fields:Array/*String*/):Object {
 		var res:Object = {};
-		var p259:Number=0; for (var i259:String in fields) { var field:String = fields[fields.length==null ? i259 : p259]; p259++;
+		var p316:Number=0; for (var i316:String in fields) { var field:String = fields[fields.length==null ? i316 : p316]; p316++;
 			res[field] = instance[field];
 		}
 		return res;
@@ -293,14 +349,14 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	public static function setMethodParameters(msg:API_Message, parameters:Array):Void { 
 		var names:Array = getParamNames(msg); 
 		var pos:Number = 0;
-		var p298:Number=0; for (var i298:String in names) { var name:String = names[names.length==null ? i298 : p298]; p298++;
+		var p355:Number=0; for (var i355:String in names) { var name:String = names[names.length==null ? i355 : p355]; p355++;
 			msg[name] = parameters[pos++];
 		}
 	}
 	public static function getMethodParameters(msg:API_Message):Array { 
 		var names:Array = getParamNames(msg);
 		var res:Array = [];
-		var p305:Number=0; for (var i305:String in names) { var name:String = names[names.length==null ? i305 : p305]; p305++;
+		var p362:Number=0; for (var i362:String in names) { var name:String = names[names.length==null ? i362 : p362]; p362++;
 			res.push(msg[name]);
 		}
 		return res;

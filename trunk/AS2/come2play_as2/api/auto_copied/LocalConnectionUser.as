@@ -20,7 +20,7 @@ import come2play_as2.api.auto_copied.*;
 		public static function throwError(msg:String):Void {
 			StaticFunctions.throwError(msg);
 		}		
-		public static function assert(val:Boolean, name:String, ...args):Void {
+		public static function assert(val:Boolean, name:String/*InAS3: ...args*/):Void { var args:Array = arguments.slice(2); 
 			StaticFunctions.assert(val, name, args);
 		}
 
@@ -227,7 +227,7 @@ import come2play_as2.api.auto_copied.*;
         }
         private function sendHandShakeDoRegister():Void{
         	try{
-        		lcUser.send(sSendChanel, "localconnection_callback",API_DoRegisterOnServer.create());  
+        		lcUser.send(sSendChanel, "localconnection_callback",API_DoRegisterOnServer.create().toObject());  
         	}catch(err:Error){
         		ErrorHandler.myTimeout("sendHandShakeDoRegister", AS3_vs_AS2.delegate(this,this.sendHandShakeDoRegister),1000);
         	}
@@ -241,8 +241,7 @@ import come2play_as2.api.auto_copied.*;
         }  
         private function createLocalConnection():LocalConnection{
         	var lc:LocalConnection = new LocalConnection();
-        	if(StaticFunctions.ALLOW_DOMAINS != null)
-				lc.allowDomain(StaticFunctions.ALLOW_DOMAINS)
+        	StaticFunctions.allowDomainForLc(lc);
 			lcTrace(["local connection Domain",lc.domain])	
 			return lc;
         }

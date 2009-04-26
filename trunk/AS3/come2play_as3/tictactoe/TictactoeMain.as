@@ -21,6 +21,9 @@ import flash.utils.*;
  */
 public final class TictactoeMain extends ClientGameAPI {
 	public static function createGame(graphics:MovieClip):void {
+		//var arr:Array = ["a","b","a","a","a","a","a","a","a","a","a","b","ccc","x"];
+		//trace(StaticFunctions.sortAndCountOccurrences(arr));
+		
 		// Main entry point - the FLA only code is:  TictactoeMain.createGame(this);
 		
 		// Setting parameters for SinglePlayerEmulator
@@ -211,13 +214,11 @@ public final class TictactoeMain extends ClientGameAPI {
 		
 		if (shouldUseAvatars) {
 			// set the player's avatars instead of the default TicTacToe symbols
-			// Sometimes two players uses the same avatar. In that case I do not replace one of the symbols. 
-			var avatarUrlExists:Object = {};
+			// Sometimes two players uses the same avatar, but we also add a tiny X or O symbol
 			for (var colorId:int=0; colorId<allPlayerIds.length; colorId++) {
 				var playerId:int = allPlayerIds[colorId];
 				var avatarUrl:String = AS3_vs_AS2.asString(T.getUserValue(playerId,USER_INFO_KEY_avatar_url,null));
-				if (avatarUrl!=null && avatarUrl!='' && avatarUrlExists[avatarUrl]==null) {
-					avatarUrlExists[avatarUrl] = true; // to mark that we saw this avatarUrl 
+				if (avatarUrl!=null && avatarUrl!='') {
 					replaceSymbol(colorId, avatarUrl);
 				}
 			}

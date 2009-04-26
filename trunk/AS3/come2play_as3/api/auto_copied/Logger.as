@@ -7,10 +7,17 @@ package come2play_as3.api.auto_copied
  * After you created a logger, it is put in a static array,
  * and when getTraces is called, all the traces from all the loggers
  * are combined into a single time-line.
+ * 
+ * IMPORTANT for AS2:
+ * We use static Loggers:
+ * static var LOG:Logger = new Logger(...)
+ * Therefore, to prevent init cycles, the class Logger must not use any other class
+ * (e.g., JSON or StaticFunctions!)
+ * It creates crazy weird bugs in AS2 (but not in AS3)
  */ 
 public final class Logger
 {
-	private static var ALL_LOGGERS:Array = [];
+	public static var ALL_LOGGERS:Array = [];
 	public static var MAX_LOGGERS_NUM:int = 500;
 	public static var TRACE_PREFIX:String = ""; // because in flashlog you see traces of many users and it is all mixed 
 		
@@ -32,7 +39,6 @@ public final class Logger
 	// todo: add "unlimitedTrace" or add the size of each trace line
 	public static var MAX_TRACE_LEN:int = 10000;	//10KB
 	public static var MAX_HUGE_LEN:int 	= 500000;	//500KB
-	public static var MAX_TOTAL:int 	= 2000000;	//2000KB
 	
 	// the game traces are a single huge traceline
 	public function hugeLog(...args):void {
@@ -42,52 +48,17 @@ public final class Logger
 		limitedLog(MAX_TRACE_LEN,args);
 	}
 	public function limitedLog(maxTraceLen:int, obj:Object):void {
-		try {
-			if (maxTraces<=0) return;
+		if (maxTraces<=0) return;
 			 
-			var traceLine:LoggerLine = new LoggerLine(maxTraceLen,name,obj);
-			StaticFunctions.limitedPush(traces, traceLine , maxTraces); // we discard old traces
-			if (StaticFunctions.SHOULD_CALL_TRACE) trace(RANDOM_PREFIX+TRACE_PREFIX + " " + name+":\t" + traceLine.toString());
-		} catch (err:Error) {
-			if (StaticFunctions.SHOULD_CALL_TRACE) trace(RANDOM_PREFIX+TRACE_PREFIX + "\n\n\n\n\n\n\n\n\n\n\n\nERROR!!!!!!!!!!!!!!!!!!!!!!! err="+AS3_vs_AS2.error2String(err)+"\n\n\n\n\n\n\n\n\n\n\n");
-		}
+		var traceLine:LoggerLine = new LoggerLine(maxTraceLen,name,obj);
+		limitedPush(traces, traceLine , maxTraces); // we discard old traces
 	}
-	public function getMyTraces():String {
-		return arrToString(traces,MAX_TOTAL);
+	public static function limitedPush(arr:Array, element:Object, maxSize:int):void {
+		if (arr.length>=maxSize) arr.shift(); // we discard old elements (in a queue-like manner)
+		arr.push(element);
+	}	
+	public function getMyTraces():Array/*LoggerLine*/ {
+		return traces;
 	}
-	
-	private static var keyTraces:Array = [];	
-	public static var RANDOM_PREFIX:String = "Rnd"+int(100+Math.random()*900)+": ";
-	
-	public static function getTraces():String {
-		return getTracesOfLoggers(ALL_LOGGERS,MAX_TOTAL);
-	}
-	public static function getTracesOfLoggers(loggers:Array/*Logger*/, maxTotal:int):String {		
-		var res:Array/*LoggerLine*/ = [];
-		for each (var logger:Logger in loggers) {
-			res.push.apply(null,logger.traces);
-		}		
-		// I sort the traces		
-		res.sort(function (arg1:LoggerLine, arg2:LoggerLine):int {
-			return arg1.traceId - arg2.traceId;
-		});
-		return arrToString(res, maxTotal);
-	}
-
-	private static function arrToString(arr:Array/*LoggerLine*/, maxTotal:int):String {			
-		var res:Array = new Array();
-		var len:int = 0;
-		// the latest traces are the most important
-		for (var i:int = arr.length-1; i>=0; i--) {
-			var line:LoggerLine = arr[i];
-			var s:String = line.toString();
-			len += s.length;
-			if (len>=maxTotal) break;
-			res.push(s); 
-		}
-		res.reverse();
-		return "["+res.join(",\n")+"]";
-	}
-
 }
 }

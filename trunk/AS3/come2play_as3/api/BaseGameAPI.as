@@ -32,7 +32,7 @@ package come2play_as3.api {
 			ALL_LOG.log(this);
 			ErrorHandler.SEND_BUG_REPORT = AS3_vs_AS2.delegate(this, this.sendBugReport);
 			AS3_vs_AS2.addKeyboardListener(_someMovieClip, ErrorHandler.wrapWithCatch("keyPressed",AS3_vs_AS2.delegate(this,this.keyPressed)));
-			if (getPrefixFromFlashVars(_someMovieClip)==null) 
+			if (originalPrefix==null) 
 				singlePlayerEmulator = new SinglePlayerEmulator(_someMovieClip); // to prevent garbage collection
 			//come2play_as3.api::BaseGameAPI.abc = 666
 		}

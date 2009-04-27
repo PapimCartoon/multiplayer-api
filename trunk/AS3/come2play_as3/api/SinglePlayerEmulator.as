@@ -72,6 +72,7 @@ package come2play_as3.api
 		
 		public static var WAIT_BETWEEN_EXTRA_CALLBACKS:int = 0;
 		public static var EXTRA_CALLBACKS:Array/*API_Message*/ = [];
+		private static var LOG:Logger = new Logger("SinglePlayerEmulator",10);
 												 
 		private var messageNum:int = 10000;
 		private var curUserId:int; // the current userId (we change this curUserId when getting doAllSetTurn)
@@ -79,7 +80,8 @@ package come2play_as3.api
 		private var apiMsgsQueue:Array/*API_Message*/ = [];
 		private var serverStateMiror:ObjectDictionary;
 		public function SinglePlayerEmulator(graphics:DisplayObjectContainer) {
-			super(graphics,true, DEFAULT_LOCALCONNECTION_PREFIX,true);			
+			super(graphics,true, DEFAULT_LOCALCONNECTION_PREFIX,true);
+			LOG.log("Created!!!");			
 		}
 		private function updateUserIds(userIdsToUpdate:Array/*int*/,userIdsToAdd:Array/*int*/):Boolean{
 			var updated:Boolean = false;
@@ -294,8 +296,6 @@ package come2play_as3.api
 					var entry:ServerEntry = /*as*/serverStateMiror.getValue(key) as ServerEntry;
 					if(entry!= null)
 						serverEntries.push(entry)
-					else
-						trace(JSON.stringify(key))
 				}
 				queueSendMessage(API_GotRequestStateCalculation.create(1,serverEntries))
         	} else if (msg is API_DoAllSetTurn) {
@@ -303,6 +303,7 @@ package come2play_as3.api
         		if (setTurn.userId!=curUserId) {
         			// we switch users by ending and loading the match
         			var userId:int = setTurn.userId;
+        			LOG.log("Switch turns:",curUserId," ---> ",userId);
 					if (SHOW_TURN_MSGS) AS3_vs_AS2.showMessage( T.i18nReplace("The turn of $name$ is starting.\n", {name: getUserName(userId)}) , "newTurn");
 					
         			var ongoingIds:Array/*int*/ = StaticFunctions.subtractArray(getPlayerIds(),finishedUserIds);
@@ -354,7 +355,7 @@ package come2play_as3.api
   			queueSendMessage(API_GotMatchStarted.create(++messageNum,getPlayerIds(), finishedUserIds, serverStateMiror.getValues() ) );
   			if (WAIT_BETWEEN_EXTRA_CALLBACKS==0) {
 	  			for each (var extraCallback:API_Message in EXTRA_CALLBACKS) {
-	  				trace("Passing extraCallback="+extraCallback);
+	  				LOG.log("Passing extraCallback=",extraCallback);
 	  				queueSendMessage( extraCallback );
 	  			}
 	  		} else  				

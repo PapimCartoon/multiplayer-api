@@ -57,11 +57,13 @@ public final class StaticFunctions
 		STORE_LOGGER.log(obj);
 	}
 	
-	 
+	public static function pushAll(toArr:Array, fromArr:Array):void {
+		toArr.push.apply(null,fromArr);
+	}
 	public static function getTracesOfLoggers(loggers:Array/*Logger*/, maxTotal:int):String {		
 		var res:Array/*LoggerLine*/ = [];
 		for each (var logger:Logger in loggers) {
-			res.push.apply(null,logger.getMyTraces());
+			pushAll(res, logger.getMyTraces());
 		}		
 		// I sort the traces		
 		res.sort(function (arg1:LoggerLine, arg2:LoggerLine):int {
@@ -236,7 +238,7 @@ public final class StaticFunctions
 		return str.substr(str.length-suffix.length, suffix.length)==suffix;
 	}
 	
-	private static const REFLECTION_PREFIX:String = "REFLECTION_";
+	public static const REFLECTION_PREFIX:String = "REFLECTION_";
 	private static var REFLECTION_LOG:Logger = new Logger("REFLECTION",10);
 	public static function performReflectionFromFlashVars(_someMovieClip:DisplayObjectContainer):void {		
 		var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(_someMovieClip);		

@@ -21,6 +21,7 @@ package come2play_as3.api.auto_copied
 		}
 		
 		private var name:String;
+		private var isRemoved:Boolean = false;
 		public function AS3_Timer(name:String, delay:Number, repeatCount:int=0)	{
 			StaticFunctions.assert(delay>0, "AS3_Timer: illegal delay=",[delay," name=",name, " repeatCount=",repeatCount]);
 			super(delay, repeatCount);
@@ -31,15 +32,31 @@ package come2play_as3.api.auto_copied
 			}
 			ALL_TIMERS[this] = true;
 		}
+		private function assertNotRemoved():void {
+			StaticFunctions.assert(!isRemoved, "Can't use an AS3_Timer after you removed all listeners! name=",this);			
+		}
+		public function deleteTimer():void {
+			assertNotRemoved();
+			isRemoved = true;
+			delete ALL_TIMERS[this];
+		}
+		override public function addEventListener(type:String, listener:Function, useCapture:Boolean=false, priority:int=0, useWeakReference:Boolean=false):void {
+			assertNotRemoved();
+			super.addEventListener(type,listener,useCapture,priority,useWeakReference);
+		}
 		override public function start():void {
+			assertNotRemoved();
 			LOG.log([name,"started"]);
 			super.start();
 		}
 		override public function stop():void {
+			if (!running) return;
+			assertNotRemoved();
 			LOG.log([name,"stoped"]);
 			super.stop();
 		}
 		override public function reset():void {
+			assertNotRemoved();
 			LOG.log([name,"reset"]);
 			super.reset();
 		}

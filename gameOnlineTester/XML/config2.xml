@@ -13,7 +13,7 @@ The xml assumes the current dir is gameOnlineTester
 		(you can also set JPG_QUALITY of SendMultipartImage)
 
 	- override_*  - to override values in the XML
-	- reflection_*  - to override static vars in the flash (e.g., come2play_as3.util.General.isDoingTrace=true)
+	- REFLECTION_*  - to override static vars in the flash (e.g., REFLECTION_come2play_as3.util::General.isDoingTrace=true)
 	
 
 	The javascript should have the following functions:

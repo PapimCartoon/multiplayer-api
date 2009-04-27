@@ -450,7 +450,7 @@ public final class TictactoeMain extends ClientGameAPI {
 		
 		doStoreState( [UserEntry.create(getEntryKey(), move, false)] );		
 		// We do not update the graphics here. We update the graphics only after the server called gotStateChanged
-		// Note that as a result, if the user presses quickly on the same button, there might be several identical calls to doStoreState.
+		// Note that as a result, if the user clicks quickly on the same button, then we reject future clicks using shouldSendMove
 	}
 	private function isMyTurn():Boolean {
 		return isSinglePlayer() || myColor==turnOfColor;

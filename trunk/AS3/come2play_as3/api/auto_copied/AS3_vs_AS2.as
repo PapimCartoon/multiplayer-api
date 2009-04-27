@@ -181,9 +181,15 @@ public final class AS3_vs_AS2
 		StaticFunctions.assert(func!=null,"myRemoveEventListener2",errInfo);
 		delete dic2[listener];
 		if (isDictionaryEmpty(dic2)) delete dic1[type];
-		if (isDictionaryEmpty(dic1)) delete dispatchersInfo[dispatcher];
+		if (isDictionaryEmpty(dic1)) removeDispatcher(dispatcher);
 		dispatcher.removeEventListener(type, func);
-	}			
+	}
+	private static function removeDispatcher(dispatcher:IEventDispatcher):void {
+		delete dispatchersInfo[dispatcher];
+		if (dispatcher is AS3_Timer)
+			(dispatcher as AS3_Timer).deleteTimer();
+	}
+	
 	public static function myRemoveAllEventListeners(dispatcherName:String, dispatcher:IEventDispatcher):void {
 		var info:DispatcherInfo = getDispatcherInfo(dispatcherName,dispatcher);
 		var dic1:Dictionary = info.type2listner2func;
@@ -196,7 +202,7 @@ public final class AS3_vs_AS2
 				dispatcher.removeEventListener(type, newListener);
 			}
 		}
-		delete dispatchersInfo[dispatcher];
+		removeDispatcher(dispatcher);
 	}
 	public static function myWeakAddEventListener(dispatcherName:String, dispatcher:IEventDispatcher, type:String, listener:Function, useCapture:Boolean=false, priority:int=0):void {
 		p_myAddEventListener(dispatcherName,dispatcher,type,listener,useCapture,priority,true);
@@ -270,9 +276,12 @@ public final class AS3_vs_AS2
 		//return setInterval(func,in_milliseconds);
 	}
 	private static function createTimer(zoneName:String, func:Function, in_milliseconds:int, repeat:int):Object {
-		var t:Timer = new AS3_Timer(zoneName,in_milliseconds,repeat);
-		myAddEventListener(zoneName,t,TimerEvent.TIMER, function (ev:TimerEvent):void { 
-			if (repeat==1) myRemoveAllEventListeners(zoneName,t);
+		var t:AS3_Timer = new AS3_Timer(zoneName,in_milliseconds,repeat);
+		myAddEventListener(zoneName,t,TimerEvent.TIMER, function (ev:TimerEvent):void {			 
+			if (repeat==1) {
+				t.stop();
+				myRemoveAllEventListeners(zoneName,t);
+			}
 			func(); 
 		});
 		t.start();
@@ -321,7 +330,7 @@ public final class AS3_vs_AS2
 		AS3_Loader.loadImage(url, function (event:Event):void {
 				var loaderInfo:LoaderInfo = event.target as LoaderInfo;	
 				var newChild:DisplayObject = loaderInfo.content;
-				newMovie.addChild(newChild);
+				newMovie.addChildAt(newChild,0);
 				if (onLoaded!=null) onLoaded(true, newChild);
 			}, function (event:Event):void {
 		        if (onLoaded!=null) onLoaded(false, null);

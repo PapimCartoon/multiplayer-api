@@ -25,6 +25,7 @@ public final class TictactoeSquareGraphic
 
 	private var move:TictactoeSquare;
 	private var logoContainer:MovieClip;
+	private var logoClip:DisplayObjectContainer;
 		
 	public function TictactoeSquareGraphic(graphic:TictactoeMain, square:MovieClip, move:TictactoeSquare) {
     	this.animationStartedOn = new TimeMeasure();
@@ -78,7 +79,8 @@ public final class TictactoeSquareGraphic
 		addSymbol(color, newSymbol);
 	}
 	public function gotLogo(logo:String):void {
-		AS3_vs_AS2.loadMovieIntoNewChild(logoContainer, logo, null);		
+		if (logoClip!=null) AS3_vs_AS2.removeMovie(logoClip);
+		logoClip = AS3_vs_AS2.loadMovieIntoNewChild(logoContainer, logo, null);		
 	}	
     private function showOrHideLogo(shouldAdd:Boolean):void {
     	AS3_vs_AS2.setVisible(logoContainer,shouldAdd);

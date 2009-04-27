@@ -97,23 +97,26 @@ package emulator.auto_copied
 				return defaultValue;
 			isSameType(res,defaultValue);
 			return res;
-		}
+		}		
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		// for customization, e.g., the frame-rate of the game.
-		// If defaultValue is not null, then we require that the **type** of the return value
-		// will be identical to the **type** of the defaultValue.		
+		public static function getUsersInfo():Object {
+			return _usersInfo;
+		}
 		public static function getCustom():Object {
 			return _custom;
 		}
+		// for customization, e.g., the frame-rate of the game.
+		// If defaultValue is not null, then we require that the **type** of the return value
+		// will be identical to the **type** of the defaultValue.
 		public static function isSameType(res:Object,defaultValue:Object):void{
-			if (defaultValue==null || res==null) return;
-			var typeD:String = AS3_vs_AS2.getClassName(defaultValue);
-			var typeR:String = AS3_vs_AS2.getClassName(res);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			if (defaultValue==null || res==null) return;
+			var typeD:String = AS3_vs_AS2.getClassName(defaultValue);
+			var typeR:String = AS3_vs_AS2.getClassName(res);
 			StaticFunctions.assert(typeD==typeR, "In T.custom and the T.getUserValue the type of defaultValue and the return value must be identical! DefaultValue=",[defaultValue," type of DefaultValue=",typeD," result=",res," type of result=",typeR]); 
 		}
 		public static function custom(key:String, defaultValue:Object/*Type*/):Object/*Type*/ {
@@ -121,12 +124,12 @@ package emulator.auto_copied
 			if (res==null) return defaultValue;			
 			// the type of defaultValue must be identical to res
 			isSameType(res,defaultValue);
-			return res; 
-		}
-		
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			return res; 
+		}
+		
 		// for internationalization	
 		// i18n stands for "i"(nternationalizatio)"n"	
 		public static function i18n(str:String):String { //internationalization			
@@ -134,12 +137,12 @@ package emulator.auto_copied
 			return res==null ? str : res.toString();
 		}		
 		public static function i18nReplace(str:String, replacement:Object):String {
-			var res:String = i18n(str);
-			for (var key:String in replacement) {
-				res = StaticFunctions.replaceAll(res, "$"+key+"$", ''+replacement[key]); 
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			var res:String = i18n(str);
+			for (var key:String in replacement) {
+				res = StaticFunctions.replaceAll(res, "$"+key+"$", ''+replacement[key]); 
 			} 
 			return res;			
 		}
@@ -147,12 +150,12 @@ package emulator.auto_copied
 		
 		public static var isLeftToRight:Boolean = true;
 		
-		private var arr:Array;
-		public function T() {
-			arr = [];
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		private var arr:Array;
+		public function T() {
+			arr = [];
 		}
 		public function add(str:String):void {
 			if (isLeftToRight) 
@@ -160,11 +163,11 @@ package emulator.auto_copied
 			else
 				arr.unshift(str);
 		}
-		public function join():String {
-			return arr.join("");
-		}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		public function join():String {
+			return arr.join("");
+		}
 	}
 }

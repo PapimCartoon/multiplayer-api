@@ -22,6 +22,7 @@ class come2play_as2.tictactoe.TictactoeSquareGraphic
 
 	private var move:TictactoeSquare;
 	private var logoContainer:MovieClip;
+	private var logoClip:MovieClip;
 		
 	public function TictactoeSquareGraphic(graphic:TictactoeMain, square:MovieClip, move:TictactoeSquare) {
     	this.animationStartedOn = new TimeMeasure();
@@ -61,22 +62,22 @@ class come2play_as2.tictactoe.TictactoeSquareGraphic
 	private function addSymbol(color:Number, newSymbol:MovieClip):Void {
 		allSymbolGraphics[color] = newSymbol;
 	} 
-	public function gotSymbol(color:Number, symbolUrl:String):Void {
-		
+	private static var SYMBOL_LOG:Logger = new Logger("TictactoeSymbol",10);
+	public function gotSymbol(color:Number, symbolUrl:String):Void {		
 		if (color<0 || color>=MAX_SYMBOLS) throw new Error("Illegal color="+color+" MAX_SYMBOLS="+MAX_SYMBOLS);
-		var thisObj:TictactoeSquareGraphic = this; // for AS2
 		var newSymbol:MovieClip =
 			AS3_vs_AS2.loadMovieIntoNewChild(allSymbols[color], symbolUrl,
 				function(isSuccess:Boolean, newChild:MovieClip):Void { 
-					if (isSuccess) {
-						AS3_vs_AS2.removeMovie(thisObj.allSymbolGraphics[color]);
-						AS3_vs_AS2.createMovieInstance(newSymbol,"SmallSymbol_"+color,"symbolGraphics");
-						thisObj.addSymbol(color, newSymbol);
-					} 
-				} );		
+					if (!isSuccess)
+						SYMBOL_LOG.log("Couldn't load symbolUrl=",symbolUrl," into newSymbol=",newSymbol);
+				} );
+		AS3_vs_AS2.removeMovie(allSymbolGraphics[color]);
+		AS3_vs_AS2.createMovieInstance(newSymbol,"SmallSymbol_"+color,"symbolGraphics");
+		addSymbol(color, newSymbol);
 	}
 	public function gotLogo(logo:String):Void {
-		AS3_vs_AS2.loadMovieIntoNewChild(logoContainer, logo, null);		
+		if (logoClip!=null) AS3_vs_AS2.removeMovie(logoClip);
+		logoClip = AS3_vs_AS2.loadMovieIntoNewChild(logoContainer, logo, null);		
 	}	
     private function showOrHideLogo(shouldAdd:Boolean):Void {
     	AS3_vs_AS2.setVisible(logoContainer,shouldAdd);

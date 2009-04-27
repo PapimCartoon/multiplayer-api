@@ -67,9 +67,9 @@ public final class AS3_Loader
 		
 		var res:Array = [];
 		res.push("Images cached:");
-		res.push.apply(null,cachedRes);
+		StaticFunctions.pushAll(res,cachedRes);
 		res.push("\tImages in queue:");
-		res.push.apply(null,requestRes);
+		StaticFunctions.pushAll(res,requestRes);
 		return  res.join("\n\t\t\t")+
 			// pauseQueue might be null
 			"\npauseQueue="+pauseQueue;
@@ -226,17 +226,12 @@ public final class AS3_Loader
 			req.successHandler(ev);
 	}
 
-	private static function doLoadTrace():Boolean{
-		return (T.custom("doLoadTrace",true) as Boolean);
-	}
 	public static var EVENT_DATA_DEBUG_LEN:int = 20;
 	private static function loadURL(url:Object,successHandler:Function = null,failureHandler:Function = null,progressHandler:Function = null,context:LoaderContext = null, retryCount:int=0):void{
 		StaticFunctions.assert( retryCount<imageLoadingRetry, "Internal error in loadURL",[]);
 		
 		StaticFunctions.assert(url!=null,"loadURL was given a null url",[]);
-		if(failureHandler == null){
-			if(doLoadTrace())	tmpTrace("trying to load : ",url, " retryCount=",retryCount);
-		}
+		tmpTrace("trying to load : ",url, " retryCount=",retryCount);
 		if (successHandler == null){
 			successHandler = traceHandler
 		}
@@ -297,15 +292,13 @@ public final class AS3_Loader
 			tmpTrace("We loaded an empty ByteArray! so we retry to load the image again");
 			isFailure = true;
 		}
-					
-		if (doLoadTrace()) {			
-			tmpTrace("loaded url=",url," isFailure=",isFailure," event=",ev, " event.data=", 
-				// if you load a SWF, then .data is a very long $ByteArray$ "arr":[67,87...] 
-				data==null ? 			"no ev.target.data" :
-				data is String ? 		StaticFunctions.cutString(data as String,EVENT_DATA_DEBUG_LEN)  : 
-				data is ByteArray ?  	["ByteArray.len=",(data as ByteArray).length] :
-										"data is not String or ByteArray");
-		}
+								
+		tmpTrace("loaded url=",url," isFailure=",isFailure," event=",ev, " event.data=", 
+			// if you load a SWF, then .data is a very long $ByteArray$ "arr":[67,87...] 
+			data==null ? 			"no ev.target.data" :
+			data is String ? 		StaticFunctions.cutString(data as String,EVENT_DATA_DEBUG_LEN)  : 
+			data is ByteArray ?  	["ByteArray.len=",(data as ByteArray).length] :
+									"data is not String or ByteArray");
 		
 		if (!isFailure) {
 			successHandler(ev);
@@ -321,7 +314,7 @@ public final class AS3_Loader
 	
 	
 	public static function traceHandler(e:Event):void {
-        tmpTrace("traceHandler:", e!=null && e.target!=null && e.target.hasOwnProperty("data") ? e.target.data : "No data!");
+        // we already do tracing in tmpTrace
     }
 	public static function criticalError(ev:Event,url:String):void{
 		tmpTrace(" Error loading URL: ",url)

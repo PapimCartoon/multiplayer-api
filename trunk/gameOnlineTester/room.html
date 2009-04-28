@@ -56,7 +56,7 @@
 				paramsToSend[obj.htmlName] = windowParams[obj.htmlName]
 		}
 		paramsToSend = parametersToUrl(paramsToSend);*/
-		openWindows.push(single_popup=window.open(url+"&flash_type=game&type="+type, windowTarget, windowCreateParams))
+		openWindows.push(single_popup=window.open(url+"&type="+type, windowTarget, windowCreateParams))
 	}
 	function getParametersFromURL() {
 	    var res = new Array();
@@ -155,12 +155,19 @@
 			}
 				
 		}
+		
+		
+		
 		addTableParams(params,"serverTable")
 		loadSwf = "framework/distribution.swf"
 		params["chat_skin_url"]="graphics/chatGraphics.swf";
 		params["preloader_url"]="graphics/Preloader.swf";
 		params["swf_url"]=  "framework/FlashCode.swf";
+		isGame = (windowParams["flash_type"] == "room")
 		
+		isSmartAutoMatch = (windowParams["isSmartAutoMatch"] == "true")
+		windowParams["flash_type"] = "game";
+		windowParams["isSmartAutoMatch"] = "false"
 		paramsToSend ="room.html?"+parametersToUrl(windowParams)+"&";
 		params["override_config.openJavaScriptPopup.start_game_from_invite_url"] = paramsToSend;
 		params["override_config.openJavaScriptPopup.start_game_from_table_url"] = paramsToSend;
@@ -174,7 +181,7 @@
 			
 	
 	
-		if (windowParams["flash_type"] == "room"){
+		if (isGame){
 		document.title = "Room Tester"
 			if(windowParams["isYoavContainer"] == "true")
 				params["swf_url"]=  "MxmlRoomGraphics.swf";
@@ -221,7 +228,7 @@
 				params["override_config.game_parameters.SentInvitation.player_ids"] = windowParams["player_ids"];
 			}else if(windowParams["type"] == "AutoMatch"){
 				params["intro_screen_url"] = "graphics/IntroScreenSkin.swf"
-				if(windowParams["isSmartAutoMatch"] == "true")	params["intro_config_url"] = "XML/introConfig.XML"	
+				if(isSmartAutoMatch)	params["intro_config_url"] = "XML/introConfig.XML"	
 				params["override_config.game_parameters.start_scenario"] = "AutoMatch";
 				params["override_config.game_parameters.AutoMatch.match_string"] = windowParams["match_string"];
 			}

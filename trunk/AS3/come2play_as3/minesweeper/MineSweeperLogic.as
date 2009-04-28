@@ -227,6 +227,7 @@ package come2play_as3.minesweeper
 		{
 			var playerNum:int = allPlayerIds.indexOf(playerMove.playerId);
 			var currentData:PlayerData = playerGameData[playerNum]
+			if(currentData == null)	return;
 			if(isComputer){
 				if(serverBox.isMine){
 					mineSweeperGraphic.foundMine(playerNum,serverBox.xPos,serverBox.yPos);

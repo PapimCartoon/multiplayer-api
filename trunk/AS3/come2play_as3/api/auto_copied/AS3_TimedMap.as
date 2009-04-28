@@ -35,6 +35,15 @@ public final class AS3_TimedMap
 	public function contains(key:Object):Boolean {
 		return dic[key]!=null;
 	}
+	public function getVal(key:Object):Object {
+		return (dic[key] as DebugInfo).val;
+	}
+	public function getKeys():Array {
+		var res:Array = [];
+		for (var key:Object in dic)
+			res.push(key);
+		return res;
+	}
 	public function clear():void {
 		dic = new Dictionary();
 	}

@@ -106,4 +106,5 @@ import come2play_as2.api.auto_generated.*;
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
 		public static var CUSTOM_INFO_KEY_isBack:String = "CONTAINER_isBack";
+		public static var CUSTOM_INFO_KEY_isInReview:String = "CONTAINER_isInReview";
 	}

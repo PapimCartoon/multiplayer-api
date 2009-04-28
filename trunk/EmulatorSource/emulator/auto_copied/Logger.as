@@ -55,14 +55,13 @@ public final class Logger
 	}
 	public function toString():String { return "Logger "+name; }
 	
-	// todo: add "unlimitedTrace" or add the size of each trace line
 	public static var MAX_TRACE_LEN:int = 10000;	//10KB
 	public static var MAX_HUGE_LEN:int 	= 500000;	//500KB
 	
+	// the game traces are a single huge traceline
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	// the game traces are a single huge traceline
 	public function hugeLog(...args):void {
 		limitedLog(MAX_HUGE_LEN,args);		
 	}
@@ -72,10 +71,10 @@ public final class Logger
 	public function limitedLog(maxTraceLen:int, obj:Object):void {
 		if (maxTraces<=0) return;
 			 
+		var traceLine:LoggerLine = new LoggerLine(maxTraceLen,name,obj);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		var traceLine:LoggerLine = new LoggerLine(maxTraceLen,name,obj);
 		limitedPush(traces, traceLine , maxTraces); // we discard old traces
 	}
 	public static function limitedPush(arr:Array, element:Object, maxSize:int):void {
@@ -85,8 +84,8 @@ public final class Logger
 	public function getMyTraces():Array/*LoggerLine*/ {
 		return traces;
 	}
+}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-}
 }

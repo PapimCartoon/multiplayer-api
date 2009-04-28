@@ -13,7 +13,8 @@ public final class StaticFunctions
 	public static var GOOGLE_REVISION_NUMBER:int = 977;
 	public static var COME2PLAY_REVISION_NUMBER:int = 2785;
 	public static function getRevision():String {
-		return "g="+GOOGLE_REVISION_NUMBER+",c2p="+COME2PLAY_REVISION_NUMBER;		
+		return (SerializableClass.IS_IN_FRAMEWORK ? "Container" : "Game")+
+			" g="+GOOGLE_REVISION_NUMBER+",c2p="+COME2PLAY_REVISION_NUMBER;		
 	}
 	
 	public static var someMovieClip:DisplayObjectContainer; // so we can display error messages on the stage	

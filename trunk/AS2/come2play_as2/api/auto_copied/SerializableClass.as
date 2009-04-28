@@ -167,9 +167,6 @@ class come2play_as2.api.auto_copied.SerializableClass /*<InAPI>extends Event</In
 		return xlass==null ? null : new xlass();
 	}    
  	
-	//todo: public static function deserializeXML(xml:String):Object {
-	//	return deserialize( JSON.parse(str) );
-	//}
 	public static function deserializeString(str:String):Object {
 		return deserialize( JSON.parse(str) );
 	}

@@ -28,7 +28,6 @@ package come2play_as3.api {
 		
 		public function BaseGameAPI(_someMovieClip:DisplayObjectContainer) {
 			super(_someMovieClip, false, getPrefixFromFlashVars(_someMovieClip),true);	
-			ErrorHandler.ERROR_REPORT_PREFIX = "GAME";
 			ALL_LOG.log(this);
 			ErrorHandler.SEND_BUG_REPORT = AS3_vs_AS2.delegate(this, this.sendBugReport);
 			AS3_vs_AS2.addKeyboardListener(_someMovieClip, ErrorHandler.wrapWithCatch("keyPressed",AS3_vs_AS2.delegate(this,this.keyPressed)));
@@ -37,12 +36,11 @@ package come2play_as3.api {
 			//come2play_as3.api::BaseGameAPI.abc = 666
 		}
 		private function sendBugReport(bug_id:int, errMessage:String):void {
-			sendMessage( API_DoAllFoundHacker.create(hackerUserId, 
-				"Got sendBugReport errMessage="+errMessage+
-				" bug_id="+bug_id+
 				// we take the traces in the container in AS3 by calling come2play_as3.api::StaticFunctions.getTraces()
 				// in AS2, I limit the traces to 10KB because LocalConnection has a limit of 40KB for messages.
-				(AS3_vs_AS2.isAS3 ? " (flashTraces are too long)" : StaticFunctions.cutString(StaticFunctions.getTraces(),10000) ) ) ); 
+			if (!AS3_vs_AS2.isAS3)
+				errMessage = errMessage + StaticFunctions.cutString(StaticFunctions.getTraces(),10000); 
+			sendMessage( API_DoAllFoundHacker.create(hackerUserId,errMessage) ); 
 		}
 		public function toString():String {
 			var output:Array/*String*/ = [];

@@ -34,7 +34,6 @@ class come2play_as2.api.auto_copied.Logger
 	}
 	public function toString():String { return "Logger "+name; }
 	
-	// todo: add "unlimitedTrace" or add the size of each trace line
 	public static var MAX_TRACE_LEN:Number = 10000;	//10KB
 	public static var MAX_HUGE_LEN:Number 	= 500000;	//500KB
 	

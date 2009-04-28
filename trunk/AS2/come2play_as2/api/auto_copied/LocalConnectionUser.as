@@ -96,9 +96,12 @@ import come2play_as2.api.auto_copied.*;
 		public var verifier:ProtocolVerifier;
 		public var _shouldVerify:Boolean;
 		private var isUsingAS3:Boolean;
+		public var originalPrefix:String;
+		
 		//Constructor
 		public function LocalConnectionUser(_someMovieClip:MovieClip, isContainer:Boolean, sPrefix:String,shouldVerify:Boolean) {
 			try {
+				this.originalPrefix = sPrefix;
 				this.isUsingAS3 = sPrefix==USING_AS3_PREFIX;
 							
 				if (!isContainer) // in the container we apply the reflection in RoomLogic (e.g., for a room we do not have a localconnection) 

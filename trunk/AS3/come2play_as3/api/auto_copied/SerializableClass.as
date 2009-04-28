@@ -169,9 +169,6 @@ public class SerializableClass /*<InAPI>*/extends Event/*</InAPI>*/
 		return xlass==null ? null : new xlass();
 	}    
  	
-	//todo: public static function deserializeXML(xml:String):Object {
-	//	return deserialize( JSON.parse(str) );
-	//}
 	public static function deserializeString(str:String):Object {
 		return deserialize( JSON.parse(str) );
 	}

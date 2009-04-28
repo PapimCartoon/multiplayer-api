@@ -69,6 +69,7 @@ import come2play_as2.api.*;
 		
 		public static var WAIT_BETWEEN_EXTRA_CALLBACKS:Number = 0;
 		public static var EXTRA_CALLBACKS:Array/*API_Message*/ = [];
+		private static var LOG:Logger = new Logger("SinglePlayerEmulator",10);
 												 
 		private var messageNum:Number = 10000;
 		private var curUserId:Number; // the current userId (we change this curUserId when getting doAllSetTurn)
@@ -76,11 +77,12 @@ import come2play_as2.api.*;
 		private var apiMsgsQueue:Array/*API_Message*/ = [];
 		private var serverStateMiror:ObjectDictionary;
 		public function SinglePlayerEmulator(graphics:MovieClip) {
-			super(graphics,true, DEFAULT_LOCALCONNECTION_PREFIX,true);			
+			super(graphics,true, DEFAULT_LOCALCONNECTION_PREFIX,true);
+			LOG.log("Created!!!");			
 		}
 		private function updateUserIds(userIdsToUpdate:Array/*int*/,userIdsToAdd:Array/*int*/):Boolean{
 			var updated:Boolean = false;
-			var p84:Number=0; for (var i84:String in userIdsToAdd) { var id:Number = userIdsToAdd[userIdsToAdd.length==null ? i84 : p84]; p84++;
+			var p86:Number=0; for (var i86:String in userIdsToAdd) { var id:Number = userIdsToAdd[userIdsToAdd.length==null ? i86 : p86]; p86++;
 				if(AS3_vs_AS2.IndexOf(userIdsToUpdate,id)==-1){
 					updated = true;
 					userIdsToUpdate.push(id);
@@ -117,7 +119,7 @@ import come2play_as2.api.*;
 			var serverEntries:Array/*ServerEntry*/ = new Array();
 			var serverEntry:ServerEntry;
 			var pointerObject:Object;
-			var p121:Number=0; for (var i121:String in revealEntries) { var revealEntry:RevealEntry = revealEntries[revealEntries.length==null ? i121 : p121]; p121++;
+			var p123:Number=0; for (var i123:String in revealEntries) { var revealEntry:RevealEntry = revealEntries[revealEntries.length==null ? i123 : p123]; p123++;
 				if (revealEntry.depth == 0) {
 					serverEntry = doRevealEntry(revealEntry);
 					if (serverEntry!=null)	serverEntries.push(serverEntry);
@@ -161,7 +163,7 @@ import come2play_as2.api.*;
 		private function extractStoredData(userEntries:Array/*UserEntry*/,storePrefrence:Number):Array/*ServerEntries*/{
 			var serverEntries:Array/*ServerEntry*/ = [];
 			var serverEntry:ServerEntry;
-			var p165:Number=0; for (var i165:String in userEntries) { var userEntry:UserEntry = userEntries[userEntries.length==null ? i165 : p165]; p165++;
+			var p167:Number=0; for (var i167:String in userEntries) { var userEntry:UserEntry = userEntries[userEntries.length==null ? i167 : p167]; p167++;
 				switch(storePrefrence){
 					case 1:serverEntry = ServerEntry.create(userEntry.key, userEntry.value,curUserId,userEntry.isSecret ? [curUserId] : null, getTimer()); break;
 					case 2:serverEntry = ServerEntry.create(userEntry.key, userEntry.value,-1,userEntry.isSecret ? [] : null, getTimer()); break;
@@ -202,7 +204,7 @@ import come2play_as2.api.*;
 			if (msg instanceof API_Transaction) {
 				var transaction:API_Transaction = API_Transaction(msg);
 				var tempServerEntries:Array;
-				var p206:Number=0; for (var i206:String in transaction.messages) { var innerMsg:API_Message = transaction.messages[transaction.messages.length==null ? i206 : p206]; p206++;
+				var p208:Number=0; for (var i208:String in transaction.messages) { var innerMsg:API_Message = transaction.messages[transaction.messages.length==null ? i208 : p208]; p208++;
 					tempServerEntries = messageHandler(innerMsg,serverEntries);
 					if(tempServerEntries.length>0)
 					serverEntries = serverEntries.concat(tempServerEntries);
@@ -270,7 +272,7 @@ import come2play_as2.api.*;
 				var newlyFinishedUserIds:Array = [];
 				var t:T = new T();
 				t.add( T.i18n("Game is over for:\n") );
-				var p274:Number=0; for (var i274:String in endMatch.finishedPlayers) { var matchOver:PlayerMatchOver = endMatch.finishedPlayers[endMatch.finishedPlayers.length==null ? i274 : p274]; p274++;
+				var p276:Number=0; for (var i276:String in endMatch.finishedPlayers) { var matchOver:PlayerMatchOver = endMatch.finishedPlayers[endMatch.finishedPlayers.length==null ? i276 : p276]; p276++;
 					var playerId:Number = matchOver.playerId;
 					newlyFinishedUserIds.push( playerId );
 					finishedUserIds.push( playerId );
@@ -287,12 +289,10 @@ import come2play_as2.api.*;
 				doRegisterOnServer();
 			} else if (msg instanceof API_DoAllRequestStateCalculation) { 
 				var requestStateCalculationMsg:API_DoAllRequestStateCalculation = API_DoAllRequestStateCalculation(msg);
-				var p291:Number=0; for (var i291:String in requestStateCalculationMsg.keys) { var key:Object = requestStateCalculationMsg.keys[requestStateCalculationMsg.keys.length==null ? i291 : p291]; p291++;
+				var p293:Number=0; for (var i293:String in requestStateCalculationMsg.keys) { var key:Object = requestStateCalculationMsg.keys[requestStateCalculationMsg.keys.length==null ? i293 : p293]; p293++;
 					var entry:ServerEntry = ServerEntry(serverStateMiror.getValue(key));
 					if(entry!= null)
 						serverEntries.push(entry)
-					else
-						trace(JSON.stringify(key))
 				}
 				queueSendMessage(API_GotRequestStateCalculation.create(1,serverEntries))
         	} else if (msg instanceof API_DoAllSetTurn) {
@@ -300,6 +300,7 @@ import come2play_as2.api.*;
         		if (setTurn.userId!=curUserId) {
         			// we switch users by ending and loading the match
         			var userId:Number = setTurn.userId;
+        			LOG.log("Switch turns:",curUserId," ---> ",userId);
 					if (SHOW_TURN_MSGS) AS3_vs_AS2.showMessage( T.i18nReplace("The turn of $name$ is starting.\n", {name: getUserName(userId)}) , "newTurn");
 					
         			var ongoingIds:Array/*int*/ = StaticFunctions.subtractArray(getPlayerIds(),finishedUserIds);
@@ -334,7 +335,7 @@ import come2play_as2.api.*;
   			
   			if (DEFAULT_USERS_INFO.length>0) {
 	  			var pos:Number = 0;
-	  			var p338:Number=0; for (var i338:String in getPlayerIds()) { var curUserId:Number = getPlayerIds()[getPlayerIds().length==null ? i338 : p338]; p338++;
+	  			var p339:Number=0; for (var i339:String in getPlayerIds()) { var curUserId:Number = getPlayerIds()[getPlayerIds().length==null ? i339 : p339]; p339++;
 	  				queueSendMessage(API_GotUserInfo.create(curUserId, pos<DEFAULT_USERS_INFO.length ? DEFAULT_USERS_INFO[pos++] : DEFAULT_USERS_INFO[pos-1]) );
 				}
 	  		}
@@ -344,14 +345,14 @@ import come2play_as2.api.*;
 	  		setCurUserId( getFirstPlayerId() );
 	  		
   			serverStateMiror = new ObjectDictionary();	
-  			var p348:Number=0; for (var i348:String in DEFAULT_MATCH_STATE) { var serverEntry:ServerEntry = DEFAULT_MATCH_STATE[DEFAULT_MATCH_STATE.length==null ? i348 : p348]; p348++;
+  			var p349:Number=0; for (var i349:String in DEFAULT_MATCH_STATE) { var serverEntry:ServerEntry = DEFAULT_MATCH_STATE[DEFAULT_MATCH_STATE.length==null ? i349 : p349]; p349++;
   				serverStateMiror.addEntry(serverEntry);
 			}
 			finishedUserIds = DEFAULT_FINISHED_USER_IDS.concat(); // to create a copy
   			queueSendMessage(API_GotMatchStarted.create(++messageNum,getPlayerIds(), finishedUserIds, serverStateMiror.getValues() ) );
   			if (WAIT_BETWEEN_EXTRA_CALLBACKS==0) {
-	  			var p354:Number=0; for (var i354:String in EXTRA_CALLBACKS) { var extraCallback:API_Message = EXTRA_CALLBACKS[EXTRA_CALLBACKS.length==null ? i354 : p354]; p354++;
-	  				trace("Passing extraCallback="+extraCallback);
+	  			var p355:Number=0; for (var i355:String in EXTRA_CALLBACKS) { var extraCallback:API_Message = EXTRA_CALLBACKS[EXTRA_CALLBACKS.length==null ? i355 : p355]; p355++;
+	  				LOG.log("Passing extraCallback=",extraCallback);
 	  				queueSendMessage( extraCallback );
 	  			}
 	  		} else  				

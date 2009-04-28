@@ -10,8 +10,6 @@ public final class ErrorHandler
 	}
 	public static function getOngoingTimers():String {
 		var res:Array = [];
-		res.push("ERROR REPORT FROM:");
-		res.push(ERROR_REPORT_PREFIX);
 		res.push("My stack traces:");	
 		res.push( getStackTraces() );
 		res.push("\n");
@@ -133,7 +131,6 @@ public final class ErrorHandler
 			alwaysTraceAndSendReport("BAD stack behaviour (multithreaded flash?)", [my_stack_trace, toInsert, poped]);
 		return res;				
 	}
-	public static var ERROR_REPORT_PREFIX:String = "DISTRIBUTION"; // where did the error come from?
 	public static function handleError(err:Error, obj:Object):void {
 		alwaysTraceAndSendReport("handleError: "+AS3_vs_AS2.error2String(err),[" catching-arguments=",obj]);
 	}	
@@ -159,7 +156,6 @@ public final class ErrorHandler
 			var errMessage:String = 
 				(stackTraces==null ? "" : "AAAA (with stack trace) ")+ // so I will easily find them in our "errors page"
 				"Revision="+StaticFunctions.getRevision()+": "+
-				ERROR_REPORT_PREFIX + " " +
 				errStr;
 			
 			if (SEND_BUG_REPORT!=null)

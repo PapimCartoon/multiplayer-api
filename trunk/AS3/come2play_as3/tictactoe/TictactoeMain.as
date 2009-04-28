@@ -439,15 +439,15 @@ public final class TictactoeMain extends ClientGameAPI {
 		if (logic==null) return; // game not in progress
 		if (!isMyTurn()) return; // not my turn
 		if (!logic.isSquareAvailable(move)) return; // already filled this square (e.g., if you press on the keyboard, you may choose a cell that is already full)
-
-		shouldSendMove = false;		
+		
 		for each (var square:TictactoeSquare in allCells) {				
 			if (!logic.isSquareAvailable(square)) continue;
 			if (move.isEqual(square)) continue; // otherwise, it causes a slight blink because we show the logo and then immediately the move animation
 			var squareGraphics:TictactoeSquareGraphic = getSquareGraphic(square);
 			squareGraphics.startMove(TictactoeSquareGraphic.BTN_NONE); // to cancel mouseOver and mouseOut
 		}
-		
+
+		shouldSendMove = false;		
 		doStoreState( [UserEntry.create(getEntryKey(), move, false)] );		
 		// We do not update the graphics here. We update the graphics only after the server called gotStateChanged
 		// Note that as a result, if the user clicks quickly on the same button, then we reject future clicks using shouldSendMove
@@ -459,18 +459,19 @@ public final class TictactoeMain extends ClientGameAPI {
 	private function startMove(isInProgress:Boolean):void {
 		if (logic==null) return; 
 						
-		if (isInProgress) {
-			doAllSetTurn(allPlayerIds[isSinglePlayer() ? 0 : turnOfColor],-1);
-		}		
-		if (isMyTurn()) shouldSendMove = true;
-		
 		var isBack:Boolean = AS3_vs_AS2.asBoolean(T.custom(CUSTOM_INFO_KEY_isBack,false));
+		var isInReview:Boolean = AS3_vs_AS2.asBoolean(T.custom(CUSTOM_INFO_KEY_isInReview,false));
 		var isViewer:Boolean = myColor==VIEWER;
 		var _isMyTurn:Boolean = isMyTurn();
 		LOG.log("isInProgress=",isInProgress, 
 			"isBack=",isBack, 
 			"isViewer=",isViewer,
 			"isMyTurn=",_isMyTurn); 
+		
+		if (isInProgress) {
+			doAllSetTurn(allPlayerIds[isSinglePlayer() ? 0 : turnOfColor],-1);
+			if (isMyTurn() && !isInReview) shouldSendMove = true;
+		}		
 		
 		for each (var square:TictactoeSquare in allCells) {				
 			if (!logic.isSquareAvailable(square)) continue;

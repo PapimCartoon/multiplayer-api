@@ -36,7 +36,6 @@ public final class Logger
 	}
 	public function toString():String { return "Logger "+name; }
 	
-	// todo: add "unlimitedTrace" or add the size of each trace line
 	public static var MAX_TRACE_LEN:int = 10000;	//10KB
 	public static var MAX_HUGE_LEN:int 	= 500000;	//500KB
 	

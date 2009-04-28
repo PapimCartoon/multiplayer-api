@@ -227,13 +227,10 @@ public class SerializableClass /*<InAPI>*/extends Event/*</InAPI>*/
 		return xlass==null ? null : new xlass();
 	}    
  	
-	//todo: public static function deserializeXML(xml:String):Object {
+	public static function deserializeString(str:String):Object {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	//	return deserialize( JSON.parse(str) );
-	//}
-	public static function deserializeString(str:String):Object {
 		return deserialize( JSON.parse(str) );
 	}
 	
@@ -241,12 +238,12 @@ public class SerializableClass /*<InAPI>*/extends Event/*</InAPI>*/
 		if (object==null) return null;	
 		if (AS3_vs_AS2.isSerializableClass(object)) 
 			return AS3_vs_AS2.asSerializableClass(object).toObject();
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 		var isArray:Boolean = AS3_vs_AS2.isArray(object);
 		var isObj:Boolean = isObject(object);
 		var res:Object = object;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		if (isArray || isObj) {
 			res = isArray ? [] : {}; // we create a new copy	
 			for (var key:String in object)
@@ -254,12 +251,12 @@ public class SerializableClass /*<InAPI>*/extends Event/*</InAPI>*/
 		}
 		return res;
 	}
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 	public static function shallowDeserialize(object:Object):Object {
 		var shortName:String = 
 					object.hasOwnProperty(CLASS_NAME_FIELD) ? 
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 					object[CLASS_NAME_FIELD] : null;
 		if (shortName!=null && 
 			(IS_IN_GAME || SHORTNAME_TO_INSTANCE[shortName]!=null)) {				
@@ -268,10 +265,10 @@ public class SerializableClass /*<InAPI>*/extends Event/*</InAPI>*/
 				for (var key:String in object)
 					newObject[key] = object[key]; // might throw an illegal assignment (due to type mismatch)
 
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
-
 				AS3_vs_AS2.checkAllFieldsDeserialized(object, newObject);
+
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
 
 				object = newObject.postDeserialize();
 			}
@@ -280,12 +277,12 @@ public class SerializableClass /*<InAPI>*/extends Event/*</InAPI>*/
 	}
 	public static function deserialize(object:Object):Object {
 		try {
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 			if (object==null) return null;
 			var isArray:Boolean = AS3_vs_AS2.isArray(object);
 			var isObj:Boolean = isObject(object);
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			var res:Object = object;
 			if (isArray || isObj) {				
 				
@@ -293,12 +290,12 @@ public class SerializableClass /*<InAPI>*/extends Event/*</InAPI>*/
 		
 				for (var key:String in object)
 					res[key] = deserialize(object[key]); 
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 				
 				res = shallowDeserialize(res);						
 			}
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			//trace(JSON.stringify(object)+" object="+object+" res="+res+" isArray="+isArray+" isObj="+isObj);
 			return res; 						
 		} catch (err:Error) {
@@ -306,12 +303,12 @@ public class SerializableClass /*<InAPI>*/extends Event/*</InAPI>*/
 			//	then it will cause an error (that may be discovered only in the reveal stage)
 			// instead the client should call setMaybeHackerUserId before processing secret data.
 			REGISTER_LOG.log("Exception thrown in deserialize:",err);
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 			if (IS_THROWING_EXCEPTIONS)
 				throw err;
 		}
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		return object;
 	}	
 	public static function isToStringObject(str:String):Boolean {
@@ -319,9 +316,6 @@ public class SerializableClass /*<InAPI>*/extends Event/*</InAPI>*/
 	}
 	public static function isObject(o:Object):Boolean {
 		return isToStringObject(o.toString());	
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 	}
 }
 }

@@ -7,19 +7,17 @@ class come2play_as2.api.auto_copied.ErrorHandler
 	}
 	public static function getOngoingTimers():String {
 		var res:Array = [];
-		res.push("ERROR REPORT FROM:");
-		res.push(ERROR_REPORT_PREFIX);
 		res.push("My stack traces:");	
 		res.push( getStackTraces() );
 		res.push("\n");
 					
 		res.push("My ongoingIntervals:");
-		var p18:Number=0; for (var i18:String in ongoingIntervals) { var arr1:Array = ongoingIntervals[ongoingIntervals.length==null ? i18 : p18]; p18++;
+		var p16:Number=0; for (var i16:String in ongoingIntervals) { var arr1:Array = ongoingIntervals[ongoingIntervals.length==null ? i16 : p16]; p16++;
 			res.push( "\t"+JSON.stringify(arr1) );
 		}
 		res.push("\n");
 		res.push("My ongoingTimeouts:\n");
-		var p23:Number=0; for (var i23:String in ongoingTimeouts) { var arr2:Array = ongoingTimeouts[ongoingTimeouts.length==null ? i23 : p23]; p23++;
+		var p21:Number=0; for (var i21:String in ongoingTimeouts) { var arr2:Array = ongoingTimeouts[ongoingTimeouts.length==null ? i21 : p21]; p21++;
 			res.push( "\t"+JSON.stringify(arr2) );
 		}
 		res.push("\n");		
@@ -130,7 +128,6 @@ class come2play_as2.api.auto_copied.ErrorHandler
 			alwaysTraceAndSendReport("BAD stack behaviour (multithreaded flash?)", [my_stack_trace, toInsert, poped]);
 		return res;				
 	}
-	public static var ERROR_REPORT_PREFIX:String = "DISTRIBUTION"; // where did the error come from?
 	public static function handleError(err:Error, obj:Object):Void {
 		alwaysTraceAndSendReport("handleError: "+AS3_vs_AS2.error2String(err),[" catching-arguments=",obj]);
 	}	
@@ -156,7 +153,6 @@ class come2play_as2.api.auto_copied.ErrorHandler
 			var errMessage:String = 
 				(stackTraces==null ? "" : "AAAA (with stack trace) ")+ // so I will easily find them in our "errors page"
 				"Revision="+StaticFunctions.getRevision()+": "+
-				ERROR_REPORT_PREFIX + " " +
 				errStr;
 			
 			if (SEND_BUG_REPORT!=null)

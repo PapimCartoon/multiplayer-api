@@ -435,18 +435,18 @@ class come2play_as2.tictactoe.TictactoeMain extends ClientGameAPI {
 		if (logic==null) return; // game not in progress
 		if (!isMyTurn()) return; // not my turn
 		if (!logic.isSquareAvailable(move)) return; // already filled this square (e.g., if you press on the keyboard, you may choose a cell that is already full)
-
-		shouldSendMove = false;		
-		var p442:Number=0; for (var i442:String in allCells) { var square:TictactoeSquare = allCells[allCells.length==null ? i442 : p442]; p442++;
+		
+		var p441:Number=0; for (var i441:String in allCells) { var square:TictactoeSquare = allCells[allCells.length==null ? i441 : p441]; p441++;
 			if (!logic.isSquareAvailable(square)) continue;
 			if (move.isEqual(square)) continue; // otherwise, it causes a slight blink because we show the logo and then immediately the move animation
 			var squareGraphics:TictactoeSquareGraphic = getSquareGraphic(square);
 			squareGraphics.startMove(TictactoeSquareGraphic.BTN_NONE); // to cancel mouseOver and mouseOut
 		}
-		
+
+		shouldSendMove = false;		
 		doStoreState( [UserEntry.create(getEntryKey(), move, false)] );		
 		// We do not update the graphics here. We update the graphics only after the server called gotStateChanged
-		// Note that as a result, if the user presses quickly on the same button, there might be several identical calls to doStoreState.
+		// Note that as a result, if the user clicks quickly on the same button, then we reject future clicks using shouldSendMove
 	}
 	private function isMyTurn():Boolean {
 		return isSinglePlayer() || myColor==turnOfColor;
@@ -455,12 +455,8 @@ class come2play_as2.tictactoe.TictactoeMain extends ClientGameAPI {
 	private function startMove(isInProgress:Boolean):Void {
 		if (logic==null) return; 
 						
-		if (isInProgress) {
-			doAllSetTurn(allPlayerIds[isSinglePlayer() ? 0 : turnOfColor],-1);
-		}		
-		if (isMyTurn()) shouldSendMove = true;
-		
 		var isBack:Boolean = AS3_vs_AS2.asBoolean(T.custom(CUSTOM_INFO_KEY_isBack,false));
+		var isInReview:Boolean = AS3_vs_AS2.asBoolean(T.custom(CUSTOM_INFO_KEY_isInReview,false));
 		var isViewer:Boolean = myColor==VIEWER;
 		var _isMyTurn:Boolean = isMyTurn();
 		LOG.log("isInProgress=",isInProgress, 
@@ -468,7 +464,12 @@ class come2play_as2.tictactoe.TictactoeMain extends ClientGameAPI {
 			"isViewer=",isViewer,
 			"isMyTurn=",_isMyTurn); 
 		
-		var p473:Number=0; for (var i473:String in allCells) { var square:TictactoeSquare = allCells[allCells.length==null ? i473 : p473]; p473++;
+		if (isInProgress) {
+			doAllSetTurn(allPlayerIds[isSinglePlayer() ? 0 : turnOfColor],-1);
+			if (isMyTurn() && !isInReview) shouldSendMove = true;
+		}		
+		
+		var p474:Number=0; for (var i474:String in allCells) { var square:TictactoeSquare = allCells[allCells.length==null ? i474 : p474]; p474++;
 			if (!logic.isSquareAvailable(square)) continue;
 			var squareGraphics:TictactoeSquareGraphic = getSquareGraphic(square);
 			squareGraphics.startMove(

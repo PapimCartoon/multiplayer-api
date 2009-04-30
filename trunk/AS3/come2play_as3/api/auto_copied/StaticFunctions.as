@@ -243,11 +243,18 @@ public final class StaticFunctions
 	private static var REFLECTION_LOG:Logger = new Logger("REFLECTION",10);
 	public static function performReflectionFromFlashVars(_someMovieClip:DisplayObjectContainer):void {		
 		var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(_someMovieClip);		
+		performReflectionFromObject(parameters);		
+	}
+	public static function performReflectionFromObject(parameters:Object):void {
 		REFLECTION_LOG.log("performReflectionFromFlashVars=",parameters);
+		// e.g., REFLECTION_come2play_as3.util::General.isDoingTrace=true
 		for (var key:String in parameters) {
 			if (startsWith(key,REFLECTION_PREFIX)) {
 				var before:String = key.substr(REFLECTION_PREFIX.length);
 				var after:String = parameters[key];
+				// e.g., 
+				// before=come2play_as3.util::General.isDoingTrace
+				// after=true
 				performReflectionString(before, after);	
 			}			
 		}

@@ -238,11 +238,18 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	private static var REFLECTION_LOG:Logger = new Logger("REFLECTION",10);
 	public static function performReflectionFromFlashVars(_someMovieClip:MovieClip):Void {		
 		var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(_someMovieClip);		
+		performReflectionFromObject(parameters);		
+	}
+	public static function performReflectionFromObject(parameters:Object):Void {
 		REFLECTION_LOG.log("performReflectionFromFlashVars=",parameters);
+		// e.g., REFLECTION_come2play_as2.util::General.isDoingTrace=true
 		for (var key:String in parameters) {
 			if (startsWith(key,REFLECTION_PREFIX)) {
 				var before:String = key.substr(REFLECTION_PREFIX.length);
 				var after:String = parameters[key];
+				// e.g., 
+				// before=come2play_as2.util::General.isDoingTrace
+				// after=true
 				performReflectionString(before, after);	
 			}			
 		}
@@ -313,7 +320,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	}
 	public static function instance2Object(instance:Object, fields:Array/*String*/):Object {
 		var res:Object = {};
-		var p319:Number=0; for (var i319:String in fields) { var field:String = fields[fields.length==null ? i319 : p319]; p319++;
+		var p326:Number=0; for (var i326:String in fields) { var field:String = fields[fields.length==null ? i326 : p326]; p326++;
 			res[field] = instance[field];
 		}
 		return res;
@@ -352,14 +359,14 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	public static function setMethodParameters(msg:API_Message, parameters:Array):Void { 
 		var names:Array = getParamNames(msg); 
 		var pos:Number = 0;
-		var p358:Number=0; for (var i358:String in names) { var name:String = names[names.length==null ? i358 : p358]; p358++;
+		var p365:Number=0; for (var i365:String in names) { var name:String = names[names.length==null ? i365 : p365]; p365++;
 			msg[name] = parameters[pos++];
 		}
 	}
 	public static function getMethodParameters(msg:API_Message):Array { 
 		var names:Array = getParamNames(msg);
 		var res:Array = [];
-		var p365:Number=0; for (var i365:String in names) { var name:String = names[names.length==null ? i365 : p365]; p365++;
+		var p372:Number=0; for (var i372:String in names) { var name:String = names[names.length==null ? i372 : p372]; p372++;
 			res.push(msg[name]);
 		}
 		return res;

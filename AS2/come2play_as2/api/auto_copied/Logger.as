@@ -38,10 +38,10 @@ class come2play_as2.api.auto_copied.Logger
 	public static var MAX_HUGE_LEN:Number 	= 500000;	//500KB
 	
 	// the game traces are a single huge traceline
-	public function hugeLog(/*InAS3: ...args*/):Void { var args:Array = arguments.slice(0); 
+	public function hugeLog(...args):Void {
 		limitedLog(MAX_HUGE_LEN,args);		
 	}
-	public function log(/*InAS3: ...args*/):Void { var args:Array = arguments.slice(0); 
+	public function log(...args):Void {
 		limitedLog(MAX_TRACE_LEN,args);
 	}
 	public function limitedLog(maxTraceLen:Number, obj:Object):Void {

@@ -5,8 +5,8 @@
 import come2play_as2.api.auto_copied.*;
 class come2play_as2.api.auto_copied.StaticFunctions
 {			
-	public static var GOOGLE_REVISION_NUMBER:Number = 977;
-	public static var COME2PLAY_REVISION_NUMBER:Number = 2785;
+	public static var GOOGLE_REVISION_NUMBER:Number = 979;
+	public static var COME2PLAY_REVISION_NUMBER:Number = 2787;
 	public static function getRevision():String {
 		return (SerializableClass.IS_IN_FRAMEWORK ? "Container" : "Game")+
 			" g="+GOOGLE_REVISION_NUMBER+",c2p="+COME2PLAY_REVISION_NUMBER;		
@@ -113,7 +113,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 		showError("Throwing the following error="+AS3_vs_AS2.error2String(err));
 		throw err;
 	}		
-	public static function assert(val:Boolean, name:String/*InAS3: ...args*/):Void { var args:Array = arguments.slice(2); 
+	public static function assert(val:Boolean, name:String, ...args):Void {
 		if (name==null || name=='') throwError("When calling assert you must pass a non empty name! args="+JSON.stringify(args)); 
 		if (!val) throwError("An assertion failed! name="+name+" arguments="+JSON.stringify(args));
 	}

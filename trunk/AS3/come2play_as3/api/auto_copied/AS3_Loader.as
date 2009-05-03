@@ -227,7 +227,8 @@ public final class AS3_Loader
 	}
 
 	public static var EVENT_DATA_DEBUG_LEN:int = 20;
-	private static function loadURL(url:Object,successHandler:Function = null,failureHandler:Function = null,progressHandler:Function = null,context:LoaderContext = null, retryCount:int=0):void{
+	private static function loadURL(url:Object/*String or URLRequest*/,successHandler:Function = null,failureHandler:Function = null,progressHandler:Function = null,context:LoaderContext = null, retryCount:int=0):void{
+		StaticFunctions.assert( url is String || url is URLRequest, "url must be String or URLRequest", url);
 		StaticFunctions.assert( retryCount<imageLoadingRetry, "Internal error in loadURL",[]);
 		
 		StaticFunctions.assert(url!=null,"loadURL was given a null url",[]);
@@ -235,8 +236,8 @@ public final class AS3_Loader
 		if (successHandler == null){
 			successHandler = traceHandler
 		}
-		if (failureHandler==null) {
-			failureHandler = function (ev:Event):void {criticalError(ev,url as String);};			
+		if (failureHandler==null) {			
+			failureHandler = function (ev:Event):void {criticalError(ev,url is String ? url as String : (url as URLRequest).url);};			
 		}	
 		//The Loader class is used to load SWF files or image (JPG, PNG, or GIF) files.  
 		//Use the URLLoader class to load text or binary data.
@@ -271,10 +272,11 @@ public final class AS3_Loader
 			
   		try {
 	  		if (url is String) {
+	  			var urlString:String = url as String;
 	  			if(!useCache){
-	  				urlloader.load(new URLRequest(url as String));
+	  				urlloader.load(new URLRequest(urlString));
 	  			}else{
-	  				loader.load(new URLRequest(url as String),context);
+	  				loader.load(new URLRequest(urlString),context);
 	  			}
 			} else {
 				urlloader.load(url as URLRequest);

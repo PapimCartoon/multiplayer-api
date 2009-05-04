@@ -243,7 +243,7 @@ Not used by the graphics yet (but should be displayed):
 		
 		
 		<!--
-		chatType can be FIXED,DYNAMIC_OPEN,DYNAMIC_CLOSED,NO_CHAT_WITH_USERS_LIST or NO_CHAT
+		chatType can be FIXED,DYNAMIC_OPEN,DYNAMIC_CLOSED,NO_CHAT_WITH_USERS_LIST,CHAT_DYNAMIC_CLOSED_WITH_NO_USERS_LIST,CHAT_WITH_NO_USERS_LIST or NO_CHAT
 		 -->
 		<entry><key>chatType</key><value>"DYNAMIC_OPEN"</value></entry>
 		<!--
@@ -993,7 +993,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 		</language>
 		
 		<!-- ads -->
-		<is_show_ad type="boolean">true</is_show_ad>
+		<is_show_ad type="boolean">false</is_show_ad>
 		<inline_ad_url>images/ad_stub.swf</inline_ad_url>
 		
 		<framework>
@@ -1002,7 +1002,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 			</waiting_screen>
 			
 			<ads>
-				<is_show_pre_add type="boolean">true</is_show_pre_add>
+				<is_show_pre_add type="boolean">false</is_show_pre_add>
 				<is_show_post_add type="boolean">true</is_show_post_add>
 			</ads>
 			

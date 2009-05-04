@@ -172,7 +172,7 @@ class PlayerGraphicData extends MovieClip
 	}
 	public function updateLives(newLives:int):void
 	{
-		trace("newLivesnewLivesnewLives"+newLives)
+		
 		if(newLives < currentLives)
 		{
 			for(var i:int =(currentLives-1);i>=newLives;i-- )

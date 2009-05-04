@@ -129,7 +129,7 @@ package come2play_as3.minesweeper
 			var safeZones:Array = new Array /*Array*//*ServerBox*/
 			for each (var serverEntry:ServerEntry in serverEntries)
 			{
-				trace("serverEntry :"+JSON.stringify(serverEntry.value))
+			
 				if(serverEntry.value is PlayerMove)
 					addPlayerMove(serverEntry.value as PlayerMove)
 				else if(serverEntry.value is ServerBox)
@@ -151,7 +151,7 @@ package come2play_as3.minesweeper
 		{
 			var xPos:int = Math.floor((ev.stageX-(stageX+9.5))/(MineSweeperMain.squareSize*scaleX));
 			var yPos:int = Math.floor((ev.stageY-(stageY+7))/(MineSweeperMain.squareSize*scaleY));
-			trace(scaleX+"/"+scaleY)
+			
 			if((xPos> -1)&&(xPos<(boardWidth))&&(yPos>-1)&&(yPos<(boardWidth)))
 				if((boardLogic[xPos][yPos] == 0) && (isPlaying))
 				{

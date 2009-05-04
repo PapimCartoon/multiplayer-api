@@ -179,7 +179,7 @@ import flash.utils.*;
 		private function addNewMove(serverEntries:Array/*ServerEntry*/):void{
 			var serverEntry:ServerEntry = serverEntries[1];
 			if(serverEntry == null){
-				trace("Ok")
+				
 			}else if (serverEntry.value == null){
 				if(serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" deleting a move must be agreed by all users");
 				//if(!isPlaying) return;

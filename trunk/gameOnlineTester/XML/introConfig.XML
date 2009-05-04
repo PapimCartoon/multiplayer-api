@@ -1,7 +1,7 @@
 <introConfig>
 	<configURL>XML/config2.XML</configURL>
 	<graphics>
-		<gameDisplayName>cool game</gameDisplayName><!--The name of the game that will be displayed-->
+		<gameDisplayName>coo</gameDisplayName><!--The name of the game that will be displayed-->
 		<bigGameThumb></bigGameThumb><!--The URL the game will load as the background for the intro screen-->
 		<smallGameThumb></smallGameThumb><!--The URL the game will load as a side image-->
 		<introLogoURL></introLogoURL><!--The URL of the logo that is connected to the owner-->
@@ -11,7 +11,7 @@
 	<user_info>
 	  <name>This is the longest name ever</name>
 	  <avatar_url>images/Avatar_4.gif</avatar_url>
-	  <is_guest>true</is_guest>
+	  <is_guest>false</is_guest>
 	  <user_statistics_url>http://www.google.com</user_statistics_url>  
       <game_rating>2000</game_rating>	
 	  <tokens>1:1:isToken=true</tokens>  
@@ -47,7 +47,7 @@
 	<inviteBuddyURL>file:///X:/come2play/API_GoogleCodeSVN/gameOnlineTester/room.html?flash_type=game&type=AutoMatch&match_string=dogs&room_id=999&isDefaultroomXML=true&isDefaultgameXML=true&PlayersNumSim=2&AutoMatch=true&MinPlayersNum=1&MaxPlayersNum=2&PlayersNum=2&boardHeight=400&boardWidth=400&gameStageX=100&gameStageY=0&gameSwf=..%2FAS3%2FSWFs%2FMinesweeperAS3.swf%3F&swfWidth=500&swfHeight=570&roomXML=XML%2Fconfig2.xml&gameXML=XML%2Fconfig2.xml&isVeteran=false&isMale=false&isGuest=false&credibility=1765&votes_sum=2049&votes_count=508&avatar=images%2FAvatar_2.gif&GameRating=1299&tokens=0%3A445%2C1%3A48&supervisor=MiniSupervisor&name=usu%C3%A1rio&id=1984&serverTable_0=chatType&chatType=FIXED&serverTable_1=isWithTables&isWithTables=true&gameTable_0=Board%20Width&Board%20Width=12&gameTable_1=Mine%20Amount&Mine%20Amount=20&</inviteBuddyURL>
 	<moreGamesURL>http://www.google.com/</moreGamesURL>
 	<!--if this value is not empty you must popout your game to play-->
-	<popoutURL></popoutURL>
+	<popoutURL>3</popoutURL>
 	<!--if this value is not empty the intro screen will do the action specefied-->
 	<autoMatchType></autoMatchType>
 
@@ -84,6 +84,13 @@
 	</userManagement>
 	<customInitInfo>
 		<custom>
+		
+			
+			<entry><key>isAbleToPlay</key><value>true</value></entry>
+			<entry><key>miniMode</key><value>true</value></entry>
+			<entry><key>showBottomLogo</key><value>false</value></entry>
+			<entry><key>isDevelopersTab</key><value>false</value></entry>
+		
 			<entry><key>computerImage</key><value>"images/Avatar_1.gif"</value></entry>
 			<entry><key>ratings</key><value>[0,1200,1400,1600,1800,2000,2200,2400]</value></entry>
 			<entry><key>tokenFolderURL</key><value>"graphics/rewards/"</value></entry>

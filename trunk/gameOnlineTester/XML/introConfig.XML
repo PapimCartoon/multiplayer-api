@@ -88,7 +88,7 @@
 			
 			<entry><key>isAbleToPlay</key><value>true</value></entry>
 			<entry><key>miniMode</key><value>false</value></entry>
-			<entry><key>showBottomLogo</key><value>false</value></entry>
+			<entry><key>showBottomLogo</key><value>true</value></entry>
 			<entry><key>isDevelopersTab</key><value>false</value></entry>
 		
 			<entry><key>computerImage</key><value>"images/Avatar_1.gif"</value></entry>

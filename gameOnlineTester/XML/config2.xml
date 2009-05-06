@@ -196,7 +196,7 @@ Not used by the graphics yet (but should be displayed):
 		 -->
 		<entry><key>EnablePressedControlMsg</key><value>false</value></entry>
 
-		<entry><key>minimizedChatSize</key><value>10</value></entry>
+		<entry><key>minimizedChatHeight</key><value>49</value></entry>
 		<entry><key>minimizableHeader</key><value>true</value></entry>
 		<entry><key>grabIt</key><value>"http://www.facebook.com"</value></entry>
 		<entry><key>do_alternate_start_turn</key><value>true</value></entry>
@@ -243,7 +243,7 @@ Not used by the graphics yet (but should be displayed):
 		
 		
 		<!--
-		chatType can be FIXED,DYNAMIC_OPEN,DYNAMIC_CLOSED,NO_CHAT_WITH_USERS_LIST,CHAT_DYNAMIC_CLOSED_WITH_NO_USERS_LIST,CHAT_WITH_NO_USERS_LIST or NO_CHAT
+		chatType can be FIXED,DYNAMIC_OPEN,DYNAMIC_CLOSED,NO_CHAT_WITH_USERS_LIST or NO_CHAT
 		 -->
 		<entry><key>chatType</key><value>"DYNAMIC_OPEN"</value></entry>
 		<!--
@@ -952,15 +952,15 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 			chat properties
 		-->
 		<chat>
-			<total_chat_height type="int">200</total_chat_height>
-			<chat_output_height type="int">145</chat_output_height> 	<!-- there has to be at least 55 px difference -->
-			<user_list_width type="int">150</user_list_width>
+			<total_chat_height type="int">155</total_chat_height>
+			<chat_output_height type="int">100</chat_output_height> 	<!-- there has to be at least 55 px difference -->
+			<user_list_width type="int">0</user_list_width>
 			
 			<max_content_height type="int">500</max_content_height>   <!-- this makes sure the actual graphics that is
 																				   the chat output won't be big enough to affect
 																				   performance -->
 			
-			<max_chars_in_inputfield type="int">300</max_chars_in_inputfield> 	<!-- 0 is for unlimited -->
+			<max_chars_in_inputfield type="int">100</max_chars_in_inputfield> 	<!-- 0 is for unlimited -->
 			<chat_line_leading type="int">7</chat_line_leading> 	<!-- this parameter sets the leading for messages that have
 															 emoticons, so if you change their size, you might want
 															 to adjust this as well -->

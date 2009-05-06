@@ -45,30 +45,33 @@ public final class AS3_Loader
 	
 	private static var AS3_Loader_LOG:Logger = new Logger("AS3_Loader",5);	
 	{
-		AS3_Loader_LOG.log(new AS3_Loader());
+		AS3_Loader_LOG.hugeLog(new AS3_Loader());
 	}		
 	public function toString():String {		
 		var url:String
 		
 		var cachedRes:Array = [];
+		var totalSize:int = 0;
 		for (url in imageCache) {	
 			var ev:Event = imageCache[url];
+			var size:int = isImageLoadFailed(ev) ? 0:getImageLoadByteArray(ev).length;
 			cachedRes.push(url+
-				(!isImageLoadFailed(ev) ? " (size="+(getImageLoadByteArray(ev).length)+")" : " (FAILED: "+ev+")"));
+				(!isImageLoadFailed(ev) ? " (size="+size+")" : " (FAILED: "+ev+")"));
+			totalSize+=size;
 		}
 		cachedRes.sort();
 		
 		var requestRes:Array = [];
 		for (url in url2RequestArray) {
 			var arr:Array = url2RequestArray[url];
-			requestRes.push(url+" #queue="+arr.length); 
+			requestRes.push(url+" #queue="+arr.length+" #totalSize="+totalSize); 
 		}
 		requestRes.sort();
 		
 		var res:Array = [];
-		res.push("Images cached:");
+		res.push(AS3_vs_AS2.dictionarySize(imageCache) + " images cached:");
 		StaticFunctions.pushAll(res,cachedRes);
-		res.push("\tImages in queue:");
+		res.push("\t"+AS3_vs_AS2.dictionarySize(url2RequestArray) + " images in queue:");
 		StaticFunctions.pushAll(res,requestRes);
 		return  res.join("\n\t\t\t")+
 			// pauseQueue might be null
@@ -118,12 +121,12 @@ public final class AS3_Loader
 			loadImageReq(req);
 		pauseQueue = null;		
 	}
-	public static function loadImage(imageUrl:String,successHandler:Function = null,failureHandler:Function = null,progressHandler:Function = null,context:LoaderContext = null):void {
+	public static function loadImage(imageUrl:String,successHandler:Function = null,failureHandler:Function = null,progressHandler:Function = null,context:LoaderContext = null,calledFrom:String="undefined"):void {
+		StaticFunctions.assert(imageUrl!="" && imageUrl!=null,"can't load a blank image",[calledFrom]);
 		imageUrl = getURL(imageUrl);
-		StaticFunctions.assert(imageUrl!="","can't load a blank image",[]);
 		if (failureHandler==null) {
 			failureHandler = function(ev:Event):void {
-				criticalError(ev,imageUrl);
+				criticalError(ev,imageUrl,calledFrom);
 			};			
 		}
 		if(successHandler == null) {
@@ -210,14 +213,17 @@ public final class AS3_Loader
 			var byteConverter:Loader = new Loader();
 			var dispatcher:IEventDispatcher = byteConverter.contentLoaderInfo;
 			// IMPORTANT - there was a garbage collection issue here (if I remove the anonymous function and replace it with req.successHandler)
-			// therefore the event listener must refer to byteConverter to prevent it from being garbage-collected
-			AS3_vs_AS2.myAddEventListener("handleExistingImage", dispatcher,Event.COMPLETE, function (ev:Event):void { removeImageLoaderListeners(byteConverter,req,ev,false); });
-			AS3_vs_AS2.myAddEventListener("handleExistingImage", dispatcher, IOErrorEvent.IO_ERROR, function (ev:Event):void { removeImageLoaderListeners(byteConverter,req,ev,true); });
+			// therefore the event listener must refer to byteConverter to prevent it from being garbage-collected			
+			var failureFunc:Function = function (ev:Event):void { removeImageLoaderListeners(byteConverter,dispatcher,req,ev,true); };
+			var successFunc:Function = function (ev:Event):void { removeImageLoaderListeners(byteConverter,dispatcher,req,ev,false); };
+			AS3_vs_AS2.myAddEventListener("handleExistingImage", dispatcher,Event.COMPLETE, successFunc); 
+			var errorEvents:Array/*String*/ = [IOErrorEvent.IO_ERROR, HTTPStatusEvent.HTTP_STATUS, SecurityErrorEvent.SECURITY_ERROR];
+			for (var errorEvent:String in errorEvents)
+				AS3_vs_AS2.myAddEventListener("handleExistingImage", dispatcher, errorEvent, failureFunc);
 			byteConverter.loadBytes(data,req.context);
 		}
 	}
-	private static function removeImageLoaderListeners(byteConverter:Loader, req:ImageLoadRequest, ev:Event, isFailure:Boolean):void {
-		var dispatcher:IEventDispatcher = byteConverter.contentLoaderInfo;
+	private static function removeImageLoaderListeners(byteConverter:Loader, dispatcher:IEventDispatcher, req:ImageLoadRequest, ev:Event, isFailure:Boolean):void {
 		AS3_vs_AS2.myRemoveAllEventListeners("handleExistingImage", dispatcher);
 		tmpTrace(["COMPLETED handling image: ", req.imageUrl, "reqId=", req.reqId, " res=",byteConverter.content, " isFailure=",isFailure, "event=",ev]);
 		if (isFailure)
@@ -227,7 +233,7 @@ public final class AS3_Loader
 	}
 
 	public static var EVENT_DATA_DEBUG_LEN:int = 20;
-	private static function loadURL(url:Object/*String or URLRequest*/,successHandler:Function = null,failureHandler:Function = null,progressHandler:Function = null,context:LoaderContext = null, retryCount:int=0):void{
+	private static function loadURL(url:Object/*String or URLRequest*/,successHandler:Function = null,failureHandler:Function = null,progressHandler:Function = null,context:LoaderContext = null, retryCount:int=0,calledFrom:String="undefined"):void{
 		StaticFunctions.assert( url is String || url is URLRequest, "url must be String or URLRequest", url);
 		StaticFunctions.assert( retryCount<imageLoadingRetry, "Internal error in loadURL",[]);
 		
@@ -237,7 +243,7 @@ public final class AS3_Loader
 			successHandler = traceHandler
 		}
 		if (failureHandler==null) {			
-			failureHandler = function (ev:Event):void {criticalError(ev,url is String ? url as String : (url as URLRequest).url);};			
+			failureHandler = function (ev:Event):void {criticalError(ev,url is String ? url as String : (url as URLRequest).url,calledFrom);};			
 		}	
 		//The Loader class is used to load SWF files or image (JPG, PNG, or GIF) files.  
 		//Use the URLLoader class to load text or binary data.
@@ -318,8 +324,8 @@ public final class AS3_Loader
 	public static function traceHandler(e:Event):void {
         // we already do tracing in tmpTrace
     }
-	public static function criticalError(ev:Event,url:String):void{
-		tmpTrace(" Error loading URL: ",url)
+	public static function criticalError(ev:Event,url:String,calledFrom:String ="undefined"):void{
+		tmpTrace(" Error loading URL: ",url,"From :",calledFrom)
 		var msg:String;
 		if(ev is IOErrorEvent){
 			msg = "critical IOErrorEvent" + JSON.stringify(ev as IOErrorEvent);

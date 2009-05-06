@@ -29,10 +29,44 @@ class come2play_as2.api.auto_copied.ErrorHandler
 	
 	
 	// returns the bug_id (or -1 if we already reported an error)
-	private static var ErrorReport_LOG:Logger = new Logger("ErrorReport",10);
-	public static function alwaysTraceAndSendReport(msg:String, args:Object):Number {
-		ErrorReport_LOG.log([msg, args]);
-		return sendReport(msg);
+	private static var ErrorReport_LOG:Logger = new Logger("ErrorReport",10);	
+	public static var SHOULD_SHOW_ERRORS:Boolean = true;
+	public static var didReportError:Boolean = false; // we report only 1 error (usually 1 error leads to others)
+	// If the container has a bug, then it adds the traces of the game, reports to ASP, and send to java. 
+	// If the game has a bug, then it sends DoAllFoundHacker (which cause the container to send a bug report)  
+	public static var SEND_BUG_REPORT:Function = null;
+	public static function alwaysTraceAndSendReport(errStr:String, args:Object):Number {
+		ErrorReport_LOG.log([errStr, args]);
+		if (didReportError) return -1;
+		didReportError = true;
+		
+		var bug_id:Number = StaticFunctions.random(1, 10000000);	
+		
+		try {	
+			var err:Error = new Error();
+			var stackTraces:String = AS3_vs_AS2.myGetStackTrace(err); // null in the release version
+			if (stackTraces!=null) ErrorReport_LOG.log(["Catching point stack trace=",err]);
+							
+			ErrorReport_LOG.log(["sendReport SEND_BUG_REPORT=",SEND_BUG_REPORT]);
+			
+			var errMessage:String = 
+				(stackTraces==null ? "" : "AAAA (with stack trace) ")+ // so I will easily find them in our "errors page"
+				"Revision="+StaticFunctions.getRevision()+": "+
+				errStr;
+			
+			if (SEND_BUG_REPORT!=null)
+				SEND_BUG_REPORT(bug_id, errMessage);	
+				
+			// we should show the error after we call sendMultipartImage (so we send the image without the error window)
+			if (SHOULD_SHOW_ERRORS) {
+				var msg:String = "ERROR "+errMessage+"\n\ntraces:\n\n"+StaticFunctions.getTraces();
+				AS3_vs_AS2.showError(msg);
+				StaticFunctions.setClipboard(msg);
+			}		
+		} catch (err:Error) {
+			AS3_vs_AS2.showError("!!!!!ERROR!!!! in sendReport:"+AS3_vs_AS2.error2String(err));
+		}			
+		return bug_id;
 	}
 	
 	/**
@@ -130,43 +164,5 @@ class come2play_as2.api.auto_copied.ErrorHandler
 	}
 	public static function handleError(err:Error, obj:Object):Void {
 		alwaysTraceAndSendReport("handleError: "+AS3_vs_AS2.error2String(err),[" catching-arguments=",obj]);
-	}	
-
-	public static var SHOULD_SHOW_ERRORS:Boolean = true;
-	public static var didReportError:Boolean = false; // we report only 1 error (usually 1 error leads to others)
-	// If the container has a bug, then it adds the traces of the game, reports to ASP, and send to java. 
-	// If the game has a bug, then it sends DoAllFoundHacker (which cause the container to send a bug report)  
-	public static var SEND_BUG_REPORT:Function = null; 
-	private static function sendReport(errStr:String):Number {
-		if (didReportError) return -1;
-		didReportError = true;
-		
-		var bug_id:Number = StaticFunctions.random(1, 10000000);	
-		
-		try {	
-			var err:Error = new Error();
-			var stackTraces:String = AS3_vs_AS2.myGetStackTrace(err); // null in the release version
-			if (stackTraces!=null) ErrorReport_LOG.log(["Catching point stack trace=",err]);
-							
-			ErrorReport_LOG.log(["sendReport for error=", errStr," SEND_BUG_REPORT=",SEND_BUG_REPORT]);
-			
-			var errMessage:String = 
-				(stackTraces==null ? "" : "AAAA (with stack trace) ")+ // so I will easily find them in our "errors page"
-				"Revision="+StaticFunctions.getRevision()+": "+
-				errStr;
-			
-			if (SEND_BUG_REPORT!=null)
-				SEND_BUG_REPORT(bug_id, errMessage);	
-				
-			// we should show the error after we call sendMultipartImage (so we send the image without the error window)
-			if (SHOULD_SHOW_ERRORS) {
-				var msg:String = "ERROR "+errMessage+"\n\ntraces:\n\n"+StaticFunctions.getTraces();
-				AS3_vs_AS2.showError(msg);
-				StaticFunctions.setClipboard(msg);
-			}		
-		} catch (err:Error) {
-			AS3_vs_AS2.showError("!!!!!ERROR!!!! in sendReport:"+AS3_vs_AS2.error2String(err));
-		}			
-		return bug_id;
-	}
+	}		
 }

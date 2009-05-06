@@ -27,18 +27,18 @@ public final class AS3_vs_AS2
 	public static var NATIVE_SERIALIZERS:Array/*NativeSerializable*/;
 	public static function registerNativeSerializers():void {
 		var classes:Array/*Class*/ = [
-			ErrorSerializable,
-			XMLSerializable,
-			ByteArraySerializable,
-			DictionarySerializable,
-			DateSerializable
+			AS3_ErrorSerializable,
+			AS3_XMLSerializable,
+			AS3_ByteArraySerializable,
+			AS3_DictionarySerializable,
+			AS3_DateSerializable
 		];	
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
 		NATIVE_SERIALIZERS = [];
 		for each (var serializerClass:Class in classes) {
-			var serializer:NativeSerializable = new serializerClass();
+			var serializer:AS3_NativeSerializable = new serializerClass();
 			SerializableClass.registerClassAlias(serializer.__CLASS_NAME__, serializerClass);
 			serializer.register();
 			NATIVE_SERIALIZERS.push(serializer);
@@ -56,8 +56,8 @@ public final class AS3_vs_AS2
 	public static function specialToString(o:Object):String {
 		if (o is DisplayObject) return getDisplayObjectDesc(o as DisplayObject); // instead of the default toString which returns "[object peshka2_15]", I want to return the fullname and current keyframe (if it is a movieclip)
 		if (o is URLRequest) return (o as URLRequest).url;
-		var nativeSerializer:NativeSerializable = null;
-		for each (var serializer:NativeSerializable in NATIVE_SERIALIZERS) {
+		var nativeSerializer:AS3_NativeSerializable = null;
+		for each (var serializer:AS3_NativeSerializable in NATIVE_SERIALIZERS) {
 			nativeSerializer = serializer.fromNative(o);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
@@ -68,7 +68,7 @@ public final class AS3_vs_AS2
 		return o.toString();		
 	}
 	public static function byteArr2Str(byteArr:ByteArray):String {
-		return JSON.stringify(ByteArraySerializable.byteArr2Arr(byteArr));		
+		return JSON.stringify(AS3_ByteArraySerializable.byteArr2Arr(byteArr));		
 	}
 	public static function copyObjectUsingByteArray(o:Object):Object {
 		// see also flash.net.registerClassAlias
@@ -768,135 +768,4 @@ class DispatcherInfo {
 		this.isWeakRef = isWeakRef;
 	}
 }
-class NativeSerializable extends SerializableClass {
-	public function NativeSerializable(shortName:String=null) {
-		super(shortName);
-	}
-	public function fromNative(obj:Object):NativeSerializable {
-		throw new Error("Must override fromNative");
 
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
-	}	
-	override public function postDeserialize():Object {
-		throw new Error("Must override postDeserialize");
-	}
-}	
-
-class ErrorSerializable extends NativeSerializable {
-	public var stackTraces:String;
-	public var message:String;
-	public var errorId:int;
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
-	public function ErrorSerializable(err:Error=null) {
-		super("Error");
-		message = err==null ? null : err.message;
-		stackTraces = err==null ? null : err.getStackTrace();
-		errorId = err==null ? 0 : err.errorID;
-	}	
-	override public function fromNative(obj:Object):NativeSerializable {
-		return obj is Error ? new ErrorSerializable(obj as Error) : null;
-	}
-	override public function postDeserialize():Object {
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
-		return new Error(message, errorId);
-	}	
-}
-class XMLSerializable extends NativeSerializable {
-	public var xmlStr:String;
-	public function XMLSerializable(xml:XML=null) {
-		super("XML");
-		xmlStr = xml==null ? null : xml.toXMLString();
-	}	
-	override public function fromNative(obj:Object):NativeSerializable {
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
-		return obj is XML ? new XMLSerializable(obj as XML) : null;
-	}
-	override public function postDeserialize():Object {
-		return AS3_vs_AS2.xml_create(xmlStr);
-	}	
-}
-class DateSerializable extends NativeSerializable {
-	//public var utcDate:String; //Tue Feb 1 00:00:00 2005 UTC
-	public var millis:Number; //the number of milliseconds since midnight January 1, 1970, universal time
-	public function DateSerializable(date:Date=null) {
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
-		super("Date");
-		//utcDate = date==null ? null : date.toUTCString();
-		millis = date==null ? null : date.valueOf();
-	}	
-	override public function fromNative(obj:Object):NativeSerializable {
-		return obj is Date ? new DateSerializable(obj as Date) : null;
-	}
-	override public function postDeserialize():Object {
-		return new Date(millis); //millis<=0 ? utcDate : millis
-	}	
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
-}
-class DictionarySerializable extends NativeSerializable {
-	public var keyValArr:Array = [];
-	public function DictionarySerializable(dic:Dictionary=null) {
-		super("Dictionary");
-		if (dic!=null) {
-			for (var k:Object in dic) 
-	 			keyValArr.push([k, dic[k]]);
-	 	}
-	}	
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
-	override public function fromNative(obj:Object):NativeSerializable {
-		return obj is Dictionary ? new DictionarySerializable(obj as Dictionary) : null;
-	}
-	override public function postDeserialize():Object {
-		var res:Dictionary = new Dictionary();
-		for each (var keyVal:Array in keyValArr)
-			res[ keyVal[0] ] = keyVal[1];
-		return res;
-	}	
-}
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
-class ByteArraySerializable extends NativeSerializable {
-	public var arr:Array/*int*/;
-	public function ByteArraySerializable(byteArr:ByteArray=null) {
-		super("ByteArray");
-		arr = byteArr==null ? null : byteArr2Arr(byteArr);
-	}	
-	override public function fromNative(obj:Object):NativeSerializable {
-		return obj is ByteArray ? new ByteArraySerializable(obj as ByteArray) : null;
-	}
-	public static function byteArr2Arr(byteArr:ByteArray):Array {
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
-		var bytes:Array = [];
-		var oldPosition:int = byteArr.position;
-		byteArr.position = 0;
-		for (var i:int=0; i<byteArr.length; i++)
-			bytes.push(byteArr.readByte());
-		byteArr.position = oldPosition;
-		return bytes;
-	}
-	override public function postDeserialize():Object {
-		var res:ByteArray = new ByteArray();
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
-		for each (var i:int in arr)
-			res.writeByte(i);
-		res.position = 0; 
-		return res;
-	}	
-}

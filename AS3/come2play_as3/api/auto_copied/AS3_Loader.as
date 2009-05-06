@@ -22,6 +22,7 @@ package come2play_as3.api.auto_copied
 public final class AS3_Loader
 {
 	private static var LOG:Logger = new Logger("Loader",10);
+	private static var SUCCESS_RETRY_LOG:Logger = new Logger("SUCCESS_RETRY",10);
 	public static function tmpTrace(...args):void {
 		LOG.log(args);
 	}
@@ -292,6 +293,7 @@ public final class AS3_Loader
      		removeLoadUrlListeners(true, url,dispatcher,ev,successHandler, failureHandler,progressHandler, context, retryCount);
      	}		
 	}
+	public static var RETRY_DELAY_MILLI:int = 3000;
 	private static function removeLoadUrlListeners(isFailure:Boolean, url:Object,dispatcher:IEventDispatcher, ev:Event, successHandler:Function,failureHandler:Function, progressHandler:Function,context:LoaderContext, retryCount:int):void {
 		AS3_vs_AS2.myRemoveAllEventListeners("loadURL", dispatcher);
 		var data:Object	= null;
@@ -309,11 +311,14 @@ public final class AS3_Loader
 									"data is not String or ByteArray");
 		
 		if (!isFailure) {
+			if (retryCount>0) SUCCESS_RETRY_LOG.log("Retry mechanism worked for url=",url);
 			successHandler(ev);
 		} else {
 			if (retryCount+1<imageLoadingRetry) {
 				tmpTrace("We retry to load the url=",url);
-				loadURL(url,successHandler,failureHandler,progressHandler,context,retryCount+1);
+				ErrorHandler.myTimeout("RetryDelay",function():void {
+					loadURL(url,successHandler,failureHandler,progressHandler,context,retryCount+1);
+				},RETRY_DELAY_MILLI);
 			} else {
 				failureHandler(ev);
 			}

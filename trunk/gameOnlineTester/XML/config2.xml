@@ -189,7 +189,15 @@ Not used by the graphics yet (but should be displayed):
 		 
 		<entry><key>rewardPageLink</key><value>"www.google.com/aaa.asp?"</value></entry>
 		
-		<entry><key>banned_words_regexp</key><value>"&#102;uck|suck|ass"</value></entry>
+		<!-- I'm using base64 because some firewalls block our xml because it uses faul language.
+			E.g.,  
+			fuck|ass   
+			in base64 is:
+			ZnVja3xhc3M=
+			
+		<entry><key>banned_words_regexp</key><value>"fuck|ass"</value></entry>
+			-->		
+		<entry><key>banned_words_base64_regexp</key><value>"ZnVja3xhc3M="</value></entry>
 		
 		<!-- when doing local testing, I don't want popups, or msgs when I press Control		
 		<entry><key>enablePopUps</key><value>false</value></entry>
@@ -234,12 +242,13 @@ Not used by the graphics yet (but should be displayed):
 		<entry><key>testThrow in timeout</key><value>true</value></entry>
 		<entry><key>EndGameDelay</key><value>10</value></entry>
 		
-		<entry><key>ARTIFICIAL_TO_JAVA_DELAY</key><value>'700-8000'</value></entry>
-		<entry><key>ARTIFICIAL_FROM_JAVA_DELAY</key><value>'700-8000'</value></entry>
-		
 		<entry><key>ARTIFICIAL_TO_JAVA_DELAY</key><value>'500-1000'</value></entry>
 		<entry><key>ARTIFICIAL_FROM_JAVA_DELAY</key><value>'500-1000'</value></entry>
+		
+		<entry><key>ARTIFICIAL_TO_JAVA_DELAY</key><value>'700-8000'</value></entry>
+		<entry><key>ARTIFICIAL_FROM_JAVA_DELAY</key><value>'700-8000'</value></entry>
 		 -->
+		
 		
 		
 		<!--
@@ -782,8 +791,8 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 		  		and 30 elements of id=3
 		  -->
 		  <avatar_url>images/Avatar_1.gif</avatar_url>
-		  <!-- to change my supervisor status: Admin, Supervisor, MiniSupervisor, Supervisor -->
-		  <supervisor>Supervisor</supervisor>
+		  <!-- to change my supervisor status: Admin, Supervisor, MiniSupervisor, NormalUser -->
+		  <supervisor>NormalUser</supervisor>
 		  <credibility>100</credibility>
 		  <tokens>0:5000</tokens>
 		  <votes_sum>9</votes_sum>

@@ -252,7 +252,6 @@ package come2play_as3.api.auto_copied
 			return lc;
         }
         public function localconnection_init(sRandomPrefix:String):void {
-        	if (ErrorHandler.didReportError) return;
         	if (lcUser != null) return;
         	try{
         		lcTrace(["Container? :",isContainer,"got sRandomPrefix=",sRandomPrefix," on sInitChanel=",sInitChanel]);
@@ -278,7 +277,6 @@ package come2play_as3.api.auto_copied
         	ErrorHandler.catchErrors("GotAPI_Msg",AS3_vs_AS2.delegate(this,this.p_localconnection_callback),[msgObj]);        	
         }
         private function p_localconnection_callback(msgObj:Object):void {
-        	if (ErrorHandler.didReportError) return;
         	var msg:API_Message = null;
     		var deserializedMsg:Object = SerializableClass.deserialize(msgObj);
     		msg = /*as*/deserializedMsg as API_Message;

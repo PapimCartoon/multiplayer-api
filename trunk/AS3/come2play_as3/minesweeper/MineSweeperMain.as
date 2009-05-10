@@ -62,10 +62,10 @@ import flash.utils.*;
 		{
 			if(loadServerEntries != null)
 				mineSweeperLogic.loadBoard(loadServerEntries);
-			if(! (T.custom(API_Message.CUSTOM_INFO_KEY_isBack,false) as Boolean) )
-				animationEnded("startGraphicAnimation");
 			if((allPlayerIds.indexOf(-1) != -1) && isPlaying) computerMoveTimer.start();
 			allowMoves = true;
+			if(! (T.custom(API_Message.CUSTOM_INFO_KEY_isBack,false) as Boolean) )
+				animationEnded("startGraphicAnimation");
 		}
 		public function gameOver(playerMatchOverArr:Array/*PlayerMatchOver*/):void
 		{

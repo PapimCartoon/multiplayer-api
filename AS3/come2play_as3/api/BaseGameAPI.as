@@ -15,6 +15,7 @@ package come2play_as3.api {
 	{        
 		private static var ANIMATIONS_LOG:Logger = new Logger("ANIMATIONS",20);
 		public static var ERROR_DO_ALL:String = "You can only call a doAll* message when the server calls gotStateChanged, gotMatchStarted, gotMatchEnded, or gotRequestStateCalculation.";
+		public static var GAME_USE_KEYBOARD:Boolean = true;
 		
 		private var msgsInTransaction:Array/*API_Message*/ = null;
 		private var serverStateMiror:ObjectDictionary;
@@ -25,12 +26,14 @@ package come2play_as3.api {
 		private var singlePlayerEmulator:SinglePlayerEmulator;
 		
 		private static var ALL_LOG:Logger = new Logger("BaseGameAPI",10);
+		private static var KEYBOARD_LOG:Logger = new Logger("KEYBOARD",20);
 		
 		public function BaseGameAPI(_someMovieClip:DisplayObjectContainer) {
 			super(_someMovieClip, false, getPrefixFromFlashVars(_someMovieClip),true);	
 			ALL_LOG.log(this);
 			ErrorHandler.SEND_BUG_REPORT = AS3_vs_AS2.delegate(this, this.sendBugReport);
-			AS3_vs_AS2.addKeyboardListener(_someMovieClip, ErrorHandler.wrapWithCatch("keyPressed",AS3_vs_AS2.delegate(this,this.keyPressed)));
+			if (GAME_USE_KEYBOARD) 
+				AS3_vs_AS2.addKeyboardListener(_someMovieClip, AS3_vs_AS2.delegate(this,this.keyPressed));
 			if (originalPrefix==null) 
 				singlePlayerEmulator = new SinglePlayerEmulator(_someMovieClip); // to prevent garbage collection
 			//come2play_as3.api::BaseGameAPI.abc = 666
@@ -66,6 +69,8 @@ package come2play_as3.api {
 		
 		private function keyPressed(is_key_down:Boolean, charCode:int, keyCode:int, keyLocation:int, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean):void
 		{
+			KEYBOARD_LOG.log("is_key_down=",is_key_down,"charCode=",charCode,"keyCode=",keyCode,"keyLocation=",keyLocation,"altKey=",altKey,"ctrlKey=",ctrlKey,"shiftKey=",shiftKey);
+			
 			if((shiftKey) && (ctrlKey) && (altKey) && (is_key_down) && T.custom("ENABLE COMMANDS",true) ) {
 				if('G'.charCodeAt(0) == charCode)
 				{	
@@ -91,6 +96,9 @@ package come2play_as3.api {
 			for(var str:String in custom)
 				infoEntries.push(InfoEntry.create(str,custom[str]))
 			return infoEntries;
+		}
+		public function getMyUserId():int {
+			return AS3_vs_AS2.as_int(T.custom(API_Message.CUSTOM_INFO_KEY_myUserId,0));
 		}
 		/**
 		 * If your overriding 'got' methods will throw an Error,
@@ -207,9 +215,7 @@ package come2play_as3.api {
 							customObj[key] = value;
 						}
 					}		
-					T.initI18n(i18nObj, customObj); // may be called several times because we may pass different 'secondsPerMatch' every time a game starts
-					var myUserId:Object = T.custom(API_Message.CUSTOM_INFO_KEY_myUserId,null);
-					if (myUserId!=null) Logger.TRACE_PREFIX = "API myUserId="+myUserId+":";
+					T.initI18n(i18nObj, customObj); // may be called several times because we may pass different 'secondsPerMatch' every time a game starts					
 				}else if(msg is API_GotUserInfo){
 					var infoMessage:API_GotUserInfo =/*as*/ msg as API_GotUserInfo;
 					var userObject:Object = {};

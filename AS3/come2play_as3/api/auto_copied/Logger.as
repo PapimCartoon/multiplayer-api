@@ -19,7 +19,6 @@ public final class Logger
 {
 	public static var ALL_LOGGERS:Array = [];
 	public static var MAX_LOGGERS_NUM:int = 500;
-	public static var TRACE_PREFIX:String = ""; // because in flashlog you see traces of many users and it is all mixed 
 		
 	// Be careful that the traces will not grow too big to send to the java (limit of 1MB, enforced in Bytes2Object)
 	public static var MAX_TRACES:Object = {};

@@ -113,7 +113,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 		showError("Throwing the following error="+AS3_vs_AS2.error2String(err));
 		throw err;
 	}		
-	public static function assert(val:Boolean, name:String, ...args):Void {
+	public static function assert(val:Boolean, name:String/*InAS3: ...args*/):Void { var args:Array = arguments.slice(2); 
 		if (name==null || name=='') throwError("When calling assert you must pass a non empty name! args="+JSON.stringify(args)); 
 		if (!val) throwError("An assertion failed! name="+name+" arguments="+JSON.stringify(args));
 	}

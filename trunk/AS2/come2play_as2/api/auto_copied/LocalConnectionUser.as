@@ -20,7 +20,7 @@ import come2play_as2.api.auto_copied.*;
 		public static function throwError(msg:String):Void {
 			StaticFunctions.throwError(msg);
 		}		
-		public static function assert(val:Boolean, name:String, ...args):Void {
+		public static function assert(val:Boolean, name:String/*InAS3: ...args*/):Void { var args:Array = arguments.slice(2); 
 			StaticFunctions.assert(val, name, args);
 		}
 

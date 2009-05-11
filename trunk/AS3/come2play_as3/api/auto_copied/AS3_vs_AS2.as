@@ -374,16 +374,17 @@ public final class AS3_vs_AS2
 	public static function removeMovie(graphics:DisplayObject):void {
 		graphics.parent.removeChild( graphics );
 	}
+	private static var addKeyboardListener_LOG:Logger = new Logger("addKeyboardListener",5);
 	public static function addKeyboardListener(graphics:DisplayObjectContainer, func:Function):void {
 		var isStageReady:Boolean = graphics.stage!=null;
 		if (isStageReady)	
 			addKeyboardListenerStageReady(graphics, func);
 		else {
-			trace("Called addKeyboardListener, but stage is still null, so we set an interval until stage is ready");
+			addKeyboardListener_LOG.log("Called addKeyboardListener, but stage is still null, so we set an interval until stage is ready");
 			var intervalId:Object = ErrorHandler.myInterval("addKeyboardListener", 
 				function ():void {
 					if (graphics.stage!=null) {
-						trace("stage is ready, so we now call addKeyboardListener");
+						addKeyboardListener_LOG.log("stage is ready, so we now call addKeyboardListener");
 						ErrorHandler.myClearInterval("addKeyboardListener",intervalId);					
 						addKeyboardListenerStageReady(graphics, func);
 					}
@@ -391,6 +392,7 @@ public final class AS3_vs_AS2
 		}		
 	}
 	private static function addKeyboardListenerStageReady(graphics:DisplayObjectContainer, func:Function):void {
+		addKeyboardListener_LOG.log("Added KeyboardListener to Stage");
 		addKeyboardListener2(true, graphics, func);
 		addKeyboardListener2(false, graphics, func);
 	}

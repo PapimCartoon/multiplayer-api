@@ -216,7 +216,7 @@ Not used by the graphics yet (but should be displayed):
 		<entry><key>computerImage</key><value>"images/Avatar_1.gif"</value></entry>
 		<!--
 		
-		<entry><key>isGameScalable</key><value>true</value></entry>
+		<entry><key>isGameScalable</key><value>false</value></entry>
 		<entry><key>force_board_height</key><value>100</value></entry>
 		<entry><key>force_board_width</key><value>100</value></entry>
 		

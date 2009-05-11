@@ -64,7 +64,7 @@ public final class AS3_Loader
 
 	private static var url2RequestArray:Dictionary/*imageUrl->ImageLoadRequest[]*/ = new Dictionary();
 	private static var pauseQueue:Array/*ImageLoadRequest*/ = null;
-	public static var imageLoadingRetry:int = 2;
+	public static var imageLoadingRetry:int = 3;
 	
 	private static var AS3_Loader_LOG:Logger = new Logger("AS3_Loader",5);	
 	{
@@ -418,7 +418,7 @@ public final class AS3_Loader
 			successHandler(ev);
 		} else {
 			if (retryCount+1<imageLoadingRetry) {
-				tmpTrace("We retry to load the url=",url);
+				tmpTrace("We retry to load the url=",url,"retry delay is",RETRY_DELAY_MILLI);
 				ErrorHandler.myTimeout("RetryDelay",function():void {
 					loadURL(url,successHandler,failureHandler,progressHandler,context,retryCount+1);
 				},RETRY_DELAY_MILLI);

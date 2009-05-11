@@ -103,8 +103,8 @@ import come2play_as2.api.auto_copied.*;
 		public function LocalConnectionUser(_someMovieClip:MovieClip, isContainer:Boolean, sPrefix:String,shouldVerify:Boolean) {
 			try {
 				var namePrefix:String = isContainer?"CONTAINER":"GAME";
-				SENT_LOG = new Logger(namePrefix+"SENT_MSG",50);
-				GOT_LOG = new Logger(namePrefix+"GOT_MSG",50);
+				SENT_LOG = new Logger(namePrefix+"_SENT_MSG",50);
+				GOT_LOG = new Logger(namePrefix+"_GOT_MSG",50);
 				this.originalPrefix = sPrefix;
 				this.isUsingAS3 = sPrefix==USING_AS3_PREFIX;
 							
@@ -253,7 +253,6 @@ import come2play_as2.api.auto_copied.*;
 			return lc;
         }
         public function localconnection_init(sRandomPrefix:String):Void {
-        	if (ErrorHandler.didReportError) return;
         	if (lcUser != null) return;
         	try{
         		lcTrace(["Container? :",isContainer,"got sRandomPrefix=",sRandomPrefix," on sInitChanel=",sInitChanel]);
@@ -279,7 +278,6 @@ import come2play_as2.api.auto_copied.*;
         	ErrorHandler.catchErrors("GotAPI_Msg",AS3_vs_AS2.delegate(this,this.p_localconnection_callback),[msgObj]);        	
         }
         private function p_localconnection_callback(msgObj:Object):Void {
-        	if (ErrorHandler.didReportError) return;
         	var msg:API_Message = null;
     		var deserializedMsg:Object = SerializableClass.deserialize(msgObj);
     		msg = API_Message(deserializedMsg);

@@ -32,11 +32,10 @@ public final class Logger
 {
 	public static var ALL_LOGGERS:Array = [];
 	public static var MAX_LOGGERS_NUM:int = 500;
-	public static var TRACE_PREFIX:String = ""; // because in flashlog you see traces of many users and it is all mixed 
+		
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		
 	// Be careful that the traces will not grow too big to send to the java (limit of 1MB, enforced in Bytes2Object)
 	public static var MAX_TRACES:Object = {};
 	
@@ -46,10 +45,10 @@ public final class Logger
 	private var traces:Array/*LoggerLine*/ = [];
 	public function Logger(name:String, maxTraces:int) {
 		this.name = name;
+		this.maxTraces = MAX_TRACES[name]!=null ? int(MAX_TRACES[name]) : maxTraces;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		this.maxTraces = MAX_TRACES[name]!=null ? int(MAX_TRACES[name]) : maxTraces;
 		ALL_LOGGERS.push(this);
 		if (ALL_LOGGERS.length>MAX_LOGGERS_NUM) throw new Error("Passed MAX_LOGGERS_NUM! ALL_LOGGERS="+ALL_LOGGERS);
 	}
@@ -59,10 +58,10 @@ public final class Logger
 	public static var MAX_HUGE_LEN:int 	= 500000;	//500KB
 	
 	// the game traces are a single huge traceline
+	public function hugeLog(...args):void {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	public function hugeLog(...args):void {
 		limitedLog(MAX_HUGE_LEN,args);		
 	}
 	public function log(...args):void {
@@ -72,10 +71,10 @@ public final class Logger
 		if (maxTraces<=0) return;
 			 
 		var traceLine:LoggerLine = new LoggerLine(maxTraceLen,name,obj);
+		limitedPush(traces, traceLine , maxTraces); // we discard old traces
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		limitedPush(traces, traceLine , maxTraces); // we discard old traces
 	}
 	public static function limitedPush(arr:Array, element:Object, maxSize:int):void {
 		if (arr.length>=maxSize) arr.shift(); // we discard old elements (in a queue-like manner)
@@ -85,7 +84,4 @@ public final class Logger
 		return traces;
 	}
 }
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 }

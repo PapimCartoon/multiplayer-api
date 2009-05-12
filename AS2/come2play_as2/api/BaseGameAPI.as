@@ -240,6 +240,7 @@ import come2play_as2.api.*;
 			if (func==null) return;
 			var params:Array = StaticFunctions.getMethodParameters(msg);
 			if (msg instanceof API_GotMatchStarted || msg instanceof API_GotMatchEnded || msg instanceof API_GotStateChanged) {
+				StaticFunctions.assert(AS3_vs_AS2.isOnStage(StaticFunctions.someMovieClip),"The game must be on stage when the game is in progress");
 				// removes the msgNum:Number
 				params.shift();
 			}

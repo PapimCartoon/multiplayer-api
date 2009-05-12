@@ -5,7 +5,7 @@
 import come2play_as2.api.auto_copied.*;
 class come2play_as2.api.auto_copied.StaticFunctions
 {			
-	public static var GOOGLE_REVISION_NUMBER:Number = 983;
+	public static var GOOGLE_REVISION_NUMBER:Number = 984;
 	public static var COME2PLAY_REVISION_NUMBER:Number = 2791;
 	public static function getRevision():String {
 		return (SerializableClass.IS_IN_FRAMEWORK ? "Container" : "Game")+

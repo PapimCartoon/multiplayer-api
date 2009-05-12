@@ -93,7 +93,7 @@ public final class AS3_Loader
 		var requestRes:Array = [];
 		for (url in url2RequestArray) {
 			var arr:Array = url2RequestArray[url];
-			requestRes.push(url+" #queue="+arr.length+" #totalSize="+totalSize); 
+			requestRes.push(url+" #queue="+arr.length); 
 		}
 		requestRes.sort();
 		
@@ -107,7 +107,7 @@ public final class AS3_Loader
 		StaticFunctions.pushAll(res,requestRes);
 		return  res.join("\n\t\t\t")+
 			// pauseQueue might be null
-			"\npauseQueue="+pauseQueue;
+			"\npauseQueue="+pauseQueue+" #totalSize="+totalSize;
 	}
 	
 	public static function object2URLVariables(msg:Object):URLVariables {

@@ -306,7 +306,7 @@ Not used by the graphics yet (but should be displayed):
 		1)in case the url to load starts with http:// , the base path is diregarded
 		2)in case the url to load starts with / , the base path domain is used,but not it's subdirectories,such
 		as in the case of using http://www.come2play.com/shared/ as a base path,loading the image url /images/pink.swf
-		will give the resualt of laoding http://www.come2play.com/images/pink.swf
+		will give the resualt of loading http://www.come2play.com/images/pink.swf
 		3)in case non of the above applies,both urls will be connected togther
 		
 		-->

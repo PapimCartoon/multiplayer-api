@@ -375,8 +375,12 @@ public final class AS3_vs_AS2
 		graphics.parent.removeChild( graphics );
 	}
 	private static var addKeyboardListener_LOG:Logger = new Logger("addKeyboardListener",5);
+	
+	public static function isOnStage(graphics:DisplayObjectContainer):Boolean {
+		return graphics.stage!=null; 		
+	}
 	public static function addKeyboardListener(graphics:DisplayObjectContainer, func:Function):void {
-		var isStageReady:Boolean = graphics.stage!=null;
+		var isStageReady:Boolean = isOnStage(graphics);
 		if (isStageReady)	
 			addKeyboardListenerStageReady(graphics, func);
 		else {

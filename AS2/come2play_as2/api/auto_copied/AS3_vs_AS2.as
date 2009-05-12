@@ -276,9 +276,13 @@ class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 	public static function stringLastIndexOf(str:String, val:String, startIndex:Number):Number {
 		return startIndex!=null ? str.lastIndexOf(val, startIndex) : str.lastIndexOf(val);
 	}	
+
 	
+	// no stage in AS2...
+	public static function isOnStage(graphics:MovieClip):Boolean {
+		return true;
+	}
 	public static function waitForStage(graphics:MovieClip, gameConsructor:Function):Void {
-		// no stage in AS2...
 		gameConsructor();
 	}
 

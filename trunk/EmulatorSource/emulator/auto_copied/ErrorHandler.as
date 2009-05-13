@@ -193,31 +193,33 @@ public final class ErrorHandler
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
 		my_stack_trace.push(toInsert);
+		var indentLevel:int = my_stack_trace.length;
 		var logger:Logger = ZONE_LOGGERS[zoneName];
 		if (logger==null) {
 			logger = new Logger("CATCH-"+zoneName,ZONE_LOGGER_SIZE);
 			ZONE_LOGGERS[zoneName] = logger;
 		}
 		logger.log("ENTERED");
-		
+		LoggerLine.LINE_INDENT = indentLevel;
 		var wasError:Boolean = false;			
-		try {		
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		try {		
 			res = func.apply(null, args); 
 		} catch (err:Error) { handleError(err, args); }
 			
+		LoggerLine.LINE_INDENT = indentLevel-1;
 		logger.log("EXITED");
 			
 		var poped:Object = my_stack_trace.pop(); 
 			// I tried to do the pop inside a "finally" clause (to handle correctly cases with exceptions), 
 			//but I got "undefined" errors:
-			//		undefined
-			//			at come2play_as3.util::General$/stackTrace()
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			//		undefined
+			//			at come2play_as3.util::General$/stackTrace()
 			//			at come2play_as3.util::General$/catchErrors() 
 		if (!didReportError && toInsert!=poped) 
 			alwaysTraceAndSendReport("BAD stack behaviour (multithreaded flash?)", [my_stack_trace, toInsert, poped]);
@@ -226,5 +228,8 @@ public final class ErrorHandler
 	public static function handleError(err:Error, obj:Object):void {
 		alwaysTraceAndSendReport("handleError: "+AS3_vs_AS2.error2String(err),[" catching-arguments=",obj]);
 	}		
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 }
 }

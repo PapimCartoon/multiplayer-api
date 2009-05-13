@@ -10,8 +10,8 @@ package come2play_as3.api.auto_copied
 // Only StaticFunctions and JSON are copied to flex_utils 
 public final class StaticFunctions
 {			
-public static var GOOGLE_REVISION_NUMBER:int = 985;
-	public static var COME2PLAY_REVISION_NUMBER:int = 2792;
+public static var GOOGLE_REVISION_NUMBER:int = 1022;
+	public static var COME2PLAY_REVISION_NUMBER:int = 3082;
 	public static function getRevision():String {
 		return (SerializableClass.IS_IN_FRAMEWORK ? "Container" : "Game")+
 			" g="+GOOGLE_REVISION_NUMBER+",c2p="+COME2PLAY_REVISION_NUMBER;		
@@ -27,7 +27,7 @@ public static var GOOGLE_REVISION_NUMBER:int = 985;
 	private static var REVISIONS_LOG:Logger = new Logger("REVISIONS",5);
 	public static function allowDomains():void {
 		if (!LOGGED_REVISIONS) {
-			LOGGED_REVISIONS = true;			
+			LOGGED_REVISIONS = true;		
 			REVISIONS_LOG.log( new ErrorHandler() );
 			REVISIONS_LOG.log("GOOGLE_REVISION_NUMBER=",GOOGLE_REVISION_NUMBER, " c2p=COME2PLAY_REVISION_NUMBER=",COME2PLAY_REVISION_NUMBER, " LAST_RAN_JAVA_DATE=",API_Message.LAST_RAN_JAVA_DATE);
 			if (ALLOW_DOMAINS != null){
@@ -36,6 +36,7 @@ public static var GOOGLE_REVISION_NUMBER:int = 985;
 			}
 		}
 	}
+	
 			
 	private static var TMP_LOGGER:Logger = new Logger("TMP",80);
 	private static var API_LOGGER:Logger = new Logger("API",20);
@@ -72,13 +73,15 @@ public static var GOOGLE_REVISION_NUMBER:int = 985;
 		});
 		return arrToString(res, maxTotal);
 	}
+	private static var INDENT_DEPTHS:Array/*String*/ = ["","\t","\t\t","\t\t\t","\t\t\t\t","\t\t\t\t\t","\t\t\t\t\t\t"];
 	private static function arrToString(arr:Array/*LoggerLine*/, maxTotal:int):String {			
 		var res:Array = new Array();
 		var len:int = 0;
 		// the latest traces are the most important
 		for (var i:int = arr.length-1; i>=0; i--) {
 			var l:LoggerLine = arr[i];
-			var line:String = "id="+l.traceId+"\tt="+l.traceTime+"\t"+l.loggerName+"\t"+JSON.stringify(l.obj);
+			var indent:String = INDENT_DEPTHS[Math.min(INDENT_DEPTHS.length-1, l.indent)]; 
+			var line:String = "id="+l.traceId+"\tt="+l.traceTime+"\t"+indent+l.loggerName+"\t"+JSON.stringify(l.obj);
 			var s:String = StaticFunctions.cutString(line, l.maxLen);
 			len += s.length;
 			if (len>=maxTotal) break;

@@ -5,8 +5,8 @@
 import come2play_as2.api.auto_copied.*;
 class come2play_as2.api.auto_copied.StaticFunctions
 {			
-	public static var GOOGLE_REVISION_NUMBER:Number = 984;
-	public static var COME2PLAY_REVISION_NUMBER:Number = 2791;
+public static var GOOGLE_REVISION_NUMBER:Number = 1022;
+	public static var COME2PLAY_REVISION_NUMBER:Number = 3082;
 	public static function getRevision():String {
 		return (SerializableClass.IS_IN_FRAMEWORK ? "Container" : "Game")+
 			" g="+GOOGLE_REVISION_NUMBER+",c2p="+COME2PLAY_REVISION_NUMBER;		
@@ -22,7 +22,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	private static var REVISIONS_LOG:Logger = new Logger("REVISIONS",5);
 	public static function allowDomains():Void {
 		if (!LOGGED_REVISIONS) {
-			LOGGED_REVISIONS = true;			
+			LOGGED_REVISIONS = true;		
 			REVISIONS_LOG.log( new ErrorHandler() );
 			REVISIONS_LOG.log("GOOGLE_REVISION_NUMBER=",GOOGLE_REVISION_NUMBER, " c2p=COME2PLAY_REVISION_NUMBER=",COME2PLAY_REVISION_NUMBER, " LAST_RAN_JAVA_DATE=",API_Message.LAST_RAN_JAVA_DATE);
 			if (ALLOW_DOMAINS != null){
@@ -31,6 +31,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 			}
 		}
 	}
+	
 			
 	private static var TMP_LOGGER:Logger = new Logger("TMP",80);
 	private static var API_LOGGER:Logger = new Logger("API",20);
@@ -58,7 +59,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	}
 	public static function getTracesOfLoggers(loggers:Array/*Logger*/, maxTotal:Number):String {		
 		var res:Array/*LoggerLine*/ = [];
-		var p64:Number=0; for (var i64:String in loggers) { var logger:Logger = loggers[loggers.length==null ? i64 : p64]; p64++;
+		var p65:Number=0; for (var i65:String in loggers) { var logger:Logger = loggers[loggers.length==null ? i65 : p65]; p65++;
 			pushAll(res, logger.getMyTraces());
 		}		
 		// I sort the traces		
@@ -67,13 +68,15 @@ class come2play_as2.api.auto_copied.StaticFunctions
 		});
 		return arrToString(res, maxTotal);
 	}
+	private static var INDENT_DEPTHS:Array/*String*/ = ["","\t","\t\t","\t\t\t","\t\t\t\t","\t\t\t\t\t","\t\t\t\t\t\t"];
 	private static function arrToString(arr:Array/*LoggerLine*/, maxTotal:Number):String {			
 		var res:Array = new Array();
 		var len:Number = 0;
 		// the latest traces are the most important
 		for (var i:Number = arr.length-1; i>=0; i--) {
 			var l:LoggerLine = arr[i];
-			var line:String = "id="+l.traceId+"\tt="+l.traceTime+"\t"+l.loggerName+"\t"+JSON.stringify(l.obj);
+			var indent:String = INDENT_DEPTHS[Math.min(INDENT_DEPTHS.length-1, l.indent)]; 
+			var line:String = "id="+l.traceId+"\tt="+l.traceTime+"\t"+indent+l.loggerName+"\t"+JSON.stringify(l.obj);
 			var s:String = StaticFunctions.cutString(line, l.maxLen);
 			len += s.length;
 			if (len>=maxTotal) break;
@@ -164,7 +167,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 				// for static properties we use describeType
 				// because o1 and o2 have the same type, it is enough to use the fields of o1.
 				var fieldsArr:Array = AS3_vs_AS2.getFieldNames(o1);
-				var p170:Number=0; for (var i170:String in fieldsArr) { var field:String = fieldsArr[fieldsArr.length==null ? i170 : p170]; p170++;
+				var p173:Number=0; for (var i173:String in fieldsArr) { var field:String = fieldsArr[fieldsArr.length==null ? i173 : p173]; p173++;
 					allFields[field] = true;
 				}
 			}
@@ -184,7 +187,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 		var res:Array/*String[]*/ = [];
 		var lastStr:String = null;
 		var lastCount:Number = 0;
-		var p190:Number=0; for (var i190:String in arr) { var str:String = arr[arr.length==null ? i190 : p190]; p190++;
+		var p193:Number=0; for (var i193:String in arr) { var str:String = arr[arr.length==null ? i193 : p193]; p193++;
 			if (lastStr!=str) {
 				if (lastStr!=null) res.push([lastCount, lastCount+" occurrences of: "+lastStr]);
 				lastCount = 1;
@@ -197,14 +200,14 @@ class come2play_as2.api.auto_copied.StaticFunctions
 			return arr2[0] - arr1[0]; // DESC order
 		});
 		var res2:Array/*String*/ = [];
-		var p203:Number=0; for (var i203:String in res) { var countArr:Array = res[res.length==null ? i203 : p203]; p203++;
+		var p206:Number=0; for (var i206:String in res) { var countArr:Array = res[res.length==null ? i206 : p206]; p206++;
 			res2.push(countArr[1]);
 		}
 		return res2;
 	}
 	public static function subtractArray(arr:Array, minus:Array):Array {
 		var res:Array = arr.concat();
-		var p210:Number=0; for (var i210:String in minus) { var o:Object = minus[minus.length==null ? i210 : p210]; p210++;
+		var p213:Number=0; for (var i213:String in minus) { var o:Object = minus[minus.length==null ? i213 : p213]; p213++;
 			var indexOf:Number = AS3_vs_AS2.IndexOf(res, o);
 			StaticFunctions.assert(indexOf!=-1, "When subtracting minus=",[minus," from array=", arr, " we did not find element ",o]);				
 			res.splice(indexOf, 1);
@@ -320,7 +323,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	}
 	public static function instance2Object(instance:Object, fields:Array/*String*/):Object {
 		var res:Object = {};
-		var p326:Number=0; for (var i326:String in fields) { var field:String = fields[fields.length==null ? i326 : p326]; p326++;
+		var p329:Number=0; for (var i329:String in fields) { var field:String = fields[fields.length==null ? i329 : p329]; p329++;
 			res[field] = instance[field];
 		}
 		return res;
@@ -359,14 +362,14 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	public static function setMethodParameters(msg:API_Message, parameters:Array):Void { 
 		var names:Array = getParamNames(msg); 
 		var pos:Number = 0;
-		var p365:Number=0; for (var i365:String in names) { var name:String = names[names.length==null ? i365 : p365]; p365++;
+		var p368:Number=0; for (var i368:String in names) { var name:String = names[names.length==null ? i368 : p368]; p368++;
 			msg[name] = parameters[pos++];
 		}
 	}
 	public static function getMethodParameters(msg:API_Message):Array { 
 		var names:Array = getParamNames(msg);
 		var res:Array = [];
-		var p372:Number=0; for (var i372:String in names) { var name:String = names[names.length==null ? i372 : p372]; p372++;
+		var p375:Number=0; for (var i375:String in names) { var name:String = names[names.length==null ? i375 : p375]; p375++;
 			res.push(msg[name]);
 		}
 		return res;

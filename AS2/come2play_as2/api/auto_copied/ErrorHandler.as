@@ -138,18 +138,20 @@ class come2play_as2.api.auto_copied.ErrorHandler
 		
 		var toInsert:Object = [zoneName,"t:",getTimer(),"args=",args]; // I couldn't find a way to get the function name (describeType(func) only returns that the method is a closure)
 		my_stack_trace.push(toInsert);
+		var indentLevel:Number = my_stack_trace.length;
 		var logger:Logger = ZONE_LOGGERS[zoneName];
 		if (logger==null) {
 			logger = new Logger("CATCH-"+zoneName,ZONE_LOGGER_SIZE);
 			ZONE_LOGGERS[zoneName] = logger;
 		}
 		logger.log("ENTERED");
-		
+		LoggerLine.LINE_INDENT = indentLevel;
 		var wasError:Boolean = false;			
 		try {		
 			res = func.apply(null, args); 
 		} catch (err:Error) { handleError(err, args); }
 			
+		LoggerLine.LINE_INDENT = indentLevel-1;
 		logger.log("EXITED");
 			
 		var poped:Object = my_stack_trace.pop(); 

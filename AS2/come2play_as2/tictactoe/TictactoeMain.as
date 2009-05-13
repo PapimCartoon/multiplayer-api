@@ -170,13 +170,13 @@ class come2play_as2.tictactoe.TictactoeMain extends ClientGameAPI {
 		
 		assert(winLength>1 && winLength<=5 && winLength<=ROWS() && winLength<=COLS(), "Illegal winLength=",[winLength]);
 		assert(winnerPercentage>0 && winnerPercentage<=100, "Illegal winnerPercentage=",[winnerPercentage]);
-		
-		for (var i:Number=0; i<TictactoeSquareGraphic.MAX_SYMBOLS; i++) {
+		var i:Number
+		for (i=0; i<TictactoeSquareGraphic.MAX_SYMBOLS; i++) {
 			replaceSymbol(i,null); // after each game, I return all the symbols to their original state			
 		}
 		
 		if (!shouldUseAvatars && customSymbolsStringArray!=null) {
-			for (var i:Number=0; i<customSymbolsStringArray.length; i++) {
+			for (i=0; i<customSymbolsStringArray.length; i++) {
 				var symbolUrl:String = customSymbolsStringArray[i];
 				if (symbolUrl!=null) 
 					replaceSymbol(i,symbolUrl);

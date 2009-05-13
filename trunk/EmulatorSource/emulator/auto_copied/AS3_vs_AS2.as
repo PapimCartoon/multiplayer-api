@@ -741,17 +741,16 @@ public final class AS3_vs_AS2
 	public static function checkObjectIsSerializable(obj:Object):void {
 		if (obj==null) return;
 		if (obj is Boolean || obj is String || obj is Number) return;
-		var className:String = getClassName(obj);
-		if (className!="Array" && className!="Object")
+		if (!isArray(obj) && !SerializableClass.isObject(obj))
 			if (!(obj is SerializableClass))
-				throw new Error("className="+className+" should extend SerializableClass because it was sent over a LocalConnection");
+				throw new Error("className="+getClassName(obj)+" should extend SerializableClass because it was sent over a LocalConnection");
 		for each (var field:Object in obj)
 			checkObjectIsSerializable(field);
 	}	
+	public static function sendToURL(vars:Object, url:String):void {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	public static function sendToURL(vars:Object, url:String):void {
 		AS3_Loader.sendToURL(vars, URLRequestMethod.POST, url);	
 	}
 	
@@ -761,10 +760,10 @@ import emulator.auto_copied.SerializableClass;
 import emulator.auto_copied.AS3_vs_AS2;
 import flash.utils.*;
 
+class DispatcherInfo {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-class DispatcherInfo {
 	public var type2listner2func:Dictionary = new Dictionary();
 	public var name:String; 
 	public var isWeakRef:Boolean;
@@ -774,7 +773,4 @@ class DispatcherInfo {
 		this.isWeakRef = isWeakRef;
 	}
 }
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 

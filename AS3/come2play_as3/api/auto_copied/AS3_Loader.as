@@ -8,7 +8,16 @@ package come2play_as3.api.auto_copied
 	
 /**
  * We use a pause mechanism in case the flash is overloaded.
- * 
+ *
+ * Important: Loader has a garbage-collection bug.
+ * If you do:
+ * var loader:Loader = new Loader();
+ * ...
+ * and do not store a reference to loader, then it might be garbage collected 
+ * (even if it has event listeners!)
+ * In this file we create a Loader twice, 
+ * and we pass the loader object to its event handlers to prevent garbage collection.
+ *  
  * todo: if the image loaded is a BitMap, 
  * then we should use Loader instead of URLLoader,
  * and cache the bitmapData and return a new BitMap:
@@ -249,8 +258,7 @@ public final class AS3_Loader
 		//The Loader class is used to load SWF files or image (JPG, PNG, or GIF) files.  
 		//Use the URLLoader class to load text or binary data.
 		var dispatcher:IEventDispatcher;
-		var loader:Loader;
-		
+		var loader:Loader;		
 		var urlloader:URLLoader;
 		var useCache:Boolean = isNoCache(context);
 		if (url is String) {
@@ -267,8 +275,9 @@ public final class AS3_Loader
 			dispatcher = urlloader;
 		}
 				
-		var newSuccFunction:Function = function (ev:Event):void { removeLoadUrlListeners(false , url,dispatcher,ev,successHandler, failureHandler,progressHandler, context, retryCount); };
-		var newFailFunction:Function = function (ev:Event):void { removeLoadUrlListeners(true, url,dispatcher,ev,successHandler, failureHandler,progressHandler, context, retryCount); };
+		// garbage-collection bug: we must refer to loader to prevent it from being garbage-collected!
+		var newSuccFunction:Function = function (ev:Event):void { removeLoadUrlListeners(false, loader,url,dispatcher,ev,successHandler, failureHandler,progressHandler, context, retryCount); };
+		var newFailFunction:Function = function (ev:Event):void { removeLoadUrlListeners(true , loader,url,dispatcher,ev,successHandler, failureHandler,progressHandler, context, retryCount); };
 			
 		AS3_vs_AS2.myAddEventListener("loadURL",dispatcher,Event.COMPLETE, newSuccFunction); 
 		AS3_vs_AS2.myAddEventListener("loadURL",dispatcher,IOErrorEvent.IO_ERROR, newFailFunction);
@@ -290,11 +299,13 @@ public final class AS3_Loader
 			}
      	} catch(error:Error) {
      		var ev:Event = new SecurityErrorEvent(SecurityErrorEvent.SECURITY_ERROR,false, false, AS3_vs_AS2.error2String(error));
-     		removeLoadUrlListeners(true, url,dispatcher,ev,successHandler, failureHandler,progressHandler, context, retryCount);
+     		removeLoadUrlListeners(true, loader, url,dispatcher,ev,successHandler, failureHandler,progressHandler, context, retryCount);
      	}		
 	}
 	public static var RETRY_DELAY_MILLI:int = 3000;
-	private static function removeLoadUrlListeners(isFailure:Boolean, url:Object,dispatcher:IEventDispatcher, ev:Event, successHandler:Function,failureHandler:Function, progressHandler:Function,context:LoaderContext, retryCount:int):void {
+	private static function removeLoadUrlListeners(isFailure:Boolean, loader:Loader, url:Object,dispatcher:IEventDispatcher, ev:Event, successHandler:Function,failureHandler:Function, progressHandler:Function,context:LoaderContext, retryCount:int):void {
+		// I don't use the loader, but I still pass it to prevent garbage collection
+		
 		AS3_vs_AS2.myRemoveAllEventListeners("loadURL", dispatcher);
 		var data:Object	= null;
 		if (ev!=null && ev.target!=null && ev.target.hasOwnProperty("data")) data = ev.target.data;

@@ -6,7 +6,7 @@
 
 import come2play_as2.api.auto_generated.*;
 	class come2play_as2.api.auto_generated.API_Message extends SerializableClass {
-		public static var LAST_RAN_JAVA_DATE:String = "Wed May 13 11:08:06 IDT 2009";
+		public static var LAST_RAN_JAVA_DATE:String = "Wed May 13 13:25:42 IDT 2009";
 		public static var USER_INFO_KEY_name:String = "name";
 		public static var USER_INFO_KEY_avatar_url:String = "avatar_url";
 		public static var USER_INFO_KEY_supervisor:String = "supervisor";

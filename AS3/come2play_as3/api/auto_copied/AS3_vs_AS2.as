@@ -563,10 +563,9 @@ public final class AS3_vs_AS2
 	public static function checkObjectIsSerializable(obj:Object):void {
 		if (obj==null) return;
 		if (obj is Boolean || obj is String || obj is Number) return;
-		var className:String = getClassName(obj);
-		if (className!="Array" && className!="Object")
+		if (!isArray(obj) && !SerializableClass.isObject(obj))
 			if (!(obj is SerializableClass))
-				throw new Error("className="+className+" should extend SerializableClass because it was sent over a LocalConnection");
+				throw new Error("className="+getClassName(obj)+" should extend SerializableClass because it was sent over a LocalConnection");
 		for each (var field:Object in obj)
 			checkObjectIsSerializable(field);
 	}	

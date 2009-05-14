@@ -220,7 +220,8 @@ package come2play_as3.api.auto_copied
         private function trySendMessageUsingLocalConnection(msg:Object):String {  
         	if (!handShakeMade) return "Did not finish handshake yet"; 
         	if (lcUser == null)	return "lcUser is still null";			  
-			try{        			
+			try{        	
+				//Careful from ArgumentError: Error #2084: The AMF encoding of the arguments cannot exceed 40K.		
 				lcUser.send(sSendChanel, "localconnection_callback", msg);  
 			}catch(err:Error) { 
 				ErrorHandler.handleError(err,msg);

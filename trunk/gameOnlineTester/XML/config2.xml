@@ -141,6 +141,8 @@ Not used by the graphics yet (but should be displayed):
 -->
 <customInitInfo>
 	<custom>
+		<entry><key>CanViewGame</key><value>false</value></entry>	
+		
 		<!-- 
 			Saved games for testing are stored in the xml as customInfo with keys like this:
 			LOCALTEST_GAMENAME-VARIANT-PLAYERSNUM-EnumPlayType

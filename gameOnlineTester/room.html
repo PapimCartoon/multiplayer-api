@@ -217,6 +217,8 @@
 			params["override_config.game_parameters.play_type"] = "MultiPlayer";
 			params["override_config.flash_type"] = "game";
 			if(windowParams["type"] == "start_game_from_table_url"){
+				params["override_config.game_parameters.SentInvitation"] = "DELETE"
+				params["override_config.game_parameters.AutoMatch"] = "DELETE"
 				loadSwf = "graphics/Preloader.swf"
 				params["IGNORE_skip_distrabution"] = "true";
 				params["override_config.game_parameters.start_scenario"] = "FromTable";
@@ -224,9 +226,14 @@
 				params["override_config.game_parameters.FromTable.player_ids"] = windowParams["player_ids"];		
 			}
 			else if(windowParams["type"] == "start_game_from_invite_url"){
+				params["override_config.game_parameters.FromTable"] = "DELETE"
+				params["override_config.game_parameters.AutoMatch"] = "DELETE"
 				params["override_config.game_parameters.start_scenario"] = "SentInvitation";
 				params["override_config.game_parameters.SentInvitation.player_ids"] = windowParams["player_ids"];
 			}else if(windowParams["type"] == "AutoMatch"){
+				params["override_config.game_parameters.SentInvitation"] = "DELETE"
+				params["override_config.game_parameters.FromTable"] = "DELETE"
+				
 				params["intro_screen_url"] = "graphics/IntroScreenSkin.swf"
 				if(isSmartAutoMatch)	params["intro_config_url"] = "XML/introConfig.XML"	
 				params["override_config.game_parameters.start_scenario"] = "AutoMatch";

@@ -127,9 +127,10 @@ public final class AS3_Loader
 	public static function exitPause():void {
 		if (pauseQueue==null) return;
 		tmpTrace(["exitPause. #pauseQueue=",pauseQueue.length]);
-		for each (var req:ImageLoadRequest in pauseQueue)
+		var copyPause:Array = pauseQueue;
+		pauseQueue = null; // we must exit the pause before calling loadImageReq
+		for each (var req:ImageLoadRequest in copyPause)
 			loadImageReq(req);
-		pauseQueue = null;		
 	}
 	public static function loadImage(imageUrl:String,successHandler:Function = null,failureHandler:Function = null,progressHandler:Function = null,context:LoaderContext = null,calledFrom:String="undefined"):void {
 		StaticFunctions.assert(imageUrl!="" && imageUrl!=null,"can't load a blank image",[calledFrom]);
@@ -157,10 +158,7 @@ public final class AS3_Loader
 		loadRequest.progressHandler = progressHandler;
 		loadRequest.context = context;
 		
-		if (pauseQueue==null)
-			loadImageReq(loadRequest);
-		else
-			pauseQueue.push(loadRequest);		
+		loadImageReq(loadRequest);		
 	}
 	private static function loadImageReq(loadRequest:ImageLoadRequest):void {
 		var imageUrl:String = loadRequest.imageUrl;
@@ -175,7 +173,10 @@ public final class AS3_Loader
 			handleExistingImage(imageCache[imageUrl],loadRequest);
 		} else {
 			// image not loaded yet
-			
+			if (pauseQueue!=null) {
+				pauseQueue.push(loadRequest);	
+				return;
+			}		
 			var requestArray:Array/*ImageLoadRequest*/ = url2RequestArray[imageUrl];
 			if (requestArray==null) {
 				// the first time we try to load imageUrl

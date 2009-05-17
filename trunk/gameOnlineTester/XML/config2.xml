@@ -242,6 +242,7 @@ Not used by the graphics yet (but should be displayed):
 		use the following (with Red5 turned on):
 		localhost:8083:socket,localhost:2000:socket
 				
+				
 		-->
 		<entry><key>override all_java_ips</key><value>'localhost:2000:socket,localhost:8083:rtmpt'</value></entry>		
 		
@@ -800,7 +801,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 		  -->
 		  <avatar_url>images/Avatar_1.gif</avatar_url>
 		  <!-- to change my supervisor status: Admin, Supervisor, MiniSupervisor, NormalUser -->
-		  <supervisor>Supervisor</supervisor>
+		  <supervisor>NormalUser</supervisor>
 		  <credibility>100</credibility>
 		  <tokens>0:5000</tokens>
 		  <votes_sum>9</votes_sum>

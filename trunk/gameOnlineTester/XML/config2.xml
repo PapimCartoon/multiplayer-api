@@ -992,7 +992,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 			<line_color_invitation type="uint">0xFF0000</line_color_invitation>
 			<line_color_private_message type="uint">0x82AA3C</line_color_private_message>
 			<line_color_taunt type="uint">0xFB8F84</line_color_taunt>
-			<is_with_emoticons type="boolean">false</is_with_emoticons>
+			<is_with_emoticons type="boolean">true</is_with_emoticons>
 		</chat>
 		
 		<user_info_pref>
@@ -1006,7 +1006,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 			
 		<is_chat_enabled type="boolean">true</is_chat_enabled>
 		
-		<is_align_vertical type="boolean">false</is_align_vertical>	
+		<is_align_vertical type="boolean">true</is_align_vertical>	
 		<is_rtl type="boolean">false</is_rtl>    
 	</graphics>
 </config>

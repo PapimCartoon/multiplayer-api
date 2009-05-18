@@ -35,7 +35,10 @@ package come2play_as3.api.auto_copied
 		private function assertNotRemoved():void {
 			StaticFunctions.assert(!isRemoved, "Can't use an AS3_Timer after you removed all listeners! name=",this);			
 		}
-		public function deleteTimer():void {
+		/**
+		 * deleteTimer should be called only from AS3_vs_AS2.
+		 */
+		internal function deleteTimer():void {
 			assertNotRemoved();
 			isRemoved = true;
 			delete ALL_TIMERS[this];

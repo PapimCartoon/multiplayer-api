@@ -296,7 +296,8 @@ package emulator.auto_copied
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			try{        			
+			try{        	
+				//Careful from ArgumentError: Error #2084: The AMF encoding of the arguments cannot exceed 40K.		
 				lcUser.send(sSendChanel, "localconnection_callback", msg);  
 			}catch(err:Error) { 
 				ErrorHandler.handleError(err,msg);
@@ -305,10 +306,10 @@ package emulator.auto_copied
         }
         private function sendPrefix():void {  				  
 			try{
-				lcTrace(["sent randomPrefix on ",sInitChanel," randomPrefix sent is:",randomPrefix," Is server: ",isContainer]);	
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+				lcTrace(["sent randomPrefix on ",sInitChanel," randomPrefix sent is:",randomPrefix," Is server: ",isContainer]);	
 				lcInit.send(sInitChanel, "localconnection_init", randomPrefix);  
 			}catch(err:Error) { 				
 				ErrorHandler.handleError(err, ["prefix error,prefix :",randomPrefix]);
@@ -318,10 +319,10 @@ package emulator.auto_copied
         	try{
         		lcUser.send(sSendChanel, "localconnection_callback",API_DoRegisterOnServer.create().toObject());  
         	}catch(err:Error){
-        		ErrorHandler.myTimeout("sendHandShakeDoRegister", AS3_vs_AS2.delegate(this,this.sendHandShakeDoRegister),1000);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+        		ErrorHandler.myTimeout("sendHandShakeDoRegister", AS3_vs_AS2.delegate(this,this.sendHandShakeDoRegister),1000);
         	}
         }
         private function verify(msg:API_Message, isSend:Boolean):void {
@@ -331,10 +332,10 @@ package emulator.auto_copied
     		else
     			verifier.msgToGame(msg);        	
         }  
-        private function createLocalConnection():LocalConnection{
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+        private function createLocalConnection():LocalConnection{
         	var lc:LocalConnection = new LocalConnection();
         	StaticFunctions.allowDomainForLc(lc);
 			lcTrace(["local connection Domain",lc.domain])	
@@ -344,10 +345,10 @@ package emulator.auto_copied
         	if (lcUser != null) return;
         	try{
         		lcTrace(["Container? :",isContainer,"got sRandomPrefix=",sRandomPrefix," on sInitChanel=",sInitChanel]);
-        		lcUser = createLocalConnection()
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+        		lcUser = createLocalConnection()
 				AS3_vs_AS2.addStatusListener(lcUser, this, ["localconnection_callback"]);
 				
 				var sDoChanel:String = getDoChanelString(sRandomPrefix);
@@ -357,10 +358,10 @@ package emulator.auto_copied
 				sSendChanel = 
 					!isContainer ? sDoChanel : sGotChanel;				
 				lcTrace(["Container? :",isContainer,"LocalConnection listens on channel=",sListenChannel," and sends on ",sSendChanel]);
-				lcUser.connect(sListenChannel);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+				lcUser.connect(sListenChannel);
 				if(isContainer)	sendHandShakeDoRegister();
 			} catch(err:Error) { 
 				ErrorHandler.handleError(err,"local connection init");
@@ -370,10 +371,10 @@ package emulator.auto_copied
 		
         public function localconnection_callback(msgObj:Object):void {
         	ErrorHandler.catchErrors("GotAPI_Msg",AS3_vs_AS2.delegate(this,this.p_localconnection_callback),[msgObj]);        	
-        }
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+        }
         private function p_localconnection_callback(msgObj:Object):void {
         	var msg:API_Message = null;
     		var deserializedMsg:Object = SerializableClass.deserialize(msgObj);
@@ -383,10 +384,10 @@ package emulator.auto_copied
     		if (!isUsingAS3) {
         		if((msg is API_DoRegisterOnServer) && (!handShakeMade)){
         			handShakeMade = true;
-	        		if(isContainer){	
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	        		if(isContainer){	
 	        			lcInit.close();	
 	        		}else{
 	        			sendPrefixInterval.clear();
@@ -396,10 +397,10 @@ package emulator.auto_copied
         	}
     		GOT_LOG.log(msg);
     		verify(msg, false);
-    		gotMessage(msg);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+    		gotMessage(msg);
         }  
 	
 		public static function getMsgNum(currentCallback:API_Message):int {
@@ -409,8 +410,8 @@ package emulator.auto_copied
 	    	if (currentCallback is API_GotStateChanged) msgNum = (/*as*/currentCallback as API_GotStateChanged).msgNum;
 	    	return msgNum;
 	 	}			
-	}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	}
 }

@@ -19,35 +19,39 @@ package emulator.auto_copied
 		private var pausedEvents:Array = new Array();
 		public function AS3_GATracker(disp:DisplayObject,id:String,isAS3:String="AS3",arg3:Boolean=false)
 		{
-			try{
+			reconstruct(disp,id,isAS3,arg3)
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		}
+		public function reconstruct(disp:DisplayObject,id:String,isAS3:String="AS3",arg3:Boolean=false):void{
+			if(realGATracker!=null)	return;
+			try{
 				var c:Class = AS3_vs_AS2.getClassByName("com.google.analytics::GATracker");
 				realGATracker = new c(disp,id,isAS3,arg3)
 				for each(var obj:Object in pausedEvents){
 					realGATracker.trackEvent(obj.catagory,obj.action,obj.label,obj.value)
 				}
 				pausedEvents = [];
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 				ANALYTIC_LOG.log("successfully created analytics")
 			}catch(err:Error){
 				ANALYTIC_LOG.log("failed to create analytics")
 			}
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 		}
 		public function trackEvent(catagory:String,action:String,label:String=null,value:Number=0):void{
 			ANALYTIC_LOG.log("trackEvent",catagory,action,label,value)
 			if(realGATracker==null){
 				pausedEvents.push({catagory:catagory,action:action,label:label,value:value})
 				return;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			}	
 			realGATracker.trackEvent(catagory,action,label,value)
 		}
-
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
 
 
 	}

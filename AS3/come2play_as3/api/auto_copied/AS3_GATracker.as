@@ -9,6 +9,10 @@ package come2play_as3.api.auto_copied
 		private var pausedEvents:Array = new Array();
 		public function AS3_GATracker(disp:DisplayObject,id:String,isAS3:String="AS3",arg3:Boolean=false)
 		{
+			reconstruct(disp,id,isAS3,arg3)
+		}
+		public function reconstruct(disp:DisplayObject,id:String,isAS3:String="AS3",arg3:Boolean=false):void{
+			if(realGATracker!=null)	return;
 			try{
 				var c:Class = AS3_vs_AS2.getClassByName("com.google.analytics::GATracker");
 				realGATracker = new c(disp,id,isAS3,arg3)

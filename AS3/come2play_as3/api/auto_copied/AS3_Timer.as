@@ -43,6 +43,10 @@ package come2play_as3.api.auto_copied
 			isRemoved = true;
 			delete ALL_TIMERS[this];
 		}
+		override public function set delay(value:Number):void{
+			StaticFunctions.assert(delay>0, "AS3_Timer: illegal delay=",delay,"in timer",name)
+			super.delay = value;
+		}
 		override public function addEventListener(type:String, listener:Function, useCapture:Boolean=false, priority:int=0, useWeakReference:Boolean=false):void {
 			assertNotRemoved();
 			super.addEventListener(type,listener,useCapture,priority,useWeakReference);

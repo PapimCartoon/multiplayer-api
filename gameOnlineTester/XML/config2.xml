@@ -868,7 +868,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 			<url>emoticon3.swf</url>
 		</emoticon>
 		<emoticon> 
-			<string>:-o</string>
+			<string>;-)</string>
 			<url>emoticon4.swf</url>
 		</emoticon>
 		<emoticon> 

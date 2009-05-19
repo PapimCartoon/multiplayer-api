@@ -60,6 +60,7 @@ import come2play_as2.api.auto_copied.*;
 		 * using method calls instead of LocalConnection in AS3.
 		 * We still must serialize and deserialize because the API_* classes are different.
 		 */ 
+		public static var CREATED_STACKTRACE:Error = null;
 		public static var SINGLETON:LocalConnectionUser = null;
 		public static var USING_AS3_PREFIX:String = "usingAS3";
 		public static var AS3_RECEIVER_CLASS_NAME:String = "come2play_as2.auto_copied::LocalConnectionUser"; // set using reflection
@@ -135,7 +136,8 @@ import come2play_as2.api.auto_copied.*;
 					// in AS3 we prefer to use direct method calls (using the static SINGLETON member), 
 					// instead of LocalConnection (which has size limitations)
 					// putting a value in SINGLETON means that the init is done (so it must be done after API_LoadMessages) 
-					StaticFunctions.assert(SINGLETON==null,"You can create a LocalConnectionUser only once!",[]);
+					StaticFunctions.assert(SINGLETON==null,"You can create a LocalConnectionUser only once!",[CREATED_STACKTRACE]);
+					CREATED_STACKTRACE = new Error("CREATED_STACKTRACE");
 					SINGLETON = this;
 					
 					madeConnection();

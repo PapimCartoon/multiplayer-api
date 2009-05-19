@@ -283,7 +283,7 @@ public final class AS3_Loader
 		}
 				
 		// garbage-collection bug: we must refer to loader to prevent it from being garbage-collected!
-		var failTimer:AS3_Timer = new AS3_Timer("LoadFailTimer",10000);	
+		var failTimer:AS3_Timer = new AS3_Timer("LoadFailTimer",30000);	
 		var newSuccFunction:Function = function (ev:Event):void { removeLoadUrlListeners(false, loader,url,dispatcher,ev,successHandler, failureHandler,progressHandler, context, retryCount,failTimer); };
 		var newFailFunction:Function = function (ev:Event):void { removeLoadUrlListeners(true , loader,url,dispatcher,ev,successHandler, failureHandler,progressHandler, context, retryCount,failTimer); };
 		AS3_vs_AS2.myAddEventListener("failTimer",failTimer,TimerEvent.TIMER, newFailFunction); 
@@ -324,7 +324,7 @@ public final class AS3_Loader
      	}		
 	}
 	public static var RETRY_DELAY_MILLI:int = 3000;
-	public static var MIN_LEN:int = -1;
+	public static var MIN_LEN:int = 3;
 	private static function removeLoadUrlListeners(isFailure:Boolean, loader:Loader, url:Object/*String or URLRequest*/,dispatcher:IEventDispatcher, ev:Event, successHandler:Function,failureHandler:Function, progressHandler:Function,context:LoaderContext, retryCount:int,failTimer:AS3_Timer):void {
 		// I don't use the loader, but I still pass it to prevent garbage collection
 		if(failTimer!=null){
@@ -337,13 +337,13 @@ public final class AS3_Loader
 		AS3_vs_AS2.myRemoveAllEventListeners("loadURL", dispatcher);
 		var data:Object	= null;
 		if (ev!=null && ev.target!=null && ev.target.hasOwnProperty("data")) data = ev.target.data;
-		var len:int = data==null ? 0 :
+		var len:int = data==null ? int.MAX_VALUE : // null is a legal case! e.g., (todo: find an example)
 			data is String ? (data as String).length : 
 			data is ByteArray ? (data as ByteArray).length : 
 			-1;
 		StaticFunctions.assert(len>=0, "Loaded an illegal type for data: ",data);
 			
-		if (len<MIN_LEN) {
+		if (len<=MIN_LEN) {
 			tmpTrace("We loaded a String/ByteArray which are too small! so we retry to load the image again");
 			isFailure = true;
 		}
@@ -358,6 +358,7 @@ public final class AS3_Loader
 			if (retryCount>0) SUCCESS_RETRY_LOG.log("Retry mechanism worked for url=",url);
 			successHandler(ev);
 		} else {
+			if(loader!=null)	loader.unload()
 			if (retryCount+1<imageLoadingRetry) {
 				tmpTrace("We retry to load the url=",url,"retry delay is",RETRY_DELAY_MILLI);
 				var urlString:String

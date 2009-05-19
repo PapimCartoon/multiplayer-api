@@ -44,11 +44,12 @@ package emulator.auto_copied
 		public function trackEvent(catagory:String,action:String,label:String=null,value:Number=0):void{
 			ANALYTIC_LOG.log("trackEvent",catagory,action,label,value)
 			if(realGATracker==null){
+				if(pausedEvents.length > 100)	return;
 				pausedEvents.push({catagory:catagory,action:action,label:label,value:value})
-				return;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+				return;
 			}	
 			realGATracker.trackEvent(catagory,action,label,value)
 		}

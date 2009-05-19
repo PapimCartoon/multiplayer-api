@@ -242,13 +242,13 @@ Not used by the graphics yet (but should be displayed):
 		use the following (with Red5 turned on):
 		localhost:8083:socket,localhost:2000:socket
 		
-		to test tunneling in the IIS:
+		to test tunneling in the IISs:
 			msn.come2play.com;80.179.46.238:8080:rtmpt
+			www.come2play.com;80.179.46.238:8080:rtmpt
 			
 		to test tunneling locally:
 			localhost;80.179.46.238:8083:rtmpt
-		
-		localhost:2000:socket,localhost:8083:rtmpt
+				
 		-->
 		<entry><key>override all_java_ips</key><value>'localhost:2000:socket,localhost:8083:rtmpt'</value></entry>		
 		

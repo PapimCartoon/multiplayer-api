@@ -29,8 +29,8 @@ package come2play_as3.api.auto_copied{
  */
 public final class AS3_Loader
 {
-	private static var LOG:Logger = new Logger("Loader",10);
-	private static var Progress_LOG:Logger = new Logger("Progress_LOG",10);
+	private static var LOG:Logger = new Logger("Loader",20);
+	private static var Progress_LOG:Logger = new Logger("Progress_LOG",20);
 	private static var SUCCESS_RETRY_LOG:Logger = new Logger("SUCCESS_RETRY",10);
 	public static function tmpTrace(...args):void {
 		LOG.log(args);
@@ -288,7 +288,7 @@ public final class AS3_Loader
 		var newFailFunction:Function = function (ev:Event):void { removeLoadUrlListeners(true , loader,url,dispatcher,ev,successHandler, failureHandler,progressHandler, context, retryCount,failTimer); };
 		AS3_vs_AS2.myAddEventListener("failTimer",failTimer,TimerEvent.TIMER, newFailFunction); 
 		
-		var traceFunc:Function = function (ev:Event):void { tmpTrace("Event=",ev," loader.content=",loader==null ? "no loader" : loader.content); };
+		var traceFunc:Function = function (ev:Event):void { tmpTrace("Event for ",url, "event=",ev," loader.content=",loader==null ? "no loader" : loader.content); };
 		var allTraceEvents:Array = [Event.ACTIVATE, Event.DEACTIVATE,Event.INIT,Event.OPEN,Event.UNLOAD,HTTPStatusEvent.HTTP_STATUS];			
 		for each (var event:String in allTraceEvents)
 			AS3_vs_AS2.myAddEventListener("loadURL",dispatcher,event, traceFunc); 			
@@ -310,6 +310,7 @@ public final class AS3_Loader
 	  			if(!notUseCache){
 	  				urlloader.load(new URLRequest(urlString));
 	  			}else{
+	  				// not using cache
 	  				tmpTrace("Loading urlString=",urlString, " with context=",context);
 	  				loader.load(new URLRequest(urlString),context);
 	  				tmpTrace("load did not throw an exception");

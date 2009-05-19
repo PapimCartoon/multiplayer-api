@@ -231,7 +231,7 @@ Not used by the graphics yet (but should be displayed):
 		
 		
 		Local:  localhost:2000:socket,localhost:2000:old_xmlsocket,localhost:8083:rtmpt
-		Java44 (for game-developer testing without ASP): 74.63.37.40:8080:socket,74.63.37.40:8080:old_xmlsocket,74.63.37.40:80:rtmpt
+		Java45 (production server - need different md5): 74.63.37.38:8080:socket,74.63.37.38:80:rtmpt
 		Java238 (for game-developer testing without ASP): 80.179.46.238:8080:socket,80.179.46.238:8080:old_xmlsocket,80.179.46.238:80:rtmpt
 		Java43 (for testing with ASP): 74.63.37.41:8080:socket,74.63.37.41:8080:old_xmlsocket,74.63.37.41:80:rtmpt
 		
@@ -241,8 +241,14 @@ Not used by the graphics yet (but should be displayed):
 		To test the weird PROXY some users have (that returns HTTP/1.1 400)
 		use the following (with Red5 turned on):
 		localhost:8083:socket,localhost:2000:socket
-				
-				
+		
+		to test tunneling in the IIS:
+			msn.come2play.com;80.179.46.238:8080:rtmpt
+			
+		to test tunneling locally:
+			localhost;80.179.46.238:8083:rtmpt
+		
+		localhost:2000:socket,localhost:8083:rtmpt
 		-->
 		<entry><key>override all_java_ips</key><value>'localhost:2000:socket,localhost:8083:rtmpt'</value></entry>		
 		

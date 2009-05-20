@@ -103,21 +103,24 @@ public final class AS3_Loader
 			vars[k] = msg[k];
 		return vars;			
 	}
-	public static function sendToURL(vars:Object, method:String, url:String, successHandler:Function = null,failureHandler:Function = null):void {
+	public static function sendToURL(vars:Object, method:String, url:String, successHandler:Function = null,failureHandler:Function = null, progressHandler:Function = null):void {
 		tmpTrace("sendToURL=",url);
 		var request:URLRequest = new URLRequest(url);
 		request.data = object2URLVariables(vars);
 		request.method = method;
-		loadText(request, successHandler, failureHandler)
+		loadText(request, successHandler, failureHandler,progressHandler)
 	}        
 	public static function loadText(urlRequest:URLRequest,successHandler:Function = null,failureHandler:Function = null,progressHandler:Function = null):void {
 		loadURL(urlRequest,successHandler,failureHandler,progressHandler)
 	}
-	// 
+ 
+ 	// are we using Loader or URLLoader?
+ 	// It is better to use a URLLoader (because once we used Loader, it failed, but still loaded two instances of a game) 	
 	public static function isUsingLoader(imageUrl:String, context:LoaderContext):Boolean {
 		return imageUrl.indexOf("?")>0 && // if the url has "?" then we must use Loader (and URLLoader) because we can't pass urlParameters using URLLoader 
 			context!=null && context.checkPolicyFile;
 	}
+	
 	public static var domainURL:String = "";	
 	public static function getURL(url:String):String{
 		if (url.substr(0,1) == "/"){

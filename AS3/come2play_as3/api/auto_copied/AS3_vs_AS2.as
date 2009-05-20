@@ -504,10 +504,8 @@ public final class AS3_vs_AS2
 	 * In the container use I add a function 
 	 *  that also handles BASE64 XMLs (to pass content-filters)
 	 */
-	public static var CONVERT_XML_STRING:Function/*String->String*/ = null;
 	public static function xml_create(str:String):XML {		
 		try {
-			if (CONVERT_XML_STRING!=null) str = CONVERT_XML_STRING(str);
 			return new XML(str);
 		} catch (e:Error) {
 			throw new Error("Error in createXML in str="+str);

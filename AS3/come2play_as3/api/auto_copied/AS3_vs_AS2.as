@@ -102,26 +102,22 @@ public final class AS3_vs_AS2
 				return handler.apply(thisObj, otherArgs.concat(args) ); 
 			};
 	}
-	public static var TRACE_ONPRESS:Boolean = true;;
+	private static function removeMouseListeners(movie:IEventDispatcher):void {		
+		if (myHasAnyEventListener("as3_vs_as2", movie)) 
+			myRemoveAllEventListeners("as3_vs_as2", movie);
+	}
 	public static function addOnPress(movie:IEventDispatcher, func:Function, isActive:Boolean):void {
 		//function (event:MouseEvent):void {
-		if (myHasEventListener("as3_vs_as2", movie, MouseEvent.MOUSE_DOWN , func))
-			myRemoveEventListener("as3_vs_as2", movie, MouseEvent.MOUSE_DOWN , func);
-			
+		removeMouseListeners(movie);	
 		if (isActive) {
-			if (TRACE_ONPRESS) StaticFunctions.storeTrace(["Added on MOUSE_DOWN to movie=",movie]);
 			myAddEventListener("as3_vs_as2", movie, MouseEvent.MOUSE_DOWN , func);
 		}
 	}
-	public static function addOnMouseOver(movie:IEventDispatcher, mouseOverFunc:Function, mouseOutFunc:Function, isActive:Boolean):void {		
-		//function (event:MouseEvent):void { 		
-		if (myHasEventListener("as3_vs_as2", movie, MouseEvent.MOUSE_OVER , mouseOverFunc))
-			myRemoveEventListener("as3_vs_as2", movie, MouseEvent.MOUSE_OVER , mouseOverFunc);
-			
-		if (myHasEventListener("as3_vs_as2", movie, MouseEvent.MOUSE_OUT , mouseOutFunc))		
-			myRemoveEventListener("as3_vs_as2", movie, MouseEvent.MOUSE_OUT , mouseOutFunc);
-			
+	public static function addOnMouseOver(movie:IEventDispatcher, pressedOn:Function, mouseOverFunc:Function, mouseOutFunc:Function, isActive:Boolean):void {		
+		//function (event:MouseEvent):void { 
+		removeMouseListeners(movie);		
 		if (isActive) {
+			myAddEventListener("as3_vs_as2", movie, MouseEvent.MOUSE_DOWN , pressedOn);
 			myAddEventListener("as3_vs_as2", movie, MouseEvent.MOUSE_OVER , mouseOverFunc);		
 			myAddEventListener("as3_vs_as2", movie, MouseEvent.MOUSE_OUT , mouseOutFunc);
 		}
@@ -129,7 +125,7 @@ public final class AS3_vs_AS2
 	public static function isDictionaryEmpty(dic:Dictionary):Boolean {
 		return dictionarySize(dic)==0;
 	}
-	public static function dictionarySize(dic:Dictionary):int {
+	public static function dictionarySize(dic:Object):int {
 		var size:int = 0;
 		for (var key:Object in dic)
 			size++;
@@ -216,12 +212,15 @@ public final class AS3_vs_AS2
 		StaticFunctions.assert(dispatcherName==null || info.name==dispatcherName, "getDispatcherInfo: You used the same dispatcher with different dispatcherName! dispatcher=",[dispatcher," new dispatcherName=",dispatcherName, " old dispatcherName=",info.name]);
 		return info;
 	}
+	private static var addEventListener_LOG:Logger = new Logger("addEventListener",10);
 	private static var ALL_Event_LOG:Logger = new Logger("ALL_EVENT_LISTENERS",10);
+	private static var MultipleListeners_LOG:Logger = new Logger("MultipleEventListeners",10);
 	private static function p_myAddEventListener(dispatcherName:String, dispatcher:IEventDispatcher, type:String, listener:Function, useCapture:Boolean, priority:int, weakReference:Boolean):void {
 		if (dispatchersInfo==null) {
 			dispatchersInfo = new Dictionary(true); // weak keys! when the listener is garbaged-collected, the wrapper is deleted
 			ALL_Event_LOG.log( getEventListenersTrace() );
 		}
+		addEventListener_LOG.log(dispatcherName," added ", type, " weak=",weakReference);
 		 		
 		var func:Function = ErrorHandler.wrapWithCatch(dispatcherName+" for event "+type, listener);		
 		if (dispatchersInfo[dispatcher] == null)
@@ -233,6 +232,10 @@ public final class AS3_vs_AS2
 		var dic1:Dictionary = info.type2listner2func;		
 		if (dic1[type] == null)
 			dic1[type] = new Dictionary(false);
+		else {
+			// this is usually a bug (you should have multiple listeners for the same type
+			MultipleListeners_LOG.log(dispatcherName," already had a listener for type=",type);
+		}
 		var dic2:Dictionary = dic1[type];
 		StaticFunctions.assert(dic2[listener]==null,"myAddEventListener: you added the same listener twice! dispatcherName=",[dispatcherName," type=",type]);	
 		dic2[listener] = func;		
@@ -310,8 +313,26 @@ public final class AS3_vs_AS2
 	public static function getTimeString():String {
 		return new Date().toLocaleTimeString();
 	}
+	private static var ParamLog:Logger = new Logger("LoaderInfoParameters",10);
+	private static var infoParams:Object = null;
 	public static function getLoaderInfoParameters(someMovieClip:DisplayObject):Object {
-		return someMovieClip.loaderInfo.parameters;
+		if (infoParams!=null) return infoParams;
+		infoParams = someMovieClip.loaderInfo.parameters;
+		if (dictionarySize(infoParams)==0) {
+			// when we use URLLoader instead of Loader, we can't pass "?..." parameters.
+			var xlass:Class = null;
+			try {
+				xlass = AS3_vs_AS2.getClassByName("come2play_as3.util::StaticConfig");
+			} catch (e:Error) {
+				ParamLog.log("Running locally, i.e., not running in the container");
+				return infoParams;
+			}
+			infoParams = xlass["getGameParameters"]();
+			ParamLog.log("Running in the container with params=",infoParams);
+		} else {
+			ParamLog.log("ERROR!!! we use the old technique of loading with Loader instead of URLLoader! params=",infoParams, new Error());
+		}
+		return infoParams;
 	}
 	public static function getLoaderInfoUrl(someMovieClip:DisplayObject):String {
 		return someMovieClip.loaderInfo.url;
@@ -460,13 +481,33 @@ public final class AS3_vs_AS2
 					}
 				},CHECK_STAGE_EVERY_MILLI);
 	}
+	
+	private static var Memory_LOG:Logger = new Logger("Memory",60); // 10 minutes = 60*every 10 seconds
+	public static function logMemory():void {
+		// trace( 55000000 >> 20);  // outputs: 52
+		// >> 20  does shift by 20 bits (like dividing by  2^20 = 1024*1024)
+		Memory_LOG.log(System.totalMemory >> 20);// in MB		
+	}
 
+
+	public static function createURLVariables(str:String):URLVariables { 
+		try {
+			return new URLVariables(str);
+		} catch (e:Error) {
+			throw new Error("Error in createURLVariables in str="+str);
+		}
+		return null;
+	}
 	/**
 	 * XML differences between AS2 and AS3.
 	 * In AS2 I use XMLNode.
+	 * In the container use I add a function 
+	 *  that also handles BASE64 XMLs (to pass content-filters)
 	 */
+	public static var CONVERT_XML_STRING:Function/*String->String*/ = null;
 	public static function xml_create(str:String):XML {		
 		try {
+			if (CONVERT_XML_STRING!=null) str = CONVERT_XML_STRING(str);
 			return new XML(str);
 		} catch (e:Error) {
 			throw new Error("Error in createXML in str="+str);

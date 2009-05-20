@@ -22,10 +22,18 @@ package come2play_as3.api.auto_copied{
  * and cache the bitmapData and return a new BitMap:
  * var loader:Loader = new Loader();
    when loaded:
+    // loadEvent.target as LoaderInfo;
  	var loadedImage:Bitmap = loader.getChildAt(0) as Bitmap;
 	var copyImage:DisplayObject = new Bitmap(loadedImage.bitmapData);
    This will save a lot of space if the image is used many times on the stage
-   (or if you have a memory leak) 
+   (or if we have a memory leak) 
+   private static var bitmapCache:Dictionary
+   we need to change our loading mechanism, and instead of a Loader, return directly a: 
+   * DisplayObject/XML/URLVariables
+   Currently we have code duplication in the successHandler(loadEvent:Event) {
+   	var loader:LoaderInfo = loadEvent.target as LoaderInfo;			
+	var child:DisplayObject = loader.content;
+	...
  */
 public final class AS3_Loader
 {
@@ -47,6 +55,7 @@ public final class AS3_Loader
 	public static function isImageLoadFailed(ev:Event):Boolean {
 		return getImageLoadByteArray(ev).length==0; 
 	}
+	
 	
 	private static var imageCache:Dictionary/*imageUrl->Event (if loading failed, then the ev.data is an empty ByteArray)*/ = new Dictionary();
 	private static var url2RequestArray:Dictionary/*imageUrl->ImageLoadRequest[]*/ = new Dictionary();
@@ -104,8 +113,10 @@ public final class AS3_Loader
 	public static function loadText(urlRequest:URLRequest,successHandler:Function = null,failureHandler:Function = null,progressHandler:Function = null):void {
 		loadURL(urlRequest,successHandler,failureHandler,progressHandler)
 	}
-	public static function isNoCache(context:LoaderContext):Boolean {
-		return context!=null && context.checkPolicyFile;
+	// 
+	public static function isUsingLoader(imageUrl:String, context:LoaderContext):Boolean {
+		return imageUrl.indexOf("?")>0 && // if the url has "?" then we must use Loader (and URLLoader) because we can't pass urlParameters using URLLoader 
+			context!=null && context.checkPolicyFile;
 	}
 	public static var domainURL:String = "";	
 	public static function getURL(url:String):String{
@@ -145,7 +156,7 @@ public final class AS3_Loader
 		}	
 		
 		
-		if (isNoCache(context)) {
+		if (isUsingLoader(imageUrl,context)) {
 			// we do not cache graphics and game
 			loadURL(imageUrl,successHandler,failureHandler,progressHandler,context);
 			return;
@@ -232,6 +243,7 @@ public final class AS3_Loader
 			var errorEvents:Array/*String*/ = [IOErrorEvent.IO_ERROR, HTTPStatusEvent.HTTP_STATUS, SecurityErrorEvent.SECURITY_ERROR];
 			for (var errorEvent:String in errorEvents)
 				AS3_vs_AS2.myAddEventListener("handleExistingImage", dispatcher, errorEvent, failureFunc);
+			if (req.context!=null) req.context.checkPolicyFile = false; // can't use loadBytes with checkPolicyFile=true  
 			byteConverter.loadBytes(data,req.context);
 		}
 	}
@@ -266,10 +278,11 @@ public final class AS3_Loader
 		var dispatcher:IEventDispatcher;
 		var loader:Loader = null;		
 		var urlloader:URLLoader;
-		var notUseCache:Boolean = isNoCache(context);
+		var isLoader:Boolean;
 		if (url is String) {
-			if(!notUseCache){
-				// using cache
+			isLoader = isUsingLoader(url as String,context);
+			if(!isLoader){
+				// using URLLoader
 				urlloader = new URLLoader();	
 				urlloader.dataFormat = URLLoaderDataFormat.BINARY;
 				dispatcher = urlloader;
@@ -308,13 +321,12 @@ public final class AS3_Loader
   		try {
 	  		if (url is String) {
 	  			var urlString:String = url as String;
-	  			if(!notUseCache){
+	  			if(!isLoader){
 	  				urlloader.load(new URLRequest(urlString));
 	  			}else{
 	  				// not using cache
-	  				tmpTrace("Loading urlString=",urlString, " with context=",context);
+	  				tmpTrace("Using Loader! urlString=",urlString, " with context=",context);
 	  				loader.load(new URLRequest(urlString),context);
-	  				tmpTrace("load did not throw an exception");
 	  			}
 			} else {
 				urlloader.load(url as URLRequest);

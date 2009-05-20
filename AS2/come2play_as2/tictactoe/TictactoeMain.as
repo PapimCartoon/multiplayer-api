@@ -176,10 +176,10 @@ class come2play_as2.tictactoe.TictactoeMain extends ClientGameAPI {
 		}
 		
 		if (!shouldUseAvatars && customSymbolsStringArray!=null) {
-			for (i=0; i<customSymbolsStringArray.length; i++) {
-				var symbolUrl:String = customSymbolsStringArray[i];
+			for (var j:Number=0; j<customSymbolsStringArray.length; j++) {
+				var symbolUrl:String = customSymbolsStringArray[j];
 				if (symbolUrl!=null) 
-					replaceSymbol(i,symbolUrl);
+					replaceSymbol(j,symbolUrl);
 			}	
 		}
 			

@@ -52,8 +52,10 @@ class come2play_as2.tictactoe.TictactoeSquareGraphic
 		// In AS2 we put onPress on the inner button, and in AS3 on the buttonContainer (because we need to remove those mouse-event-listeners
 		if (AS3_vs_AS2.isAS3 || isActive) {	
 			var btn:MovieClip = AS3_vs_AS2.isAS3 ? buttonContainer : AS3_vs_AS2.getChild(buttonContainer,"btn");	
-			AS3_vs_AS2.addOnPress(btn,	AS3_vs_AS2.delegate(this, this.pressedOn), isActive);
-			AS3_vs_AS2.addOnMouseOver(btn,	AS3_vs_AS2.delegate(this, this.mouseOver),	AS3_vs_AS2.delegate(this, this.mouseOut), isActive);
+			AS3_vs_AS2.addOnMouseOver(btn,	
+				AS3_vs_AS2.delegate(this, this.pressedOn), 
+				AS3_vs_AS2.delegate(this, this.mouseOver), AS3_vs_AS2.delegate(this, this.mouseOut), 
+				isActive);
 		}
 	}
 	private function addSymbol(color:Number, newSymbol:MovieClip):Void {

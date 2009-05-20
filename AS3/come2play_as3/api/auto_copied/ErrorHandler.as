@@ -126,6 +126,27 @@ public final class ErrorHandler
 		LOG.log([reason, zoneName, id, milliseconds]);
 	}
 				
+	/**
+	 * Flash freezing:
+	 * Sometimes flash freezes for a long time.
+	 * We discovered everyone can do it by pressing on the "X" close symbol on the browser, and not releasing,
+	 * then finally releasing outside the "X" area (thus not closing the window).
+	 * Another way to freeze the flash is calling a javascript with an "alert" (or a popup blocker that displays some message).
+	 * Maybe there are other ways to freeze the flash... (I suspect that a long garbage-collection cycle might also cause it)
+	 * 
+	 * When the flash freezes, there are unpredictable errors in different places, 
+	 * e.g., disconnecting from java, transaction that took too long, an entry that stayed too long in AS3_TimedMap, long round trip times, etc.
+	 * Therefore, we decided to immediately report this error, when we see that the flash "froze",
+	 * and it's easiest to detect it in the entry point of all our functions: 
+	 * 	in catchErrors
+	 * We make sure that logMemoryInterval ticks every 1/2 * MAX_FREEZE_TIME_MILLI
+	 */
+	public static function startLogMemoryInterval():void {
+		myInterval("logMemoryInterval",AS3_vs_AS2.logMemory,MAX_FREEZE_TIME_MILLI/2);
+		LAST_CATCH_ERRORS_ON = getTimer();
+	}
+	public static var MAX_FREEZE_TIME_MILLI:int = 20*1000; // 20 seconds of freezing might even be too much!
+	public static var LAST_CATCH_ERRORS_ON:int = -1; 
 	
 	private static var my_stack_trace:Array = [];
 	public static function wrapWithCatch(zoneName:String, func:Function):Function {
@@ -149,6 +170,17 @@ public final class ErrorHandler
 		}
 		logger.log("ENTERED");
 		LoggerLine.LINE_INDENT = indentLevel;
+		
+		if (LAST_CATCH_ERRORS_ON>=0) {
+			var now:int = getTimer();
+			var lastCatch:int = LAST_CATCH_ERRORS_ON;
+			LAST_CATCH_ERRORS_ON = now; // I assign before alwaysTraceAndSendReport to prevent recursive calls.
+			if (now - lastCatch > MAX_FREEZE_TIME_MILLI) {
+				// the flash froze!
+				alwaysTraceAndSendReport("The flash froze!", ["LAST_CATCH_ERRORS_ON=",lastCatch," now=",now]);
+			}
+		}
+		
 		var wasError:Boolean = false;			
 		try {		
 			res = func.apply(null, args); 

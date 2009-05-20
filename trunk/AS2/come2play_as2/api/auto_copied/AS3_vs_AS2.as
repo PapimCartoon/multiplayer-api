@@ -41,6 +41,10 @@ class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 	public static function asSerializableClass(o):SerializableClass {
 		return o;
 	}	
+	public static function logMemory():Void {
+		// can't get System.totalMemory in AS2
+	}
+
 	public static function delegate(target:Object, handler:Function):Function {
 		var extraArgs:Array = arguments.slice(2);
 		return function() {
@@ -53,7 +57,8 @@ class come2play_as2.api.auto_copied.AS3_vs_AS2 {
 		//trace("Adding onPress to movie="+movie+" func="+func);
 		movie.onPress = isActive ? func : null; //function () {trace("Pressed on movie="+movie+" func="+func); func(); };
 	}	
-	public static function addOnMouseOver(movie:MovieClip, mouseOverFunc:Function, mouseOutFunc:Function, isActive:Boolean):Void {		
+	public static function addOnMouseOver(movie:MovieClip, onPressFunc:Function, mouseOverFunc:Function, mouseOutFunc:Function, isActive:Boolean):Void {		
+		addOnPress(movie, onPressFunc, isActive);
 		movie.onRollOver = isActive ? mouseOverFunc : null; 
 		movie.onRollOut = isActive ? mouseOutFunc : null; 
 	}

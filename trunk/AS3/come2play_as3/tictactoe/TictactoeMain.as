@@ -180,10 +180,10 @@ public final class TictactoeMain extends ClientGameAPI {
 		}
 		
 		if (!shouldUseAvatars && customSymbolsStringArray!=null) {
-			for (i=0; i<customSymbolsStringArray.length; i++) {
-				var symbolUrl:String = customSymbolsStringArray[i];
+			for (var j:int=0; j<customSymbolsStringArray.length; j++) {
+				var symbolUrl:String = customSymbolsStringArray[j];
 				if (symbolUrl!=null) 
-					replaceSymbol(i,symbolUrl);
+					replaceSymbol(j,symbolUrl);
 			}	
 		}
 			

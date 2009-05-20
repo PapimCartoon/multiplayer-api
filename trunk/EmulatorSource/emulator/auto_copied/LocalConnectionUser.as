@@ -103,7 +103,7 @@ package emulator.auto_copied
 
 				xlass = AS3_vs_AS2.getClassByName(AS3_RECEIVER_CLASS_NAME);
 			} catch (e:Error) {
-				// , because container or game were not loaded yet
+				// because container or game were not loaded yet
 				return "class not found";
 			}
 			var singleton:Object = xlass["SINGLETON"];

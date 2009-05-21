@@ -643,11 +643,23 @@ public final class AS3_vs_AS2
 		Memory_LOG.log(System.totalMemory >> 20);// in MB		
 	}
 
-	/**
+
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	public static function createURLVariables(str:String):URLVariables { 
+		try {
+			return new URLVariables(str);
+		} catch (e:Error) {
+			throw new Error("Error in createURLVariables in str="+str);
+		}
+		return null;
+	}
+	/**
 	 * XML differences between AS2 and AS3.
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 	 * In AS2 I use XMLNode.
 	 * In the container use I add a function 
 	 *  that also handles BASE64 XMLs (to pass content-filters)
@@ -657,10 +669,10 @@ public final class AS3_vs_AS2
 		try {
 			if (CONVERT_XML_STRING!=null) str = CONVERT_XML_STRING(str);
 			return new XML(str);
+		} catch (e:Error) {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		} catch (e:Error) {
 			throw new Error("Error in createXML in str="+str);
 		}
 		return null;
@@ -670,10 +682,10 @@ public final class AS3_vs_AS2
 	}
 	public static function xml_getSimpleContent(xml:XML):String {
 		return xml.toString();
+	}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	}
 	public static function xml_getChildren(xml:XML):Array/*XML*/ {
 		var list:XMLList = xml.children();
 		var res:Array/*XML*/ = [];
@@ -683,10 +695,10 @@ public final class AS3_vs_AS2
 	}
 		
 
+	/**
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	/**
 	 * Serialization and handling classes and classNames
 	 */
 	public static function getClassName(o:Object):String {
@@ -696,10 +708,10 @@ public final class AS3_vs_AS2
 	public static function getClassByName(className:String):Class {
 		try {
 			return getDefinitionByName(className) as Class;
+		} catch (err:Error) {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		} catch (err:Error) {
 			throw new Error("The class named '"+className+"' was not found!");
 		}	
 		return null;
@@ -709,10 +721,10 @@ public final class AS3_vs_AS2
 		//		AS3_vs_AS2.as$35::XMLSerializable
 		var className:String = getClassName(instance);
 		var res:Class = getClassByName(className);
+		
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		
 		StaticFunctions.assert(res!=null, "Missing class for instance=",[instance, " className=",className]);
 		return res;		
 	}
@@ -722,10 +734,10 @@ public final class AS3_vs_AS2
 		// but we only do this once at startup!		
 		var className:String = obj.__CLASS_NAME__;
 		if (checkedClasses[className]!=null) return;
+		checkedClasses[className] = true;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		checkedClasses[className] = true;
 		//trace("Checking ctor of "+className);
 		var descriptionXML:XML = describeType(obj);
 		//trace("descriptionXML="+descriptionXML.toXMLString());
@@ -735,10 +747,10 @@ public final class AS3_vs_AS2
 			for each (var parameter:XML in constructor.children())
 				if (parameter.attribute("optional").toString()!="true")
 					StaticFunctions.throwError("The constructor of class "+className+" that extends SerializableClass has arguments that are not optional! These are the parameters of the constructor="+constructor.toXMLString()); 
+		}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		}
 		// I want to check that all fields are non-static and public,
 		// but describeType only returns such fields in the first place.
 		//<variable name="col" type="int"/>
@@ -748,10 +760,10 @@ public final class AS3_vs_AS2
 		var className:String = getClassName(instance);
 		var fieldNames:Array = name2classFields[className];
 		if (fieldNames==null) {
+			fieldNames = [];
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			fieldNames = [];
 			// we could have also used ByteArray.writeObject,
 			// but I think this is more readable
 			// Sadly, a simple for loop doesn't go over the fields of a class (like it does in AS2)
@@ -761,10 +773,10 @@ public final class AS3_vs_AS2
 			var fieldsList:XMLList = describeType(instance).variable;
 			for each (var fieldInfo:XML in fieldsList)
 				fieldNames.push( fieldInfo.attribute("name") );			
+			name2classFields[className] = fieldNames;			
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			name2classFields[className] = fieldNames;			
 		}
 		return fieldNames;
 	}
@@ -774,10 +786,10 @@ public final class AS3_vs_AS2
 			if (StaticFunctions.startsWith(fieldName,"__")) continue;	
 			if (!obj.hasOwnProperty(fieldName))
 				throw new Error("When deserializing, we didn't find fieldName="+fieldName+" in object="+JSON.stringify(obj));
+		}	
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		}	
 	}
 	public static function checkObjectIsSerializable(obj:Object):void {
 		if (obj==null) return;
@@ -787,10 +799,10 @@ public final class AS3_vs_AS2
 				throw new Error("className="+getClassName(obj)+" should extend SerializableClass because it was sent over a LocalConnection");
 		for each (var field:Object in obj)
 			checkObjectIsSerializable(field);
+	}	
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	}	
 	public static function sendToURL(vars:Object, url:String):void {
 		AS3_Loader.sendToURL(vars, URLRequestMethod.POST, url);	
 	}
@@ -801,8 +813,8 @@ import emulator.auto_copied.SerializableClass;
 import emulator.auto_copied.AS3_vs_AS2;
 import flash.utils.*;
 
-// This is a AUTOMATICALLY GENERATED! Do not change!
 
+// This is a AUTOMATICALLY GENERATED! Do not change!
 
 class DispatcherInfo {
 	public var type2listner2func:Dictionary = new Dictionary();
@@ -813,8 +825,8 @@ class DispatcherInfo {
 		this.name = name;
 		this.isWeakRef = isWeakRef;
 	}
+}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-}
 

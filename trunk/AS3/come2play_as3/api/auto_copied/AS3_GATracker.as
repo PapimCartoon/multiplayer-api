@@ -26,6 +26,7 @@ package come2play_as3.api.auto_copied
 			try{
 				var c:Class = AS3_vs_AS2.getClassByName("com.google.analytics::GATracker");
 				realGATracker = new c(disp,id,isAS3,arg3)
+				// todo: send all the pausedEvents in one transaction
 				for each(var obj:Object in pausedEvents){
 					sendTrackEvent(obj.catagory,obj.action,obj.label,obj.value)
 				}
@@ -35,6 +36,7 @@ package come2play_as3.api.auto_copied
 				ANALYTIC_LOG.log("failed to create analytics")
 			}
 		}
+		// todo:  add transaction to combine events
 		public function trackEvent(catagory:String,action:String,label:String=null,value:Number=0):void{
 			ANALYTIC_LOG.log("trackEvent",catagory,action,label,value);
 			if(realGATracker==null){

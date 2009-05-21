@@ -457,9 +457,11 @@ public final class AS3_vs_AS2
 	
 	
 	public static function IndexOf(arr:Array, val:Object):int {
+		StaticFunctions.assert(arr!=null, "Called indexOf on a null array! val=",val);
 		return arr.indexOf(val);
 	}	
 	public static function LastIndexOf(arr:Array, val:Object):int {
+		StaticFunctions.assert(arr!=null, "Called lastIndexOf on a null array! val=",val);
 		return arr.lastIndexOf(val);
 	}	
 	public static function stringIndexOf(str:String, val:String, startIndex:int=0):int {

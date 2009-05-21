@@ -34,7 +34,8 @@ public final class CurrentPlayers
     	return AS3_vs_AS2.IndexOf(currentPlayerIds, playerId)!=-1;        	
     }
     public function isAllInPlayers(playerIds:Array/*int*/):Boolean {
-    	StaticFunctions.assert(playerIds.length>=1, "isAllInPlayers was called with an empty playerIds array");
+    	StaticFunctions.assert(currentPlayerIds!=null, "playerIds used in a DoAll command are no longer playing - the match has already ended! playerIds=",playerIds);
+    	StaticFunctions.assert(playerIds.length>=1, "used an empty array of playerIds in a DoAll command.");
     	for each (var playerId:int in playerIds) {
     		if (!isInPlayers(playerId)) return false;
     	}

@@ -341,6 +341,7 @@ public final class AS3_Loader
 	}
 	public static var RETRY_DELAY_MILLI:int = 3000;
 	public static var MIN_LEN:int = 3;
+	//private static var gaTracker:AS3_GATracker = new AS3_GATracker(null,"","AS3")
 	private static function removeLoadUrlListeners(isFailure:Boolean, loader:Loader, url:Object/*String or URLRequest*/,dispatcher:IEventDispatcher, ev:Event, successHandler:Function,failureHandler:Function, progressHandler:Function,context:LoaderContext, retryCount:int,failTimer:AS3_Timer):void {
 		// I don't use the loader, but I still pass it to prevent garbage collection
 		failTimer.stop();

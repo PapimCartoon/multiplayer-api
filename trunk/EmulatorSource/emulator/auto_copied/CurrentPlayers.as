@@ -53,15 +53,16 @@ public final class CurrentPlayers
     	return AS3_vs_AS2.IndexOf(currentPlayerIds, playerId)!=-1;        	
     }
     public function isAllInPlayers(playerIds:Array/*int*/):Boolean {
-    	StaticFunctions.assert(playerIds.length>=1, "isAllInPlayers was called with an empty playerIds array");
+    	StaticFunctions.assert(currentPlayerIds!=null, "playerIds used in a DoAll command are no longer playing - the match has already ended! playerIds=",playerIds);
+    	StaticFunctions.assert(playerIds.length>=1, "used an empty array of playerIds in a DoAll command.");
     	for each (var playerId:int in playerIds) {
     		if (!isInPlayers(playerId)) return false;
     	}
     	return true;        	
-    }
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+    }
 	public function assertInProgress(inProgress:Boolean, msg:API_Message):void {
 		StaticFunctions.assert(inProgress == isInProgress(), "assertInProgress",["The game must ",inProgress?"" : "not"," be in progress when passing msg=",msg]); 
 	}
@@ -71,10 +72,10 @@ public final class CurrentPlayers
 			currentPlayerIds = null;
 			allPlayerIds = null;
 		}
-	}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	}
 	public function gotMessage(gotMsg:API_Message):void {
 		if (gotMsg is API_GotMatchStarted) {
 			assertInProgress(false,gotMsg);
@@ -84,10 +85,10 @@ public final class CurrentPlayers
 		} else if (gotMsg is API_GotMatchEnded) {	    			
 			assertInProgress(true,gotMsg);
 			var matchEnded:API_GotMatchEnded = /*as*/gotMsg as API_GotMatchEnded;
-			finishedPlayerIds(matchEnded.finishedPlayerIds);			
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			finishedPlayerIds(matchEnded.finishedPlayerIds);			
 		}
 	}
 	

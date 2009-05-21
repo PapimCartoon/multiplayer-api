@@ -11,12 +11,25 @@ package emulator.auto_copied
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
 	import flash.display.DisplayObject;
+	import flash.utils.Dictionary;
 	
 	public final class AS3_GATracker
-	{
+	{				
+		public static var MAX_EVENTS:int = 300;
 		static private var ANALYTIC_LOG:Logger = new Logger("Analytic",30);
+		static private var ANALYTIC_ERRORS_LOG:Logger = new Logger("AnalyticError",10);
+		public static var COME2PLAY_TRACKER:AS3_GATracker = new AS3_GATracker(null,"UA-154580-30");
+		public static function trackWarning(action:String,label:String=null,value:Number=0):void {
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+			COME2PLAY_TRACKER.trackEvent("Warning",action,label,value);
+		}
+		
 		private var realGATracker:Object;
 		private var pausedEvents:Array = new Array();
+		private var uniqueEvents:Dictionary = new Dictionary();
+		private var eventsSent:int = 0;
 		public function AS3_GATracker(disp:DisplayObject,id:String,isAS3:String="AS3",arg3:Boolean=false)
 		{
 			reconstruct(disp,id,isAS3,arg3)
@@ -30,7 +43,7 @@ package emulator.auto_copied
 				var c:Class = AS3_vs_AS2.getClassByName("com.google.analytics::GATracker");
 				realGATracker = new c(disp,id,isAS3,arg3)
 				for each(var obj:Object in pausedEvents){
-					realGATracker.trackEvent(obj.catagory,obj.action,obj.label,obj.value)
+					sendTrackEvent(obj.catagory,obj.action,obj.label,obj.value)
 				}
 				pausedEvents = [];
 
@@ -42,17 +55,39 @@ package emulator.auto_copied
 			}
 		}
 		public function trackEvent(catagory:String,action:String,label:String=null,value:Number=0):void{
-			ANALYTIC_LOG.log("trackEvent",catagory,action,label,value)
+			ANALYTIC_LOG.log("trackEvent",catagory,action,label,value);
 			if(realGATracker==null){
-				if(pausedEvents.length > 100)	return;
+				if (pausedEvents.length>MAX_EVENTS)	return;
 				pausedEvents.push({catagory:catagory,action:action,label:label,value:value})
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
 				return;
-			}	
-			realGATracker.trackEvent(catagory,action,label,value)
+			}
+			
+			var uniqueKey:String = catagory+"--"+action+"--"+label;
+			if (uniqueEvents[uniqueKey]==true) {
+				ANALYTIC_ERRORS_LOG.log("Already used key=",uniqueKey);
+				return;
+			}
+			sendTrackEvent(catagory,action,label,value);	
 		}
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+		
+		private function sendTrackEvent(catagory:String,action:String,label:String,value:Number):void {
+			eventsSent++;
+			if (eventsSent>=MAX_EVENTS) {
+				if (eventsSent==MAX_EVENTS)
+					ANALYTIC_ERRORS_LOG.log("ERROR!!! Sent too many events");
+				return;				
+			}
+			realGATracker.trackEvent(catagory,action,label,value);			
+		}
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 
 
 	}

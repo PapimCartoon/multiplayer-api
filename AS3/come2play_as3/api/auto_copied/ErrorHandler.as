@@ -43,6 +43,8 @@ public final class ErrorHandler
 		if (didReportError) return -1;
 		didReportError = true;
 		
+		AS3_GATracker.COME2PLAY_TRACKER.trackEvent("BugReports",StaticFunctions.getRevision(),errStr,getTimer());
+		
 		var bug_id:int = StaticFunctions.random(1, 10000000);	
 		
 		try {	

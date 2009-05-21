@@ -4,10 +4,15 @@ package come2play_as3.api.auto_copied
 	import flash.utils.Dictionary;
 	
 	public final class AS3_GATracker
-	{
+	{				
 		public static var MAX_EVENTS:int = 300;
 		static private var ANALYTIC_LOG:Logger = new Logger("Analytic",30);
-		static private var ANALYTIC_ERRORS_LOG:Logger = new Logger("AnalyticError",30);
+		static private var ANALYTIC_ERRORS_LOG:Logger = new Logger("AnalyticError",10);
+		public static var COME2PLAY_TRACKER:AS3_GATracker = new AS3_GATracker(null,"UA-154580-30");
+		public static function trackWarning(action:String,label:String=null,value:Number=0):void {
+			COME2PLAY_TRACKER.trackEvent("Warning",action,label,value);
+		}
+		
 		private var realGATracker:Object;
 		private var pausedEvents:Array = new Array();
 		private var uniqueEvents:Dictionary = new Dictionary();

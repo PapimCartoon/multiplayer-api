@@ -602,12 +602,14 @@ public final class AS3_vs_AS2
 	
 	
 	public static function IndexOf(arr:Array, val:Object):int {
+		StaticFunctions.assert(arr!=null, "Called indexOf on a null array! val=",val);
 		return arr.indexOf(val);
 	}	
-	public static function LastIndexOf(arr:Array, val:Object):int {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	public static function LastIndexOf(arr:Array, val:Object):int {
+		StaticFunctions.assert(arr!=null, "Called lastIndexOf on a null array! val=",val);
 		return arr.lastIndexOf(val);
 	}	
 	public static function stringIndexOf(str:String, val:String, startIndex:int=0):int {
@@ -616,11 +618,11 @@ public final class AS3_vs_AS2
 	public static function stringLastIndexOf(str:String, val:String, startIndex:int=0x7FFFFFFF):int {
 		return str.lastIndexOf(val,startIndex);
 	}	
-	public static var CHECK_STAGE_EVERY_MILLI:int = 100;
-	public static function waitForStage(graphics:MovieClip, gameConsructor:Function):void
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	public static var CHECK_STAGE_EVERY_MILLI:int = 100;
+	public static function waitForStage(graphics:MovieClip, gameConsructor:Function):void
 	{
 		var stageTimer:MyInterval = new MyInterval("waitForStage");
 		trace('waitForStage...');
@@ -629,11 +631,11 @@ public final class AS3_vs_AS2
 						trace('stage loaded!');
 						stageTimer.clear();
 						gameConsructor();
-					}
-				},CHECK_STAGE_EVERY_MILLI);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+					}
+				},CHECK_STAGE_EVERY_MILLI);
 	}
 	
 	private static var Memory_LOG:Logger = new Logger("Memory",60); // 10 minutes = 60*every 10 seconds
@@ -643,9 +645,9 @@ public final class AS3_vs_AS2
 		Memory_LOG.log(System.totalMemory >> 20);// in MB		
 	}
 
-
-
 // This is a AUTOMATICALLY GENERATED! Do not change!
+
+
 
 	public static function createURLVariables(str:String):URLVariables { 
 		try {
@@ -655,19 +657,17 @@ public final class AS3_vs_AS2
 		}
 		return null;
 	}
-	/**
-	 * XML differences between AS2 and AS3.
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	/**
+	 * XML differences between AS2 and AS3.
 	 * In AS2 I use XMLNode.
 	 * In the container use I add a function 
 	 *  that also handles BASE64 XMLs (to pass content-filters)
 	 */
-	public static var CONVERT_XML_STRING:Function/*String->String*/ = null;
 	public static function xml_create(str:String):XML {		
 		try {
-			if (CONVERT_XML_STRING!=null) str = CONVERT_XML_STRING(str);
 			return new XML(str);
 		} catch (e:Error) {
 

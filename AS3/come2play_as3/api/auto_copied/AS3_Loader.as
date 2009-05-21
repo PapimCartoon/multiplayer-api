@@ -119,7 +119,11 @@ public final class AS3_Loader
 	public static function isUsingLoader(imageUrl:String, context:LoaderContext):Boolean {
 		return imageUrl.indexOf("?")>0 && // if the url has "?" then we must use Loader (and URLLoader) because we can't pass urlParameters using URLLoader 
 			context!=null && context.checkPolicyFile;
-	}
+	}	
+    public static function removeQueryString(url:String):String {
+    	var indexOfQuestionMark:int = url.indexOf("?");
+    	return indexOfQuestionMark==-1 ? url : url.substr(0, indexOfQuestionMark);
+    }
 	
 	public static var domainURL:String = "";	
 	public static function getURL(url:String):String{

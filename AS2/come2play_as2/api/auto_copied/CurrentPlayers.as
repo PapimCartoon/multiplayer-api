@@ -33,8 +33,9 @@ class come2play_as2.api.auto_copied.CurrentPlayers
     	return AS3_vs_AS2.IndexOf(currentPlayerIds, playerId)!=-1;        	
     }
     public function isAllInPlayers(playerIds:Array/*int*/):Boolean {
-    	StaticFunctions.assert(playerIds.length>=1, "isAllInPlayers was called with an empty playerIds array");
-    	var p36:Number=0; for (var i36:String in playerIds) { var playerId:Number = playerIds[playerIds.length==null ? i36 : p36]; p36++;
+    	StaticFunctions.assert(currentPlayerIds!=null, "playerIds used in a DoAll command are no longer playing - the match has already ended! playerIds=",playerIds);
+    	StaticFunctions.assert(playerIds.length>=1, "used an empty array of playerIds in a DoAll command.");
+    	var p37:Number=0; for (var i37:String in playerIds) { var playerId:Number = playerIds[playerIds.length==null ? i37 : p37]; p37++;
     		if (!isInPlayers(playerId)) return false;
     	}
     	return true;        	

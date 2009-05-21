@@ -50,6 +50,8 @@ package come2play_as3.api.auto_copied
 				ANALYTIC_ERRORS_LOG.log("Already used key=",uniqueKey);
 				return;
 			}
+			uniqueEvents[uniqueKey] = true;
+			
 			sendTrackEvent(catagory,action,label,value);	
 		}
 		

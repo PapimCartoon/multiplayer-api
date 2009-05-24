@@ -63,6 +63,7 @@ public final class TictactoeMain extends ClientGameAPI {
 				InfoEntry.create(API_Message.CUSTOM_INFO_KEY_reflection, reflection) );
 		}
 		
+		BaseGameAPI.GAME_USE_KEYBOARD = TICTACTOE_USE_KEYBOARD;
 		new TictactoeMain(graphics);	  
 	}
 	private static const VIEWER:int = -1; 	
@@ -97,6 +98,7 @@ public final class TictactoeMain extends ClientGameAPI {
 	public static var winLength:int = 3;
 	public static var winnerPercentage:int = 70;
 	public static var PLAYERS_NUM_IN_SINGLE_PLAYER:int = 3;
+	public static var TICTACTOE_USE_KEYBOARD:Boolean = false; // users typed in the chat, and it didn't transfer the focus fast enough, and therefore it made a move in TicTacToe.
 	
 	private var logoFullUrl:String;
 	private var gameHeight:int;

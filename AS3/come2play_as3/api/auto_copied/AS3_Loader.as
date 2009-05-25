@@ -47,7 +47,7 @@ public final class AS3_Loader
 	private static var EMPTY_BYTE_ARRAY:ByteArray = new ByteArray();	
 	public static function getImageLoadByteArray(ev:Event):ByteArray {
 		var loadedImage:URLLoader = ev.target as URLLoader;
-		StaticFunctions.assert(loadedImage!=null || ev is TimerEvent, "loadedImage is null", [ev]);	
+		StaticFunctions.assert(loadedImage!=null || ev is TimerEvent, "loadedImage is null", ev, ev.target);	
 		var res:ByteArray = loadedImage!=null ? loadedImage.data : null;
 		// res can be null for 2032 Stream Error or for 2048 securityError
 		return res==null ? EMPTY_BYTE_ARRAY : res;
@@ -117,8 +117,8 @@ public final class AS3_Loader
  	// are we using Loader or URLLoader?
  	// It is better to use a URLLoader (because once we used Loader, it failed, but still loaded two instances of a game) 	
 	public static function isUsingLoader(imageUrl:String, context:LoaderContext):Boolean {
-		return imageUrl.indexOf("?")>0 && // if the url has "?" then we must use Loader (and URLLoader) because we can't pass urlParameters using URLLoader 
-			context!=null && context.checkPolicyFile;
+		return imageUrl.indexOf("?")>0 && (imageUrl.indexOf("?preventCache")==-1)// if the url has "?" then we must use Loader (and URLLoader) because we can't pass urlParameters using URLLoader 
+			context!=null && context.checkPolicyFile ;
 	}	
     public static function removeQueryString(url:String):String {
     	var indexOfQuestionMark:int = url.indexOf("?");
@@ -250,8 +250,12 @@ public final class AS3_Loader
 			var errorEvents:Array/*String*/ = [IOErrorEvent.IO_ERROR, HTTPStatusEvent.HTTP_STATUS, SecurityErrorEvent.SECURITY_ERROR];
 			for (var errorEvent:String in errorEvents)
 				AS3_vs_AS2.myAddEventListener("handleExistingImage", dispatcher, errorEvent, failureFunc);
-			if (req.context!=null) req.context.checkPolicyFile = false; // can't use loadBytes with checkPolicyFile=true  
-			byteConverter.loadBytes(data,req.context);
+				
+			var context:LoaderContext = null;
+			if (req.context!=null) {
+				context = new LoaderContext(false, req.context.applicationDomain); 
+			}  
+			byteConverter.loadBytes(data,context);
 		}
 	}
 	private static function removeImageLoaderListeners(byteConverter:Loader, dispatcher:IEventDispatcher, req:ImageLoadRequest, ev:Event, isFailure:Boolean):void {
@@ -345,7 +349,6 @@ public final class AS3_Loader
 	}
 	public static var RETRY_DELAY_MILLI:int = 3000;
 	public static var MIN_LEN:int = 3;
-	//private static var gaTracker:AS3_GATracker = new AS3_GATracker(null,"","AS3")
 	private static function removeLoadUrlListeners(isFailure:Boolean, loader:Loader, url:Object/*String or URLRequest*/,dispatcher:IEventDispatcher, ev:Event, successHandler:Function,failureHandler:Function, progressHandler:Function,context:LoaderContext, retryCount:int,failTimer:AS3_Timer):void {
 		// I don't use the loader, but I still pass it to prevent garbage collection
 		failTimer.stop();
@@ -372,11 +375,20 @@ public final class AS3_Loader
 			data==null ? 			"no ev.target.data" :
 			data is String ? 		StaticFunctions.cutString(data as String,EVENT_DATA_DEBUG_LEN)  : 
 						  			"ByteArray");
-		
+		var urlString:String
+		if (url is URLRequest){
+			urlString = (url as URLRequest).url;
+		}else{
+			urlString = url as String
+		}
 		if (!isFailure) {
-			if (retryCount>0) SUCCESS_RETRY_LOG.log("Retry mechanism worked for url=",url);
+			if (retryCount>0){
+				 SUCCESS_RETRY_LOG.log("Retry mechanism worked for url=",url);
+				 AS3_GATracker.COME2PLAY_TRACKER.trackEvent("Loading","Image Loading","Succeded retry "+retryCount+" on "+removeQueryString(urlString),1)
+			}
 			successHandler(ev);
 		} else {
+			AS3_GATracker.COME2PLAY_TRACKER.trackEvent("Loading","Image Loading","Failed retry "+retryCount+" on "+removeQueryString(urlString),1)
 			if(loader!=null)	loader.unload();
 			if (dispatcher is URLLoader)  {
 				try{
@@ -388,12 +400,6 @@ public final class AS3_Loader
 			}		
 			if (retryCount+1<imageLoadingRetry) {
 				tmpTrace("We retry to load the url=",url,"retry delay is",RETRY_DELAY_MILLI);
-				var urlString:String
-				if (url is URLRequest){
-					urlString = (url as URLRequest).url;
-				}else{
-					urlString = url as String
-				}
 				urlString+=((urlString.indexOf("?") == -1)?"?":"&")+"preventCache="+int(Math.random()*int.MAX_VALUE)
 				if (url is URLRequest){
 					(url as URLRequest).url = urlString;

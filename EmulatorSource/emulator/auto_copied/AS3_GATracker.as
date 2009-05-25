@@ -54,14 +54,17 @@ package emulator.auto_copied
 				ANALYTIC_LOG.log("failed to create analytics")
 			}
 		}
+		public function setVar(newVal:String):void{
+			realGATracker.setVar(newVal)	
+		}
 		public function trackEvent(catagory:String,action:String,label:String=null,value:Number=0):void{
 			ANALYTIC_LOG.log("trackEvent",catagory,action,label,value);
-			if(realGATracker==null){
-				if (pausedEvents.length>MAX_EVENTS)	return;
-				pausedEvents.push({catagory:catagory,action:action,label:label,value:value})
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			if(realGATracker==null){
+				if (pausedEvents.length>MAX_EVENTS)	return;
+				pausedEvents.push({catagory:catagory,action:action,label:label,value:value})
 				return;
 			}
 			
@@ -69,25 +72,27 @@ package emulator.auto_copied
 			if (uniqueEvents[uniqueKey]==true) {
 				ANALYTIC_ERRORS_LOG.log("Already used key=",uniqueKey);
 				return;
-			}
-			sendTrackEvent(catagory,action,label,value);	
-		}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			}
+			uniqueEvents[uniqueKey] = true;
+			
+			sendTrackEvent(catagory,action,label,value);	
+		}
 		
 		private function sendTrackEvent(catagory:String,action:String,label:String,value:Number):void {
 			eventsSent++;
 			if (eventsSent>=MAX_EVENTS) {
 				if (eventsSent==MAX_EVENTS)
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 					ANALYTIC_ERRORS_LOG.log("ERROR!!! Sent too many events");
 				return;				
 			}
 			realGATracker.trackEvent(catagory,action,label,value);			
 		}
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 
 
 	}

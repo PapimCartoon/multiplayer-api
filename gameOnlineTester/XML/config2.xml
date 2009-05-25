@@ -839,7 +839,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
     <!-- league_stage_id determines the tokens in this stage  -->
     <league_stage_id type="string">0</league_stage_id>
     <!-- config.game_name is prefixed to the rating, e.g., game_rating_chess . I do this to make sure the ratings of different games don't override one another -->
-    <game_name>chess</game_name>
+    <game_name>Metatron_DominoAS3</game_name>
 		
 	<is_with_taunts type="boolean">true</is_with_taunts> <!--  show the taunt pop up -->
 	<is_with_stakes type="boolean">true</is_with_stakes>
@@ -979,7 +979,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 			<is_hide_avatar_in_chat_list type="boolean">false</is_hide_avatar_in_chat_list>
 			<total_chat_height type="int">155</total_chat_height>
 			<chat_output_height type="int">100</chat_output_height> 	<!-- there has to be at least 55 px difference -->
-			<user_list_width type="int">0</user_list_width>
+			<user_list_width type="int">200</user_list_width>
 			
 			<max_content_height type="int">500</max_content_height>   <!-- this makes sure the actual graphics that is
 																				   the chat output won't be big enough to affect

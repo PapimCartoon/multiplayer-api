@@ -36,6 +36,7 @@ package come2play_as3.api.auto_copied
 			}
 		}
 		public function setVar(newVal:String):void{
+			if(realGATracker == null)	return;
 			realGATracker.setVar(newVal)	
 		}
 		public function trackEvent(catagory:String,action:String,label:String=null,value:Number=0):void{

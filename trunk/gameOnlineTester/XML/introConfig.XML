@@ -6,7 +6,7 @@
 		<smallGameThumb></smallGameThumb><!--The URL the game will load as a side image-->
 		<introLogoURL></introLogoURL><!--The URL of the logo that is connected to the owner-->
 		<introLogoLink>http://www.google.com</introLogoLink><!--The URL of the logo will direct to-->
-		<gameInstructions>http://www.google.com</gameInstructions>
+		<gameInstructions>../GameHelp Structure/InstractuionsContainer.swf?loadHelp=../GameHelp Structure/HowToPlay.swf</gameInstructions>
 	</graphics>
 	<league_stage_id>1</league_stage_id>
 	<user_info>

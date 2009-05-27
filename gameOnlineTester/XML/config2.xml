@@ -266,7 +266,7 @@ Not used by the graphics yet (but should be displayed):
 		<!--
 		chatType can be FIXED,DYNAMIC_OPEN,DYNAMIC_CLOSED,NO_CHAT_WITH_USERS_LIST or NO_CHAT
 		 -->
-		<entry><key>chatType</key><value>"DYNAMIC_OPEN"</value></entry>
+		<entry><key>chatType</key><value>"DYNAMIC_CLOSED"</value></entry>
 		<!--
 		logoUrl - url where end game logo is placed
 		logoLink - url clicking the logo will lead

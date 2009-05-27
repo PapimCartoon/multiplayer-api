@@ -5,7 +5,7 @@ package emulator.auto_generated {
 	import emulator.*;
 	import emulator.auto_copied.*;
 	public  class API_Message extends SerializableClass {
-		public static var LAST_RAN_JAVA_DATE:String = "Mon May 25 15:00:13 IDT 2009";
+		public static var LAST_RAN_JAVA_DATE:String = "Wed May 27 12:00:33 IDT 2009";
 		public static const USER_INFO_KEY_name:String = "name";
 		public static const USER_INFO_KEY_avatar_url:String = "avatar_url";
 		public static const USER_INFO_KEY_supervisor:String = "supervisor";

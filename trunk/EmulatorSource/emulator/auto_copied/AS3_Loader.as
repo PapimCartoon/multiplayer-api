@@ -416,7 +416,7 @@ public final class AS3_Loader
 		var newFailFunction:Function = function (ev:Event):void { removeLoadUrlListeners(true , loader,url,dispatcher,ev,successHandler, failureHandler,progressHandler, context, retryCount,failTimer); };
 		AS3_vs_AS2.myAddEventListener("failTimer",failTimer,TimerEvent.TIMER, newFailFunction); 
 		
-		var traceFunc:Function = function (ev:Event):void { tmpTrace("Event for ",url, "event=",ev," loader.content=",loader==null ? "no loader" : loader.content); };
+		var traceFunc:Function = function (ev:Event):void { tmpTrace("Only tracing (for debugging purposes) event for ",url, "event=",ev," loader.content=",loader==null ? "no loader" : loader.content); };
 		var allTraceEvents:Array = [Event.ACTIVATE, Event.DEACTIVATE,Event.INIT,Event.OPEN,Event.UNLOAD,HTTPStatusEvent.HTTP_STATUS];			
 		for each (var event:String in allTraceEvents)
 			AS3_vs_AS2.myAddEventListener("loadURL",dispatcher,event, traceFunc); 			
@@ -491,7 +491,7 @@ public final class AS3_Loader
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		tmpTrace("loaded url=",url," isFailure=",isFailure," event=",ev, " len=",len, " event.data=", 
+		tmpTrace("loaded url=",url," isFailure=",isFailure," event=",ev, " len=",len, " ev.target.data=", 
 			// if you load a SWF, then .data is a very long $ByteArray$ "arr":[67,87...] 
 			data==null ? 			"no ev.target.data" :
 			data is String ? 		StaticFunctions.cutString(data as String,EVENT_DATA_DEBUG_LEN)  : 

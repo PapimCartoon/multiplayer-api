@@ -230,7 +230,8 @@ Not used by the graphics yet (but should be displayed):
 		
 		
 		
-		Local:  localhost:2000:socket,localhost:2000:old_xmlsocket,localhost:8083:rtmpt
+		locally, I either use 8083 (for only red5) or 18083 (when running both red5 and my java)
+		Local:  localhost:2000:socket,localhost:2000:old_xmlsocket,localhost:18083:rtmpt
 		Java45 (production server - need different md5): 74.63.37.38:8080:socket,74.63.37.38:80:rtmpt
 		Java238 (for game-developer testing without ASP): 80.179.46.238:8080:socket,80.179.46.238:8080:old_xmlsocket,80.179.46.238:80:rtmpt
 		Java43 (for testing with ASP): 74.63.37.41:8080:socket,74.63.37.41:8080:old_xmlsocket,74.63.37.41:80:rtmpt
@@ -240,7 +241,7 @@ Not used by the graphics yet (but should be displayed):
 
 		To test the weird PROXY some users have (that returns HTTP/1.1 400)
 		use the following (with Red5 turned on):
-		localhost:8083:socket,localhost:2000:socket
+		localhost:18083:socket,localhost:2000:socket
 		
 		to test tunneling in the IISs:
 			msn.come2play.com;80.179.46.238:8080:rtmpt
@@ -250,20 +251,16 @@ Not used by the graphics yet (but should be displayed):
 			localhost;80.179.46.238:8083:rtmpt
 				
 		-->
-		<entry><key>override all_java_ips</key><value>'localhost:2000:socket,localhost:8083:rtmpt'</value></entry>		
+		<entry><key>override all_java_ips</key><value>'localhost:2000:socket,localhost:18083:rtmpt'</value></entry>		
 		
 		
 		<!--
 		<entry><key>testThrow in timeout</key><value>true</value></entry>
 		<entry><key>EndGameDelay</key><value>10</value></entry>
-		
-		<entry><key>ARTIFICIAL_TO_JAVA_DELAY</key><value>'500-1000'</value></entry>
-		<entry><key>ARTIFICIAL_FROM_JAVA_DELAY</key><value>'500-1000'</value></entry>
-		
+				
 		<entry><key>ARTIFICIAL_TO_JAVA_DELAY</key><value>'700-8000'</value></entry>
 		<entry><key>ARTIFICIAL_FROM_JAVA_DELAY</key><value>'700-8000'</value></entry>
-		 -->
-		
+		 -->		
 		
 		
 		<!--
@@ -358,7 +355,7 @@ Not used by the graphics yet (but should be displayed):
 	<!-- 
 		For unkown users, e.g., in a game that was saved and some players have disconnected. 
 		We first search in players_info to see if we have that user_id.
-		If not, we use UnknownUserTemplate. 
+		If not, we use UnknownUserTemplate.
 	-->
 	<UnknownUserTemplate>
 		<params>

@@ -2,14 +2,18 @@ package come2play_as3.api.auto_copied
 {
 	import flash.display.DisplayObject;
 	import flash.utils.Dictionary;
+	import flash.utils.getTimer;
 	
 	public final class AS3_GATracker
 	{				
-		public static var MAX_EVENTS:int = 300;
+		//For each visit (user session), a maximum of approximately 500 combined GATC requests (both events and page views) can be tracked.
+		public static var MAX_EVENTS:int = 100;
+		public static var MAX_LABEL_LEN:int = 900;
+		
 		static private var ANALYTIC_LOG:Logger = new Logger("Analytic",30);
 		static private var ANALYTIC_ERRORS_LOG:Logger = new Logger("AnalyticError",10);
 		public static var COME2PLAY_TRACKER:AS3_GATracker = new AS3_GATracker(null,"UA-154580-30");
-		public static function trackWarning(action:String,label:String=null,value:Number=0):void {
+		public static function trackWarning(action:String,label:String=null,value:Number=1):void {
 			COME2PLAY_TRACKER.trackEvent("Warning",action,label,value);
 		}
 		
@@ -39,13 +43,21 @@ package come2play_as3.api.auto_copied
 			if(realGATracker == null)	return;
 			realGATracker.setVar(newVal)	
 		}
-		public function trackEvent(catagory:String,action:String,label:String=null,value:Number=0):void{
+		public function trackEvent(catagory:String,action:String,label:String=null,value:Number=1):void{
 			ANALYTIC_LOG.log("trackEvent",catagory,action,label,value);
 			if(realGATracker==null){
 				if (pausedEvents.length>MAX_EVENTS)	return;
 				pausedEvents.push({catagory:catagory,action:action,label:label,value:value})
 				return;
 			}
+			
+			sendTrackEvent(catagory,action,label,value);	
+		}
+		
+		private function sendTrackEvent(catagory:String,action:String,label:String,value:Number):void {			
+			catagory = StaticFunctions.cutString(catagory,MAX_LABEL_LEN);
+			action = StaticFunctions.cutString(action,MAX_LABEL_LEN);
+			label = StaticFunctions.cutString(label,MAX_LABEL_LEN);
 			
 			var uniqueKey:String = catagory+"--"+action+"--"+label;
 			if (uniqueEvents[uniqueKey]==true) {
@@ -54,14 +66,14 @@ package come2play_as3.api.auto_copied
 			}
 			uniqueEvents[uniqueKey] = true;
 			
-			sendTrackEvent(catagory,action,label,value);	
-		}
-		
-		private function sendTrackEvent(catagory:String,action:String,label:String,value:Number):void {
 			eventsSent++;
+			
+			
 			if (eventsSent>=MAX_EVENTS) {
-				if (eventsSent==MAX_EVENTS)
+				if (eventsSent==MAX_EVENTS) {
+					realGATracker.trackEvent("Errors","Sent too many google events","",getTimer());
 					ANALYTIC_ERRORS_LOG.log("ERROR!!! Sent too many events");
+				}
 				return;				
 			}
 			realGATracker.trackEvent(catagory,action,label,value);			

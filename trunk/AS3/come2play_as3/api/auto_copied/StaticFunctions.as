@@ -131,22 +131,23 @@ public final class StaticFunctions
 		return str==" " || str=="\n" || str=="\t" || str=="\r"; //String.fromCharCode(10)
 	}
 	public static function trim(str:String):String {
-	   var j:int, strlen:int, k:int;
-	   strlen = str.length
-	   j = 0;
-	   while (isEmptyChar(str.charAt(j))) {
-		  j++
-	   } 
-	   if(j>0) {
-		  str = str.substring(j)
-		  if(j == strlen) return str;
-	   }
-	   k = str.length - 1;
-	   while(isEmptyChar(str.charAt(k))) {
-		  k--;
-	   }
-	   return str.substring(0,k+1);
-	}
+		if (str==null) return null;
+		var j:int, strlen:int, k:int;
+		strlen = str.length
+		j = 0;
+		while (isEmptyChar(str.charAt(j))) {
+			j++
+		} 
+		if(j>0) {
+			str = str.substring(j)
+			if(j == strlen) return str;
+		}
+		k = str.length - 1;
+		while(isEmptyChar(str.charAt(k))) {
+			k--;
+		}
+		return str.substring(0,k+1);
+		}
 	public static function areEqual(o1:Object, o2:Object):Boolean {
 		if (o1===o2) return true; // because false==[] or {} was true!
 		if (o1==null || o2==null) return false;

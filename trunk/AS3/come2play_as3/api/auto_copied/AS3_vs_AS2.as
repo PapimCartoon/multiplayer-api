@@ -29,6 +29,10 @@ public final class AS3_vs_AS2
 		}
 	}
 	
+	public static function getDisplayObjectDescNoFrames(movie:DisplayObject):String {
+		if (movie==null || movie.name==null || movie==StaticFunctions.someMovieClip) return '';
+		return getDisplayObjectDescNoFrames(movie.parent)+"."+movie.name;		
+	}
 	public static function getDisplayObjectDesc(movie:DisplayObject):String {
 		if (movie==null || movie.name==null || movie==StaticFunctions.someMovieClip) return '';
 		return getDisplayObjectDesc(movie.parent)+"."+movie.name +
@@ -200,12 +204,6 @@ public final class AS3_vs_AS2
 		}
 		removeDispatcher(dispatcher);
 	}
-	public static function myWeakAddEventListener(dispatcherName:String, dispatcher:IEventDispatcher, type:String, listener:Function, useCapture:Boolean=false, priority:int=0):void {
-		p_myAddEventListener(dispatcherName,dispatcher,type,listener,useCapture,priority,true);
-	}
-	public static function myAddEventListener(dispatcherName:String, dispatcher:IEventDispatcher, type:String, listener:Function, useCapture:Boolean=false, priority:int=0):void {
-		p_myAddEventListener(dispatcherName,dispatcher,type,listener,useCapture,priority,false);
-	}
 	private static function getDispatcherInfo(dispatcherName:String, dispatcher:IEventDispatcher):DispatcherInfo {
 		var info:DispatcherInfo = dispatchersInfo[dispatcher];
 		StaticFunctions.assert(info!=null, "getDispatcherInfo: No event listeners to remove! dispatcherName=",[dispatcherName," dispatcher=",dispatcher]);
@@ -215,19 +213,18 @@ public final class AS3_vs_AS2
 	private static var addEventListener_LOG:Logger = new Logger("addEventListener",10);
 	private static var ALL_Event_LOG:Logger = new Logger("ALL_EVENT_LISTENERS",10);
 	private static var MultipleListeners_LOG:Logger = new Logger("MultipleEventListeners",10);
-	private static function p_myAddEventListener(dispatcherName:String, dispatcher:IEventDispatcher, type:String, listener:Function, useCapture:Boolean, priority:int, weakReference:Boolean):void {
+	
+	public static function myAddEventListener(dispatcherName:String, dispatcher:IEventDispatcher, type:String, listener:Function, useCapture:Boolean=false, priority:int=0):void {
 		if (dispatchersInfo==null) {
 			dispatchersInfo = new Dictionary(true); // weak keys! when the listener is garbaged-collected, the wrapper is deleted
 			ALL_Event_LOG.log( getEventListenersTrace() );
 		}
-		addEventListener_LOG.log(dispatcherName," added ", type, " weak=",weakReference);
+		addEventListener_LOG.log(dispatcherName," added ", type);
 		 		
 		var func:Function = ErrorHandler.wrapWithCatch(dispatcherName+" for event "+type, listener);		
 		if (dispatchersInfo[dispatcher] == null)
-			dispatchersInfo[dispatcher] = new DispatcherInfo(dispatcherName,weakReference); 
+			dispatchersInfo[dispatcher] = new DispatcherInfo(dispatcherName); 
 		var info:DispatcherInfo = getDispatcherInfo(dispatcherName,dispatcher);
-		
-		StaticFunctions.assert(info.isWeakRef==weakReference, "myAddEventListener: You used both true and false for weakReference! dispatcherName=",[dispatcherName]);
 		
 		var dic1:Dictionary = info.type2listner2func;		
 		if (dic1[type] == null)
@@ -239,7 +236,7 @@ public final class AS3_vs_AS2
 		var dic2:Dictionary = dic1[type];
 		StaticFunctions.assert(dic2[listener]==null,"myAddEventListener: you added the same listener twice! dispatcherName=",[dispatcherName," type=",type]);	
 		dic2[listener] = func;		
-		dispatcher.addEventListener(type, func, useCapture, priority, weakReference);
+		dispatcher.addEventListener(type, func, useCapture, priority, false); // no weak references! it causes memory leaks and bugs with anonymous functions
 	}	
 	
 	
@@ -492,7 +489,7 @@ public final class AS3_vs_AS2
 	}
 
 
-	public static function createURLVariables(str:String):URLVariables { 
+	public static function createURLVariables(str:String=null):URLVariables { 
 		try {
 			return new URLVariables(StaticFunctions.trim(str));
 		} catch (e:Error) {
@@ -623,11 +620,9 @@ import flash.utils.*;
 class DispatcherInfo {
 	public var type2listner2func:Dictionary = new Dictionary();
 	public var name:String; 
-	public var isWeakRef:Boolean;
 	
-	public function DispatcherInfo(name:String, isWeakRef:Boolean) {
+	public function DispatcherInfo(name:String) {
 		this.name = name;
-		this.isWeakRef = isWeakRef;
 	}
 }
 

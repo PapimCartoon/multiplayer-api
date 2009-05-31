@@ -33,7 +33,7 @@ public final class ErrorHandler
 	
 	// returns the bug_id (or -1 if we already reported an error)
 	private static var ErrorReport_LOG:Logger = new Logger("ErrorReport",10);	
-	public static var SHOULD_SHOW_ERRORS:Boolean = true;
+	public static var SHOW_ERROR_FUNC:Function/*function(errMsg:String):void*/ = null;
 	public static var didReportError:Boolean = false; // we report only 1 error (usually 1 error leads to others)
 	// If the container has a bug, then it adds the traces of the game, reports to ASP, and send to java. 
 	// If the game has a bug, then it sends DoAllFoundHacker (which cause the container to send a bug report)  
@@ -63,10 +63,11 @@ public final class ErrorHandler
 				SEND_BUG_REPORT(bug_id, errMessage);	
 				
 			// we should show the error after we call sendMultipartImage (so we send the image without the error window)
-			if (SHOULD_SHOW_ERRORS) {
-				var msg:String = "ERROR "+errMessage+"\n\ntraces:\n\n"+StaticFunctions.getTraces();
-				AS3_vs_AS2.showError(msg);
-				StaticFunctions.setClipboard(msg);
+			StaticFunctions.setClipboard(errMessage);
+			if (SHOW_ERROR_FUNC!=null) {
+				SHOW_ERROR_FUNC(bug_id,errMessage);
+			} else {				
+				AS3_vs_AS2.showError(errMessage);
 			}		
 		} catch (err:Error) {
 			AS3_vs_AS2.showError("!!!!!ERROR!!!! in sendReport:"+AS3_vs_AS2.error2String(err));
@@ -131,10 +132,13 @@ public final class ErrorHandler
 	/**
 	 * Flash freezing:
 	 * Sometimes flash freezes for a long time.
+	 * We discovered it usually happens when the flash is not in focus, 
+	 * and it freezes usually for 20-60 seconds.
+	 * 
 	 * We discovered everyone can do it by pressing on the "X" close symbol on the browser, and not releasing,
 	 * then finally releasing outside the "X" area (thus not closing the window).
 	 * Another way to freeze the flash is calling a javascript with an "alert" (or a popup blocker that displays some message).
-	 * Maybe there are other ways to freeze the flash... (I suspect that a long garbage-collection cycle might also cause it)
+	 * Maybe there are other ways to freeze the flash... (I suspect that an overloaded computer or long garbage-collection cycle might also cause it)
 	 * 
 	 * When the flash freezes, there are unpredictable errors in different places, 
 	 * e.g., disconnecting from java, transaction that took too long, an entry that stayed too long in AS3_TimedMap, long round trip times, etc.
@@ -144,10 +148,14 @@ public final class ErrorHandler
 	 * We make sure that logMemoryInterval ticks every 1/2 * MAX_FREEZE_TIME_MILLI
 	 */
 	public static function startLogMemoryInterval():void {
-		myInterval("logMemoryInterval",AS3_vs_AS2.logMemory,MAX_FREEZE_TIME_MILLI/2);
+		myInterval("logMemoryInterval",AS3_vs_AS2.logMemory,MEM_INTERVAL_MILLI/2);
 		LAST_CATCH_ERRORS_ON = getTimer();
 	}
-	public static var MAX_FREEZE_TIME_MILLI:int = 20*1000; // 20 seconds of freezing might even be too much!
+	
+	public static var MEM_INTERVAL_MILLI:int = 10*1000; //10 secs
+	public static var FREEZING_BUCKETS_MILLI:int = 10*1000;
+	private static var FREEZE_COUNT:int = 0; 
+	public static var MAX_FREEZE_TIME_MILLI:int = 60*1000; // 60 seconds of freezing might even be too much!
 	public static var LAST_CATCH_ERRORS_ON:int = -1; 
 	
 	private static var my_stack_trace:Array = [];
@@ -177,9 +185,17 @@ public final class ErrorHandler
 			var now:int = getTimer();
 			var lastCatch:int = LAST_CATCH_ERRORS_ON;
 			LAST_CATCH_ERRORS_ON = now; // I assign before alwaysTraceAndSendReport to prevent recursive calls.
-			if (now - lastCatch > MAX_FREEZE_TIME_MILLI) {
-				// the flash froze!
-				alwaysTraceAndSendReport("The flash froze!", ["LAST_CATCH_ERRORS_ON=",lastCatch," now=",now]);
+			var delta:int = now - lastCatch;
+			if (delta > FREEZING_BUCKETS_MILLI) {
+				// gather freezing statistics
+				FREEZE_COUNT++;
+				var bucket:int = delta/FREEZING_BUCKETS_MILLI;
+				AS3_GATracker.trackWarning("Flash froze", "Freeze no. "+FREEZE_COUNT+" for "+(bucket*10)+" seconds",delta);
+				
+				if (delta > MAX_FREEZE_TIME_MILLI) {
+					// the flash froze!
+					alwaysTraceAndSendReport("The flash froze!", ["LAST_CATCH_ERRORS_ON=",lastCatch," now=",now]);
+				}
 			}
 		}
 		

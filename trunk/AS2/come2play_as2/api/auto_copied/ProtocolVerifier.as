@@ -5,11 +5,9 @@
 import come2play_as2.api.auto_copied.*;
 	class come2play_as2.api.auto_copied.ProtocolVerifier
 	{
-		// I had normal cases that took more than 30 seconds!
-		//["Time: ",63516,["myInterval set","TictactoeSquareGraphic.moveAnimationStep",MyInterval x50 not running,50]],
-		//["Time: ",99063,["myInterval cleared","TictactoeSquareGraphic.moveAnimationStep",MyInterval x50 not running,50]]]
+		// sometimes the flash freezes for 1 minute. see MAX_FREEZE_TIME_MILLI
 		public static var MAX_ANIMATION_MILLISECONDS:Number = 120*1000; // max seconds for animations
-		public static var WARN_ANIMATION_MILLISECONDS:Number = 60*1000; // if an animation finished after X seconds, we report an error (for us to know that it can happen!)
+		public static var WARN_ANIMATION_MILLISECONDS:Number = 90*1000; // if an animation finished after X seconds, we report an error (for us to know that it can happen!)
 
 		private var transactionStartedOn:TimeMeasure; 
 		private var currentCallback:API_Message = null;
@@ -48,7 +46,7 @@ import come2play_as2.api.auto_copied.*;
 			StaticFunctions.assert(false, "ProtocolVerifier found an error: ", [arr]);
 		}
 		private function checkServerEntries(serverEntries:Array/*ServerEntry*/):Void {
-			var p54:Number=0; for (var i54:String in serverEntries) { var entry:ServerEntry = serverEntries[serverEntries.length==null ? i54 : p54]; p54++;
+			var p52:Number=0; for (var i52:String in serverEntries) { var entry:ServerEntry = serverEntries[serverEntries.length==null ? i52 : p52]; p52++;
 				check(entry.key!=null, ["Found a null key in serverEntry=",entry]);
 			}
 		}
@@ -130,7 +128,7 @@ import come2play_as2.api.auto_copied.*;
 				
 				var wasStoreStateCalculation:Boolean = false;
 				var isRequestStateCalculation:Boolean = currentCallback instanceof API_GotRequestStateCalculation;
-				var p136:Number=0; for (var i136:String in transaction.messages) { var doAllMsg:API_Message = transaction.messages[transaction.messages.length==null ? i136 : p136]; p136++;
+				var p134:Number=0; for (var i134:String in transaction.messages) { var doAllMsg:API_Message = transaction.messages[transaction.messages.length==null ? i134 : p134]; p134++;
 					checkDoAll(doAllMsg);
 					if (isRequestStateCalculation) {
 						if (doAllMsg instanceof API_DoAllStoreStateCalculation)	
@@ -160,7 +158,7 @@ import come2play_as2.api.auto_copied.*;
 		}
 		private function isDeleteLegal(userEntries:Array/*UserEntry*/):Void
 		{
-			var p166:Number=0; for (var i166:String in userEntries) { var userEntry:UserEntry = userEntries[userEntries.length==null ? i166 : p166]; p166++;
+			var p164:Number=0; for (var i164:String in userEntries) { var userEntry:UserEntry = userEntries[userEntries.length==null ? i164 : p164]; p164++;
 				if (userEntry.value == null)
 					check(!userEntry.isSecret,["key deletion must be public! userEntry=",userEntry]);
 			}
@@ -227,21 +225,21 @@ import come2play_as2.api.auto_copied.*;
         private function isNullKeyExistUserEntry(userEntries:Array/*UserEntry*/):Void
         {
         	check(userEntries.length!=0, ["userEntries must have at least one UserEntry!"]);
-        	var p233:Number=0; for (var i233:String in userEntries) { var userEntry:UserEntry = userEntries[userEntries.length==null ? i233 : p233]; p233++;
+        	var p231:Number=0; for (var i231:String in userEntries) { var userEntry:UserEntry = userEntries[userEntries.length==null ? i231 : p231]; p231++;
         		check(userEntry.key != null,["UserEntry.key cannot be null ! userEntry=",userEntry]);
         	}
         }
         private function isNullKeyExistRevealEntry(revealEntries:Array/*RevealEntry*/):Void
         {
         	//check(revealEntries.length>=1, ["revealEntries must have at least one RevealEntry!"]);
-        	var p240:Number=0; for (var i240:String in revealEntries) { var revealEntry:RevealEntry = revealEntries[revealEntries.length==null ? i240 : p240]; p240++;
+        	var p238:Number=0; for (var i238:String in revealEntries) { var revealEntry:RevealEntry = revealEntries[revealEntries.length==null ? i238 : p238]; p238++;
         		check(revealEntry != null && revealEntry.key != null && (revealEntry.userIds==null || currentPlayers.isAllInPlayers(revealEntry.userIds)), ["RevealEntry.key cannot be null, userIds must either be null or contain only players. revealEntry=",revealEntry]); 
         	}
         }
         private function isNullKeyExist(keys:Array/*Object*/):Void
         {
         	check(keys.length!=0,["keys must have at leasy one key!"]);        		
-        	var p247:Number=0; for (var i247:String in keys) { var key:String = keys[keys.length==null ? i247 : p247]; p247++;
+        	var p245:Number=0; for (var i245:String in keys) { var key:String = keys[keys.length==null ? i245 : p245]; p245++;
         		check(key != null,["key cannot be null ! keys=",keys]);
         	}
         }

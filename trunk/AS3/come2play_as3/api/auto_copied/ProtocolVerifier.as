@@ -10,11 +10,9 @@ package come2play_as3.api.auto_copied
 	
 	public class ProtocolVerifier
 	{
-		// I had normal cases that took more than 30 seconds!
-		//["Time: ",63516,["myInterval set","TictactoeSquareGraphic.moveAnimationStep",MyInterval x50 not running,50]],
-		//["Time: ",99063,["myInterval cleared","TictactoeSquareGraphic.moveAnimationStep",MyInterval x50 not running,50]]]
+		// sometimes the flash freezes for 1 minute. see MAX_FREEZE_TIME_MILLI
 		public static var MAX_ANIMATION_MILLISECONDS:int = 120*1000; // max seconds for animations
-		public static var WARN_ANIMATION_MILLISECONDS:int = 60*1000; // if an animation finished after X seconds, we report an error (for us to know that it can happen!)
+		public static var WARN_ANIMATION_MILLISECONDS:int = 90*1000; // if an animation finished after X seconds, we report an error (for us to know that it can happen!)
 
 		private var transactionStartedOn:TimeMeasure; 
 		private var currentCallback:API_Message = null;

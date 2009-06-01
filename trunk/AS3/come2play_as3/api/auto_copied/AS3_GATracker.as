@@ -59,10 +59,23 @@ package come2play_as3.api.auto_copied
 			sendTrackEvent(catagory,action,label,value);	
 		}
 		
+		public static var ILLEGAL_CHARS:String = "#";
+		public static var ILLEGAL_CHARS_REPLACEMENT:String = "-";
+		private function makeLegal(str:String):String {
+			// make sure the string is not too long
+			str = StaticFunctions.cutString(str,MAX_LABEL_LEN);
+			// make sure the string doesn't contain illegal characters
+			for (var i:int=0; i<ILLEGAL_CHARS.length; i++) {
+				var ch:String = ILLEGAL_CHARS.charAt(i);
+				str = StaticFunctions.replaceAll(str,ch,ILLEGAL_CHARS_REPLACEMENT.charAt(i));
+			}
+			return str;
+		}		
+		
 		private function sendTrackEvent(catagory:String,action:String,label:String,value:Number):void {			
-			catagory = StaticFunctions.cutString(catagory,MAX_LABEL_LEN);
-			action = StaticFunctions.cutString(action,MAX_LABEL_LEN);
-			label = StaticFunctions.cutString(label,MAX_LABEL_LEN);
+			catagory = makeLegal(catagory);
+			action = makeLegal(action);
+			label = makeLegal(label);
 			
 			var uniqueKey:String = catagory+"--"+action+"--"+label;
 			if (uniqueEvents[uniqueKey]==true) {

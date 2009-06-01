@@ -310,7 +310,7 @@ public final class StaticFunctions
 	 * 	StaticFunctions.replaceAll("$y'+knkjh$y'+$y'+uoiuoiu$y'+8y$y'+", "$y'+","REPLACED") ==
 	 * 							"REPLACEDknkjhREPLACEDREPLACEDuoiuoiuREPLACED8yREPLACED"		
 	 */
-	public static function replaceAll(str:String, searchFor:String, replaceWith:String):String {		
+	public static function replaceAll(str:String, searchFor:String, replaceWith:String):String {				
 		var index:int = 0;
 		var lastIndex:int = 0;
 		var res:Array = [];
@@ -320,6 +320,9 @@ public final class StaticFunctions
 			index += searchFor.length;
 			lastIndex = index;			
 		}
+		
+		if (res.length==0) return str; // an optimization only
+		
 		res.push( str.substring(lastIndex) );
 		return res.join("");
 	}

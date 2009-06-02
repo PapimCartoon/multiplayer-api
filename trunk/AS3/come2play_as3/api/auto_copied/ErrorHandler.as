@@ -33,6 +33,7 @@ public final class ErrorHandler
 	
 	// returns the bug_id (or -1 if we already reported an error)
 	private static var ErrorReport_LOG:Logger = new Logger("ErrorReport",10);	
+	public static var SHOULD_SHOW_ERRORS:Boolean = true;
 	public static var SHOW_ERROR_FUNC:Function/*function(errMsg:String):void*/ = null;
 	public static var didReportError:Boolean = false; // we report only 1 error (usually 1 error leads to others)
 	// If the container has a bug, then it adds the traces of the game, reports to ASP, and send to java. 
@@ -67,7 +68,7 @@ public final class ErrorHandler
 			if (SHOW_ERROR_FUNC!=null) {
 				SHOW_ERROR_FUNC(bug_id,errMessage);
 			} else {				
-				AS3_vs_AS2.showError(errMessage);
+				if (SHOULD_SHOW_ERRORS) AS3_vs_AS2.showError(errMessage);
 			}		
 		} catch (err:Error) {
 			AS3_vs_AS2.showError("!!!!!ERROR!!!! in sendReport:"+AS3_vs_AS2.error2String(err));

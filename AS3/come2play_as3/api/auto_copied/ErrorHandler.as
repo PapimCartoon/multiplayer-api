@@ -155,7 +155,7 @@ public final class ErrorHandler
 	public static var MEM_INTERVAL_MILLI:int = 10*1000; //10 secs
 	public static var FREEZING_BUCKETS_MILLI:int = 10*1000;
 	private static var FREEZE_COUNT:int = 0; 
-	public static var MAX_FREEZE_TIME_MILLI:int = 60*1000; // 60 seconds of freezing might even be too much!
+	public static var MAX_FREEZE_TIME_MILLI:int = 70*1000; // 70 seconds of freezing might even be too much!
 	public static var LAST_CATCH_ERRORS_ON:int = -1; 
 	
 	private static var my_stack_trace:Array = [];

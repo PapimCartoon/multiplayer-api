@@ -110,7 +110,7 @@ public final class AS3_Loader
 		request.method = method;
 		loadText(request, successHandler, failureHandler,progressHandler)
 	}        
-	public static function loadText(urlRequest:URLRequest,successHandler:Function = null,failureHandler:Function = null,progressHandler:Function = null):void {
+	private static function loadText(urlRequest:URLRequest,successHandler:Function = null,failureHandler:Function = null,progressHandler:Function = null):void {
 		loadURL(urlRequest,successHandler,failureHandler,progressHandler)
 	}
  

@@ -39,9 +39,9 @@ package come2play_as3.cards
 			initCardDefenitins();
 			this.cardGraphics = cardGraphics
 			
-			AS3_vs_AS2.myWeakAddEventListener("cardGraphics",cardGraphics,CardPressedEvent.CardPressedEvent,cardMarked,true)
-			AS3_vs_AS2.myWeakAddEventListener("cardGraphics",cardGraphics,AnimationEndedEvent.AnimationEndedEvent,endAnimation)
-			AS3_vs_AS2.myWeakAddEventListener("cardGraphics",cardGraphics,AnimationStartedEvent.AnimationStartedEvent,startAnimation)
+			AS3_vs_AS2.myAddEventListener("cardGraphics",cardGraphics,CardPressedEvent.CardPressedEvent,cardMarked,true)
+			AS3_vs_AS2.myAddEventListener("cardGraphics",cardGraphics,AnimationEndedEvent.AnimationEndedEvent,endAnimation)
+			AS3_vs_AS2.myAddEventListener("cardGraphics",cardGraphics,AnimationStartedEvent.AnimationStartedEvent,startAnimation)
 			super(cardGraphics);
 		}		
 		private function startAnimation(ev:Event):void

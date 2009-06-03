@@ -43,7 +43,7 @@ package emulator.auto_copied
 			super(delay, repeatCount);
 			this.name = name;
 			if (ALL_TIMERS==null) {
-				ALL_TIMERS = new Dictionary(true); // weak keys (to allow garbage-collection)
+				ALL_TIMERS = new Dictionary();
 				ALL_LOG.log(new ForTraces());
 			}
 
@@ -66,15 +66,16 @@ package emulator.auto_copied
 			delete ALL_TIMERS[this];
 		}
 		override public function set delay(value:Number):void{
+			assertNotRemoved();
 			StaticFunctions.assert(delay>0, "AS3_Timer: illegal delay=",delay,"in timer",name)
 			super.delay = value;
 		}
 		override public function addEventListener(type:String, listener:Function, useCapture:Boolean=false, priority:int=0, useWeakReference:Boolean=false):void {
 			assertNotRemoved();
-			super.addEventListener(type,listener,useCapture,priority,useWeakReference);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			super.addEventListener(type,listener,useCapture,priority,useWeakReference);
 		}
 		override public function start():void {
 			assertNotRemoved();
@@ -84,10 +85,10 @@ package emulator.auto_copied
 		override public function stop():void {
 			if (!running) return;
 			assertNotRemoved();
-			LOG.log([name,"stoped"]);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			LOG.log([name,"stoped"]);
 			super.stop();
 		}
 		override public function reset():void {
@@ -97,10 +98,10 @@ package emulator.auto_copied
 		}
 		override public function toString():String {
 			return name+" every "+delay+" millis, "+ 
-				(AS3_vs_AS2.myHasAnyEventListener(null,this) ? "WITH listeners" : "without listeners")+ 
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+				(AS3_vs_AS2.myHasAnyEventListener(null,this) ? "WITH listeners" : "without listeners")+ 
 				(!running?" not running" : 
 					" RUNNING"+ 
 					(repeatCount==0 ? "" : " "+this.currentCount+"/"+repeatCount));
@@ -110,10 +111,10 @@ package emulator.auto_copied
 
 import emulator.auto_copied.AS3_Timer;
 class ForTraces {
-	public function toString():String {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	public function toString():String {
 		return AS3_Timer.getTimersLog();
 	}
 }

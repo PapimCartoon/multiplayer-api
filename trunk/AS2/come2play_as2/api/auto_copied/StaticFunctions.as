@@ -5,8 +5,8 @@
 import come2play_as2.api.auto_copied.*;
 class come2play_as2.api.auto_copied.StaticFunctions
 {			
-	public static var GOOGLE_REVISION_NUMBER:Number = 1058;
-	public static var COME2PLAY_REVISION_NUMBER:Number = 3380;
+	public static var GOOGLE_REVISION_NUMBER:Number = 1062;
+	public static var COME2PLAY_REVISION_NUMBER:Number = 3401;
 	public static function getRevision():String {
 		return (SerializableClass.IS_IN_FRAMEWORK ? "Container" : "Game")+
 			" g="+GOOGLE_REVISION_NUMBER+",c2p="+COME2PLAY_REVISION_NUMBER;		
@@ -305,7 +305,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	 * 	StaticFunctions.replaceAll("$y'+knkjh$y'+$y'+uoiuoiu$y'+8y$y'+", "$y'+","REPLACED") ==
 	 * 							"REPLACEDknkjhREPLACEDREPLACEDuoiuoiuREPLACED8yREPLACED"		
 	 */
-	public static function replaceAll(str:String, searchFor:String, replaceWith:String):String {		
+	public static function replaceAll(str:String, searchFor:String, replaceWith:String):String {				
 		var index:Number = 0;
 		var lastIndex:Number = 0;
 		var res:Array = [];
@@ -315,6 +315,9 @@ class come2play_as2.api.auto_copied.StaticFunctions
 			index += searchFor.length;
 			lastIndex = index;			
 		}
+		
+		if (res.length==0) return str; // an optimization only
+		
 		res.push( str.substring(lastIndex) );
 		return res.join("");
 	}
@@ -329,7 +332,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	}
 	public static function instance2Object(instance:Object, fields:Array/*String*/):Object {
 		var res:Object = {};
-		var p335:Number=0; for (var i335:String in fields) { var field:String = fields[fields.length==null ? i335 : p335]; p335++;
+		var p338:Number=0; for (var i338:String in fields) { var field:String = fields[fields.length==null ? i338 : p338]; p338++;
 			res[field] = instance[field];
 		}
 		return res;
@@ -368,14 +371,14 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	public static function setMethodParameters(msg:API_Message, parameters:Array):Void { 
 		var names:Array = getParamNames(msg); 
 		var pos:Number = 0;
-		var p374:Number=0; for (var i374:String in names) { var name:String = names[names.length==null ? i374 : p374]; p374++;
+		var p377:Number=0; for (var i377:String in names) { var name:String = names[names.length==null ? i377 : p377]; p377++;
 			msg[name] = parameters[pos++];
 		}
 	}
 	public static function getMethodParameters(msg:API_Message):Array { 
 		var names:Array = getParamNames(msg);
 		var res:Array = [];
-		var p381:Number=0; for (var i381:String in names) { var name:String = names[names.length==null ? i381 : p381]; p381++;
+		var p384:Number=0; for (var i384:String in names) { var name:String = names[names.length==null ? i384 : p384]; p384++;
 			res.push(msg[name]);
 		}
 		return res;

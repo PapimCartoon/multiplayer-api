@@ -42,7 +42,7 @@ import flash.utils.*;
 			this.graphics = graphics;
 			AS3_vs_AS2.waitForStage(graphics,constructGame);
 			computerMoveTimer = new AS3_Timer("computerMoveTimer",100,0);	
-			AS3_vs_AS2.myWeakAddEventListener("computerMoveTimer",computerMoveTimer,TimerEvent.TIMER,computerMakeMove)
+			AS3_vs_AS2.myAddEventListener("computerMoveTimer",computerMoveTimer,TimerEvent.TIMER,computerMakeMove)
 		}
 		public function constructGame():void
 		{ 
@@ -54,7 +54,7 @@ import flash.utils.*;
 			startGraphic.y=160;
 			startGraphic.stop();
 			graphics.addChild(startGraphic);
-			AS3_vs_AS2.myWeakAddEventListener("startGraphic",startGraphic,"starterEnd",startGame);
+			AS3_vs_AS2.myAddEventListener("startGraphic",startGraphic,"starterEnd",startGame);
 			doRegisterOnServer();
 		}
 		
@@ -173,6 +173,7 @@ import flash.utils.*;
 		}
 		override public function gotMatchEnded(finishedPlayerIds:Array/*int*/):void 
 		{
+			AS3_GATracker.COME2PLAY_TRACKER.trackEvent("Tests","Minesweeper send","sent data");
 			computerMoveTimer.reset();
 			mineSweeperLogic.isPlaying = false;
 		}

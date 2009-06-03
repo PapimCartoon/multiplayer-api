@@ -84,23 +84,39 @@ package emulator.auto_copied
 			sendTrackEvent(catagory,action,label,value);	
 		}
 		
-		private function sendTrackEvent(catagory:String,action:String,label:String,value:Number):void {			
+		public static var ILLEGAL_CHARS:String = "#";
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			catagory = StaticFunctions.cutString(catagory,MAX_LABEL_LEN);
-			action = StaticFunctions.cutString(action,MAX_LABEL_LEN);
-			label = StaticFunctions.cutString(label,MAX_LABEL_LEN);
+		public static var ILLEGAL_CHARS_REPLACEMENT:String = "-";
+		private function makeLegal(str:String):String {
+			// make sure the string is not too long
+			str = StaticFunctions.cutString(str,MAX_LABEL_LEN);
+			// make sure the string doesn't contain illegal characters
+			for (var i:int=0; i<ILLEGAL_CHARS.length; i++) {
+				var ch:String = ILLEGAL_CHARS.charAt(i);
+				str = StaticFunctions.replaceAll(str,ch,ILLEGAL_CHARS_REPLACEMENT.charAt(i));
+			}
+			return str;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+		}		
+		
+		private function sendTrackEvent(catagory:String,action:String,label:String,value:Number):void {			
+			catagory = makeLegal(catagory);
+			action = makeLegal(action);
+			label = makeLegal(label);
 			
 			var uniqueKey:String = catagory+"--"+action+"--"+label;
 			if (uniqueEvents[uniqueKey]==true) {
 				ANALYTIC_ERRORS_LOG.log("Already used key=",uniqueKey);
-				return;
-			}
-			uniqueEvents[uniqueKey] = true;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+				return;
+			}
+			uniqueEvents[uniqueKey] = true;
 			
 			eventsSent++;
 			
@@ -108,12 +124,12 @@ package emulator.auto_copied
 			if (eventsSent>=MAX_EVENTS) {
 				if (eventsSent==MAX_EVENTS) {
 					realGATracker.trackEvent("Errors","Sent too many google events","",getTimer());
-					ANALYTIC_ERRORS_LOG.log("ERROR!!! Sent too many events");
-				}
-				return;				
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+					ANALYTIC_ERRORS_LOG.log("ERROR!!! Sent too many events");
+				}
+				return;				
 			}
 			realGATracker.trackEvent(catagory,action,label,value);			
 		}

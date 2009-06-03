@@ -18,7 +18,7 @@ package emulator.auto_copied
 		private var catagoryNamePrefix:String;
 		public function AS3_TimeTracker(catagoryNamePrefix:String,buckets:Array=null)
 		{
-			this.buckets = buckets!=null?buckets:[100,200,300,400,500,1000,1500,2000,2500,5000];
+			this.buckets = buckets!=null?buckets:[100,200,300,400,500,1000,1500,2000,2500,5000,10000];
 			this.catagoryNamePrefix = catagoryNamePrefix;	
 
 // This is a AUTOMATICALLY GENERATED! Do not change!

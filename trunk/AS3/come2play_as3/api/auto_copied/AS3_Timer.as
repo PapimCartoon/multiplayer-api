@@ -27,7 +27,7 @@ package come2play_as3.api.auto_copied
 			super(delay, repeatCount);
 			this.name = name;
 			if (ALL_TIMERS==null) {
-				ALL_TIMERS = new Dictionary(true); // weak keys (to allow garbage-collection)
+				ALL_TIMERS = new Dictionary();
 				ALL_LOG.log(new ForTraces());
 			}
 			ALL_TIMERS[this] = true;
@@ -44,6 +44,7 @@ package come2play_as3.api.auto_copied
 			delete ALL_TIMERS[this];
 		}
 		override public function set delay(value:Number):void{
+			assertNotRemoved();
 			StaticFunctions.assert(delay>0, "AS3_Timer: illegal delay=",delay,"in timer",name)
 			super.delay = value;
 		}

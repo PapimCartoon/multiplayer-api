@@ -52,16 +52,17 @@ public final class ErrorHandler
 	
 	// returns the bug_id (or -1 if we already reported an error)
 	private static var ErrorReport_LOG:Logger = new Logger("ErrorReport",10);	
+	public static var SHOULD_SHOW_ERRORS:Boolean = true;
 	public static var SHOW_ERROR_FUNC:Function/*function(errMsg:String):void*/ = null;
 	public static var didReportError:Boolean = false; // we report only 1 error (usually 1 error leads to others)
 	// If the container has a bug, then it adds the traces of the game, reports to ASP, and send to java. 
 	// If the game has a bug, then it sends DoAllFoundHacker (which cause the container to send a bug report)  
 	public static var SEND_BUG_REPORT:Function = null;
 	public static function alwaysTraceAndSendReport(errStr:String, args:Object):int {
-		ErrorReport_LOG.log([errStr, args]);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		ErrorReport_LOG.log([errStr, args]);
 		if (didReportError) return -1;
 		didReportError = true;
 		
@@ -71,10 +72,10 @@ public final class ErrorHandler
 		
 		try {	
 			var err:Error = new Error();
-			var stackTraces:String = AS3_vs_AS2.myGetStackTrace(err); // null in the release version
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			var stackTraces:String = AS3_vs_AS2.myGetStackTrace(err); // null in the release version
 			if (stackTraces!=null) ErrorReport_LOG.log(["Catching point stack trace=",err]);
 							
 			ErrorReport_LOG.log(["sendReport SEND_BUG_REPORT=",SEND_BUG_REPORT]);
@@ -84,10 +85,10 @@ public final class ErrorHandler
 				"Revision="+StaticFunctions.getRevision()+": "+
 				errStr;
 			
-			if (SEND_BUG_REPORT!=null)
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			if (SEND_BUG_REPORT!=null)
 				SEND_BUG_REPORT(bug_id, errMessage);	
 				
 			// we should show the error after we call sendMultipartImage (so we send the image without the error window)
@@ -95,12 +96,12 @@ public final class ErrorHandler
 			if (SHOW_ERROR_FUNC!=null) {
 				SHOW_ERROR_FUNC(bug_id,errMessage);
 			} else {				
-				AS3_vs_AS2.showError(errMessage);
+				if (SHOULD_SHOW_ERRORS) AS3_vs_AS2.showError(errMessage);
 			}		
-		} catch (err:Error) {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		} catch (err:Error) {
 			AS3_vs_AS2.showError("!!!!!ERROR!!!! in sendReport:"+AS3_vs_AS2.error2String(err));
 		}			
 		return bug_id;
@@ -110,10 +111,10 @@ public final class ErrorHandler
 	 * Error handling should be done in one central place.
 	 * In flash however there is a lot of asynchronous code in:
 	 *  setTimeout
-	 *  setInterval
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	 *  setInterval
 	 *  addEventListener and removeEventListener
 	 *  and if you have code on keyframes.
 	 * Use the methods here below instead of the AS3 version, because	 
@@ -123,10 +124,10 @@ public final class ErrorHandler
 	 * 
 	 */ 
 	private static var ongoingIntervals:Dictionary = new Dictionary();//also printed in traces
-	private static var ongoingTimeouts:Dictionary = new Dictionary();//also printed in traces	
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	private static var ongoingTimeouts:Dictionary = new Dictionary();//also printed in traces	
 	public static function myTimeout(zoneName:String, func:Function, milliseconds:int):Object {
 		var timeout_id:Object;
 		var newFunc:Function = 
@@ -136,10 +137,10 @@ public final class ErrorHandler
 				};
 		timeout_id = AS3_vs_AS2.unwrappedSetTimeout(zoneName, newFunc, milliseconds);
 		modifyOngoing(true, true, zoneName, timeout_id, "myTimeout set", milliseconds);
-		return timeout_id;			
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		return timeout_id;			
 	}
 	public static function myInterval(zoneName:String, func:Function, milliseconds:int):Object {
 		var interval_id:Object = AS3_vs_AS2.unwrappedSetInterval(zoneName, func, milliseconds);
@@ -149,10 +150,10 @@ public final class ErrorHandler
 	public static function myClearTimeout(zoneName:String, id:Object):void {
 		modifyOngoing(false, true, zoneName, id, "myTimeout cleared", -1);
 		AS3_vs_AS2.unwrappedClearTimeout(zoneName, id);			
-	}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	}
 	public static function myClearInterval(zoneName:String, id:Object):void {
 		modifyOngoing(false, false, zoneName, id, "myInterval cleared", -1);
 		AS3_vs_AS2.unwrappedClearInterval(zoneName, id);			
@@ -162,10 +163,10 @@ public final class ErrorHandler
 		var arr:Object = isTimeout ? ongoingTimeouts : ongoingIntervals;
 		if (isAdd) {
 			StaticFunctions.assert(arr[id]==null, "Internal error! already added id=",[id]);
-			arr[id] = [zoneName, milliseconds];
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			arr[id] = [zoneName, milliseconds];
 		} else {
 			var info:Array = arr[id];
 			StaticFunctions.assert(info!=null && info[0]==zoneName, "there is no such zoneName!",["reason=",reason, " zoneName=",zoneName," info=", info]);
@@ -175,10 +176,10 @@ public final class ErrorHandler
 		LOG.log([reason, zoneName, id, milliseconds]);
 	}
 				
-	/**
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	/**
 	 * Flash freezing:
 	 * Sometimes flash freezes for a long time.
 	 * We discovered it usually happens when the flash is not in focus, 
@@ -188,10 +189,10 @@ public final class ErrorHandler
 	 * then finally releasing outside the "X" area (thus not closing the window).
 	 * Another way to freeze the flash is calling a javascript with an "alert" (or a popup blocker that displays some message).
 	 * Maybe there are other ways to freeze the flash... (I suspect that an overloaded computer or long garbage-collection cycle might also cause it)
-	 * 
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	 * 
 	 * When the flash freezes, there are unpredictable errors in different places, 
 	 * e.g., disconnecting from java, transaction that took too long, an entry that stayed too long in AS3_TimedMap, long round trip times, etc.
 	 * Therefore, we decided to immediately report this error, when we see that the flash "froze",
@@ -201,23 +202,23 @@ public final class ErrorHandler
 	 */
 	public static function startLogMemoryInterval():void {
 		myInterval("logMemoryInterval",AS3_vs_AS2.logMemory,MEM_INTERVAL_MILLI/2);
-		LAST_CATCH_ERRORS_ON = getTimer();
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		LAST_CATCH_ERRORS_ON = getTimer();
 	}
 	
 	public static var MEM_INTERVAL_MILLI:int = 10*1000; //10 secs
 	public static var FREEZING_BUCKETS_MILLI:int = 10*1000;
 	private static var FREEZE_COUNT:int = 0; 
-	public static var MAX_FREEZE_TIME_MILLI:int = 60*1000; // 60 seconds of freezing might even be too much!
+	public static var MAX_FREEZE_TIME_MILLI:int = 70*1000; // 70 seconds of freezing might even be too much!
 	public static var LAST_CATCH_ERRORS_ON:int = -1; 
 	
 	private static var my_stack_trace:Array = [];
-	public static function wrapWithCatch(zoneName:String, func:Function):Function {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	public static function wrapWithCatch(zoneName:String, func:Function):Function {
 		var longerName:String = zoneName; //Extra stack traces are not needed because we use zoneName for all events:  +(my_stack_trace.length==0 ? "" : " with first stacktrace: {\n"+my_stack_trace[0]+"\n}");
 		return function (...args):void { 
 			catchErrors(longerName,func,args);
@@ -227,10 +228,10 @@ public final class ErrorHandler
 	private static var ZONE_LOGGERS:Object/*String->Logger*/ = {};
 	public static function catchErrors(zoneName:String, func:Function, args:Array):Object {
 		var res:Object = null;		
-		
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		
 		var toInsert:Object = [zoneName,"t:",getTimer(),"args=",args]; // I couldn't find a way to get the function name (describeType(func) only returns that the method is a closure)
 		my_stack_trace.push(toInsert);
 		var indentLevel:int = my_stack_trace.length;
@@ -240,10 +241,10 @@ public final class ErrorHandler
 			ZONE_LOGGERS[zoneName] = logger;
 		}
 		logger.log("ENTERED");
-		LoggerLine.LINE_INDENT = indentLevel;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		LoggerLine.LINE_INDENT = indentLevel;
 		
 		if (LAST_CATCH_ERRORS_ON>=0) {
 			var now:int = getTimer();
@@ -253,10 +254,10 @@ public final class ErrorHandler
 			if (delta > FREEZING_BUCKETS_MILLI) {
 				// gather freezing statistics
 				FREEZE_COUNT++;
-				var bucket:int = delta/FREEZING_BUCKETS_MILLI;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+				var bucket:int = delta/FREEZING_BUCKETS_MILLI;
 				AS3_GATracker.trackWarning("Flash froze", "Freeze no. "+FREEZE_COUNT+" for "+(bucket*10)+" seconds",delta);
 				
 				if (delta > MAX_FREEZE_TIME_MILLI) {
@@ -266,10 +267,10 @@ public final class ErrorHandler
 			}
 		}
 		
-		var wasError:Boolean = false;			
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		var wasError:Boolean = false;			
 		try {		
 			res = func.apply(null, args); 
 		} catch (err:Error) { handleError(err, args); }
@@ -279,10 +280,10 @@ public final class ErrorHandler
 			
 		var poped:Object = my_stack_trace.pop(); 
 			// I tried to do the pop inside a "finally" clause (to handle correctly cases with exceptions), 
-			//but I got "undefined" errors:
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			//but I got "undefined" errors:
 			//		undefined
 			//			at come2play_as3.util::General$/stackTrace()
 			//			at come2play_as3.util::General$/catchErrors() 
@@ -292,9 +293,9 @@ public final class ErrorHandler
 	}
 	public static function handleError(err:Error, obj:Object):void {
 		alwaysTraceAndSendReport("handleError: "+AS3_vs_AS2.error2String(err),[" catching-arguments=",obj]);
-	}		
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	}		
 }
 }

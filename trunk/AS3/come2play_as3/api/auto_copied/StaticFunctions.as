@@ -98,6 +98,15 @@ public final class StaticFunctions
 		return strRes;
 	}
 	
+	// for example,  
+	//prefixZeros("3",3) returns  "003"
+	//prefixZeros("23",3) returns "023"
+	public static function prefixZeros(str:String, toLen:int):String {
+		var res:String = str;
+		for (var i:int=str.length; i<=toLen; i++)
+			res = "0"+res;
+		return res;
+	}
 	public static function cutString(str:String, toSize:int):String {		
 		if (str.length<toSize) return str;
 		return str.substr(0,toSize)+"... (string cut)";

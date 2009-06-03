@@ -30,6 +30,7 @@ class come2play_as2.api.auto_copied.ErrorHandler
 	
 	// returns the bug_id (or -1 if we already reported an error)
 	private static var ErrorReport_LOG:Logger = new Logger("ErrorReport",10);	
+	public static var SHOULD_SHOW_ERRORS:Boolean = true;
 	public static var SHOW_ERROR_FUNC:Function/*function(errMsg:String):Void*/ = null;
 	public static var didReportError:Boolean = false; // we report only 1 error (usually 1 error leads to others)
 	// If the container has a bug, then it adds the traces of the game, reports to ASP, and send to java. 
@@ -64,7 +65,7 @@ class come2play_as2.api.auto_copied.ErrorHandler
 			if (SHOW_ERROR_FUNC!=null) {
 				SHOW_ERROR_FUNC(bug_id,errMessage);
 			} else {				
-				AS3_vs_AS2.showError(errMessage);
+				if (SHOULD_SHOW_ERRORS) AS3_vs_AS2.showError(errMessage);
 			}		
 		} catch (err:Error) {
 			AS3_vs_AS2.showError("!!!!!ERROR!!!! in sendReport:"+AS3_vs_AS2.error2String(err));
@@ -152,7 +153,7 @@ class come2play_as2.api.auto_copied.ErrorHandler
 	public static var MEM_INTERVAL_MILLI:Number = 10*1000; //10 secs
 	public static var FREEZING_BUCKETS_MILLI:Number = 10*1000;
 	private static var FREEZE_COUNT:Number = 0; 
-	public static var MAX_FREEZE_TIME_MILLI:Number = 60*1000; // 60 seconds of freezing might even be too much!
+	public static var MAX_FREEZE_TIME_MILLI:Number = 70*1000; // 70 seconds of freezing might even be too much!
 	public static var LAST_CATCH_ERRORS_ON:Number = -1; 
 	
 	private static var my_stack_trace:Array = [];

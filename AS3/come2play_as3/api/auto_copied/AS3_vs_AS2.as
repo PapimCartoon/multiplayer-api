@@ -152,7 +152,13 @@ public final class AS3_vs_AS2
 			var info:DispatcherInfo = dispatchersInfo[dispatcher];
 			var listeners:Array = [];
 			for (var type:String in info.type2listner2func) {
-				listeners.push(type);
+				var listner2func:Dictionary = info.type2listner2func[type];
+				var size:int = listner2func==null ? 0 : dictionarySize(listner2func);
+				if (size==0) {
+					res.push("\n\n\n\t\tInternal ERROR: bug in our event listener code\n\n\n"); 
+				} else {
+					listeners.push(type+"("+size+")");
+				}				
 			} 			
 			listeners.sort();
 			res.push(onStage+info.name+" with listeners: "+listeners.join(", "));
@@ -176,9 +182,9 @@ public final class AS3_vs_AS2
 		var dic1:Dictionary = info.type2listner2func;
 		var dic2:Dictionary = dic1[type];
 		var errInfo:Array = ["dispatcherName=",dispatcherName," dispatcher=",dispatcher," type=",type];
-		StaticFunctions.assert(dic2!=null,"myRemoveEventListener1",errInfo);
+		StaticFunctions.assert(dic2!=null,"Type does not exist",errInfo);
 		var func:Function = dic2[listener];
-		StaticFunctions.assert(func!=null,"myRemoveEventListener2",errInfo);
+		StaticFunctions.assert(func!=null,"Listener does not exist",errInfo);
 		delete dic2[listener];
 		if (isDictionaryEmpty(dic2)) delete dic1[type];
 		if (isDictionaryEmpty(dic1)) removeDispatcher(dispatcher);
@@ -216,7 +222,7 @@ public final class AS3_vs_AS2
 	
 	public static function myAddEventListener(dispatcherName:String, dispatcher:IEventDispatcher, type:String, listener:Function, useCapture:Boolean=false, priority:int=0):void {
 		if (dispatchersInfo==null) {
-			dispatchersInfo = new Dictionary(true); // weak keys! when the listener is garbaged-collected, the wrapper is deleted
+			dispatchersInfo = new Dictionary();
 			ALL_Event_LOG.log( getEventListenersTrace() );
 		}
 		addEventListener_LOG.log(dispatcherName," added ", type);
@@ -228,7 +234,7 @@ public final class AS3_vs_AS2
 		
 		var dic1:Dictionary = info.type2listner2func;		
 		if (dic1[type] == null)
-			dic1[type] = new Dictionary(false);
+			dic1[type] = new Dictionary();
 		else {
 			// this is usually a bug (you should have multiple listeners for the same type
 			MultipleListeners_LOG.log(dispatcherName," already had a listener for type=",type);

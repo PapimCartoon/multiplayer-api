@@ -23,8 +23,8 @@ public final class StaticFunctions
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	public static var GOOGLE_REVISION_NUMBER:int = 1058;
-	public static var COME2PLAY_REVISION_NUMBER:int = 3380;
+	public static var GOOGLE_REVISION_NUMBER:int = 1062;
+	public static var COME2PLAY_REVISION_NUMBER:int = 3401;
 	public static function getRevision():String {
 		return (SerializableClass.IS_IN_FRAMEWORK ? "Container" : "Game")+
 			" g="+GOOGLE_REVISION_NUMBER+",c2p="+COME2PLAY_REVISION_NUMBER;		
@@ -413,7 +413,7 @@ public final class StaticFunctions
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	public static function replaceAll(str:String, searchFor:String, replaceWith:String):String {		
+	public static function replaceAll(str:String, searchFor:String, replaceWith:String):String {				
 		var index:int = 0;
 		var lastIndex:int = 0;
 		var res:Array = [];
@@ -426,6 +426,9 @@ public final class StaticFunctions
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		
+		if (res.length==0) return str; // an optimization only
+		
 		res.push( str.substring(lastIndex) );
 		return res.join("");
 	}
@@ -433,12 +436,12 @@ public final class StaticFunctions
 		var index:int = isLast ? AS3_vs_AS2.stringLastIndexOf(str, searchFor) : AS3_vs_AS2.stringIndexOf(str, searchFor);
 		if (index==-1) showError("Did not find searchFor="+searchFor+" in string="+str);
 		return [str.substring(0,index),str.substring(index+searchFor.length)];
-	}
-	public static function replaceLastOccurance(str:String, searchFor:String, replaceWith:String):String {
-		var two:Array = splitInTwo(str, searchFor, true);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	}
+	public static function replaceLastOccurance(str:String, searchFor:String, replaceWith:String):String {
+		var two:Array = splitInTwo(str, searchFor, true);
 		return two[0] + replaceWith + two[1];
 	}
 	public static function instance2Object(instance:Object, fields:Array/*String*/):Object {
@@ -446,12 +449,12 @@ public final class StaticFunctions
 		for each (var field:String in fields) {
 			res[field] = instance[field];
 		}
-		return res;
-	}
-	
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		return res;
+	}
+	
 	private static var cacheShortName:Object = {};
 	public static function getShortClassName(obj:Object):String {
 		var className:String = AS3_vs_AS2.getClassName(obj);
@@ -459,12 +462,12 @@ public final class StaticFunctions
 		var res:String = className.substr(AS3_vs_AS2.stringIndexOf(className,"::")+2);
 		cacheShortName[className] = res;
 		return res;		
-	}
-	
-	
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	}
+	
+	
 	
 	// The Java auto generates all classes	
 	private static function getClassFromMsg(msg:API_Message, fieldName:String):Object {
@@ -472,12 +475,12 @@ public final class StaticFunctions
 		var res:Object = xlass[fieldName];
 		assert(res!=null, "getClassFromMsg",["Missing ",fieldName," in msg=",msg, " xlass=",xlass]);
 		return res;
-	}
-	private static function getParamNames(msg:API_Message):Array/*String*/ {
-		return AS3_vs_AS2.asArray(getClassFromMsg(msg,"METHOD_PARAMS"));
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	}
+	private static function getParamNames(msg:API_Message):Array/*String*/ {
+		return AS3_vs_AS2.asArray(getClassFromMsg(msg,"METHOD_PARAMS"));
 	}
 	public static function getFunctionId(msg:API_Message):int { 
 		return AS3_vs_AS2.as_int(getClassFromMsg(msg,"FUNCTION_ID"));
@@ -485,12 +488,12 @@ public final class StaticFunctions
 	public static function getMethodName(msg:API_Message):String {
 		return getClassFromMsg(msg,"METHOD_NAME").toString();		 
 	} 	
-	public static function getMethodParametersNum(msg:API_Message):int { 
-		return getParamNames(msg).length;
-	}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	public static function getMethodParametersNum(msg:API_Message):int { 
+		return getParamNames(msg).length;
+	}
 	public static function setMethodParameters(msg:API_Message, parameters:Array):void { 
 		var names:Array = getParamNames(msg); 
 		var pos:int = 0;
@@ -498,12 +501,12 @@ public final class StaticFunctions
 			msg[name] = parameters[pos++];
 		}
 	}
-	public static function getMethodParameters(msg:API_Message):Array { 
-		var names:Array = getParamNames(msg);
-		var res:Array = [];
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	public static function getMethodParameters(msg:API_Message):Array { 
+		var names:Array = getParamNames(msg);
+		var res:Array = [];
 		for each (var name:String in names) {
 			res.push(msg[name]);
 		}

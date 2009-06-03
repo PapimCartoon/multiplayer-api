@@ -111,6 +111,7 @@ public final class AS3_Loader
 		loadText(request, successHandler, failureHandler,progressHandler)
 	}        
 	private static function loadText(urlRequest:URLRequest,successHandler:Function = null,failureHandler:Function = null,progressHandler:Function = null):void {
+		urlRequest.url = getURL(urlRequest.url)
 		loadURL(urlRequest,successHandler,failureHandler,progressHandler)
 	}
  
@@ -376,8 +377,10 @@ public final class AS3_Loader
 			data is String ? 		StaticFunctions.cutString(data as String,EVENT_DATA_DEBUG_LEN)  : 
 						  			"ByteArray");
 		var urlString:String
+		
 		if (url is URLRequest){
-			urlString = (url as URLRequest).url;
+			var tempUrlRequest:URLRequest = url as URLRequest
+			urlString = tempUrlRequest.url;
 		}else{
 			urlString = url as String
 		}
@@ -386,6 +389,7 @@ public final class AS3_Loader
 				 SUCCESS_RETRY_LOG.log("Retry mechanism worked for url=",url);
 				 AS3_GATracker.COME2PLAY_TRACKER.trackEvent("Loading","Image Loading","Succeded retry "+retryCount+" on "+removeQueryString(urlString),1)
 			}
+			tmpTrace("calling successHandler=",successHandler)
 			successHandler(ev);
 		} else {
 			AS3_GATracker.COME2PLAY_TRACKER.trackEvent("Loading","Image Loading","Failed retry "+retryCount+" on "+removeQueryString(urlString),1)

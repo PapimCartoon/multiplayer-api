@@ -51,12 +51,12 @@ package come2play_as3.minesweeper
 			shift = new Shift();
 			shift.x = 250;
 			shift.y = 300;
-			AS3_vs_AS2.myWeakAddEventListener("shift",shift,MouseEvent.CLICK,pressShift)
-			AS3_vs_AS2.myWeakAddEventListener("shift",shift,MouseEvent.ROLL_OVER,overShift)
-			AS3_vs_AS2.myWeakAddEventListener("shift",shift,MouseEvent.ROLL_OUT,leftShift)
+			AS3_vs_AS2.myAddEventListener("shift",shift,MouseEvent.CLICK,pressShift)
+			AS3_vs_AS2.myAddEventListener("shift",shift,MouseEvent.ROLL_OVER,overShift)
+			AS3_vs_AS2.myAddEventListener("shift",shift,MouseEvent.ROLL_OUT,leftShift)
 			this.graphics.addChild(shift)
 			mineSweeperGraphic = new MineSweeperGraphic();
-			AS3_vs_AS2.myWeakAddEventListener("mineSweeperGraphic",mineSweeperGraphic,MouseEvent.CLICK,selectMine)
+			AS3_vs_AS2.myAddEventListener("mineSweeperGraphic",mineSweeperGraphic,MouseEvent.CLICK,selectMine)
 			graphics.addChild(mineSweeperGraphic);
 		}
 		private function pressShift(ev:MouseEvent):void

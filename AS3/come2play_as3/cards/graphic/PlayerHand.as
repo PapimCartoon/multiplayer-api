@@ -51,7 +51,7 @@ package come2play_as3.cards.graphic
 			cardsToRemove = new Array();
 			bouncePosition = CardDefenitins.playerYPositions[0] - 20;
 			
-			AS3_vs_AS2.myWeakAddEventListener("bounceCards",bounceCards,TimerEvent.TIMER,doBounce)
+			AS3_vs_AS2.myAddEventListener("bounceCards",bounceCards,TimerEvent.TIMER,doBounce)
 			AS3_vs_AS2.myAddEventListener("arrangeCardsTimer",arrangeCardsTimer,TimerEvent.TIMER,moveCard)
 			AS3_vs_AS2.myAddEventListener("cardsBack",cardsBack,TimerEvent.TIMER,cardsBackToPlace)		
 			AS3_vs_AS2.myAddEventListener("PlayerHand",this,MouseEvent.MOUSE_MOVE,repositionCards)

@@ -3,6 +3,7 @@ package
 	import flash.filesystem.File;
 	import flash.filesystem.FileMode;
 	import flash.filesystem.FileStream;
+	import flash.utils.Dictionary;
 	
 	import mx.controls.DataGrid;
 	//reflection
@@ -38,9 +39,9 @@ package
 			var str:String = fileStream.readUTFBytes(fileStream.bytesAvailable);
 			fileStream.close();
 			var fileName:String = file.name;		
-			var customValues:Array = runRegExp(str,firstTcustomReg,secondTcustomReg,newErrors,fileName);	
-			var i18nValues:Array = runRegExp(str,firstI18nReg,secondI18nReg,newErrors,fileName)		
-			var i18nReplaceValues:Array =runRegExp(str,firstI18nReplaceReg,secondI18nReplaceReg,newErrors,fileName)	
+			var customValues:Dictionary = runRegExp(str,firstTcustomReg,secondTcustomReg,newErrors,fileName);	
+			var i18nValues:Dictionary = runRegExp(str,firstI18nReg,secondI18nReg,newErrors,fileName)		
+			var i18nReplaceValues:Dictionary =runRegExp(str,firstI18nReplaceReg,secondI18nReplaceReg,newErrors,fileName)	
 			var reflectionsArr:Array = getReflections(str);
 			if(reflectionsArr.length > 1)
 				reflectionArray2XML(reflectionsArr,str,file.name,xmlreflection)
@@ -88,10 +89,12 @@ package
 			}
 			
 		}
-		static private function array2XML(arr:Array/*Array*/,xml:XML,defaultText:String):void
+		static private function array2XML(dic:Dictionary/*Array*/,xml:XML,defaultText:String):void
 		{
-			for each(var customArr:Array in arr)
+			var customArr:Array
+			for(var key:String in dic)
 			{
+				customArr = dic[key]
 				//if(customArr[0]!="") customArr[0]="<!--"+customArr[0]+"-->";
 				//if(customArr[2]!="") customArr[2]="<!--"+customArr[2]+"-->";
 				var customEntry:XML = <customEntry/>;
@@ -120,26 +123,29 @@ package
 				return false
 			return true;
 		}
-		static private function runRegExp(str:String,firstReg:RegExp,secondReg:RegExp,errorCollection:Array,fileName:String):Array
+		static private function runRegExp(str:String,firstReg:RegExp,secondReg:RegExp,errorCollection:Array,fileName:String):Dictionary
 		{
 			var res:Object;
 			var oldRes:Object;
 			var tempArr:Array = new Array();
-			var goodArr:Array = new Array();
+			var goodDic:Dictionary = new Dictionary();
 			while ( (res= firstReg.exec(str) ) != null) {
 				tempArr[res.index] = res;
 			}
+			var newRes:Array
 			while ( (res= secondReg.exec(str) ) != null) {
 				oldRes = tempArr[res.index];
 				if(isOk(res,"'"))
-					goodArr.push(getWrapLines(res.index,str,res[2]));
+					newRes = getWrapLines(res.index,str,res[2])//goodArr.push(getWrapLines(res.index,str,res[2]));
 				else if(isOk(oldRes,'"'))
-					goodArr.push(getWrapLines(res.index,str,oldRes[2]));
+					newRes = getWrapLines(res.index,str,oldRes[2])//goodArr.push(getWrapLines(res.index,str,oldRes[2]));
 				else			
-					addError(str,errorCollection,res.index,fileName); 			
+					addError(str,errorCollection,res.index,fileName); 
+				if(newRes!=null)goodDic[newRes[1]] = newRes;
+				newRes = null			
 			}
 
-			return goodArr;
+			return goodDic;
 		}
 		static private function getWrapLines(index:int,str:String,text:String):Array
 		{

@@ -257,10 +257,10 @@ Not used by the graphics yet (but should be displayed):
 		<!--
 		<entry><key>testThrow in timeout</key><value>true</value></entry>
 		<entry><key>EndGameDelay</key><value>10</value></entry>
-				
-		<entry><key>ARTIFICIAL_TO_JAVA_DELAY</key><value>'700-12000'</value></entry>
-		<entry><key>ARTIFICIAL_FROM_JAVA_DELAY</key><value>'700-12000'</value></entry>
-		 -->		
+			
+		<entry><key>ARTIFICIAL_TO_JAVA_DELAY</key>  <value>'1000-3000'</value></entry>
+		<entry><key>ARTIFICIAL_FROM_JAVA_DELAY</key><value>'1000-3000'</value></entry>
+		 -->			
 		
 		
 		<!--

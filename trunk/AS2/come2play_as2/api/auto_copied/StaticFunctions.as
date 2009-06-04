@@ -5,8 +5,8 @@
 import come2play_as2.api.auto_copied.*;
 class come2play_as2.api.auto_copied.StaticFunctions
 {			
-	public static var GOOGLE_REVISION_NUMBER:Number = 1062;
-	public static var COME2PLAY_REVISION_NUMBER:Number = 3401;
+	public static var GOOGLE_REVISION_NUMBER:Number = 1063;
+	public static var COME2PLAY_REVISION_NUMBER:Number = 3434;
 	public static function getRevision():String {
 		return (SerializableClass.IS_IN_FRAMEWORK ? "Container" : "Game")+
 			" g="+GOOGLE_REVISION_NUMBER+",c2p="+COME2PLAY_REVISION_NUMBER;		
@@ -93,6 +93,15 @@ class come2play_as2.api.auto_copied.StaticFunctions
 		return strRes;
 	}
 	
+	// for example,  
+	//prefixZeros("3",3) returns  "003"
+	//prefixZeros("23",3) returns "023"
+	public static function prefixZeros(str:String, toLen:Number):String {
+		var res:String = str;
+		for (var i:Number=str.length; i<=toLen; i++)
+			res = "0"+res;
+		return res;
+	}
 	public static function cutString(str:String, toSize:Number):String {		
 		if (str.length<toSize) return str;
 		return str.substr(0,toSize)+"... (string cut)";
@@ -173,7 +182,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 				// for static properties we use describeType
 				// because o1 and o2 have the same type, it is enough to use the fields of o1.
 				var fieldsArr:Array = AS3_vs_AS2.getFieldNames(o1);
-				var p179:Number=0; for (var i179:String in fieldsArr) { var field:String = fieldsArr[fieldsArr.length==null ? i179 : p179]; p179++;
+				var p188:Number=0; for (var i188:String in fieldsArr) { var field:String = fieldsArr[fieldsArr.length==null ? i188 : p188]; p188++;
 					allFields[field] = true;
 				}
 			}
@@ -193,7 +202,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 		var res:Array/*String[]*/ = [];
 		var lastStr:String = null;
 		var lastCount:Number = 0;
-		var p199:Number=0; for (var i199:String in arr) { var str:String = arr[arr.length==null ? i199 : p199]; p199++;
+		var p208:Number=0; for (var i208:String in arr) { var str:String = arr[arr.length==null ? i208 : p208]; p208++;
 			if (lastStr!=str) {
 				if (lastStr!=null) res.push([lastCount, lastCount+" occurrences of: "+lastStr]);
 				lastCount = 1;
@@ -206,14 +215,14 @@ class come2play_as2.api.auto_copied.StaticFunctions
 			return arr2[0] - arr1[0]; // DESC order
 		});
 		var res2:Array/*String*/ = [];
-		var p212:Number=0; for (var i212:String in res) { var countArr:Array = res[res.length==null ? i212 : p212]; p212++;
+		var p221:Number=0; for (var i221:String in res) { var countArr:Array = res[res.length==null ? i221 : p221]; p221++;
 			res2.push(countArr[1]);
 		}
 		return res2;
 	}
 	public static function subtractArray(arr:Array, minus:Array):Array {
 		var res:Array = arr.concat();
-		var p219:Number=0; for (var i219:String in minus) { var o:Object = minus[minus.length==null ? i219 : p219]; p219++;
+		var p228:Number=0; for (var i228:String in minus) { var o:Object = minus[minus.length==null ? i228 : p228]; p228++;
 			var indexOf:Number = AS3_vs_AS2.IndexOf(res, o);
 			StaticFunctions.assert(indexOf!=-1, "When subtracting minus=",[minus," from array=", arr, " we did not find element ",o]);				
 			res.splice(indexOf, 1);
@@ -332,7 +341,7 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	}
 	public static function instance2Object(instance:Object, fields:Array/*String*/):Object {
 		var res:Object = {};
-		var p338:Number=0; for (var i338:String in fields) { var field:String = fields[fields.length==null ? i338 : p338]; p338++;
+		var p347:Number=0; for (var i347:String in fields) { var field:String = fields[fields.length==null ? i347 : p347]; p347++;
 			res[field] = instance[field];
 		}
 		return res;
@@ -371,14 +380,14 @@ class come2play_as2.api.auto_copied.StaticFunctions
 	public static function setMethodParameters(msg:API_Message, parameters:Array):Void { 
 		var names:Array = getParamNames(msg); 
 		var pos:Number = 0;
-		var p377:Number=0; for (var i377:String in names) { var name:String = names[names.length==null ? i377 : p377]; p377++;
+		var p386:Number=0; for (var i386:String in names) { var name:String = names[names.length==null ? i386 : p386]; p386++;
 			msg[name] = parameters[pos++];
 		}
 	}
 	public static function getMethodParameters(msg:API_Message):Array { 
 		var names:Array = getParamNames(msg);
 		var res:Array = [];
-		var p384:Number=0; for (var i384:String in names) { var name:String = names[names.length==null ? i384 : p384]; p384++;
+		var p393:Number=0; for (var i393:String in names) { var name:String = names[names.length==null ? i393 : p393]; p393++;
 			res.push(msg[name]);
 		}
 		return res;

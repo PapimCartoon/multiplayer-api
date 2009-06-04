@@ -215,7 +215,7 @@ public final class ErrorHandler
 			//			at come2play_as3.util::General$/stackTrace()
 			//			at come2play_as3.util::General$/catchErrors() 
 		if (!didReportError && toInsert!=poped) 
-			alwaysTraceAndSendReport("BAD stack behaviour (multithreaded flash?)", [my_stack_trace, toInsert, poped]);
+			alwaysTraceAndSendReport("BAD stack behaviour (multithreaded flash?)", ["my_stack_trace=",my_stack_trace, "toInsert=",toInsert, "poped=",poped]);
 		return res;				
 	}
 	public static function handleError(err:Error, obj:Object):void {

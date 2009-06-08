@@ -10,8 +10,8 @@ package come2play_as3.api.auto_copied
 // Only StaticFunctions and JSON are copied to flex_utils 
 public final class StaticFunctions
 {			
-	public static var GOOGLE_REVISION_NUMBER:int = 1064;
-	public static var COME2PLAY_REVISION_NUMBER:int = 3449;
+	public static var GOOGLE_REVISION_NUMBER:int = 1067;
+	public static var COME2PLAY_REVISION_NUMBER:int = 3496;
 	public static function getRevision():String {
 		return (SerializableClass.IS_IN_FRAMEWORK ? "Container" : "Game")+
 			" g="+GOOGLE_REVISION_NUMBER+",c2p="+COME2PLAY_REVISION_NUMBER;		

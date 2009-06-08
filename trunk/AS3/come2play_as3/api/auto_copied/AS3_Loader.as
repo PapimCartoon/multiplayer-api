@@ -334,6 +334,7 @@ public final class AS3_Loader
 	  		if (url is String) {
 	  			var urlString:String = url as String;
 	  			if(!isLoader){
+	  				tmpTrace("not Using Loader! urlString=",urlString)
 	  				urlloader.load(new URLRequest(urlString));
 	  			}else{
 	  				// not using cache
@@ -341,7 +342,9 @@ public final class AS3_Loader
 	  				loader.load(new URLRequest(urlString),context);
 	  			}
 			} else {
-				urlloader.load(url as URLRequest);
+				var tempUrlRequest:URLRequest = url as URLRequest
+				tmpTrace("loading URLRequest! urlString=",tempUrlRequest.url)
+				urlloader.load(tempUrlRequest);
 			}
      	} catch(error:Error) {
      		var ev:Event = new SecurityErrorEvent(SecurityErrorEvent.SECURITY_ERROR,false, false, AS3_vs_AS2.error2String(error));

@@ -141,6 +141,8 @@ Not used by the graphics yet (but should be displayed):
 -->
 <customInitInfo>
 	<custom>
+	
+	<entry><key>isGameScalable</key><value>true</value></entry>	
 		<entry><key>CanViewGame</key><value>false</value></entry>	
 		
 		<!-- 

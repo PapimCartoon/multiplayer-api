@@ -31,7 +31,7 @@ class come2play_as2.api.auto_copied.ErrorHandler
 	// returns the bug_id (or -1 if we already reported an error)
 	private static var ErrorReport_LOG:Logger = new Logger("ErrorReport",10);	
 	public static var SHOULD_SHOW_ERRORS:Boolean = true;
-	public static var SHOW_ERROR_FUNC:Function/*function(errMsg:String):Void*/ = null;
+	public static var SHOW_ERROR_FUNC:Function/*function(bug_id:Number,errMessage:String):Void*/ = null;
 	public static var didReportError:Boolean = false; // we report only 1 error (usually 1 error leads to others)
 	// If the container has a bug, then it adds the traces of the game, reports to ASP, and send to java. 
 	// If the game has a bug, then it sends DoAllFoundHacker (which cause the container to send a bug report)  

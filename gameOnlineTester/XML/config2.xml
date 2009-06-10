@@ -467,15 +467,15 @@ Explanation about Chess:
 Chess with dice: (set extra_match_info to "Dice")
 ../../as2_old_boards/OldBoardContainer.swf?oldboard_swf=../../as2_old_boards/boards/Chess_board.swf&game_type=Chess&
 Chess without dice: set extra_match_info to "")
-../../as2_old_boards/OldBoardContainer.swf?oldboard_swf=../../as2_old_boards/boards/Chess_board.swf&game_type=Chess&do_roll_dice_is_visible=false&do_automatic_roll_is_visible=false&
+../../as2_old_boards/OldBoardContainer.swf?oldboard_swf=../../as2_old_boards/boards/Chess_board.swf&game_type=Chess&do_roll_dice_is_visible=false&do_automatic_roll_is_on=false&
 BackGammon:
-../../as2_old_boards/OldBoardContainer.swf?oldboard_swf=../../as2_old_boards/boards/BackGammon_board.swf&game_type=BackGammon&
+../../as2_old_boards/OldBoardContainer.swf?oldboard_swf=../../as2_old_boards/boards/BackGammon_board.swf&game_type=BackGammon&do_automatic_roll_is_on=false&
 
 For OldBoard, you can set these variables (by default, they are all set to 'true'):
-4 buttons:
-  do_back,do_forward,do_cancel,do_roll_dice
-5 checkboxes:
-  do_automatic_roll,do_chess_3D_or_2D,do_make_move_animations,do_make_dice_animations,do_make_animations_on_forward
+2 buttons:
+  do_cancel,do_roll_dice
+6 checkboxes:
+  do_make_move_animations,do_make_dice_animations,do_enable_one_click_move,do_make_animations_on_forward,do_chess_3D_or_2D,do_automatic_roll
 Each one can be:
 	*_is_visible (if it is 'false' then we set _visible=false)
 	*_is_on (for checkboxes only. determines if the initial position is on or off)
@@ -689,7 +689,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 		--> 		
 		<rooms type="list"> 
 			<room>
-				<room_id>382</room_id>
+				<room_id>7468</room_id>
 				<all_java_ips></all_java_ips> 		
 				<room_name>Chess room</room_name> 
 				<cur_users>5</cur_users> 
@@ -1005,7 +1005,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 			<blocked_selected_color type="uint">0xCB2565</blocked_selected_color> 			<!-- color of the highlight -->
 		</user_info_pref>
     
-		<default_room_id>382</default_room_id>
+		<default_room_id>7468</default_room_id>
 		
 		<is_show_viewers type="boolean">true</is_show_viewers>
 			

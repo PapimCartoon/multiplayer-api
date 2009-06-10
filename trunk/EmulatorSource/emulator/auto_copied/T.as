@@ -132,40 +132,45 @@ package emulator.auto_copied
 		
 		// for internationalization	
 		// i18n stands for "i"(nternationalizatio)"n"	
+		public static var POST_PROCESS:Function = null; 
 		public static function i18n(str:String):String { //internationalization			
-			var res:Object = _dictionary[str];
-			return res==null ? str : res.toString();
-		}		
-		public static function i18nReplace(str:String, replacement:Object):String {
+			var res:String = innerI18n(str)
+			return POST_PROCESS==null?res:POST_PROCESS(res);
+		}	
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			var res:String = i18n(str);
+		private static function innerI18n(str:String):String { //internationalization			
+			var res:Object = _dictionary[str];
+			return  res==null ? str : res.toString();
+		}		
+		public static function i18nReplace(str:String, replacement:Object):String {
+			var res:String = innerI18n(str);
 			for (var key:String in replacement) {
 				res = StaticFunctions.replaceAll(res, "$"+key+"$", ''+replacement[key]); 
 			} 
-			return res;			
+			return POST_PROCESS==null?res:POST_PROCESS(res);			
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		}
 		
 		
 		public static var isLeftToRight:Boolean = true;
 		
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 		private var arr:Array;
 		public function T() {
 			arr = [];
 		}
 		public function add(str:String):void {
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			if (isLeftToRight) 
 				arr.push(str);
 			else
 				arr.unshift(str);
 		}
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 		public function join():String {
 			return arr.join("");
 		}

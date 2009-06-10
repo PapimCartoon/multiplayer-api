@@ -95,16 +95,21 @@ package come2play_as3.api.auto_copied
 		
 		// for internationalization	
 		// i18n stands for "i"(nternationalizatio)"n"	
+		public static var POST_PROCESS:Function = null; 
 		public static function i18n(str:String):String { //internationalization			
+			var res:String = innerI18n(str)
+			return POST_PROCESS==null?res:POST_PROCESS(res);
+		}	
+		private static function innerI18n(str:String):String { //internationalization			
 			var res:Object = _dictionary[str];
-			return res==null ? str : res.toString();
+			return  res==null ? str : res.toString();
 		}		
 		public static function i18nReplace(str:String, replacement:Object):String {
-			var res:String = i18n(str);
+			var res:String = innerI18n(str);
 			for (var key:String in replacement) {
 				res = StaticFunctions.replaceAll(res, "$"+key+"$", ''+replacement[key]); 
 			} 
-			return res;			
+			return POST_PROCESS==null?res:POST_PROCESS(res);			
 		}
 		
 		

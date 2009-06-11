@@ -145,6 +145,9 @@ Not used by the graphics yet (but should be displayed):
 	<entry><key>isGameScalable</key><value>true</value></entry>	
 		<entry><key>CanViewGame</key><value>false</value></entry>	
 		
+		<!-- used like a cookie for WEB-API. what ever the ASP puts here, he gets in the WEB-API. -->
+		<entry><key>user_channel_info</key><value>42</value></entry>
+		
 		<!-- 
 			Saved games for testing are stored in the xml as customInfo with keys like this:
 			LOCALTEST_GAMENAME-VARIANT-PLAYERSNUM-EnumPlayType
@@ -334,6 +337,9 @@ Not used by the graphics yet (but should be displayed):
 			
 			If you want to test the error report mechanism:
 			<entry><key>come2play_as3.network::ServerConnection.error_report_url</key><value>'http://www.come2play.com/shared/flex_object/error_report.asp'</value></entry>
+			
+			if you want to test how to overload the queues in ValueWriter on the server:
+			<entry><key>come2play_as3.network::ValueWriter.SEND_ACK_FOR_QUEUE_SIZE</key><value>1000</value></entry>
 		-->
 		<entry><key>come2play_as3.network::MySocket.USE_HEX</key><value>false</value></entry>
 		

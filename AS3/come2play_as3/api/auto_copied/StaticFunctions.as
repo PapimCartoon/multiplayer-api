@@ -258,7 +258,7 @@ public final class StaticFunctions
 	}
 	
 	public static const REFLECTION_PREFIX:String = "REFLECTION_";
-	private static var REFLECTION_LOG:Logger = new Logger("REFLECTION",10);
+	private static var REFLECTION_LOG:Logger = new Logger("REFLECTION",100);
 	public static function performReflectionFromFlashVars(_someMovieClip:DisplayObjectContainer):void {		
 		var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(_someMovieClip);		
 		performReflectionFromObject(parameters);		

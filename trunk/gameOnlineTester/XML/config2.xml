@@ -991,7 +991,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 																				   performance -->
 			
 			<max_chars_in_inputfield type="int">100</max_chars_in_inputfield> 	<!-- 0 is for unlimited -->
-			<chat_line_leading type="int">7</chat_line_leading> 	<!-- this parameter sets the leading for messages that have
+			<chat_line_leading type="int">2</chat_line_leading> 	<!-- this parameter sets the leading for messages that have
 															 emoticons, so if you change their size, you might want
 															 to adjust this as well -->
 			<emoticon_spacer type="int">3</emoticon_spacer>    	<!-- this parameter sets space that is created in the textfield

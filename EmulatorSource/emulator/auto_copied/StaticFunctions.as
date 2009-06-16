@@ -23,8 +23,8 @@ public final class StaticFunctions
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	public static var GOOGLE_REVISION_NUMBER:int = 1072;
-	public static var COME2PLAY_REVISION_NUMBER:int = 3574;
+	public static var GOOGLE_REVISION_NUMBER:int = 1080;
+	public static var COME2PLAY_REVISION_NUMBER:int = 3650;
 	public static function getRevision():String {
 		return (SerializableClass.IS_IN_FRAMEWORK ? "Container" : "Game")+
 			" g="+GOOGLE_REVISION_NUMBER+",c2p="+COME2PLAY_REVISION_NUMBER;		
@@ -343,7 +343,7 @@ public final class StaticFunctions
 	}
 	
 	public static const REFLECTION_PREFIX:String = "REFLECTION_";
-	private static var REFLECTION_LOG:Logger = new Logger("REFLECTION",10);
+	private static var REFLECTION_LOG:Logger = new Logger("REFLECTION",100);
 	public static function performReflectionFromFlashVars(_someMovieClip:DisplayObjectContainer):void {		
 
 // This is a AUTOMATICALLY GENERATED! Do not change!

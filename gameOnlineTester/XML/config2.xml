@@ -471,11 +471,11 @@ Explanation about Chess:
 
 	
 Chess with dice: (set extra_match_info to "Dice")
-../../as2_old_boards/OldBoardContainer.swf?oldboard_swf=../../as2_old_boards/boards/Chess_board.swf&game_type=Chess&
+OldBoardContainer.swf?oldboard_swf=../../as2_old_boards/boards/Chess_board.swf&game_type=Chess&
 Chess without dice: set extra_match_info to "")
-../../as2_old_boards/OldBoardContainer.swf?oldboard_swf=../../as2_old_boards/boards/Chess_board.swf&game_type=Chess&do_roll_dice_is_visible=false&do_automatic_roll_is_on=false&
+OldBoardContainer.swf?oldboard_swf=../../as2_old_boards/boards/Chess_board.swf&game_type=Chess&do_roll_dice_is_visible=false&do_automatic_roll_is_on=false&
 BackGammon:
-../../as2_old_boards/OldBoardContainer.swf?oldboard_swf=../../as2_old_boards/boards/BackGammon_board.swf&game_type=BackGammon&do_automatic_roll_is_on=false&
+OldBoardContainer.swf?oldboard_swf=../../as2_old_boards/boards/BackGammon_board.swf&game_type=BackGammon&do_automatic_roll_is_on=false&
 
 For OldBoard, you can set these variables (by default, they are all set to 'true'):
 2 buttons:

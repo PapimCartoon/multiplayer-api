@@ -75,14 +75,13 @@ import flash.utils.*;
 		}
 		public function makePlayerMove(playerMove:PlayerMove):void
 		{
+			if((T.custom(CUSTOM_INFO_KEY_isPause,false) as Boolean))	return;
 			var key:Object ={xPos:playerMove.xPos,yPos:playerMove.yPos,playerId:playerMove.playerId}
 			var serverKey:Object = {xPos:playerMove.xPos,yPos:playerMove.yPos}
 			if(allowMoves){
 				doStoreState([UserEntry.create(key,playerMove,false)],[RevealEntry.create(serverKey,null,1)]);
 			}
 		}
-		
-		//override functions
 		
 		override public function gotCustomInfo(infoEntries:Array):void
 		{

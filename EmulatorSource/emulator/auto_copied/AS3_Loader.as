@@ -331,7 +331,7 @@ public final class AS3_Loader
 			var successFunc:Function = function (ev:Event):void { removeImageLoaderListeners(byteConverter,dispatcher,req,ev,false); };
 			AS3_vs_AS2.myAddEventListener("handleExistingImage", dispatcher,Event.COMPLETE, successFunc); 
 			var errorEvents:Array/*String*/ = [IOErrorEvent.IO_ERROR, HTTPStatusEvent.HTTP_STATUS, SecurityErrorEvent.SECURITY_ERROR];
-			for (var errorEvent:String in errorEvents)
+			for each (var errorEvent:String in errorEvents)
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 

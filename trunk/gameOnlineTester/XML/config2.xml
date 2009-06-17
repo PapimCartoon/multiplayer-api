@@ -101,7 +101,7 @@ Not used by the graphics yet (but should be displayed):
 	custom="list"
 	reflection="list"
 	i18n="list"
-	value="xml"
+	value="string"
 	
 	xml="xml"
 	user_id="int"
@@ -277,10 +277,9 @@ Not used by the graphics yet (but should be displayed):
 		logoLink - url clicking the logo will lead
 		-->
 		<entry><key>logoLink</key><value>'http://www.google.com'</value></entry>
-		<entry><key>Send font</key><value>'<font size="16">$text$</font>'</value></entry>
+		<entry><key>Send font</key><value>'&lt;font size="16"&gt;$text$&lt;/font&gt;'</value></entry>
 		<entry><key>DebugMultipleMessages</key><value>false</value></entry>
 		<!--causes the framework to show a waiting screen  -->
-		<entry><key>StartUp_3_WaitingForOpponents tags</key><value>'<custom>SHOW_AD</custom>'</value></entry>
 		<entry><key>adType</key><value>'MochiAd'</value></entry>
 		<!--
 		MochiAd
@@ -1017,8 +1016,8 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 			
 		<is_chat_enabled type="boolean">true</is_chat_enabled>
 		
-		<is_align_vertical type="boolean">true</is_align_vertical>	
-		<is_rtl type="boolean">false</is_rtl>    
+		<is_align_vertical type="boolean">false</is_align_vertical>	
+		<is_rtl type="boolean">true</is_rtl>    
 	</graphics>
 </config>
 </root>

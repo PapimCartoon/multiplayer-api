@@ -143,7 +143,7 @@ Not used by the graphics yet (but should be displayed):
 	<custom>
 	
 	<entry><key>isGameScalable</key><value>true</value></entry>	
-		<entry><key>CanViewGame</key><value>false</value></entry>	
+		<entry><key>CanViewGame</key><value>true</value></entry>	
 		
 		<!-- used like a cookie for WEB-API. what ever the ASP puts here, he gets in the WEB-API. -->
 		<entry><key>user_channel_info</key><value>42</value></entry>
@@ -212,7 +212,7 @@ Not used by the graphics yet (but should be displayed):
 		<entry><key>EnablePressedControlMsg</key><value>false</value></entry>
 
 		<entry><key>minimizedChatHeight</key><value>49</value></entry>
-		<entry><key>minimizableHeader</key><value>true</value></entry>
+		<entry><key>minimizableHeader</key><value>false</value></entry>
 		<entry><key>grabIt</key><value>"http://www.facebook.com"</value></entry>
 		<entry><key>do_alternate_start_turn</key><value>true</value></entry>
 		
@@ -567,7 +567,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 		<!-- in Sudoku and Match4, 
 			we use seconds_per_move to limit the time for the entire match 
 		-->
-		<seconds_per_move type="int">20</seconds_per_move>
+		<seconds_per_move type="int">200</seconds_per_move>
 		<seconds_per_match type="int">200</seconds_per_match>
 		<!-- extra_match_info is for 
 					**OldBoard** games.
@@ -1016,7 +1016,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 			
 		<is_chat_enabled type="boolean">true</is_chat_enabled>
 		
-		<is_align_vertical type="boolean">false</is_align_vertical>	
+		<is_align_vertical type="boolean">true</is_align_vertical>	
 		<is_rtl type="boolean">true</is_rtl>    
 	</graphics>
 </config>

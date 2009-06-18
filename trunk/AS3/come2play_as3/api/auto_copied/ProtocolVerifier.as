@@ -14,6 +14,7 @@ package come2play_as3.api.auto_copied
 		public static var MAX_ANIMATION_MILLISECONDS:int = 120*1000; // max seconds for animations
 		public static var WARN_ANIMATION_MILLISECONDS:int = 90*1000; // if an animation finished after X seconds, we report an error (for us to know that it can happen!)
 
+		private var isGameRuning:Boolean;
 		private var transactionStartedOn:TimeMeasure; 
 		private var currentCallback:API_Message = null;
 		private var didRegisterOnServer:Boolean = false;
@@ -120,6 +121,12 @@ package come2play_as3.api.auto_copied
         	if (doMsg is API_DoStoreState) {
         		// The game might send DoStoreState for a player, but the verifier already send GotMatchEnded for that player
         		// check(isPlayer(), ["Only a player can send DoStoreState"]);
+        		if(!isGameRuning){
+        		//StaticFunctions.assert(isGameRuning,"doStoreState can't be called before gotMatchStarted has finished,or after gotMatchEnded has finished","failed msg=",doMsg);
+        			StaticFunctions.alwaysTrace(["\n\nERRRRRRRRRRROR\n\n doStoreState can't be called before gotMatchStarted has finished,or after gotMatchEnded has finished","failed msg=",doMsg])
+        			AS3_GATracker.trackWarning("game errors","doStoreState not in game",1)
+        		}
+        		
         		var doStoreStateMessage:API_DoStoreState = /*as*/doMsg as API_DoStoreState;
         		isNullKeyExistUserEntry(doStoreStateMessage.userEntries);
         		isNullKeyExistRevealEntry(doStoreStateMessage.revealEntries)
@@ -133,6 +140,8 @@ package come2play_as3.api.auto_copied
 				
 				var wasStoreStateCalculation:Boolean = false;
 				var isRequestStateCalculation:Boolean = currentCallback is API_GotRequestStateCalculation;
+				if(currentCallback is API_GotMatchStarted) isGameRuning = true;
+				if(currentCallback is API_GotMatchEnded) isGameRuning = false;
 				for each (var doAllMsg:API_Message in transaction.messages) {
 					checkDoAll(doAllMsg);
 					if (isRequestStateCalculation) {
@@ -142,6 +151,7 @@ package come2play_as3.api.auto_copied
 							check(doAllMsg is API_DoAllFoundHacker, ["Illegal msg=",doAllMsg," when processing ",currentCallback]);
 					}					
 				}
+				
 				if (transaction.messages.length>0)
 					check(isRequestStateCalculation ||
 						  currentCallback is API_GotMatchStarted || 

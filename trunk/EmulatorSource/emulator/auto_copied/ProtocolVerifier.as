@@ -27,15 +27,16 @@ package emulator.auto_copied
 		public static var MAX_ANIMATION_MILLISECONDS:int = 120*1000; // max seconds for animations
 		public static var WARN_ANIMATION_MILLISECONDS:int = 90*1000; // if an animation finished after X seconds, we report an error (for us to know that it can happen!)
 
+		private var isGameRuning:Boolean;
 		private var transactionStartedOn:TimeMeasure; 
 		private var currentCallback:API_Message = null;
 		private var didRegisterOnServer:Boolean = false;
 		
 		private var currentPlayers:CurrentPlayers;
-		
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		
 		public function ProtocolVerifier() {
 			transactionStartedOn = new TimeMeasure();
 			ErrorHandler.myInterval("ProtocolVerifier.checkAnimationInterval",AS3_vs_AS2.delegate(this, this.checkAnimationInterval), MAX_ANIMATION_MILLISECONDS);
@@ -45,10 +46,10 @@ package emulator.auto_copied
 			return "ProtocolVerifier:"+
 				" transactionStartedOn="+transactionStartedOn+
 				" currentCallback="+currentCallback+ 
-				" didRegisterOnServer="+didRegisterOnServer+ 
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+				" didRegisterOnServer="+didRegisterOnServer+ 
 				" currentPlayers="+currentPlayers+
 				"";
 		}
@@ -58,10 +59,10 @@ package emulator.auto_copied
         private function checkAnimationInterval():void {
         	if (!transactionStartedOn.isTimeSet()) return; // animation is not running
         	var delta:int = transactionRunningTime();
-        	if (delta<MAX_ANIMATION_MILLISECONDS) return; // animation is running for a short time
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+        	if (delta<MAX_ANIMATION_MILLISECONDS) return; // animation is running for a short time
         	// animation is running for too long
         	StaticFunctions.throwError("An transaction is running for more than MAX_ANIMATION_MILLISECONDS="+MAX_ANIMATION_MILLISECONDS);         	
         }
@@ -71,10 +72,10 @@ package emulator.auto_copied
 		private function check(cond:Boolean, arr:Array):void {
 			if (cond) return;
 			StaticFunctions.assert(false, "ProtocolVerifier found an error: ", [arr]);
-		}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		}
 		private function checkServerEntries(serverEntries:Array/*ServerEntry*/):void {
 			for each (var entry:ServerEntry in serverEntries) {
 				check(entry.key!=null, ["Found a null key in serverEntry=",entry]);
@@ -84,10 +85,10 @@ package emulator.auto_copied
 			currentPlayers.assertInProgress(inProgress,msg); 
 		}
 		public function msgToGame(gotMsg:API_Message):void {
-			check(gotMsg!=null, ["Got a null message!"]);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			check(gotMsg!=null, ["Got a null message!"]);
 			check(currentCallback==null, ["Container sent two messages without waiting! oldCallback=", currentCallback, " newCallback=",gotMsg]);
 			//check(didRegisterOnServer, [T.i18n("Container sent a message before getting doRegisterOnServer")]); 
 			currentCallback = gotMsg;
@@ -97,10 +98,10 @@ package emulator.auto_copied
 			} else if (gotMsg is API_GotStateChanged) {
     			checkInProgress(true,gotMsg);
     			var stateChanged:API_GotStateChanged = /*as*/gotMsg as API_GotStateChanged;
-    			checkServerEntries(stateChanged.serverEntries);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+    			checkServerEntries(stateChanged.serverEntries);
     			
 			} else if (gotMsg is API_GotMatchStarted) {
 				var matchStarted:API_GotMatchStarted = /*as*/gotMsg as API_GotMatchStarted;
@@ -110,10 +111,10 @@ package emulator.auto_copied
     					
 			} else if (gotMsg is API_GotCustomInfo) {	 					    			
     			// isPause is called when the game is in progress,
-    			// and other info is passed before the game starts.
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+    			// and other info is passed before the game starts.
 			} else if (gotMsg is API_GotKeyboardEvent) {						    			
     			checkInProgress(true,gotMsg);
     			
@@ -123,10 +124,10 @@ package emulator.auto_copied
 			} else if (gotMsg is API_GotRequestStateCalculation){
 				
 			}
-			else {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			else {
 				check(false, ["Illegal gotMsg=",gotMsg]);
 			}
 		}
@@ -136,10 +137,10 @@ package emulator.auto_copied
 		}
 		public static function isPassThrough(doMsg:API_Message):Boolean {
 			return doMsg is API_DoAllFoundHacker || 
-				doMsg is API_DoRegisterOnServer || doMsg is API_DoTrace ||
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+				doMsg is API_DoRegisterOnServer || doMsg is API_DoTrace ||
         		isOldBoard(doMsg);
 		}
 		public function isDoAll(doMsg:API_Message):Boolean {
@@ -149,10 +150,10 @@ package emulator.auto_copied
 		public function msgFromGame(doMsg:API_Message):void {
 			check(doMsg!=null, ["Send a null message!"]);
 			
-			if (doMsg is API_DoRegisterOnServer) {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			if (doMsg is API_DoRegisterOnServer) {
 				check(!didRegisterOnServer, ["Call DoRegisterOnServer only once!"]);
 				didRegisterOnServer = true;
 				return;
@@ -162,13 +163,22 @@ package emulator.auto_copied
 			
         	if (doMsg is API_DoStoreState) {
         		// The game might send DoStoreState for a player, but the verifier already send GotMatchEnded for that player
-        		// check(isPlayer(), ["Only a player can send DoStoreState"]);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+        		// check(isPlayer(), ["Only a player can send DoStoreState"]);
+        		if(!isGameRuning){
+        		//StaticFunctions.assert(isGameRuning,"doStoreState can't be called before gotMatchStarted has finished,or after gotMatchEnded has finished","failed msg=",doMsg);
+        			StaticFunctions.alwaysTrace(["\n\nERRRRRRRRRRROR\n\n doStoreState can't be called before gotMatchStarted has finished,or after gotMatchEnded has finished","failed msg=",doMsg])
+        			AS3_GATracker.trackWarning("game errors","doStoreState not in game",1)
+        		}
+        		
         		var doStoreStateMessage:API_DoStoreState = /*as*/doMsg as API_DoStoreState;
         		isNullKeyExistUserEntry(doStoreStateMessage.userEntries);
         		isNullKeyExistRevealEntry(doStoreStateMessage.revealEntries)
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
         		isDeleteLegal(doStoreStateMessage.userEntries)
 			} else if (doMsg is API_Transaction) {
 				var transaction:API_Transaction = /*as*/doMsg as API_Transaction;
@@ -176,12 +186,14 @@ package emulator.auto_copied
 				// The game may perform doAllFoundHacker (in a transaction) even after the game is over,
 				// because: The container may pass gotStateChanged after the game sends doAllEndMatch,
 				//			because the game should verify every doStoreState (to prevent hackers from polluting the state after they know the game will be over).
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 				
 				var wasStoreStateCalculation:Boolean = false;
 				var isRequestStateCalculation:Boolean = currentCallback is API_GotRequestStateCalculation;
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+				if(currentCallback is API_GotMatchStarted) isGameRuning = true;
+				if(currentCallback is API_GotMatchEnded) isGameRuning = false;
 				for each (var doAllMsg:API_Message in transaction.messages) {
 					checkDoAll(doAllMsg);
 					if (isRequestStateCalculation) {
@@ -189,11 +201,12 @@ package emulator.auto_copied
 							wasStoreStateCalculation = true;
 						else
 							check(doAllMsg is API_DoAllFoundHacker, ["Illegal msg=",doAllMsg," when processing ",currentCallback]);
+					}					
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-					}					
 				}
+				
 				if (transaction.messages.length>0)
 					check(isRequestStateCalculation ||
 						  currentCallback is API_GotMatchStarted || 

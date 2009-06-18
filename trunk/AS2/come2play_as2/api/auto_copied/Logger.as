@@ -15,6 +15,8 @@
 import come2play_as2.api.auto_copied.*;
 class come2play_as2.api.auto_copied.Logger
 {
+	public static var TURN_OFF_ALL:Boolean = false;
+	
 	public static var ALL_LOGGERS:Array = [];
 	public static var MAX_LOGGERS_NUM:Number = 500;
 		
@@ -44,7 +46,7 @@ class come2play_as2.api.auto_copied.Logger
 		limitedLog(MAX_TRACE_LEN,args);
 	}
 	public function limitedLog(maxTraceLen:Number, obj:Object):Void {
-		if (maxTraces<=0) return;
+		if (TURN_OFF_ALL || maxTraces<=0) return;
 			 
 		var traceLine:LoggerLine = new LoggerLine(maxTraceLen,name,obj);
 		limitedPush(traces, traceLine , maxTraces); // we discard old traces

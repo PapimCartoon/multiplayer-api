@@ -17,6 +17,8 @@ package come2play_as3.api.auto_copied
  */ 
 public final class Logger
 {
+	public static var TURN_OFF_ALL:Boolean = false;
+	
 	public static var ALL_LOGGERS:Array = [];
 	public static var MAX_LOGGERS_NUM:int = 500;
 		
@@ -46,7 +48,7 @@ public final class Logger
 		limitedLog(MAX_TRACE_LEN,args);
 	}
 	public function limitedLog(maxTraceLen:int, obj:Object):void {
-		if (maxTraces<=0) return;
+		if (TURN_OFF_ALL || maxTraces<=0) return;
 			 
 		var traceLine:LoggerLine = new LoggerLine(maxTraceLen,name,obj);
 		limitedPush(traces, traceLine , maxTraces); // we discard old traces

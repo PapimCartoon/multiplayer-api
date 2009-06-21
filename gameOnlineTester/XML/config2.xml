@@ -142,7 +142,13 @@ Not used by the graphics yet (but should be displayed):
 <customInitInfo>
 	<custom>
 	
+	
+	
+	<entry><key>gameLogoUrl</key><value>"images/AnimatedLogo.swf"</value></entry>	
 	<entry><key>isGameScalable</key><value>true</value></entry>	
+	<entry><key>translated_game_name</key><value>"Game name"</value></entry>	
+	
+	
 		<entry><key>CanViewGame</key><value>true</value></entry>	
 		
 		<!-- used like a cookie for WEB-API. what ever the ASP puts here, he gets in the WEB-API. -->
@@ -163,7 +169,7 @@ Not used by the graphics yet (but should be displayed):
 		
 		
 		<entry><key>disableGameRating</key><value>false</value></entry>		
-		<entry><key>disableStatisticsPage</key><value>true</value></entry>	
+		<entry><key>disableStatisticsPage</key><value>false</value></entry>	
 		
 		<entry><key>isSmartAutoMatch</key><value>false</value></entry>		
 		<entry><key>isSendErrorImage</key><value>false</value></entry>		 
@@ -212,7 +218,7 @@ Not used by the graphics yet (but should be displayed):
 		<entry><key>EnablePressedControlMsg</key><value>false</value></entry>
 
 		<entry><key>minimizedChatHeight</key><value>49</value></entry>
-		<entry><key>minimizableHeader</key><value>false</value></entry>
+		<entry><key>minimizableHeader</key><value>true</value></entry>
 		<entry><key>grabIt</key><value>"http://www.facebook.com"</value></entry>
 		<entry><key>do_alternate_start_turn</key><value>true</value></entry>
 		
@@ -258,10 +264,10 @@ Not used by the graphics yet (but should be displayed):
 		-->
 		<entry><key>override all_java_ips</key><value>'localhost:2000:socket,localhost:18083:rtmpt'</value></entry>		
 		
-		
+		<entry><key>EndGameDelay</key><value>100</value></entry>
 		<!--
 		<entry><key>testThrow in timeout</key><value>true</value></entry>
-		<entry><key>EndGameDelay</key><value>10</value></entry>
+		
 			
 		<entry><key>ARTIFICIAL_TO_JAVA_DELAY</key>  <value>'1000-3000'</value></entry>
 		<entry><key>ARTIFICIAL_FROM_JAVA_DELAY</key><value>'1000-3000'</value></entry>
@@ -568,7 +574,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 			we use seconds_per_move to limit the time for the entire match 
 		-->
 		<seconds_per_move type="int">200</seconds_per_move>
-		<seconds_per_match type="int">200</seconds_per_match>
+		<seconds_per_match type="int">0</seconds_per_match>
 		<!-- extra_match_info is for 
 					**OldBoard** games.
 			example: 
@@ -1016,8 +1022,8 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 			
 		<is_chat_enabled type="boolean">true</is_chat_enabled>
 		
-		<is_align_vertical type="boolean">true</is_align_vertical>	
-		<is_rtl type="boolean">true</is_rtl>    
+		<is_align_vertical type="boolean">false</is_align_vertical>	
+		<is_rtl type="boolean">false</is_rtl>    
 	</graphics>
 </config>
 </root>

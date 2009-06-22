@@ -2,7 +2,7 @@
 The xml assumes the current dir is gameOnlineTester
 
 	The flash should get in "flashvars" the following parameters:
-	(all URL-Parameters are written in: RoomLogicBase.URL_PARAM_*)
+	(all URL-Parameters are written in: RoomLogic.URL_PARAM_*)
 	- WaitForParameters: a flag passed by the DistributionSWF (that passes the config_url in a function call)
 	- skin_url: the url of the graphics SWF (we can't put it in the XML because Yotam's graphics must load it in the beginning)
 	- config_url: the url of this config XML 

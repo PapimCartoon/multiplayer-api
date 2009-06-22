@@ -34,6 +34,21 @@ package come2play_as3.api.auto_copied{
    	var loader:LoaderInfo = loadEvent.target as LoaderInfo;			
 	var child:DisplayObject = loader.content;
 	...
+	 
+
+todo:  
+After all the games are recompiled:
+1) Delete using the Loader (always use  "URLLoader")
+2) use one place to add  "domainURL", and one place you do caching (be careful not to cache ASP pages, like the one returning the current number of players in igoogle)
+3) In addition to size, show also:  startedLoadingOn=... ,  loadingTook=...,  fromCache=true/false
+
+21 images cached:
+            http://static.come2play.net/Shared/swf/components/Analytic/Analytic.swf (size=56138)
+            http://static.come2play.net/shared/avatars/2009_6/84607912.jpg (size=6931)
+
+4) Analytics for files bigger than 20KB.   Use a SharedObject to predict if the file was in cache or not.
+5) When loading images (not SWFs), you can share the BitMapData content  (see my comment in the top of AS3_Loader)
+
  */
 public final class AS3_Loader
 {

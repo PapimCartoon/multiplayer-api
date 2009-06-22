@@ -14,11 +14,8 @@ package come2play_as3.api.auto_copied
 		}
 		public static function byteArr2Arr(byteArr:ByteArray):Array {
 			var bytes:Array = [];
-			var oldPosition:int = byteArr.position;
-			byteArr.position = 0;
 			for (var i:int=0; i<byteArr.length; i++)
-				bytes.push(byteArr.readByte());
-			byteArr.position = oldPosition;
+				bytes.push(byteArr[i]);
 			return bytes;
 		}
 		override public function postDeserialize():Object {

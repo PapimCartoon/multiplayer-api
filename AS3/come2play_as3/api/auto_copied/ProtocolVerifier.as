@@ -121,12 +121,8 @@ package come2play_as3.api.auto_copied
         	if (doMsg is API_DoStoreState) {
         		// The game might send DoStoreState for a player, but the verifier already send GotMatchEnded for that player
         		// check(isPlayer(), ["Only a player can send DoStoreState"]);
-        		if(!isGameRuning){
-        		//StaticFunctions.assert(isGameRuning,"doStoreState can't be called before gotMatchStarted has finished,or after gotMatchEnded has finished","failed msg=",doMsg);
-        			StaticFunctions.alwaysTrace(["\n\nERRRRRRRRRRROR\n\n doStoreState can't be called before gotMatchStarted has finished,or after gotMatchEnded has finished","failed msg=",doMsg])
-        			AS3_GATracker.trackWarning("game errors","doStoreState not in game",1)
-        		}
-        		
+        		//todo: StaticFunctions.assert(isGameRuning,"doStoreState can't be called before gotMatchStarted has finished,or after gotMatchEnded has finished","failed msg=",doMsg);
+
         		var doStoreStateMessage:API_DoStoreState = /*as*/doMsg as API_DoStoreState;
         		isNullKeyExistUserEntry(doStoreStateMessage.userEntries);
         		isNullKeyExistRevealEntry(doStoreStateMessage.revealEntries)

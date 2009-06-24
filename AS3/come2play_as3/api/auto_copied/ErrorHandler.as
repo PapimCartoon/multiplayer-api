@@ -39,9 +39,9 @@ public final class ErrorHandler
 	// If the container has a bug, then it adds the traces of the game, reports to ASP, and send to java. 
 	// If the game has a bug, then it sends DoAllFoundHacker (which cause the container to send a bug report)  
 	public static var SEND_BUG_REPORT:Function = null;
-	public static function alwaysTraceAndSendReport(errStr:String, args:Object):int {
+	public static function alwaysTraceAndSendReport(errStr:String, args:Object,userGeneratedBug:Boolean=false):int {
 		ErrorReport_LOG.log([errStr, args]);
-		if (didReportError) return -1;
+		if ((didReportError) && (!userGeneratedBug)) return -1;
 		didReportError = true;
 		
 		AS3_GATracker.COME2PLAY_TRACKER.trackEvent("BugReports",StaticFunctions.getRevision(),errStr,getTimer());

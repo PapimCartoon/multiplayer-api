@@ -1,4 +1,5 @@
 package emulator {
+	import emulator.auto_copied.StaticFunctions;
 	import emulator.auto_generated.*;
 	
 	import fl.controls.*;
@@ -282,7 +283,7 @@ package emulator {
 			{
 				var messageToSend:API_Message = messageQueue[0];
 				connectionToGame.sendMessage(messageToSend);
-				trace("message : "+messageToSend.getMethodName());
+				trace("message : "+StaticFunctions.getMethodName(messageToSend));
 			}
 		}
 		

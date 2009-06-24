@@ -27,18 +27,15 @@ package emulator.auto_copied
 		}
 		public static function byteArr2Arr(byteArr:ByteArray):Array {
 			var bytes:Array = [];
-			var oldPosition:int = byteArr.position;
-			byteArr.position = 0;
 			for (var i:int=0; i<byteArr.length; i++)
-				bytes.push(byteArr.readByte());
-			byteArr.position = oldPosition;
+				bytes.push(byteArr[i]);
 			return bytes;
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 		}
 		override public function postDeserialize():Object {
 			var res:ByteArray = new ByteArray();
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			for each (var i:int in arr)
 				res.writeByte(i);
 			res.position = 0; 
@@ -46,7 +43,4 @@ package emulator.auto_copied
 		}	
 		
 	}
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 }

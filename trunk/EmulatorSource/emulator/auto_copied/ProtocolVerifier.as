@@ -167,185 +167,178 @@ package emulator.auto_copied
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
         		// check(isPlayer(), ["Only a player can send DoStoreState"]);
-        		if(!isGameRuning){
-        		//StaticFunctions.assert(isGameRuning,"doStoreState can't be called before gotMatchStarted has finished,or after gotMatchEnded has finished","failed msg=",doMsg);
-        			StaticFunctions.alwaysTrace(["\n\nERRRRRRRRRRROR\n\n doStoreState can't be called before gotMatchStarted has finished,or after gotMatchEnded has finished","failed msg=",doMsg])
-        			AS3_GATracker.trackWarning("game errors","doStoreState not in game",1)
-        		}
-        		
+        		//todo: StaticFunctions.assert(isGameRuning,"doStoreState can't be called before gotMatchStarted has finished,or after gotMatchEnded has finished","failed msg=",doMsg);
+
         		var doStoreStateMessage:API_DoStoreState = /*as*/doMsg as API_DoStoreState;
         		isNullKeyExistUserEntry(doStoreStateMessage.userEntries);
         		isNullKeyExistRevealEntry(doStoreStateMessage.revealEntries)
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
         		isDeleteLegal(doStoreStateMessage.userEntries)
 			} else if (doMsg is API_Transaction) {
 				var transaction:API_Transaction = /*as*/doMsg as API_Transaction;
 				check(currentCallback!=null && StaticFunctions.getMethodName(currentCallback)==transaction.callback.callbackName, ["Illegal callbackName!"]);
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 				// The game may perform doAllFoundHacker (in a transaction) even after the game is over,
 				// because: The container may pass gotStateChanged after the game sends doAllEndMatch,
 				//			because the game should verify every doStoreState (to prevent hackers from polluting the state after they know the game will be over).
 				
 				var wasStoreStateCalculation:Boolean = false;
 				var isRequestStateCalculation:Boolean = currentCallback is API_GotRequestStateCalculation;
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 				if(currentCallback is API_GotMatchStarted) isGameRuning = true;
 				if(currentCallback is API_GotMatchEnded) isGameRuning = false;
 				for each (var doAllMsg:API_Message in transaction.messages) {
 					checkDoAll(doAllMsg);
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 					if (isRequestStateCalculation) {
 						if (doAllMsg is API_DoAllStoreStateCalculation)	
 							wasStoreStateCalculation = true;
 						else
 							check(doAllMsg is API_DoAllFoundHacker, ["Illegal msg=",doAllMsg," when processing ",currentCallback]);
 					}					
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 				}
 				
 				if (transaction.messages.length>0)
 					check(isRequestStateCalculation ||
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 						  currentCallback is API_GotMatchStarted || 
 						  currentCallback is API_GotMatchEnded ||
 						  currentCallback is API_GotStateChanged, ["You can change the state with a doAll message only in a transaction that corresponds to GotMatchStarted, GotMatchEnded or GotStateChanged. doAllMsg=",doAllMsg," currentCallback=",currentCallback]);
 						  
 				if (isRequestStateCalculation)
 					check(wasStoreStateCalculation, ["When the server calls gotRequestStateCalculation, you must call doAllStoreStateCalculation"]);
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 				
 				currentCallback = null;
 				
 				if (transactionRunningTime()>WARN_ANIMATION_MILLISECONDS) // for us to know it can happen (so we should increase our bound)
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 					ErrorHandler.alwaysTraceAndSendReport("A transaction finished after WARN_ANIMATION_MILLISECONDS",transactionStartedOn);
         		transactionStartedOn.clearTime();
 			} else {
 				check(false, ["Forgot to verify message type=",AS3_vs_AS2.getClassName(doMsg), " doMsg=",doMsg]);
 			}
 			
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 		}
 		private function isDeleteLegal(userEntries:Array/*UserEntry*/):void
 		{
 			for each(var userEntry:UserEntry in userEntries) {
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 				if (userEntry.value == null)
 					check(!userEntry.isSecret,["key deletion must be public! userEntry=",userEntry]);
 			}
 		}		    		
 
         private function checkDoAll(msg:API_Message):void {
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
         	if (msg is API_DoAllFoundHacker) {        		
 			}
 			else if (msg is API_DoAllStoreStateCalculation) 
 			{
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 				var doAllStoreStateCalculations:API_DoAllStoreStateCalculation = /*as*/msg as API_DoAllStoreStateCalculation;
         		isNullKeyExistUserEntry(doAllStoreStateCalculations.userEntries);
 				isDeleteLegal(doAllStoreStateCalculations.userEntries)
         	}
         	else if (msg is API_DoAllStoreState)
 			{
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 				var doAllStoreStateMessage:API_DoAllStoreState = /*as*/msg as API_DoAllStoreState;
         		isNullKeyExistUserEntry(doAllStoreStateMessage.userEntries);
 				isDeleteLegal(doAllStoreStateMessage.userEntries)
 			}   
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			else if (msg is API_DoAllEndMatch)
 			{
 				var doAllEndMatchMessage:API_DoAllEndMatch = /*as*/msg as API_DoAllEndMatch;
 				currentPlayers.isAllInPlayers(doAllEndMatchMessage.finishedPlayers);
 				// IMPORTANT Note: I do not update currentPlayers, because the container still needs to pass gotMatchEnded
 				// Also, the container may pass gotStateChanged after the game sends DoAllEndMatch,
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 				// because the game should verify every doStoreState (to prevent hackers from polluting the state after they know the game will be over). 
 			} 
 			else if (msg is API_DoAllRevealState) 
 			{
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 				var doAllRevealState:API_DoAllRevealState = /*as*/msg as API_DoAllRevealState;
         		isNullKeyExistRevealEntry(doAllRevealState.revealEntries);
 			} 
 			else if (msg is API_DoAllRequestStateCalculation) 
 			{
 				var doAllRequestStateCalculation:API_DoAllRequestStateCalculation = /*as*/msg as API_DoAllRequestStateCalculation;
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
         		isNullKeyExist(doAllRequestStateCalculation.keys);
 			}
 			else if	(msg is API_DoAllRequestRandomState)
 			{
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 				var doAllRequestRandomState:API_DoAllRequestRandomState = /*as*/msg as API_DoAllRequestRandomState;	
 				check(doAllRequestRandomState.key != null,["You have to call doAllRequestRandomState with a non null key !"]);
 			}	
 			else if (msg is API_DoAllSetTurn) 
 			{
 				var doAllSetTurn:API_DoAllSetTurn = /*as*/msg as API_DoAllSetTurn;
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
         		check(currentPlayers.isInPlayers(doAllSetTurn.userId), ["You have to call doAllSetTurn with a playerId!"]);
 			}
 			else if (msg is API_DoAllSetMove) 
 			{				
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 				// nothing to check
 			}
 			else if (msg is API_DoAllShuffleState) 
 			{
 				var doAllShuffleState:API_DoAllShuffleState = /*as*/msg as API_DoAllShuffleState;
         		isNullKeyExist(doAllShuffleState.keys);			
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 			}
 			else
 			{
 				check(false, ["Unknown doAll message=",msg]);
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			}
         }
 		
         private function isNullKeyExistUserEntry(userEntries:Array/*UserEntry*/):void
         {
         	check(userEntries.length!=0, ["userEntries must have at least one UserEntry!"]);
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
         	for each (var userEntry:UserEntry in userEntries) {
         		check(userEntry.key != null,["UserEntry.key cannot be null ! userEntry=",userEntry]);
         	}
         }
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
         private function isNullKeyExistRevealEntry(revealEntries:Array/*RevealEntry*/):void
         {
         	//check(revealEntries.length>=1, ["revealEntries must have at least one RevealEntry!"]);
         	for each (var revealEntry:RevealEntry in revealEntries) {
         		check(revealEntry != null && revealEntry.key != null && (revealEntry.userIds==null || currentPlayers.isAllInPlayers(revealEntry.userIds)), ["RevealEntry.key cannot be null, userIds must either be null or contain only players. revealEntry=",revealEntry]); 
         	}
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
         }
         private function isNullKeyExist(keys:Array/*Object*/):void
         {
         	check(keys.length!=0,["keys must have at leasy one key!"]);        		
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
         	for each (var key:String in keys) {
         		check(key != null,["key cannot be null ! keys=",keys]);
         	}
         }
 
 	}
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 }

@@ -166,12 +166,12 @@ public final class AS3_Loader
 		for each (var req:ImageLoadRequest in copyPause)
 			loadImageReq(req);
 	}
-	public static function loadImage(imageUrl:String,successHandler:Function = null,failureHandler:Function = null,progressHandler:Function = null,context:LoaderContext = null,calledFrom:String="undefined"):void {
-		StaticFunctions.assert(imageUrl!="" && imageUrl!=null,"can't load a blank image",[calledFrom]);
+	public static function loadImage(imageUrl:String,successHandler:Function = null,failureHandler:Function = null,progressHandler:Function = null,context:LoaderContext = null,justCach:Boolean = false):void {
+		StaticFunctions.assert(imageUrl!="" && imageUrl!=null,"can't load a blank image");
 		imageUrl = getURL(imageUrl);
 		if (failureHandler==null) {
 			failureHandler = function(ev:Event):void {
-				criticalError(ev,imageUrl,calledFrom);
+				criticalError(ev,imageUrl);
 			};			
 		}
 		if(successHandler == null) {
@@ -191,7 +191,7 @@ public final class AS3_Loader
 		loadRequest.failureHandler = failureHandler;
 		loadRequest.progressHandler = progressHandler;
 		loadRequest.context = context;
-		
+		loadRequest.justCach = justCach;
 		loadImageReq(loadRequest);		
 	}
 	private static function loadImageReq(loadRequest:ImageLoadRequest):void {
@@ -249,6 +249,10 @@ public final class AS3_Loader
 	
 	private static function handleExistingImage(ev:Event,req:ImageLoadRequest):void{		
 		tmpTrace(["Loaded image: ", req.imageUrl, "reqId=", req.reqId, "ev=",ev]);
+		if(req.justCach){
+			req.justCach = false;
+			return;
+		}	
 		if (isImageLoadFailed(ev)) {
 			// previous loading failed 
 			req.failureHandler(ev);
@@ -298,7 +302,7 @@ public final class AS3_Loader
 			successHandler = traceHandler
 		}
 		if (failureHandler==null) {			
-			failureHandler = function (ev:Event):void {criticalError(ev,url is String ? url as String : (url as URLRequest).url,calledFrom);};			
+			failureHandler = function (ev:Event):void {criticalError(ev,url is String ? url as String : (url as URLRequest).url);};			
 		}	
 		//The Loader class is used to load SWF files or image (JPG, PNG, or GIF) files.  
 		//Use the URLLoader class to load text or binary data.
@@ -441,8 +445,8 @@ public final class AS3_Loader
 	public static function traceHandler(e:Event):void {
         // we already do tracing in tmpTrace
     }
-	public static function criticalError(ev:Event,url:String,calledFrom:String ="undefined"):void{
-		tmpTrace(" Error loading URL: ",url,"From :",calledFrom)
+	public static function criticalError(ev:Event,url:String):void{
+		tmpTrace(" Error loading URL: ",url)
 		var msg:String;
 		if(ev is IOErrorEvent){
 			msg = "critical IOErrorEvent" + JSON.stringify(ev as IOErrorEvent);
@@ -460,6 +464,7 @@ class ImageLoadRequest {
 	public static var CURR_REQ_ID:int = 1; 
 	public var reqId:int = CURR_REQ_ID++;
 	
+	public var justCach:Boolean
 	public var imageUrl:String;
 	public var context:LoaderContext;
 	public var successHandler:Function;

@@ -705,7 +705,7 @@ package emulator {
 			{
 				if(playByPlayTimer.running)
 					return;
-				addMessageLog(user.Name, msg.getMethodName(), msg.toString());	
+				addMessageLog(user.Name, StaticFunctions.getMethodName(msg), msg.toString());	
 				waitingQueue.push(new QueueEntry(user,new Transaction([msg]),getTimer()-matchStartTime));
 				queueTimer.start();
 				processQueue(waitingQueue,false);
@@ -721,7 +721,7 @@ package emulator {
 					isCallback = true;
 					if(finishedCallbackMsg.callbackName != "gotKeyboardEvent")
 					{
-						addMessageLog(user.Name, finishedCallbackMsg.getMethodName(), finishedCallbackMsg.toString());
+						addMessageLog(user.Name, StaticFunctions.getMethodName(finishedCallbackMsg), finishedCallbackMsg.toString());
 						verefyAction(user);
 						//user.do_finished_callback(finishedCallbackMsg.callbackName)
 					}
@@ -771,18 +771,18 @@ package emulator {
 						errorHandler("Transaction cannot be empty");
 				}
 				if (!bGameStarted) {
-					errorHandler("can't do "+ msg.getMethodName()+" game not started");
+					errorHandler("can't do "+ StaticFunctions.getMethodName(msg)+" game not started");
 					return;
 				}
 				if (bGameEnded) {
-					errorHandler("can't do "+ msg.getMethodName()+" game ended");
+					errorHandler("can't do "+ StaticFunctions.getMethodName(msg)+" game ended");
 					return;
 				}
 				
 				//addMessageLog("id : "+user.ID,"Transaction","length "+transMsg.messages.length);
 				
 				for each(msg in transMsg.messages)
-					addMessageLog(user.Name, msg.getMethodName(), msg.toString());	
+					addMessageLog(user.Name, StaticFunctions.getMethodName(msg), msg.toString());	
 				waitingQueue.push(new QueueEntry(user,new Transaction(transMsg.messages),getTimer()-matchStartTime));
 				queueTimer.start();
 				processQueue(waitingQueue,false);
@@ -975,16 +975,16 @@ package emulator {
 			for each(var checkedQueueEntry:QueueEntry in doAllArray)
 			{
 				checkedMsg = checkedQueueEntry.transaction.messageArray[0];
-				if(checkedMsg.getMethodName() != msg.getMethodName())		
+				if(StaticFunctions.getMethodName(checkedMsg) != StaticFunctions.getMethodName(msg))		
 				{
-					errorHandler(checkedQueueEntry.user.Name + " : called " + checkedMsg.getMethodName() + "\n while " + queueEntry.user.Name+" : called  "+ msg.getMethodName())
+					errorHandler(checkedQueueEntry.user.Name + " : called " + StaticFunctions.getMethodName(checkedMsg) + "\n while " + queueEntry.user.Name+" : called  "+ StaticFunctions.getMethodName(msg))
 					gameOver();
 					return false;
 				}
 				
-				if(!ObjectDictionary.areEqual(checkedMsg.getMethodParameters(),msg.getMethodParameters()))
+				if(!ObjectDictionary.areEqual(StaticFunctions.getMethodParameters(checkedMsg),StaticFunctions.getMethodParameters(msg)))
 				{
-					errorHandler(checkedMsg.getMethodName()+" : "+checkedMsg.getMethodParameters()+" is diffrent then "+msg.getMethodName()+" : "+msg.getMethodParameters());
+					errorHandler(StaticFunctions.getMethodName(checkedMsg)+" : "+StaticFunctions.getMethodParameters(checkedMsg)+" is diffrent then "+StaticFunctions.getMethodName(msg)+" : "+StaticFunctions.getMethodParameters(msg));
 					gameOver();
 					return false
 				}
@@ -1823,7 +1823,7 @@ package emulator {
 				{
 					itemObj=new Object();
 					itemObj[COL_User]=unverifiedFunction.user.ID;
-					itemObj[COL_MethodName]=unverifiedFunction.msg.getMethodName();
+					itemObj[COL_MethodName]=StaticFunctions.getMethodName(unverifiedFunction.msg);
 					itemObj[COL_Parameters]=getParametersAsString(unverifiedFunction.msg);
 					tblInfo.addItem(itemObj);
 					tblInfo.verticalScrollPosition = tblInfo.maxVerticalScrollPosition+30;
@@ -2418,7 +2418,7 @@ class User extends LocalConnectionUser {
 		if (!wasRegistered) return;
 		try {
     		sendMessage(msg);
-			sServer.addMessageLog(sName, msg.getMethodName(), sServer.getParametersAsString(msg));	
+			sServer.addMessageLog(sName, StaticFunctions.getMethodName(msg), sServer.getParametersAsString(msg));	
 		}catch(err:Error) { 
 			sServer.errorHandler(err.getStackTrace());
 		}  

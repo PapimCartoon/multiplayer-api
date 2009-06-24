@@ -116,12 +116,8 @@ import come2play_as2.api.auto_copied.*;
         	if (doMsg instanceof API_DoStoreState) {
         		// The game might send DoStoreState for a player, but the verifier already send GotMatchEnded for that player
         		// check(isPlayer(), ["Only a player can send DoStoreState"]);
-        		if(!isGameRuning){
-        		//StaticFunctions.assert(isGameRuning,"doStoreState can't be called before gotMatchStarted has finished,or after gotMatchEnded has finished","failed msg=",doMsg);
-        			StaticFunctions.alwaysTrace(["\n\nERRRRRRRRRRROR\n\n doStoreState can't be called before gotMatchStarted has finished,or after gotMatchEnded has finished","failed msg=",doMsg])
-        			AS3_GATracker.trackWarning("game errors","doStoreState not in game",1)
-        		}
-        		
+        		//todo: StaticFunctions.assert(isGameRuning,"doStoreState can't be called before gotMatchStarted has finished,or after gotMatchEnded has finished","failed msg=",doMsg);
+
         		var doStoreStateMessage:API_DoStoreState = API_DoStoreState(doMsg);
         		isNullKeyExistUserEntry(doStoreStateMessage.userEntries);
         		isNullKeyExistRevealEntry(doStoreStateMessage.revealEntries)
@@ -137,7 +133,7 @@ import come2play_as2.api.auto_copied.*;
 				var isRequestStateCalculation:Boolean = currentCallback instanceof API_GotRequestStateCalculation;
 				if(currentCallback instanceof API_GotMatchStarted) isGameRuning = true;
 				if(currentCallback instanceof API_GotMatchEnded) isGameRuning = false;
-				var p143:Number=0; for (var i143:String in transaction.messages) { var doAllMsg:API_Message = transaction.messages[transaction.messages.length==null ? i143 : p143]; p143++;
+				var p139:Number=0; for (var i139:String in transaction.messages) { var doAllMsg:API_Message = transaction.messages[transaction.messages.length==null ? i139 : p139]; p139++;
 					checkDoAll(doAllMsg);
 					if (isRequestStateCalculation) {
 						if (doAllMsg instanceof API_DoAllStoreStateCalculation)	
@@ -168,7 +164,7 @@ import come2play_as2.api.auto_copied.*;
 		}
 		private function isDeleteLegal(userEntries:Array/*UserEntry*/):Void
 		{
-			var p174:Number=0; for (var i174:String in userEntries) { var userEntry:UserEntry = userEntries[userEntries.length==null ? i174 : p174]; p174++;
+			var p170:Number=0; for (var i170:String in userEntries) { var userEntry:UserEntry = userEntries[userEntries.length==null ? i170 : p170]; p170++;
 				if (userEntry.value == null)
 					check(!userEntry.isSecret,["key deletion must be public! userEntry=",userEntry]);
 			}
@@ -235,21 +231,21 @@ import come2play_as2.api.auto_copied.*;
         private function isNullKeyExistUserEntry(userEntries:Array/*UserEntry*/):Void
         {
         	check(userEntries.length!=0, ["userEntries must have at least one UserEntry!"]);
-        	var p241:Number=0; for (var i241:String in userEntries) { var userEntry:UserEntry = userEntries[userEntries.length==null ? i241 : p241]; p241++;
+        	var p237:Number=0; for (var i237:String in userEntries) { var userEntry:UserEntry = userEntries[userEntries.length==null ? i237 : p237]; p237++;
         		check(userEntry.key != null,["UserEntry.key cannot be null ! userEntry=",userEntry]);
         	}
         }
         private function isNullKeyExistRevealEntry(revealEntries:Array/*RevealEntry*/):Void
         {
         	//check(revealEntries.length>=1, ["revealEntries must have at least one RevealEntry!"]);
-        	var p248:Number=0; for (var i248:String in revealEntries) { var revealEntry:RevealEntry = revealEntries[revealEntries.length==null ? i248 : p248]; p248++;
+        	var p244:Number=0; for (var i244:String in revealEntries) { var revealEntry:RevealEntry = revealEntries[revealEntries.length==null ? i244 : p244]; p244++;
         		check(revealEntry != null && revealEntry.key != null && (revealEntry.userIds==null || currentPlayers.isAllInPlayers(revealEntry.userIds)), ["RevealEntry.key cannot be null, userIds must either be null or contain only players. revealEntry=",revealEntry]); 
         	}
         }
         private function isNullKeyExist(keys:Array/*Object*/):Void
         {
         	check(keys.length!=0,["keys must have at leasy one key!"]);        		
-        	var p255:Number=0; for (var i255:String in keys) { var key:String = keys[keys.length==null ? i255 : p255]; p255++;
+        	var p251:Number=0; for (var i251:String in keys) { var key:String = keys[keys.length==null ? i251 : p251]; p251++;
         		check(key != null,["key cannot be null ! keys=",keys]);
         	}
         }

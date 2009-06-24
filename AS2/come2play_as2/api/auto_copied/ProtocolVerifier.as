@@ -116,7 +116,7 @@ import come2play_as2.api.auto_copied.*;
         	if (doMsg instanceof API_DoStoreState) {
         		// The game might send DoStoreState for a player, but the verifier already send GotMatchEnded for that player
         		// check(isPlayer(), ["Only a player can send DoStoreState"]);
-        		//todo: StaticFunctions.assert(isGameRuning,"doStoreState can't be called before gotMatchStarted has finished,or after gotMatchEnded has finished","failed msg=",doMsg);
+        		StaticFunctions.assert(isGameRuning,"doStoreState can't be called before gotMatchStarted has finished,or after gotMatchEnded has finished","failed msg=",doMsg);
 
         		var doStoreStateMessage:API_DoStoreState = API_DoStoreState(doMsg);
         		isNullKeyExistUserEntry(doStoreStateMessage.userEntries);

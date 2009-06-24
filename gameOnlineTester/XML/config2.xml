@@ -141,7 +141,7 @@ Not used by the graphics yet (but should be displayed):
 -->
 <customInitInfo>
 	<custom>
-	
+	<entry><key>isWithSinglePlayer</key><value>false</value></entry>	
 	
 	
 	<entry><key>gameLogoUrl</key><value>"images/AnimatedLogo.swf"</value></entry>	
@@ -316,9 +316,8 @@ Not used by the graphics yet (but should be displayed):
 			room_name
 			all i18n strings
 			-->
-	<i18n>
-		<entry><key>Close</key><value>סגור</value></entry>	
-		
+	<i18n>		
+			<entry><key>Ra</key><value>"sad"</value></entry>
 	</i18n>
 	<reflection>
 	<entry><key>come2play_as3.auto_copied::AS3_Loader.domainURL</key><value>""</value></entry>
@@ -989,7 +988,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 			<is_hide_avatar_in_chat_list type="boolean">false</is_hide_avatar_in_chat_list>
 			<total_chat_height type="int">155</total_chat_height>
 			<chat_output_height type="int">100</chat_output_height> 	<!-- there has to be at least 55 px difference -->
-			<user_list_width type="int">200</user_list_width>
+			<user_list_width type="int">300</user_list_width>
 			
 			<max_content_height type="int">500</max_content_height>   <!-- this makes sure the actual graphics that is
 																				   the chat output won't be big enough to affect

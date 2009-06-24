@@ -167,7 +167,7 @@ package emulator.auto_copied
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
         		// check(isPlayer(), ["Only a player can send DoStoreState"]);
-        		//todo: StaticFunctions.assert(isGameRuning,"doStoreState can't be called before gotMatchStarted has finished,or after gotMatchEnded has finished","failed msg=",doMsg);
+        		StaticFunctions.assert(isGameRuning,"doStoreState can't be called before gotMatchStarted has finished,or after gotMatchEnded has finished","failed msg=",doMsg);
 
         		var doStoreStateMessage:API_DoStoreState = /*as*/doMsg as API_DoStoreState;
         		isNullKeyExistUserEntry(doStoreStateMessage.userEntries);

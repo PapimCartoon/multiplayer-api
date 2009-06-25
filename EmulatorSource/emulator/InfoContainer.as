@@ -413,9 +413,6 @@ package emulator {
 							break;
 						}
 					}	
-					CustomMessage.infoEntries.push(InfoEntry.create(API_Message.CUSTOM_INFO_KEY_gameStageX,frameSprite.x))
-					CustomMessage.infoEntries.push(InfoEntry.create(API_Message.CUSTOM_INFO_KEY_gameStageY,frameSprite.y))
-					
 					sendGotOperation(msg);
 					return;
 				}

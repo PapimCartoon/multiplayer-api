@@ -1,12 +1,12 @@
 package come2play_as3.minesweeper
 {
 	import come2play_as3.api.auto_copied.AS3_vs_AS2;
-	import come2play_as3.api.auto_copied.JSON;
 	import come2play_as3.api.auto_generated.PlayerMatchOver;
 	import come2play_as3.api.auto_generated.ServerEntry;
 	
 	import flash.display.MovieClip;
 	import flash.events.MouseEvent;
+	import flash.geom.Point;
 	
 	public class MineSweeperLogic
 	{
@@ -21,9 +21,6 @@ package come2play_as3.minesweeper
 		public var myUserId:int;
 		public var isPlaying:Boolean;
 		
-		private var scaleX:Number;
-		private var scaleY:Number;
-		
 		private var mineSweeperMainPointer:MineSweeperMain;/*Pointer to minesweeper main*/
 		private var boardLogic:Array;
 		/*
@@ -34,9 +31,6 @@ package come2play_as3.minesweeper
 		value 3 means the move is on the board
 		*/
 		private var boardWidth:int;/*board width in squares*/
-		
-		private var stageX:int;/*the x where the game is positioned*/
-		private var stageY:int;/*the y where the game is positioned*/
 		
 		private var movesInProcess:Array;/*Moves that need to be addressed*/
 		private var isMine:Boolean;
@@ -72,11 +66,7 @@ package come2play_as3.minesweeper
 				shift.gotoAndStop(8);
 			}
 		}
-		public function setNewGraphicScale(scaleX:Number,scaleY:Number):void
-		{
-			this.scaleX = scaleX;
-			this.scaleY = scaleY;
-		}
+
 		private function overShift(ev:MouseEvent):void
 		{
 			//shift.stroke_mc.visible = true;
@@ -95,11 +85,9 @@ package come2play_as3.minesweeper
 				shift.gotoAndStop(1);
 				
 		}
-		public function makeBoard(boardWidth:int,stageX:int,stageY:int,allPlayerIds:Array/*int*/,myUserId:int):void
+		public function makeBoard(boardWidth:int,allPlayerIds:Array/*int*/,myUserId:int):void
 		{
 			this.boardWidth = boardWidth;
-			this.stageX = stageX;
-			this.stageY = stageY;
 			this.myUserId = myUserId;
 			this.allPlayerIds = allPlayerIds;
 			if(allPlayerIds.indexOf(myUserId)!= -1)
@@ -149,8 +137,9 @@ package come2play_as3.minesweeper
 		}
 		private function selectMine(ev:MouseEvent):void
 		{
-			var xPos:int = Math.floor((ev.stageX-(stageX+9.5))/(MineSweeperMain.squareSize*scaleX));
-			var yPos:int = Math.floor((ev.stageY-(stageY+7))/(MineSweeperMain.squareSize*scaleY));
+			var clickPoint:Point = mineSweeperGraphic.globalToLocal(new Point(ev.stageX,ev.stageY));
+			var xPos:int = Math.floor((clickPoint.x - 9.5)/(MineSweeperMain.squareSize));
+			var yPos:int = Math.floor((clickPoint.y-7)/(MineSweeperMain.squareSize));
 			
 			if((xPos> -1)&&(xPos<(boardWidth))&&(yPos>-1)&&(yPos<(boardWidth)))
 				if((boardLogic[xPos][yPos] == 0) && (isPlaying))

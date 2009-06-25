@@ -6,6 +6,7 @@ import come2play_as3.api.auto_generated.*;
 
 import flash.display.*;
 import flash.events.*;
+import flash.geom.Point;
 import flash.utils.*;
 	public class MineSweeperMain extends ClientGameAPI
 	{
@@ -15,8 +16,6 @@ import flash.utils.*;
 		private var graphics:MovieClip;
 		private static var boardWidth:int=10;
 		private static var mineAmount:int=10;
-		private var stageX:int = 0;
-		private var stageY:int = 0;
 		//calculator variables
 		private var emptyBoxes:Array;
 		private var newCalculatorBoard:Array
@@ -86,8 +85,7 @@ import flash.utils.*;
 		override public function gotCustomInfo(infoEntries:Array):void
 		{
 			myUserId = T.custom(CUSTOM_INFO_KEY_myUserId, null) as int;
-			stageX = T.custom(CUSTOM_INFO_KEY_gameStageX, null) as int;
-			stageY = T.custom(CUSTOM_INFO_KEY_gameStageY, null) as int;
+
 			if(!computerMoveTimer.running)	computerMoveTimer.delay = T.custom("ComputerSpeed",2000) as int;
 			for each(var info:InfoEntry in infoEntries){
 				if(info.key == CUSTOM_INFO_KEY_gameWidth){
@@ -95,7 +93,6 @@ import flash.utils.*;
 				}else if(info.key == CUSTOM_INFO_KEY_gameHeight){
 					graphics.height = T.custom(CUSTOM_INFO_KEY_gameHeight,int(graphics.height)) as int;
 				}
-				mineSweeperLogic.setNewGraphicScale(graphics.scaleX,graphics.scaleY);
 			}		
 			boardWidth = T.custom("Board Width", 12) as int;
 			mineAmount = T.custom("Mine Amount", 20) as int;
@@ -146,7 +143,7 @@ import flash.utils.*;
 				doAllRequestRandomState("randomSeed",true);
 				doAllStoreState([UserEntry.create("Board Width",boardWidth),UserEntry.create("Mine Amount",mineAmount)])
 				doAllRequestStateCalculation(["randomSeed","Board Width","Mine Amount"]);
-				mineSweeperLogic.makeBoard(boardWidth,stageX,stageY,this.allPlayerIds,myUserId);
+				mineSweeperLogic.makeBoard(boardWidth,this.allPlayerIds,myUserId);
 			}
 			else
 			{
@@ -155,12 +152,12 @@ import flash.utils.*;
 				graphicPlayed = true;
 				if((T.custom(API_Message.CUSTOM_INFO_KEY_isBack,false) as Boolean))
 				{
-					mineSweeperLogic.makeBoard(boardWidth,stageX,stageY,this.allPlayerIds,myUserId);
+					mineSweeperLogic.makeBoard(boardWidth,this.allPlayerIds,myUserId);
 					startGame();
 				}
 				else
 				{
-					mineSweeperLogic.makeBoard(boardWidth,stageX,stageY,this.allPlayerIds,myUserId);
+					mineSweeperLogic.makeBoard(boardWidth,this.allPlayerIds,myUserId);
 					animationStarted("startGraphicAnimation");
 					startGraphic.play();
 				}

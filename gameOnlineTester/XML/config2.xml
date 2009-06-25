@@ -141,7 +141,11 @@ Not used by the graphics yet (but should be displayed):
 -->
 <customInitInfo>
 	<custom>
+	
+	
+	
 	<entry><key>isWithSinglePlayer</key><value>false</value></entry>	
+	<entry><key>friend_ids</key><value>[1,2,3]</value></entry>	
 	
 	
 	<entry><key>gameLogoUrl</key><value>"images/AnimatedLogo.swf"</value></entry>	
@@ -189,7 +193,7 @@ Not used by the graphics yet (but should be displayed):
 		
 		<entry><key>cacheAsBitmap</key><value>false</value></entry>
 		
-		<entry><key>isWithBorder</key><value>false</value></entry>
+		<entry><key>isWithBorder</key><value>true</value></entry>
 		<entry><key>rewardFolderURL</key><value>"graphics/rewards/"</value></entry>
 		<entry><key>tokenFolderURL</key><value>"graphics/rewards/"</value></entry>
 		<entry><key>noUserPic</key><value>"images/noOne.png"</value></entry>
@@ -530,7 +534,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 			<custom>
 				<entry><key>CONTAINER_checkThrowingAnError</key><value>false</value></entry>
 			</custom>
-			<i18n>			
+			<i18n>	
 				<entry><key>Container sent a message before getting doRegisterOnServer</key><value>'באג בקונטיינר ששלח הודעה לפני שהמשחק נרשם'</value></entry>
 			</i18n>
 			<reflection>

@@ -89,12 +89,10 @@ package come2play_as3.api.auto_generated {
 		public static const CUSTOM_INFO_KEY_logoFullUrl:String = "CONTAINER_logoFullUrl";
 		public static const CUSTOM_INFO_KEY_secondsPerMatch:String = "CONTAINER_secondsPerMatch";
 		public static const CUSTOM_INFO_KEY_secondsPerMove:String = "CONTAINER_secondsPerMove";
-		public static const CUSTOM_INFO_KEY_gameStageX:String = "CONTAINER_gameStageX";
+		public static const CUSTOM_INFO_KEY_gameHeight:String = "CONTAINER_gameHeight";
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		public static const CUSTOM_INFO_KEY_gameStageY:String = "CONTAINER_gameStageY";
-		public static const CUSTOM_INFO_KEY_gameHeight:String = "CONTAINER_gameHeight";
 		public static const CUSTOM_INFO_KEY_gameWidth:String = "CONTAINER_gameWidth";
 		public static const CUSTOM_INFO_KEY_gameFrameRate:String = "CONTAINER_gameFrameRate";
 		public static const CUSTOM_INFO_KEY_myUserId:String = "CONTAINER_myUserId";
@@ -103,10 +101,10 @@ package come2play_as3.api.auto_generated {
 		public static const CUSTOM_INFO_KEY_i18n:String = "CONTAINER_i18n";
 		public static const CUSTOM_INFO_KEY_reflection:String = "CONTAINER_reflection";
 		public static const CUSTOM_INFO_KEY_checkThrowingAnError:String = "CONTAINER_checkThrowingAnError";
+		public static const CUSTOM_INFO_KEY_isBack:String = "CONTAINER_isBack";
+		public static const CUSTOM_INFO_KEY_isInReview:String = "CONTAINER_isInReview";
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		public static const CUSTOM_INFO_KEY_isBack:String = "CONTAINER_isBack";
-		public static const CUSTOM_INFO_KEY_isInReview:String = "CONTAINER_isInReview";
 	}
 }

@@ -73,12 +73,6 @@ package come2play_as3.minesweeper
 		{
 			var player:PlayerGraphicData = playerGraphicDataArr[playerNum];
 			player.updateLives(livesCount);
-			/*for(var i:int=0;i<3;i++)
-			{
-				boardUnderPart.addChild(player.playerLives[i]);
-				if(livesCount < (i+1))
-					boardUnderPart.removeChild(player.playerLives[i])
-			}	*/
 		}
 		public function updateScore(playerNum:int,Score:int):void
 		{

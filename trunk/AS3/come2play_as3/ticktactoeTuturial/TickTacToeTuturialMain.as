@@ -72,8 +72,6 @@ package come2play_as3.ticktactoeTuturial
 		override public function gotCustomInfo(infoEntries:Array):void
 		{
 			trace("ok")
-			gameLogic.stageX = T.custom(CUSTOM_INFO_KEY_gameStageX,0) as int;
-			gameLogic.stageY = T.custom(CUSTOM_INFO_KEY_gameStageY,0) as int;
 			gameLogic.stageWidth = T.custom(CUSTOM_INFO_KEY_gameWidth,0) as int;
 			gameLogic.stageHeight = T.custom(CUSTOM_INFO_KEY_gameHeight,0) as int;
 			gameLogic.LogoUrl = T.custom(CUSTOM_INFO_KEY_logoFullUrl,"") as String;

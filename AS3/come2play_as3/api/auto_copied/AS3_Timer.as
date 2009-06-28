@@ -5,6 +5,8 @@ package come2play_as3.api.auto_copied
 	/**
 	 * We use AS3_Timer instead of Timer because 
 	 * this allows us to keep track of all ongoing timers.
+	 * 
+	 * an AS3_Timer will throw an error if it is running and doesn't have any listeners
 	 */
 	public final class AS3_Timer extends Timer
 	{

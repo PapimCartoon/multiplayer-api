@@ -143,7 +143,7 @@ Not used by the graphics yet (but should be displayed):
 	<custom>
 	
 	
-	
+	<entry><key>user_buddy_url</key><value>"http://www.google.com/nada"</value></entry>
 	<entry><key>isWithSinglePlayer</key><value>false</value></entry>	
 	<entry><key>friend_ids</key><value>[1,2,3]</value></entry>	
 	
@@ -703,7 +703,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 		--> 		
 		<rooms type="list"> 
 			<room>
-				<room_id>7468</room_id>
+				<room_id>999</room_id>
 				<all_java_ips></all_java_ips> 		
 				<room_name>Chess room</room_name> 
 				<cur_users>5</cur_users> 
@@ -784,8 +784,8 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 		
 		If any of these two parameters is less than or **equal** to 0, then you **cannot** reconnect. 
 	     -->
-	  <can_reconnect_after_seconds type="int">1</can_reconnect_after_seconds> 
-	  <wait_before_close_seconds type="int">10</wait_before_close_seconds> 
+	  <can_reconnect_after_seconds type="int">0</can_reconnect_after_seconds> 
+	  <wait_before_close_seconds type="int">0</wait_before_close_seconds> 
 	  <!-- md5 is:	  
 		MD5( SECRET + 
 		'x' + config.extra_args.user_id + 

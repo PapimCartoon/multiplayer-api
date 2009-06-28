@@ -7,6 +7,9 @@ import come2play_as3.api.auto_generated.*;
 import flash.display.*;
 import flash.events.*;
 import flash.utils.*;
+
+import nl.demonsters.debugger.MonsterDebugger;
+
 /**
  * See the game rules in TictactoeLogic.
  * 
@@ -107,7 +110,9 @@ public final class TictactoeMain extends ClientGameAPI {
 	
 	public function TictactoeMain(graphics:MovieClip) {
 		super(graphics);	
-			
+									
+		//new MonsterDebugger(graphics);
+		
 		new TictactoeSquare().register();	 
 		this.graphics = graphics;	
 		// It's best to hide the board until the game starts.

@@ -155,7 +155,8 @@ public final class ErrorHandler
 	
 	public static var MEM_INTERVAL_MILLI:int = 10*1000; //10 secs
 	public static var FREEZING_BUCKETS_MILLI:int = 10*1000;
-	private static var FREEZE_COUNT:int = 0; 
+	private static var FREEZE_COUNT:int = 0;
+	public static var LAST_FROZE_ON:int = 0; 
 	public static var MAX_FREEZE_TIME_MILLI:int = 70*1000; // 70 seconds of freezing might even be too much!
 	public static var LAST_CATCH_ERRORS_ON:int = -1; 
 	
@@ -190,6 +191,7 @@ public final class ErrorHandler
 			if (delta > FREEZING_BUCKETS_MILLI) {
 				// gather freezing statistics
 				FREEZE_COUNT++;
+				LAST_FROZE_ON = now;
 				var bucket:int = delta/FREEZING_BUCKETS_MILLI;
 				AS3_GATracker.trackWarning("Flash froze", "Freeze no. "+FREEZE_COUNT+" for "+(bucket*10)+" seconds",delta);
 				

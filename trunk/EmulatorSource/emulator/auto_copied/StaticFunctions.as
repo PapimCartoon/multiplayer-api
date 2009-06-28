@@ -23,8 +23,8 @@ public final class StaticFunctions
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	public static var GOOGLE_REVISION_NUMBER:int = 1089;
-	public static var COME2PLAY_REVISION_NUMBER:int = 3841;
+	public static var GOOGLE_REVISION_NUMBER:int = 1094;
+	public static var COME2PLAY_REVISION_NUMBER:int = 3942;
 	public static function getRevision():String {
 		return (SerializableClass.IS_IN_FRAMEWORK ? "Container" : "Game")+
 			" g="+GOOGLE_REVISION_NUMBER+",c2p="+COME2PLAY_REVISION_NUMBER;		

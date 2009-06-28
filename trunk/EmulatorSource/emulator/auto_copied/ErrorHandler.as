@@ -210,14 +210,15 @@ public final class ErrorHandler
 	
 	public static var MEM_INTERVAL_MILLI:int = 10*1000; //10 secs
 	public static var FREEZING_BUCKETS_MILLI:int = 10*1000;
-	private static var FREEZE_COUNT:int = 0; 
+	private static var FREEZE_COUNT:int = 0;
+	public static var LAST_FROZE_ON:int = 0; 
 	public static var MAX_FREEZE_TIME_MILLI:int = 70*1000; // 70 seconds of freezing might even be too much!
 	public static var LAST_CATCH_ERRORS_ON:int = -1; 
 	
-	private static var my_stack_trace:Array = [];
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	private static var my_stack_trace:Array = [];
 	public static function wrapWithCatch(zoneName:String, func:Function):Function {
 		var longerName:String = zoneName; //Extra stack traces are not needed because we use zoneName for all events:  +(my_stack_trace.length==0 ? "" : " with first stacktrace: {\n"+my_stack_trace[0]+"\n}");
 		return function (...args):void { 
@@ -227,10 +228,10 @@ public final class ErrorHandler
 	public static var ZONE_LOGGER_SIZE:int = 6;
 	private static var ZONE_LOGGERS:Object/*String->Logger*/ = {};
 	public static function catchErrors(zoneName:String, func:Function, args:Array):Object {
-		var res:Object = null;		
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		var res:Object = null;		
 		
 		var toInsert:Object = [zoneName,"t:",getTimer(),"args=",args]; // I couldn't find a way to get the function name (describeType(func) only returns that the method is a closure)
 		my_stack_trace.push(toInsert);
@@ -240,10 +241,10 @@ public final class ErrorHandler
 			logger = new Logger("CATCH-"+zoneName,ZONE_LOGGER_SIZE);
 			ZONE_LOGGERS[zoneName] = logger;
 		}
-		logger.log("ENTERED");
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		logger.log("ENTERED");
 		LoggerLine.LINE_INDENT = indentLevel;
 		
 		if (LAST_CATCH_ERRORS_ON>=0) {
@@ -253,10 +254,11 @@ public final class ErrorHandler
 			var delta:int = now - lastCatch;
 			if (delta > FREEZING_BUCKETS_MILLI) {
 				// gather freezing statistics
-				FREEZE_COUNT++;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+				FREEZE_COUNT++;
+				LAST_FROZE_ON = now;
 				var bucket:int = delta/FREEZING_BUCKETS_MILLI;
 				AS3_GATracker.trackWarning("Flash froze", "Freeze no. "+FREEZE_COUNT+" for "+(bucket*10)+" seconds",delta);
 				
@@ -265,11 +267,11 @@ public final class ErrorHandler
 					alwaysTraceAndSendReport("The flash froze!", ["LAST_CATCH_ERRORS_ON=",lastCatch," now=",now]);
 				}
 			}
-		}
-		
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		}
+		
 		var wasError:Boolean = false;			
 		try {		
 			res = func.apply(null, args); 
@@ -278,11 +280,11 @@ public final class ErrorHandler
 		LoggerLine.LINE_INDENT = indentLevel-1;
 		logger.log("EXITED");
 			
-		var poped:Object = my_stack_trace.pop(); 
-			// I tried to do the pop inside a "finally" clause (to handle correctly cases with exceptions), 
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		var poped:Object = my_stack_trace.pop(); 
+			// I tried to do the pop inside a "finally" clause (to handle correctly cases with exceptions), 
 			//but I got "undefined" errors:
 			//		undefined
 			//			at come2play_as3.util::General$/stackTrace()
@@ -291,11 +293,11 @@ public final class ErrorHandler
 			alwaysTraceAndSendReport("BAD stack behaviour (multithreaded flash?)", ["my_stack_trace=",my_stack_trace, "toInsert=",toInsert, "poped=",poped]);
 		return res;				
 	}
-	public static function handleError(err:Error, obj:Object):void {
-		alwaysTraceAndSendReport("handleError: "+AS3_vs_AS2.error2String(err),[" catching-arguments=",obj]);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	public static function handleError(err:Error, obj:Object):void {
+		alwaysTraceAndSendReport("handleError: "+AS3_vs_AS2.error2String(err),[" catching-arguments=",obj]);
 	}		
 }
 }

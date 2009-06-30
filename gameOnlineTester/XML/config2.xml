@@ -142,6 +142,8 @@ Not used by the graphics yet (but should be displayed):
 <customInitInfo>
 	<custom>
 
+
+	<entry><key>is_rtl</key><value>true</value></entry>
 	<entry><key>user_buddy_url</key><value>"http://www.google.com/nada"</value></entry>
 
 	<entry><key>isWithSinglePlayer</key><value>false</value></entry>	
@@ -856,7 +858,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
     <!-- config.game_name is prefixed to the rating, e.g., game_rating_chess . I do this to make sure the ratings of different games don't override one another -->
     <game_name>Chess</game_name>
 		
-	<is_with_taunts type="boolean">true</is_with_taunts> <!--  show the taunt pop up -->
+	<is_with_taunts type="boolean">false</is_with_taunts> <!--  show the taunt pop up -->
 	<is_with_stakes type="boolean">true</is_with_stakes>
 		
 	<taunts type="list">
@@ -991,29 +993,19 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 			chat properties
 		-->
 		<chat>
-			<is_hide_avatar_in_chat_list type="boolean">false</is_hide_avatar_in_chat_list>
-			<total_chat_height type="int">155</total_chat_height>
-			<chat_output_height type="int">100</chat_output_height> 	<!-- there has to be at least 55 px difference -->
-			<user_list_width type="int">300</user_list_width>
-			
-			<max_content_height type="int">500</max_content_height>   <!-- this makes sure the actual graphics that is
-																				   the chat output won't be big enough to affect
-																				   performance -->
-			
-			<max_chars_in_inputfield type="int">100</max_chars_in_inputfield> 	<!-- 0 is for unlimited -->
-			<chat_line_leading type="int">2</chat_line_leading> 	<!-- this parameter sets the leading for messages that have
-															 emoticons, so if you change their size, you might want
-															 to adjust this as well -->
-			<emoticon_spacer type="int">3</emoticon_spacer>    	<!-- this parameter sets space that is created in the textfield
-															 of the chat output to make room for emoticons.
-															 if you change the size of the emoticons, or font for the chat
-															 output, you want to adjust this as well -->
-															 
-			<emoticon_spacer_color type="uint">0xFFFFFF</emoticon_spacer_color>
-			<line_color_invitation type="uint">0xFF0000</line_color_invitation>
-			<line_color_private_message type="uint">0x82AA3C</line_color_private_message>
-			<line_color_taunt type="uint">0xFB8F84</line_color_taunt>
-			<is_with_emoticons type="boolean">true</is_with_emoticons>
+			<is_hide_avatar_in_chat_list>false</is_hide_avatar_in_chat_list>
+			<total_chat_height>184</total_chat_height>
+			<chat_output_height>127</chat_output_height>
+			<user_list_width>173</user_list_width>
+			<max_content_height>500</max_content_height>
+			<max_chars_in_inputfield>100</max_chars_in_inputfield>
+			<chat_line_leading>7</chat_line_leading>
+			<emoticon_spacer>3</emoticon_spacer>
+			<emoticon_spacer_color>0xFFFFFF</emoticon_spacer_color>
+			<line_color_invitation>0xFF0000</line_color_invitation>
+			<line_color_private_message>0x82AA3C</line_color_private_message>
+			<line_color_taunt>0xFB8F84</line_color_taunt>
+			<is_with_emoticons>true</is_with_emoticons>
 		</chat>
 		
 		<user_info_pref>

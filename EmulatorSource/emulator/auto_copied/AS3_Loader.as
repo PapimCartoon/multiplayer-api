@@ -224,14 +224,16 @@ public final class AS3_Loader
 		for each (var req:ImageLoadRequest in copyPause)
 			loadImageReq(req);
 	}
+	public static var imageFailedFunc:Function
 	public static function loadImage(imageUrl:String,successHandler:Function = null,failureHandler:Function = null,progressHandler:Function = null,context:LoaderContext = null,justCach:Boolean = false):void {
 		StaticFunctions.assert(imageUrl!="" && imageUrl!=null,"can't load a blank image");
 		imageUrl = getURL(imageUrl);
-		if (failureHandler==null) {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		if (failureHandler==null) {
 			failureHandler = function(ev:Event):void {
+				if(imageFailedFunc!=null)	imageFailedFunc(imageUrl)
 				criticalError(ev,imageUrl);
 			};			
 		}
@@ -239,11 +241,11 @@ public final class AS3_Loader
 			successHandler = traceHandler
 		}	
 		
-		
-		if (isUsingLoader(imageUrl,context)) {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		
+		if (isUsingLoader(imageUrl,context)) {
 			// we do not cache graphics and game
 			loadURL(imageUrl,successHandler,failureHandler,progressHandler,context);
 			return;
@@ -252,11 +254,11 @@ public final class AS3_Loader
 		var loadRequest:ImageLoadRequest = new ImageLoadRequest();
 		loadRequest.imageUrl = imageUrl;
 		loadRequest.successHandler = successHandler;
-		loadRequest.failureHandler = failureHandler;
-		loadRequest.progressHandler = progressHandler;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		loadRequest.failureHandler = failureHandler;
+		loadRequest.progressHandler = progressHandler;
 		loadRequest.context = context;
 		loadRequest.justCach = justCach;
 		loadImageReq(loadRequest);		
@@ -265,11 +267,11 @@ public final class AS3_Loader
 		var imageUrl:String = loadRequest.imageUrl;
 		var progressHandler:Function = loadRequest.progressHandler;
 		var context:LoaderContext = loadRequest.context; 
-		tmpTrace(["Started handling image: ", imageUrl, "reqId=", loadRequest.reqId]); 
-		
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		tmpTrace(["Started handling image: ", imageUrl, "reqId=", loadRequest.reqId]); 
+		
 		// caching mechanism
 		if (imageCache[imageUrl] != null) {
 			StaticFunctions.assert(url2RequestArray[imageUrl]==null,"url2RequestArray must be empty: ",[imageUrl]);
@@ -278,11 +280,11 @@ public final class AS3_Loader
 		} else {
 			// image not loaded yet
 			if (pauseQueue!=null) {
-				pauseQueue.push(loadRequest);	
-				return;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+				pauseQueue.push(loadRequest);	
+				return;
 			}		
 			var requestArray:Array/*ImageLoadRequest*/ = url2RequestArray[imageUrl];
 			if (requestArray==null) {
@@ -291,11 +293,11 @@ public final class AS3_Loader
 				url2RequestArray[imageUrl] = requestArray;
 			}
 			requestArray.push(loadRequest);
-			if (requestArray.length==1) {		
-				loadURL(imageUrl,
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			if (requestArray.length==1) {		
+				loadURL(imageUrl,
 					// success function
 					function(ev:Event):void {
 						loadedImageUrl(false, imageUrl,ev);						
@@ -304,11 +306,11 @@ public final class AS3_Loader
 					function(ev:Event):void {
 						loadedImageUrl(true, imageUrl,ev);						
 					},progressHandler,context);		
-			}
-		}		
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			}
+		}		
 	}
 	private static function loadedImageUrl(isFailure:Boolean, imageUrl:String, ev:Event):void {
 		tmpTrace(["loadedImageUrl isFailure=",isFailure," imageUrl=",imageUrl, " event=",ev]);
@@ -317,11 +319,11 @@ public final class AS3_Loader
 		StaticFunctions.assert(isFailure==isImageLoadFailed(ev), "loadedImageUrl failure mismatch",["isFailure=", isFailure, imageUrl, ev]);
 		for each (var req:ImageLoadRequest in url2RequestArray[imageUrl]) {
 			handleExistingImage(ev,req);		
-		}
-		
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		}
+		
 		StaticFunctions.assert(imageCache[imageUrl]==null,"imageCache must be empty",[imageUrl]);
 		// even if loading failed, 
 		// we put the event to prevent future attempts to load the image again
@@ -330,11 +332,11 @@ public final class AS3_Loader
 	}
 	
 	private static function handleExistingImage(ev:Event,req:ImageLoadRequest):void{		
-		tmpTrace(["Loaded image: ", req.imageUrl, "reqId=", req.reqId, "ev=",ev]);
-		if(req.justCach){
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		tmpTrace(["Loaded image: ", req.imageUrl, "reqId=", req.reqId, "ev=",ev]);
+		if(req.justCach){
 			req.justCach = false;
 			return;
 		}	
@@ -343,11 +345,11 @@ public final class AS3_Loader
 			req.failureHandler(ev);
 		} else {
 			var data:ByteArray = getImageLoadByteArray(ev);
-			StaticFunctions.assert(data.length>0,"Internal error: image loading did not fail, so data.length>0!",[])
-			var byteConverter:Loader = new Loader();
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			StaticFunctions.assert(data.length>0,"Internal error: image loading did not fail, so data.length>0!",[])
+			var byteConverter:Loader = new Loader();
 			PREVENT_GC[byteConverter] = true;
 			var dispatcher:IEventDispatcher = byteConverter.contentLoaderInfo;
 			// IMPORTANT - there was a garbage collection issue here (if I remove the anonymous function and replace it with req.successHandler)
@@ -356,11 +358,11 @@ public final class AS3_Loader
 			var successFunc:Function = function (ev:Event):void { removeImageLoaderListeners(byteConverter,dispatcher,req,ev,false); };
 			AS3_vs_AS2.myAddEventListener("handleExistingImage", dispatcher,Event.COMPLETE, successFunc); 
 			var errorEvents:Array/*String*/ = [IOErrorEvent.IO_ERROR, HTTPStatusEvent.HTTP_STATUS, SecurityErrorEvent.SECURITY_ERROR];
-			for each (var errorEvent:String in errorEvents)
-				AS3_vs_AS2.myAddEventListener("handleExistingImage", dispatcher, errorEvent, failureFunc);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			for each (var errorEvent:String in errorEvents)
+				AS3_vs_AS2.myAddEventListener("handleExistingImage", dispatcher, errorEvent, failureFunc);
 				
 			var context:LoaderContext = null;
 			if (req.context!=null) {
@@ -369,11 +371,11 @@ public final class AS3_Loader
 			byteConverter.loadBytes(data,context);
 		}
 	}
-	private static function removeImageLoaderListeners(byteConverter:Loader, dispatcher:IEventDispatcher, req:ImageLoadRequest, ev:Event, isFailure:Boolean):void {
-		delete PREVENT_GC[byteConverter];
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	private static function removeImageLoaderListeners(byteConverter:Loader, dispatcher:IEventDispatcher, req:ImageLoadRequest, ev:Event, isFailure:Boolean):void {
+		delete PREVENT_GC[byteConverter];
 		AS3_vs_AS2.myRemoveAllEventListeners("handleExistingImage", dispatcher);
 		tmpTrace(["COMPLETED handling image: ", req.imageUrl, "reqId=", req.reqId, " res=",byteConverter.content, " isFailure=",isFailure, "event=",ev]);
 		if (isFailure)
@@ -382,11 +384,11 @@ public final class AS3_Loader
 			req.successHandler(ev);
 	}
 
-	private static var PREVENT_GC:Dictionary = new Dictionary();
-	
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	private static var PREVENT_GC:Dictionary = new Dictionary();
+	
 	public static var EVENT_DATA_DEBUG_LEN:int = 1000;
 	public static var TIMEOUT_TIMER_MILLI:int = 30000;
 	private static function loadURL(url:Object/*String or URLRequest*/,successHandler:Function = null,failureHandler:Function = null,progressHandler:Function = null,context:LoaderContext = null, retryCount:int=0,calledFrom:String="undefined"):void{
@@ -395,11 +397,11 @@ public final class AS3_Loader
 		
 		StaticFunctions.assert(url!=null,"loadURL was given a null url",[]);
 		tmpTrace("trying to load : ",url, " retryCount=",retryCount);
-		if (successHandler == null){
-			successHandler = traceHandler
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		if (successHandler == null){
+			successHandler = traceHandler
 		}
 		if (failureHandler==null) {			
 			failureHandler = function (ev:Event):void {criticalError(ev,url is String ? url as String : (url as URLRequest).url);};			
@@ -408,11 +410,11 @@ public final class AS3_Loader
 		//Use the URLLoader class to load text or binary data.
 		var dispatcher:IEventDispatcher;
 		var loader:Loader = null;		
-		var urlloader:URLLoader;
-		var isLoader:Boolean;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		var urlloader:URLLoader;
+		var isLoader:Boolean;
 		if (url is String) {
 			isLoader = isUsingLoader(url as String,context);
 			if(!isLoader){
@@ -421,11 +423,11 @@ public final class AS3_Loader
 				urlloader.dataFormat = URLLoaderDataFormat.BINARY;
 				dispatcher = urlloader;
 			}else{
-				loader = new Loader();
-				PREVENT_GC[loader] = true;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+				loader = new Loader();
+				PREVENT_GC[loader] = true;
 				dispatcher = loader.contentLoaderInfo
 			}
 		} else {
@@ -434,11 +436,11 @@ public final class AS3_Loader
 		}
 				
 		// garbage-collection bug: we must refer to loader to prevent it from being garbage-collected!
-		var failTimer:AS3_Timer = new AS3_Timer("LoadFailTimer",TIMEOUT_TIMER_MILLI);	
-		var newSuccFunction:Function = function (ev:Event):void { removeLoadUrlListeners(false, loader,url,dispatcher,ev,successHandler, failureHandler,progressHandler, context, retryCount,failTimer); };
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		var failTimer:AS3_Timer = new AS3_Timer("LoadFailTimer",TIMEOUT_TIMER_MILLI);	
+		var newSuccFunction:Function = function (ev:Event):void { removeLoadUrlListeners(false, loader,url,dispatcher,ev,successHandler, failureHandler,progressHandler, context, retryCount,failTimer); };
 		var newFailFunction:Function = function (ev:Event):void { removeLoadUrlListeners(true , loader,url,dispatcher,ev,successHandler, failureHandler,progressHandler, context, retryCount,failTimer); };
 		AS3_vs_AS2.myAddEventListener("failTimer",failTimer,TimerEvent.TIMER, newFailFunction); 
 		
@@ -447,11 +449,11 @@ public final class AS3_Loader
 		for each (var event:String in allTraceEvents)
 			AS3_vs_AS2.myAddEventListener("loadURL",dispatcher,event, traceFunc); 			
 			
-		AS3_vs_AS2.myAddEventListener("loadURL",dispatcher,Event.COMPLETE, newSuccFunction); 
-		AS3_vs_AS2.myAddEventListener("loadURL",dispatcher,IOErrorEvent.IO_ERROR, newFailFunction);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		AS3_vs_AS2.myAddEventListener("loadURL",dispatcher,Event.COMPLETE, newSuccFunction); 
+		AS3_vs_AS2.myAddEventListener("loadURL",dispatcher,IOErrorEvent.IO_ERROR, newFailFunction);
     	AS3_vs_AS2.myAddEventListener("loadURL",dispatcher, SecurityErrorEvent.SECURITY_ERROR, newFailFunction);
     	  
     	var newProgressHandler:Function = function(ev:ProgressEvent):void{
@@ -460,11 +462,11 @@ public final class AS3_Loader
     		failTimer.reset();
     		failTimer.start();
     	};	    	
-		AS3_vs_AS2.myAddEventListener("loadURL",dispatcher,ProgressEvent.PROGRESS,newProgressHandler)
-  		try {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		AS3_vs_AS2.myAddEventListener("loadURL",dispatcher,ProgressEvent.PROGRESS,newProgressHandler)
+  		try {
 	  		if (url is String) {
 	  			var urlString:String = url as String;
 	  			if(!isLoader){
@@ -473,11 +475,11 @@ public final class AS3_Loader
 	  			}else{
 	  				// not using cache
 	  				tmpTrace("Using Loader! urlString=",urlString, " with context=",context);
-	  				loader.load(new URLRequest(urlString),context);
-	  			}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	  				loader.load(new URLRequest(urlString),context);
+	  			}
 			} else {
 				var tempUrlRequest:URLRequest = url as URLRequest
 				tmpTrace("loading URLRequest! urlString=",tempUrlRequest.url)
@@ -486,11 +488,11 @@ public final class AS3_Loader
      	} catch(error:Error) {
      		var ev:Event = new SecurityErrorEvent(SecurityErrorEvent.SECURITY_ERROR,false, false, AS3_vs_AS2.error2String(error));
      		removeLoadUrlListeners(true, loader, url,dispatcher,ev,successHandler, failureHandler,progressHandler, context, retryCount,failTimer);
-     	}		
-	}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+     	}		
+	}
 	public static var RETRY_DELAY_MILLI:int = 3000;
 	public static var MIN_LEN:int = 3;
 	private static function removeLoadUrlListeners(isFailure:Boolean, loader:Loader, url:Object/*String or URLRequest*/,dispatcher:IEventDispatcher, ev:Event, successHandler:Function,failureHandler:Function, progressHandler:Function,context:LoaderContext, retryCount:int,failTimer:AS3_Timer):void {
@@ -499,11 +501,11 @@ public final class AS3_Loader
 		AS3_vs_AS2.myRemoveAllEventListeners("failTimer",failTimer)	
 		
 		if (loader!=null) delete PREVENT_GC[loader];
-		
-		AS3_vs_AS2.myRemoveAllEventListeners("loadURL", dispatcher);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		
+		AS3_vs_AS2.myRemoveAllEventListeners("loadURL", dispatcher);
 		var data:Object	= null;
 		if (ev!=null && ev.target!=null && ev.target.hasOwnProperty("data")) data = ev.target.data;
 		var len:int = data==null ? int.MAX_VALUE : // null is a legal case! e.g., (todo: find an example)
@@ -512,11 +514,11 @@ public final class AS3_Loader
 			-1;
 		StaticFunctions.assert(len>=0, "Loaded an illegal type for data: ",data);
 			
-		if (len<=MIN_LEN) {
-			tmpTrace("We loaded a String/ByteArray which are too small! so we retry to load the image again");
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		if (len<=MIN_LEN) {
+			tmpTrace("We loaded a String/ByteArray which are too small! so we retry to load the image again");
 			isFailure = true;
 		}
 								
@@ -525,11 +527,11 @@ public final class AS3_Loader
 			data==null ? 			"no ev.target.data" :
 			data is String ? 		StaticFunctions.cutString(data as String,EVENT_DATA_DEBUG_LEN)  : 
 						  			"ByteArray");
-		var urlString:String
-		
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		var urlString:String
+		
 		if (url is URLRequest){
 			var tempUrlRequest:URLRequest = url as URLRequest
 			urlString = tempUrlRequest.url;
@@ -538,11 +540,11 @@ public final class AS3_Loader
 		}
 		if (!isFailure) {
 			if (retryCount>0){
-				 SUCCESS_RETRY_LOG.log("Retry mechanism worked for url=",url);
-				 AS3_GATracker.COME2PLAY_TRACKER.trackEvent("Loading","Image Loading","Succeded retry "+retryCount+" on "+removeQueryString(urlString),1)
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+				 SUCCESS_RETRY_LOG.log("Retry mechanism worked for url=",url);
+				 AS3_GATracker.COME2PLAY_TRACKER.trackEvent("Loading","Image Loading","Succeded retry "+retryCount+" on "+removeQueryString(urlString),1)
 			}
 			tmpTrace("calling successHandler=",successHandler)
 			successHandler(ev);
@@ -551,11 +553,11 @@ public final class AS3_Loader
 			if(loader!=null)	loader.unload();
 			if (dispatcher is URLLoader)  {
 				try{
-					var urlLoader:URLLoader = (dispatcher as URLLoader)
-					urlLoader.close();
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+					var urlLoader:URLLoader = (dispatcher as URLLoader)
+					urlLoader.close();
 				}catch(err:Error){
 					tmpTrace(err,"Stream was already closed for ",urlLoader);
 				}
@@ -564,11 +566,11 @@ public final class AS3_Loader
 				tmpTrace("We retry to load the url=",url,"retry delay is",RETRY_DELAY_MILLI);
 				urlString+=((urlString.indexOf("?") == -1)?"?":"&")+"preventCache="+int(Math.random()*int.MAX_VALUE)
 				if (url is URLRequest){
-					(url as URLRequest).url = urlString;
-				}else{
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+					(url as URLRequest).url = urlString;
+				}else{
 					url = urlString;
 				}
 				ErrorHandler.myTimeout("RetryDelay",function():void {
@@ -577,11 +579,11 @@ public final class AS3_Loader
 			} else {
 				failureHandler(ev);
 			}
-		}
-	}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		}
+	}
 	
 	
 	public static function traceHandler(e:Event):void {
@@ -590,11 +592,11 @@ public final class AS3_Loader
 	public static function criticalError(ev:Event,url:String):void{
 		tmpTrace(" Error loading URL: ",url)
 		var msg:String;
-		if(ev is IOErrorEvent){
-			msg = "critical IOErrorEvent" + JSON.stringify(ev as IOErrorEvent);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		if(ev is IOErrorEvent){
+			msg = "critical IOErrorEvent" + JSON.stringify(ev as IOErrorEvent);
 		}else if(ev is SecurityErrorEvent){
 			msg = "critical SecurityErrorEvent" + JSON.stringify(ev as SecurityErrorEvent);	
 		}
@@ -603,11 +605,11 @@ public final class AS3_Loader
 	}
 
 }
-}
-import flash.system.LoaderContext;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+}
+import flash.system.LoaderContext;
 class ImageLoadRequest {
 	public static var CURR_REQ_ID:int = 1; 
 	public var reqId:int = CURR_REQ_ID++;
@@ -616,11 +618,11 @@ class ImageLoadRequest {
 	public var imageUrl:String;
 	public var context:LoaderContext;
 	public var successHandler:Function;
-	public var progressHandler:Function;
-	public var failureHandler:Function;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	public var progressHandler:Function;
+	public var failureHandler:Function;
 	
 	public function toString():String {
 		return imageUrl;

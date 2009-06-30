@@ -10,8 +10,9 @@ package come2play_as3.api.auto_copied
 // Only StaticFunctions and JSON are copied to flex_utils 
 public final class StaticFunctions
 {			
-	public static var GOOGLE_REVISION_NUMBER:int = 1094;
-	public static var COME2PLAY_REVISION_NUMBER:int = 3942;
+	public static var GOOGLE_REVISION_NUMBER:int = 1100;
+	public static var COME2PLAY_REVISION_NUMBER:int = 3952;
+	public static var ERRORS_THROWN_LOGGER:Logger = new Logger("Throw",5);
 	public static function getRevision():String {
 		return (SerializableClass.IS_IN_FRAMEWORK ? "Container" : "Game")+
 			" g="+GOOGLE_REVISION_NUMBER+",c2p="+COME2PLAY_REVISION_NUMBER;		
@@ -128,7 +129,7 @@ public final class StaticFunctions
 		var err:Error = new Error(msg);
 		// I know the error should be caught, but in flash you do not always wrap everything in a catch clause
 		// so I prefer to also send the error to the container now
-		showError("Throwing the following error="+AS3_vs_AS2.error2String(err));
+		ERRORS_THROWN_LOGGER.log("Throwing the following error="+AS3_vs_AS2.error2String(err))
 		throw err;
 	}		
 	public static function assert(val:Boolean, name:String, ...args):void {

@@ -15,14 +15,16 @@ package emulator.auto_copied
 	/**
 	 * We use AS3_Timer instead of Timer because 
 	 * this allows us to keep track of all ongoing timers.
+	 * 
+	 * an AS3_Timer will throw an error if it is running and doesn't have any listeners
 	 */
 	public final class AS3_Timer extends Timer
 	{
-		private static var ALL_LOG:Logger = new Logger("ALL_TIMERS",5);
-		private static var LOG:Logger = new Logger("TIMERS",50);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		private static var ALL_LOG:Logger = new Logger("ALL_TIMERS",5);
+		private static var LOG:Logger = new Logger("TIMERS",50);
 		private static var ALL_TIMERS:Dictionary/*AS3_Timer->Boolean*/;
 		
 		public static function getTimersLog():String {
@@ -31,11 +33,11 @@ package emulator.auto_copied
 				res.push(t.toString());
 			res = StaticFunctions.sortAndCountOccurrences(res); 
 			return "all timers info:\n\t\t\t" + res.join("\n\t\t\t");
-		}
-		
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		}
+		
 		private var name:String;
 		private var isRemoved:Boolean = false;
 		public function AS3_Timer(name:String, delay:Number, repeatCount:int=0)	{
@@ -44,11 +46,11 @@ package emulator.auto_copied
 			this.name = name;
 			if (ALL_TIMERS==null) {
 				ALL_TIMERS = new Dictionary();
-				ALL_LOG.log(new ForTraces());
-			}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+				ALL_LOG.log(new ForTraces());
+			}
 			ALL_TIMERS[this] = true;
 		}
 		private function assertNotRemoved():void {
@@ -57,11 +59,11 @@ package emulator.auto_copied
 		/**
 		 * deleteTimer should be called only from AS3_vs_AS2.
 		 */
-		internal function deleteTimer():void {
-			assertNotRemoved();
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		internal function deleteTimer():void {
+			assertNotRemoved();
 			isRemoved = true;
 			delete ALL_TIMERS[this];
 		}
@@ -70,11 +72,11 @@ package emulator.auto_copied
 			StaticFunctions.assert(delay>0, "AS3_Timer: illegal delay=",delay,"in timer",name)
 			super.delay = value;
 		}
-		override public function addEventListener(type:String, listener:Function, useCapture:Boolean=false, priority:int=0, useWeakReference:Boolean=false):void {
-			assertNotRemoved();
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		override public function addEventListener(type:String, listener:Function, useCapture:Boolean=false, priority:int=0, useWeakReference:Boolean=false):void {
+			assertNotRemoved();
 			super.addEventListener(type,listener,useCapture,priority,useWeakReference);
 		}
 		override public function start():void {
@@ -83,11 +85,11 @@ package emulator.auto_copied
 			super.start();
 		}
 		override public function stop():void {
-			if (!running) return;
-			assertNotRemoved();
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			if (!running) return;
+			assertNotRemoved();
 			LOG.log([name,"stoped"]);
 			super.stop();
 		}
@@ -96,11 +98,11 @@ package emulator.auto_copied
 			LOG.log([name,"reset"]);
 			super.reset();
 		}
-		override public function toString():String {
-			return name+" every "+delay+" millis, "+ 
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		override public function toString():String {
+			return name+" every "+delay+" millis, "+ 
 				(AS3_vs_AS2.myHasAnyEventListener(null,this) ? "WITH listeners" : "without listeners")+ 
 				(!running?" not running" : 
 					" RUNNING"+ 
@@ -109,11 +111,11 @@ package emulator.auto_copied
 	}
 }
 
-import emulator.auto_copied.AS3_Timer;
-class ForTraces {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+import emulator.auto_copied.AS3_Timer;
+class ForTraces {
 	public function toString():String {
 		return AS3_Timer.getTimersLog();
 	}

@@ -166,11 +166,13 @@ public final class AS3_Loader
 		for each (var req:ImageLoadRequest in copyPause)
 			loadImageReq(req);
 	}
+	public static var imageFailedFunc:Function
 	public static function loadImage(imageUrl:String,successHandler:Function = null,failureHandler:Function = null,progressHandler:Function = null,context:LoaderContext = null,justCach:Boolean = false):void {
 		StaticFunctions.assert(imageUrl!="" && imageUrl!=null,"can't load a blank image");
 		imageUrl = getURL(imageUrl);
 		if (failureHandler==null) {
 			failureHandler = function(ev:Event):void {
+				if(imageFailedFunc!=null)	imageFailedFunc(imageUrl)
 				criticalError(ev,imageUrl);
 			};			
 		}

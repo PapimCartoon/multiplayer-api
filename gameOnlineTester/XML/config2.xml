@@ -201,7 +201,7 @@ Not used by the graphics yet (but should be displayed):
 		<entry><key>rewardFolderURL</key><value>"graphics/rewards/"</value></entry>
 		<entry><key>tokenFolderURL</key><value>"graphics/rewards/"</value></entry>
 		<entry><key>noUserPic</key><value>"images/noOne.png"</value></entry>
-		<entry><key>tokenSet</key><value>[[0,"0.swf"],[1,"1.swf"],[5,"5.swf"],[10,"10.swf"],[50,"50.swf"],[100,"100.swf"],[500,"500.swf"],[1000,"1000.swf"],["x","x.swf"]]</value></entry>
+		<entry><key>tokenSet</key><value>[[0,"0.swf"],[1,"1.swf"],[5,"5.swf"],[10,"10.swf"],[50,"50.swf"],[100,"100.swf"],[500,"500.swf"],[1000,"1000.swf"],[5000,"5000.swf"],[10000,"10000.swf"],[50000,"50000.swf"],[100000,"100000.swf"],["x","x.swf"]]</value></entry>
 		<entry><key>ratings</key><value>[0,1200,1400,1600,1800,2000,2200,2400]</value></entry>
 		
 		<!--

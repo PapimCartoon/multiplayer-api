@@ -225,12 +225,13 @@ public final class ErrorHandler
 			catchErrors(longerName,func,args);
 		};
 	}
+	public static var DO_AFTER_CATCH:Function = null;
 	public static var ZONE_LOGGER_SIZE:int = 6;
 	private static var ZONE_LOGGERS:Object/*String->Logger*/ = {};
-	public static function catchErrors(zoneName:String, func:Function, args:Array):Object {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	public static function catchErrors(zoneName:String, func:Function, args:Array):Object {
 		var res:Object = null;		
 		
 		var toInsert:Object = [zoneName,"t:",getTimer(),"args=",args]; // I couldn't find a way to get the function name (describeType(func) only returns that the method is a closure)
@@ -240,10 +241,10 @@ public final class ErrorHandler
 		if (logger==null) {
 			logger = new Logger("CATCH-"+zoneName,ZONE_LOGGER_SIZE);
 			ZONE_LOGGERS[zoneName] = logger;
-		}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		}
 		logger.log("ENTERED");
 		LoggerLine.LINE_INDENT = indentLevel;
 		
@@ -253,10 +254,10 @@ public final class ErrorHandler
 			LAST_CATCH_ERRORS_ON = now; // I assign before alwaysTraceAndSendReport to prevent recursive calls.
 			var delta:int = now - lastCatch;
 			if (delta > FREEZING_BUCKETS_MILLI) {
-				// gather freezing statistics
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+				// gather freezing statistics
 				FREEZE_COUNT++;
 				LAST_FROZE_ON = now;
 				var bucket:int = delta/FREEZING_BUCKETS_MILLI;
@@ -266,38 +267,48 @@ public final class ErrorHandler
 					// the flash froze!
 					alwaysTraceAndSendReport("The flash froze!", ["LAST_CATCH_ERRORS_ON=",lastCatch," now=",now]);
 				}
-			}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			}
 		}
 		
 		var wasError:Boolean = false;			
 		try {		
 			res = func.apply(null, args); 
 		} catch (err:Error) { handleError(err, args); }
-			
-		LoggerLine.LINE_INDENT = indentLevel-1;
-		logger.log("EXITED");
-			
+		// some actions need to be done after all other actions complete (e.g., sending messages to java)
+		try {
+			if (DO_AFTER_CATCH!=null && indentLevel==1) {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+				DO_AFTER_CATCH();				
+			} 	
+		} catch (err:Error) { handleError(err, args); }
+		LoggerLine.LINE_INDENT = indentLevel-1;
+		logger.log("EXITED");
+			
 		var poped:Object = my_stack_trace.pop(); 
 			// I tried to do the pop inside a "finally" clause (to handle correctly cases with exceptions), 
 			//but I got "undefined" errors:
 			//		undefined
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			//			at come2play_as3.util::General$/stackTrace()
 			//			at come2play_as3.util::General$/catchErrors() 
 		if (!didReportError && toInsert!=poped) 
 			alwaysTraceAndSendReport("BAD stack behaviour (multithreaded flash?)", ["my_stack_trace=",my_stack_trace, "toInsert=",toInsert, "poped=",poped]);
+			
+		
 		return res;				
 	}
+	public static function handleError(err:Error, obj:Object):void {
+		alwaysTraceAndSendReport("handleError: "+AS3_vs_AS2.error2String(err),[" catching-arguments=",obj]);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	public static function handleError(err:Error, obj:Object):void {
-		alwaysTraceAndSendReport("handleError: "+AS3_vs_AS2.error2String(err),[" catching-arguments=",obj]);
 	}		
 }
 }

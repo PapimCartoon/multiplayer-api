@@ -23,7 +23,7 @@ public final class StaticFunctions
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	public static var GOOGLE_REVISION_NUMBER:int = 1099;
+	public static var GOOGLE_REVISION_NUMBER:int = 1100;
 	public static var COME2PLAY_REVISION_NUMBER:int = 3952;
 	public static var ERRORS_THROWN_LOGGER:Logger = new Logger("Throw",5);
 	public static function getRevision():String {

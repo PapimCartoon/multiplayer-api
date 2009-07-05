@@ -167,6 +167,7 @@ public final class ErrorHandler
 			catchErrors(longerName,func,args);
 		};
 	}
+	public static var DO_AFTER_CATCH:Function = null;
 	public static var ZONE_LOGGER_SIZE:int = 6;
 	private static var ZONE_LOGGERS:Object/*String->Logger*/ = {};
 	public static function catchErrors(zoneName:String, func:Function, args:Array):Object {
@@ -206,7 +207,12 @@ public final class ErrorHandler
 		try {		
 			res = func.apply(null, args); 
 		} catch (err:Error) { handleError(err, args); }
-			
+		// some actions need to be done after all other actions complete (e.g., sending messages to java)
+		try {
+			if (DO_AFTER_CATCH!=null && indentLevel==1) {
+				DO_AFTER_CATCH();				
+			} 	
+		} catch (err:Error) { handleError(err, args); }
 		LoggerLine.LINE_INDENT = indentLevel-1;
 		logger.log("EXITED");
 			
@@ -218,6 +224,8 @@ public final class ErrorHandler
 			//			at come2play_as3.util::General$/catchErrors() 
 		if (!didReportError && toInsert!=poped) 
 			alwaysTraceAndSendReport("BAD stack behaviour (multithreaded flash?)", ["my_stack_trace=",my_stack_trace, "toInsert=",toInsert, "poped=",poped]);
+			
+		
 		return res;				
 	}
 	public static function handleError(err:Error, obj:Object):void {

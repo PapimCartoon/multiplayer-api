@@ -18,6 +18,13 @@ package come2play_as3.api.auto_copied
 		static private var ANALYTIC_LOG:Logger = new Logger("Analytic",30);
 		static private var ANALYTIC_ERRORS_LOG:Logger = new Logger("AnalyticError",10);
 		public static var COME2PLAY_TRACKER:AS3_GATracker = new AS3_GATracker(null,"UA-154580-30");
+				
+		private static var TRACK_ONCE:Dictionary = new Dictionary();
+		public static function trackWarningOnce(action:String,label:String=null,value:Number=1):void {
+			if (TRACK_ONCE[action]!=null) return;
+			TRACK_ONCE[action] = true;
+			trackWarning(action,label,value);
+		}
 		public static function trackWarning(action:String,label:String=null,value:Number=1):void {
 			COME2PLAY_TRACKER.trackEvent("Warning",action,label,value);
 		}

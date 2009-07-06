@@ -13,7 +13,7 @@ The xml assumes the current dir is gameOnlineTester
 		(you can also set JPG_QUALITY of SendMultipartImage)
 
 	- override_*  - to override values in the XML
-	- REFLECTION_*  - to override static vars in the flash (e.g., REFLECTION_come2play_as3.util::General.isDoingTrace=true)
+	- REFLECTION_*  - to override static vars in the flash (e.g., REFLECTION_come2play_as3.util::General.CALL_JS_FUNCTIONS=false)
 	
 
 	The javascript should have the following functions:
@@ -271,11 +271,11 @@ Not used by the graphics yet (but should be displayed):
 				
 				localhost:2000:socket
 				localhost:5555:polling
-				80.179.46.237:5555:polling
+				80.179.46.238:80:polling
 				
 				localhost:18083:rtmpt
 		-->
-		<entry><key>override all_java_ips</key><value>'localhost:5555:polling'</value></entry>		
+		<entry><key>override all_java_ips</key><value>'localhost:2000:socket,80.179.46.238:80:polling'</value></entry>		
 		
 		<entry><key>EndGameDelay</key><value>100</value></entry>
 		<!--
@@ -793,8 +793,8 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 		
 		If any of these two parameters is less than or **equal** to 0, then you **cannot** reconnect. 
 	     -->
-	  <can_reconnect_after_seconds type="int">0</can_reconnect_after_seconds> 
-	  <wait_before_close_seconds type="int">0</wait_before_close_seconds> 
+	  <can_reconnect_after_seconds type="int">1</can_reconnect_after_seconds> 
+	  <wait_before_close_seconds type="int">30</wait_before_close_seconds> 
 	  <!-- md5 is:	  
 		MD5( SECRET + 
 		'x' + config.extra_args.user_id + 

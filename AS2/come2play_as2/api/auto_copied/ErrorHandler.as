@@ -191,7 +191,7 @@ class come2play_as2.api.auto_copied.ErrorHandler
 				FREEZE_COUNT++;
 				LAST_FROZE_ON = now;
 				var bucket:Number = delta/FREEZING_BUCKETS_MILLI;
-				AS3_GATracker.trackWarning("Flash froze", "Freeze no. "+FREEZE_COUNT+" for "+(bucket*10)+" seconds",delta);
+				if (FREEZE_COUNT<=10) AS3_GATracker.trackWarning("Flash froze", "Freeze no. "+FREEZE_COUNT+" for "+(bucket*10)+" seconds",delta);
 				
 				if (delta > MAX_FREEZE_TIME_MILLI) {
 					// the flash froze!

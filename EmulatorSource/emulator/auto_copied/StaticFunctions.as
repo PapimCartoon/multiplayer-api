@@ -23,8 +23,8 @@ public final class StaticFunctions
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-public static var GOOGLE_REVISION_NUMBER:int = 1001;
-	public static var COME2PLAY_REVISION_NUMBER:int = 3993;
+public static var GOOGLE_REVISION_NUMBER:int = 1002;
+	public static var COME2PLAY_REVISION_NUMBER:int = 4045;
 	public static var ERRORS_THROWN_LOGGER:Logger = new Logger("Throw",5);
 	public static function getRevision():String {
 		return (SerializableClass.IS_IN_FRAMEWORK ? "Container" : "Game")+

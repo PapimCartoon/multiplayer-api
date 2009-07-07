@@ -23,9 +23,6 @@ function getPlayerAvatar(){
 }
 
 
-var default_javaToConnect = "80.179.46.238:8080:socket,80.179.46.238:8080:old_xmlsocket,80.179.46.238:80:rtmpt";
-var local_javaToConnect = "localhost:2000:socket,localhost:2000:old_xmlsocket,localhost:8083:rtmpt";
-
 var supervisorLevels = new Array("Admin","Supervisor","MiniSupervisor","NormalUser");
 var playerInitial = new Array("player","שחקן","???","usu?rio","Hr??")
 var oldBoardValues = new Array();
@@ -161,6 +158,7 @@ paramArr.push( {htmlName:"gameSwf",xmlName:"override_config.game_parameters.boar
 paramArr.push( {htmlName:"prefix",xmlName:"override_config.game_parameters.prefix_local_connection_id",type:"string"});
 
 paramArr.push( {htmlName:"javaToConnect",type:"string"});
+paramArr.push( {htmlName:"javaProtocol",type:"string"});
 paramArr.push( {htmlName:"isSmartAutoMatch",type:"string"});
 
 

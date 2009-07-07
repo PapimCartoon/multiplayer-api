@@ -275,7 +275,7 @@ Not used by the graphics yet (but should be displayed):
 				
 				localhost:18083:rtmpt
 		-->
-		<entry><key>override all_java_ips</key><value>'localhost:2000:socket,80.179.46.238:80:polling'</value></entry>		
+		<entry><key>override all_java_ips</key><value>'localhost:5555:polling'</value></entry>		
 		
 		<entry><key>EndGameDelay</key><value>100</value></entry>
 		<!--

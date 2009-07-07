@@ -291,7 +291,8 @@
 			comboStr+="<option value=\""+oldGames[i]+"\">"+oldGames[i]+"</option>";
 		}
 		comboStr+="</select>"+
-			"<br><select name='javaToConnect' id='javaToConnect'><option value='"+default_javaToConnect+"'>80.179.46.238<option value='"+local_javaToConnect+"' selected>localhost</select><br>"+
+			"<br><select name='javaToConnect' id='javaToConnect'><option value='80.179.46.238'>80.179.46.238<option value='localhost' selected>localhost</select><br>"+
+			"<select name='javaProtocol' id='javaProtocol'><option value='socket'>socket<option value='polling' selected>polling</select><br>"+
 			"<select name='isSmartAutoMatch' id='isSmartAutoMatch'><option value='true'>Smart auto match<option value='false'>Simple auto match</select>";
 		var cell = row.insertCell(1);
 		cell.innerHTML = comboStr;

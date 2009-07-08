@@ -180,8 +180,7 @@ Not used by the graphics yet (but should be displayed):
 			
 		<entry><key>disableGameRating</key><value>false</value></entry>		
 		<entry><key>disableStatisticsPage</key><value>false</value></entry>	
-		
-		<entry><key>isSmartAutoMatch</key><value>false</value></entry>		
+			
 		<entry><key>isSendErrorImage</key><value>false</value></entry>
 			
 		<entry><key>block_user_ids</key><value>[]</value></entry>
@@ -388,7 +387,7 @@ Not used by the graphics yet (but should be displayed):
 			  <is_veteran_user>false</is_veteran_user>
 			  <is_guest>true</is_guest>
 			  <site_name>facebook</site_name>
-			  <name>Unknown #user_id#</name>
+			  <name>%26amp%3B%22A%26amp%3Bquot%3B+%26amp%3B</name>
 			  <avatar_url>images/Avatar_4.gif</avatar_url>
 			  <supervisor>Supervisor</supervisor>
 			  <credibility>0</credibility>
@@ -1024,7 +1023,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 			
 		<is_chat_enabled type="boolean">true</is_chat_enabled>
 		
-		<is_align_vertical type="boolean">false</is_align_vertical>	
+		<is_align_vertical type="boolean">true</is_align_vertical>	
 		<is_rtl type="boolean">false</is_rtl>    
 	</graphics>
 </config>

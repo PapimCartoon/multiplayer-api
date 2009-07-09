@@ -14,7 +14,7 @@ package come2play_as3.snake
 		private var snakeSpeed:int = 500;
 		private var myUserId:int;
 		private var allPlayerIds:Array/*int*/;
-		private var graphic:MovieClip;
+		private var _graphic:MovieClip;
 		private var snakeGraphic:SnakeGraphic;
 		private var snakeMainPointer:SnakeMain;
 		private var allPlayerSnakes:Array/*PlayerSnake*/
@@ -23,9 +23,9 @@ package come2play_as3.snake
 		private var moveGap:int;
 		public var moveTick:Timer
 		
-		public function SnakeLogic(graphic:MovieClip,snakeMainPointer:SnakeMain)
+		public function SnakeLogic(_graphic:MovieClip,snakeMainPointer:SnakeMain)
 		{
-			this.graphic = graphic;
+			this._graphic = _graphic;
 			this.snakeMainPointer = snakeMainPointer;
 			moveTick = new AS3_Timer("SnakeLogic.snakeSpeed", snakeSpeed,0);
 			moveTick.addEventListener(TimerEvent.TIMER,makeMove);
@@ -128,7 +128,7 @@ package come2play_as3.snake
 		public function startGame(myUserId:int,allPlayerIds:Array/*int*/,xMax:int,yMax:int,snakeSpeed:int):Array/*UserEntry*/
 		{
 			if(snakeGraphic != null)
-				graphic.removeChild(snakeGraphic);
+				_graphic.removeChild(snakeGraphic);
 			if(snakeSpeed > 0)
 			{
 				this.snakeSpeed = snakeSpeed;
@@ -153,7 +153,7 @@ package come2play_as3.snake
 			}
 			
 			snakeGraphic = new SnakeGraphic(allPlayerSnakes,allPlayerIds);
-			graphic.addChild(snakeGraphic);
+			_graphic.addChild(snakeGraphic);
 			if(allPlayerIds.indexOf(myUserId) != -1)
 				moveTick.start();
 			return userEntries;
@@ -164,7 +164,7 @@ package come2play_as3.snake
 		public function loadGame(myUserId:int,allPlayerIds:Array/*int*/,xMax:int,yMax:int,serverEntries:Array/*ServerEntry*/):void
 		{
 			if(snakeGraphic != null)
-				graphic.removeChild(snakeGraphic);
+				_graphic.removeChild(snakeGraphic);
 			moveGap = 0;
 			this.myUserId = myUserId;	
 			this.allPlayerIds = allPlayerIds;
@@ -246,7 +246,7 @@ package come2play_as3.snake
 			}
 			
 			snakeGraphic = new SnakeGraphic(allPlayerSnakes,allPlayerIds);
-			graphic.addChild(snakeGraphic);
+			_graphic.addChild(snakeGraphic);
 			if(allPlayerIds.indexOf(myUserId) != -1)
 				moveTick.start();
 		}

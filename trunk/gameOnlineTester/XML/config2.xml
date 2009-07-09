@@ -152,7 +152,7 @@ Not used by the graphics yet (but should be displayed):
 	<entry><key>isWithSinglePlayer</key><value>true</value></entry>	
 	
 	<entry><key>gameLogoUrl</key><value>"images/AnimatedLogo.swf"</value></entry>	
-	<entry><key>isGameScalable</key><value>true</value></entry>	
+	<entry><key>isGameScalable</key><value>false</value></entry>	
 	<entry><key>translated_game_name</key><value>"Game name"</value></entry>	
 	
 	

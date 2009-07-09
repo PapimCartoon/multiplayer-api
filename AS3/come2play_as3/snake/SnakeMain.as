@@ -5,11 +5,12 @@ package come2play_as3.snake
 	import come2play_as3.api.auto_generated.*;
 	
 	import flash.display.MovieClip;
+	import flash.display.Sprite;
 
 	public class SnakeMain extends ClientGameAPI
 	{
 		private var snakeLogic:SnakeLogic;
-		private var graphics:MovieClip;
+		private var _graphics:MovieClip;
 		private var myUserId:int;
 		private var allPlayerIds:Array;/*int*/
 		private var waitingMove:Boolean;
@@ -21,17 +22,17 @@ package come2play_as3.snake
 		public var tail:int;
 		public var tick:int;
 		public var paused:Boolean;
-		public function SnakeMain(graphics:MovieClip)
+		public function SnakeMain(_graphics:MovieClip)
 		{
 			(new PlayerMove).register();
-			super(graphics);
-			this.graphics = graphics;
-			AS3_vs_AS2.waitForStage(graphics,constructGame);
+			super(_graphics);
+			this._graphics = _graphics;
+			AS3_vs_AS2.waitForStage(_graphics,constructGame);
 		}
 		public function constructGame():void
 		{
 			waitingMove = false;
-			snakeLogic = new SnakeLogic(graphics,this);
+			snakeLogic = new SnakeLogic(_graphics,this);
 			doRegisterOnServer();	
 		}
 		

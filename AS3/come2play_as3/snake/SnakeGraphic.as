@@ -1,17 +1,21 @@
 package come2play_as3.snake
 {
 	import flash.display.MovieClip;
+	import flash.display.Sprite;
 	
 	public class SnakeGraphic extends MovieClip
 	{
 		private var allPlayerGraphicSnakes:Array/*GraphicSnake*/;
 		private var allPlayerIds:Array/*int*/;
-		private var foodCube:Food;
+		private var foodCube:Sprite;
 		public function SnakeGraphic(allPlayerSnakes:Array/*PlayerSnake*/,allPlayerIds:Array/*int*/)
 		{
 			this.allPlayerIds = allPlayerIds;
 			allPlayerGraphicSnakes = new Array();
-			foodCube = new Food();
+			foodCube = new Sprite()
+			foodCube.graphics.beginFill(0xFF0000)
+			foodCube.graphics.drawRect(0,0,16,16);
+			foodCube.graphics.endFill()
 			for each(var playerSnake:VirtualSnake in allPlayerSnakes)
 			{
 				var tempGraphicSnake:GraphicSnake = new GraphicSnake(playerSnake.playerNum)
@@ -46,6 +50,8 @@ package come2play_as3.snake
 
 	import flash.display.MovieClip;
 	import come2play_as3.snake.SnakePart;
+	import flash.utils.Endian;
+	import flash.display.Sprite;
 	
 
 class GraphicSnake extends MovieClip 
@@ -70,13 +76,13 @@ class GraphicSnake extends MovieClip
 	
 	private function addSnakePart(snakePart:SnakePart,guess:Boolean):void
 	{
-		var tempSquare:SquareExample = new SquareExample();
+		var tempSquare:Sprite = new Sprite();
+		tempSquare.graphics.beginFill(playerNum==1?0xFF0000:0x00FF00)
+		tempSquare.graphics.drawRect(0,0,16,16);
+		tempSquare.graphics.endFill();
 		tempSquare.x = snakePart.xpos * 16;
 		tempSquare.y = snakePart.ypos * 16;
-		if(guess)
-			tempSquare.gotoAndStop("player_"+playerNum+"_guess");
-		else
-			tempSquare.gotoAndStop("player_"+playerNum+"_sure");
+		tempSquare.alpha = guess?0.5:1;y
 		snake.push(tempSquare);	
 		addChild(tempSquare);
 	}

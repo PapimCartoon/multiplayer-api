@@ -169,6 +169,8 @@ public final class ErrorHandler
 	}
 	public static var DO_AFTER_CATCH:Function = null;
 	public static var ZONE_LOGGER_SIZE:int = 6;
+	public static var ANALYTICS_COUNT_MAX:int = 3;
+	public static var ANALYTICS_BUCKET_MAX:int = 6;
 	private static var ZONE_LOGGERS:Object/*String->Logger*/ = {};
 	public static function catchErrors(zoneName:String, func:Function, args:Array):Object {
 		var res:Object = null;		
@@ -193,8 +195,11 @@ public final class ErrorHandler
 				// gather freezing statistics
 				FREEZE_COUNT++;
 				LAST_FROZE_ON = now;
-				var bucket:int = delta/FREEZING_BUCKETS_MILLI;
-				if (FREEZE_COUNT<=10) AS3_GATracker.trackWarning("Flash froze", "Freeze no. "+FREEZE_COUNT+" for "+(bucket*10)+" seconds",delta);
+				if (FREEZE_COUNT<=10) {
+					var bucket:int = Math.min(ANALYTICS_BUCKET_MAX, delta/FREEZING_BUCKETS_MILLI);
+					var countStr:String = FREEZE_COUNT>=ANALYTICS_COUNT_MAX ? ""+ANALYTICS_COUNT_MAX+"+" : ""+FREEZE_COUNT;
+					AS3_GATracker.trackWarning("Flash froze", "Flash Freeze no. "+countStr+" for "+(bucket*10)+" seconds",now);
+				}
 				
 				if (delta > MAX_FREEZE_TIME_MILLI) {
 					// the flash froze!

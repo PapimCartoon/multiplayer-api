@@ -6,6 +6,7 @@
 	<script language="javascript" src="params.js"></script>
 	<script type="text/javascript">
 	var openWindows = new Array();
+	params = new Array();
 	var javaToConnect = '80.179.46.238'
 	
 	var prefix_random_number = 2+ Math.ceil(1000000*Math.random());
@@ -37,7 +38,7 @@
     }
 	function parametersToUrl(param_arr) {
 	    var flash_arr = new Array();
-	    for(var key in param_arr) {
+		for(var key in param_arr) {
 	        var val = param_arr[key];
 	        flash_arr[flash_arr.length] = key + "=" + encodeURIComponent(val);
 	    }
@@ -47,14 +48,6 @@
 	
 	}
 	function openJavaScriptPopup(type, url, windowTarget, windowCreateParams){
-		/*var paramsToSend = new Array();
-		var obj;
-		for(var i=0;i<paramArr.length;i++){
-			obj = paramArr[i];
-			if(obj.fromTable == null)
-				paramsToSend[obj.htmlName] = windowParams[obj.htmlName]
-		}
-		paramsToSend = parametersToUrl(paramsToSend);*/
 		openWindows.push(single_popup=window.open(url+"&type="+type, windowTarget, windowCreateParams))
 	}
 	function getParametersFromURL() {
@@ -102,8 +95,9 @@
 		
 		while(windowParams[tableName+"_"+i]!=null){
 			params[putCustomIn+"_"+tableName+"_"+i] = "<entry><key>"+windowParams[tableName+"_"+i]+"</key><value>"+windowParams[windowParams[tableName+"_"+i]]+"</value></entry>"
-			i++;
+		i++;
 		}
+		
 		if(tableName == "serverTable"){	
 		var javaIp = windowParams["javaToConnect"] != undefined?windowParams["javaToConnect"]:javaToConnect
 		var javaProtocol = windowParams["javaProtocol"] != undefined?windowParams["javaProtocol"]:"polling"
@@ -122,7 +116,14 @@
 			return document[name]
 		}
 	}
-
+	function getParams(){
+		var myArr = new Array();
+		for(var key in params){
+			myArr.push(key);
+			myArr.push(params[key]);
+		}
+		return 	parametersToUrl(params)
+	}
 	</script>	
 </HEAD>
 
@@ -132,7 +133,7 @@
 	<div id="roomDiv" name="roomDiv"></div>
 	<script type="text/javascript">
 		var windowParams = getParametersFromURL();
-		var params=new Array();
+		
 		var loadSwf;
 		//shared information betweeng game and room begins here
 		var obj;
@@ -166,7 +167,7 @@
 		params["analytics_swf_url"]=  "framework/Analytic.swf";
 		
 		
-		isGame = (windowParams["flash_type"] == "room")
+		isRoom = (windowParams["flash_type"] == "room")
 		
 		isSmartAutoMatch = (windowParams["isSmartAutoMatch"] == "true")
 		windowParams["flash_type"] = "game";
@@ -183,7 +184,7 @@
 			
 	
 	
-		if (isGame){
+		if (isRoom){
 		document.title = "Room Tester"
 			if(windowParams["isYoavContainer"] == "true")
 				params["swf_url"]=  "MxmlRoomGraphics.swf";
@@ -194,19 +195,22 @@
 			params["config_url"]=windowParams["roomXML"];
 			params["override_config.game_parameters"] = "DELETE";
 			params["override_config.flash_type"] = "room";	
-		}else if(windowParams["flash_type"] == "game"){
-		var lastGameChar =params["override_config.game_parameters.board_swf_url"].charAt(params["override_config.game_parameters.board_swf_url"].length -1);
-		if((lastGameChar != "?") && (lastGameChar !="&") ){
-			params["override_config.game_parameters.board_swf_url"]+="?";
-		}
-		
-		document.title = "Game Tester"
-		params["override_config.room_parameters"] = "DELETE";
-		addTableParams(params,"gameTable")
-			if(windowParams["isYoavContainer"] == "true")
-				params["swf_url"] = "MxmlGameGraphics.swf";
-			else
+		}else{
+			var lastGameChar =params["override_config.game_parameters.board_swf_url"].charAt(params["override_config.game_parameters.board_swf_url"].length -1);
+			if((lastGameChar != "?") && (lastGameChar !="&") ){
+				params["override_config.game_parameters.board_swf_url"]+="?";
+			}
+			
+			document.title = "Game Tester"
+			params["override_config.room_parameters"] = "DELETE";
+			addTableParams(params,"gameTable")
+				
+			if(windowParams["isYoavContainer"] == "true"){
+					params["swf_url"] = "MxmlGameGraphics.swf";
+			}else{
 				params["is_game"]=  "true";
+			}
+				
 			params["skin_url"]="graphics/GameGraphics.swf";	
 			params["config_url"]=windowParams["gameXML"];			
 			params["override_config.game_parameters.game_room.room_id"] = windowParams["room_id"];	
@@ -218,6 +222,7 @@
 			}		
 			params["override_config.game_parameters.play_type"] = "MultiPlayer";
 			params["override_config.flash_type"] = "game";
+			
 			if(windowParams["type"] == "start_game_from_table_url"){
 				params["override_config.game_parameters.SentInvitation"] = "DELETE"
 				params["override_config.game_parameters.AutoMatch"] = "DELETE"
@@ -226,8 +231,7 @@
 				params["override_config.game_parameters.start_scenario"] = "FromTable";
 				params["override_config.game_parameters.FromTable.table_id"] = windowParams["table_id"];
 				params["override_config.game_parameters.FromTable.player_ids"] = windowParams["player_ids"];		
-			}
-			else if(windowParams["type"] == "start_game_from_invite_url"){
+			}else if(windowParams["type"] == "start_game_from_invite_url"){
 				params["override_config.game_parameters.FromTable"] = "DELETE"
 				params["override_config.game_parameters.AutoMatch"] = "DELETE"
 				params["override_config.game_parameters.start_scenario"] = "SentInvitation";
@@ -235,21 +239,31 @@
 			}else if(windowParams["type"] == "AutoMatch"){
 				params["override_config.game_parameters.SentInvitation"] = "DELETE"
 				params["override_config.game_parameters.FromTable"] = "DELETE"
-				
 				params["intro_screen_url"] = "graphics/IntroScreenSkin.swf"
-				if(isSmartAutoMatch)	params["intro_config_url"] = "XML/introConfig.XML"	
+				if(isSmartAutoMatch){	
+					params["intro_config_url"] = "XML/introConfig.XML"	
+				}
 				params["override_config.game_parameters.start_scenario"] = "AutoMatch";
 				params["override_config.game_parameters.AutoMatch.match_string"] = windowParams["match_string"];
-			}
-			
+			}	
+				
 			
 		}
 		//params["REFLECTION_come2play_as3::StaticGUI.COUNTING_URL"] = "''";
-		if(windowParams["isYoavContainer"] == "true"){
-			loadSWF(params["swf_url"],parametersToUrl(params),windowParams["swfWidth"],windowParams["swfHeight"])
-		}else{
-			loadSWF(loadSwf,parametersToUrl(params),windowParams["swfWidth"],windowParams["swfHeight"])
-		}
+		
+		/*
+		Explorer can't have more than 35 params
+		*/
+		var onlyParam = {}
+		onlyParam["IGNORE_GET_PARAMS_JS"] = "getParams"
+		onlyParam["preloader_url"] = params["preloader_url"]
+		onlyParam["swf_url"] = params["swf_url"]
+		
+		
+		loadSwf = (windowParams["isYoavContainer"] == "true")?params["swf_url"]:loadSwf;
+		loadSWF(loadSwf,parametersToUrl(onlyParam),windowParams["swfWidth"],windowParams["swfHeight"])
+		
+
 	</script>
 </BODY>
 </HTML>

@@ -6,9 +6,8 @@
 	<script language="javascript" src="params.js"></script>
 	<script type="text/javascript">
 	var openWindows = new Array();
-	//var javaToConnect ='localhost:2000:socket,localhost:2000:old_xmlsocket,localhost:8083:rtmpt'
-	var javaToConnect = '80.179.46.238:8080:socket,80.179.46.238:8080:old_xmlsocket,80.179.46.238:80:rtmpt'
-
+	var javaToConnect = '80.179.46.238'
+	
 	var prefix_random_number = 2+ Math.ceil(1000000*Math.random());
 	function gotMatchStatus(state){
 	//alert("game is"+state)
@@ -106,7 +105,11 @@
 			i++;
 		}
 		if(tableName == "serverTable"){	
-			var valueToPut = windowParams["javaToConnect"] != undefined?windowParams["javaToConnect"]:javaToConnect
+		var javaIp = windowParams["javaToConnect"] != undefined?windowParams["javaToConnect"]:javaToConnect
+		var javaProtocol = windowParams["javaProtocol"] != undefined?windowParams["javaProtocol"]:"polling"
+		var javaPort = javaIp=="localhost" ? (javaProtocol=="polling" ? "5555" : "2000") : (javaProtocol=="polling" ? "80" : "8080");
+		var valueToPut = javaIp + ":"+ javaPort + ":" + javaProtocol;
+
 			params[putCustomIn+"_"+tableName+"_"+i] = "<entry><key>override all_java_ips</key><value>'"+valueToPut+"'</value></entry>";
 		}
 	}

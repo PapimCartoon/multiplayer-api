@@ -30,7 +30,7 @@ package come2play_as3.api {
 		
 		public function BaseGameAPI(_someMovieClip:DisplayObjectContainer) {
 			super(_someMovieClip, false, getPrefixFromFlashVars(_someMovieClip),true);	
-			ALL_LOG.log(this);
+			ALL_LOG.hugeLog(this);
 			ErrorHandler.SEND_BUG_REPORT = AS3_vs_AS2.delegate(this, this.sendBugReport);
 			if (GAME_USE_KEYBOARD) 
 				AS3_vs_AS2.addKeyboardListener(_someMovieClip, AS3_vs_AS2.delegate(this,this.keyPressed));

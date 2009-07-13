@@ -116,12 +116,31 @@
 			return document[name]
 		}
 	}
+	function newExcitingAlerts() {
+    var oldTitle = document.title;
+    var msg = "New!";
+    var timeoutId = setInterval(function() {
+        document.title = document.title == msg ? ' ' : msg;
+    }, 1000);
+    window.onmousemove = function() {
+        clearInterval(timeoutId);
+        document.title = oldTitle;
+        window.onmousemove = null;
+    };
+}
+
+	
+	
+	
+	
 	function getParams(){
 		var myArr = new Array();
 		for(var key in params){
 			myArr.push(key);
 			myArr.push(params[key]);
 		}
+		
+		newExcitingAlerts()
 		return 	parametersToUrl(params)
 	}
 	</script>	
@@ -164,7 +183,6 @@
 		params["chat_skin_url"]="graphics/chatGraphics.swf";
 		params["preloader_url"]="graphics/Preloader.swf";
 		params["swf_url"]=  "framework/FlashCode.swf";
-		params["analytics_swf_url"]=  "framework/Analytic.swf";
 		
 		
 		isRoom = (windowParams["flash_type"] == "room")
@@ -255,6 +273,7 @@
 		Explorer can't have more than 35 params
 		*/
 		var onlyParam = {}
+		onlyParam["IGNORE_skip_distrabution"] = params["IGNORE_skip_distrabution"]
 		onlyParam["IGNORE_GET_PARAMS_JS"] = "getParams"
 		onlyParam["preloader_url"] = params["preloader_url"]
 		onlyParam["swf_url"] = params["swf_url"]

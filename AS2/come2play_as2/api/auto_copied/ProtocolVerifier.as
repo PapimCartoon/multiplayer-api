@@ -116,7 +116,8 @@ import come2play_as2.api.auto_copied.*;
         	if (doMsg instanceof API_DoStoreState) {
         		// The game might send DoStoreState for a player, but the verifier already send GotMatchEnded for that player
         		// check(isPlayer(), ["Only a player can send DoStoreState"]);
-        		StaticFunctions.assert(isGameRuning,"doStoreState can't be called before gotMatchStarted has finished,or after gotMatchEnded has finished","failed msg=",doMsg);
+        		if(T.custom("strictMode",true) as Boolean)
+        			StaticFunctions.assert(isGameRuning,"doStoreState can't be called before gotMatchStarted has finished,or after gotMatchEnded has finished","failed msg=",doMsg);
 
         		var doStoreStateMessage:API_DoStoreState = API_DoStoreState(doMsg);
         		isNullKeyExistUserEntry(doStoreStateMessage.userEntries);
@@ -133,7 +134,7 @@ import come2play_as2.api.auto_copied.*;
 				var isRequestStateCalculation:Boolean = currentCallback instanceof API_GotRequestStateCalculation;
 				if(currentCallback instanceof API_GotMatchStarted) isGameRuning = true;
 				if(currentCallback instanceof API_GotMatchEnded) isGameRuning = false;
-				var p139:Number=0; for (var i139:String in transaction.messages) { var doAllMsg:API_Message = transaction.messages[transaction.messages.length==null ? i139 : p139]; p139++;
+				var p140:Number=0; for (var i140:String in transaction.messages) { var doAllMsg:API_Message = transaction.messages[transaction.messages.length==null ? i140 : p140]; p140++;
 					checkDoAll(doAllMsg);
 					if (isRequestStateCalculation) {
 						if (doAllMsg instanceof API_DoAllStoreStateCalculation)	
@@ -164,7 +165,7 @@ import come2play_as2.api.auto_copied.*;
 		}
 		private function isDeleteLegal(userEntries:Array/*UserEntry*/):Void
 		{
-			var p170:Number=0; for (var i170:String in userEntries) { var userEntry:UserEntry = userEntries[userEntries.length==null ? i170 : p170]; p170++;
+			var p171:Number=0; for (var i171:String in userEntries) { var userEntry:UserEntry = userEntries[userEntries.length==null ? i171 : p171]; p171++;
 				if (userEntry.value == null)
 					check(!userEntry.isSecret,["key deletion must be public! userEntry=",userEntry]);
 			}
@@ -231,21 +232,21 @@ import come2play_as2.api.auto_copied.*;
         private function isNullKeyExistUserEntry(userEntries:Array/*UserEntry*/):Void
         {
         	check(userEntries.length!=0, ["userEntries must have at least one UserEntry!"]);
-        	var p237:Number=0; for (var i237:String in userEntries) { var userEntry:UserEntry = userEntries[userEntries.length==null ? i237 : p237]; p237++;
+        	var p238:Number=0; for (var i238:String in userEntries) { var userEntry:UserEntry = userEntries[userEntries.length==null ? i238 : p238]; p238++;
         		check(userEntry.key != null,["UserEntry.key cannot be null ! userEntry=",userEntry]);
         	}
         }
         private function isNullKeyExistRevealEntry(revealEntries:Array/*RevealEntry*/):Void
         {
         	//check(revealEntries.length>=1, ["revealEntries must have at least one RevealEntry!"]);
-        	var p244:Number=0; for (var i244:String in revealEntries) { var revealEntry:RevealEntry = revealEntries[revealEntries.length==null ? i244 : p244]; p244++;
+        	var p245:Number=0; for (var i245:String in revealEntries) { var revealEntry:RevealEntry = revealEntries[revealEntries.length==null ? i245 : p245]; p245++;
         		check(revealEntry != null && revealEntry.key != null && (revealEntry.userIds==null || currentPlayers.isAllInPlayers(revealEntry.userIds)), ["RevealEntry.key cannot be null, userIds must either be null or contain only players. revealEntry=",revealEntry]); 
         	}
         }
         private function isNullKeyExist(keys:Array/*Object*/):Void
         {
         	check(keys.length!=0,["keys must have at leasy one key!"]);        		
-        	var p251:Number=0; for (var i251:String in keys) { var key:String = keys[keys.length==null ? i251 : p251]; p251++;
+        	var p252:Number=0; for (var i252:String in keys) { var key:String = keys[keys.length==null ? i252 : p252]; p252++;
         		check(key != null,["key cannot be null ! keys=",keys]);
         	}
         }

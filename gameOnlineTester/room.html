@@ -116,18 +116,28 @@
 			return document[name]
 		}
 	}
-	function newExcitingAlerts() {
-    var oldTitle = document.title;
-    var msg = "New!";
-    var timeoutId = setInterval(function() {
-        document.title = document.title == msg ? ' ' : msg;
-    }, 1000);
-    window.onmousemove = function() {
+	
+	var oldTitle = document.title;
+	var timeoutId = 0
+	function clearFocous(){
+		isInFocous = false
         clearInterval(timeoutId);
         document.title = oldTitle;
         window.onmousemove = null;
-    };
-}
+	}
+	function addFocous(){
+		isInFocous = true
+	}
+	document.onfocusout = clearFocous;
+	document.onfocusin = addFocous;
+	function flashAlert(message) {
+		if(isInFocous)	return  
+	    var msg = message;
+	    timeoutId = setInterval(function() {
+	        document.title = document.title == msg ? ' ' : msg;
+	    }, 1000);
+	    window.onmousemove = clearFocous
+	}
 
 	
 	
@@ -140,7 +150,7 @@
 			myArr.push(params[key]);
 		}
 		
-		newExcitingAlerts()
+		//flashAlert("loading")
 		return 	parametersToUrl(params)
 	}
 	</script>	

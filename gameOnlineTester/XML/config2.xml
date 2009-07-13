@@ -143,7 +143,7 @@ Not used by the graphics yet (but should be displayed):
 	<custom>
 
 	<entry><key>blockChars</key><value>[1488,1489,1490,1491,1492,1493,1494,1495,1496,1497,1498,1499,1500,1501,1502,1503,1504,1505,1506,1507,1508,1509,1510,1511,1512,1513,1514]</value></entry>
-	<entry><key>is_rtl</key><value>false</value></entry>
+	<entry><key>is_rtl</key><value>true</value></entry>
 	<entry><key>user_buddy_url</key><value>"http://www.google.com/nada"</value></entry>
 
 	<entry><key>isWithSinglePlayer</key><value>false</value></entry>	
@@ -154,6 +154,9 @@ Not used by the graphics yet (but should be displayed):
 	<entry><key>gameLogoUrl</key><value>"images/AnimatedLogo.swf"</value></entry>	
 	<entry><key>isGameScalable</key><value>false</value></entry>	
 	<entry><key>translated_game_name</key><value>"Game name"</value></entry>	
+	
+	<entry><key>chatGuestLink</key><value>"http://www.google.com"</value></entry>
+	
 	
 	
 		<entry><key>CanViewGame</key><value>true</value></entry>	

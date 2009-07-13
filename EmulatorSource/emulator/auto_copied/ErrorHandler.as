@@ -227,10 +227,12 @@ public final class ErrorHandler
 	}
 	public static var DO_AFTER_CATCH:Function = null;
 	public static var ZONE_LOGGER_SIZE:int = 6;
-	private static var ZONE_LOGGERS:Object/*String->Logger*/ = {};
+	public static var ANALYTICS_COUNT_MAX:int = 3;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	public static var ANALYTICS_BUCKET_MAX:int = 6;
+	private static var ZONE_LOGGERS:Object/*String->Logger*/ = {};
 	public static function catchErrors(zoneName:String, func:Function, args:Array):Object {
 		var res:Object = null;		
 		
@@ -239,11 +241,11 @@ public final class ErrorHandler
 		var indentLevel:int = my_stack_trace.length;
 		var logger:Logger = ZONE_LOGGERS[zoneName];
 		if (logger==null) {
-			logger = new Logger("CATCH-"+zoneName,ZONE_LOGGER_SIZE);
-			ZONE_LOGGERS[zoneName] = logger;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			logger = new Logger("CATCH-"+zoneName,ZONE_LOGGER_SIZE);
+			ZONE_LOGGERS[zoneName] = logger;
 		}
 		logger.log("ENTERED");
 		LoggerLine.LINE_INDENT = indentLevel;
@@ -252,63 +254,66 @@ public final class ErrorHandler
 			var now:int = getTimer();
 			var lastCatch:int = LAST_CATCH_ERRORS_ON;
 			LAST_CATCH_ERRORS_ON = now; // I assign before alwaysTraceAndSendReport to prevent recursive calls.
-			var delta:int = now - lastCatch;
-			if (delta > FREEZING_BUCKETS_MILLI) {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			var delta:int = now - lastCatch;
+			if (delta > FREEZING_BUCKETS_MILLI) {
 				// gather freezing statistics
 				FREEZE_COUNT++;
 				LAST_FROZE_ON = now;
-				var bucket:int = delta/FREEZING_BUCKETS_MILLI;
-				if (FREEZE_COUNT<=10) AS3_GATracker.trackWarning("Flash froze", "Freeze no. "+FREEZE_COUNT+" for "+(bucket*10)+" seconds",delta);
+				if (FREEZE_COUNT<=10) {
+					var bucket:int = Math.min(ANALYTICS_BUCKET_MAX, delta/FREEZING_BUCKETS_MILLI);
+					var countStr:String = FREEZE_COUNT>=ANALYTICS_COUNT_MAX ? ""+ANALYTICS_COUNT_MAX+"+" : ""+FREEZE_COUNT;
+					AS3_GATracker.trackWarning("Flash froze", "Flash Freeze no. "+countStr+" for "+(bucket*10)+" seconds",now);
+				}
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 				
 				if (delta > MAX_FREEZE_TIME_MILLI) {
 					// the flash froze!
 					alwaysTraceAndSendReport("The flash froze!", ["LAST_CATCH_ERRORS_ON=",lastCatch," now=",now]);
 				}
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 			}
 		}
 		
 		var wasError:Boolean = false;			
 		try {		
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			res = func.apply(null, args); 
 		} catch (err:Error) { handleError(err, args); }
 		// some actions need to be done after all other actions complete (e.g., sending messages to java)
 		try {
 			if (DO_AFTER_CATCH!=null && indentLevel==1) {
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 				DO_AFTER_CATCH();				
 			} 	
 		} catch (err:Error) { handleError(err, args); }
 		LoggerLine.LINE_INDENT = indentLevel-1;
 		logger.log("EXITED");
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			
 		var poped:Object = my_stack_trace.pop(); 
 			// I tried to do the pop inside a "finally" clause (to handle correctly cases with exceptions), 
 			//but I got "undefined" errors:
 			//		undefined
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 			//			at come2play_as3.util::General$/stackTrace()
 			//			at come2play_as3.util::General$/catchErrors() 
 		if (!didReportError && toInsert!=poped) 
 			alwaysTraceAndSendReport("BAD stack behaviour (multithreaded flash?)", ["my_stack_trace=",my_stack_trace, "toInsert=",toInsert, "poped=",poped]);
 			
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		
 		return res;				
 	}
 	public static function handleError(err:Error, obj:Object):void {
 		alwaysTraceAndSendReport("handleError: "+AS3_vs_AS2.error2String(err),[" catching-arguments=",obj]);
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 	}		
 }
 }

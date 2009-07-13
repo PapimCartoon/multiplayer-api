@@ -329,6 +329,11 @@ Not used by the graphics yet (but should be displayed):
 			all i18n strings
 			-->
 	<i18n>		
+	<entry>
+		<key>(1/3)Waiting For Opponent Action</key>	<value>"(1/3) ממתין לפעולת היריב"</value>
+	</entry>
+	
+	
 			<entry><key>Ra</key><value>"sad"</value></entry>
 	</i18n>
 	<reflection>

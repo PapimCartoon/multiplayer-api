@@ -5,7 +5,7 @@
 		<bigGameThumb></bigGameThumb><!--The URL the game will load as the background for the intro screen-->
 		<smallGameThumb></smallGameThumb><!--The URL the game will load as a side image-->
 		<introLogoLink>http://www.google.com</introLogoLink><!--The URL of the logo will direct to-->
-		<gameInstructions>../GameHelp Structure/InstractuionsContainer.swf?loadHelp=../GameHelp Structure/HowToPlay.swf</gameInstructions>
+		<gameInstructions>http://static.amr/shared/swf/components/FlexBoards/MineSweeperAS3_board/HowToPlay_1.swf</gameInstructions>
 	</graphics>
 	<league_stage_id>1</league_stage_id>
 	<user_info>

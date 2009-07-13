@@ -169,6 +169,9 @@ public final class AS3_Loader
 	}
 	public static var imageFailedFunc:Function
 	public static function loadImage(imageUrl:String,successHandler:Function = null,failureHandler:Function = null,progressHandler:Function = null,context:LoaderContext = null,justCach:Boolean = false):void {
+		if(imageUrl.indexOf("preventCache") == -1){
+			StaticFunctions.assert((imageUrl.indexOf("?") == -1),"can't pass parameters to a loaded image");
+		}	
 		StaticFunctions.assert(imageUrl!="" && imageUrl!=null,"can't load a blank image");
 		imageUrl = getURL(imageUrl);
 		if (failureHandler==null) {

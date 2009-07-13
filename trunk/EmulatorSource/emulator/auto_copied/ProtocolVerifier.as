@@ -167,7 +167,8 @@ package emulator.auto_copied
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
         		// check(isPlayer(), ["Only a player can send DoStoreState"]);
-        		StaticFunctions.assert(isGameRuning,"doStoreState can't be called before gotMatchStarted has finished,or after gotMatchEnded has finished","failed msg=",doMsg);
+        		if(T.custom("strictMode",true) as Boolean)
+        			StaticFunctions.assert(isGameRuning,"doStoreState can't be called before gotMatchStarted has finished,or after gotMatchEnded has finished","failed msg=",doMsg);
 
         		var doStoreStateMessage:API_DoStoreState = /*as*/doMsg as API_DoStoreState;
         		isNullKeyExistUserEntry(doStoreStateMessage.userEntries);
@@ -175,10 +176,10 @@ package emulator.auto_copied
         		isDeleteLegal(doStoreStateMessage.userEntries)
 			} else if (doMsg is API_Transaction) {
 				var transaction:API_Transaction = /*as*/doMsg as API_Transaction;
-				check(currentCallback!=null && StaticFunctions.getMethodName(currentCallback)==transaction.callback.callbackName, ["Illegal callbackName!"]);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+				check(currentCallback!=null && StaticFunctions.getMethodName(currentCallback)==transaction.callback.callbackName, ["Illegal callbackName!"]);
 				// The game may perform doAllFoundHacker (in a transaction) even after the game is over,
 				// because: The container may pass gotStateChanged after the game sends doAllEndMatch,
 				//			because the game should verify every doStoreState (to prevent hackers from polluting the state after they know the game will be over).
@@ -188,10 +189,10 @@ package emulator.auto_copied
 				if(currentCallback is API_GotMatchStarted) isGameRuning = true;
 				if(currentCallback is API_GotMatchEnded) isGameRuning = false;
 				for each (var doAllMsg:API_Message in transaction.messages) {
-					checkDoAll(doAllMsg);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+					checkDoAll(doAllMsg);
 					if (isRequestStateCalculation) {
 						if (doAllMsg is API_DoAllStoreStateCalculation)	
 							wasStoreStateCalculation = true;
@@ -201,10 +202,10 @@ package emulator.auto_copied
 				}
 				
 				if (transaction.messages.length>0)
-					check(isRequestStateCalculation ||
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+					check(isRequestStateCalculation ||
 						  currentCallback is API_GotMatchStarted || 
 						  currentCallback is API_GotMatchEnded ||
 						  currentCallback is API_GotStateChanged, ["You can change the state with a doAll message only in a transaction that corresponds to GotMatchStarted, GotMatchEnded or GotStateChanged. doAllMsg=",doAllMsg," currentCallback=",currentCallback]);
@@ -214,10 +215,10 @@ package emulator.auto_copied
 				
 				currentCallback = null;
 				
-				if (transactionRunningTime()>WARN_ANIMATION_MILLISECONDS) // for us to know it can happen (so we should increase our bound)
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+				if (transactionRunningTime()>WARN_ANIMATION_MILLISECONDS) // for us to know it can happen (so we should increase our bound)
 					ErrorHandler.alwaysTraceAndSendReport("A transaction finished after WARN_ANIMATION_MILLISECONDS",transactionStartedOn);
         		transactionStartedOn.clearTime();
 			} else {
@@ -227,10 +228,10 @@ package emulator.auto_copied
 		}
 		private function isDeleteLegal(userEntries:Array/*UserEntry*/):void
 		{
-			for each(var userEntry:UserEntry in userEntries) {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			for each(var userEntry:UserEntry in userEntries) {
 				if (userEntry.value == null)
 					check(!userEntry.isSecret,["key deletion must be public! userEntry=",userEntry]);
 			}
@@ -240,10 +241,10 @@ package emulator.auto_copied
         	if (msg is API_DoAllFoundHacker) {        		
 			}
 			else if (msg is API_DoAllStoreStateCalculation) 
-			{
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			{
 				var doAllStoreStateCalculations:API_DoAllStoreStateCalculation = /*as*/msg as API_DoAllStoreStateCalculation;
         		isNullKeyExistUserEntry(doAllStoreStateCalculations.userEntries);
 				isDeleteLegal(doAllStoreStateCalculations.userEntries)
@@ -253,10 +254,10 @@ package emulator.auto_copied
 				var doAllStoreStateMessage:API_DoAllStoreState = /*as*/msg as API_DoAllStoreState;
         		isNullKeyExistUserEntry(doAllStoreStateMessage.userEntries);
 				isDeleteLegal(doAllStoreStateMessage.userEntries)
-			}   
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			}   
 			else if (msg is API_DoAllEndMatch)
 			{
 				var doAllEndMatchMessage:API_DoAllEndMatch = /*as*/msg as API_DoAllEndMatch;
@@ -266,10 +267,10 @@ package emulator.auto_copied
 				// because the game should verify every doStoreState (to prevent hackers from polluting the state after they know the game will be over). 
 			} 
 			else if (msg is API_DoAllRevealState) 
-			{
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			{
 				var doAllRevealState:API_DoAllRevealState = /*as*/msg as API_DoAllRevealState;
         		isNullKeyExistRevealEntry(doAllRevealState.revealEntries);
 			} 
@@ -279,10 +280,10 @@ package emulator.auto_copied
         		isNullKeyExist(doAllRequestStateCalculation.keys);
 			}
 			else if	(msg is API_DoAllRequestRandomState)
-			{
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			{
 				var doAllRequestRandomState:API_DoAllRequestRandomState = /*as*/msg as API_DoAllRequestRandomState;	
 				check(doAllRequestRandomState.key != null,["You have to call doAllRequestRandomState with a non null key !"]);
 			}	
@@ -292,10 +293,10 @@ package emulator.auto_copied
         		check(currentPlayers.isInPlayers(doAllSetTurn.userId), ["You have to call doAllSetTurn with a playerId!"]);
 			}
 			else if (msg is API_DoAllSetMove) 
-			{				
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			{				
 				// nothing to check
 			}
 			else if (msg is API_DoAllShuffleState) 
@@ -305,10 +306,10 @@ package emulator.auto_copied
 			}
 			else
 			{
-				check(false, ["Unknown doAll message=",msg]);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+				check(false, ["Unknown doAll message=",msg]);
 			}
         }
 		
@@ -318,10 +319,10 @@ package emulator.auto_copied
         	for each (var userEntry:UserEntry in userEntries) {
         		check(userEntry.key != null,["UserEntry.key cannot be null ! userEntry=",userEntry]);
         	}
-        }
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+        }
         private function isNullKeyExistRevealEntry(revealEntries:Array/*RevealEntry*/):void
         {
         	//check(revealEntries.length>=1, ["revealEntries must have at least one RevealEntry!"]);
@@ -331,10 +332,10 @@ package emulator.auto_copied
         }
         private function isNullKeyExist(keys:Array/*Object*/):void
         {
-        	check(keys.length!=0,["keys must have at leasy one key!"]);        		
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+        	check(keys.length!=0,["keys must have at leasy one key!"]);        		
         	for each (var key:String in keys) {
         		check(key != null,["key cannot be null ! keys=",keys]);
         	}

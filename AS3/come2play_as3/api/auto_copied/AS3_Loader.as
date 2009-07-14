@@ -118,21 +118,22 @@ public final class AS3_Loader
 			vars[k] = msg[k];
 		return vars;			
 	}
+	static public var utfLogger:Logger = new Logger("bytesLoaded",5);
 	public static function sendToURL(vars:Object, method:String, url:String, successHandler:Function = null,failureHandler:Function = null, progressHandler:Function = null):void {
 		tmpTrace("sendToURL=",url);
 		var request:URLRequest = new URLRequest(url);
 		request.data = object2URLVariables(vars);
 		request.method = method;
-		loadText(request, function (ev:Event):void {
+		var sendSuccessHandler:Function = function (ev:Event):void {
 			var byteArr:ByteArray = ev.target.data;
 			StaticFunctions.assert(byteArr!=null && byteArr.length>0,"Illegal result on success",ev);
-			ev.target.data = byteArr.readUTFBytes(byteArr.length);
+			var res:String =  byteArr.readUTFBytes(byteArr.length);
+			utfLogger.log(res)
+			ev.target.data =res
 			successHandler( ev );
-		}, failureHandler,progressHandler)
-	}        
-	private static function loadText(urlRequest:URLRequest,successHandler:Function = null,failureHandler:Function = null,progressHandler:Function = null):void {
-		urlRequest.url = getURL(urlRequest.url)
-		loadURL(urlRequest,successHandler,failureHandler,progressHandler)
+		};
+		request.url = getURL(request.url)
+		loadURL(request,sendSuccessHandler,failureHandler,progressHandler)
 	}
  
  	// are we using Loader or URLLoader?
@@ -169,9 +170,11 @@ public final class AS3_Loader
 	}
 	public static var imageFailedFunc:Function
 	public static function loadImage(imageUrl:String,successHandler:Function = null,failureHandler:Function = null,progressHandler:Function = null,context:LoaderContext = null,justCach:Boolean = false):void {
-		if(imageUrl.indexOf("preventCache") == -1){
-			StaticFunctions.assert((imageUrl.indexOf("?") == -1),"can't pass parameters to a loaded image");
-		}	
+		if(T.custom("strictMode",true) as Boolean){
+			if(imageUrl.indexOf("preventCache") == -1){
+				StaticFunctions.assert((imageUrl.indexOf("?") == -1),"can't pass parameters to a loaded image",imageUrl);
+			}	
+		}
 		StaticFunctions.assert(imageUrl!="" && imageUrl!=null,"can't load a blank image");
 		imageUrl = getURL(imageUrl);
 		if (failureHandler==null) {

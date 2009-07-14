@@ -143,7 +143,7 @@ class come2play_as2.api.auto_copied.ErrorHandler
 	 * Therefore, we decided to immediately report this error, when we see that the flash "froze",
 	 * and it's easiest to detect it in the entry point of all our functions: 
 	 * 	in catchErrors
-	 * We make sure that logMemoryInterval ticks every 1/2 * MAX_FREEZE_TIME_MILLI
+	 * We make sure that logMemoryInterval ticks every 10 seconds, and MAX_FREEZE_TIME_MILLI is more than twice that number.
 	 */
 	public static function startLogMemoryInterval():Void {
 		myInterval("logMemoryInterval",AS3_vs_AS2.logMemory,MEM_INTERVAL_MILLI/2);
@@ -154,7 +154,10 @@ class come2play_as2.api.auto_copied.ErrorHandler
 	public static var FREEZING_BUCKETS_MILLI:Number = 10*1000;
 	private static var FREEZE_COUNT:Number = 0;
 	public static var LAST_FROZE_ON:Number = 0; 
+	// see also ServerConnection.MAX_FREEZE_MILLI_AFTER_JAVA_CONNECT
 	public static var MAX_FREEZE_TIME_MILLI:Number = 70*1000; // 70 seconds of freezing might even be too much!
+	public static var IGNORE_FREEZE_LONGER_THAN:Number = 5*60*1000; // more than 5 minutes freeze is probably because the computer went into sleep mode.
+	
 	public static var LAST_CATCH_ERRORS_ON:Number = -1; 
 	
 	private static var my_stack_trace:Array = [];
@@ -200,7 +203,13 @@ class come2play_as2.api.auto_copied.ErrorHandler
 				
 				if (delta > MAX_FREEZE_TIME_MILLI) {
 					// the flash froze!
-					alwaysTraceAndSendReport("The flash froze!", ["LAST_CATCH_ERRORS_ON=",lastCatch," now=",now]);
+					if (delta<IGNORE_FREEZE_LONGER_THAN) {
+						// regular freeze
+						alwaysTraceAndSendReport("The flash froze!", ["LAST_CATCH_ERRORS_ON=",lastCatch," now=",now]);
+					} else {
+						// the computer probably went into sleep mode
+						didReportError = true; 	
+					}
 				}
 			}
 		}

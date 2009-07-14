@@ -117,6 +117,7 @@
 		}
 	}
 	
+	var isInFocous
 	var oldTitle = document.title;
 	var timeoutId = 0
 	function clearFocous(){
@@ -131,7 +132,8 @@
 	document.onfocusout = clearFocous;
 	document.onfocusin = addFocous;
 	function flashAlert(message) {
-		if(isInFocous)	return  
+		//window.focus();
+		if(isInFocous)	return  	
 	    var msg = message;
 	    timeoutId = setInterval(function() {
 	        document.title = document.title == msg ? ' ' : msg;

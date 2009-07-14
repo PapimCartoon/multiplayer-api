@@ -17,7 +17,7 @@ package emulator.auto_copied
 	public final class AS3_GATracker
 	{				
 		//For each visit (user session), a maximum of approximately 500 combined GATC requests (both events and page views) can be tracked.
-		public static var MAX_EVENTS:int = 100;
+		public static var MAX_EVENTS:int = 200;
 		public static var MAX_LABEL_LEN:int = 500; // the max label we saw on google was 750, but if you send other parameters (like flash parameters), the limit is even lower.
 		/**
 

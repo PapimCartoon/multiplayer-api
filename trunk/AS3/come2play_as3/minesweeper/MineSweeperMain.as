@@ -27,7 +27,7 @@ import flash.utils.*;
 		private var myUserId:int; //my user id
 		private var allPlayerIds:Array; //playing user ids
 		private var isPlaying:Boolean;
-		private var allowMoves:Boolean;
+		public var allowMoves:Boolean;
 		private var computerMoveTimer:AS3_Timer;
 	/** 
 	 * Written by: Ofir Vainshtein (ofir@come2play.com)
@@ -74,12 +74,9 @@ import flash.utils.*;
 		}
 		public function makePlayerMove(playerMove:PlayerMove):void
 		{
-			if((T.custom(CUSTOM_INFO_KEY_isPause,false) as Boolean))	return;
 			var key:Object ={xPos:playerMove.xPos,yPos:playerMove.yPos,playerId:playerMove.playerId}
 			var serverKey:Object = {xPos:playerMove.xPos,yPos:playerMove.yPos}
-			if(allowMoves){
-				doStoreState([UserEntry.create(key,playerMove,false)],[RevealEntry.create(serverKey,null,1)]);
-			}
+			doStoreState([UserEntry.create(key,playerMove,false)],[RevealEntry.create(serverKey,null,1)]);
 		}
 		
 		override public function gotCustomInfo(infoEntries:Array):void

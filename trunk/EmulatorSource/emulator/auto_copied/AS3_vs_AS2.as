@@ -656,7 +656,7 @@ public final class AS3_vs_AS2
 		try {
 			return new URLVariables(StaticFunctions.trim(str));
 		} catch (e:Error) {
-			throw new Error("Error in createURLVariables in str="+str);
+			throw new Error("Error in createURLVariables! err="+error2String(e)+" in str="+str);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 

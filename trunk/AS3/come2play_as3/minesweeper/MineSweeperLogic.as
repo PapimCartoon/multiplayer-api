@@ -1,6 +1,8 @@
 package come2play_as3.minesweeper
 {
 	import come2play_as3.api.auto_copied.AS3_vs_AS2;
+	import come2play_as3.api.auto_copied.T;
+	import come2play_as3.api.auto_generated.API_Message;
 	import come2play_as3.api.auto_generated.PlayerMatchOver;
 	import come2play_as3.api.auto_generated.ServerEntry;
 	
@@ -136,7 +138,9 @@ package come2play_as3.minesweeper
 
 		}
 		private function selectMine(ev:MouseEvent):void
-		{
+		{		
+			if((T.custom(API_Message.CUSTOM_INFO_KEY_isPause,false) as Boolean))	return;
+			if(!mineSweeperMainPointer.allowMoves)	return;
 			var clickPoint:Point = mineSweeperGraphic.globalToLocal(new Point(ev.stageX,ev.stageY));
 			var xPos:int = Math.floor((clickPoint.x - 9.5)/(MineSweeperMain.squareSize));
 			var yPos:int = Math.floor((clickPoint.y-7)/(MineSweeperMain.squareSize));

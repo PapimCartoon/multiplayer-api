@@ -198,7 +198,7 @@ public final class ErrorHandler
 	 * Therefore, we decided to immediately report this error, when we see that the flash "froze",
 	 * and it's easiest to detect it in the entry point of all our functions: 
 	 * 	in catchErrors
-	 * We make sure that logMemoryInterval ticks every 1/2 * MAX_FREEZE_TIME_MILLI
+	 * We make sure that logMemoryInterval ticks every 10 seconds, and MAX_FREEZE_TIME_MILLI is more than twice that number.
 	 */
 	public static function startLogMemoryInterval():void {
 		myInterval("logMemoryInterval",AS3_vs_AS2.logMemory,MEM_INTERVAL_MILLI/2);
@@ -212,12 +212,15 @@ public final class ErrorHandler
 	public static var FREEZING_BUCKETS_MILLI:int = 10*1000;
 	private static var FREEZE_COUNT:int = 0;
 	public static var LAST_FROZE_ON:int = 0; 
+	// see also ServerConnection.MAX_FREEZE_MILLI_AFTER_JAVA_CONNECT
 	public static var MAX_FREEZE_TIME_MILLI:int = 70*1000; // 70 seconds of freezing might even be too much!
-	public static var LAST_CATCH_ERRORS_ON:int = -1; 
-	
+	public static var IGNORE_FREEZE_LONGER_THAN:int = 5*60*1000; // more than 5 minutes freeze is probably because the computer went into sleep mode.
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	
+	public static var LAST_CATCH_ERRORS_ON:int = -1; 
+	
 	private static var my_stack_trace:Array = [];
 	public static function wrapWithCatch(zoneName:String, func:Function):Function {
 		var longerName:String = zoneName; //Extra stack traces are not needed because we use zoneName for all events:  +(my_stack_trace.length==0 ? "" : " with first stacktrace: {\n"+my_stack_trace[0]+"\n}");
@@ -225,12 +228,12 @@ public final class ErrorHandler
 			catchErrors(longerName,func,args);
 		};
 	}
-	public static var DO_AFTER_CATCH:Function = null;
-	public static var ZONE_LOGGER_SIZE:int = 6;
-	public static var ANALYTICS_COUNT_MAX:int = 3;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	public static var DO_AFTER_CATCH:Function = null;
+	public static var ZONE_LOGGER_SIZE:int = 6;
+	public static var ANALYTICS_COUNT_MAX:int = 3;
 	public static var ANALYTICS_BUCKET_MAX:int = 6;
 	private static var ZONE_LOGGERS:Object/*String->Logger*/ = {};
 	public static function catchErrors(zoneName:String, func:Function, args:Array):Object {
@@ -238,12 +241,12 @@ public final class ErrorHandler
 		
 		var toInsert:Object = [zoneName,"t:",getTimer(),"args=",args]; // I couldn't find a way to get the function name (describeType(func) only returns that the method is a closure)
 		my_stack_trace.push(toInsert);
-		var indentLevel:int = my_stack_trace.length;
-		var logger:Logger = ZONE_LOGGERS[zoneName];
-		if (logger==null) {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		var indentLevel:int = my_stack_trace.length;
+		var logger:Logger = ZONE_LOGGERS[zoneName];
+		if (logger==null) {
 			logger = new Logger("CATCH-"+zoneName,ZONE_LOGGER_SIZE);
 			ZONE_LOGGERS[zoneName] = logger;
 		}
@@ -251,12 +254,12 @@ public final class ErrorHandler
 		LoggerLine.LINE_INDENT = indentLevel;
 		
 		if (LAST_CATCH_ERRORS_ON>=0) {
-			var now:int = getTimer();
-			var lastCatch:int = LAST_CATCH_ERRORS_ON;
-			LAST_CATCH_ERRORS_ON = now; // I assign before alwaysTraceAndSendReport to prevent recursive calls.
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			var now:int = getTimer();
+			var lastCatch:int = LAST_CATCH_ERRORS_ON;
+			LAST_CATCH_ERRORS_ON = now; // I assign before alwaysTraceAndSendReport to prevent recursive calls.
 			var delta:int = now - lastCatch;
 			if (delta > FREEZING_BUCKETS_MILLI) {
 				// gather freezing statistics
@@ -264,26 +267,35 @@ public final class ErrorHandler
 				LAST_FROZE_ON = now;
 				if (FREEZE_COUNT<=10) {
 					var bucket:int = Math.min(ANALYTICS_BUCKET_MAX, delta/FREEZING_BUCKETS_MILLI);
-					var countStr:String = FREEZE_COUNT>=ANALYTICS_COUNT_MAX ? ""+ANALYTICS_COUNT_MAX+"+" : ""+FREEZE_COUNT;
-					AS3_GATracker.trackWarning("Flash froze", "Flash Freeze no. "+countStr+" for "+(bucket*10)+" seconds",now);
-				}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+					var countStr:String = FREEZE_COUNT>=ANALYTICS_COUNT_MAX ? ""+ANALYTICS_COUNT_MAX+"+" : ""+FREEZE_COUNT;
+					AS3_GATracker.trackWarning("Flash froze", "Flash Freeze no. "+countStr+" for "+(bucket*10)+" seconds",now);
+				}
 				
 				if (delta > MAX_FREEZE_TIME_MILLI) {
 					// the flash froze!
-					alwaysTraceAndSendReport("The flash froze!", ["LAST_CATCH_ERRORS_ON=",lastCatch," now=",now]);
+					if (delta<IGNORE_FREEZE_LONGER_THAN) {
+						// regular freeze
+						alwaysTraceAndSendReport("The flash froze!", ["LAST_CATCH_ERRORS_ON=",lastCatch," now=",now]);
+					} else {
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
+						// the computer probably went into sleep mode
+						didReportError = true; 	
+					}
 				}
 			}
 		}
 		
 		var wasError:Boolean = false;			
 		try {		
+			res = func.apply(null, args); 
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			res = func.apply(null, args); 
 		} catch (err:Error) { handleError(err, args); }
 		// some actions need to be done after all other actions complete (e.g., sending messages to java)
 		try {
@@ -293,10 +305,10 @@ public final class ErrorHandler
 		} catch (err:Error) { handleError(err, args); }
 		LoggerLine.LINE_INDENT = indentLevel-1;
 		logger.log("EXITED");
+			
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			
 		var poped:Object = my_stack_trace.pop(); 
 			// I tried to do the pop inside a "finally" clause (to handle correctly cases with exceptions), 
 			//but I got "undefined" errors:
@@ -306,10 +318,10 @@ public final class ErrorHandler
 		if (!didReportError && toInsert!=poped) 
 			alwaysTraceAndSendReport("BAD stack behaviour (multithreaded flash?)", ["my_stack_trace=",my_stack_trace, "toInsert=",toInsert, "poped=",poped]);
 			
+		
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		
 		return res;				
 	}
 	public static function handleError(err:Error, obj:Object):void {

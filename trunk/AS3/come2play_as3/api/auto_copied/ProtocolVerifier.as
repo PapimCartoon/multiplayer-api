@@ -11,8 +11,8 @@ package come2play_as3.api.auto_copied
 	public class ProtocolVerifier
 	{
 		// sometimes the flash freezes for 1 minute. see MAX_FREEZE_TIME_MILLI
-		public static var MAX_ANIMATION_MILLISECONDS:int = 120*1000; // max seconds for animations
-		public static var WARN_ANIMATION_MILLISECONDS:int = 90*1000; // if an animation finished after X seconds, we report an error (for us to know that it can happen!)
+		public static var MAX_ANIMATION_MILLISECONDS:int = 60*1000; // max seconds for animations
+		public static var WARN_ANIMATION_MILLISECONDS:int = 40*1000; // if an animation finished after X seconds, we report an error (for us to know that it can happen!)
 
 		private var isGameRuning:Boolean;
 		private var transactionStartedOn:TimeMeasure; 
@@ -42,7 +42,8 @@ package come2play_as3.api.auto_copied
         	var delta:int = transactionRunningTime();
         	if (delta<MAX_ANIMATION_MILLISECONDS) return; // animation is running for a short time
         	// animation is running for too long
-        	StaticFunctions.throwError("An transaction is running for more than MAX_ANIMATION_MILLISECONDS="+MAX_ANIMATION_MILLISECONDS);         	
+        	if (ErrorHandler.LAST_FROZE_ON==0)
+        		StaticFunctions.throwError("An transaction is running for more than MAX_ANIMATION_MILLISECONDS="+MAX_ANIMATION_MILLISECONDS);         	
         }
         public function getCurrentPlayers():CurrentPlayers {
         	return currentPlayers;
@@ -160,7 +161,7 @@ package come2play_as3.api.auto_copied
 				
 				currentCallback = null;
 				
-				if (transactionRunningTime()>WARN_ANIMATION_MILLISECONDS) // for us to know it can happen (so we should increase our bound)
+				if (transactionRunningTime()>WARN_ANIMATION_MILLISECONDS && ErrorHandler.LAST_FROZE_ON==0) // for us to know it can happen (so we should increase our bound)
 					ErrorHandler.alwaysTraceAndSendReport("A transaction finished after WARN_ANIMATION_MILLISECONDS",transactionStartedOn);
         		transactionStartedOn.clearTime();
 			} else {

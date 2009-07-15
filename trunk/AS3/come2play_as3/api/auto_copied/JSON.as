@@ -45,15 +45,13 @@ package come2play_as3.api.auto_copied
 	                            res.push('\\f');
 	                            break;
 	                        case '\n':
-	                            res.push('\\n');
-	                            if (KEEP_NEWLINES) res.push("\n\t\t");
+	                            res.push(KEEP_NEWLINES ? '\n' : '\\n');
 	                            break;
 	                        case '\r':
 	                            res.push('\\r');
 	                            break;
 	                        case '\t':
-	                            if (KEEP_TABS) res.push('\t');
-	                            res.push('\\t');
+	                            res.push(KEEP_NEWLINES ? '\t' : '\\t');
 	                            break;
 	                        default:
 	                            var charCode:int = c.charCodeAt();

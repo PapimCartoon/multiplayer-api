@@ -146,15 +146,16 @@ public final class ErrorHandler
 	 * Therefore, we decided to immediately report this error, when we see that the flash "froze",
 	 * and it's easiest to detect it in the entry point of all our functions: 
 	 * 	in catchErrors
-	 * We make sure that logMemoryInterval ticks every 10 seconds, and MAX_FREEZE_TIME_MILLI is more than twice that number.
+	 * We make sure that logMemoryInterval ticks every 5 seconds, and MAX_FREEZE_TIME_MILLI is more than twice that number.
 	 */
 	public static function startLogMemoryInterval():void {
-		myInterval("logMemoryInterval",AS3_vs_AS2.logMemory,MEM_INTERVAL_MILLI/2);
+		myInterval("logMemoryInterval",AS3_vs_AS2.logMemory,MEM_INTERVAL_MILLI);
 		LAST_CATCH_ERRORS_ON = getTimer();
 	}
 	
-	public static var MEM_INTERVAL_MILLI:int = 10*1000; //10 secs
-	public static var FREEZING_BUCKETS_MILLI:int = 10*1000;
+	public static var FREEZE_CALLBACK:Function/*function (deltaMilli:int):void*/ = null; 
+	public static var MEM_INTERVAL_MILLI:int = 5*1000; //5 secs
+	public static var FREEZING_BUCKETS_MILLI:int = 10*1000; // must be more than 2*MEM_INTERVAL_MILLI 
 	private static var FREEZE_COUNT:int = 0;
 	public static var LAST_FROZE_ON:int = 0; 
 	// see also ServerConnection.MAX_FREEZE_MILLI_AFTER_JAVA_CONNECT
@@ -175,6 +176,7 @@ public final class ErrorHandler
 	public static var ANALYTICS_COUNT_MAX:int = 3;
 	public static var ANALYTICS_BUCKET_MAX:int = 6;
 	private static var ZONE_LOGGERS:Object/*String->Logger*/ = {};
+	private static var Freeze_LOG:Logger = new Logger("FreezeLog",10);	
 	public static function catchErrors(zoneName:String, func:Function, args:Array):Object {
 		var res:Object = null;		
 		
@@ -197,12 +199,16 @@ public final class ErrorHandler
 			if (delta > FREEZING_BUCKETS_MILLI) {
 				// gather freezing statistics
 				FREEZE_COUNT++;
+				Freeze_LOG.log("Flash Freeze no. ",FREEZE_COUNT," for ",delta/1000," seconds");
 				LAST_FROZE_ON = now;
 				if (FREEZE_COUNT<=10) {
 					var bucket:int = Math.min(ANALYTICS_BUCKET_MAX, delta/FREEZING_BUCKETS_MILLI);
 					var countStr:String = FREEZE_COUNT>=ANALYTICS_COUNT_MAX ? ""+ANALYTICS_COUNT_MAX+"+" : ""+FREEZE_COUNT;
 					AS3_GATracker.trackWarning("Flash froze", "Flash Freeze no. "+countStr+" for "+(bucket*10)+" seconds",now);
 				}
+				
+				
+				if (FREEZE_CALLBACK!=null) FREEZE_CALLBACK(delta);
 				
 				if (delta > MAX_FREEZE_TIME_MILLI) {
 					// the flash froze!

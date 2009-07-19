@@ -6,42 +6,42 @@
 // We do not share the code because the flash goes crazy if it loads to SWFs files with classes of identical names and packages.
 // So we changed the package name when we copied the directory 'auto_copied'
 package emulator.auto_copied
-{	
+{
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	public final class MyTimeout 
-	{
-		private var timeout_id:Object = null;
-		public var name:String;
-		public function MyTimeout(name:String)	{
-			this.name = name;
-		}
-		public function toString():String {
-			return name;
-		}
+public final class MyTimeout
+{
+private var timeout_id:Object = null;
+public var name:String;
+public function MyTimeout(name:String)	{
+this.name = name;
+}
+public function toString():String {
+return name;
+}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		public function start(func:Function, milliseconds:int):void {
-			clear();
-			var thisObj:MyTimeout = this; // for AS2
-			timeout_id = ErrorHandler.myTimeout(name, function ():void {
-				thisObj.clearId();
-				func();				
-			}, milliseconds);
-		}
-		private function clearId():void {
-			timeout_id = null;			
+public function start(func:Function, milliseconds:int):void {
+clear();
+var thisObj:MyTimeout = this; // for AS2
+timeout_id = ErrorHandler.myTimeout(name, function ():void {
+thisObj.clearId();
+func();
+}, milliseconds);
+}
+private function clearId():void {
+timeout_id = null;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		}
-		public function clear():void {
-			if (timeout_id!=null) {
-				ErrorHandler.myClearTimeout(name, timeout_id);
-				clearId()
-			}	
-		}
-	}
+}
+public function clear():void {
+if (timeout_id!=null) {
+ErrorHandler.myClearTimeout(name, timeout_id);
+clearId()
+}
+}
+}
 }

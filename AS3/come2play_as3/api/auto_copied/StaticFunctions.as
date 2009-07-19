@@ -108,6 +108,12 @@ public final class StaticFunctions
 			res = "0"+res;
 		return res;
 	}
+	public static function suffixSpaces(str:String, toLen:int):String {
+		var res:String = str;
+		for (var i:int=str.length; i<=toLen; i++)
+			res = res+" ";
+		return res;
+	}
 	public static function cutString(str:String, toSize:int):String {		
 		if (str.length<toSize) return str;
 		return str.substr(0,toSize)+"... (string cut)";

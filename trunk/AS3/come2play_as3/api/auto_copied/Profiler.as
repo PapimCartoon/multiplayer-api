@@ -17,7 +17,7 @@ package come2play_as3.api.auto_copied
 			if (len>0) {
 				// update self time
 				var entry:StackEntry = stack[len-1];				
-				entry.selfTotal = now - entry.selfStarted;
+				entry.selfTotal += now - entry.selfStarted;
 			} else {				
 				ALL_STAT.cumulativeTime.add(now-CODE_FINISHED_ON);
 			}

@@ -6,29 +6,29 @@
 // We do not share the code because the flash goes crazy if it loads to SWFs files with classes of identical names and packages.
 // So we changed the package name when we copied the directory 'auto_copied'
 package emulator.auto_copied
-{	
+{
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	public final class ShouldUpdateAdvanced extends ShouldUpdate
-	{
-		private var freeCount:int;
-	    private var currCount:int;
-	
-	    public function ShouldUpdateAdvanced(everySeconds:int, freeCount:int) {
-	        super(1000*everySeconds, false);
-	        this.freeCount = freeCount;
-	    }
-	    override public function shouldUpdate():Boolean {
+public final class ShouldUpdateAdvanced extends ShouldUpdate
+{
+private var freeCount:int;
+private var currCount:int;
+
+public function ShouldUpdateAdvanced(everySeconds:int, freeCount:int) {
+super(1000*everySeconds, false);
+this.freeCount = freeCount;
+}
+override public function shouldUpdate():Boolean {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	        if (super.shouldUpdate()) {
-	            currCount = 1;
-	            return true;
-	        } else {
-	            return ++currCount<=freeCount;
-	        }
-	    }
-	}
+if (super.shouldUpdate()) {
+currCount = 1;
+return true;
+} else {
+return ++currCount<=freeCount;
+}
+}
+}
 }

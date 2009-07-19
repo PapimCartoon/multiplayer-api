@@ -6,33 +6,33 @@
 // We do not share the code because the flash goes crazy if it loads to SWFs files with classes of identical names and packages.
 // So we changed the package name when we copied the directory 'auto_copied'
 ﻿package emulator.auto_copied
-{	
+{
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	public class ShouldUpdate
-	{
-	    private var updatedOn:TimeMeasure = new TimeMeasure();
-	    private var everyMilliSec:int;
-		public function ShouldUpdate(milli:int, doNow:Boolean) {
-	        everyMilliSec = milli;
-	        if (!doNow) updatedOn.setTime();
-	    }
-	    public function toString():String {
-	        return "ShouldUpdate updatedOn="+ (updatedOn)+" everyMilliSec="+everyMilliSec;
+public class ShouldUpdate
+{
+private var updatedOn:TimeMeasure = new TimeMeasure();
+private var everyMilliSec:int;
+public function ShouldUpdate(milli:int, doNow:Boolean) {
+everyMilliSec = milli;
+if (!doNow) updatedOn.setTime();
+}
+public function toString():String {
+return "ShouldUpdate updatedOn="+ (updatedOn)+" everyMilliSec="+everyMilliSec;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	    }	
-	    public function shouldUpdate():Boolean {
-	        if (!havePassed(everyMilliSec)) return false;
-	        updatedOn.setTime();
-	        return true;
-	    }
-	    public function havePassed(milli:int):Boolean {
-	        return updatedOn.havePassed(milli);
-	    }
-	}
+}
+public function shouldUpdate():Boolean {
+if (!havePassed(everyMilliSec)) return false;
+updatedOn.setTime();
+return true;
+}
+public function havePassed(milli:int):Boolean {
+return updatedOn.havePassed(milli);
+}
+}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 

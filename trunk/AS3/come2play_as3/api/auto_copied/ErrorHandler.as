@@ -178,6 +178,8 @@ public final class ErrorHandler
 	private static var ZONE_LOGGERS:Object/*String->Logger*/ = {};
 	private static var Freeze_LOG:Logger = new Logger("FreezeLog",10);	
 	public static function catchErrors(zoneName:String, func:Function, args:Array):Object {
+		Profiler.started("catchErrors");
+		
 		var res:Object = null;		
 		
 		var toInsert:Object = [zoneName,"t:",getTimer(),"args=",args]; // I couldn't find a way to get the function name (describeType(func) only returns that the method is a closure)
@@ -206,8 +208,7 @@ public final class ErrorHandler
 					var countStr:String = FREEZE_COUNT>=ANALYTICS_COUNT_MAX ? ""+ANALYTICS_COUNT_MAX+"+" : ""+FREEZE_COUNT;
 					AS3_GATracker.trackWarning("Flash froze", "Flash Freeze no. "+countStr+" for "+(bucket*10)+" seconds",now);
 				}
-				
-				
+								
 				if (FREEZE_CALLBACK!=null) FREEZE_CALLBACK(delta);
 				
 				if (delta > MAX_FREEZE_TIME_MILLI) {
@@ -225,12 +226,13 @@ public final class ErrorHandler
 		
 		var wasError:Boolean = false;			
 		try {		
-			res = func.apply(null, args); 
+			res = Profiler.measure(zoneName, func, args); 
 		} catch (err:Error) { handleError(err, args); }
 		// some actions need to be done after all other actions complete (e.g., sending messages to java)
 		try {
 			if (DO_AFTER_CATCH!=null && indentLevel==1) {
-				DO_AFTER_CATCH();				
+				Profiler.measure("DoAfterCatch",DO_AFTER_CATCH,[]);
+				//DO_AFTER_CATCH();				
 			} 	
 		} catch (err:Error) { handleError(err, args); }
 		LoggerLine.LINE_INDENT = indentLevel-1;
@@ -245,7 +247,7 @@ public final class ErrorHandler
 		if (!didReportError && toInsert!=poped) 
 			alwaysTraceAndSendReport("BAD stack behaviour (multithreaded flash?)", ["my_stack_trace=",my_stack_trace, "toInsert=",toInsert, "poped=",poped]);
 			
-		
+		Profiler.ended("catchErrors");
 		return res;				
 	}
 	public static function handleError(err:Error, obj:Object):void {

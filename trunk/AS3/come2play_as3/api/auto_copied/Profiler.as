@@ -103,7 +103,7 @@ package come2play_as3.api.auto_copied
 			addData(res,"| cumulative ");//sum
 			addData(res,"time");//avg
 			addData(res,"");//max
-			addData(res," | Buckets of 100 milliseconds\n");
+			addData(res," | Buckets of "+BUCKET_SIZE+" milliseconds\n");
 			res.push(StaticFunctions.suffixSpaces("name",NAME_LEN));
 			addData(res,"count");
 			addData(res,"|sum");

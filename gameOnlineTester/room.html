@@ -169,6 +169,8 @@
 		var obj;
 		for(var i=0;i<paramArr.length;i++){
 			obj = paramArr[i];
+			if(windowParams[obj.htmlName]==null)	continue
+			if(windowParams[obj.htmlName]=="")	continue
 			if((obj.fromTable) && (windowParams["type"] != "start_game_from_table_url")) continue;
 			if(obj.isUser == true){	
 				if(obj.htmlName == "tokens"){
@@ -190,16 +192,12 @@
 		
 		
 		addTableParams(params,"serverTable")
-		loadSwf = "framework/distribution.swf"
-		params["chat_skin_url"]="graphics/chatGraphics.swf";
-		params["preloader_url"]="graphics/Preloader.swf";
-		params["swf_url"]=  "framework/FlashCode.swf";
-		
-		
+
 		isRoom = (windowParams["flash_type"] == "room")
 		
 		isSmartAutoMatch = (windowParams["isSmartAutoMatch"] == "true")
 		windowParams["flash_type"] = "game";
+		params["IGNORE_skip_distrabution"] = "true";
 		paramsToSend ="room.html?"+parametersToUrl(windowParams)+"&";
 		params["override_config.openJavaScriptPopup.start_game_from_invite_url"] = paramsToSend;
 		params["override_config.openJavaScriptPopup.start_game_from_table_url"] = paramsToSend;
@@ -209,10 +207,7 @@
 		
 		
 		//shared information betweeng game and room ends here
-
-			
-	
-	
+		loadSwf = "framework/FlashCode.swf"
 		if (isRoom){
 		document.title = "Room Tester"
 			if(windowParams["isYoavContainer"] == "true")
@@ -220,7 +215,6 @@
 			else
 				params["is_game"]=  "false";
 				
-			params["skin_url"]="graphics/RoomGraphics.swf";		
 			params["config_url"]=windowParams["roomXML"];
 			params["override_config.game_parameters"] = "DELETE";
 			params["override_config.flash_type"] = "room";	
@@ -240,7 +234,6 @@
 				params["is_game"]=  "true";
 			}
 				
-			params["skin_url"]="graphics/GameGraphics.swf";	
 			params["config_url"]=windowParams["gameXML"];			
 			params["override_config.game_parameters.game_room.room_id"] = windowParams["room_id"];	
 			if(windowParams["oldBoard"] != null){
@@ -255,8 +248,7 @@
 			if(windowParams["type"] == "start_game_from_table_url"){
 				params["override_config.game_parameters.SentInvitation"] = "DELETE"
 				params["override_config.game_parameters.AutoMatch"] = "DELETE"
-				loadSwf = "graphics/Preloader.swf"
-				params["IGNORE_skip_distrabution"] = "true";
+				
 				params["override_config.game_parameters.start_scenario"] = "FromTable";
 				params["override_config.game_parameters.FromTable.table_id"] = windowParams["table_id"];
 				params["override_config.game_parameters.FromTable.player_ids"] = windowParams["player_ids"];		
@@ -266,9 +258,12 @@
 				params["override_config.game_parameters.start_scenario"] = "SentInvitation";
 				params["override_config.game_parameters.SentInvitation.player_ids"] = windowParams["player_ids"];
 			}else if(windowParams["type"] == "AutoMatch"){
+				params["preloader_url"] = loadSwf;
+				params["IGNORE_skip_distrabution"] = "false";
+				
+				loadSwf = "framework/distribution.swf"
 				params["override_config.game_parameters.SentInvitation"] = "DELETE"
 				params["override_config.game_parameters.FromTable"] = "DELETE"
-				params["intro_screen_url"] = "graphics/IntroScreenSkin.swf"
 				if(isSmartAutoMatch){	
 					params["intro_config_url"] = "XML/introConfig.XML"	
 				}
@@ -284,12 +279,10 @@
 		Explorer can't have more than 35 params
 		*/
 		var onlyParam = {}
-		onlyParam["IGNORE_sponser_logo"] =  "http://www.blogcdn.com/www.autobloggreen.com/media/2008/05/gg_quadster.jpg"
-		onlyParam["IGNORE_skip_distrabution"] = params["IGNORE_skip_distrabution"]
+		//onlyParam["IGNORE_sponser_logo"] =  "http://www.blakearchive.org/blake/public/urizen.G.P1.detail.100.jpg"
 		onlyParam["IGNORE_GET_PARAMS_JS"] = "getParams"
-		onlyParam["preloader_url"] = params["preloader_url"]
-		onlyParam["swf_url"] = params["swf_url"]
-		
+		onlyParam["preloader_url"] = params["preloader_url"] 
+		onlyParam["IGNORE_skip_distrabution"] =params["IGNORE_skip_distrabution"]
 		
 		loadSwf = (windowParams["isYoavContainer"] == "true")?params["swf_url"]:loadSwf;
 		loadSWF(loadSwf,parametersToUrl(onlyParam),windowParams["swfWidth"],windowParams["swfHeight"])

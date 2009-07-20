@@ -173,6 +173,7 @@
 		for(var i=0;i<paramArr.length;i++){
 			obj = paramArr[i];
 			if(document.getElementById(obj.htmlName) == null) continue;
+			if(document.getElementById(obj.htmlName) == undefined) continue;
 			if(obj.fromTable != null) continue;
 			if(obj.minValue !=null){
 				if(document.getElementById(obj.htmlName).value<document.getElementById(obj.minValue).value) throw obj.htmlName+" Must be equel to or bigger then "+obj.minValue
@@ -293,7 +294,11 @@
 		comboStr+="</select>"+
 			"<br><select name='javaToConnect' id='javaToConnect'><option value='java238.come2play.com'>java238<option value='java237.come2play.com'>java237<option value='localhost' selected>localhost</select><br>"+
 			"<select name='javaProtocol' id='javaProtocol'><option value='socket'>socket<option value='polling' selected>polling</select><br>"+
-			"<select name='isSmartAutoMatch' id='isSmartAutoMatch'><option value='true'>Smart auto match<option value='false'>Simple auto match</select>";
+			"<select name='isSmartAutoMatch' id='isSmartAutoMatch'><option value='true'>Smart auto match<option value='false'>Simple auto match</select>"+
+			"<BR>Saved Match String:"+
+			"<BR><input type=\"text\" id=\"gameSave\" value=\"\">"+
+			"<BR>saved match player ids:"+
+			"<BR><input type=\"text\" id=\"gamePlayers\" value=\"\">";
 		var cell = row.insertCell(1);
 		cell.innerHTML = comboStr;
 		var cell = row.insertCell(2);

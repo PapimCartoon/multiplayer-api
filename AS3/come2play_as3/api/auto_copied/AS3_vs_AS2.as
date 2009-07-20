@@ -321,20 +321,16 @@ public final class AS3_vs_AS2
 	public static function getLoaderInfoParameters(someMovieClip:DisplayObject):Object {
 		if (infoParams!=null) return infoParams;
 		infoParams = someMovieClip.loaderInfo.parameters;
-		if (dictionarySize(infoParams)==0) {
-			// when we use URLLoader instead of Loader, we can't pass "?..." parameters.
-			var xlass:Class = null;
-			try {
-				xlass = AS3_vs_AS2.getClassByName("come2play_as3.util::StaticConfig");
-			} catch (e:Error) {
-				ParamLog.log("Running locally, i.e., not running in the container");
-				return infoParams;
-			}
-			infoParams = xlass["getGameParameters"]();
-			ParamLog.log("Running in the container with params=",infoParams);
-		} else {
-			ParamLog.log("ERROR!!! we use the old technique of loading with Loader instead of URLLoader! params=",infoParams, new Error());
+		// when we use URLLoader instead of Loader, we can't pass "?..." parameters.
+		var xlass:Class = null;
+		try {
+			xlass = AS3_vs_AS2.getClassByName("come2play_as3.util::StaticConfig");
+		} catch (e:Error) {
+			ParamLog.log("Running locally, i.e., not running in the container");
+			return infoParams;
 		}
+		infoParams = xlass["getGameParameters"]();
+		ParamLog.log("Running in the container with params=",infoParams);		
 		return infoParams;
 	}
 	public static function getLoaderInfoUrl(someMovieClip:DisplayObject):String {

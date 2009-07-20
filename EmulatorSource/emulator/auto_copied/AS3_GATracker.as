@@ -29,13 +29,15 @@ package emulator.auto_copied
 		 */
 		
 		static private var ANALYTIC_LOG:Logger = new Logger("Analytic",30);
+		static private var SameKey_LOG:Logger = new Logger("AnalyticSameKey",30);
 		static private var ANALYTIC_ERRORS_LOG:Logger = new Logger("AnalyticError",10);
+		static private var ANALYTIC_INIT_LOG:Logger = new Logger("AnalyticInit",10);
 		public static var COME2PLAY_TRACKER:AS3_GATracker = new AS3_GATracker(null,"UA-154580-30");
-				
-		private static var TRACK_ONCE:Dictionary = new Dictionary();
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+				
+		private static var TRACK_ONCE:Dictionary = new Dictionary();
 		public static function trackWarningOnce(action:String,label:String=null,value:Number=1):void {
 			if (TRACK_ONCE[action]!=null) return;
 			TRACK_ONCE[action] = true;
@@ -44,11 +46,11 @@ package emulator.auto_copied
 		public static function trackWarning(action:String,label:String=null,value:Number=1):void {
 			COME2PLAY_TRACKER.trackEvent("Warning",action,label,value);
 		}
-		
-		private var realGATracker:Object;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		
+		private var realGATracker:Object;
 		private var pausedEvents:Array = new Array();
 		private var uniqueEvents:Dictionary = new Dictionary();
 		private var eventsSent:int = 0;
@@ -57,37 +59,50 @@ package emulator.auto_copied
 			reconstruct(disp,id,isAS3,arg3)
 		}
 		public function reconstruct(disp:DisplayObject,id:String,isAS3:String="AS3",arg3:Boolean=false):void{
-			if(realGATracker!=null)	return;
-			try{
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			if(realGATracker!=null)	return;
+			var now:int = getTimer();
+			try {
 				var c:Class = AS3_vs_AS2.getClassByName("com.google.analytics::GATracker");
 				realGATracker = new c(disp,id,isAS3,arg3)
+				if(varToSet!="")	setVar(varToSet)
 				for each(var obj:Object in pausedEvents){
 					sendTrackEvent(obj.catagory,obj.action,obj.label,obj.value)
 				}
 				pausedEvents = [];
-				ANALYTIC_LOG.log("successfully created analytics")
-			}catch(err:Error){
-				ANALYTIC_LOG.log("failed to create analytics")
-			}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+				ANALYTIC_INIT_LOG.log("successfully created analytics");
+			} catch (err:Error) {
+				ANALYTIC_INIT_LOG.log("failed to create analytics");
+			}
+			var delta:int = getTimer() - now;
+			if (delta>2000) {
+				ANALYTIC_ERRORS_LOG.log("WARNING: creating analytics took ", delta, " milliseconds");
+			}
 		}
+		private var varToSet:String
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		public function setVar(newVal:String):void{
-			if(realGATracker == null)	return;
+			if(realGATracker == null){
+				varToSet = newVal
+				return;
+			}	
 			realGATracker.setVar(newVal)	
 		}
 		public function trackEvent(catagory:String,action:String,label:String=null,value:Number=1):void{
 			ANALYTIC_LOG.log("trackEvent",catagory,action,label,value);
 			if(realGATracker==null){
-				if (pausedEvents.length>MAX_EVENTS)	return;
-				pausedEvents.push({catagory:catagory,action:action,label:label,value:value})
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+				if (pausedEvents.length>MAX_EVENTS)	return;
+				pausedEvents.push({catagory:catagory,action:action,label:label,value:value})
 				return;
 			}
 			
@@ -96,11 +111,11 @@ package emulator.auto_copied
 		
 		public static var ILLEGAL_CHARS:String = "#";
 		public static var ILLEGAL_CHARS_REPLACEMENT:String = "-";
-		private function makeLegal(str:String):String {
-			// make sure the string is not too long
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		private function makeLegal(str:String):String {
+			// make sure the string is not too long
 			str = StaticFunctions.cutString(str,MAX_LABEL_LEN);
 			// make sure the string doesn't contain illegal characters
 			for (var i:int=0; i<ILLEGAL_CHARS.length; i++) {
@@ -109,24 +124,24 @@ package emulator.auto_copied
 			}
 			return str;
 		}		
-		
-		private function sendTrackEvent(catagory:String,action:String,label:String,value:Number):void {			
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		
+		private function sendTrackEvent(catagory:String,action:String,label:String,value:Number):void {			
 			catagory = makeLegal(catagory);
 			action = makeLegal(action);
 			label = makeLegal(label);
 			
-			var uniqueKey:String = catagory+"--"+action+"--"+label;
+			var uniqueKey:String = catagory+"--"+action; //+"--"+label
 			if (uniqueEvents[uniqueKey]==true) {
-				ANALYTIC_ERRORS_LOG.log("Already used key=",uniqueKey);
+				SameKey_LOG.log("Already used key=",uniqueKey);
 				return;
-			}
-			uniqueEvents[uniqueKey] = true;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			}
+			uniqueEvents[uniqueKey] = true;
 			
 			eventsSent++;
 			
@@ -135,11 +150,11 @@ package emulator.auto_copied
 				if (eventsSent==MAX_EVENTS) {
 					realGATracker.trackEvent("Errors","Sent too many google events","",getTimer());
 					ANALYTIC_ERRORS_LOG.log("ERROR!!! Sent too many events");
-				}
-				return;				
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+				}
+				return;				
 			}
 			realGATracker.trackEvent(catagory,action,label,value);			
 		}

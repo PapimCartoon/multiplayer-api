@@ -94,6 +94,9 @@ package come2play_as3.api.auto_copied
 			allStats.sortOn("sortBy", Array.DESCENDING | Array.NUMERIC);
 			var res:Array = [
 				"\n"+
+				"\tShowing the running times (in milliseconds) of "+
+				SHOW_TOP_X+" out of "+
+				allStats.length+" methods.\n"+ 
 				StaticFunctions.suffixSpaces("",NAME_LEN)];
 			addData(res,""); // count
 			addData(res,"| self ");//sum

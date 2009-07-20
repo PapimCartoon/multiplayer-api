@@ -10,22 +10,22 @@ package emulator.auto_copied
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-import emulator.auto_copied.SerializableClass;
+	import emulator.auto_copied.SerializableClass;
 
-public class AS3_NativeSerializable extends SerializableClass
-{
-public function AS3_NativeSerializable(shortName:String=null) {
-super(shortName);
-}
-public function fromNative(obj:Object):AS3_NativeSerializable {
-throw new Error("Must override fromNative");
-}
+	public class AS3_NativeSerializable extends SerializableClass
+	{
+		public function AS3_NativeSerializable(shortName:String=null) {
+			super(shortName);
+		}
+		public function fromNative(obj:Object):AS3_NativeSerializable {
+			throw new Error("Must override fromNative");
+		}	
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-override public function postDeserialize():Object {
-throw new Error("Must override postDeserialize");
-}
-
-}
+		override public function postDeserialize():Object {
+			throw new Error("Must override postDeserialize");
+		}
+		
+	}
 }

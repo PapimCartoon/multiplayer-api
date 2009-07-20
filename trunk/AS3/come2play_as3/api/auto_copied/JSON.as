@@ -48,7 +48,7 @@ package come2play_as3.api.auto_copied
 	                            res.push(KEEP_NEWLINES ? '\n' : '\\n');
 	                            break;
 	                        case '\r':
-	                            res.push('\\r');
+	                            res.push(KEEP_NEWLINES ? '\r' : '\\r');
 	                            break;
 	                        case '\t':
 	                            res.push(KEEP_NEWLINES ? '\t' : '\\t');

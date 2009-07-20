@@ -155,7 +155,14 @@ paramArr.push( {htmlName:"gameStageX",xmlName:"override_config.game_parameters.g
 paramArr.push( {htmlName:"gameStageY",xmlName:"override_config.game_parameters.gameStageY",type:"int"});
 
 paramArr.push( {htmlName:"gameSwf",xmlName:"override_config.game_parameters.board_swf_url",type:"string"});
+paramArr.push( {htmlName:"gameSave",xmlName:"override_config.game_parameters.load_saved_match.match_state",type:"string"});
+paramArr.push( {htmlName:"gamePlayers",xmlName:"override_config.game_parameters.load_saved_match.saved_player_ids",type:"string"});
+
+
 paramArr.push( {htmlName:"prefix",xmlName:"override_config.game_parameters.prefix_local_connection_id",type:"string"});
+
+
+
 
 paramArr.push( {htmlName:"javaToConnect",type:"string"});
 paramArr.push( {htmlName:"javaProtocol",type:"string"});

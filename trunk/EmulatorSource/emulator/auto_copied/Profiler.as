@@ -131,15 +131,18 @@ package emulator.auto_copied
 			allStats.sortOn("sortBy", Array.DESCENDING | Array.NUMERIC);
 			var res:Array = [
 				"\n"+
+				"\tShowing the running times (in milliseconds) of "+
+				SHOW_TOP_X+" out of "+
+				allStats.length+" methods.\n"+ 
 				StaticFunctions.suffixSpaces("",NAME_LEN)];
 			addData(res,""); // count
 			addData(res,"| self ");//sum
-			addData(res,"time");//avg
-			addData(res,"");//max
-			addData(res,"   | ");//min
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			addData(res,"time");//avg
+			addData(res,"");//max
+			addData(res,"   | ");//min
 			addData(res,"| cumulative ");//sum
 			addData(res,"time");//avg
 			addData(res,"");//max
@@ -147,12 +150,12 @@ package emulator.auto_copied
 			res.push(StaticFunctions.suffixSpaces("name",NAME_LEN));
 			addData(res,"count");
 			addData(res,"|sum");
-			addData(res,"avg");
-			addData(res,"max");
-			addData(res,"min|");
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			addData(res,"avg");
+			addData(res,"max");
+			addData(res,"min|");
 			addData(res,"|sum");
 			addData(res,"avg");
 			addData(res,"max");
@@ -160,12 +163,12 @@ package emulator.auto_copied
 			res.push("selfBuckets\t\t\t");
 			res.push("cumulativeBuckets");
 			res.push("\n");
-			res.push("ALL (sepcial) uses 'self time' for the CODE time, and 'cumulative time' for the GRAPHICS rendering (and quite) time\n");
-			for each (var o:Object in allStats) {
-				e = o.e;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			res.push("ALL (sepcial) uses 'self time' for the CODE time, and 'cumulative time' for the GRAPHICS rendering (and quite) time\n");
+			for each (var o:Object in allStats) {
+				e = o.e;
 				var self:StatGather = e.selfTime;
 				var cum:StatGather = e.cumulativeTime;
 				res.push(StaticFunctions.suffixSpaces(e.name,NAME_LEN));
@@ -173,12 +176,12 @@ package emulator.auto_copied
 				addData(res,""+self.getSum());
 				addData(res,""+self.getAvgStr());
 				addData(res,""+self.getMax());
-				addData(res,""+self.getMin());
-				addData(res,""+cum.getSum());
-				addData(res,""+cum.getAvgStr());
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+				addData(res,""+self.getMin());
+				addData(res,""+cum.getSum());
+				addData(res,""+cum.getAvgStr());
 				addData(res,""+cum.getMax());
 				addData(res,""+cum.getMin());	
 				res.push(self.getBuckets()); res.push("\t");		
@@ -186,12 +189,12 @@ package emulator.auto_copied
 			}
 			return res.join("");
 		}
-		private static function addData(res:Array,data:String):void {
-			res.push(StaticFunctions.suffixSpaces(data,DATA_LEN));			
-		}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		private static function addData(res:Array,data:String):void {
+			res.push(StaticFunctions.suffixSpaces(data,DATA_LEN));			
+		}
 	}
 }
 
@@ -199,12 +202,12 @@ import emulator.auto_copied.StatGather;
 import emulator.auto_copied.Profiler;	
 class StatEntry {
 	public var name:String;
-	// 100 milliseconds per bucket, with 5 buckets
-	public var selfTime:StatGather = Profiler.createStatGather(); 
-	public var cumulativeTime:StatGather = Profiler.createStatGather();
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	// 100 milliseconds per bucket, with 5 buckets
+	public var selfTime:StatGather = Profiler.createStatGather(); 
+	public var cumulativeTime:StatGather = Profiler.createStatGather();
 	
 	public function StatEntry(name:String) {
 		this.name = name;		
@@ -212,12 +215,12 @@ class StatEntry {
 }
 class StackEntry {
 	public var name:String;
-	public var cumulativeStarted:int;
-	public var selfStarted:int;
-	public var selfTotal:int = 0;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	public var cumulativeStarted:int;
+	public var selfStarted:int;
+	public var selfTotal:int = 0;
 	
 	public function StackEntry(now:int, name:String) {
 		this.name = name;

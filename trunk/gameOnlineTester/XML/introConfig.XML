@@ -2,7 +2,7 @@
 	<configURL>XML/config2.XML</configURL>
 	<graphics>
 		<gameDisplayName>this</gameDisplayName><!--The name of the game that will be displayed-->
-		<bigGameThumb></bigGameThumb><!--The URL the game will load as the background for the intro screen-->
+		<bigGameThumb>http://static.amr/shared/not_svn/games/2009_01/325_Domino/intro_bg.swf</bigGameThumb><!--The URL the game will load as the background for the intro screen-->
 		<smallGameThumb></smallGameThumb><!--The URL the game will load as a side image-->
 		<introLogoLink>http://www.google.com</introLogoLink><!--The URL of the logo will direct to-->
 		<gameInstructions>http://static.amr/shared/swf/components/FlexBoards/MineSweeperAS3_board/HowToPlay_1.swf</gameInstructions>
@@ -11,13 +11,23 @@
 	<user_info>
 	  <name>This is the longest name ever</name>
 	  <avatar_url>images/Avatar_4.gif</avatar_url>
-	  <is_guest>true</is_guest>
+	  <is_guest>false</is_guest>
 	  <user_statistics_url>http://www.google.com</user_statistics_url>  
       <game_rating>2000</game_rating>	
 	  <tokens>1:1:isToken=true</tokens>  
 	</user_info>
 	<moreGames>	
 		<game>
+			<callerId>12</callerId><!--The callerId of the game -->
+			<image>http://bingobee.com/images/oilerlogos/Logo%20Third%2030x30.JPG</image><!--The URL of the image to load for the more game-->
+			<url>http://bingobee.com/images/oilerlogos/Logo%20Third%2030x30.JPG</url><!--The URL of the game-->	
+		</game>
+				<game>
+			<callerId>12</callerId><!--The callerId of the game -->
+			<image>http://bingobee.com/images/oilerlogos/Logo%20Third%2030x30.JPG</image><!--The URL of the image to load for the more game-->
+			<url>http://bingobee.com/images/oilerlogos/Logo%20Third%2030x30.JPG</url><!--The URL of the game-->	
+		</game>
+				<game>
 			<callerId>12</callerId><!--The callerId of the game -->
 			<image>http://bingobee.com/images/oilerlogos/Logo%20Third%2030x30.JPG</image><!--The URL of the image to load for the more game-->
 			<url>http://bingobee.com/images/oilerlogos/Logo%20Third%2030x30.JPG</url><!--The URL of the game-->	
@@ -71,11 +81,7 @@
 			<entry><key>addTokens</key><value>"http://www.supersonicads.com/delivery/panel.php?siteUserId=&amp;siteId=39&amp;network=Generic&amp;gender=1&amp;language=he&amp;altCurrency=%D7%96%27%D7%98%D7%95%D7%A0%D7%99%D7%9D&amp;categories=Games%2C&amp;z0=664_665_666_667&amp;z1=668_669_670_671&amp;z2=672_673_674_675&amp;"</value></entry>
 			<entry><key>footerLogoURL</key><value>"images/come2playLogo.swf"</value></entry>
 			<entry><key>footerLogoLink</key><value>"http://www.google.com/"</value></entry>
-			<entry><key>moreGrabIt</key><value>[
-			["http://bingobee.com/images/oilerlogos/Logo%20Third%2030x30.JPG","http://bingobee.com/"],
-			["http://bingobee.com/images/oilerlogos/Logo%20Third%2030x30.JPG","http://bingobee.com/"],
-			["http://bingobee.com/images/oilerlogos/Logo%20Third%2030x30.JPG","http://bingobee.com/"],
-			["http://bingobee.com/images/oilerlogos/Logo%20Third%2030x30.JPG","http://bingobee.com/"]]</value></entry>
+			<entry><key>moreGrabIt</key><value>[]</value></entry>
 			<entry><key>grabIt</key><value>"http://bingobee.com/"</value></entry>
 			
 			<entry><key>addFooter</key><value>false</value></entry>

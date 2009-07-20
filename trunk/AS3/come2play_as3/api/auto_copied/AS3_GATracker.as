@@ -45,6 +45,7 @@ package come2play_as3.api.auto_copied
 			try {
 				var c:Class = AS3_vs_AS2.getClassByName("com.google.analytics::GATracker");
 				realGATracker = new c(disp,id,isAS3,arg3)
+				if(varToSet!="")	setVar(varToSet)
 				for each(var obj:Object in pausedEvents){
 					sendTrackEvent(obj.catagory,obj.action,obj.label,obj.value)
 				}
@@ -58,8 +59,12 @@ package come2play_as3.api.auto_copied
 				ANALYTIC_ERRORS_LOG.log("WARNING: creating analytics took ", delta, " milliseconds");
 			}
 		}
+		private var varToSet:String
 		public function setVar(newVal:String):void{
-			if(realGATracker == null)	return;
+			if(realGATracker == null){
+				varToSet = newVal
+				return;
+			}	
 			realGATracker.setVar(newVal)	
 		}
 		public function trackEvent(catagory:String,action:String,label:String=null,value:Number=1):void{

@@ -6,7 +6,6 @@ import come2play_as3.api.auto_generated.*;
 
 import flash.display.*;
 import flash.events.*;
-import flash.geom.Point;
 import flash.utils.*;
 	public class MineSweeperMain extends ClientGameAPI
 	{
@@ -61,9 +60,12 @@ import flash.utils.*;
 		{
 			if(loadServerEntries != null)
 				mineSweeperLogic.loadBoard(loadServerEntries);
-			if((allPlayerIds.indexOf(-1) != -1) && isPlaying) computerMoveTimer.start();
+			if((allPlayerIds.indexOf(-1) != -1) && isPlaying){ 
+				if(!(isInReview() || (isBack())) )
+					computerMoveTimer.start();
+			}
 			allowMoves = true;
-			if(! (T.custom(API_Message.CUSTOM_INFO_KEY_isBack,false) as Boolean) )
+			if(! ((isBack()) || (isInReview())) )
 				animationEnded("startGraphicAnimation");
 		}
 		public function gameOver(playerMatchOverArr:Array/*PlayerMatchOver*/):void
@@ -125,35 +127,39 @@ import flash.utils.*;
 				doStoreState([UserEntry.create(key,computerMove,false)],[RevealEntry.create(serverKey,null,1)]);
 			}
 		}
+		private function isBack():Boolean{
+			return T.custom(API_Message.CUSTOM_INFO_KEY_isBack,false) as Boolean
+		}
+		
+		private function isInReview():Boolean{
+			return T.custom(API_Message.CUSTOM_INFO_KEY_isInReview,false) as Boolean
+		}
+		
 		override public function gotMatchStarted(allPlayerIds:Array, finishedPlayerIds:Array, serverEntries:Array):void
 		{
 			canSendMove = true;
 			isPlaying = true;
 			this.allPlayerIds = allPlayerIds.concat();
 			loadServerEntries = null;
-			graphicPlayed = false;
-			if(this.allPlayerIds.length == 1){
+			graphicPlayed = !isInReview();
+			
+			startGraphic.visible = false;
+			if((this.allPlayerIds.length == 1) && (!isInReview())){
 				this.allPlayerIds.push(-1);
 			}
-			if(serverEntries.length == 0)
-			{
+			if(serverEntries.length == 0){
 				doAllRequestRandomState("randomSeed",true);
 				doAllStoreState([UserEntry.create("Board Width",boardWidth),UserEntry.create("Mine Amount",mineAmount)])
 				doAllRequestStateCalculation(["randomSeed","Board Width","Mine Amount"]);
 				mineSweeperLogic.makeBoard(boardWidth,this.allPlayerIds,myUserId);
-			}
-			else
-			{
+			}else{
 				loadServerEntries = serverEntries;
 				//load game or viewer
 				graphicPlayed = true;
-				if((T.custom(API_Message.CUSTOM_INFO_KEY_isBack,false) as Boolean))
-				{
+				if((isBack()) || (isInReview())){
 					mineSweeperLogic.makeBoard(boardWidth,this.allPlayerIds,myUserId);
 					startGame();
-				}
-				else
-				{
+				}else{
 					mineSweeperLogic.makeBoard(boardWidth,this.allPlayerIds,myUserId);
 					animationStarted("startGraphicAnimation");
 					startGraphic.play();
@@ -217,8 +223,7 @@ import flash.utils.*;
 				if(!isPlaying) return;
 				if(!graphicPlayed)
 				{
-					if(! (T.custom(API_Message.CUSTOM_INFO_KEY_isBack,false) as Boolean))
-					{
+					if(! ((isBack()) || isInReview())){
 						animationStarted("startGraphicAnimation");
 						startGraphic.play();
 					}

@@ -99,6 +99,8 @@
 		}
 		
 		if(tableName == "serverTable"){	
+		
+		
 		var javaIp = windowParams["javaToConnect"] != undefined?windowParams["javaToConnect"]:javaToConnect
 		var javaProtocol = windowParams["javaProtocol"] != undefined?windowParams["javaProtocol"]:"polling"
 		var javaPort = javaIp=="localhost" ? (javaProtocol=="polling" ? "5555" : "2000") : (javaProtocol=="polling" ? "80" : "8080");
@@ -242,7 +244,6 @@
 				params["override_config.game_parameters.game_room.game_name"] = windowParams["oldBoard"];
 				params["override_config.game_parameters.extra_match_info"] = windowParams["extra_match_info"];
 			}		
-			params["override_config.game_parameters.play_type"] = "MultiPlayer";
 			params["override_config.flash_type"] = "game";
 			
 			if(windowParams["type"] == "start_game_from_table_url"){

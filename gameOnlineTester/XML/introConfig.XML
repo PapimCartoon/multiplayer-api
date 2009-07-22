@@ -2,7 +2,7 @@
 	<configURL>XML/config2.XML</configURL>
 	<graphics>
 		<gameDisplayName>this</gameDisplayName><!--The name of the game that will be displayed-->
-		<bigGameThumb>http://static.amr/shared/not_svn/games/2009_01/325_Domino/intro_bg.swf</bigGameThumb><!--The URL the game will load as the background for the intro screen-->
+		<bigGameThumb></bigGameThumb><!--The URL the game will load as the background for the intro screen-->
 		<smallGameThumb></smallGameThumb><!--The URL the game will load as a side image-->
 		<introLogoLink>http://www.google.com</introLogoLink><!--The URL of the logo will direct to-->
 		<gameInstructions>http://static.amr/shared/swf/components/FlexBoards/MineSweeperAS3_board/HowToPlay_1.swf</gameInstructions>
@@ -11,7 +11,7 @@
 	<user_info>
 	  <name>This is the longest name ever</name>
 	  <avatar_url>images/Avatar_4.gif</avatar_url>
-	  <is_guest>false</is_guest>
+	  <is_guest>true</is_guest>
 	  <user_statistics_url>http://www.google.com</user_statistics_url>  
       <game_rating>2000</game_rating>	
 	  <tokens>1:1:isToken=true</tokens>  

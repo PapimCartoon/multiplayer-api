@@ -160,7 +160,7 @@ paramArr.push( {htmlName:"gamePlayers",xmlName:"override_config.game_parameters.
 
 
 paramArr.push( {htmlName:"prefix",xmlName:"override_config.game_parameters.prefix_local_connection_id",type:"string"});
-
+paramArr.push( {htmlName:"play_type",type:"string",xmlName:"override_config.game_parameters.play_type"});
 
 
 

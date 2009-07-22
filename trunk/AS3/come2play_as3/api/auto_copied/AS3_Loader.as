@@ -311,7 +311,7 @@ public final class AS3_Loader
 		urlloader = new URLLoader();	
 		urlloader.dataFormat = URLLoaderDataFormat.BINARY;
 		dispatcher = urlloader;
-
+		HTTPStatusEvent
 				
 		// garbage-collection bug: we must refer to loader to prevent it from being garbage-collected!
 		var failTimer:AS3_Timer = new AS3_Timer("LoadFailTimer",TIMEOUT_TIMER_MILLI);	
@@ -319,7 +319,10 @@ public final class AS3_Loader
 		var newFailFunction:Function = function (ev:Event):void { removeLoadUrlListeners(true ,urlRequest,dispatcher,ev,successHandler, failureHandler,progressHandler, context, retryCount,failTimer); };
 		AS3_vs_AS2.myAddEventListener("failTimer",failTimer,TimerEvent.TIMER, newFailFunction); 
 		
-		var traceFunc:Function = function (ev:Event):void { tmpTrace("Only tracing (for debugging purposes) event for ",urlRequest.url, "event=",ev); };
+		var traceFunc:Function = function (ev:Event):void {
+			// HTTPStatusEvent.responseHeaders are only available in AdobeAir
+			tmpTrace("Only tracing (for debugging purposes) event for ",urlRequest.url, "event=",ev); 
+		};
 		var allTraceEvents:Array = [Event.ACTIVATE, Event.DEACTIVATE,Event.INIT,Event.OPEN,Event.UNLOAD,HTTPStatusEvent.HTTP_STATUS];			
 		for each (var event:String in allTraceEvents)
 			AS3_vs_AS2.myAddEventListener("loadURL",dispatcher,event, traceFunc); 			

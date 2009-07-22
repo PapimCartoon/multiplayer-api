@@ -206,7 +206,9 @@ public final class ErrorHandler
 				if (FREEZE_COUNT<=10) {
 					var bucket:int = Math.min(ANALYTICS_BUCKET_MAX, delta/FREEZING_BUCKETS_MILLI);
 					var countStr:String = FREEZE_COUNT>=ANALYTICS_COUNT_MAX ? ""+ANALYTICS_COUNT_MAX+"+" : ""+FREEZE_COUNT;
-					AS3_GATracker.trackWarning("Flash froze", "Flash Freeze no. "+countStr+" for "+(bucket*10)+" seconds",now);
+					AS3_GATracker.trackWarning("Flash froze", "Flash Freeze no. "+countStr+" for "+(bucket*10)+
+							(bucket==ANALYTICS_BUCKET_MAX ? "+" : "")+
+							" seconds",now);
 				}
 								
 				if (FREEZE_CALLBACK!=null) FREEZE_CALLBACK(delta);

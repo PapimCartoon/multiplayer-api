@@ -221,6 +221,7 @@ public final class AS3_vs_AS2
 	private static var MultipleListeners_LOG:Logger = new Logger("MultipleEventListeners",10);
 	
 	public static function myAddEventListener(dispatcherName:String, dispatcher:IEventDispatcher, type:String, listener:Function, useCapture:Boolean=false, priority:int=0):void {
+		StaticFunctions.assert(type!=null && type!="","eventListener type must be non null and not empty","your type was: ",type);
 		if (dispatchersInfo==null) {
 			dispatchersInfo = new Dictionary();
 			ALL_Event_LOG.log( getEventListenersTrace() );

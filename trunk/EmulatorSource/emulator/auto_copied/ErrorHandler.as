@@ -276,13 +276,15 @@ public final class ErrorHandler
 				if (FREEZE_COUNT<=10) {
 					var bucket:int = Math.min(ANALYTICS_BUCKET_MAX, delta/FREEZING_BUCKETS_MILLI);
 					var countStr:String = FREEZE_COUNT>=ANALYTICS_COUNT_MAX ? ""+ANALYTICS_COUNT_MAX+"+" : ""+FREEZE_COUNT;
-					AS3_GATracker.trackWarning("Flash froze", "Flash Freeze no. "+countStr+" for "+(bucket*10)+" seconds",now);
+					AS3_GATracker.trackWarning("Flash froze", "Flash Freeze no. "+countStr+" for "+(bucket*10)+
+							(bucket==ANALYTICS_BUCKET_MAX ? "+" : "")+
+							" seconds",now);
 				}
-								
-				if (FREEZE_CALLBACK!=null) FREEZE_CALLBACK(delta);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+								
+				if (FREEZE_CALLBACK!=null) FREEZE_CALLBACK(delta);
 				
 				if (delta > MAX_FREEZE_TIME_MILLI) {
 					// the flash froze!
@@ -291,11 +293,11 @@ public final class ErrorHandler
 						alwaysTraceAndSendReport("The flash froze!", ["LAST_CATCH_ERRORS_ON=",lastCatch," now=",now]);
 					} else {
 						// the computer probably went into sleep mode
-						didReportError = true; 	
-					}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+						didReportError = true; 	
+					}
 				}
 			}
 		}
@@ -304,11 +306,11 @@ public final class ErrorHandler
 		try {		
 			res = Profiler.measure(zoneName, func, args); 
 		} catch (err:Error) { handleError(err, args); }
-		// some actions need to be done after all other actions complete (e.g., sending messages to java)
-		try {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		// some actions need to be done after all other actions complete (e.g., sending messages to java)
+		try {
 			if (DO_AFTER_CATCH!=null && indentLevel==1) {
 				Profiler.measure("DoAfterCatch",DO_AFTER_CATCH,[]);
 				//DO_AFTER_CATCH();				
@@ -317,11 +319,11 @@ public final class ErrorHandler
 		LoggerLine.LINE_INDENT = indentLevel-1;
 		logger.log("EXITED");
 			
-		var poped:Object = my_stack_trace.pop(); 
-			// I tried to do the pop inside a "finally" clause (to handle correctly cases with exceptions), 
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		var poped:Object = my_stack_trace.pop(); 
+			// I tried to do the pop inside a "finally" clause (to handle correctly cases with exceptions), 
 			//but I got "undefined" errors:
 			//		undefined
 			//			at come2play_as3.util::General$/stackTrace()
@@ -330,11 +332,11 @@ public final class ErrorHandler
 			alwaysTraceAndSendReport("BAD stack behaviour (multithreaded flash?)", ["my_stack_trace=",my_stack_trace, "toInsert=",toInsert, "poped=",poped]);
 			
 		Profiler.ended("catchErrors");
-		return res;				
-	}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		return res;				
+	}
 	public static function handleError(err:Error, obj:Object):void {
 		alwaysTraceAndSendReport("handleError: "+AS3_vs_AS2.error2String(err),[" catching-arguments=",obj]);
 	}		

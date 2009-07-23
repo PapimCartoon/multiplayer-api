@@ -96,7 +96,7 @@ package come2play_as3.api.auto_copied
 			action = makeLegal(action);
 			label = makeLegal(label);
 			
-			var uniqueKey:String = catagory+"--"+action; //+"--"+label
+			var uniqueKey:String = catagory+"--"+action+"--"+label;
 			if (uniqueEvents[uniqueKey]==true) {
 				SameKey_LOG.log("Already used key=",uniqueKey);
 				return;

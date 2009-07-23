@@ -114,9 +114,10 @@ public final class StaticFunctions
 			res = res+" ";
 		return res;
 	}
-	public static function cutString(str:String, toSize:int):String {		
-		if (str.length<toSize) return str;
-		return str.substr(0,toSize)+"... (string cut)";
+	public static function cutString(str:String, toSize:int):String {
+		var len:int = str.length;	
+		if (len<toSize) return str;
+		return str.substr(0,toSize)+"... (string cut from len="+len+")";
 	}
 	public static function setClipboard(msg:String):void {
 		try {			

@@ -298,11 +298,11 @@ Not used by the graphics yet (but should be displayed):
 				
 				localhost:2000:socket
 				localhost:5555:polling
-				80.179.46.238:80:polling
+				java238.come2play.com:80:polling
 				
 				localhost:18083:rtmpt
 		-->
-		<entry><key>override all_java_ips</key><value>'80.179.46.238:80:polling'</value></entry>		
+		<entry><key>override all_java_ips</key><value>'localhost:2000:socket'</value></entry>		
 		
 		<entry><key>EndGameDelay</key><value>100</value></entry>
 		<!--
@@ -841,7 +841,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 		If any of these two parameters is less than or **equal** to 0, then you **cannot** reconnect. 
 	     -->
 	  <can_reconnect_after_seconds type="int">1</can_reconnect_after_seconds> 
-	  <wait_before_close_seconds type="int">0</wait_before_close_seconds> 
+	  <wait_before_close_seconds type="int">30</wait_before_close_seconds> 
 	  <!-- md5 is:	  
 		MD5( SECRET + 
 		'x' + config.extra_args.user_id + 

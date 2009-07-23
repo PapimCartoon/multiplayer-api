@@ -201,7 +201,7 @@ public final class ErrorHandler
 			if (delta > FREEZING_BUCKETS_MILLI) {
 				// gather freezing statistics
 				FREEZE_COUNT++;
-				Freeze_LOG.log("Flash Freeze no. ",FREEZE_COUNT," for ",delta/1000," seconds");
+				Freeze_LOG.log("Flash Freeze no. ",FREEZE_COUNT," for ",int(delta/1000)," seconds");
 				LAST_FROZE_ON = now;
 				if (FREEZE_COUNT<=10) {
 					var bucket:int = Math.min(ANALYTICS_BUCKET_MAX, delta/FREEZING_BUCKETS_MILLI);

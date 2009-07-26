@@ -141,9 +141,9 @@ import flash.utils.*;
 			isPlaying = true;
 			this.allPlayerIds = allPlayerIds.concat();
 			loadServerEntries = null;
-			graphicPlayed = !isInReview();
+			graphicPlayed = false;
 			
-			startGraphic.visible = false;
+			startGraphic.visible = !isInReview();
 			if((this.allPlayerIds.length == 1) && (!isInReview())){
 				this.allPlayerIds.push(-1);
 			}

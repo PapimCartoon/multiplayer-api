@@ -478,17 +478,34 @@ public final class AS3_vs_AS2
 		stageTimer.start(function():void {
 					if(graphics.stage) {
 						trace('stage loaded!');
+						startTimer = getTimer();
+						graphics.stage.addEventListener(Event.ENTER_FRAME,onEnterFrame);
 						stageTimer.clear();
 						gameConsructor();
 					}
 				},CHECK_STAGE_EVERY_MILLI);
 	}
-	
+	private static var statisticsGather:StatGather = new StatGather(5,10)
 	private static var Memory_LOG:Logger = new Logger("Memory",60); // 10 minutes = 60*every 10 seconds
+	private static var countFrames:int
+	private static var startTimer:int
+	private static var cureentFPS:int = 18;
+	static private function onEnterFrame(ev:Event):void{
+		if(countFrames == 36){
+			var currentTime:int = getTimer();
+			cureentFPS = (1000*countFrames)/(currentTime - startTimer);
+			statisticsGather.add(cureentFPS)
+			countFrames = 0
+			startTimer = currentTime;
+		}else{
+			countFrames++;
+		}
+	}
+	
 	public static function logMemory():void {
 		// trace( 55000000 >> 20);  // outputs: 52
 		// >> 20  does shift by 20 bits (like dividing by  2^20 = 1024*1024)
-		Memory_LOG.log(System.totalMemory >> 20);// in MB		
+		Memory_LOG.log(System.totalMemory >> 20,"FPS: ",cureentFPS);// in MB		
 	}
 
 

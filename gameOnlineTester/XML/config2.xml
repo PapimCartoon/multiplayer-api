@@ -333,7 +333,7 @@ Not used by the graphics yet (but should be displayed):
 		cpmStar
 		gameJacket
 		-->
-		<entry><key>isWithTables</key><value>true</value></entry>
+		
 		<!--
 		TurnBased
 		NO_TIMER
@@ -345,7 +345,7 @@ Not used by the graphics yet (but should be displayed):
 		LINE - for line view
 		-->
 		<entry><key>tableStyle</key><value>"LINE"</value></entry>
-
+		<entry><key>isWithTables</key><value>false</value></entry>
 		<entry><key>MochiCode</key><value>'53c06abe662b2907'</value></entry>
 		<entry><key>CPMStarSubPoolID</key><value>1</value></entry>
 		<entry><key>CPMStarPoolID</key><value>1910</value></entry>

@@ -1,8 +1,6 @@
 ﻿<flash_project name="API" version="1">
     <project_file path="./AS3/TicTacToe_AS3.fla" filetype="fla" profile="" def_file="true" />
-    <project_file path="./AS2/TicTacToe_AS2.fla" filetype="fla" profile="" />
     <project_file path="./AS3/TestClientGameAPI_AS3.fla" filetype="fla" profile="" />
-    <project_file path="./AS2/TestClientGameAPI_AS2.fla" filetype="fla" profile="" />
     <project_file path="./AS3/SnakeAS3.fla" filetype="fla" profile="" />
     <project_file path="./EmulatorSource/Emulator.fla" filetype="fla" profile="" />
     <project_file path="./EmulatorSource/GetParams.fla" filetype="fla" profile="" />

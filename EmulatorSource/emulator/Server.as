@@ -133,7 +133,6 @@ package emulator {
 
 		public function constructServer():void {
 			this.stop();
-			trace("version 1")
 			stateCalculationsID = -42;
 			afinishedPlayers=new Array();
 			serverState = new ObjectDictionary();
@@ -569,10 +568,8 @@ package emulator {
 			{
 				var serverEntriesString:String ="["+(String(root.loaderInfo.parameters["serverEntries"]).split("\n")).join(",")+"]"
 				historyEntries = SerializableClass.deserialize(JSON.parse(serverEntriesString) ) as Array ;
-				trace(historyEntries)
 			}
 				
-			//trace(JSON.stringify())
 			loadSavedGames();
 
 			enableSavedGames();

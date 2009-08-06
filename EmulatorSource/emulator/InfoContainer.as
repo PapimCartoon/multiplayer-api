@@ -271,7 +271,6 @@ package emulator {
 			gotKeyboardEvent.shiftKey = event.shiftKey;
 			sendGotOperation(gotKeyboardEvent);
 			
-			//doTrace(new API_DoTrace("gotKeyboardEvent", "is_key_down="+is_key_down+", charCode="+charCode+", keyCode="+keyCode+", keyLocation="+keyLocation+", altKey="+altKey+", ctrlKey="+ctrlKey+", shiftKey="+shiftKey));
 		}
 		public function doTrace(msg:API_Message):void {	
 			var doTrace:API_DoTrace = msg as API_DoTrace;
@@ -283,7 +282,6 @@ package emulator {
 			{
 				var messageToSend:API_Message = messageQueue[0];
 				connectionToGame.sendMessage(messageToSend);
-				trace("message : "+StaticFunctions.getMethodName(messageToSend));
 			}
 		}
 		
@@ -297,7 +295,6 @@ package emulator {
 					var apiTransaction:API_Transaction = msg as API_Transaction;
 					if(apiTransaction.callback != null)
 					{
-						trace("finished callback : "+apiTransaction.callback.callbackName);
 						messageQueue.shift();
 						nextMessage();
 					}
@@ -408,8 +405,6 @@ package emulator {
 							bStarted = true;
 							
 							iMyID = infoEntry.value as int;
-							trace("iMyID :"+infoEntry.value)
-							trace(iMyID)
 							break;
 						}
 					}	
@@ -524,7 +519,6 @@ package emulator {
 		}
 		public function doAllSetTurn(msg:API_DoAllSetTurn):void
 		{
-			trace("set turn to:")
 			for each(var user:UserInfo in aUsers)
 			{
 				if(user.userID ==msg.userId)

@@ -153,6 +153,10 @@ Not used by the graphics yet (but should be displayed):
 	
 	<entry><key>isWithSinglePlayer</key><value>true</value></entry>	
 	
+	
+	
+	<entry><key>registerImage</key><value>"images/register.swf"</value></entry>
+	
 	<entry><key>gameLogoUrl</key><value>"images/AnimatedLogo.swf"</value></entry>	
 	<entry><key>isGameScalable</key><value>false</value></entry>	
 	<entry><key>translated_game_name</key><value>"Game name"</value></entry>	
@@ -633,7 +637,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 		<!-- in Sudoku and Match4, 
 			we use seconds_per_move to limit the time for the entire match 
 		-->
-		<seconds_per_move type="int">15</seconds_per_move>
+		<seconds_per_move type="int">90</seconds_per_move>
 		<seconds_per_match type="int">0</seconds_per_match>
 		<!-- extra_match_info is for 
 					**OldBoard** games.
@@ -649,7 +653,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 				- You cannot go back and forward.
 				- You cannot review a match (favorite match).
 			-->
-		<is_with_match_state_history type="boolean">true</is_with_match_state_history>
+		<is_with_match_state_history type="boolean">false</is_with_match_state_history>
 		
 		<!--
 		can_rollback_state determines if the players can roll-back moves 
@@ -1089,7 +1093,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 			
 		<is_chat_enabled type="boolean">true</is_chat_enabled>
 		
-		<is_align_vertical type="boolean">true</is_align_vertical>	
+		<is_align_vertical type="boolean">false</is_align_vertical>	
 		<is_rtl type="boolean">false</is_rtl>    
 	</graphics>
 </config>

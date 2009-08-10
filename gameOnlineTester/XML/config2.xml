@@ -424,7 +424,7 @@ Not used by the graphics yet (but should be displayed):
 			  <is_male>true</is_male>
 			  <is_veteran_user>false</is_veteran_user>
 			  <is_guest>true</is_guest>
-			  <site_name>facebook</site_name>
+			  <site_name>zapak</site_name>
 			  <name>%26amp%3B%22A%26amp%3Bquot%3B+%26amp%3B</name>
 			  <avatar_url>images/Avatar_4.gif</avatar_url>
 			  <supervisor>Supervisor</supervisor>
@@ -691,7 +691,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 			  	  <is_male>true</is_male>
 			  	  <is_veteran_user>false</is_veteran_user>
 			  	  <is_guest>false</is_guest>
-			  	  <site_name>facebook</site_name>
+			  	  <site_name>zapak</site_name>
 				  <name>Yoav</name>
 				  <avatar_url>images/Avatar_2.gif</avatar_url>
 				  <supervisor>Supervisor</supervisor>
@@ -861,7 +861,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 		  <is_male>true</is_male>
 		  <is_veteran_user>false</is_veteran_user>
 		  <is_guest>false</is_guest>
-		  <site_name>facebook</site_name>
+		  <site_name>zapak</site_name>
 		  <name>Yoav</name>
 		  <!-- 
 		  - avatar examples:

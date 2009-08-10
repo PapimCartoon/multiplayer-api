@@ -1,6 +1,7 @@
 package come2play_as3.dominoGame.graphicClasses
 {
 	import come2play_as3.dominoGame.LogicClasses.MiddleBoard;
+	import come2play_as3.dominoGame.serverClasses.DominoCube;
 	import come2play_as3.dominoGame.serverClasses.DominoMove;
 	import come2play_as3.dominoGame.usefullFunctions.Tools;
 	
@@ -44,13 +45,13 @@ package come2play_as3.dominoGame.graphicClasses
 			isInAnimation = false;
 			if(delayedBricks.length>0){
 				var delayedAnimation:Object = delayedBricks.shift()
-				addBrick(delayedAnimation.cube,delayedAnimation.move)
+				addBrick(delayedAnimation.cube,delayedAnimation.move,delayedAnimation.dominoCube)
 			}
 		}
 		
-		public function addBrick(cube:DominoBrickGraphic,move:DominoMove):void{
+		public function addBrick(cube:DominoBrickGraphic,move:DominoMove,dominoCube:DominoCube):void{
 			if(isInAnimation){
-				delayedBricks.push({cube:cube,move:move})
+				delayedBricks.push({cube:cube,move:move,dominoCube:dominoCube})
 				return;
 			}		
 			isInAnimation = true
@@ -60,21 +61,21 @@ package come2play_as3.dominoGame.graphicClasses
 			cube.y = oldPoint.y
 			if(move.connectToRight){
 				if(right.length == 0)	rightBrick.isHeadRight = true
-				handleAddBrick(rightBrick,cube,rightBrick.rightBrickNum,move)
-				if(rightBrick.rightBrickNum == move.dominoCube.down){
-					cube.rightBrickNum = move.dominoCube.up
+				handleAddBrick(rightBrick,cube,rightBrick.rightBrickNum,move,dominoCube)
+				if(rightBrick.rightBrickNum == dominoCube.down){
+					cube.rightBrickNum = dominoCube.up
 				}else{
-					cube.rightBrickNum = move.dominoCube.down
+					cube.rightBrickNum = dominoCube.down
 					cube.flipSide()
 				}
 				right.push(cube)
 			}else{
 				if(left.length == 0)	leftBrick.isHeadRight = false
-				handleAddBrick(leftBrick,cube,leftBrick.leftBrickNum,move)
-				if(leftBrick.leftBrickNum == move.dominoCube.down){
-					cube.leftBrickNum = move.dominoCube.up
+				handleAddBrick(leftBrick,cube,leftBrick.leftBrickNum,move,dominoCube)
+				if(leftBrick.leftBrickNum == dominoCube.down){
+					cube.leftBrickNum = dominoCube.up
 				}else{
-					cube.leftBrickNum = move.dominoCube.down
+					cube.leftBrickNum = dominoCube.down
 					cube.flipSide()		
 				}
 				left.push(cube)
@@ -101,14 +102,14 @@ package come2play_as3.dominoGame.graphicClasses
 		private function get leftBrick():DominoBrickGraphic{
 			return left.length == 0?middle:left[left.length-1]
 		}
-		private var hitTestDistance:int = 1800
-		private function handleAddBrick(brick:DominoBrickGraphic,cube:DominoBrickGraphic,connectNum:int,move:DominoMove):void{
+		private var hitTestDistance:int = 2500
+		private function handleAddBrick(brick:DominoBrickGraphic,cube:DominoBrickGraphic,connectNum:int,move:DominoMove,dominoCube:DominoCube):void{
 			if(brick.isDouble()){
-				brick.addNormal(cube,connectNum == move.dominoCube.up,false)
+				brick.addNormal(cube,connectNum == dominoCube.up,false)
 			}else if(cube.isDouble()){
 				brick.addDouble(cube,false)
 			}else{	
-				brick.connectBrickToThis(cube,connectNum == move.dominoCube.up,move.brickOrientation,false)
+				brick.connectBrickToThis(cube,connectNum == dominoCube.up,move.brickOrientation,false)
 			}	
 		}
 		
@@ -128,7 +129,6 @@ package come2play_as3.dominoGame.graphicClasses
 			var rightPoint:Point = rightBrick.getRightPoint();
 			var leftDistance:int = MiddleBoard.canAddLeft(heldBrick.dominoCube)?DominoBrickGraphic.getDistance(leftPoint,cubePoint):int.MAX_VALUE
 			var rightDistance:int = MiddleBoard.canAddRight(heldBrick.dominoCube)?DominoBrickGraphic.getDistance(rightPoint,cubePoint):int.MAX_VALUE
-		//	trace("leftDistance: "+leftDistance+"rightDistance: "+rightDistance)
 			if((leftDistance<hitTestDistance) || (rightDistance<hitTestDistance)){
 				if(leftDistance>rightDistance){
 					if(right.length == 0)	rightBrick.isHeadRight = true

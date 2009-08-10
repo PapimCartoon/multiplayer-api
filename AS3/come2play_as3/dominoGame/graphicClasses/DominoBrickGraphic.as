@@ -23,7 +23,7 @@ package come2play_as3.dominoGame.graphicClasses
 		
 		private var blockGraphic:BlockGraphic;
 		public var dominoCube:DominoCube;
-		public var key:Object;
+		public var key:String;
 		public var rightBrickNum:int
 		public var leftBrickNum:int
 		/**
@@ -44,7 +44,7 @@ package come2play_as3.dominoGame.graphicClasses
 		private var rotationSprite:Sprite = new Sprite();
 		
 		
-		public function DominoBrickGraphic(key:Object,dominoCube:DominoCube)
+		public function DominoBrickGraphic(key:String,dominoCube:DominoCube)
 		{
 			blockGraphic = new BlockGraphic();
 			direction = UP;
@@ -82,8 +82,8 @@ package come2play_as3.dominoGame.graphicClasses
 			changeUpperNum(dominoCube.up)
 			changeLowerNum(dominoCube.down)
 		}
-		public function isSame(testKey:Object):Boolean{
-			return (key["brickNum"] == testKey["brickNum"])
+		public function isSame(testKey:String):Boolean{
+			return (key == testKey)
 		}
 		private function changeUpperNum(num:int):void{
 			blockGraphic.numBmc.gotoAndStop(num+1)

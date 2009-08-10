@@ -1,6 +1,7 @@
 package come2play_as3.dominoGame.graphicClasses
 {
 	import come2play_as3.api.auto_copied.AS3_vs_AS2;
+	import come2play_as3.dominoGame.LogicClasses.MiddleBoard;
 	import come2play_as3.dominoGame.events.AnimationEvent;
 	import come2play_as3.dominoGame.events.DrawEvent;
 	import come2play_as3.dominoGame.events.GrabEvent;
@@ -22,6 +23,13 @@ package come2play_as3.dominoGame.graphicClasses
 			this.pileX = pileX;
 			this.pileY = pileY;
 		}
+		public function hasMoves():Boolean{
+			for each(var cube:DominoBrickGraphic in myHand){
+				if(MiddleBoard.canAddLeft(cube.dominoCube) || MiddleBoard.canAddRight(cube.dominoCube) )	return true;
+			}
+			return false		
+		}
+		
 		public function clear():void{
 			handX = 10;
 			isDrawing = false;
@@ -31,8 +39,17 @@ package come2play_as3.dominoGame.graphicClasses
 			}
 			myHand = []
 		}
-		
-		public function getBrick(key:Object):DominoBrickGraphic{
+		public function findBrick(key:String):DominoBrickGraphic{
+			var len:int = myHand.length;
+			for(var i:int=0;i<len;i++){
+				var myBrickGraphic:DominoBrickGraphic = myHand[i]
+				if(myBrickGraphic.isSame(key)){
+					return myBrickGraphic
+				}	
+			}
+			return new DominoBrickGraphic(key,null);
+		}
+		public function getBrick(key:String):DominoBrickGraphic{
 			var len:int = myHand.length;
 			var foundBrick:DominoBrickGraphic
 			var index:int
@@ -48,8 +65,12 @@ package come2play_as3.dominoGame.graphicClasses
 					myBrickGraphic.returnBrick()
 				}
 			}
-			handX -= 25
-			myHand.splice(index,1);
+			if(foundBrick==null){
+				foundBrick = new DominoBrickGraphic(key,null);
+			}else{
+				handX -= 25
+				myHand.splice(index,1);
+			}		
 			return foundBrick;
 		}
 		public function get dominoInHand():int{
@@ -69,7 +90,7 @@ package come2play_as3.dominoGame.graphicClasses
 			} 
 		}
 		private var hasStartedGraphic:Boolean
-		public function draw(key:Object,dominoCube:DominoCube=null):void{
+		public function draw(key:String,dominoCube:DominoCube=null):void{
 			if(isDrawing){
 				goingToDraw.push({key:key,dominoCube:dominoCube})
 				return;
@@ -84,7 +105,6 @@ package come2play_as3.dominoGame.graphicClasses
 				hasStartedGraphic = true;
 				dispatchEvent(new AnimationEvent(true,"drawing done"))
 			}
-			dispatchEvent(new DrawEvent())
 			blockGraphic.x = pileX;
 			blockGraphic.y = pileY;
 			blockGraphic.setStartPoint(handX,brickY)
@@ -92,6 +112,7 @@ package come2play_as3.dominoGame.graphicClasses
 			handX += 25;
 			myHand.push(blockGraphic)
 			addChildAt(blockGraphic,0)
+			dispatchEvent(new DrawEvent())
 		}
 		private function reDispatch(ev:GrabEvent):void{
 			addChild(ev.brick)

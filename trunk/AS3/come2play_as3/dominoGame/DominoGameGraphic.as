@@ -104,7 +104,7 @@ package come2play_as3.dominoGame
 			addChild(helpScreen)
 		}
 		public function gameEnded():void{
-			didPassBefore = brickPosed = canGrab = false;
+			 brickPosed = canGrab = false;
 			leaveBrick()
 			filters = []
 			if(waitingScreen.parent!=null)	waitingScreen.parent.removeChild(waitingScreen);
@@ -112,9 +112,17 @@ package come2play_as3.dominoGame
 			dominoDraw.enabled = false;
 		}
 		private var isMyTurn:Boolean
-		public function disableButtons(value:Boolean,turn:int):void{
-			isMyTurn = !value
-			if(value){
+		public function disableButtons(isMyTurn:Boolean,turn:int):void{
+			dominoDraw.enabled = false;
+			dominoPass.enabled = false
+			this.isMyTurn = isMyTurn
+			if(isMyTurn){
+				dominoBack.turnIndicator1.gotoAndStop(1)
+				filters = []
+				if(waitingScreen.parent!=null)	waitingScreen.parent.removeChild(waitingScreen);
+				tryEnableDraw()
+				tryEnablePass()
+			}else{
 				if(isViewer){
 					dominoBack.turnIndicator1.gotoAndStop(3+turn)	
 				}else{
@@ -122,14 +130,17 @@ package come2play_as3.dominoGame
 					filters = [createSaturationFilter(20)]
 					addChild(waitingScreen)
 				}
-			}else{
-				dominoBack.turnIndicator1.gotoAndStop(1)
-				filters = []
-				if(waitingScreen.parent!=null)	waitingScreen.parent.removeChild(waitingScreen);
 			}
-			dominoPass.enabled = (!value) && (!didPassBefore);
-			dominoDraw.enabled = ((!value) && (currentDominoAmount>0))
-			tryDisableDraw()
+		}
+		private function tryEnableDraw():void{
+			dominoDraw.enabled = ((currentDominoAmount>0) && (!didReachMaxHand()) && isMyTurn);
+		}
+		private function tryEnablePass():void{
+			dominoPass.enabled = (!hasMoves() && (!dominoDraw.enabled))
+		}
+		private function hasMoves():Boolean{
+			if(isViewer)	return false;
+			return myHand.hasMoves();
 		}
 		public function isNoMoreDomino():Boolean{
 			return (currentDominoAmount==0)
@@ -137,17 +148,18 @@ package come2play_as3.dominoGame
 		
 		public function drawDomino(ev:MouseEvent):void{
 			dispatchEvent(DominoDraw.create())
-			tryDisableDraw();
+			tryEnableDraw()
 		}
-		private function tryDisableDraw():void{
-			if(((myHand.dominoInHand + dominoesDelayed.length) >= DominoGameMain.dominoMaxHand) || isViewer || (!isMyTurn)){
-				dominoDraw.enabled = false;
-			}
+
+		public function didReachMaxHand():Boolean{
+			return ((myHand.dominoInHand + dominoesDelayed.length ) >= DominoGameMain.dominoMaxHand) 
 		}
 		
-		private var didPassBefore:Boolean
+
+		
 		public function passTurn(ev:MouseEvent):void{
-			didPassBefore = true
+			canGrab = false;
+			dominoPass.enabled = false
 			dispatchEvent(DominoPass.create())
 		}
 		public function startGraphic(currentDominoAmount:int,isViewer:Boolean):void{
@@ -162,21 +174,26 @@ package come2play_as3.dominoGame
 			rivalHand.clear();
 			this.currentDominoAmount = currentDominoAmount;			
 		}
-		
-		public function rivalDraw(key:Object,rivalNum:int):void{
-			//didPassBefore = false
+		public function rivalShow(key:String,dominoCube:DominoCube):void{
+			var dominoGraphic:DominoBrickGraphic = rivalHand.findBrick(key)
+			dominoGraphic.show(dominoCube)
+		}
+		public function myShow(key:String,dominoCube:DominoCube):void{
+			if(!isViewer)	return
+			var dominoGraphic:DominoBrickGraphic = rivalHand.findBrick(key)
+			dominoGraphic.show(dominoCube)
+		}
+		public function rivalDraw(key:String,rivalNum:int):void{
 			if(rivalNum==0)
 				rivalHand.draw(key)	
 			else
 				myHand.draw(key);
 		}
 
-		public function draw(dominoCube:DominoCube,key:Object):void{
-			didPassBefore = false;
-			dominoPass.enabled = true
+		public function draw(dominoCube:DominoCube,key:String):void{
 			for(var i:int =0;i<dominoesDelayed.length;i++){
-				var waitingKey:Object = dominoesDelayed[i]
-				if(key["brickNum"] == waitingKey["brickNum"]){
+				var waitingKey:String = dominoesDelayed[i]
+				if(key == waitingKey){
 					dominoesDelayed.splice(i,1);
 					break;
 				}
@@ -187,12 +204,11 @@ package come2play_as3.dominoGame
 		public function tryPutBricks():void{
 			if(waitingPutBricks.length == 0)	return;
 			var obj:Object = waitingPutBricks.shift()
-			putBrick(obj.dominoMove,obj.putWhere)
+			putBrick(obj.dominoMove,obj.dominoCube,obj.putWhere,obj.isLoad)
 		}
-		public function putBrick(dominoMove:DominoMove,putWhere:int):void{
-			didPassBefore = false
+		public function putBrick(dominoMove:DominoMove,dominoCube:DominoCube,putWhere:int,isLoad:Boolean):void{
 			if(myHand.isWithQueue || rivalHand.isWithQueue){
-				waitingPutBricks.push({dominoMove:dominoMove,putWhere:putWhere})
+				waitingPutBricks.push({dominoMove:dominoMove,putWhere:putWhere,dominoCube:dominoCube,isLoad:isLoad})
 				return;
 			}
 			var cube:DominoBrickGraphic
@@ -200,15 +216,14 @@ package come2play_as3.dominoGame
 				cube = myHand.getBrick(dominoMove.key)
 			}else if(putWhere==0){
 				cube = rivalHand.getBrick(dominoMove.key)
-				cube.show(dominoMove.dominoCube)
 			}else if(putWhere==1){
-				cube = myHand.getBrick(dominoMove.key)
-				cube.show(dominoMove.dominoCube)
+				cube = myHand.getBrick(dominoMove.key)	
 			}
+			cube.show(dominoCube)
 			if(middleGraphic.canAddCenter()){
 				middleGraphic.addCenter(cube)
 			}else{
-				middleGraphic.addBrick(cube,dominoMove)
+				middleGraphic.addBrick(cube,dominoMove,dominoCube)
 			}
 			tryPutBricks()
 			
@@ -216,10 +231,11 @@ package come2play_as3.dominoGame
 		public var dominoesDelayed:Array
 		public function takeDominoFromDeck(ev:DrawEvent):void{
 			currentDominoAmount--;
-			dominoDraw.enabled = (currentDominoAmount>0);
-			tryDisableDraw();
 			dominoBack.stockText1.text = "x "+currentDominoAmount;
+			tryEnableDraw()
+			tryEnablePass()
 		}
+
 		
 		public function startStageListening():void{
 			AS3_vs_AS2.myAddEventListener("keyboard-stage",stage,MouseEvent.MOUSE_MOVE,mouseMoved)

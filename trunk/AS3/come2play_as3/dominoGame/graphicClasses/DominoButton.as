@@ -28,9 +28,7 @@ package come2play_as3.dominoGame.graphicClasses
 			if(_enabled)
 				_graphic.gotoAndStop(1)
 			else
-				_graphic.gotoAndStop(4)
-			trace(value)
-			
+				_graphic.gotoAndStop(4)			
 		}
 		private function mouseOver(ev:MouseEvent):void{
 			if(_enabled)

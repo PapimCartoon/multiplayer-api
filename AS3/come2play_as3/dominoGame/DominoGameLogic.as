@@ -100,7 +100,6 @@ package come2play_as3.dominoGame
 			dominoGraphic.startGraphic(dominoAmount,rivalUserIds.length == 2)
 		}
 		public function takeDominoBrick(serverEntry:ServerEntry,forceRival:Boolean=false):void{
-			
 			var key:String = JSON.stringify(serverEntry.key)
 			if(serverEntry.visibleToUserIds == null){
 				openBricks[key] = serverEntry.value as DominoCube
@@ -109,6 +108,7 @@ package come2play_as3.dominoGame
 				takeBrick(serverEntry.value as DominoCube,key)
 			}else{
 				if( (DominoGameMain.isSinglePlayer)&&(serverEntry.visibleToUserIds.indexOf(myUserId)!=-1)){
+					trace("take computer brick")
 					computerBricks[key] = serverEntry.value as DominoCube;
 					takeOpponentBrick(key,0);
 				}else{
@@ -122,13 +122,13 @@ package come2play_as3.dominoGame
 		}
 		
 		//add a brick to your hand
-		public function takeBrick(domino:DominoCube,key:String):void{
+		private function takeBrick(domino:DominoCube,key:String):void{
 			myHandBricks[key] = domino;
 			dominoGraphic.draw(domino,key)
 				
 		}
 		//add a brick to your rival hand
-		public function takeOpponentBrick(key:String,rivalNum:int):void{
+		private function takeOpponentBrick(key:String,rivalNum:int):void{
 			opponentsBrickAvailable[rivalNum][key] = 1
 			dominoGraphic.rivalDraw(key,rivalNum);
 		}
@@ -216,12 +216,12 @@ package come2play_as3.dominoGame
 			for(var key:String in computerBricks){
 				var dominoCube:DominoCube = computerBricks[key];
 				if(MiddleBoard.canAddLeft(dominoCube)){
-					dominoComputerMove =DominoComputerMove.create(DominoMove.create(myUserId,key,false,Math.random()*4,moveNum++));
 					delete computerBricks[key]
+					dominoComputerMove =DominoComputerMove.create(DominoMove.create(myUserId,key,false,Math.random()*4,moveNum++));
 					return dominoComputerMove;
 				}else if(MiddleBoard.canAddRight(dominoCube)){
-					dominoComputerMove =DominoComputerMove.create(DominoMove.create(myUserId,key,true,Math.random()*4,moveNum++));
 					delete computerBricks[key]
+					dominoComputerMove =DominoComputerMove.create(DominoMove.create(myUserId,key,true,Math.random()*4,moveNum++));
 					return dominoComputerMove;
 				}
 			}
@@ -238,7 +238,6 @@ package come2play_as3.dominoGame
 				}
 				return
 			}
-			
 			dispatchEvent(dominoComputerMove)
 		}
 		public function setTurn(userTurn:int):void{

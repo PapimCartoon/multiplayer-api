@@ -151,12 +151,13 @@ package come2play_as3.dominoGame
 		}
 		/*End of calculator code*/
 		private function drawDomino(ev:DominoDraw):void{
-			if((leftDominoKeys.length<1) ||  (!gameInProgress) || dominoGraphic.isNoMoreDomino())	return;
-			if(isInTransaction()){	
-				ErrorHandler.myTimeout("drawTimeout",function():void{
-					drawDomino(ev)
-				},1000);
-				return
+			if((leftDominoKeys.length<1) ||  (!gameInProgress) || dominoGraphic.isNoMoreDomino() || isInTransaction()){	
+				if((currentTurn == 1) && (isSinglePlayer)) {
+					ErrorHandler.myTimeout("drawTimeout",function():void{
+						dominoLogic.makeComputerMove();
+					},1000);
+				};
+				return;
 			}
 			var key:Object = leftDominoKeys.shift()
 			dominoGraphic.dominoesDelayed.push(JSON.stringify(key))
@@ -327,18 +328,21 @@ package come2play_as3.dominoGame
 			}else if(serverEntry.value is DominoDraw){
 				hackerAssertion(serverEntry.storedByUserId == serverEntry.key.playerId,serverEntry.storedByUserId,"user has to draw for himself")
 				var shouldForce:Boolean = serverEntry.value is DominoComputerDraw
+				if(shouldForce)	trace("computer draw")
 				serverEntry = serverEntries[1];
 				removeKey(serverEntry.key);
 				dominoLogic.takeDominoBrick(serverEntry,shouldForce)
 				if((isSinglePlayer) && (shouldForce)){
-					dominoLogic.makeComputerMove()
+					ErrorHandler.myTimeout("computerMakeMove",function():void{
+						trace("make move")
+						dominoLogic.makeComputerMove()
+					},1000);
 				}
 			}else if(serverEntry.value is DominoPass){
 				hackerAssertion(serverEntry.storedByUserId == serverEntry.key.playerId,serverEntry.storedByUserId,"user has to pass for himself")
 				if(passCount >= 1)	declareWinner(new WinnerEvent(-1))
-				if(gameInProgress) doStoreState([UserEntry.create({type:"PlayerTurn"},PlayerTurn.create(getNextTurn()))])
 				if(dominoGraphic.isNoMoreDomino())	passCount++;
-				
+				if(gameInProgress) doStoreState([UserEntry.create({type:"PlayerTurn"},PlayerTurn.create(getNextTurn()))])
 			}
 			
 			

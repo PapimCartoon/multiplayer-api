@@ -84,12 +84,11 @@ package come2play_as3.dominoGame.graphicClasses
 			if(goingToDraw.length>0){
 				var obj:Object = goingToDraw.pop()
 				draw(obj.key,obj.dominoCube)
-			}else if(hasStartedGraphic){
-				dispatchEvent(new AnimationEvent(false,"drawing done"))
-				hasStartedGraphic = false;
-			} 
+				dispatchEvent(new DrawEvent(false))	
+			}else{
+				dispatchEvent(new DrawEvent(true))	
+			}
 		}
-		private var hasStartedGraphic:Boolean
 		public function draw(key:String,dominoCube:DominoCube=null):void{
 			if(isDrawing){
 				goingToDraw.push({key:key,dominoCube:dominoCube})
@@ -101,10 +100,6 @@ package come2play_as3.dominoGame.graphicClasses
 				AS3_vs_AS2.myAddEventListener("DominoBlock",blockGraphic,GrabEvent.GRAB_BRICK,reDispatch)
 				AS3_vs_AS2.myAddEventListener("DominoBlock",blockGraphic,GrabEvent.LEAVE_BRICK,reDispatch)
 			}	
-			if(!hasStartedGraphic){
-				hasStartedGraphic = true;
-				dispatchEvent(new AnimationEvent(true,"drawing done"))
-			}
 			blockGraphic.x = pileX;
 			blockGraphic.y = pileY;
 			blockGraphic.setStartPoint(handX,brickY)
@@ -112,7 +107,6 @@ package come2play_as3.dominoGame.graphicClasses
 			handX += 25;
 			myHand.push(blockGraphic)
 			addChildAt(blockGraphic,0)
-			dispatchEvent(new DrawEvent())
 		}
 		private function reDispatch(ev:GrabEvent):void{
 			addChild(ev.brick)

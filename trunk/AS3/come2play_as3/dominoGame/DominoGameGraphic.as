@@ -3,6 +3,7 @@ package come2play_as3.dominoGame
 	import come2play_as3.api.auto_copied.AS3_vs_AS2;
 	import come2play_as3.api.auto_copied.T;
 	import come2play_as3.api.auto_generated.API_Message;
+	import come2play_as3.cards.events.AnimationEndedEvent;
 	import come2play_as3.dominoGame.events.AnimationEvent;
 	import come2play_as3.dominoGame.events.DrawEvent;
 	import come2play_as3.dominoGame.events.GrabEvent;
@@ -61,9 +62,6 @@ package come2play_as3.dominoGame
 			dominoBack.addChild(pileGraphic)
 			myHand = new HandGraphic(330,pileGraphic.x,pileGraphic.y)
 			rivalHand = new HandGraphic(5,pileGraphic.x,pileGraphic.y)
-			
-			AS3_vs_AS2.myAddEventListener("myHand",myHand,AnimationEvent.ANIMATION_EVENT,reDisaptch)
-			AS3_vs_AS2.myAddEventListener("rivalHand",rivalHand,AnimationEvent.ANIMATION_EVENT,reDisaptch)
 			
 			AS3_vs_AS2.myAddEventListener("myHand",myHand,DrawEvent.DRAW_EVENT,takeDominoFromDeck)
 			AS3_vs_AS2.myAddEventListener("rivalHand",rivalHand,DrawEvent.DRAW_EVENT,takeDominoFromDeck)
@@ -234,6 +232,7 @@ package come2play_as3.dominoGame
 			dominoBack.stockText1.text = "x "+currentDominoAmount;
 			tryEnableDraw()
 			tryEnablePass()
+			if(ev.isFinish)	tryPutBricks()
 		}
 
 		
@@ -282,10 +281,6 @@ package come2play_as3.dominoGame
 			}
 			
 			grabbedBrick = null;
-		}
-		private function reDisaptch(ev:AnimationEvent):void{
-			if(!ev.start)	tryPutBricks()
-			dispatchEvent(new AnimationEvent(ev.start,ev.animationName))
 		}
 		private static const rConst:Number = 0.2225
 		private static const gConst:Number = 0.7169 

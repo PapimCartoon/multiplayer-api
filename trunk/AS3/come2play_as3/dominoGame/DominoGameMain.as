@@ -249,12 +249,7 @@ package come2play_as3.dominoGame
 					}else if(serverEntry.value is PlayerTurn){
 						var playerTurn:PlayerTurn = serverEntry.value as PlayerTurn
 						setTurn(playerTurn)
-					}/*else if(!(serverEntry.key is String)){
-						if(serverEntry.key.type == DOMINO_CUBE){	
-							logger.log("takeDomino: ",serverEntry);
-							dominoLogic.takeDominoBrick(serverEntry)
-						}
-					}*/
+					}
 				}
 
 			}
@@ -315,6 +310,9 @@ package come2play_as3.dominoGame
 				var dominoComputerMove:DominoComputerMove = serverEntry.value as DominoComputerMove
 				hackerAssertion(serverEntry.storedByUserId == myUserId,serverEntry.storedByUserId,"there can only be my user id in single player mode")
 				serverEntry = serverEntries[1];
+				if(serverEntry==null){
+					serverEntry = getServerEntry(JSON.parse(dominoComputerMove.key))
+				}
 				passCount = 0;
 				dominoLogic.putBrick(dominoComputerMove,serverEntry.value as DominoCube)
 				if(gameInProgress) doStoreState([UserEntry.create({type:"PlayerTurn"},PlayerTurn.create(getNextTurn()))])
@@ -322,19 +320,20 @@ package come2play_as3.dominoGame
 				var dominoMove:DominoMove = serverEntry.value as DominoMove
 				hackerAssertion(serverEntry.storedByUserId == dominoMove.playerId,serverEntry.storedByUserId,"user has to move for himself")
 				serverEntry = serverEntries[1];
+				if(serverEntry==null){
+					serverEntry = getServerEntry(JSON.parse(dominoMove.key))
+				}
 				passCount = 0;
 				dominoLogic.putBrick(dominoMove,serverEntry.value as DominoCube)
 				if(gameInProgress) doStoreState([UserEntry.create({type:"PlayerTurn"},PlayerTurn.create(getNextTurn()))])
 			}else if(serverEntry.value is DominoDraw){
 				hackerAssertion(serverEntry.storedByUserId == serverEntry.key.playerId,serverEntry.storedByUserId,"user has to draw for himself")
 				var shouldForce:Boolean = serverEntry.value is DominoComputerDraw
-				if(shouldForce)	trace("computer draw")
 				serverEntry = serverEntries[1];
 				removeKey(serverEntry.key);
 				dominoLogic.takeDominoBrick(serverEntry,shouldForce)
 				if((isSinglePlayer) && (shouldForce)){
 					ErrorHandler.myTimeout("computerMakeMove",function():void{
-						trace("make move")
 						dominoLogic.makeComputerMove()
 					},1000);
 				}

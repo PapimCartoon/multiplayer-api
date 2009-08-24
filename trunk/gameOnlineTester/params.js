@@ -184,7 +184,7 @@ paramArr.push( {htmlName:"votes_sum",xmlName:"override_config.user_info.params.v
 paramArr.push( {htmlName:"votes_count",xmlName:"override_config.user_info.params.votes_count",type:"int",isUser:true,callFunc:getRandomNum,colName:"Votes count"});
 paramArr.push( {htmlName:"avatar",xmlName:"override_config.user_info.params.avatar_url",type:"string",isUser:true,colName:"Avatar url",callFunc:getPlayerAvatar});
 paramArr.push( {htmlName:"GameRating",xmlName:"override_config.user_info.params.game_rating",type:"int",isUser:true,callFunc:getRandomNum,colName:"Game rating"});
-paramArr.push( {htmlName:"tokens",xmlName:"override_config.user_info.params.tokens",type:"string",isUser:true,callFunc:getRandomTokens,colName:"Tokens"});
+//paramArr.push( {htmlName:"tokens",xmlName:"override_config.user_info.params.tokens",type:"string",isUser:true,callFunc:getRandomTokens,colName:"Tokens"});
 paramArr.push( {htmlName:"supervisor",xmlName:"override_config.user_info.params.supervisor",type:"string",isUser:true,callFunc:getRandomsupervisor,colName:"Supervisor"});
 paramArr.push( {htmlName:"name",xmlName:"override_config.user_info.params.name",type:"string",isUser:true,colName:"Name",callFunc:getPlayerName});
 paramArr.push( {htmlName:"id",xmlName:"override_config.extra_args.user_id",type:"int",isUser:true,colName:"ID",callFunc:getPlayerId});

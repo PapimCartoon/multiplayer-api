@@ -85,7 +85,11 @@ package come2play_as3.dominoGame
 			var winner:int = ev.playerId
 			var winnerMatchOver:PlayerMatchOver
 			var loserMatchOver:PlayerMatchOver
-			if(winner == -1){
+			if(winner == -10){
+				winnerMatchOver = PlayerMatchOver.create(allPlayerIds[0],100,-1)
+				loserMatchOver = PlayerMatchOver.create(allPlayerIds[1],100,-1);
+				doAllEndMatch([winnerMatchOver,loserMatchOver]);
+			}else if(winner == -1){
 				var arr:Array = dominoLogic.dominoToReveal()
 				responseLength = arr.length;
 				if(responseLength != 0){

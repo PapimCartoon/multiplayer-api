@@ -63,7 +63,7 @@ package come2play_as3.dominoGame
 			}else if(myScore<opponentScore){
 				dispatchEvent(new WinnerEvent(myUserId))
 			}else{
-				dispatchEvent(new WinnerEvent(-1))
+				dispatchEvent(new WinnerEvent(-10))
 			}
 			
 		}

@@ -108,7 +108,6 @@ package come2play_as3.dominoGame
 				takeBrick(serverEntry.value as DominoCube,key)
 			}else{
 				if( (DominoGameMain.isSinglePlayer)&&(serverEntry.visibleToUserIds.indexOf(myUserId)!=-1)){
-					trace("take computer brick")
 					computerBricks[key] = serverEntry.value as DominoCube;
 					takeOpponentBrick(key,0);
 				}else{

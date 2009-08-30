@@ -53,6 +53,10 @@
 		<autoMatchString></autoMatchString><!-- The autoMatch string of the game you connect to-->
 	</inviteAutoMatch>
 	<userManagement>
+		<forgotPasswordURL>http://127.0.0.1/index.asp?action=register&</forgotPasswordURL>
+		<!-- put email=..
+		result=true/false
+		-->
 		<registerURL>http://127.0.0.1/index.asp?action=register&</registerURL>
 		<!-- put name=..&email=..&pass..&is_male..&date_of_birth..&first_name..&last_name 
 		result=true/false

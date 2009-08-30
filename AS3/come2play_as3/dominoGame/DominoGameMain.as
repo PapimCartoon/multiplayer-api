@@ -179,6 +179,7 @@ package come2play_as3.dominoGame
 		}
 		private function makeMove(ev:DominoMove):void{	
 			if(gameInProgress){
+				if(isInTransaction())	doTrace("Game should fail","Game should fail")
 				doStoreState([UserEntry.create(ev.getKey(),ev)],[RevealEntry.create(JSON.parse(ev.key),null)])
 			}
 		}
@@ -319,7 +320,7 @@ package come2play_as3.dominoGame
 				}
 				passCount = 0;
 				dominoLogic.putBrick(dominoComputerMove,serverEntry.value as DominoCube)
-				if(gameInProgress) doStoreState([UserEntry.create({type:"PlayerTurn"},PlayerTurn.create(getNextTurn()))])
+				if(gameInProgress) doAllStoreState([UserEntry.create({type:"PlayerTurn"},PlayerTurn.create(getNextTurn()))])
 			}else if(serverEntry.value is DominoMove){//got a player move
 				var dominoMove:DominoMove = serverEntry.value as DominoMove
 				hackerAssertion(serverEntry.storedByUserId == dominoMove.playerId,serverEntry.storedByUserId,"user has to move for himself")
@@ -329,7 +330,7 @@ package come2play_as3.dominoGame
 				}
 				passCount = 0;
 				dominoLogic.putBrick(dominoMove,serverEntry.value as DominoCube)
-				if(gameInProgress) doStoreState([UserEntry.create({type:"PlayerTurn"},PlayerTurn.create(getNextTurn()))])
+				if(gameInProgress) doAllStoreState([UserEntry.create({type:"PlayerTurn"},PlayerTurn.create(getNextTurn()))])
 			}else if(serverEntry.value is DominoDraw){
 				hackerAssertion(serverEntry.storedByUserId == serverEntry.key.playerId,serverEntry.storedByUserId,"user has to draw for himself")
 				var shouldForce:Boolean = serverEntry.value is DominoComputerDraw
@@ -345,7 +346,7 @@ package come2play_as3.dominoGame
 				hackerAssertion(serverEntry.storedByUserId == serverEntry.key.playerId,serverEntry.storedByUserId,"user has to pass for himself")
 				if(passCount >= 1)	declareWinner(new WinnerEvent(-1))
 				if(dominoGraphic.isNoMoreDomino())	passCount++;
-				if(gameInProgress) doStoreState([UserEntry.create({type:"PlayerTurn"},PlayerTurn.create(getNextTurn()))])
+				if(gameInProgress) doAllStoreState([UserEntry.create({type:"PlayerTurn"},PlayerTurn.create(getNextTurn()))])
 			}
 			
 			

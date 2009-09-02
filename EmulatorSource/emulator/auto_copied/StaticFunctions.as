@@ -23,8 +23,8 @@ public final class StaticFunctions
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	public static var GOOGLE_REVISION_NUMBER:int = 1130;
-	public static var COME2PLAY_REVISION_NUMBER:int = 4409;
+	public static var GOOGLE_REVISION_NUMBER:int = 1148;
+	public static var COME2PLAY_REVISION_NUMBER:int = 4509;
 	public static var ERRORS_THROWN_LOGGER:Logger = new Logger("Throw",5);
 	public static function getRevision():String {
 		return (SerializableClass.IS_IN_FRAMEWORK ? "Container" : "Game")+
@@ -157,15 +157,16 @@ public final class StaticFunctions
 			res = res+" ";
 		return res;
 	}
-	public static function cutString(str:String, toSize:int):String {		
-		if (str.length<toSize) return str;
-		return str.substr(0,toSize)+"... (string cut)";
+	public static function cutString(str:String, toSize:int):String {
+		var len:int = str.length;	
+		if (len<toSize) return str;
+		return str.substr(0,toSize)+"... (string cut from len="+len+")";
 	}
 	public static function setClipboard(msg:String):void {
-		try {			
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		try {			
 			trace("Setting in clipboard message:")
 			trace(cutString(msg,20));
 			System.setClipboard(msg);
@@ -175,10 +176,10 @@ public final class StaticFunctions
 		}
 	}
 	public static function showError(msg:String):void {
-		ErrorHandler.alwaysTraceAndSendReport(msg,"showError"); 
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		ErrorHandler.alwaysTraceAndSendReport(msg,"showError"); 
 	}
 	public static function throwError(msg:String):void {
 		var err:Error = new Error(msg);
@@ -188,10 +189,10 @@ public final class StaticFunctions
 		throw err;
 	}		
 	public static function assert(val:Boolean, name:String, ...args):void {
-		if (name==null || name=='') throwError("When calling assert you must pass a non empty name! args="+JSON.stringify(args)); 
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		if (name==null || name=='') throwError("When calling assert you must pass a non empty name! args="+JSON.stringify(args)); 
 		if (!val) throwError("An assertion failed! name="+name+" arguments="+JSON.stringify(args));
 	}
 	
@@ -201,10 +202,10 @@ public final class StaticFunctions
 	public static function trim(str:String):String {
 		if (str==null) return null;
 		var j:int, strlen:int, k:int;
-		strlen = str.length
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		strlen = str.length
 		j = 0;
 		while (isEmptyChar(str.charAt(j))) {
 			j++
@@ -214,10 +215,10 @@ public final class StaticFunctions
 			if(j == strlen) return str;
 		}
 		k = str.length - 1;
-		while(isEmptyChar(str.charAt(k))) {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		while(isEmptyChar(str.charAt(k))) {
 			k--;
 		}
 		return str.substring(0,k+1);
@@ -227,10 +228,10 @@ public final class StaticFunctions
 		if (o1==null || o2==null) return false;
 		var t:String = typeof(o1);
 		if (t!=typeof(o2)) 
-			return false;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			return false;
 		// Array and ImmutableArray are considered equal identical
 		var isArr1:Boolean = AS3_vs_AS2.isArray(o1); 
 		var isArr2:Boolean = AS3_vs_AS2.isArray(o2); 
@@ -240,10 +241,10 @@ public final class StaticFunctions
 			
 		if (t=="object") {
 			var x:String;	
-			var allFields:Object = {};
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			var allFields:Object = {};
 			var c:int = 0;	
 			for (x in o1) {
 				allFields[x] = true;
@@ -253,10 +254,10 @@ public final class StaticFunctions
 				if (allFields[x]==null) return false;
 				c--;
 			}
-			if (c!=0) return false; // not the same number of dynamic properties
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			if (c!=0) return false; // not the same number of dynamic properties
 			if (AS3_vs_AS2.isAS3) {
 				// for static properties we use describeType
 				// because o1 and o2 have the same type, it is enough to use the fields of o1.
@@ -266,10 +267,10 @@ public final class StaticFunctions
 				}
 			}
 			for (x in allFields) 	
-				if (!o1.hasOwnProperty(x) || 
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+				if (!o1.hasOwnProperty(x) || 
 					!o2.hasOwnProperty(x) || 
 					!areEqual(o1[x], o2[x])) return false;
 			return true;
@@ -279,10 +280,10 @@ public final class StaticFunctions
 	}
 	
 	public static function sortAndCountOccurrences(arr:Array/*String*/):Array/*String*/ {
-		arr.sort();
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		arr.sort();
 		if (arr.length>0) arr.push(""); // to handle the last string in arr
 		var res:Array/*String[]*/ = [];
 		var lastStr:String = null;
@@ -292,10 +293,10 @@ public final class StaticFunctions
 				if (lastStr!=null) res.push([lastCount, lastCount+" occurrences of: "+lastStr]);
 				lastCount = 1;
 				lastStr = str;
-			} else {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			} else {
 				lastCount++;
 			}			
 		}
@@ -305,10 +306,10 @@ public final class StaticFunctions
 		var res2:Array/*String*/ = [];
 		for each (var countArr:Array in res) {
 			res2.push(countArr[1]);
-		}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		}
 		return res2;
 	}
 	public static function subtractArray(arr:Array, minus:Array):Array {
@@ -318,10 +319,10 @@ public final class StaticFunctions
 			StaticFunctions.assert(indexOf!=-1, "When subtracting minus=",[minus," from array=", arr, " we did not find element ",o]);				
 			res.splice(indexOf, 1);
 		}
-		return res;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		return res;
 	}
 	// returns true if the element was in arr
 	public static function removeElement(arr:Array, element:Object):Boolean {
@@ -331,10 +332,10 @@ public final class StaticFunctions
 		return isContained;		
 	}
 	public static function limitedPush(arr:Array, element:Object, maxSize:int):void {
-		Logger.limitedPush(arr,element,maxSize);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		Logger.limitedPush(arr,element,maxSize);
 	}
 	
 	// e.g., random(0,2) returns either 0 or 1
@@ -344,10 +345,10 @@ public final class StaticFunctions
 	}
 	public static function startsWith(str:String, start:String):Boolean {
 		return str.substr(0, start.length)==start;
-	}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	}
 	public static function endsWith(str:String, suffix:String):Boolean {
 		return str.substr(str.length-suffix.length, suffix.length)==suffix;
 	}
@@ -357,10 +358,10 @@ public final class StaticFunctions
 	public static function performReflectionFromFlashVars(_someMovieClip:DisplayObjectContainer):void {		
 		var parameters:Object = AS3_vs_AS2.getLoaderInfoParameters(_someMovieClip);		
 		performReflectionFromObject(parameters);		
-	}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	}
 	public static function performReflectionFromObject(parameters:Object):void {
 		REFLECTION_LOG.log("performReflectionFromFlashVars=",parameters);
 		// e.g., REFLECTION_come2play_as3.util::General.isDoingTrace=true
@@ -370,10 +371,10 @@ public final class StaticFunctions
 				var after:String = parameters[key];
 				// e.g., 
 				// before=come2play_as3.util::General.isDoingTrace
-				// after=true
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+				// after=true
 				performReflectionString(before, after);	
 			}			
 		}
@@ -383,10 +384,10 @@ public final class StaticFunctions
 		performReflectionString(two[0], two[1]);
 	}
 	public static function performReflectionString(fullClassName:String, valStr:String):void {
-		performReflectionObject(fullClassName, SerializableClass.deserializeString(valStr));
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		performReflectionObject(fullClassName, SerializableClass.deserializeString(valStr));
 	}
 	public static function performReflectionObject(fullClassName:String, valObj:Object):void {
 		//fullClassName = come2play_as3.util::EnumMessage.CouldNotConnect.__minDelayMilli 
@@ -396,10 +397,10 @@ public final class StaticFunctions
 			var package2:Array = splitInTwo(fullClassName, "::", false);
 			var fields2:Array = splitInTwo(package2[1], ".", false);
 			var clzName:String = trim(package2[0]) + "::" + trim(fields2[0]);
-			var fieldsName:String = trim(fields2[1]);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+			var fieldsName:String = trim(fields2[1]);
 			var classReference:Object = AS3_vs_AS2.getClassByName(clzName);
 			var oldVal:Object = null;
 			var fieldsArr:Array = fieldsName.split(".");
@@ -409,10 +410,10 @@ public final class StaticFunctions
 					classReference = classReference[fieldName];
 				else {
 					oldVal = classReference[fieldName];
-					classReference[fieldName] = valObj;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+					classReference[fieldName] = valObj;
 				}			
 			} 		
 			REFLECTION_LOG.log("Setting field ",fieldsName," in class ",clzName,": oldVal=",oldVal, " newVal=",valObj);
@@ -422,10 +423,10 @@ public final class StaticFunctions
 	}
 
 
-	/**
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	/**
 	 * Similar to replace with:  new RegExp(searchFor,"g")
 	 * but we need to escape special characters from searchFor
 	 * e.g., 
@@ -435,10 +436,10 @@ public final class StaticFunctions
 	public static function replaceAll(str:String, searchFor:String, replaceWith:String):String {				
 		var index:int = 0;
 		var lastIndex:int = 0;
-		var res:Array = [];
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		var res:Array = [];
 		while ( (index = AS3_vs_AS2.stringIndexOf(str, searchFor, index)) != -1) {
 			res.push( str.substring(lastIndex,index) );
 			res.push( replaceWith );
@@ -448,10 +449,10 @@ public final class StaticFunctions
 		
 		if (res.length==0) return str; // an optimization only
 		
-		res.push( str.substring(lastIndex) );
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		res.push( str.substring(lastIndex) );
 		return res.join("");
 	}
 	public static function splitInTwo(str:String, searchFor:String, isLast:Boolean):Array {
@@ -461,10 +462,10 @@ public final class StaticFunctions
 	}
 	public static function replaceLastOccurance(str:String, searchFor:String, replaceWith:String):String {
 		var two:Array = splitInTwo(str, searchFor, true);
-		return two[0] + replaceWith + two[1];
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		return two[0] + replaceWith + two[1];
 	}
 	public static function instance2Object(instance:Object, fields:Array/*String*/):Object {
 		var res:Object = {};
@@ -474,10 +475,10 @@ public final class StaticFunctions
 		return res;
 	}
 	
-	private static var cacheShortName:Object = {};
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	private static var cacheShortName:Object = {};
 	public static function getShortClassName(obj:Object):String {
 		var className:String = AS3_vs_AS2.getClassName(obj);
 		if (cacheShortName[className]!=null) return cacheShortName[className];
@@ -487,10 +488,10 @@ public final class StaticFunctions
 	}
 	
 	
-	
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	
 	// The Java auto generates all classes	
 	private static function getClassFromMsg(msg:API_Message, fieldName:String):Object {
 		var xlass:Class = AS3_vs_AS2.getClassOfInstance(msg);
@@ -500,10 +501,10 @@ public final class StaticFunctions
 	}
 	private static function getParamNames(msg:API_Message):Array/*String*/ {
 		return AS3_vs_AS2.asArray(getClassFromMsg(msg,"METHOD_PARAMS"));
-	}
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	}
 	public static function getFunctionId(msg:API_Message):int { 
 		return AS3_vs_AS2.as_int(getClassFromMsg(msg,"FUNCTION_ID"));
 	}
@@ -513,10 +514,10 @@ public final class StaticFunctions
 	public static function getMethodParametersNum(msg:API_Message):int { 
 		return getParamNames(msg).length;
 	}
-	public static function setMethodParameters(msg:API_Message, parameters:Array):void { 
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+	public static function setMethodParameters(msg:API_Message, parameters:Array):void { 
 		var names:Array = getParamNames(msg); 
 		var pos:int = 0;
 		for each (var name:String in names) {
@@ -526,10 +527,10 @@ public final class StaticFunctions
 	public static function getMethodParameters(msg:API_Message):Array { 
 		var names:Array = getParamNames(msg);
 		var res:Array = [];
-		for each (var name:String in names) {
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
+		for each (var name:String in names) {
 			res.push(msg[name]);
 		}
 		return res;

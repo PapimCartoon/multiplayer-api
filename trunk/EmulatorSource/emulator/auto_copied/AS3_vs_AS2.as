@@ -222,7 +222,7 @@ public final class AS3_vs_AS2
 			res.push(onStage+info.name+" with listeners: "+listeners.join(", "));
 		}
 		res = StaticFunctions.sortAndCountOccurrences(res); 
-		return "all event listeners info:\n\t\t\t" + res.join("\n\t\t\t");
+		return "There are "+dictionarySize(dispatchersInfo)+" event listeners info:\n\t\t\t" + res.join("\n\t\t\t");
 	}
 	
 	public static function myHasAnyEventListener(dispatcherName:String, dispatcher:IEventDispatcher):Boolean {
@@ -300,7 +300,7 @@ public final class AS3_vs_AS2
 		StaticFunctions.assert(type!=null && type!="","eventListener type must be non null and not empty","your type was: ",type);
 		if (dispatchersInfo==null) {
 			dispatchersInfo = new Dictionary();
-			ALL_Event_LOG.log( getEventListenersTrace() );
+			ALL_Event_LOG.hugeLog( getEventListenersTrace() );
 		}
 		addEventListener_LOG.log(dispatcherName," added ", type);
 		 		

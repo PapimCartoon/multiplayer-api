@@ -215,7 +215,10 @@ package come2play_as3.api
 				if(serverEntries.length > 0)
 					queueSendMessage(API_GotStateChanged.create(++messageNum,combineServerEntries(serverEntries)))
 				gotMessage(transaction.callback);
-			} else if (msg is API_DoStoreState) {
+			}else if(msg is API_DoTrace){ 
+				var doTrace:API_DoTrace = /*as*/msg as API_DoTrace;	
+				trace(doTrace.name+" : "+doTrace.message);
+			}else if (msg is API_DoStoreState) {
 				var doStore:API_DoStoreState = /*as*/msg as API_DoStoreState;				
 				serverEntries = extractStoredData(doStore.userEntries,1);
 				if(doStore.revealEntries !=null)

@@ -3,7 +3,6 @@ package come2play_as3.dominoGame
 	import come2play_as3.api.auto_copied.AS3_vs_AS2;
 	import come2play_as3.api.auto_copied.T;
 	import come2play_as3.api.auto_generated.API_Message;
-	import come2play_as3.cards.events.AnimationEndedEvent;
 	import come2play_as3.dominoGame.events.AnimationEvent;
 	import come2play_as3.dominoGame.events.DrawEvent;
 	import come2play_as3.dominoGame.events.GrabEvent;

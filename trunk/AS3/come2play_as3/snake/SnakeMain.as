@@ -12,7 +12,7 @@ package come2play_as3.snake
 		private var snakeLogic:SnakeLogic;
 		private var _graphics:MovieClip;
 		private var myUserId:int;
-		private var allPlayerIds:Array;/*int*/
+		private var allPlayerIds:Array/*int*/ = [];
 		private var waitingMove:Boolean;
 		private var nextMove:int;
 		private var xMax:int;

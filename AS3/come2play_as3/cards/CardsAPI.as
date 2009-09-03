@@ -1,413 +1,191 @@
 package come2play_as3.cards
 {
 	import come2play_as3.api.auto_copied.AS3_vs_AS2;
+	import come2play_as3.api.auto_copied.StaticFunctions;
 	import come2play_as3.api.auto_copied.T;
 	import come2play_as3.api.auto_generated.ClientGameAPI;
 	import come2play_as3.api.auto_generated.RevealEntry;
 	import come2play_as3.api.auto_generated.ServerEntry;
 	import come2play_as3.api.auto_generated.UserEntry;
-	import come2play_as3.cards.connectionClasses.CardTypeClass;
-	import come2play_as3.cards.events.AnimationEndedEvent;
-	import come2play_as3.cards.events.AnimationStartedEvent;
-	import come2play_as3.cards.events.CardPressedEvent;
-	import come2play_as3.cards.graphic.CardGraphic;
-	import come2play_as3.cards.graphic.CardGraphicMovieClip;
+	import come2play_as3.cards.events.GotCardsEvent;
 	
-	import flash.events.Event;
+	import flash.display.MovieClip;
+	import flash.utils.Dictionary;
 	
 	public class CardsAPI extends ClientGameAPI
 	{
-		private var currentCard:int;
-		private var availableCards:int;
-		private var storedDecks:Boolean;
-		private var allPlayerIdsForCardAPI:Array;/*int*/
-		private var finishedPlayerIdsForCardAPI:Array;/*int*/
-		private var allPlayerCardsKeys:Array;/*Array*/
-		private var allPlayerAvailableCards:Array;/*Array*/
-		
-		private var cardGraphics:CardGraphic;
-		protected var myUserId:int;
-		
-		private var markedCards:Array/*int*/;
-		public function CardsAPI(cardGraphics:CardGraphic)
+		static public var cardsData:CardsAPI
+		private var currentCard:int
+		private var cardGraphics:MovieClip;
+		private var waitingCards:Dictionary
+		private var drawingCards:Dictionary
+		private var flippedCards:Dictionary/*CardKey*/
+		private var deckCards:Dictionary/*CardKey*/
+		private var cardsOwners:Dictionary/*Dictionary -->userId*//*CardKey*/	
+		private var computerCards:int
+		private var userCards:int
+		private var isSinglePlayer:Boolean
+		public function CardsAPI(cardGraphics:MovieClip)
 		{
-			markedCards = new Array();
-
-			(new Card).register();
-			(new CenterCard).register();
-			(new CardTypeClass).register();	
-			initCardDefenitins();
-			this.cardGraphics = cardGraphics
-			
-			AS3_vs_AS2.myAddEventListener("cardGraphics",cardGraphics,CardPressedEvent.CardPressedEvent,cardMarked,true)
-			AS3_vs_AS2.myAddEventListener("cardGraphics",cardGraphics,AnimationEndedEvent.AnimationEndedEvent,endAnimation)
-			AS3_vs_AS2.myAddEventListener("cardGraphics",cardGraphics,AnimationStartedEvent.AnimationStartedEvent,startAnimation)
-			super(cardGraphics);
-		}		
-		private function startAnimation(ev:Event):void
-		{
-			animationStarted("CardsAPI");
-		}
-		private function endAnimation(ev:Event):void
-		{
-			animationEnded("CardsAPI");
-		}
-		private function initCardDefenitins():void
-		{
-			var tempCardGraphic:CardGraphicMovieClip= new CardGraphicMovieClip();
-			CardDefenitins.cardWidth = tempCardGraphic.width;
-			CardDefenitins.cardHeight = tempCardGraphic.height;	
-		}
-		private function getId(playerId:int):int
-		{
-			return allPlayerIdsForCardAPI.indexOf(playerId);
-		}
-
-		private function removeMarked(playerCard:PlayerCard):void
-		{
-			for(var i:int = 0;i<markedCards.length;i++)
-			{
-				var tempPlayerCard:PlayerCard = markedCards[i];
-				if(playerCard.cardKey == tempPlayerCard.cardKey)
-				{
-					markedCards.splice(i,1);
-					return;
-				}
-			}
+			super(cardGraphics)
+			StaticFunctions.assert(cardsData==null,"can only make one CardsAPI instance")
+			cardsData = this;
+			this.cardGraphics = cardGraphics;
+			new Card().register()
+			new CardKey().register()
+			AS3_vs_AS2.waitForStage(cardGraphics,buildCardsAPI)
 		}	
-		private function cardMarked(ev:CardPressedEvent):void
-		{
-			var playerCard:PlayerCard;
-			if(ev.isPressed)
-			{
-				markedCards.push(ev.playerCard)
-			}
-			else
-			{
-				for(var i:int = 0;i<markedCards.length;i++)
-				{
-					playerCard = markedCards[i];
-					if(ev.playerCard.card.sign == playerCard.card.sign)
-						if(ev.playerCard.card.value == playerCard.card.value)
-						{
-							markedCards.splice(i,1);
-							CardDefenitins.canCardsBeSelected = true;
-						}
+		protected function buildCardsAPI():void{
+			doRegisterOnServer()
+		}	
+		protected function storeDecks(deckNum:int):void{
+			var doAllStore:Array = [];
+			var doAllShuffle:Array = []
+			var key:CardKey;
+			var cardNum:int = 1;
+			for(var deck:int =0;deck<deckNum;deck++){
+				for(var sign:int=1;sign<5;sign++){
+					for(var cardValue:int=1;cardValue<14;cardValue++){	
+						key = CardKey.create(cardNum)
+						waitingCards[key.toString()] = key
+						doAllStore.push(UserEntry.create(key,Card.createByNumber(sign,cardValue)))
+						doAllShuffle.push(key)
+						cardNum++;
+					}
 				}
+				key = CardKey.create(cardNum++)
+				waitingCards[key.toString()] = key
+				doAllStore.push(UserEntry.create(key,Card.createByNumber(5,0)))
+				doAllShuffle.push(key)
+				key = CardKey.create(cardNum++)
+				waitingCards[key.toString()] = key
+				doAllStore.push(UserEntry.create(key,Card.createByNumber(6,0)))
+				doAllShuffle.push(key)
+			}	
+			doAllStoreState(doAllStore)
+			doAllShuffleState(doAllShuffle)
+		}
+		public function getCardsNumInDeck():int{
+			return AS3_vs_AS2.dictionarySize(deckCards)
+		}
+		public function getCardsInUserHand(userId:int):Array{
+			var tempDic:Dictionary = cardsOwners[userId]
+			var cards:Array = []
+			for(var str:String in tempDic){
+				cards.push(tempDic[str])
 			}
-			gotChoosenCards(markedCards.concat());
-			
+			return cards;
 		}
-		public function arrangeByNum():void
-		{
-			cardGraphics.arrangeCards(true);
-		}
-		public function arrangeByColor():void
-		{
-			cardGraphics.arrangeCards(false);
-		}
-		public function putInCenter(choosenCards:Array/*PlayerCard*/,isVisible:Boolean):void
-		{
-			var userEntries:Array/*UserEntry*/ = new Array();
-			for each(var playerCard:PlayerCard in choosenCards)
-			{
-				removeMarked(playerCard);
-				userEntries.push(UserEntry.create(CardTypeClass.create(CardTypeClass.CENTERCARD,playerCard.cardKey),CenterCard.create(myUserId,playerCard.cardKey,isVisible)))
+		
+		public function singlePlayerDrawCards(isComputer:Boolean,amount:int):void{
+			if(isComputer){
+				computerCards +=amount;
+			}else{
+				userCards +=amount;
 			}
-			doStoreState(userEntries);
+			drawCards(allPlayerIds,amount,true);
 		}
-		public function takeCardsFromMiddle(playerId:int,cardsInMiddle:Array/*CardTypeClass*/):void
-		{
-			var id:int = getId(playerId);
-			var keysToScramble:Array = new Array()
-			
-			for each(var cardTypeClass:CardTypeClass in cardsInMiddle)
-				keysToScramble.push(cardTypeClass.value);
-			keysToScramble = keysToScramble.concat(allPlayerCardsKeys[id]);
-			allPlayerAvailableCards[id] = keysToScramble.concat(allPlayerAvailableCards[id]);
-			
-			var revealEntries:Array/*RevealEntry*/ = new Array();
-			var allKeys:Array/*CardTypeClass*/ = new Array();
-			for each(var key:int in keysToScramble)
-			{
-				cardTypeClass = CardTypeClass.create(CardTypeClass.CARD,key);
-				allKeys.push(cardTypeClass);
-				revealEntries.push(RevealEntry.create(cardTypeClass,[playerId]))
+		public function drawCards(userIds:Array,amount:int,isByAll:Boolean):void{
+			if(isByAll){
+				var drawKey:Array = []
+				for(var i:int =0;i<amount;i++){
+					currentCard++
+					drawKey.push(CardKey.create(currentCard))
+				}
+				var reavealArr:Array = []
+				var keyStr:String
+				for each(var key:CardKey in drawKey){
+					keyStr = key.toString()
+					deleteOldPosition(keyStr)
+					drawingCards[keyStr] = key;
+					reavealArr.push(RevealEntry.create(key,userIds))
+				}
+				doAllRevealState(reavealArr)
+			}else{
 				
 			}
-			cardGraphics.removeCardsFromMiddle(allKeys.length);
-			doAllShuffleState(allKeys);
-			doAllRevealState(revealEntries);					
-		}
-		public function chooseCards(allowChoise:Boolean):void
-		{
-			markedCards = new Array();
-			CardDefenitins.canCardsBeSelected = allowChoise;
 		}
 		
-		public function drawCards(numberOfCards:int,playerId:int):void
-		{
-			var revealEntries:Array/*RevealEntry*/ = new Array();
-			var drawingPlayer:Array/*int*/ = allPlayerAvailableCards[getId(playerId)];
-			for(var i:int = 0;i<numberOfCards;i++)
-			{
-				revealEntries.push(RevealEntry.create(CardTypeClass.create(CardTypeClass.CARD,(currentCard+i)),[playerId]))
-				drawingPlayer.push(currentCard+i);
+		private var allPlayerIds:Array
+		private var myUserId:int
+		override public function gotMatchStarted(allPlayerIds:Array, finishedPlayerIds:Array, serverEntries:Array):void{
+			this.allPlayerIds = allPlayerIds;
+			myUserId = T.custom(CUSTOM_INFO_KEY_myUserId,42) as int
+			isSinglePlayer = (allPlayerIds.length == 1);
+			currentCard = 0
+			waitingCards = new Dictionary();
+			flippedCards = new Dictionary();
+			deckCards = new Dictionary();
+			cardsOwners = new Dictionary();
+			drawingCards = new Dictionary()
+			if(isSinglePlayer){
+				cardsOwners[myUserId] = new Dictionary()
+				cardsOwners[0] = new Dictionary()
+			}else{
+				for each(var userId:int in allPlayerIds){
+					cardsOwners[userId] = new Dictionary()
+				}
 			}
-			currentCard += i;
-			doAllRevealState(revealEntries);
-		}
 
-		
-		public function storeDecks(numberOfDecs:int,withJokers:Boolean):void
-		{
-			currentCard = 1;
-			var count:int = 1;
-			
-			var userEntries:Array/*UserEntry*/ = new Array();
-			var keys:Array/*String*/ = new Array();
-			for(var i:int=0;i<numberOfDecs;i++)
-			{
-				for(var j:int = 1;j<14;j++)
-				{
-					keys.push(CardTypeClass.create(CardTypeClass.CARD,(count)));
-					userEntries.push(UserEntry.create(CardTypeClass.create(CardTypeClass.CARD,(count++)),Card.createByNumber(1,j),true));
-					keys.push(CardTypeClass.create(CardTypeClass.CARD,(count)));
-					userEntries.push(UserEntry.create(CardTypeClass.create(CardTypeClass.CARD,(count++)),Card.createByNumber(2,j),true));
-					keys.push(CardTypeClass.create(CardTypeClass.CARD,(count)));
-					userEntries.push(UserEntry.create(CardTypeClass.create(CardTypeClass.CARD,(count++)),Card.createByNumber(3,j),true));
-					keys.push(CardTypeClass.create(CardTypeClass.CARD,(count)));
-					userEntries.push(UserEntry.create(CardTypeClass.create(CardTypeClass.CARD,(count++)),Card.createByNumber(4,j),true));	
-				}
-				if(withJokers)
-				{
-					keys.push(CardTypeClass.create(CardTypeClass.CARD,(count)));
-					userEntries.push(UserEntry.create(CardTypeClass.create(CardTypeClass.CARD,(count++)),Card.createByNumber(5,100),true));
-					keys.push(CardTypeClass.create(CardTypeClass.CARD,(count)));
-					userEntries.push(UserEntry.create(CardTypeClass.create(CardTypeClass.CARD,(count++)),Card.createByNumber(6,100),true));		
-				}
-			}
-			storedDecks = true;
-			availableCards = count - 1;
-			doAllStoreState(userEntries);
-			doAllShuffleState(keys);
 		}
-		private function interpertServerEntries(serverEntries:Array/*serverEntry*/,isLoad:Boolean):Array/*ServerEntry*/
-		{
-			var serverEntry:ServerEntry;
-			var drawnCards:Array/*Card*/ = new Array();
-			var revealedCards:Array/*Card*/ = new Array();
-			var cardsPutOnBoard:Array/*CenterCard*/ = new Array();
-			var rivalDecks:Array/*int*/ = new Array()
-			var playerCards:Array/*int*/;
-			var cardTypeClass:CardTypeClass;
-			var blameId:int;
-			for(var i:int = 0;i<serverEntries.length;i++)
-			{
-				serverEntry = serverEntries[i];
-				if(serverEntry.key is CardTypeClass)
-				{
-					cardTypeClass= serverEntry.key as CardTypeClass;
-					if(serverEntry.value is Card)
-					{
-						if(serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,"this card was stored by a single player");
-						if(serverEntry.visibleToUserIds != null)
-							drawnCards.push(new PlayerCard(serverEntry.value as Card,cardTypeClass.value));
-						else
-							revealedCards.push(new PlayerCard(serverEntry.value as Card,cardTypeClass.value));
-					}
-					if(serverEntry.value is CenterCard)
-					{
-						cardsPutOnBoard.push(serverEntry.value as CenterCard);
-						blameId = serverEntry.storedByUserId;
-					}
-					if(serverEntry.visibleToUserIds != null)
-					{
-						var drawingPlayer:Array/*int*/;
-						if(cardTypeClass.cardType != CardTypeClass.CARD) continue;
-						for each(var playerId:int in serverEntry.visibleToUserIds)
-						{		
-							var id:int = getId(playerId);			
-							drawingPlayer = allPlayerAvailableCards[id];
-							var spliceAt:int = drawingPlayer.indexOf(cardTypeClass.value);
-							if((spliceAt == -1) && (!isLoad)) doAllFoundHacker(serverEntry.storedByUserId,"player can't have this card");
-							drawingPlayer.splice(spliceAt,1);
-							
-							playerCards = allPlayerCardsKeys[id]	
-							if(playerCards.indexOf(cardTypeClass.value)==-1)
-							{
-								playerCards.push(cardTypeClass.value);
-								rivalDecks[id] == null ? rivalDecks[id] = 1 : rivalDecks[id] ++;
+		private function deletFromDic(dic:Dictionary,key:String):Boolean{
+			if(dic[key]==null)	return false;
+			delete dic[key];
+			return true;
+		}
+		private function deleteOldPosition(key:String):Boolean{	
+			if(deletFromDic(waitingCards,key))	return true ;
+			if(deletFromDic(flippedCards,key))	return true;
+			if(deletFromDic(drawingCards,key))	return true;
+			if(deletFromDic(deckCards,key))	return true;		
+			for each(var userId:int in allPlayerIds){
+				if(deletFromDic(cardsOwners[userId],key))	return true;
+			}
+			return false;
+		}
+		
+		override public function gotStateChanged(serverEntries:Array):void{
+			StaticFunctions.assert(allPlayerIds!=null,"must call super.gotMatchStarted to use cards API")
+			var changedCards:Array = []
+			for each(var serverEntry:ServerEntry in serverEntries){
+				if(serverEntry.key is CardKey){
+					var key:CardKey = serverEntry.key as CardKey
+					StaticFunctions.assert(deleteOldPosition(key.toString()),"can't delete a non existing key")
+					changedCards.push(key)
+					if((serverEntry.visibleToUserIds == null) || (allPlayerIds.length == serverEntry.visibleToUserIds.length)){
+						if(isSinglePlayer){
+							if(userCards>0){
+								cardsOwners[myUserId][key.toString()] = serverEntry.value
+								userCards--
+							}else if(computerCards>0){
+								cardsOwners[0][key.toString()] = serverEntry.value
+								computerCards--
+							}else{
+								StaticFunctions.assert(false,"bug in drawing cards");
 							}
+						}else
+							flippedCards[key.toString()] = serverEntry.value
+					}else if(serverEntry.visibleToUserIds.length ==0){
+						deckCards[key.toString()] = key;
+					}else{
+						for each(var userId:int in serverEntry.visibleToUserIds){
+							cardsOwners[userId][key.toString()] = serverEntry.value
 						}
 					}
-										
-					serverEntries.splice(i,1);
-					i--;
 				}
-				
 			}
 			
-			var isDevideCards:Boolean;
-			
-			if(isLoad)
-				gotMatchLoaded(allPlayerIdsForCardAPI.concat(), finishedPlayerIdsForCardAPI.concat(), serverEntries);	
-			if(drawnCards.length > 0)
-			{	
-				callGotCards(drawnCards);
-				isDevideCards = true;
+			var arr:Array = []
+			arr.push(["waitingCards: "+AS3_vs_AS2.dictionarySize(waitingCards)])
+			arr.push(["drawingCards: "+AS3_vs_AS2.dictionarySize(drawingCards)])
+			arr.push(["flippedCards: "+AS3_vs_AS2.dictionarySize(flippedCards)])
+			arr.push(["deckCards: "+AS3_vs_AS2.dictionarySize(deckCards)])
+			for(var id:String in cardsOwners){		
+				arr.push(["cardsOwners["+id+"]: "+AS3_vs_AS2.dictionarySize(cardsOwners[id])])
 			}
-			for each(var userId:int in allPlayerIdsForCardAPI)
-			{
-				if((rivalDecks[getId(userId)]> 0) && (userId != myUserId))
-				{
-					isDevideCards = true;
-					callRivalGotCards(userId,rivalDecks[getId(userId)]);
-				}
-					
-			}	
-			
-			if(isDevideCards)
-				cardGraphics.devideCards();	
-			if(cardsPutOnBoard.length > 0)
-				callGotPlayerPutCards(cardsPutOnBoard,blameId,isLoad);
-			if(revealedCards.length > 0)
-				callGotMiddleCards(revealedCards)
-
-			return serverEntries;
-		}
-		override public function gotCustomInfo(infoEntries:Array/*InfoEntry*/):void
-		{
-			myUserId = T.custom(CUSTOM_INFO_KEY_myUserId, null) as int;
-			CardDefenitins.CONTAINER_gameWidth = T.custom(CUSTOM_INFO_KEY_gameWidth, 400) as int;
-			CardDefenitins.CONTAINER_gameHeight = T.custom(CUSTOM_INFO_KEY_gameHeight, 400) as int;
-			CardDefenitins.playerXPositions= [CardDefenitins.CONTAINER_gameWidth - 50,CardDefenitins.CONTAINER_gameWidth - 50,50,50] ;
-			CardDefenitins.playerYPositions= [CardDefenitins.CONTAINER_gameHeight- 50,50,50,CardDefenitins.CONTAINER_gameHeight - 50]; 
+			doTrace("currentState",arr)
+			if(changedCards.length!=0)	cardGraphics.dispatchEvent(new GotCardsEvent(changedCards))
 		}
 
-		override public function gotMatchStarted(allPlayerIds:Array, finishedPlayerIds:Array, serverEntries:Array):void
-		{
-			this.allPlayerIdsForCardAPI = allPlayerIds.concat();
-			this.finishedPlayerIdsForCardAPI = finishedPlayerIds.concat()
-			cardGraphics.init(myUserId,allPlayerIdsForCardAPI);
-			CardDefenitins.playerNumber = allPlayerIdsForCardAPI.length;
-			allPlayerCardsKeys = new Array();
-			allPlayerAvailableCards = new Array();
-			for each(var playerId:int in allPlayerIdsForCardAPI)
-			{
-				var id:int = getId(playerId);
-				allPlayerCardsKeys[id]/*int*/ = new Array();
-				allPlayerAvailableCards[id]/*int*/ = new Array();
-			}
-			if(serverEntries.length>0)
-			{
-				serverEntries = interpertServerEntries(serverEntries,true);
-			}
-			else
-			{
-				gotNewMatchStarted(allPlayerIds, finishedPlayerIds, serverEntries);
-			}
-			
-			
-			
-		}
-
-		override public function gotStateChanged(serverEntries:Array):void
-		{
-			var serverEntry:ServerEntry;
-			
-			if(storedDecks)
-			{
-				var countedCards:int = 0;
-				for each(serverEntry in serverEntries)
-				{
-					if(typeof(serverEntry.key) != "object")
-						continue;
-					if(serverEntry.key is CardTypeClass)
-					{
-						var cardTypeClass:CardTypeClass = serverEntry.key as CardTypeClass;
-						if(cardTypeClass.cardType != CardTypeClass.CARD) continue;
-						if(serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,"this card was stored by a single player");
-						countedCards++;
-					}			
-				}
-				if(countedCards != availableCards)
-					doAllFoundHacker(serverEntry.storedByUserId,"Wrong number of cards recived");
-				else
-					storedDecks = false;
-			}	
-			serverEntries = interpertServerEntries(serverEntries,false);
-			gotStateChangedNoCards(serverEntries)
-		}
-		private function callGotPlayerPutCards(cardsPutOnBoard:Array/*CenterCard*/,blameId:int,isLoad:Boolean):void
-		{	
-			var keys:Array/*CardTypeClass*/ = new Array();
-			var centerCard:CenterCard = cardsPutOnBoard[0];
-			var isVisble:Boolean = centerCard.isVisible;
-			var playerId:int = centerCard.playerId;
-			var id:int = getId(playerId);
-			cardGraphics.clearBounce();
-			for each(centerCard in cardsPutOnBoard)
-			{
-				var tempPlayerKeys:Array/*int*/ = allPlayerCardsKeys[id];
-				var index:int = tempPlayerKeys.indexOf(centerCard.cardKey);
-				if(index == -1)
-				{
-					if(!isLoad)
-					{
-						doAllFoundHacker(blameId,"user faked a centerCard class");
-						return;
-					}
-				}
-				else
-				{
-					if(!isLoad)
-					tempPlayerKeys.splice(index,1);
-				}
-				keys.push(CardTypeClass.create(CardTypeClass.CARD,centerCard.cardKey))
-				if(!isLoad)
-					cardGraphics.removeCard(playerId,centerCard.cardKey);
-			}
-			if(!isVisble)
-			{
-				cardGraphics.addCardsToMiddle(keys.length,isLoad);
-				gotPlayerPutCardsInMiddleHidden(keys,playerId);
-				
-			}
-			else
-			{
-				var revealEntries:Array/*RevealEntry*/ = new Array();
-				for each(var key:CardTypeClass in keys)
-				{
-					revealEntries.push(RevealEntry.create(key,null));
-				}
-				doAllRevealState(revealEntries);
-			}
-		}
-		private function callGotMiddleCards(revealedCards:Array/*PlayerCard*/):void
-		{
-			cardGraphics.showCards(revealedCards);
-			revealMiddleCards(revealedCards);
-		}
-		private function callRivalGotCards(rivalId:int,amountOfCards:int):void
-		{
-			cardGraphics.rivalAddCards(rivalId,amountOfCards);
-			rivalGotCards(rivalId,amountOfCards);
-		}
-		private function callGotCards(playerCards:Array/*PlayerCard*/):void
-		{
-			cardGraphics.addCards(playerCards);
-			gotCards(playerCards)
-		}
-		public function revealMiddleCards(revealedCards:Array/*PlayerCard*/):void{} //cards that were revealed from the middle
-		public function gotPlayerPutCardsInMiddleHidden(keys:Array/*CardTypeClass*/,playerId:int):void{}//player put cards in a hidden state in the middle
-		public function gotPlayerPutCardsInMiddle(playerCards:Array/*PlayerCard*/,playerId:int):void{}//player put cards in a revealed state in the middle
-		public function gotMatchLoaded(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, serverEntries:Array/*ServerEntry*/):void{}	//loaded mach
-		public function gotChoosenCards(choosenCards:Array/*PlayerCard*/):void{}//cards the player has marked in his hand
-		public function gotCards(playerCards:Array/*PlayerCard*/):void{}// recived cards into hand
-		public function rivalGotCards(rivalId:int,amountOfCards:int):void{}//rival recived cards into hand
-		public function gotNewMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, serverEntries:Array/*ServerEntry*/):void	{}// the match started you should override
-		public function gotStateChangedNoCards(serverEntries:Array/*ServerEntry*/):void{}
-		
 	}
 }

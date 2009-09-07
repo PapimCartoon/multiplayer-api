@@ -80,8 +80,8 @@ package come2play_as3.cheat
 		
 		private function clickedCard(ev:CardClickedEvent):void{
 			var card:CardGraphic = ev.target as CardGraphic
+			removeMyChild(gameMessage)
 			if(middleCards.noDeck()){//first turn in phase
-				removeMyChild(gameMessage)
 				dispatchEvent(new PutCardsEvent([ev.cardData]));
 				myHand.myTurn(false)
 				return;
@@ -130,26 +130,37 @@ package come2play_as3.cheat
 				isDrawingPlayer = !isDrawingPlayer;
 			}else{
 				//finsih drawing
-				
-				
 				isDrawing = false;
-				dispatchEvent(new CardDrawEndedEvent())
+				finishedDrawing()
+				//dispatchEvent(new CardDrawEndedEvent())
 			}
 			
 		}
+		
+		public function finishedDrawing():void{
+			if(currentTurn == myUserId){
+				myHand.myTurn(true)
+				if(middleCards.noDeck()){
+					myGraphics.addChild(gameMessage)
+					gameMessage.chooseCard();
+				}else{
+					myGraphics.addChild(gameMessage)
+					gameMessage.chooseCards();
+				}
+			}else{
+				if(isPlayer){
+					myHand.myTurn(false)
+				}
+			}
+				
+		}
+		
 		private function cardDrawn(ev:CardDrawEndedEvent):void{
 			drawCardGraphic();
 		}
 		public function setTurn(userId:int):void{
 			currentTurn = userId
-			/*myHand.myTurn(false)
-			myHand.myTurn(true)
-								
-					if(middleCards.noDeck()){
-						myGraphics.addChild(gameMessage)
-						gameMessage.chooseCard();
-					}
-			*/		
+	
 			if(isPlayer){
 				if(userId == myUserId){
 					upperBackground.actionExpected_txt.text = T.i18n("your turn");

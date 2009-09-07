@@ -41,15 +41,19 @@ package come2play_as3.cheat
 		}	
 		private function handleChangedCards(ev:GotCardsEvent):void{
 			var cardsChanged:Array = ev.cardsChanged;
-			turnNumber++;
+			setNextTurn()
+			var noDraw:Boolean = true;	
 			for each(var cardChange:CardChange in cardsChanged){
 				if(cardChange.action == CardChange.USER_CARD){
+					noDraw = false;
 					cheatGraphics.drawCard(cardChange,cardChange.userId == myUserId)	
 				}else if (cardChange.action == CardChange.FLIPPED_CARD){
 					cheatGraphics.putFirst(cardChange,cardChange.userId == myUserId)	
 				}
 			}
-			cheatGraphics.setDeckSize(getCardsNumInDeck())		
+			cheatGraphics.setDeckSize(getCardsNumInDeck())
+			if(noDraw)	cheatGraphics.finishedDrawing()
+	
 		}
 		
 		override public function gotMatchStarted(allPlayerIds:Array, finishedPlayerIds:Array, serverEntries:Array):void{
@@ -80,7 +84,10 @@ package come2play_as3.cheat
 				}				
 			}
 		}
-		
+		private function setNextTurn():void{
+			turnNumber++;
+			setTurn()
+		}
 		private function setTurn():void{
 			var userTurn:int = allPlayerIds[turnNumber%allPlayerIds.length];
 			doAllSetTurn(userTurn,-1)
@@ -91,7 +98,7 @@ package come2play_as3.cheat
 			for each(var serverEntry:ServerEntry in serverEntries){
 				
 			}
-			setTurn()
+			
 		}
 		
 

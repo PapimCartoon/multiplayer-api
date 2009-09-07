@@ -10,7 +10,7 @@ package come2play_as3.cheat.graphics
 			deck = new Deck_MC();
 			deck.Deck.Symbole_MC.stop();
 			deck.Deck.Letter_MC.stop();
-			deck.scaleX = deck.scaleY = 0.4
+			deck.scaleX = deck.scaleY = 0.5
 			addChild(deck);
 		}
 		public function setCards(num:int):void{

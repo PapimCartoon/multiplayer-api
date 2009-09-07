@@ -1,10 +1,14 @@
 package come2play_as3.cheat
 {
 	
+	import come2play_as3.CardChange;
 	import come2play_as3.api.auto_copied.AS3_vs_AS2;
 	import come2play_as3.api.auto_copied.T;
+	import come2play_as3.api.auto_generated.ServerEntry;
 	import come2play_as3.cards.CardsAPI;
-	import come2play_as3.cards.events.GotCardsEvent;
+	import come2play_as3.cheat.events.CardDrawEndedEvent;
+	import come2play_as3.cheat.events.GotCardsEvent;
+	import come2play_as3.cheat.events.PutCardsEvent;
 	
 	import flash.display.MovieClip;
 
@@ -16,27 +20,45 @@ package come2play_as3.cheat
 		private var rivalUserId:int
 		private var cheatGraphics:CheatGraphics
 		private var isSinglePlayer:Boolean
+		private var allPlayerIds:Array
+		private var turnNumber:int = 0
 		public function CheatMain(cardsGraphic:MovieClip)
 		{
 			super(cardsGraphic)	
 			cheatGraphics = new CheatGraphics()
 			this.cardsGraphic = cardsGraphic;
-			cardsGraphic.addChild(cheatGraphics)
+			cardsGraphic.addChild(cheatGraphics)	
+			AS3_vs_AS2.myAddEventListener("cheatGraphics",cheatGraphics,PutCardsEvent.PUT_CARD,putCardsOnTable)		
+			AS3_vs_AS2.myAddEventListener("cheatGraphics",cheatGraphics,CardDrawEndedEvent.CARD_DRAW_ENDED,finishedDrawingCards)	
 			AS3_vs_AS2.myAddEventListener("cardsGraphic",cardsGraphic,GotCardsEvent.CARDS_CHANGED,handleChangedCards)
 		}	
-		private function handleChangedCards(ev:GotCardsEvent):void{
-			cheatGraphics.drawUserCards(getCardsInUserHand(myUserId))
-			cheatGraphics.drawRivalCards(getCardsInUserHand(rivalUserId))
-			cheatGraphics.setDeckSize(getCardsNumInDeck())
-			
+		private function putCardsOnTable(ev:PutCardsEvent):void{
+			putCards(ev.cards)
 		}
 		
+		private function finishedDrawingCards(ev:CardDrawEndedEvent):void{
+			
+		}	
+		private function handleChangedCards(ev:GotCardsEvent):void{
+			var cardsChanged:Array = ev.cardsChanged;
+			turnNumber++;
+			for each(var cardChange:CardChange in cardsChanged){
+				if(cardChange.action == CardChange.USER_CARD){
+					cheatGraphics.drawCard(cardChange,cardChange.userId == myUserId)	
+				}else if (cardChange.action == CardChange.FLIPPED_CARD){
+					cheatGraphics.putFirst(cardChange,cardChange.userId == myUserId)	
+				}
+			}
+			cheatGraphics.setDeckSize(getCardsNumInDeck())		
+		}
 		
 		override public function gotMatchStarted(allPlayerIds:Array, finishedPlayerIds:Array, serverEntries:Array):void{
 			super.gotMatchStarted(allPlayerIds, finishedPlayerIds, serverEntries)
+			this.allPlayerIds = allPlayerIds;
 			isSinglePlayer = (allPlayerIds.length == 1);
 			myUserId = T.custom(CUSTOM_INFO_KEY_myUserId,42) as int
-			cheatGraphics.init(allPlayerIds.indexOf(myUserId)!=-1);
+			cheatGraphics.init(allPlayerIds.indexOf(myUserId)!=-1,myUserId);
+			turnNumber = 0;
 			if(allPlayerIds.length == 1){
 				rivalUserId = 0;
 				cheatGraphics.setRivalName(T.i18n("Computer"))
@@ -58,8 +80,18 @@ package come2play_as3.cheat
 				}				
 			}
 		}
+		
+		private function setTurn():void{
+			var userTurn:int = allPlayerIds[turnNumber%allPlayerIds.length];
+			doAllSetTurn(userTurn,-1)
+			cheatGraphics.setTurn(userTurn)
+		}
 		override public function gotStateChanged(serverEntries:Array):void{
 			super.gotStateChanged(serverEntries)
+			for each(var serverEntry:ServerEntry in serverEntries){
+				
+			}
+			setTurn()
 		}
 		
 

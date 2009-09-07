@@ -85,7 +85,8 @@ package come2play_as3.dominoGame
 			}
 			return revealEntries;
 		}
-		public function startGame(myUserId:int,rivalUserIds:Array):void{
+		public function startGame(myUserId:int,rivalUserIds:Array):void{			
+			moveNum = 0;
 			myHandBricks = new Dictionary()
 			computerBricks = new Dictionary()
 			openBricks = new Dictionary()
@@ -160,12 +161,14 @@ package come2play_as3.dominoGame
 			return oldDominoKey;
 		}
 		private function userChoseBrick(ev:GrabEvent):void{
-			var dominoMove:DominoMove = DominoMove.create(myUserId,ev.brick.key,ev.brick.isConnectedToRight,ev.brick.brickOrientation,moveNum++);
+			var dominoMove:DominoMove = DominoMove.create(myUserId,ev.brick.key,ev.brick.isConnectedToRight,ev.brick.brickOrientation,moveNum);
 			dispatchEvent(dominoMove)
 		}
-		
+		public function madeMove():void{
+			moveNum++
+		}
 		public function getMoveNum():int{
-			return moveNum++;
+			return moveNum;
 		}
 		private function deleteFromDic(dic:Dictionary,key:String):void{
 			StaticFunctions.assert(dic[key]!=null || openBricks[key]!=null,"can't put a non existing brick");
@@ -216,11 +219,11 @@ package come2play_as3.dominoGame
 				var dominoCube:DominoCube = computerBricks[key];
 				if(MiddleBoard.canAddLeft(dominoCube)){
 					delete computerBricks[key]
-					dominoComputerMove =DominoComputerMove.create(DominoMove.create(myUserId,key,false,Math.random()*4,moveNum++));
+					dominoComputerMove =DominoComputerMove.create(DominoMove.create(myUserId,key,false,Math.random()*4,moveNum));
 					return dominoComputerMove;
 				}else if(MiddleBoard.canAddRight(dominoCube)){
 					delete computerBricks[key]
-					dominoComputerMove =DominoComputerMove.create(DominoMove.create(myUserId,key,true,Math.random()*4,moveNum++));
+					dominoComputerMove =DominoComputerMove.create(DominoMove.create(myUserId,key,true,Math.random()*4,moveNum));
 					return dominoComputerMove;
 				}
 			}
@@ -246,7 +249,7 @@ package come2play_as3.dominoGame
 				if(DominoGameMain.isSinglePlayer){
 					if(middleBoardLogic.canAddCenter()){//auto make move
 						key = findBiggestBlockKey(computerBricks)
-						var dominoComputerMove:DominoComputerMove=DominoComputerMove.create(DominoMove.create(myUserId,key,false,0,moveNum++));
+						var dominoComputerMove:DominoComputerMove=DominoComputerMove.create(DominoMove.create(myUserId,key,false,0,moveNum));
 						delete computerBricks[key]
 						dispatchEvent(dominoComputerMove)
 					}else{//make computer move
@@ -258,7 +261,7 @@ package come2play_as3.dominoGame
 			dominoGraphic.disableButtons(true,rivalUserIds.indexOf(userTurn))
 			if(middleBoardLogic.canAddCenter()){//auto make move
 				key = findBiggestBlockKey(myHandBricks)
-				var dominoMove:DominoMove = DominoMove.create(myUserId,key,false,0,moveNum++);
+				var dominoMove:DominoMove = DominoMove.create(myUserId,key,false,0,moveNum);
 				dispatchEvent(dominoMove)
 			}else{//allow making a move
 				dominoGraphic.allowMove()

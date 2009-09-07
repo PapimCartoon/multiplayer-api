@@ -19,8 +19,16 @@ package come2play_as3.dominoGame.serverClasses
 			res.down = up;
 			return res
 		}
+		private function getMod(num:int):int{
+			var add:int
+			for(var i:int = 0;i<num;i++){
+				add+=(DominoGameMain.dominoMax - i);
+			}
+			return add;
+		}
+		
 		public function getKey():Object{
-			return {type:DominoGameMain.DOMINO_CUBE,brickNum:(DominoGameMain.dominoMax*up+down)}
+			return {type:DominoGameMain.DOMINO_CUBE,brickNum:(/*DominoGameMain.dominoMax*up*/getMod(up)+down)}
 		}
 		public function isDouble():Boolean{
 			return up == down;

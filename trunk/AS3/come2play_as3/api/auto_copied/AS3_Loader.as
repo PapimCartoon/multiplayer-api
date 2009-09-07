@@ -173,7 +173,11 @@ public final class AS3_Loader
 		if(T.custom("strictMode",true) as Boolean){
 			if(imageUrl.indexOf("preventCache") == -1){
 				StaticFunctions.assert((imageUrl.indexOf("?") == -1),"can't pass parameters to a loaded image",imageUrl);
-			}	
+			}
+			var imageBreak:Array = imageUrl.split(".");
+			var end:String = imageBreak[imageBreak.length - 1]
+			end = end.toLowerCase()
+			StaticFunctions.assert((end.indexOf("jpeg") == -1 )||(end.indexOf("jpg") == -1 )||(end.indexOf("swf") == -1 )||(end.indexOf("gif") == -1 )||(end.indexOf("png") == -1 ),"ileageal image type")
 		}
 		StaticFunctions.assert(imageUrl!="" && imageUrl!=null,"can't load a blank image");
 		imageUrl = getURL(imageUrl);

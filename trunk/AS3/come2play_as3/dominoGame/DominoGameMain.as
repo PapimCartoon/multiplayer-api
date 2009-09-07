@@ -106,6 +106,7 @@ package come2play_as3.dominoGame
 			
 		}
 		private function handleAnimation(ev:AnimationEvent):void{
+			myDoTrace("handleAnimation",ev)
 			if(ev.start){
 				animationStarted(ev.animationName)
 			}else{
@@ -141,12 +142,14 @@ package come2play_as3.dominoGame
 		private var gameInProgress:Boolean
 		
 		override public function gotMatchEnded(finishedPlayerIds:Array):void{
+			myDoTrace("gotMatchEnded",finishedPlayerIds)
 			gameInProgress = false;
 			dominoGraphic.gameEnded()
 		}
 		
 		override public function gotRequestStateCalculation(requestId:int, serverEntries:Array):void{
 			//the calculators job is to decide who goes first(has the biggest double or heighest brick)
+			myDoTrace("gotRequestStateCalculation",serverEntries)
 			var serverEntry:ServerEntry = serverEntries.shift();
 			dominoHand = serverEntry.value;
 			var bestStartBrick:int = findBestStartingBrick(serverEntries.slice(0,dominoHand*2))
@@ -155,6 +158,7 @@ package come2play_as3.dominoGame
 		}
 		/*End of calculator code*/
 		private function drawDomino(ev:DominoDraw):void{
+			myDoTrace("drawDomino",ev)
 			if((leftDominoKeys.length<1) ||  (!gameInProgress) || dominoGraphic.isNoMoreDomino() || isInTransaction()){	
 				if((currentTurn == 1) && (isSinglePlayer)) {
 					ErrorHandler.myTimeout("drawTimeout",function():void{
@@ -168,6 +172,7 @@ package come2play_as3.dominoGame
 			doStoreState([UserEntry.create({type:DominoDraw.DOMINO_DRAW,playerId:myUserId,moveNum:dominoLogic.getMoveNum()},ev)],[revealKeyTo(key,myUserId)])
 		}
 		private function passTurn(ev:DominoPass):void{
+			myDoTrace("passTurn",ev)
 			if(isInTransaction()){	
 				ErrorHandler.myTimeout("passTimeout",function():void{
 					passTurn(ev)
@@ -178,8 +183,8 @@ package come2play_as3.dominoGame
 			if(gameInProgress) doStoreState([UserEntry.create({type:DominoPass.DOMINO_PASS,playerId:myUserId,moveNum:dominoLogic.getMoveNum()},ev)])
 		}
 		private function makeMove(ev:DominoMove):void{	
-			if(gameInProgress){
-				if(isInTransaction())	doTrace("Game should fail","Game should fail")
+			myDoTrace("try makeMove",[ev,"gameInProgress=",gameInProgress,"isInTransaction()=",isInTransaction()])
+			if((gameInProgress) || (isInTransaction())){
 				doStoreState([UserEntry.create(ev.getKey(),ev)],[RevealEntry.create(JSON.parse(ev.key),null)])
 			}
 		}
@@ -241,6 +246,8 @@ package come2play_as3.dominoGame
 				for each(var serverEntry:ServerEntry in serverEntries){
 					if(serverEntry.value is DominoCube){
 						dominoCubeDic[JSON.stringify(serverEntry.key)] = serverEntry.value;
+					}else if(serverEntry.value is DominoDraw){
+						dominoLogic.madeMove()
 					}
 					if(serverEntry.key.type == DOMINO_CUBE){	
 						logger.log("domino Taken: ",serverEntry);
@@ -251,20 +258,19 @@ package come2play_as3.dominoGame
 					if(serverEntry.value is DominoMove){
 						var dominoMove:DominoMove = serverEntry.value as DominoMove
 						dominoLogic.putBrick(dominoMove,dominoCubeDic[dominoMove.key] as DominoCube,true)
+						dominoLogic.madeMove()
 					}else if(serverEntry.value is PlayerTurn){
 						var playerTurn:PlayerTurn = serverEntry.value as PlayerTurn
 						setTurn(playerTurn)
 					}
 				}
 
-			}
-			
+			}	
 		}
 		private var logger:Logger = new Logger("DominoLog",40)
 		private function revealKeyTo(key:Object,userId:int):RevealEntry{
 			return RevealEntry.create(key,[userId])
 		}
-
 		private function getNextTurn():int{
 			return(currentTurn+1)==allPlayerIds.length?0:(currentTurn+1)
 		}
@@ -288,7 +294,13 @@ package come2play_as3.dominoGame
 			doAllSetTurn(isSinglePlayer?myUserId:userTurn)
 		}
 		
+		private function myDoTrace(name:String,Message:Object):void{
+			if(T.custom("traceAll",false) as Boolean)	doTrace(name,Message)	
+		}
+		
+		
 		override public function gotStateChanged(serverEntries:Array):void{
+			myDoTrace("gotStateChanged",serverEntries)
 			var serverEntry:ServerEntry = serverEntries[0];
 			if(responseLength == serverEntries.length){
 				dominoLogic.declareWinner(serverEntries)
@@ -313,6 +325,7 @@ package come2play_as3.dominoGame
 				setTurn(playerTurn)
 			}else if(serverEntry.value is DominoComputerMove){
 				var dominoComputerMove:DominoComputerMove = serverEntry.value as DominoComputerMove
+				dominoLogic.madeMove()
 				hackerAssertion(serverEntry.storedByUserId == myUserId,serverEntry.storedByUserId,"there can only be my user id in single player mode")
 				serverEntry = serverEntries[1];
 				if(serverEntry==null){
@@ -323,6 +336,7 @@ package come2play_as3.dominoGame
 				if(gameInProgress) doAllStoreState([UserEntry.create({type:"PlayerTurn"},PlayerTurn.create(getNextTurn()))])
 			}else if(serverEntry.value is DominoMove){//got a player move
 				var dominoMove:DominoMove = serverEntry.value as DominoMove
+				dominoLogic.madeMove()
 				hackerAssertion(serverEntry.storedByUserId == dominoMove.playerId,serverEntry.storedByUserId,"user has to move for himself")
 				serverEntry = serverEntries[1];
 				if(serverEntry==null){
@@ -333,6 +347,7 @@ package come2play_as3.dominoGame
 				if(gameInProgress) doAllStoreState([UserEntry.create({type:"PlayerTurn"},PlayerTurn.create(getNextTurn()))])
 			}else if(serverEntry.value is DominoDraw){
 				hackerAssertion(serverEntry.storedByUserId == serverEntry.key.playerId,serverEntry.storedByUserId,"user has to draw for himself")
+				dominoLogic.madeMove()
 				var shouldForce:Boolean = serverEntry.value is DominoComputerDraw
 				serverEntry = serverEntries[1];
 				removeKey(serverEntry.key);
@@ -344,6 +359,7 @@ package come2play_as3.dominoGame
 				}
 			}else if(serverEntry.value is DominoPass){
 				hackerAssertion(serverEntry.storedByUserId == serverEntry.key.playerId,serverEntry.storedByUserId,"user has to pass for himself")
+				dominoLogic.madeMove()
 				if(passCount >= 1)	declareWinner(new WinnerEvent(-1))
 				if(dominoGraphic.isNoMoreDomino())	passCount++;
 				if(gameInProgress) doAllStoreState([UserEntry.create({type:"PlayerTurn"},PlayerTurn.create(getNextTurn()))])

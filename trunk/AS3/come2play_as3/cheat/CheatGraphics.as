@@ -6,11 +6,12 @@ package come2play_as3.cheat
 	import come2play_as3.api.auto_generated.API_Message;
 	import come2play_as3.cards.CardKey;
 	import come2play_as3.cards.CardsAPI;
+	import come2play_as3.cheat.ServerClasses.CallCheater;
 	import come2play_as3.cheat.ServerClasses.CardsToHold;
+	import come2play_as3.cheat.ServerClasses.PlayerAction;
 	import come2play_as3.cheat.events.CardClickedEvent;
 	import come2play_as3.cheat.events.CardDrawEndedEvent;
 	import come2play_as3.cheat.events.MenuClickEvent;
-	import come2play_as3.cheat.events.PutCardsEvent;
 	import come2play_as3.cheat.graphics.CardDeck;
 	import come2play_as3.cheat.graphics.CardGraphic;
 	import come2play_as3.cheat.graphics.CardHand;
@@ -40,6 +41,8 @@ package come2play_as3.cheat
 		private var drawingCards:Array
 		private var isDrawingPlayer:Boolean
 		private var currentTurn:int
+		private var isDrawing:Boolean
+		
 		public function CheatGraphics()
 		{
 			addChild(lowerBackground)
@@ -87,7 +90,7 @@ package come2play_as3.cheat
 			var card:CardGraphic = ev.target as CardGraphic
 			removeMyChild(gameMessage)
 			if(middleCards.noDeck()){//first turn in phase
-				dispatchEvent(new PutCardsEvent([ev.cardData]));
+				CardsAPI.cardsData.putCards([ev.cardKey])
 				myHand.myTurn(false)
 				return;
 			}	
@@ -99,15 +102,20 @@ package come2play_as3.cheat
 				middleCards.pickCard(card)
 			}	
 		}
-		public function putFirst(cardChange:CardChange,isPlayer:Boolean):void{
-			var removeFromHand:CardHand = isPlayer?myHand:rivalHand;
-			var cardGraphic:CardGraphic = removeFromHand.removeCard(cardChange.cardKey)
-			if(cardGraphic==null)	return
-			cardGraphic.setCard(cardChange.card)
-			middleCards.putFirst(cardGraphic)
-		}
 		
-		private var isDrawing:Boolean
+		
+		private var lastCardHold:CardsToHold
+		public function putFirst(cardChange:CardChange,isPlayer:Boolean):void{
+			if(lastCardHold == null){
+				var removeFromHand:CardHand = isPlayer?myHand:rivalHand;
+				var cardGraphic:CardGraphic = removeFromHand.removeCard(cardChange.cardKey)
+				if(cardGraphic==null)	return
+				cardGraphic.setCard(cardChange.card)
+				middleCards.putFirst(cardGraphic)
+			}else{
+				//show cards in middle and check if all cards recied
+			}
+		}
 		public function drawCard(card:CardChange,isPlayer:Boolean):void{
 			upperBackground.actionExpected_txt.text = T.i18n("Drawing Cards")
 			var drawTo:Array = drawingCards[isPlayer?0:1]
@@ -116,7 +124,9 @@ package come2play_as3.cheat
 			isDrawing = true;
 			drawCardGraphic();
 		}
+		
 		public function putKeysInMiddle(cardsToHold:CardsToHold):void{
+			lastCardHold = cardsToHold
 			middleCards.setCardValue(cardsToHold.declaredValue);
 			var cardGraphic:CardGraphic 
 			for each(var cardKey:CardKey in cardsToHold.keys){
@@ -125,12 +135,17 @@ package come2play_as3.cheat
 				middleCards.addCard(cardGraphic)
 			}
 			if(myUserId == currentTurn){
-				menuController.showCheatChoiseMenu()
-				addChild(menuController)
-				
+				menuController.showCheatChoiseMenu(cardsToHold)
+				addChild(menuController)	
 			}
 		}
-		
+		public function callCheater(callCheater:Boolean):void{
+			if(callCheater){
+				CardsAPI.cardsData.putCards(lastCardHold.keys)
+			}else{
+				finishedDrawing()
+			}
+		}
 		private function drawCardGraphic():void{		
 			var drawFrom:Array
 			var cardChange:CardChange
@@ -151,15 +166,14 @@ package come2play_as3.cheat
 				cardChange = drawFrom.pop();
 				drawHand = rivalHand;
 			}
-			
-			if(cardChange!=null){
-				drawHand.drawCard(getEventCard(cardChange,isDrawingPlayer))
-				isDrawingPlayer = !isDrawingPlayer;
-			}else{
+			if(cardChange==null){
 				//finsih drawing
 				isDrawing = false;
 				finishedDrawing()
 				//dispatchEvent(new CardDrawEndedEvent())
+			}else{
+				drawHand.drawCard(getEventCard(cardChange,isDrawingPlayer))
+				isDrawingPlayer = !isDrawingPlayer;
 			}
 			
 		}
@@ -183,6 +197,7 @@ package come2play_as3.cheat
 		}
 		private function menuAction(ev:MenuClickEvent):void{
 			switch(ev.action){
+				//putting player
 				case MenuClickEvent.DRAW_CARD:
 					CardsAPI.cardsData.drawCards([myUserId],1,false)
 				break;
@@ -192,6 +207,14 @@ package come2play_as3.cheat
 				case MenuClickEvent.DECLARE_LOWER:
 					dispatchEvent(CardsToHold.create(middleCards.getCardKeys(),middleCards.getCardValue()-1))
 				break;
+				//recieving player
+				case MenuClickEvent.DO_NOT_CALL_CHEATER:
+					dispatchEvent(CallCheater.create(true))
+				break;
+				case MenuClickEvent.CALL_CHEATER:
+					dispatchEvent(CallCheater.create(true))
+				break;
+				
 			}
 			removeMyChild(gameMessage);
 			removeMyChild(menuController);

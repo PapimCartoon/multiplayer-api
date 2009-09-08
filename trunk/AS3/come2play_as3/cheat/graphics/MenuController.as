@@ -2,6 +2,7 @@ package come2play_as3.cheat.graphics
 {
 	import come2play_as3.api.auto_copied.AS3_vs_AS2;
 	import come2play_as3.api.auto_copied.T;
+	import come2play_as3.cheat.ServerClasses.CardsToHold;
 	import come2play_as3.cheat.events.MenuClickEvent;
 	import come2play_as3.cheat.graphics.menuItems.DeclareCardMenuImp;
 	import come2play_as3.cheat.graphics.menuItems.DeclareCheaterMenuImp;
@@ -28,11 +29,14 @@ package come2play_as3.cheat.graphics
 		public function showCardChoiseMenu():void{
 			declareCardMenu.x = 120
 			declareCardMenu.y = 23
+			if(contains(declareCheaterMenu))	removeChild(declareCheaterMenu)
 			addChild(declareCardMenu)
 		}
-		public function showCheatChoiseMenu():void{
+		public function showCheatChoiseMenu(cardsToHold:CardsToHold):void{
 			declareCheaterMenu.x = 120
 			declareCheaterMenu.y = 23
+			declareCheaterMenu.reStartCount(cardsToHold.declaredValue,cardsToHold.keys.length)
+			if(contains(declareCardMenu))	removeChild(declareCardMenu)
 			addChild(declareCheaterMenu)
 		}
 		private function drawCard(ev:MouseEvent):void{
@@ -45,9 +49,11 @@ package come2play_as3.cheat.graphics
 			dispatchEvent(new MenuClickEvent(MenuClickEvent.DECLARE_HIGHER))
 		}
 		private function trustButton(ev:MouseEvent):void{
+			declareCheaterMenu.stopTimer()
 			dispatchEvent(new MenuClickEvent(MenuClickEvent.CALL_CHEATER))
 		}
 		private function doNotTrustButton(ev:MouseEvent):void{
+			declareCheaterMenu.stopTimer()
 			dispatchEvent(new MenuClickEvent(MenuClickEvent.DO_NOT_CALL_CHEATER))
 		}
 		

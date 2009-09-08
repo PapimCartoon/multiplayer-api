@@ -5,6 +5,8 @@ package come2play_as3.cheat.ServerClasses
 	public class PlayerAction extends SerializableClass
 	{
 		static public const PUT_HIDDEN:String = "PutHidden"
+		static public const PUT_FIRST:String = "PutFirst"
+		static public const CALL_CHEAT:String = "CallCheat"
 		public var userId:int
 		public var actionType:String
 		static public function create(userId:int,actionType:String):PlayerAction{

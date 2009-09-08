@@ -40,7 +40,7 @@ package come2play_as3.cheat.graphics
 			return card.num == cardKey.num
 		}
 		private function clicked(ev:MouseEvent):void{
-			if(buttonMode)	dispatchEvent(new CardClickedEvent(cardData,cardKey))
+			if(buttonMode)	dispatchEvent(new CardClickedEvent(cardKey))
 		}
 		private function setFrameIn(mc:MovieClip,label:String,value:int):void{
 			var mod:int = value>10?(value - 10):0

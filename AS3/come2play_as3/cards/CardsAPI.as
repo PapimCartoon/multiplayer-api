@@ -10,7 +10,6 @@ package come2play_as3.cards
 	import come2play_as3.api.auto_generated.RevealEntry;
 	import come2play_as3.api.auto_generated.ServerEntry;
 	import come2play_as3.api.auto_generated.UserEntry;
-	import come2play_as3.cheat.events.GotCardsEvent;
 	
 	import flash.display.MovieClip;
 	import flash.utils.Dictionary;
@@ -97,18 +96,12 @@ package come2play_as3.cards
 			return false;		
 		}
 		
-		public function putCards(cards:Array/*Card*/):void{
-			var myDic:Dictionary = cardsOwners[myUserId];
+		public function putCards(cards:Array/*CardKey*/):void{
+			StaticFunctions.assert(cards.length!=0,"can't put 0 cards");
 			var revealKeys:Array =[]
-			for(var key:String in myDic){
-				if(doesContain(cards,myDic[key])){
-					var cardKey:CardKey = SerializableClass.deserializeString(key) as CardKey
-					cardsNumToDraw++;
-					revealKeys.push(RevealEntry.create(cardKey,null))
-					if(cards.length == 0)	break;
-				}
+			for each(var cardKey:CardKey in cards){
+				revealKeys.push(RevealEntry.create(cardKey,null))
 			}
-			if(revealKeys.length == 0)	return
 			doStoreState([UserEntry.create(CardGameAction.create(CardGameAction.PUT_CARD),CardGameAction.create(CardGameAction.PUT_CARD))],revealKeys)
 		}
 		
@@ -184,6 +177,7 @@ package come2play_as3.cards
 		
 		override public function gotStateChanged(serverEntries:Array):void{
 			StaticFunctions.assert(allPlayerIds!=null,"must call super.gotMatchStarted to use cards API")
+			var addedData:SerializableClass
 			var changedCards:Array = []
 			var serverEntry:ServerEntry = serverEntries[0]
 			var storingPlayer:int
@@ -192,6 +186,9 @@ package come2play_as3.cards
 				storingPlayer = serverEntry.storedByUserId;
 				if(cardGameAction.action == CardGameAction.DRAW_CARD){
 					if(storingPlayer!=myUserId)	currentCard++;
+				}
+				if(!(serverEntry.value is CardGameAction)){
+					addedData = serverEntry.value;
 				}
 			}	
 			var i:int = 0
@@ -246,7 +243,7 @@ package come2play_as3.cards
 			}
 			doTrace("currentState",arr)
 			doTrace("changedCards",JSON.stringify(changedCards))
-			if(changedCards.length!=0)	cardGraphics.dispatchEvent(new GotCardsEvent(changedCards))
+			if(changedCards.length!=0)	cardGraphics.dispatchEvent(new GotCardsEvent(changedCards,addedData))
 		}
 
 	}

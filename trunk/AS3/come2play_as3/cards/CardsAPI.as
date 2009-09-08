@@ -30,6 +30,7 @@ package come2play_as3.cards
 		private var cardsNumToDraw:int
 		private var userCards:int
 		private var isSinglePlayer:Boolean
+		private var canShowCards:int
 		public function CardsAPI(cardGraphics:MovieClip)
 		{
 			super(cardGraphics)
@@ -44,7 +45,7 @@ package come2play_as3.cards
 		protected function buildCardsAPI():void{
 			doRegisterOnServer()
 		}	
-		protected function storeDecks(deckNum:int):void{
+		protected function storeDecks(deckNum:int,isWithJokers:Boolean):void{
 			var doAllStore:Array = [];
 			var doAllShuffle:Array = []
 			var key:CardKey;
@@ -59,15 +60,19 @@ package come2play_as3.cards
 						cardNum++;
 					}
 				}
-				key = CardKey.create(cardNum++)
-				waitingCards[key.toString()] = key
-				doAllStore.push(UserEntry.create(key,Card.createByNumber(5,14)))
-				doAllShuffle.push(key)
-				key = CardKey.create(cardNum++)
-				waitingCards[key.toString()] = key
-				doAllStore.push(UserEntry.create(key,Card.createByNumber(6,14)))
-				doAllShuffle.push(key)
+				if(isWithJokers){
+					key = CardKey.create(cardNum++)
+					waitingCards[key.toString()] = key
+					doAllStore.push(UserEntry.create(key,Card.createByNumber(5,14)))
+					doAllShuffle.push(key)
+					
+					key = CardKey.create(cardNum++)
+					waitingCards[key.toString()] = key
+					doAllStore.push(UserEntry.create(key,Card.createByNumber(6,14)))
+					doAllShuffle.push(key)
+				}
 			}	
+			canShowCards+=(cardNum-1)
 			doAllStoreState(doAllStore)
 			doAllShuffleState(doAllShuffle)
 		}
@@ -116,23 +121,24 @@ package come2play_as3.cards
 			drawCards(allPlayerIds,amount,true);
 		}
 		public function drawCards(userIds:Array,amount:int,isByAll:Boolean):void{
+			var drawKey:Array = []
+			var reavealArr:Array = []
+			var keyStr:String
+			for(var i:int =0;i<amount;i++){
+				if(canShowCards<=currentCard)	return;
+				currentCard++
+				drawKey.push(CardKey.create(currentCard))
+			}	
+			for each(var key:CardKey in drawKey){
+				keyStr = key.toString()
+				deleteOldPosition(keyStr)
+				drawingCards[keyStr] = key;
+				reavealArr.push(RevealEntry.create(key,userIds))
+			}
 			if(isByAll){
-				var drawKey:Array = []
-				for(var i:int =0;i<amount;i++){
-					currentCard++
-					drawKey.push(CardKey.create(currentCard))
-				}
-				var reavealArr:Array = []
-				var keyStr:String
-				for each(var key:CardKey in drawKey){
-					keyStr = key.toString()
-					deleteOldPosition(keyStr)
-					drawingCards[keyStr] = key;
-					reavealArr.push(RevealEntry.create(key,userIds))
-				}
 				doAllRevealState(reavealArr)
 			}else{
-				
+				doStoreState([UserEntry.create(CardGameAction.create(CardGameAction.DRAW_CARD),CardGameAction.create(CardGameAction.DRAW_CARD))],reavealArr)
 			}
 		}
 		
@@ -182,7 +188,11 @@ package come2play_as3.cards
 			var serverEntry:ServerEntry = serverEntries[0]
 			var storingPlayer:int
 			if(serverEntry.key is CardGameAction){
+				var cardGameAction:CardGameAction = serverEntry.key as CardGameAction
 				storingPlayer = serverEntry.storedByUserId;
+				if(cardGameAction.action == CardGameAction.DRAW_CARD){
+					if(storingPlayer!=myUserId)	currentCard++;
+				}
 			}	
 			var i:int = 0
 			while(i<serverEntries.length){

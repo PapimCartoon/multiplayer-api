@@ -3,6 +3,7 @@ package come2play_as3.cheat.graphics
 	import come2play_as3.api.auto_copied.AS3_vs_AS2;
 	import come2play_as3.api.auto_copied.StaticFunctions;
 	import come2play_as3.cards.Card;
+	import come2play_as3.cards.CardKey;
 	import come2play_as3.cheat.events.CardClickedEvent;
 	
 	import flash.display.FrameLabel;
@@ -14,8 +15,10 @@ package come2play_as3.cheat.graphics
 	{
 		private var card:Card_MC;
 		private var cardData:Card;
-		public function CardGraphic(cardData:Card=null)
+		private var cardKey:CardKey;
+		public function CardGraphic(cardKey:CardKey,cardData:Card=null)
 		{
+			this.cardKey = cardKey;
 			card = new Card_MC();
 			card.Symbole_MC.stop();
 			card.Letter_MC.stop();
@@ -24,14 +27,20 @@ package come2play_as3.cheat.graphics
 			addChild(card);
 			AS3_vs_AS2.myAddEventListener("CardGraphic",this,MouseEvent.CLICK,clicked)
 		}
+		public function getCardKey():CardKey{
+			return cardKey;
+		}
 		public function get cardValue():int{
 			return cardData==null?0:(cardData.value * 4 + cardData.intSign())
 		}
-		public function isSame(card:Card):Boolean{
-			return cardData==null?true:cardData.equelTo(card)
+		public function getCardValue():int{
+			return cardData.value;
+		}
+		public function isSame(card:CardKey):Boolean{
+			return card.num == cardKey.num
 		}
 		private function clicked(ev:MouseEvent):void{
-			if(buttonMode)	dispatchEvent(new CardClickedEvent(cardData))
+			if(buttonMode)	dispatchEvent(new CardClickedEvent(cardData,cardKey))
 		}
 		private function setFrameIn(mc:MovieClip,label:String,value:int):void{
 			var mod:int = value>10?(value - 10):0

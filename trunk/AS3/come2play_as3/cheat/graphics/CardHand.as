@@ -1,8 +1,6 @@
 package come2play_as3.cheat.graphics
 {
-	import come2play_as3.api.auto_copied.T;
-	import come2play_as3.api.auto_generated.API_Message;
-	import come2play_as3.cards.Card;
+	import come2play_as3.cards.CardKey;
 	import come2play_as3.cheat.caurina.transitions.Tweener;
 	import come2play_as3.cheat.events.CardDrawEndedEvent;
 	
@@ -40,7 +38,7 @@ package come2play_as3.cheat.graphics
 			Tweener.addTween(card, {time:0.2, x:cardEndX, y:cardEndY, transition:"linear",onComplete:cardDrawn} );	
 		
 		}	
-		public function removeCard(cardData:Card):CardGraphic{
+		public function removeCard(cardData:CardKey):CardGraphic{
 			var index:int = -1;
 			for(var i:int = 0;i<cards.length;i++){
 				var card:CardGraphic = cards[i]
@@ -63,7 +61,7 @@ package come2play_as3.cheat.graphics
 				card.x = start + jump*i;
 				cardHolder.addChild(card)
 			}
-			maxHolderX = ((start + jump*(i - 1)) - (T.custom(API_Message.CUSTOM_INFO_KEY_gameWidth,400) as int) )/2
+			maxHolderX = ((start + jump*(i - 1)) - 550 )/2
 			minHolderX = (-maxHolderX)
 		}
 		private function cardDrawn():void{

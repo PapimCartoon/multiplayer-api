@@ -5,7 +5,11 @@ package come2play_as3.cheat
 	import come2play_as3.api.auto_copied.AS3_vs_AS2;
 	import come2play_as3.api.auto_copied.T;
 	import come2play_as3.api.auto_generated.ServerEntry;
+	import come2play_as3.api.auto_generated.UserEntry;
 	import come2play_as3.cards.CardsAPI;
+	import come2play_as3.cheat.ServerClasses.CardsToHold;
+	import come2play_as3.cheat.ServerClasses.PlayerAction;
+	import come2play_as3.cheat.ServerClasses.PlayerTurn;
 	import come2play_as3.cheat.events.CardDrawEndedEvent;
 	import come2play_as3.cheat.events.GotCardsEvent;
 	import come2play_as3.cheat.events.PutCardsEvent;
@@ -25,10 +29,14 @@ package come2play_as3.cheat
 		public function CheatMain(cardsGraphic:MovieClip)
 		{
 			super(cardsGraphic)	
+			new CardsToHold().register();
+			new PlayerAction().register();
+			new PlayerTurn().register();	
 			cheatGraphics = new CheatGraphics()
 			this.cardsGraphic = cardsGraphic;
 			cardsGraphic.addChild(cheatGraphics)	
 			AS3_vs_AS2.myAddEventListener("cheatGraphics",cheatGraphics,PutCardsEvent.PUT_CARD,putCardsOnTable)		
+			AS3_vs_AS2.myAddEventListener("cheatGraphics",cheatGraphics,"CardsToHold",putCardsOnTableHidden)	
 			AS3_vs_AS2.myAddEventListener("cheatGraphics",cheatGraphics,CardDrawEndedEvent.CARD_DRAW_ENDED,finishedDrawingCards)	
 			AS3_vs_AS2.myAddEventListener("cardsGraphic",cardsGraphic,GotCardsEvent.CARDS_CHANGED,handleChangedCards)
 		}	
@@ -39,6 +47,10 @@ package come2play_as3.cheat
 		private function finishedDrawingCards(ev:CardDrawEndedEvent):void{
 			
 		}	
+		private function putCardsOnTableHidden(ev:CardsToHold):void{
+			doStoreState([UserEntry.create(PlayerAction.create(myUserId,PlayerAction.PUT_HIDDEN),ev)])
+			//trace("CardsToHold: "+ev)
+		}
 		private function handleChangedCards(ev:GotCardsEvent):void{
 			var cardsChanged:Array = ev.cardsChanged;
 			setNextTurn()
@@ -67,15 +79,15 @@ package come2play_as3.cheat
 				rivalUserId = 0;
 				cheatGraphics.setRivalName(T.i18n("Computer"))
 				cheatGraphics.setUserName(T.getUserValue(myUserId,USER_INFO_KEY_name,"Player") as String)
-				storeDecks(1)
+				storeDecks(1,true)
 				singlePlayerDrawCards(true,8)
-				singlePlayerDrawCards(false,8)
+				singlePlayerDrawCards(false,20)
 			}else{
 				rivalUserId = allPlayerIds[0]==myUserId?allPlayerIds[1]:allPlayerIds[0];
 				cheatGraphics.setRivalName(T.getUserValue(rivalUserId,USER_INFO_KEY_name,"Player") as String)
 				cheatGraphics.setUserName(T.getUserValue(myUserId,USER_INFO_KEY_name,"Player") as String)
 				if(serverEntries.length == 0){
-					storeDecks(1)
+					storeDecks(1,true)
 					for each(var userId:int in allPlayerIds){
 						drawCards([userId],8,true)	
 					}	
@@ -96,7 +108,11 @@ package come2play_as3.cheat
 		override public function gotStateChanged(serverEntries:Array):void{
 			super.gotStateChanged(serverEntries)
 			for each(var serverEntry:ServerEntry in serverEntries){
-				
+				if(serverEntry.value is CardsToHold){
+					var cardsToHold:CardsToHold = serverEntry.value as CardsToHold;
+					setNextTurn()
+					cheatGraphics.putKeysInMiddle(cardsToHold)
+				}
 			}
 			
 		}

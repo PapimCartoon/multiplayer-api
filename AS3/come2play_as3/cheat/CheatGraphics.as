@@ -4,8 +4,12 @@ package come2play_as3.cheat
 	import come2play_as3.api.auto_copied.AS3_vs_AS2;
 	import come2play_as3.api.auto_copied.T;
 	import come2play_as3.api.auto_generated.API_Message;
+	import come2play_as3.cards.CardKey;
+	import come2play_as3.cards.CardsAPI;
+	import come2play_as3.cheat.ServerClasses.CardsToHold;
 	import come2play_as3.cheat.events.CardClickedEvent;
 	import come2play_as3.cheat.events.CardDrawEndedEvent;
+	import come2play_as3.cheat.events.MenuClickEvent;
 	import come2play_as3.cheat.events.PutCardsEvent;
 	import come2play_as3.cheat.graphics.CardDeck;
 	import come2play_as3.cheat.graphics.CardGraphic;
@@ -43,6 +47,8 @@ package come2play_as3.cheat
 			addChild(upperBackground)
 			cardDeck = new CardDeck()
 			gameMessage =new GameMessage()
+			menuController = new MenuController()
+			AS3_vs_AS2.myAddEventListener("menuController",menuController,MenuClickEvent.MENU_EVENT,menuAction)
 
 		}
 		public function init(isPlayer:Boolean,myUserId:int):void{
@@ -68,7 +74,7 @@ package come2play_as3.cheat
 			
 		}
 		private function getEventCard(cardData:CardChange,isPlayer:Boolean):CardGraphic{
-			var card:CardGraphic = new CardGraphic(isPlayer?cardData.card:null)
+			var card:CardGraphic = new CardGraphic(cardData.cardKey,isPlayer?cardData.card:null)
 			AS3_vs_AS2.myAddEventListener("CardGraphic",card,CardClickedEvent.CARD_CLICKED,clickedCard)
 			card.x = 510;
 			card.y = 170;
@@ -76,8 +82,7 @@ package come2play_as3.cheat
 		}
 		private function removeMyChild(disp:DisplayObject):void{
 			if(disp.parent != null)	disp.parent.removeChild(disp)
-		}
-		
+		}	
 		private function clickedCard(ev:CardClickedEvent):void{
 			var card:CardGraphic = ev.target as CardGraphic
 			removeMyChild(gameMessage)
@@ -86,17 +91,17 @@ package come2play_as3.cheat
 				myHand.myTurn(false)
 				return;
 			}	
-			if(middleCards.removeCard(card)){
+			if(middleCards.removeCard(ev.cardKey)!=null){
 				myHand.drawCard(card)
 			}else if(middleCards.haveMax()){
 				return;
-			}else if(myHand.removeCard(ev.cardData)!=null){
+			}else if(myHand.removeCard(ev.cardKey)!=null){
 				middleCards.pickCard(card)
 			}	
 		}
 		public function putFirst(cardChange:CardChange,isPlayer:Boolean):void{
 			var removeFromHand:CardHand = isPlayer?myHand:rivalHand;
-			var cardGraphic:CardGraphic = removeFromHand.removeCard(cardChange.card)
+			var cardGraphic:CardGraphic = removeFromHand.removeCard(cardChange.cardKey)
 			if(cardGraphic==null)	return
 			cardGraphic.setCard(cardChange.card)
 			middleCards.putFirst(cardGraphic)
@@ -111,20 +116,42 @@ package come2play_as3.cheat
 			isDrawing = true;
 			drawCardGraphic();
 		}
+		public function putKeysInMiddle(cardsToHold:CardsToHold):void{
+			middleCards.setCardValue(cardsToHold.declaredValue);
+			var cardGraphic:CardGraphic 
+			for each(var cardKey:CardKey in cardsToHold.keys){
+				cardGraphic = rivalHand.removeCard(cardKey)
+				if(cardGraphic==null)	cardGraphic = middleCards.removeCard(cardKey)
+				middleCards.addCard(cardGraphic)
+			}
+			if(myUserId == currentTurn){
+				menuController.showCheatChoiseMenu()
+				addChild(menuController)
+				
+			}
+		}
+		
 		private function drawCardGraphic():void{		
 			var drawFrom:Array
 			var cardChange:CardChange
 			var drawHand:CardHand
-			if(isDrawingPlayer){
+			
+			if((drawingCards[0].length > 0) && (drawingCards[1].length > 0)){
+				drawFrom = drawingCards[isDrawingPlayer?0:1];
+				cardChange = drawFrom.pop();
+				drawHand = isDrawingPlayer?myHand:rivalHand;
+			}else if(drawingCards[0].length > 0){
+				isDrawingPlayer = true;
 				drawFrom = drawingCards[0];
 				cardChange = drawFrom.pop();
-				drawHand = myHand;			
-			}
-			if((!isDrawingPlayer) || (cardChange==null)){
+				drawHand = myHand;
+			}else if(drawingCards[1].length > 0){
+				isDrawingPlayer = false;
 				drawFrom = drawingCards[1];
 				cardChange = drawFrom.pop();
-				drawHand = rivalHand
+				drawHand = rivalHand;
 			}
+			
 			if(cardChange!=null){
 				drawHand.drawCard(getEventCard(cardChange,isDrawingPlayer))
 				isDrawingPlayer = !isDrawingPlayer;
@@ -146,21 +173,34 @@ package come2play_as3.cheat
 				}else{
 					myGraphics.addChild(gameMessage)
 					gameMessage.chooseCards();
+					myGraphics.addChild(menuController)
+					menuController.showCardChoiseMenu();		
 				}
 			}else{
-				if(isPlayer){
-					myHand.myTurn(false)
-				}
+				myHand.myTurn(false)
 			}
 				
 		}
-		
+		private function menuAction(ev:MenuClickEvent):void{
+			switch(ev.action){
+				case MenuClickEvent.DRAW_CARD:
+					CardsAPI.cardsData.drawCards([myUserId],1,false)
+				break;
+				case MenuClickEvent.DECLARE_HIGHER:
+					dispatchEvent(CardsToHold.create(middleCards.getCardKeys(),middleCards.getCardValue()+1))
+				break;
+				case MenuClickEvent.DECLARE_LOWER:
+					dispatchEvent(CardsToHold.create(middleCards.getCardKeys(),middleCards.getCardValue()-1))
+				break;
+			}
+			removeMyChild(gameMessage);
+			removeMyChild(menuController);
+		}
 		private function cardDrawn(ev:CardDrawEndedEvent):void{
 			drawCardGraphic();
 		}
 		public function setTurn(userId:int):void{
 			currentTurn = userId
-	
 			if(isPlayer){
 				if(userId == myUserId){
 					upperBackground.actionExpected_txt.text = T.i18n("your turn");

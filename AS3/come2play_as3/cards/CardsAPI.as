@@ -1,12 +1,13 @@
 package come2play_as3.cards
 {
-	import come2play_as3.CardChange;
+
 	import come2play_as3.api.auto_copied.AS3_vs_AS2;
 	import come2play_as3.api.auto_copied.JSON;
 	import come2play_as3.api.auto_copied.SerializableClass;
 	import come2play_as3.api.auto_copied.StaticFunctions;
 	import come2play_as3.api.auto_copied.T;
 	import come2play_as3.api.auto_generated.ClientGameAPI;
+	import come2play_as3.api.auto_generated.PlayerMatchOver;
 	import come2play_as3.api.auto_generated.RevealEntry;
 	import come2play_as3.api.auto_generated.ServerEntry;
 	import come2play_as3.api.auto_generated.UserEntry;
@@ -27,9 +28,11 @@ package come2play_as3.cards
 		private var cardToKey:Dictionary
 		private var computerCards:int
 		private var cardsNumToDraw:int
+		private var currentSinglePlayer:int
 		private var userCards:int
 		private var isSinglePlayer:Boolean
 		private var canShowCards:int
+		protected var isPlaying:Boolean
 		public function CardsAPI(cardGraphics:MovieClip)
 		{
 			super(cardGraphics)
@@ -86,39 +89,34 @@ package come2play_as3.cards
 			}
 			return cards;
 		}
-		private function doesContain(cardsArr:Array,card:Card):Boolean{
-			for(var i:int=0;i<cardsArr.length;i++){
-				if(cardsArr[i] == card){
-					cardsArr.splice(i,1)
-					return true
-				}
-			}
-			return false;		
-		}
-		
-		public function putCards(cards:Array/*CardKey*/):void{
+		public function putCards(cards:Array/*CardKey*/,isPlayer:Boolean,addedData:SerializableClass = null):void{
+			if(!isPlaying)	return;
+			currentSinglePlayer = isPlayer?myUserId:0
 			StaticFunctions.assert(cards.length!=0,"can't put 0 cards");
 			var revealKeys:Array =[]
 			for each(var cardKey:CardKey in cards){
 				revealKeys.push(RevealEntry.create(cardKey,null))
+				if(isSinglePlayer)	cardsNumToDraw++;
 			}
-			doStoreState([UserEntry.create(CardGameAction.create(CardGameAction.PUT_CARD),CardGameAction.create(CardGameAction.PUT_CARD))],revealKeys)
+			if(addedData==null)	addedData = CardGameAction.create(CardGameAction.PUT_CARD)
+			doStoreState([UserEntry.create(CardGameAction.create(CardGameAction.PUT_CARD),addedData)],revealKeys)
 		}
 		
-		public function singlePlayerDrawCards(isComputer:Boolean,amount:int):void{
+		public function singlePlayerDrawCards(isComputer:Boolean,amount:int,isByAll:Boolean = true):void{
 			if(isComputer){
 				computerCards +=amount;
 			}else{
 				userCards +=amount;
 			}
-			drawCards(allPlayerIds,amount,true);
+			drawCards(allPlayerIds,amount,isByAll);
 		}
 		public function drawCards(userIds:Array,amount:int,isByAll:Boolean):void{
+			if ((!isPlaying) || (canShowCards<=currentCard) )	return;
 			var drawKey:Array = []
 			var reavealArr:Array = []
 			var keyStr:String
 			for(var i:int =0;i<amount;i++){
-				if(canShowCards<=currentCard)	return;
+				if(canShowCards<=currentCard)	continue;
 				currentCard++
 				drawKey.push(CardKey.create(currentCard))
 			}	
@@ -131,18 +129,63 @@ package come2play_as3.cards
 			if(isByAll){
 				doAllRevealState(reavealArr)
 			}else{
+				if(isSinglePlayer) currentSinglePlayer = userIds[0];
 				doStoreState([UserEntry.create(CardGameAction.create(CardGameAction.DRAW_CARD),CardGameAction.create(CardGameAction.DRAW_CARD))],reavealArr)
 			}
 		}
-		
+		public function takeCardsToHand(cards:Array/*CardKey*/,userId:int):void{
+			var revealEntries:Array = []
+			var userCardsDic:Dictionary = cardsOwners[userId]
+			var allCards:Array = []
+			var tmpDic:Dictionary = new Dictionary()
+			var keyString:String
+			var cardKey:CardKey
+			for(keyString in userCardsDic){
+				if(tmpDic[keyString]!=null)	continue;
+				tmpDic[keyString] = keyString
+				allCards.push(SerializableClass.deserializeString(keyString) as CardKey)
+			}	
+			for each(cardKey in cards){
+				keyString = cardKey.toString()
+				if(tmpDic[keyString]!=null)	continue;
+				tmpDic[keyString] = keyString
+				allCards.push(cardKey)
+			}
+			allCards.sortOn("num",Array.NUMERIC)
+			doAllShuffleState(allCards)
+			var isComputer:Boolean
+			if(isSinglePlayer){
+				isComputer = (userId == 0)
+				userId = myUserId;
+			}	
+			for each(cardKey in allCards){
+				keyString = cardKey.toString()
+				deleteOldPosition(cardKey.toString())
+				waitingCards[keyString] = cardKey
+				revealEntries.push(RevealEntry.create(cardKey,[userId]))
+				if(isSinglePlayer){
+					if(isComputer){
+						computerCards++
+					}else{
+						userCards++;
+					}
+				}
+			}
+				
+			doAllRevealState(revealEntries)
+		}
 		private var allPlayerIds:Array
 		private var myUserId:int
 		override public function gotMatchStarted(allPlayerIds:Array, finishedPlayerIds:Array, serverEntries:Array):void{
+			isPlaying = true
 			this.allPlayerIds = allPlayerIds;
 			myUserId = T.custom(CUSTOM_INFO_KEY_myUserId,42) as int
 			isSinglePlayer = (allPlayerIds.length == 1);
 			currentCard = 0
 			cardsNumToDraw = 0;
+			computerCards = 0;
+			userCards = 0;
+			canShowCards = 0;
 			waitingCards = new Dictionary();
 			flippedCards = new Dictionary();
 			deckCards = new Dictionary();
@@ -157,7 +200,6 @@ package come2play_as3.cards
 					cardsOwners[userId] = new Dictionary()
 				}
 			}
-
 		}
 		private function deletFromDic(dic:Dictionary,key:String):Boolean{
 			if(dic[key]==null)	return false;
@@ -172,18 +214,21 @@ package come2play_as3.cards
 			for each(var userId:int in allPlayerIds){
 				if(deletFromDic(cardsOwners[userId],key))	return true;
 			}
+			if(isSinglePlayer){
+				if(deletFromDic(cardsOwners[0],key))	return true;
+			}
 			return false;
 		}
 		
 		override public function gotStateChanged(serverEntries:Array):void{
-			StaticFunctions.assert(allPlayerIds!=null,"must call super.gotMatchStarted to use cards API")
+			StaticFunctions.assert(allPlayerIds!=null,"must call super.gotMatchStarted(serverEntries:Array) to use cards API")
 			var addedData:SerializableClass
 			var changedCards:Array = []
 			var serverEntry:ServerEntry = serverEntries[0]
 			var storingPlayer:int
 			if(serverEntry.key is CardGameAction){
 				var cardGameAction:CardGameAction = serverEntry.key as CardGameAction
-				storingPlayer = serverEntry.storedByUserId;
+				storingPlayer = isSinglePlayer?currentSinglePlayer:serverEntry.storedByUserId;
 				if(cardGameAction.action == CardGameAction.DRAW_CARD){
 					if(storingPlayer!=myUserId)	currentCard++;
 				}
@@ -197,7 +242,7 @@ package come2play_as3.cards
 				if(serverEntry.key is CardKey){
 					var key:CardKey = serverEntry.key as CardKey
 					var keyString:String = key.toString();
-					StaticFunctions.assert(deleteOldPosition(keyString),"can't delete a non existing key")
+					StaticFunctions.assert(deleteOldPosition(keyString),"can't delete a non existing key",keyString)
 					if((serverEntry.visibleToUserIds == null) || (allPlayerIds.length == serverEntry.visibleToUserIds.length)){
 						if(isSinglePlayer){
 							if(userCards>0){
@@ -209,11 +254,11 @@ package come2play_as3.cards
 								cardsOwners[0][keyString] = serverEntry.value
 								computerCards--
 							}else if(cardsNumToDraw>0){
-								changedCards.push(new CardChange(serverEntry.value,key,CardChange.FLIPPED_CARD))
+								changedCards.push(new CardChange(serverEntry.value,key,CardChange.FLIPPED_CARD,storingPlayer))
 								flippedCards[keyString] = serverEntry.value
 								cardsNumToDraw--
 							}else{
-								StaticFunctions.assert(false,"bug in drawing cards");
+								StaticFunctions.assert(false,"bug in drawing cards",keyString);
 							}
 						}else{
 							changedCards.push(new CardChange(serverEntry.value,key,CardChange.FLIPPED_CARD,storingPlayer))
@@ -244,6 +289,22 @@ package come2play_as3.cards
 			doTrace("currentState",arr)
 			doTrace("changedCards",JSON.stringify(changedCards))
 			if(changedCards.length!=0)	cardGraphics.dispatchEvent(new GotCardsEvent(changedCards,addedData))
+		}
+		
+		public function declareWinner(userId:int):void{
+			var finishedPlayers:Array = []
+			for each(var id:int in allPlayerIds){
+				if(id == userId)
+					finishedPlayers.push(PlayerMatchOver.create(id,100,100))
+				else
+					finishedPlayers.push(PlayerMatchOver.create(id,0,0))
+			}
+			
+			doAllEndMatch(finishedPlayers)
+		}
+		
+		override public function gotMatchEnded(finishedPlayerIds:Array):void{
+			isPlaying = false;
 		}
 
 	}

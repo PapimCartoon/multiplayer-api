@@ -5,9 +5,11 @@ package come2play_as3.cheat.ServerClasses
 	public class CallCheater extends SerializableClass
 	{
 		public var isCheater:Boolean
-		static public function create(isCheater:Boolean):CallCheater{
+		public var callingUser:int
+		static public function create(isCheater:Boolean,callingUser:int):CallCheater{
 			var res:CallCheater = new CallCheater();
 			res.isCheater = isCheater;
+			res.callingUser = callingUser;
 			return res;
 		}
 		

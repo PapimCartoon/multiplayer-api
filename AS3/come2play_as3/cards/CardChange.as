@@ -1,4 +1,4 @@
-package come2play_as3
+package come2play_as3.cards
 {
 	import come2play_as3.api.auto_copied.JSON;
 	import come2play_as3.cards.Card;
@@ -21,7 +21,7 @@ package come2play_as3
 			this.userId = userId;
 		}
 		public function toString():String{
-			return action+":"+JSON.stringify(card)
+			return action+" : "+(card==null?"null":card.toString())
 		}
 
 	}

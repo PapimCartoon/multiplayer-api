@@ -2,11 +2,12 @@ package come2play_as3.cheat.graphics
 {
 	import come2play_as3.api.auto_copied.AS3_Timer;
 	import come2play_as3.api.auto_copied.AS3_vs_AS2;
-	import come2play_as3.api.auto_copied.T;
-	import come2play_as3.api.auto_generated.API_Message;
+	import come2play_as3.api.auto_copied.StaticFunctions;
+	import come2play_as3.cards.CardChange;
 	
 	import flash.events.MouseEvent;
 	import flash.events.TimerEvent;
+	import flash.geom.Point;
 
 	public class YourHand extends CardHand
 	{
@@ -20,29 +21,33 @@ package come2play_as3.cheat.graphics
 			cardEndY = 400;
 			AS3_vs_AS2.myAddEventListener("CardHand",this,MouseEvent.MOUSE_MOVE,tryMovingCards,true)
 			AS3_vs_AS2.myAddEventListener("cardMover",cardMover,TimerEvent.TIMER,moveCard)
-			var gameWidth:int = T.custom(API_Message.CUSTOM_INFO_KEY_gameWidth,400) as int;
-			maxX = gameWidth * 0.8
-			minX = gameWidth * 0.2
+			var gameWidth:int = 550;
+			maxX = gameWidth * 0.7
+			minX = gameWidth * 0.3
 		}
 		private function moveCard(ev:TimerEvent):void{
-			var arr:Array = []
-			arr.push(["isMoveRight=",isMoveRight])
-			arr.push(["cardHolder.x",cardHolder.x])
-			arr.push(["minHolderX=",minHolderX])
-			arr.push(["maxHolderX=",maxHolderX])
-			arr.push("*******************")
-			//trace(arr.join("\n"))
 			if(isMoveRight){
 				if(maxHolderX>cardHolder.x)	cardHolder.x+=15
 			}else{
 				if(minHolderX<cardHolder.x)	cardHolder.x-=15
 			}
 		}
+		override public function updateData(card:CardChange):Boolean{
+			StaticFunctions.assert(cardsToDraw.length ==0,"can't have cards waitng")
+			for each(var cardGraphic:CardGraphic in cards){
+				if(cardGraphic.isSameCard(card.card)){
+					cardGraphic.setKey(card.cardKey)
+					return true;
+				}
+			}
+			return false;
+		}
 		private function tryMovingCards(ev:MouseEvent):void{
-			if(ev.stageX > maxX){
+			var point:Point = globalToLocal(new Point(ev.stageX,ev.stageY))
+			if(point.x > maxX){
 				isMoveRight = false;
 				cardMover.start();
-			}else if(ev.stageX <minX){
+			}else if(point.x <minX){
 				isMoveRight = true;
 				cardMover.start();
 			}else{

@@ -9,10 +9,12 @@ package come2play_as3.cards
 	{
 		static public const CARDS_CHANGED:String = "cardsChanged"
 		public var cardsChanged:Array/*CardKey*/
+		public var addedAction:SerializableClass;
 		public function GotCardsEvent(cardsChanged:Array,addedAction:SerializableClass)
 		{		
 			super(CARDS_CHANGED)
 			this.cardsChanged = cardsChanged;
+			this.addedAction = addedAction;
 		}
 
 	}

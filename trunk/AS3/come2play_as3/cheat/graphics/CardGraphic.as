@@ -16,7 +16,7 @@ package come2play_as3.cheat.graphics
 		private var card:Card_MC;
 		private var cardData:Card;
 		private var cardKey:CardKey;
-		public function CardGraphic(cardKey:CardKey,cardData:Card=null)
+		public function CardGraphic(cardKey:CardKey,cardData:Card=null,value:int = 0)
 		{
 			this.cardKey = cardKey;
 			card = new Card_MC();
@@ -24,6 +24,9 @@ package come2play_as3.cheat.graphics
 			card.Letter_MC.stop();
 			card.scaleX = card.scaleY = 0.5
 			setCard(cardData)
+			if(value!=0){
+				setValue(value)
+			}
 			addChild(card);
 			AS3_vs_AS2.myAddEventListener("CardGraphic",this,MouseEvent.CLICK,clicked)
 		}
@@ -31,7 +34,7 @@ package come2play_as3.cheat.graphics
 			return cardKey;
 		}
 		public function get cardValue():int{
-			return cardData==null?0:(cardData.value * 4 + cardData.intSign())
+			return cardData==null?0:(cardData.value * 9 + cardData.intSign())
 		}
 		public function getCardValue():int{
 			return cardData.value;
@@ -39,8 +42,11 @@ package come2play_as3.cheat.graphics
 		public function isSame(card:CardKey):Boolean{
 			return card.num == cardKey.num
 		}
+		public function isSameCard(card:Card):Boolean{
+			return ((cardData == null) || (card == null))?true:((card.value == cardData.value) && (card.sign == cardData.sign))
+		}
 		private function clicked(ev:MouseEvent):void{
-			if(buttonMode)	dispatchEvent(new CardClickedEvent(cardKey))
+			if(buttonMode)	dispatchEvent(new CardClickedEvent(cardKey,cardData))
 		}
 		private function setFrameIn(mc:MovieClip,label:String,value:int):void{
 			var mod:int = value>10?(value - 10):0
@@ -53,12 +59,20 @@ package come2play_as3.cheat.graphics
 			}
 			StaticFunctions.assert(false,"doesn't have proper image");
 		}
-		
+		public function setKey(cardKey:CardKey):void{
+			this.cardKey = cardKey;
+		}
+		public function getCard():Card{
+			return cardData;
+		}
+		public function hide():void{
+			card.Symbole_MC.gotoAndStop(1);
+			card.Letter_MC.gotoAndStop(1);
+		}
 		public function setCard(cardData:Card):void{
 			this.cardData = cardData;
 			if(cardData == null){
-				card.Symbole_MC.gotoAndStop(1);
-				card.Letter_MC.gotoAndStop(1);
+				hide()
 			}else if(cardData.sign == Card.BLACKJOKER){
 				card.Symbole_MC.gotoAndStop(18)
 				card.Letter_MC.gotoAndStop(29);
@@ -72,6 +86,16 @@ package come2play_as3.cheat.graphics
 				card.Letter_MC.gotoAndStop(cardData.value + 1)
 				setFrameIn(card.Symbole_MC,cardData.sign,cardData.value)
 			}
-		}		
+		}	
+		public function setValue(value:int):void{
+			card.Symbole_MC.gotoAndStop(20);
+			card.Letter_MC.gotoAndStop(29+value)
+		}
+		
+		
+		
+		override public function toString():String{
+			return cardKey.toString();
+		}	
 	}
 }

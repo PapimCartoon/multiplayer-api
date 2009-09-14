@@ -6,9 +6,19 @@ package come2play_as3.cheat.ServerClasses
 	{
 		public var keys:Array/*CardKey*/;
 		public var declaredValue:int;
-		static public function create(keys:Array/*CardKey*/,declaredValue:int):CardsToHold{
+		public var cheatingUser:int
+		public var callingUser:int
+		static public function create(keys:Array/*CardKey*/,declaredValue:int,cheatingUser:int,callingUser:int):CardsToHold{
 			var res:CardsToHold = new CardsToHold();
-			res.declaredValue = declaredValue
+			res.callingUser = callingUser;
+			res.cheatingUser = cheatingUser;
+			if(declaredValue == 14){
+				res.declaredValue = 1
+			}else if(declaredValue == 0){
+				res.declaredValue = 13
+			}else{
+				res.declaredValue = declaredValue
+			}
 			res.keys = keys;
 			return res;
 		}

@@ -1,11 +1,14 @@
 package come2play_as3.cheat.graphics
 {
 	import come2play_as3.api.auto_copied.AS3_vs_AS2;
-	import come2play_as3.api.auto_copied.T;
+	import come2play_as3.cards.CardKey;
 	import come2play_as3.cheat.ServerClasses.CardsToHold;
+	import come2play_as3.cheat.ServerClasses.JokerValue;
+	import come2play_as3.cheat.caurina.transitions.Tweener;
 	import come2play_as3.cheat.events.MenuClickEvent;
 	import come2play_as3.cheat.graphics.menuItems.DeclareCardMenuImp;
 	import come2play_as3.cheat.graphics.menuItems.DeclareCheaterMenuImp;
+	import come2play_as3.cheat.graphics.menuItems.DeclareJokerMenuImp;
 	
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
@@ -14,30 +17,57 @@ package come2play_as3.cheat.graphics
 	{
 		private var declareCheaterMenu:DeclareCheaterMenuImp
 		private var declareCardMenu:DeclareCardMenuImp
+		private var declareJokerMenu:DeclareJokerMenuImp
+		private var showingMenu:Sprite
+		
 		public function MenuController()
 		{
 			declareCardMenu = new DeclareCardMenuImp()
-			declareCardMenu.headerText.text = T.i18n("choose action")
 			AS3_vs_AS2.myAddEventListener("drawCardBtn",declareCardMenu.drawCardBtnImp,MouseEvent.CLICK,drawCard)
-			AS3_vs_AS2.myAddEventListener("lowerCardBtn",declareCardMenu.lowerCardBtnImp,MouseEvent.CLICK,declareLower)
-			AS3_vs_AS2.myAddEventListener("higherCardBtn",declareCardMenu.higherCardBtnImp,MouseEvent.CLICK,declareHigher)
+			AS3_vs_AS2.myAddEventListener("BlankCardGraphic",declareCardMenu.lowerCardBtnImp,MouseEvent.CLICK,declareLower)
+			AS3_vs_AS2.myAddEventListener("BlankCardGraphic",declareCardMenu.higherCardBtnImp,MouseEvent.CLICK,declareHigher)
 			
 			declareCheaterMenu = new DeclareCheaterMenuImp()	
 			AS3_vs_AS2.myAddEventListener("trustButton",declareCheaterMenu.trustButtonImp,MouseEvent.CLICK,trustButton)
 			AS3_vs_AS2.myAddEventListener("doNotTrustButton",declareCheaterMenu.doNotTrustButtonImp,MouseEvent.CLICK,doNotTrustButton)
+		
+			declareJokerMenu = new DeclareJokerMenuImp()
+			AS3_vs_AS2.myAddEventListener("declareJokerMenu",declareJokerMenu,"JokerValue",dispatchJokerEvent)
 		}
-		public function showCardChoiseMenu():void{
-			declareCardMenu.x = 120
-			declareCardMenu.y = 23
-			if(contains(declareCheaterMenu))	removeChild(declareCheaterMenu)
-			addChild(declareCardMenu)
+		private function removeShowingMenu(sp:Sprite):void{
+			if(showingMenu!=null){
+				removeChild(showingMenu);
+			}
+			showingMenu = sp;
+			showingMenu.x = 160
+			showingMenu.y = -200
+			addChild(showingMenu)
+			Tweener.addTween(showingMenu, {time:0.4, y:((showingMenu is DeclareCardMenuImp)?-30:-20), transition:"linear"})
 		}
-		public function showCheatChoiseMenu(cardsToHold:CardsToHold):void{
-			declareCheaterMenu.x = 120
-			declareCheaterMenu.y = 23
-			declareCheaterMenu.reStartCount(cardsToHold.declaredValue,cardsToHold.keys.length)
-			if(contains(declareCardMenu))	removeChild(declareCardMenu)
-			addChild(declareCheaterMenu)
+		public function close():void{
+			Tweener.addTween(showingMenu, {time:0.4, y:-200, transition:"linear",onComplete:function():void{
+				if(parent!=null)	parent.removeChild(this);
+			}})
+		}
+		public function showCardChoiseMenu(value:int):void{
+			declareCardMenu.setVal(value)
+			removeShowingMenu(declareCardMenu)	
+		}
+		public function showCheatChoiseMenu(cardsToHold:CardsToHold,canTrust:Boolean):void{
+			declareCheaterMenu.reStartCount(cardsToHold.declaredValue,cardsToHold.keys.length,canTrust)
+			removeShowingMenu(declareCheaterMenu)
+		}
+		public function showJokerChoiceMenu(cardKey:CardKey):void{
+			declareJokerMenu.setCardKey(cardKey)
+			removeShowingMenu(declareJokerMenu)
+		}
+		
+		public function setMiddleAmount(value:int):void{
+			declareCardMenu.setMiddleAmount(value)
+		}
+		private function dispatchJokerEvent(ev:JokerValue):void{
+			var jokerValue:JokerValue = JokerValue.create(ev.jokerValue,ev.cardKey)
+			dispatchEvent(jokerValue)
 		}
 		private function drawCard(ev:MouseEvent):void{
 			dispatchEvent(new MenuClickEvent(MenuClickEvent.DRAW_CARD))
@@ -50,11 +80,11 @@ package come2play_as3.cheat.graphics
 		}
 		private function trustButton(ev:MouseEvent):void{
 			declareCheaterMenu.stopTimer()
-			dispatchEvent(new MenuClickEvent(MenuClickEvent.CALL_CHEATER))
+			dispatchEvent(new MenuClickEvent(MenuClickEvent.DO_NOT_CALL_CHEATER))
 		}
 		private function doNotTrustButton(ev:MouseEvent):void{
 			declareCheaterMenu.stopTimer()
-			dispatchEvent(new MenuClickEvent(MenuClickEvent.DO_NOT_CALL_CHEATER))
+			dispatchEvent(new MenuClickEvent(MenuClickEvent.CALL_CHEATER))
 		}
 		
 	}

@@ -74,7 +74,7 @@ package come2play_as3.api.auto_copied
 				pausedEvents.push({catagory:catagory,action:action,label:label,value:value})
 				return;
 			}
-			
+			if(label==null)	label = action;
 			sendTrackEvent(catagory,action,label,value);	
 		}
 		

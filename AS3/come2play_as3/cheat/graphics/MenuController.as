@@ -2,6 +2,7 @@ package come2play_as3.cheat.graphics
 {
 	import come2play_as3.api.auto_copied.AS3_vs_AS2;
 	import come2play_as3.cards.CardKey;
+	import come2play_as3.cheat.CheatSoundControl;
 	import come2play_as3.cheat.ServerClasses.CardsToHold;
 	import come2play_as3.cheat.ServerClasses.JokerValue;
 	import come2play_as3.cheat.caurina.transitions.Tweener;
@@ -23,7 +24,6 @@ package come2play_as3.cheat.graphics
 		public function MenuController()
 		{
 			declareCardMenu = new DeclareCardMenuImp()
-			AS3_vs_AS2.myAddEventListener("drawCardBtn",declareCardMenu.drawCardBtnImp,MouseEvent.CLICK,drawCard)
 			AS3_vs_AS2.myAddEventListener("BlankCardGraphic",declareCardMenu.lowerCardBtnImp,MouseEvent.CLICK,declareLower)
 			AS3_vs_AS2.myAddEventListener("BlankCardGraphic",declareCardMenu.higherCardBtnImp,MouseEvent.CLICK,declareHigher)
 			
@@ -36,17 +36,25 @@ package come2play_as3.cheat.graphics
 		}
 		private function removeShowingMenu(sp:Sprite):void{
 			if(showingMenu!=null){
+				Tweener.removeTweens(showingMenu);
 				removeChild(showingMenu);
 			}
 			showingMenu = sp;
 			showingMenu.x = 160
 			showingMenu.y = -200
 			addChild(showingMenu)
+			
 			Tweener.addTween(showingMenu, {time:0.4, y:((showingMenu is DeclareCardMenuImp)?-30:-20), transition:"linear"})
 		}
 		public function close():void{
-			Tweener.addTween(showingMenu, {time:0.4, y:-200, transition:"linear",onComplete:function():void{
-				if(parent!=null)	parent.removeChild(this);
+			var sp:Sprite = this;
+			Tweener.removeTweens(showingMenu);
+			Tweener.addTween(showingMenu, {time:0.2, y:-200, transition:"linear",onComplete:function():void{
+				if(sp.parent!=null){	
+					if(sp.parent.contains(sp))
+						sp.parent.removeChild(sp);
+				}
+				
 			}})
 		}
 		public function showCardChoiseMenu(value:int):void{
@@ -66,24 +74,34 @@ package come2play_as3.cheat.graphics
 			declareCardMenu.setMiddleAmount(value)
 		}
 		private function dispatchJokerEvent(ev:JokerValue):void{
+			CheatSoundControl.playClick();
 			var jokerValue:JokerValue = JokerValue.create(ev.jokerValue,ev.cardKey)
 			dispatchEvent(jokerValue)
 		}
 		private function drawCard(ev:MouseEvent):void{
+			CheatSoundControl.playClick();
 			dispatchEvent(new MenuClickEvent(MenuClickEvent.DRAW_CARD))
 		}
 		private function declareLower(ev:MouseEvent):void{
+			CheatSoundControl.playClick();
 			dispatchEvent(new MenuClickEvent(MenuClickEvent.DECLARE_LOWER))
 		}
 		private function declareHigher(ev:MouseEvent):void{
+			CheatSoundControl.playClick();
 			dispatchEvent(new MenuClickEvent(MenuClickEvent.DECLARE_HIGHER))
 		}
-		private function trustButton(ev:MouseEvent):void{
+		public function stopCheatTimer():void{
 			declareCheaterMenu.stopTimer()
+		}
+		
+		private function trustButton(ev:MouseEvent):void{
+			stopCheatTimer()
+			CheatSoundControl.playClick();
 			dispatchEvent(new MenuClickEvent(MenuClickEvent.DO_NOT_CALL_CHEATER))
 		}
 		private function doNotTrustButton(ev:MouseEvent):void{
-			declareCheaterMenu.stopTimer()
+			stopCheatTimer()
+			CheatSoundControl.playClick();
 			dispatchEvent(new MenuClickEvent(MenuClickEvent.CALL_CHEATER))
 		}
 		

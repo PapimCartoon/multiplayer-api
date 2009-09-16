@@ -1,5 +1,6 @@
 package come2play_as3.cheat.graphics
 {
+	import come2play_as3.cards.Card;
 	import come2play_as3.cards.CardChange;
 	import come2play_as3.cards.CardKey;
 	import come2play_as3.cheat.caurina.transitions.Tweener;
@@ -10,6 +11,7 @@ package come2play_as3.cheat.graphics
 
 	public class CardHand extends MovieClip
 	{
+		private var drawingFromDeck:DrawingCardFromDeck
 		private var cardAngle:int = 8
 		protected var cards:Array
 		protected var maxHolderX:int
@@ -24,6 +26,7 @@ package come2play_as3.cheat.graphics
 		private var isComputer:Boolean
 		public function CardHand(isComputer:Boolean=false)
 		{
+			drawingFromDeck = new DrawingCardFromDeck()
 			this.isComputer = isComputer;
 			addChild(cardHolder)
 			cards = [];
@@ -40,10 +43,19 @@ package come2play_as3.cheat.graphics
 		public function updateData(card:CardChange):Boolean{
 			for each(var cardGraphic:CardGraphic in cards){
 				if(cardGraphic.isSame(card.cardKey)){
+					cardGraphic.setCardData(card.card)
 					return true;
 				}
 			}
 			return false;
+		}
+		public function getCardData(cardKey:CardKey):Card{
+			for each(var cardGraphic:CardGraphic in cards){
+				if(cardGraphic.isSame(cardKey)){
+					return cardGraphic.getCard();
+				}
+			}
+			return null;
 		}
 		public function drawCard(card:CardGraphic,callFinishFunc:Boolean):void{
 			if(isDrawing){
@@ -57,6 +69,7 @@ package come2play_as3.cheat.graphics
 			card.rotation = isCardDirectionRight?(Math.random() * cardAngle):(Math.random() * -cardAngle)
 			cardHolder.addChild(card)	
 			isCardDirectionRight = !isCardDirectionRight;
+			drawingFromDeck.play(1)
 			Tweener.addTween(card, {time:0.2, x:cardEndX, y:cardEndY, transition:"linear",onComplete:function():void{
 				cardDrawn(callFinishFunc)
 			}} );	
@@ -94,30 +107,28 @@ package come2play_as3.cheat.graphics
 		}
 		public function getRandomComputerMove():Array{
 			var cardKeys:Array = []
-			var precentage:int = 4;
+			var precentage:int = 2;
 			while(int(Math.random()*precentage) == 0){
-				precentage = precentage *1.5;
-				var cardKey:CardKey = getRandomNewCard(cardKeys,true)
+				precentage = precentage *2;
+				var cardKey:CardKey = getRandomNewCard(cardKeys)
 				if(cardKey == null)	return cardKeys;
 				cardKeys.push(cardKey);
-				if(cardKeys.length == 4)	return cardKeys;				
+				if(cardKeys.length >= 4)	return cardKeys;				
 			}
 			return cardKeys;
 		}
-		public function getRandomNewCard(arr:Array/*CardKey*/,canJoker:Boolean):CardKey{
+		public function getRandomNewCard(arr:Array/*CardKey*/):CardKey{
 			if(arr.length == cards.length)	return null
 			var index:int = int(Math.random()*cards.length)
 			var cardGraphic:CardGraphic
 			var cardKey:CardKey
 			for(var i:int = index;i<cards.length;i++){
 				cardGraphic = cards[i];
-				if((!canJoker) && (cardGraphic.getCardValue()==14))	continue;
 				cardKey = cardGraphic.getCardKey();
 				if(!isKeyContained(arr,cardKey))	return cardKey;	
 			}
 			for(i = 0;i<index;i++){
 				cardGraphic = cards[i];
-				if((!canJoker) && (cardGraphic.getCardValue()==14))	continue;
 				cardKey = cardGraphic.getCardKey();
 				if(!isKeyContained(arr,cardKey))	return cardKey;	
 			}
@@ -160,6 +171,9 @@ package come2play_as3.cheat.graphics
 		}
 		public function getCardCount():int{
 			return cardsToDraw.length + cards.length
+		}
+		public function set endY(value:int):void{
+			cardEndY = value
 		}
 		
 	}

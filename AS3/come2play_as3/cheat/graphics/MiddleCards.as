@@ -10,15 +10,19 @@ package come2play_as3.cheat.graphics
 
 	public class MiddleCards extends Sprite
 	{
+		private var placeCard:PlaceCard
 		private var choosenCards:Sprite
 		private var choosenCardsArray:Array/*CardGraphic*/
 		private var thrownDeckArray:Array/*CardGraphic*/
 		private var thrownDeck:Sprite
-		private var cardEndY:int = 200
+		private var cardEndY:int = 215
 		private var cardEndX:int = 250
 		private var cardValue:int = -1
+		private var foldToDeck:FoldToDeck;
 		public function MiddleCards()
 		{
+			foldToDeck = new FoldToDeck()
+			placeCard = new PlaceCard()
 			choosenCardsArray = new Array();
 			thrownDeckArray = new Array();	
 			choosenCards = new Sprite()
@@ -42,6 +46,7 @@ package come2play_as3.cheat.graphics
 		}
 		public function pickCard(cardGraphic:CardGraphic):void{
 			choosenCardsArray.push(cardGraphic)
+			placeCard.play()
 			Tweener.addTween(cardGraphic, {time:0.2, x:cardEndX, y:cardEndY, transition:"easeOutSine",onComplete:cardPicked} );	
 		}
 		public function putFirst(cardGraphic:CardGraphic,jokerValue:JokerValue):void{
@@ -55,6 +60,7 @@ package come2play_as3.cheat.graphics
 			thrownDeckArray.push(cardGraphic)
 			thrownDeck.addChild(cardGraphic)
 			cardGraphic.buttonMode = false;
+			placeCard.play()
 			Tweener.addTween(cardGraphic, {time:0.2, x:cardEndX, y:cardEndY, transition:"easeOutSine"} );
 		}
 		private function cardPicked():void{
@@ -102,6 +108,7 @@ package come2play_as3.cheat.graphics
 			isCardDirectionRight = !isCardDirectionRight;	
 		}
 		public function throwMiddle():void{
+			foldToDeck.play()
 			for each(var cardGraphic:CardGraphic in choosenCardsArray){
 				cardGraphic.setCard(null)
 				cardGraphic.buttonMode = false;

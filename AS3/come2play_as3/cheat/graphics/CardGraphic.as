@@ -4,6 +4,7 @@ package come2play_as3.cheat.graphics
 	import come2play_as3.api.auto_copied.StaticFunctions;
 	import come2play_as3.cards.Card;
 	import come2play_as3.cards.CardKey;
+	import come2play_as3.cheat.caurina.transitions.Tweener;
 	import come2play_as3.cheat.events.CardClickedEvent;
 	
 	import flash.display.FrameLabel;
@@ -16,6 +17,7 @@ package come2play_as3.cheat.graphics
 		private var card:Card_MC;
 		private var cardData:Card;
 		private var cardKey:CardKey;
+		private var blankCardValue:int = 0
 		public function CardGraphic(cardKey:CardKey,cardData:Card=null,value:int = 0)
 		{
 			this.cardKey = cardKey;
@@ -23,6 +25,7 @@ package come2play_as3.cheat.graphics
 			card.Symbole_MC.stop();
 			card.Letter_MC.stop();
 			card.scaleX = card.scaleY = 0.5
+			setCardData(cardData);
 			setCard(cardData)
 			if(value!=0){
 				setValue(value)
@@ -69,8 +72,22 @@ package come2play_as3.cheat.graphics
 			card.Symbole_MC.gotoAndStop(1);
 			card.Letter_MC.gotoAndStop(1);
 		}
-		public function setCard(cardData:Card):void{
-			this.cardData = cardData;
+		public function startFlip():void{
+			Tweener.addTween(card, {time:0.15, scaleX:0.1,scaleY:0.55, transition:"linear",onComplete:showCardData})
+		}
+		public function endFlip():void{
+			Tweener.addTween(card, {time:0.15, scaleX:0.5,scaleY:0.5, transition:"linear",onComplete:function():void{
+				
+			}})
+		}
+		private function showCardData(canEndFlip:Boolean = true):void{
+			if(blankCardValue!=0){
+				card.Symbole_MC.gotoAndStop(20);
+				card.Letter_MC.gotoAndStop(29+blankCardValue)
+				endFlip()
+				return	
+			}
+			
 			if(cardData == null){
 				hide()
 			}else if(cardData.sign == Card.BLACKJOKER){
@@ -86,8 +103,27 @@ package come2play_as3.cheat.graphics
 				card.Letter_MC.gotoAndStop(cardData.value + 1)
 				setFrameIn(card.Symbole_MC,cardData.sign,cardData.value)
 			}
+			if(canEndFlip)	endFlip()
+		}
+		public function setCardData(cardData:Card):void{
+			this.cardData = cardData;
+			blankCardValue = 0
+		}
+		
+		public function setCard(cardData:Card):void{
+			if(((cardData==null) && (this.cardData!=null)) || ((cardData!=null) && (this.cardData==null)) || (blankCardValue != 0)){
+				setCardData(cardData);
+				startFlip()
+			}else{
+				setCardData(cardData);
+				showCardData(false)
+			}
+			
+			
 		}	
 		public function setValue(value:int):void{
+			blankCardValue = value;
+			return;
 			card.Symbole_MC.gotoAndStop(20);
 			card.Letter_MC.gotoAndStop(29+value)
 		}

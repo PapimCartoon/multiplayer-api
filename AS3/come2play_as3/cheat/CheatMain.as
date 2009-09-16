@@ -15,6 +15,8 @@ package come2play_as3.cheat
 	import come2play_as3.cheat.ServerClasses.PlayerTurn;
 	
 	import flash.display.MovieClip;
+	import flash.media.SoundChannel;
+	import flash.media.SoundTransform;
 
 	public class CheatMain extends CardsAPI
 	{
@@ -25,6 +27,8 @@ package come2play_as3.cheat
 		private var cheatGraphics:CheatGraphics
 		private var isSinglePlayer:Boolean
 		private var allPlayerIds:Array
+		
+
 		public function CheatMain(cardsGraphic:MovieClip)
 		{
 			super(cardsGraphic)	
@@ -39,7 +43,6 @@ package come2play_as3.cheat
 			AS3_vs_AS2.myAddEventListener("cheatGraphics",cheatGraphics,"CardsToHold",putCardsOnTableHidden)
 			AS3_vs_AS2.myAddEventListener("cheatGraphics",cheatGraphics,"CallCheater",callCheater)	
 			AS3_vs_AS2.myAddEventListener("cheatGraphics",cheatGraphics,"PlayerTurn",setTurn)	
-			
 			AS3_vs_AS2.myAddEventListener("cardsGraphic",cardsGraphic,GotCardsEvent.CARDS_CHANGED,handleChangedCards)
 		}	
 
@@ -71,7 +74,7 @@ package come2play_as3.cheat
 		}
 		
 		override public function gotMatchStarted(allPlayerIds:Array, finishedPlayerIds:Array, serverEntries:Array):void{
-			super.gotMatchStarted(allPlayerIds, finishedPlayerIds, serverEntries)
+			
 			this.allPlayerIds = allPlayerIds;
 			isSinglePlayer = (allPlayerIds.length == 1);
 			myUserId = T.custom(CUSTOM_INFO_KEY_myUserId,42) as int
@@ -87,6 +90,7 @@ package come2play_as3.cheat
 			
 			
 			cheatGraphics.init(isViewer,sendMyUserId,rivalUserId);
+			super.gotMatchStarted(allPlayerIds, finishedPlayerIds, serverEntries)
 			if(isSinglePlayer){	
 				cheatGraphics.setRivalName(T.i18n("Computer"))
 				cheatGraphics.setUserName(T.getUserValue(myUserId,USER_INFO_KEY_name,"Player") as String)

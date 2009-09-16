@@ -36,7 +36,7 @@ package come2play_as3.dominoGame
 			AS3_vs_AS2.myAddEventListener("dominoGraphic",dominoGraphic,GrabEvent.PUT_BRICK,userChoseBrick)
 		}
 		private function returnDomino(dic:Dictionary,key:String):DominoCube{
-			StaticFunctions.assert(dic[key]!=null,"can't put a non existing brick");
+			StaticFunctions.assert(dic[key]!=null,"can't put a non existing brick",key);
 			return dic[key] as DominoCube
 		}
 		

@@ -35,8 +35,12 @@ package come2play_as3.cheat.graphics.menuItems
 		}
 		public function reStartCount(num:int,count:int,canTrust:Boolean):void{
 			this.canTrust = canTrust;
-			trustButtonImp.visible = canTrust
-			headerText.text = T.i18nReplace("$cardsNum$ cards claimed to be $cardType$",{cardsNum:count, cardType:num})
+			notCheat_txt.visible = trustButtonImp.visible = canTrust
+			if(count==1){
+				headerText.text = T.i18nReplace("opponent put a $cardType$",{cardType:num})
+			}else{
+				headerText.text = T.i18nReplace("opponent put $cardsNum$ cards, claimed to be $cardType$",{cardsNum:count, cardType:num})
+			}
 			startTime = getTimer();
 			decreseSecond()
 			timePassed.start();

@@ -6,13 +6,11 @@ package come2play_as3.cheat.graphics.menuItems
 	
 	public class DeclareCardMenuImp extends DeclareCardMenu
 	{
-		public var drawCardBtnImp:WrapButton
 		public var lowerCardBtnImp:BlankCardGraphic
 		public var higherCardBtnImp:BlankCardGraphic
 		public function DeclareCardMenuImp()
 		{
 			orText_txt.text = T.i18n("- OR -")
-			drawCardBtnImp = new WrapButton(drawCardBtn,T.i18n("DRAW"))
 			lowerCardBtnImp = new BlankCardGraphic()
 			higherCardBtnImp = new BlankCardGraphic()
 			lowerCardBtnImp.rotation = -10
@@ -21,15 +19,10 @@ package come2play_as3.cheat.graphics.menuItems
 			higherCardBtnImp.x = 200
 			lowerCardBtnImp.y = higherCardBtnImp.y = 130;
 			lowerCardBtnImp.buttonMode = higherCardBtnImp.buttonMode = true;
-			drawCardBtnImp.visible = false
-			addChild(drawCardBtnImp)
 			addChild(lowerCardBtnImp)
 			addChild(higherCardBtnImp)
 		}
-		override public function set y(value:Number):void{
-			drawCardBtnImp.visible = (value == -30);
-			super.y = value;
-		}
+
 		public function setVal(value:int):void{
 			setMiddleAmount(0)
 			lowerCardBtnImp.setValue(value - 1)
@@ -38,8 +31,12 @@ package come2play_as3.cheat.graphics.menuItems
 		public function setMiddleAmount(value:int):void{
 			if(value == 0){
 				headerText.text = T.i18n("Choose up to 6 cards or draw")
+				lowerCardBtnImp.mouseEnabled =lowerCardBtnImp.mouseChildren = lowerCardBtnImp.buttonMode = false
+				higherCardBtnImp.mouseEnabled =higherCardBtnImp.mouseChildren = higherCardBtnImp.buttonMode = false
 			}else{
 				headerText.text = T.i18n("Declare card value as")
+				lowerCardBtnImp.mouseEnabled =lowerCardBtnImp.mouseChildren = lowerCardBtnImp.buttonMode = true
+				higherCardBtnImp.mouseEnabled =higherCardBtnImp.mouseChildren = higherCardBtnImp.buttonMode = true
 			}
 		}
 		

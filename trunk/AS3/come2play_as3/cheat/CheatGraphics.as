@@ -538,9 +538,10 @@ package come2play_as3.cheat
 			currentTurn = userId
 			if(currentTurn == myUserId){
 				if(userId == myUserId){
-					upperBackground.actionExpected_txt.text = T.i18n("your turn");
+					upperBackground.actionExpected_txt.text = T.i18n("Your turn");
 				}else{
-					upperBackground.actionExpected_txt.text = T.i18n("opponent turn");
+					var userName:String = GameMessage.getUserName(userId)
+					upperBackground.actionExpected_txt.text = T.i18nReplace("$userName$'s turn",{userName:userName});
 				}		
 			}else{
 				upperBackground.actionExpected_txt.text = "";

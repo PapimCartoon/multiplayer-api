@@ -62,27 +62,30 @@ package come2play_as3.cheat.graphics
 			if(isBiengCalled){
 				if(isRight){
 					cheaterAlarm.play()
-					gameMessage.messageText.text = T.i18nReplace("$userName$ got us there mate !",{userName:userName});
+					if(id == 0)
+						gameMessage.messageText.text = T.i18nReplace("$userName$ got us there mate !",{userName:userName});
+					
 					gameMessage.addChild(cheater);
 				}else{
 					magicZing.play()
+					
 					gameMessage.messageText.text = T.i18nReplace("We got $userName$, Excellent !",{userName:userName});
 					gameMessage.addChild(notCheater);
 				}
 			}else{
 				if(isRight){
 					magicZing.play()
-					gameMessage.messageText.text = T.i18n("You got the cheater !");
+					gameMessage.messageText.text = T.i18nReplace("Busted! $userName$ Cheated!",{userName:userName});
 					gameMessage.addChild(cheater);
 				}else{
 					cheaterAlarm.play()
-					gameMessage.messageText.text = T.i18n("$userName$ is as innocent as a lamb, tough luck");
+					gameMessage.messageText.text = T.i18nReplace("$userName$ is as innocent as a lamb, tough luck",{userName:userName});
 					gameMessage.addChild(notCheater);
 				}
 			}
 		}
-		private function getUserName(id:int):String{
-			return (T.getUserValue(id,API_Message.USER_INFO_KEY_name,"he") as String).substr(0,8);
+		static public function getUserName(id:int):String{
+			return (T.getUserValue(id,API_Message.USER_INFO_KEY_name,"our opponent") as String).substr(0,8);
 		}
 		public function willCallBluff(isBluff:Boolean,id:int):void{
 			removeGraphics()

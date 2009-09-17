@@ -271,7 +271,7 @@ package come2play_as3.cards
 								flippedCards[keyString] = serverEntry.value
 								cardsNumToDraw--
 							}else{
-								//StaticFunctions.assert(false,"bug in drawing cards",keyString);
+								StaticFunctions.assert(false,"bug in drawing cards",keyString);
 							}
 						}else{
 							changedCards.push(new CardChange(serverEntry.value,key,CardChange.FLIPPED_CARD,storingPlayer))

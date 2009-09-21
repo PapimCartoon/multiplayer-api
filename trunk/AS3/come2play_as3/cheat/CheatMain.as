@@ -2,6 +2,7 @@ package come2play_as3.cheat
 {
 	
 	import come2play_as3.api.auto_copied.AS3_vs_AS2;
+	import come2play_as3.api.auto_copied.ErrorHandler;
 	import come2play_as3.api.auto_copied.T;
 	import come2play_as3.api.auto_generated.ServerEntry;
 	import come2play_as3.api.auto_generated.UserEntry;
@@ -15,8 +16,6 @@ package come2play_as3.cheat
 	import come2play_as3.cheat.ServerClasses.PlayerTurn;
 	
 	import flash.display.MovieClip;
-	import flash.media.SoundChannel;
-	import flash.media.SoundTransform;
 
 	public class CheatMain extends CardsAPI
 	{
@@ -91,16 +90,13 @@ package come2play_as3.cheat
 			
 			cheatGraphics.init(isViewer,sendMyUserId,rivalUserId);
 			super.gotMatchStarted(allPlayerIds, finishedPlayerIds, serverEntries)
+			cheatGraphics.setRivalName()
+			cheatGraphics.setUserName()
 			if(isSinglePlayer){	
-				cheatGraphics.setRivalName(T.i18n("Computer"))
-				cheatGraphics.setUserName(T.getUserValue(myUserId,USER_INFO_KEY_name,"Player") as String)
 				storeDecks(1,true)
 				singlePlayerDrawCards(true,8)
 				singlePlayerDrawCards(false,8)
 			}else{
-				
-				cheatGraphics.setRivalName(T.getUserValue(rivalUserId,USER_INFO_KEY_name,"Player") as String)
-				cheatGraphics.setUserName(T.getUserValue(myUserId,USER_INFO_KEY_name,"Player") as String)
 				if(serverEntries.length == 0){
 					storeDecks(1,true)
 					for each(var userId:int in allPlayerIds){
@@ -120,11 +116,14 @@ package come2play_as3.cheat
 			}else{
 				cheatGraphics.setTurn(userTurn)
 			}
-			
 		}
 		override public function gotMatchEnded(finishedPlayerIds:Array):void{
 			super.gotMatchEnded(finishedPlayerIds)
 			cheatGraphics.gameEnded()
+			animationStarted("waitForReset")
+			ErrorHandler.myTimeout("waitForReset",function():void{
+				animationEnded("waitForReset")
+			},2000)
 		}
 		override public function gotStateChanged(serverEntries:Array):void{
 			super.gotStateChanged(serverEntries)

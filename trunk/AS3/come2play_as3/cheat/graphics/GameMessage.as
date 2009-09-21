@@ -83,7 +83,7 @@ package come2play_as3.cheat.graphics
 			}
 		}
 		static public function getUserName(id:int):String{
-			return (T.getUserValue(id,API_Message.USER_INFO_KEY_name,"our opponent") as String).substr(0,8);
+			return (T.getUserValue(id,API_Message.USER_INFO_KEY_name,"our opponent") as String).substr(0,12);
 		}
 		public function willCallBluff(isBluff:Boolean,id:int):void{
 			removeGraphics()
@@ -106,7 +106,11 @@ package come2play_as3.cheat.graphics
 			gameMessage.messageText.text = T.i18n("SAFE !!!");
 			gameMessage.addChild(cheater);
 		}
-		
+		public function showHelp():void{
+			removeGraphics()
+			gameMessage.messageText.text = T.i18n("Get rid of all your cards to win. You lose when you have 30 cards");
+			gameMessage.addChild(cheater);
+		}
 		
 		public function closeMessage():void{
 			if(heartBeatSoundChannel!=null){	

@@ -22,9 +22,6 @@ package come2play_as3.cheat.graphics
 			deck.Deck2.Letter_MC.stop();
 			deck.Deck3.Symbole_MC.stop();
 			deck.Deck3.Letter_MC.stop();
-			
-			
-			
 			AS3_vs_AS2.myAddEventListener("deck",deck,MouseEvent.CLICK,drawCard)
 			AS3_vs_AS2.myAddEventListener("deck",deck,MouseEvent.MOUSE_OVER,drawOver)
 			AS3_vs_AS2.myAddEventListener("deck",deck,MouseEvent.MOUSE_OUT,drawOut)
@@ -34,7 +31,7 @@ package come2play_as3.cheat.graphics
 		}
 		public function setCards(num:int):void{
 			availableCards = num;
-			deck.cardNum_txt.text = String(num);
+			deck.cardCounter.cardNum_txt.text = String(num);
 		}
 		public function canDraw(value:Boolean):void{
 			deck.drawText.visible = deck.buttonMode = deck.mouseChildren = deck.mouseEnabled = value;

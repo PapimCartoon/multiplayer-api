@@ -30,7 +30,8 @@ package come2play_as3.cheat
 	import flash.events.MouseEvent;
 	import flash.media.SoundChannel;
 	import flash.media.SoundTransform;
-	import flash.utils.Dictionary;
+	import flash.text.TextField;
+	import flash.text.TextFormat;
 
 	public class CheatGraphics extends MovieClip
 	{
@@ -62,17 +63,14 @@ package come2play_as3.cheat
 		private var isCheaterLock:Boolean
 		private var waitingCards:Array
 		private var waitingActions:Array
-		
-		private var myTimeouts:Dictionary;
 		public function CheatGraphics()
 		{
 			addChild(lowerBackground)
 			addChild(myGraphics)
 			addChild(upperBackground)
-			myTimeouts = new Dictionary();
 			backgroundSound = new  BackgroundLoop()	
 			soundChannel = backgroundSound.play(0,100);
-			soundChannel.soundTransform = new SoundTransform(0.30)
+			soundChannel.soundTransform = new SoundTransform(/*0.30*/0)
 			cardDeck = new CardDeck()
 			gameMessage =new GameMessage(soundChannel)
 			menuController = new MenuController()
@@ -85,11 +83,7 @@ package come2play_as3.cheat
 			AS3_vs_AS2.myAddEventListener("menuController",menuController,MenuClickEvent.MENU_EVENT,menuAction)
 			AS3_vs_AS2.myAddEventListener("cardDeck",cardDeck,MenuClickEvent.MENU_EVENT,menuAction)
 			AS3_vs_AS2.myAddEventListener("menuController",menuController,"JokerValue",jokerAction)
-			
-			AS3_vs_AS2.myAddEventListener("soundController",soundController,MouseEvent.CLICK,changeSound)
-			
-			
-			
+			AS3_vs_AS2.myAddEventListener("soundController",soundController,MouseEvent.CLICK,changeSound)	
 		}
 		private function changeSound(ev:MouseEvent):void{
 			if(soundController.currentFrame == 1){
@@ -111,8 +105,8 @@ package come2play_as3.cheat
 			this.isViewer = isViewer;
 			this.myUserId = myUserId;
 			this.rivalId = rivalId;
-			scaleX = ( T.custom(API_Message.CUSTOM_INFO_KEY_gameWidth,400) as int)/550 
-			scaleY = ( T.custom(API_Message.CUSTOM_INFO_KEY_gameHeight,400) as int)/450 
+			//scaleX = ( T.custom(API_Message.CUSTOM_INFO_KEY_gameWidth,400) as int)/550 
+			//scaleY = ( T.custom(API_Message.CUSTOM_INFO_KEY_gameHeight,400) as int)/450 
 			
 			upperBackground.actionExpected_txt.text =  T.i18n("Starting Game");
 			myGraphics.addChild(cardDeck)
@@ -144,6 +138,9 @@ package come2play_as3.cheat
 			myGraphics.addChild(rivalHand)
 			myGraphics.addChild(middleCards) 	
 			myGraphics.addChild(myHand)
+			
+			gameMessage.showHelp()
+			myGraphics.addChild(gameMessage)
 			
 			
 		}
@@ -211,6 +208,7 @@ package come2play_as3.cheat
 				var isPlayer:Boolean = (cardChange.userId == myUserId)
 				var removeFromHand:CardHand = isPlayer?myHand:rivalHand;
 				var cardGraphic:CardGraphic = removeFromHand.removeCard(cardChange.cardKey)
+				if(declareWinner(rivalHand.getCardCount(),myHand.getCardCount()))	return;
 				if(cardGraphic==null)	return
 				cardGraphic.setCard(cardChange.card);
 				middleCards.putFirst(cardGraphic,jokerValue);
@@ -228,7 +226,7 @@ package come2play_as3.cheat
 					}
 				}
 				CardsAPI.cardsData.animationStarted("takeThrownCards")
-				myTimeouts["amIRight"] = ErrorHandler.myTimeout("amIRight",function():void{
+				ErrorHandler.myTimeout("amIRight",function():void{
 					if(!isViewer){
 						gameMessage.amIRight(isUserCheater,lastCardHold.cheatingUser == myUserId,rivalId)
 						myGraphics.addChild(gameMessage)
@@ -236,10 +234,9 @@ package come2play_as3.cheat
 					}
 					lastCardHold = null;
 					takeCards = true;
-					delete myTimeouts["amIRight"];
-					myTimeouts["endTakeThrownCards"] = ErrorHandler.myTimeout("endTakeThrownCards",function():void{
+					ErrorHandler.myTimeout("endTakeThrownCards",function():void{
+						setCardCount()
 						CardsAPI.cardsData.animationEnded("takeThrownCards")
-						delete myTimeouts["endTakeThrownCards"];
 					},1500);
 				},1000)
 				
@@ -249,14 +246,18 @@ package come2play_as3.cheat
 			var cardChange:CardChange
 			var cardsToDraw:Array = []
 			if(!takeCards){
+				//can win
 				setNextTurn()
 				upperBackground.actionExpected_txt.text = T.i18n("Drawing Cards")
 				for each(cardChange in cards)
 					drawCard(cardChange)
 				if(isDrawing)	return
 				isDrawing = true;
+				trace("asdasdasd"+drawingCards[0].length + "/"+drawingCards[1].length )
+				if(declareWinner(rivalHand.getCardCount() + drawingCards[1].length,myHand.getCardCount() +drawingCards[0].length))	return;
 				drawCardGraphic();
 			}else{
+				//can win
 				takeCards = false;
 				upperBackground.actionExpected_txt.text = T.i18n("Taking Cards")
 				var releveantHand:CardHand
@@ -280,13 +281,18 @@ package come2play_as3.cheat
 						cardsToDraw.push(cardGraphic)	
 					}		
 				}
+				if(isMe){
+					if(declareWinner(rivalHand.getCardCount(),myHand.getCardCount() + cardsToDraw.length))	return;
+				}else{
+					if(declareWinner(rivalHand.getCardCount()+ cardsToDraw.length,myHand.getCardCount()))	return;
+				}
+				
 				for each(cardGraphic in cardsToDraw){
 					releveantHand.drawCard(cardGraphic,false)
 				}
 				CardsAPI.cardsData.animationStarted("drawCards")
-				myTimeouts["drawCards"] = ErrorHandler.myTimeout("CheatGraphics",function():void{
+				ErrorHandler.myTimeout("CheatGraphics",function():void{
 					CardsAPI.cardsData.animationEnded("drawCards")
-					delete myTimeouts["drawCards"]
 				},(cardsToDraw.length + 1) * 200)
 				finishedDrawing()
 			}	
@@ -343,9 +349,10 @@ package come2play_as3.cheat
 					}else{
 						if(rand<=cardsToHold.keys.length)	isComputerCallCheat = true;
 					}
-					myTimeouts["CallCheater"] = ErrorHandler.myTimeout("CallCheater",function():void{
-						delete myTimeouts["CallCheater"];
+					CardsAPI.cardsData.animationStarted("callCheater")
+					ErrorHandler.myTimeout("CallCheater",function():void{
 						dispatchEvent(CallCheater.create(isComputerCallCheat,rivalId))
+						CardsAPI.cardsData.animationEnded("callCheater")
 					},isMoveCheat?2000:1000)
 				}
 			}
@@ -357,12 +364,13 @@ package come2play_as3.cheat
 			if(callCheater.isCheater){
 				CardsAPI.cardsData.putCards(lastCardHold.keys,callCheater.callingUser == myUserId)
 			}else{
+				CardsAPI.cardsData.animationStarted("bluffSuccess")
 				if(isViewer){
 					bluffSuccessEnd()
 				}if((lastCardHold.cheatingUser == myUserId) && (middleCards.isMoveCheat(lastCardHold.declaredValue))){
 					myGraphics.addChild(gameMessage)
 					gameMessage.bluffSuccess();
-					myTimeouts["bluffSuccessEnd"] = ErrorHandler.myTimeout("bluffSuccessEnd",bluffSuccessEnd,1000)
+					ErrorHandler.myTimeout("bluffSuccessEnd",bluffSuccessEnd,1000)
 				}else{
 					bluffSuccessEnd()
 					for(var i:int=0;i<waitingCards.length;i++)
@@ -371,15 +379,14 @@ package come2play_as3.cheat
 						menuAction(waitingActions[i])
 					waitingActions = []
 					waitingCards = []
-				}
-				
-				
+				}	
 			}
 		}
 		private function bluffSuccessEnd():void{
-			delete myTimeouts["bluffSuccessEnd"];
+			CardsAPI.cardsData.animationEnded("bluffSuccess")
 			middleCards.throwMiddle()
 			finishedDrawing()
+			
 		}
 		
 		private function drawCardGraphic(ev:CardDrawEndedEvent=null):void{		
@@ -387,7 +394,6 @@ package come2play_as3.cheat
 			var drawFrom:Array
 			var cardChange:CardChange
 			var drawHand:CardHand
-			
 			if((drawingCards[0].length > 0) && (drawingCards[1].length > 0)){
 				drawFrom = drawingCards[isDrawingPlayer?0:1];
 				cardChange = drawFrom.pop();
@@ -407,10 +413,10 @@ package come2play_as3.cheat
 				isDrawing = false;
 				if(callEndFunc)	finishedDrawing()
 			}else{
-				drawHand.drawCard(getEventCard(cardChange,isDrawingPlayer),true)
+				drawHand.drawCard(getEventCard(cardChange,isDrawingPlayer),true)	
 				isDrawingPlayer = !isDrawingPlayer;
 			}
-			
+			setCardCount()
 		}
 		
 		public function finishedDrawing():void{
@@ -426,26 +432,32 @@ package come2play_as3.cheat
 					cardDeck.canDraw(true)	
 				}
 			}
-			if(myHand.getCardCount() == 0){
-				CardsAPI.cardsData.declareWinner(myUserId)
-				return;
-			}else if(rivalHand.getCardCount() == 0){
-				CardsAPI.cardsData.declareWinner(rivalId == 0?myUserId:rivalId)
-				return;
-			}
+			//if(declareWinner(rivalHand.getCardCount(),myHand.getCardCount())) return;
 			if(currentTurn != myUserId){
 				if(rivalId == 0){
-					myTimeouts["doComputerMove"] = ErrorHandler.myTimeout("doComputerMove",doComputerMove,1000)
+					ErrorHandler.myTimeout("doComputerMove",doComputerMove,1000)
 				}else{
 					removeMyChild(gameMessage);
 					myHand.myTurn(false)
 				}
-				
 			}
+			setCardCount()
 				
 		}
+		
+		private function declareWinner(rivalHandCount:int,myHandCount:int):Boolean{
+			if((myHandCount == 0) || (rivalHandCount >=30)){
+				CardsAPI.cardsData.declareWinner(myUserId)
+				return true;
+			}else if((rivalHandCount == 0) || (myHandCount >= 30)){
+				CardsAPI.cardsData.declareWinner(rivalId == 0?myUserId:rivalId)
+				return true;
+			}
+			return false;
+		}
+		
+		
 		private function doComputerMove():void{
-			delete myTimeouts["doComputerMove"]
 			myHand.myTurn(false)
 			removeMyChild(gameMessage);
 			if(middleCards.noDeck()){
@@ -480,10 +492,6 @@ package come2play_as3.cheat
 			menuController.close()
 		}
 		public function gameEnded():void{
-			for(var str:String in myTimeouts){
-				ErrorHandler.myClearTimeout(str,myTimeouts[str])
-			}
-			myTimeouts = new Dictionary();
 			isPlaying = false;
 			myHand.myTurn(false);
 			removeMyChild(gameMessage)
@@ -550,11 +558,26 @@ package come2play_as3.cheat
 		public function setDeckSize(size:int):void{
 			cardDeck.setCards(size)
 		}
-		public function setRivalName(str:String):void{
-			upperBackground.rivalName_txt.text = str
+		private function setCardCount():void{
+			setRivalName()
+			setUserName()
 		}
-		public function setUserName(str:String):void{
-			upperBackground.yourName_txt.text = str
+		private function setNameAndNumber(txt:TextField,num:int,playerName:String):void{
+			var tf:TextFormat = txt.getTextFormat()
+			tf.color = num>20?0xFF0000:0xFFFFFF;
+			txt.text = T.i18nReplace("$playerName$ | $num$ cards",{num:num,playerName:playerName})
+			txt.setTextFormat(tf)
+			txt.defaultTextFormat = tf;
+		}
+		
+		
+		public function setRivalName():void{
+			var playerName:String = rivalId == 0?T.i18n("computer"):T.getUserValue(myUserId,API_Message.USER_INFO_KEY_name,"Player") as String
+			setNameAndNumber(upperBackground.rivalName_txt,rivalHand.getCardCount(),playerName)
+		}
+		public function setUserName():void{
+			var playerName:String = T.getUserValue(myUserId,API_Message.USER_INFO_KEY_name,"Player") as String
+			setNameAndNumber(upperBackground.yourName_txt,myHand.getCardCount(),playerName)
 		}
 		
 	}

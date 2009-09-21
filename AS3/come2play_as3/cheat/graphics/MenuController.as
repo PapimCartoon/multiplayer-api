@@ -57,8 +57,8 @@ package come2play_as3.cheat.graphics
 				
 			}})
 		}
-		public function showCardChoiseMenu(value:int):void{
-			declareCardMenu.setVal(value)
+		public function showCardChoiseMenu(opponentCard:int):void{
+			declareCardMenu.setVal(opponentCard)
 			removeShowingMenu(declareCardMenu)	
 		}
 		public function showCheatChoiseMenu(cardsToHold:CardsToHold,canTrust:Boolean):void{

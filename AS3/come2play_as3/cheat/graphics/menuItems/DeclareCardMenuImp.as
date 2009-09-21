@@ -2,7 +2,6 @@ package come2play_as3.cheat.graphics.menuItems
 {
 	import come2play_as3.api.auto_copied.T;
 	import come2play_as3.cheat.graphics.BlankCardGraphic;
-	import come2play_as3.cheat.graphics.WrapButton;
 	
 	public class DeclareCardMenuImp extends DeclareCardMenu
 	{
@@ -11,6 +10,7 @@ package come2play_as3.cheat.graphics.menuItems
 		public function DeclareCardMenuImp()
 		{
 			orText_txt.text = T.i18n("- OR -")
+			headerText.text = T.i18n("Declare card value as")
 			lowerCardBtnImp = new BlankCardGraphic()
 			higherCardBtnImp = new BlankCardGraphic()
 			lowerCardBtnImp.rotation = -10
@@ -22,21 +22,41 @@ package come2play_as3.cheat.graphics.menuItems
 			addChild(lowerCardBtnImp)
 			addChild(higherCardBtnImp)
 		}
-
-		public function setVal(value:int):void{
+		public function setVal(opponentCard:int):void{
 			setMiddleAmount(0)
-			lowerCardBtnImp.setValue(value - 1)
-			higherCardBtnImp.setValue(value + 1)
+			rules_txt.htmlText = T.i18nReplace("<U>Opponent declared '$OpponentCard$' you can:</U>",{OpponentCard:numberToLetter(opponentCard)})+
+			"<BR>"+T.i18nReplace("- Place a lower '$lowerCard$' card/s",{lowerCard:(numberToLetter(opponentCard - 1))})+
+			"<BR>"+T.i18nReplace("- Place a higher '$higherCard$' card/s",{higherCard:(numberToLetter(opponentCard + 1))})+
+			"<BR>"+T.i18n("- Draw a new card from the deck")+
+			"<BR>"+T.i18n("- Cheat by selecting whetever");
+			lowerCardBtnImp.setValue(opponentCard - 1)
+			higherCardBtnImp.setValue(opponentCard + 1)
 		}
+		private function numberToLetter(num:int):String{
+			if(num == 0)	return "<B>K+</B>"
+			else if(num == 1)	return "<B>A</B>"
+			else if(num<11){
+				return "<B>"+num+"</B>"
+			}else if(num == 11)	return "<B>J</B>"
+			else if(num == 12)	return "<B>Q</B>"
+			else if(num == 13)	return "<B>K</B>"
+			else if(num == 14)	return "<B>A</B>"
+			return ""
+		}
+		
 		public function setMiddleAmount(value:int):void{
 			if(value == 0){
-				headerText.text = T.i18n("Choose up to 6 cards or draw")
-				lowerCardBtnImp.mouseEnabled =lowerCardBtnImp.mouseChildren = lowerCardBtnImp.buttonMode = false
-				higherCardBtnImp.mouseEnabled =higherCardBtnImp.mouseChildren = higherCardBtnImp.buttonMode = false
+				rules_txt.visible = true;
+				headerText.visible = false
+				orText_txt.visible = false
+				lowerCardBtnImp.visible = false
+				higherCardBtnImp.visible = false
 			}else{
-				headerText.text = T.i18n("Declare card value as")
-				lowerCardBtnImp.mouseEnabled =lowerCardBtnImp.mouseChildren = lowerCardBtnImp.buttonMode = true
-				higherCardBtnImp.mouseEnabled =higherCardBtnImp.mouseChildren = higherCardBtnImp.buttonMode = true
+				rules_txt.visible = false;
+				headerText.visible = true
+				orText_txt.visible = true
+				lowerCardBtnImp.visible = true
+				higherCardBtnImp.visible = true
 			}
 		}
 		

@@ -10,6 +10,7 @@ package come2play_as3.cheat.graphics
 
 	public class MiddleCards extends Sprite
 	{
+		private var circleCounter:CircleCounterImp
 		private var placeCard:PlaceCard
 		private var choosenCards:Sprite
 		private var choosenCardsArray:Array/*CardGraphic*/
@@ -21,16 +22,22 @@ package come2play_as3.cheat.graphics
 		private var foldToDeck:FoldToDeck;
 		public function MiddleCards()
 		{
+			circleCounter = new CircleCounterImp()
+			circleCounter.x = cardEndX + 15
+			circleCounter.y = cardEndY - 55
 			foldToDeck = new FoldToDeck()
 			placeCard = new PlaceCard()
 			choosenCardsArray = new Array();
 			thrownDeckArray = new Array();	
 			choosenCards = new Sprite()
 			thrownDeck = new Sprite()
+			circleCounter.visible = false
 			addChild(thrownDeck)
 			addChild(choosenCards)
+			addChild(circleCounter)
 		}
 		public function clear():void{
+			circleCounter.visible = false
 			for each(var cardGraphic:CardGraphic in choosenCardsArray){
 				choosenCards.removeChild(cardGraphic)
 			}
@@ -45,18 +52,19 @@ package come2play_as3.cheat.graphics
 			return thrownDeckArray.length == 0;
 		}
 		public function pickCard(cardGraphic:CardGraphic):void{
+			circleCounter.visible = false
 			choosenCardsArray.push(cardGraphic)
 			placeCard.play()
 			Tweener.addTween(cardGraphic, {time:0.2, x:cardEndX, y:cardEndY, transition:"easeOutSine",onComplete:cardPicked} );	
 		}
 		public function putFirst(cardGraphic:CardGraphic,jokerValue:JokerValue):void{
+			circleCounter.visible = false
 			if(jokerValue==null){
 				cardValue = cardGraphic.getCardValue();
 			}else{
 				cardValue = jokerValue.jokerValue
 				cardGraphic.setValue(cardValue)
-			}
-			 
+			}	 
 			thrownDeckArray.push(cardGraphic)
 			thrownDeck.addChild(cardGraphic)
 			cardGraphic.buttonMode = false;
@@ -106,6 +114,7 @@ package come2play_as3.cheat.graphics
 			cardGraphic.buttonMode = false;
 			pickCard(cardGraphic)
 			isCardDirectionRight = !isCardDirectionRight;	
+			circleCounter.visible = false
 		}
 		public function throwMiddle():void{
 			foldToDeck.play()
@@ -117,6 +126,8 @@ package come2play_as3.cheat.graphics
 				Tweener.addTween(cardGraphic, {time:0.2, x:cardEndX, y:cardEndY, transition:"easeOutSine"} );
 			}
 			choosenCardsArray = [];
+			circleCounter.visible = true
+			circleCounter.setCards(thrownDeckArray.length)	
 			
 		}
 		public function revealCard(cardChange:CardChange):void{

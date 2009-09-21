@@ -62,9 +62,7 @@ package come2play_as3.cheat.graphics
 			if(isBiengCalled){
 				if(isRight){
 					cheaterAlarm.play()
-					if(id == 0)
-						gameMessage.messageText.text = T.i18nReplace("$userName$ got us there mate !",{userName:userName});
-					
+					gameMessage.messageText.text = T.i18nReplace("$userName$ got us there mate !",{userName:userName});
 					gameMessage.addChild(cheater);
 				}else{
 					magicZing.play()

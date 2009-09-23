@@ -24,9 +24,9 @@ package come2play_as3.cheat.graphics
 		private var heartBeatSoundChannel:SoundChannel;
 		private var backgroundSoundChannel:SoundChannel
 		
-		public function GameMessage(backgroundSoundChannel:SoundChannel)
+		public function GameMessage()
 		{
-			this.backgroundSoundChannel = backgroundSoundChannel;
+			
 			cheaterAlarm = new CheaterAlarm()
 			heartBeat = new HeartBeat()
 			magicZing = new MagicZing()
@@ -43,6 +43,9 @@ package come2play_as3.cheat.graphics
 			notCheater.scaleY = cheater.scaleY = 0.8
 			addChild(gameMessage);
 			
+		}
+		public function setBackgroundSound(backgroundSoundChannel:SoundChannel):void{
+			this.backgroundSoundChannel = backgroundSoundChannel;
 		}
 		private function removeGraphics():void{
 			closeMessage()

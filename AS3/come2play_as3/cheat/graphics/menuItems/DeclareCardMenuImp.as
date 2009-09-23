@@ -33,7 +33,7 @@ package come2play_as3.cheat.graphics.menuItems
 			higherCardBtnImp.setValue(opponentCard + 1)
 		}
 		private function numberToLetter(num:int):String{
-			if(num == 0)	return "<B>K+</B>"
+			if(num == 0)	return "<B>K</B>"
 			else if(num == 1)	return "<B>A</B>"
 			else if(num<11){
 				return "<B>"+num+"</B>"

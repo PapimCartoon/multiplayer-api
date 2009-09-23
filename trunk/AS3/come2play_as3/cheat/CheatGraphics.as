@@ -69,10 +69,8 @@ package come2play_as3.cheat
 			addChild(myGraphics)
 			addChild(upperBackground)
 			backgroundSound = new  BackgroundLoop()	
-			soundChannel = backgroundSound.play(0,100);
-			soundChannel.soundTransform = new SoundTransform(/*0.30*/0)
 			cardDeck = new CardDeck()
-			gameMessage =new GameMessage(soundChannel)
+			gameMessage =new GameMessage()
 			menuController = new MenuController()
 			soundController = new SoundController()
 			soundController.stop();
@@ -97,6 +95,14 @@ package come2play_as3.cheat
 		}
 		
 		public function init(isViewer:Boolean,myUserId:int,rivalId:int):void{
+			var oldSoundChannel:SoundChannel
+			if(soundChannel!=null){
+				oldSoundChannel = soundChannel
+				oldSoundChannel.stop()
+			}
+			soundChannel = backgroundSound.play(0,100);
+			soundChannel.soundTransform = (oldSoundChannel==null)?(new SoundTransform(0.30)):(oldSoundChannel.soundTransform);
+			gameMessage.setBackgroundSound(soundChannel)
 			waitingCards = []
 			waitingActions = []
 			isPlaying = true;

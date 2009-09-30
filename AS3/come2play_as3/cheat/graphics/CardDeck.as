@@ -1,7 +1,6 @@
 package come2play_as3.cheat.graphics
 {
 	import come2play_as3.api.auto_copied.AS3_vs_AS2;
-	import come2play_as3.api.auto_copied.T;
 	import come2play_as3.cheat.events.MenuClickEvent;
 	
 	import flash.display.MovieClip;
@@ -11,7 +10,9 @@ package come2play_as3.cheat.graphics
 	public class CardDeck extends MovieClip
 	{
 		private var deck:Deck_MC;
+		private var circleNum:CircleCounterImp
 		public var availableCards:int
+		
 		public function CardDeck()
 		{
 			deck = new Deck_MC();
@@ -26,12 +27,17 @@ package come2play_as3.cheat.graphics
 			AS3_vs_AS2.myAddEventListener("deck",deck,MouseEvent.MOUSE_OVER,drawOver)
 			AS3_vs_AS2.myAddEventListener("deck",deck,MouseEvent.MOUSE_OUT,drawOut)
 			deck.scaleX = deck.scaleY = 0.6
+			circleNum = new CircleCounterImp()
 			addChild(deck);
+			addChild(circleNum)
+			circleNum.y = -70
+			circleNum.x = 30
 			canDraw(false)
 		}
 		public function setCards(num:int):void{
 			availableCards = num;
-			deck.cardCounter.cardNum_txt.text = String(num);
+			circleNum.setCards(num)
+			
 		}
 		public function canDraw(value:Boolean):void{
 			deck.drawText.visible = deck.buttonMode = deck.mouseChildren = deck.mouseEnabled = value;

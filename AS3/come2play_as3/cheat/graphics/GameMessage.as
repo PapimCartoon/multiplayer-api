@@ -30,7 +30,8 @@ package come2play_as3.cheat.graphics
 			cheaterAlarm = new CheaterAlarm()
 			heartBeat = new HeartBeat()
 			magicZing = new MagicZing()
-			playerSafe = new PlayerSafe()			
+			playerSafe = new PlayerSafe()
+	
 			gameMessage = new Message()
 			gameMessage.messageText.wordWrap = true;
 			gameMessage.x = 150
@@ -112,6 +113,23 @@ package come2play_as3.cheat.graphics
 		public function showHelp():void{
 			removeGraphics()
 			gameMessage.messageText.text = T.i18n("Get rid of all your cards to win. You lose when you have 30 cards");
+			gameMessage.addChild(cheater);
+		}
+		public function endGame(isWinner:Boolean,isThirtyRule:Boolean):void{
+			removeGraphics()
+			if(isWinner){
+				if(isThirtyRule){
+					gameMessage.messageText.text = T.i18n("You won, opponent got 30 cards or more");
+				}else{
+					gameMessage.messageText.text = T.i18n("You won, you finished your cards");
+				}
+			}else{
+				if(isThirtyRule){
+					gameMessage.messageText.text = T.i18n("You lost, you have 30 cards or more");
+				}else{
+					gameMessage.messageText.text = T.i18n("You lost, opponent finished his cards");
+				}
+			}
 			gameMessage.addChild(cheater);
 		}
 		

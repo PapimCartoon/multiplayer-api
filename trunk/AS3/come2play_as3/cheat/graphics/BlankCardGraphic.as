@@ -7,13 +7,20 @@ package come2play_as3.cheat.graphics
 	
 	public class BlankCardGraphic extends Card_MC
 	{
-		public function BlankCardGraphic(cardScale:int = 25)
+		public function BlankCardGraphic(cardScale:int = 25,cancelGlow:Boolean = false)
 		{
 			scaleX = scaleY = cardScale / 100
 			Symbole_MC.stop()
 			Letter_MC.stop()
+			if(cancelGlow)	return;
 			AS3_vs_AS2.myAddEventListener("BlankCardGraphic",this,MouseEvent.MOUSE_OVER,addGlow)
 			AS3_vs_AS2.myAddEventListener("BlankCardGraphic",this,MouseEvent.MOUSE_OUT,removeGlow)
+		}
+		static public function getBlankCard(xpos:int,ypos:int,cardScale:int = 25,cancelGlow:Boolean = false):BlankCardGraphic{
+			var res:BlankCardGraphic = new BlankCardGraphic(cardScale,cancelGlow)
+			res.x = xpos
+			res.y = ypos
+			return res;
 		}
 		public function addGlow(ev:MouseEvent):void{
 			filters = [new GlowFilter(0x66FFFF,1,8,8,2.2)]

@@ -7,6 +7,7 @@ package come2play_as3.cheat.graphics
 	import come2play_as3.cheat.caurina.transitions.Tweener;
 	
 	import flash.display.Sprite;
+	import flash.geom.ColorTransform;
 
 	public class MiddleCards extends Sprite
 	{
@@ -89,6 +90,11 @@ package come2play_as3.cheat.graphics
 		public function getCardValue():int{
 			return cardValue;
 		}
+		public function removeHold():void{
+			for each(var card:CardGraphic in choosenCardsArray){
+				card.buttonMode = false;
+			}
+		}
 		public function getCardKeys():Array/*CardKey*/{
 			var keys:Array/*CardKey*/ = []
 			for each(var card:CardGraphic in choosenCardsArray){
@@ -116,7 +122,7 @@ package come2play_as3.cheat.graphics
 			isCardDirectionRight = !isCardDirectionRight;	
 			circleCounter.visible = false
 		}
-		public function throwMiddle():void{
+		public function throwMiddle(userCards:int):void{
 			foldToDeck.play()
 			for each(var cardGraphic:CardGraphic in choosenCardsArray){
 				cardGraphic.setCard(null)
@@ -126,8 +132,10 @@ package come2play_as3.cheat.graphics
 				Tweener.addTween(cardGraphic, {time:0.2, x:cardEndX, y:cardEndY, transition:"easeOutSine"} );
 			}
 			choosenCardsArray = [];
+			var thrownCardsCount:int = thrownDeckArray.length
 			circleCounter.visible = true
-			circleCounter.setCards(thrownDeckArray.length)	
+			circleCounter.setCards(thrownCardsCount)	
+			circleCounter.setCircleColor((thrownCardsCount + userCards)>30?0xFF0000:0x19559B)
 			
 		}
 		public function revealCard(cardChange:CardChange):void{

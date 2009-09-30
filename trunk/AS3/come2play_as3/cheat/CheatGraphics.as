@@ -1,5 +1,4 @@
-package come2play_as3.cheat
-{
+package come2play_as3.cheat{
 	import come2play_as3.api.auto_copied.AS3_vs_AS2;
 	import come2play_as3.api.auto_copied.ErrorHandler;
 	import come2play_as3.api.auto_copied.StaticFunctions;
@@ -111,8 +110,8 @@ package come2play_as3.cheat
 			this.isViewer = isViewer;
 			this.myUserId = myUserId;
 			this.rivalId = rivalId;
-			//scaleX = ( T.custom(API_Message.CUSTOM_INFO_KEY_gameWidth,400) as int)/550 
-			//scaleY = ( T.custom(API_Message.CUSTOM_INFO_KEY_gameHeight,400) as int)/450 
+			scaleX = ( T.custom(API_Message.CUSTOM_INFO_KEY_gameWidth,400) as int)/550 
+			scaleY = ( T.custom(API_Message.CUSTOM_INFO_KEY_gameHeight,400) as int)/450 
 			
 			upperBackground.actionExpected_txt.text =  T.i18n("Starting Game");
 			myGraphics.addChild(cardDeck)
@@ -389,10 +388,12 @@ package come2play_as3.cheat
 			}
 		}
 		private function bluffSuccessEnd():void{
+			if(gameMessage.parent!=null){
+				gameMessage.parent.removeChild(gameMessage);
+			}
 			CardsAPI.cardsData.animationEnded("bluffSuccess")
-			middleCards.throwMiddle()
-			finishedDrawing()
-			
+			middleCards.throwMiddle(isViewer?0:myHand.getCardCount())
+			finishedDrawing()	
 		}
 		
 		private function drawCardGraphic(ev:CardDrawEndedEvent=null):void{		
@@ -454,9 +455,13 @@ package come2play_as3.cheat
 		private function declareWinner(rivalHandCount:int,myHandCount:int):Boolean{
 			if((myHandCount == 0) || (rivalHandCount >=30)){
 				CardsAPI.cardsData.declareWinner(myUserId)
+				gameMessage.endGame(true,rivalHandCount >=30)
+				myGraphics.addChild(gameMessage)
 				return true;
 			}else if((rivalHandCount == 0) || (myHandCount >= 30)){
 				CardsAPI.cardsData.declareWinner(rivalId == 0?myUserId:rivalId)
+				gameMessage.endGame(false,myHandCount >=30)
+				myGraphics.addChild(gameMessage)
 				return true;
 			}
 			return false;
@@ -500,7 +505,6 @@ package come2play_as3.cheat
 		public function gameEnded():void{
 			isPlaying = false;
 			myHand.myTurn(false);
-			removeMyChild(gameMessage)
 			removeMenuController()
 		}
 		private function jokerAction(ev:JokerValue):void{
@@ -513,6 +517,7 @@ package come2play_as3.cheat
 			switch(ev.action){
 				//putting player
 				case MenuClickEvent.DRAW_CARD:
+				
 					if(canPerformAutoTrust(waitingActions,ev))	return
 					if(middleCardsNum!=0)	return;
 					if(cardDeck.availableCards == 0)	return;
@@ -526,11 +531,13 @@ package come2play_as3.cheat
 				case MenuClickEvent.DECLARE_HIGHER:
 				if(middleCardsNum==0)	return;
 					myHand.myTurn(false)
+					middleCards.removeHold()
 					dispatchEvent(CardsToHold.create(middleCards.getCardKeys(),middleCards.getCardValue()+1,myUserId,rivalId))
 				break;
 				case MenuClickEvent.DECLARE_LOWER:
 					if(middleCardsNum==0)	return;
 					myHand.myTurn(false)
+					middleCards.removeHold()
 					dispatchEvent(CardsToHold.create(middleCards.getCardKeys(),middleCards.getCardValue()-1,myUserId,rivalId))
 				break;
 				//recieving player
@@ -569,6 +576,7 @@ package come2play_as3.cheat
 			setUserName()
 		}
 		private function setNameAndNumber(txt:TextField,num:int,playerName:String):void{
+			if(playerName.length>10)	playerName = playerName.substr(0,10);
 			var tf:TextFormat = txt.getTextFormat()
 			tf.color = num>20?0xFF0000:0xFFFFFF;
 			txt.text = T.i18nReplace("$playerName$ | $num$ cards",{num:num,playerName:playerName})
@@ -578,7 +586,7 @@ package come2play_as3.cheat
 		
 		
 		public function setRivalName():void{
-			var playerName:String = rivalId == 0?T.i18n("computer"):T.getUserValue(myUserId,API_Message.USER_INFO_KEY_name,"Player") as String
+			var playerName:String = rivalId == 0?T.i18n("computer"):T.getUserValue(rivalId,API_Message.USER_INFO_KEY_name,"Player") as String
 			setNameAndNumber(upperBackground.rivalName_txt,rivalHand.getCardCount(),playerName)
 		}
 		public function setUserName():void{

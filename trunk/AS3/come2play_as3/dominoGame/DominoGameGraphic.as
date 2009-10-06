@@ -147,13 +147,9 @@ package come2play_as3.dominoGame
 			dispatchEvent(DominoDraw.create())
 			tryEnableDraw()
 		}
-
 		public function didReachMaxHand():Boolean{
 			return ((myHand.dominoInHand + dominoesDelayed.length ) >= DominoGameMain.dominoMaxHand) 
-		}
-		
-
-		
+		}	
 		public function passTurn(ev:MouseEvent):void{
 			canGrab = false;
 			dominoPass.enabled = false

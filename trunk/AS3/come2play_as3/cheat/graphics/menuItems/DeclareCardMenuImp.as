@@ -1,55 +1,42 @@
 package come2play_as3.cheat.graphics.menuItems
 {
 	import come2play_as3.api.auto_copied.T;
+	import come2play_as3.api.auto_generated.API_Message;
 	import come2play_as3.cheat.graphics.BlankCardGraphic;
 	
+	import flash.text.TextField;
 	import flash.text.TextFormat;
 	
 	public class DeclareCardMenuImp extends DeclareCardMenu
 	{
 		public var lowerCardBtnImp:BlankCardGraphic
-		public var higherCardBtnImp:BlankCardGraphic
-		
-		private var lowerCardPic:BlankCardGraphic
-		private var higherCardPic:BlankCardGraphic
-		private var choosenCardPic:BlankCardGraphic
-			
-		
+		public var higherCardBtnImp:BlankCardGraphic	
+		private var rules_txt:TextField
 		
 		public function DeclareCardMenuImp()
 		{
+			rules_txt = new TextField()
+			var tf:TextFormat = new TextFormat("Arial",13,0xFFFFFF,true)
+			rules_txt.mouseEnabled = false;
+			rules_txt.defaultTextFormat = tf
+			rules_txt.setTextFormat(tf)
 			orText_txt.text = T.i18n("- OR -")
-			headerText.text = T.i18n("Declare card value as")
-			var tf:TextFormat = rulesHeader_txt.defaultTextFormat;
-			tf.underline = true;
-			rulesHeader_txt.defaultTextFormat = tf;
-			rulesHeader_txt.setTextFormat(tf)
-			lowerCardPic = BlankCardGraphic.getBlankCard(115,110,13,true)
-			higherCardPic = BlankCardGraphic.getBlankCard(220,110,13,true)
-			choosenCardPic = BlankCardGraphic.getBlankCard(160,78,17,true)	
-			lowerCardBtnImp = BlankCardGraphic.getBlankCard(65,130)
-			higherCardBtnImp =BlankCardGraphic.getBlankCard(170,130)
+			rules_txt.width = 237;
+			rules_txt.height = 40
+			rules_txt.selectable = false;
+			rules_txt.x = 2
+			rules_txt.y = 155	
+			lowerCardBtnImp = BlankCardGraphic.getBlankCard(65,120)
+			higherCardBtnImp =BlankCardGraphic.getBlankCard(170,120)
 			lowerCardBtnImp.rotation = -10
 			higherCardBtnImp.rotation = 10
-			lowerCardBtnImp.buttonMode = higherCardBtnImp.buttonMode = true;
-			lowerCardPic.rotation = -10
-			higherCardPic.rotation = 10
-			addChild(choosenCardPic);
-			addChild(lowerCardPic);
-			addChild(higherCardPic);
-			addChild(choosenCardPic);
 			addChild(lowerCardBtnImp)
 			addChild(higherCardBtnImp)
+			addChild(rules_txt)
 		}
 		public function setVal(opponentCard:int):void{
 			setMiddleAmount(0)
-			choosenCardPic.setValue(opponentCard)
-			lowerCardPic.setValue(opponentCard - 1)
-			higherCardPic.setValue(opponentCard + 1)
-			rulesHeader_txt.text = T.i18n("Opponent declared:")
-			rules_txt.text = T.i18n("- Place a lower")+
-			"            "+T.i18n("or a higher")+
-			"\n"+T.i18n("- Draw a new card from the deck")+
+			rules_txt.text = T.i18n("- Draw a new card from the deck") +
 			"\n"+T.i18n("- Cheat by selecting whetever");
 			lowerCardBtnImp.setValue(opponentCard - 1)
 			higherCardBtnImp.setValue(opponentCard + 1)
@@ -57,25 +44,15 @@ package come2play_as3.cheat.graphics.menuItems
 		
 		public function setMiddleAmount(value:int):void{
 			if(value == 0){
+				headerText.text = T.i18n("Choose cards")
+				lowerCardBtnImp.mouseEnabled = lowerCardBtnImp.mouseChildren = lowerCardBtnImp.buttonMode = false
+				higherCardBtnImp.mouseEnabled = higherCardBtnImp.mouseChildren = higherCardBtnImp.buttonMode = false
 				rules_txt.visible = true;
-				rulesHeader_txt.visible = true
-				choosenCardPic.visible = true
-				lowerCardPic.visible = true
-				higherCardPic.visible = true
-				headerText.visible = false
-				orText_txt.visible = false
-				lowerCardBtnImp.visible = false
-				higherCardBtnImp.visible = false
 			}else{
+				headerText.text = T.i18n("Declare card value as")
+				lowerCardBtnImp.mouseEnabled = lowerCardBtnImp.mouseChildren = lowerCardBtnImp.buttonMode = true
+				higherCardBtnImp.mouseEnabled = higherCardBtnImp.mouseChildren  = higherCardBtnImp.buttonMode = true
 				rules_txt.visible = false;
-				rulesHeader_txt.visible = false
-				choosenCardPic.visible = false
-				lowerCardPic.visible = false
-				higherCardPic.visible = false
-				headerText.visible = true
-				orText_txt.visible = true
-				lowerCardBtnImp.visible = true
-				higherCardBtnImp.visible = true
 			}
 		}
 		

@@ -70,16 +70,13 @@ package come2play_as3.cheat{
 			backgroundSound = new  BackgroundLoop()	
 			cardDeck = new CardDeck()
 			gameMessage =new GameMessage()
-			menuController = new MenuController()
 			soundController = new SoundController()
 			soundController.stop();
 			soundController.buttonMode = true;
 			soundController.x = 475;
 			soundController.y = 3
 			upperBackground.addChild(soundController)
-			AS3_vs_AS2.myAddEventListener("menuController",menuController,MenuClickEvent.MENU_EVENT,menuAction)
 			AS3_vs_AS2.myAddEventListener("cardDeck",cardDeck,MenuClickEvent.MENU_EVENT,menuAction)
-			AS3_vs_AS2.myAddEventListener("menuController",menuController,"JokerValue",jokerAction)
 			AS3_vs_AS2.myAddEventListener("soundController",soundController,MouseEvent.CLICK,changeSound)	
 		}
 		private function changeSound(ev:MouseEvent):void{
@@ -89,11 +86,14 @@ package come2play_as3.cheat{
 			}else{
 				soundController.gotoAndStop(1)
 				soundChannel.soundTransform = new SoundTransform(0.30)
-			}
-			
+			}	
 		}
-		
 		public function init(isViewer:Boolean,myUserId:int,rivalId:int):void{
+			if(menuController==null){	
+				menuController = new MenuController()
+				AS3_vs_AS2.myAddEventListener("menuController",menuController,MenuClickEvent.MENU_EVENT,menuAction)
+				AS3_vs_AS2.myAddEventListener("menuController",menuController,"JokerValue",jokerAction)
+			}
 			var oldSoundChannel:SoundChannel
 			if(soundChannel!=null){
 				oldSoundChannel = soundChannel
@@ -213,10 +213,10 @@ package come2play_as3.cheat{
 				var isPlayer:Boolean = (cardChange.userId == myUserId)
 				var removeFromHand:CardHand = isPlayer?myHand:rivalHand;
 				var cardGraphic:CardGraphic = removeFromHand.removeCard(cardChange.cardKey)
-				if(declareWinner(rivalHand.getCardCount(),myHand.getCardCount()))	return;
 				if(cardGraphic==null)	return
 				cardGraphic.setCard(cardChange.card);
 				middleCards.putFirst(cardGraphic,jokerValue);
+				if(declareWinner(rivalHand.getCardCount(),myHand.getCardCount()))	return;
 				finishedDrawing();
 			}else{
 				var isUserCheater:Boolean
@@ -258,7 +258,6 @@ package come2play_as3.cheat{
 					drawCard(cardChange)
 				if(isDrawing)	return
 				isDrawing = true;
-				trace("asdasdasd"+drawingCards[0].length + "/"+drawingCards[1].length )
 				if(declareWinner(rivalHand.getCardCount() + drawingCards[1].length,myHand.getCardCount() +drawingCards[0].length))	return;
 				drawCardGraphic();
 			}else{
@@ -298,7 +297,7 @@ package come2play_as3.cheat{
 				CardsAPI.cardsData.animationStarted("drawCards")
 				ErrorHandler.myTimeout("CheatGraphics",function():void{
 					CardsAPI.cardsData.animationEnded("drawCards")
-				},(cardsToDraw.length + 1) * 200)
+				},(cardsToDraw.length + 1) * 210)
 				finishedDrawing()
 			}	
 		}
@@ -346,7 +345,7 @@ package come2play_as3.cheat{
 				myGraphics.addChild(gameMessage)
 				if(rivalId == 0){
 					var isComputerCallCheat:Boolean
-					var rand:int = Math.random()*10
+					var rand:int = Math.random() * 10
 					if(myHand.getCardCount() == 0){
 						isComputerCallCheat = true;
 					}else if(isMoveCheat){
@@ -367,12 +366,13 @@ package come2play_as3.cheat{
 			isCheaterLock = false;
 			removeMyChild(gameMessage)
 			if(callCheater.isCheater){
+				myHand.myTurn(false)
 				CardsAPI.cardsData.putCards(lastCardHold.keys,callCheater.callingUser == myUserId)
 			}else{
 				CardsAPI.cardsData.animationStarted("bluffSuccess")
 				if(isViewer){
 					bluffSuccessEnd()
-				}if((lastCardHold.cheatingUser == myUserId) && (middleCards.isMoveCheat(lastCardHold.declaredValue))){
+				}else if((lastCardHold.cheatingUser == myUserId) && (middleCards.isMoveCheat(lastCardHold.declaredValue))){
 					myGraphics.addChild(gameMessage)
 					gameMessage.bluffSuccess();
 					ErrorHandler.myTimeout("bluffSuccessEnd",bluffSuccessEnd,1000)
@@ -439,7 +439,6 @@ package come2play_as3.cheat{
 					cardDeck.canDraw(true)	
 				}
 			}
-			//if(declareWinner(rivalHand.getCardCount(),myHand.getCardCount())) return;
 			if(currentTurn != myUserId){
 				if(rivalId == 0){
 					ErrorHandler.myTimeout("doComputerMove",doComputerMove,1000)
@@ -494,6 +493,8 @@ package come2play_as3.cheat{
 				} 
 				if(computerMoveArr.length>0){
 					dispatchEvent(CardsToHold.create(computerMoveArr,middleCards.getCardValue()+ (isHigher?1:-1),rivalId,myUserId))
+				}else if(cardDeck.availableCards < 1){
+					doComputerMove()
 				}else{
 					CardsAPI.cardsData.singlePlayerDrawCards(true,1,false);
 				}

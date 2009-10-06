@@ -74,22 +74,22 @@ package come2play_as3.cheat
 		
 		override public function gotMatchStarted(allPlayerIds:Array, finishedPlayerIds:Array, serverEntries:Array):void{
 			
-			this.allPlayerIds = allPlayerIds;
-			isSinglePlayer = (allPlayerIds.length == 1);
+			this.allPlayerIds = allPlayerIds.concat();
+			isSinglePlayer = (this.allPlayerIds.length == 1);
 			myUserId = T.custom(CUSTOM_INFO_KEY_myUserId,42) as int
-			var isViewer:Boolean = allPlayerIds.indexOf(myUserId)==-1
+			var isViewer:Boolean = this.allPlayerIds.indexOf(myUserId)==-1
 			var sendMyUserId:int
 			if(isViewer){
-				sendMyUserId = allPlayerIds[0]
-				rivalUserId = allPlayerIds[1]
+				sendMyUserId = this.allPlayerIds[0]
+				rivalUserId = this.allPlayerIds[1]
 			}else{
 				sendMyUserId = myUserId
-				rivalUserId = isSinglePlayer?0:(allPlayerIds[0]==myUserId?allPlayerIds[1]:allPlayerIds[0]);
+				rivalUserId = isSinglePlayer?0:(this.allPlayerIds[0]==myUserId?this.allPlayerIds[1]:this.allPlayerIds[0]);
 			}
 			
 			
 			cheatGraphics.init(isViewer,sendMyUserId,rivalUserId);
-			super.gotMatchStarted(allPlayerIds, finishedPlayerIds, serverEntries)
+			super.gotMatchStarted(this.allPlayerIds, finishedPlayerIds, serverEntries)
 			cheatGraphics.setRivalName()
 			cheatGraphics.setUserName()
 			if(isSinglePlayer){	
@@ -99,7 +99,7 @@ package come2play_as3.cheat
 			}else{
 				if(serverEntries.length == 0){
 					storeDecks(1,true)
-					for each(var userId:int in allPlayerIds){
+					for each(var userId:int in this.allPlayerIds){
 						drawCards([userId],8,true)	
 					}	
 				}else{

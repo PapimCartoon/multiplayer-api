@@ -68,7 +68,7 @@ public final class AS3_Loader
 		return res==null ? EMPTY_BYTE_ARRAY : res;
 	}
 	public static function isImageLoadFailed(ev:Event):Boolean {
-		return getImageLoadByteArray(ev).length==0; 
+		return getImageLoadByteArray(ev).length==0 || (ev is IOErrorEvent); 
 	}
 	
 	

@@ -25,6 +25,8 @@ package come2play_as3.api {
 		private var keys:Array;
 		private var singlePlayerEmulator:SinglePlayerEmulator;
 		
+		private var singlePlayerGamesDone:int = 0
+		private var normalGamesDone:int = 0
 		private static var ALL_LOG:Logger = new Logger("BaseGameAPI",10);
 		private static var KEYBOARD_LOG:Logger = new Logger("KEYBOARD",20);
 		
@@ -63,7 +65,9 @@ package come2play_as3.api {
 				"\nrunningAnimations="+runningAnimations+
 				"\ncurrentCallback="+currentCallback+
 				"\nmsgsInTransaction="+JSON.stringify(msgsInTransaction)+
-				"\n\ngotMatchStarted : \n\n"+JSON.stringify(gotMatchStarted)+
+				"\nSingle Player games done="+singlePlayerGamesDone+
+				"\nMulti Player games done="+normalGamesDone+
+				"\n\nfake gotMatchStarted : \n\n"+JSON.stringify(gotMatchStarted)+
 				"\n"+output.join("");					
 		}
 		
@@ -195,6 +199,11 @@ package come2play_as3.api {
 	    		} else if (msg is API_GotMatchStarted) {
 	    			serverStateMiror = new ObjectDictionary();
 					var matchStarted:API_GotMatchStarted = /*as*/msg as API_GotMatchStarted;
+					if(matchStarted.allPlayerIds.length == 1){
+						singlePlayerGamesDone++;
+					}else{
+						normalGamesDone++;
+					}
 					updateMirorServerState(matchStarted.serverEntries);
 	    		} else if (msg is API_GotCustomInfo) {	 					    			
 					var customInfo:API_GotCustomInfo = /*as*/msg as API_GotCustomInfo;

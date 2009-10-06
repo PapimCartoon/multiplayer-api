@@ -186,9 +186,9 @@ package come2play_as3.cards
 			//serverEntries = SerializableClass.deserializeString(testStr) as Array;
 			
 			isPlaying = true
-			this.allPlayerIds = allPlayerIds;
+			this.allPlayerIds = allPlayerIds.concat();
 			myUserId = T.custom(CUSTOM_INFO_KEY_myUserId,42) as int
-			isSinglePlayer = (allPlayerIds.length == 1);
+			isSinglePlayer = (this.allPlayerIds.length == 1);
 			currentCard = 0
 			cardsNumToDraw = 0;
 			computerCards = 0;
@@ -204,7 +204,7 @@ package come2play_as3.cards
 				cardsOwners[myUserId] = new Dictionary()
 				cardsOwners[0] = new Dictionary()
 			}else{
-				for each(var userId:int in allPlayerIds){
+				for each(var userId:int in this.allPlayerIds){
 					cardsOwners[userId] = new Dictionary()
 				}
 			}
@@ -299,8 +299,8 @@ package come2play_as3.cards
 			for(var id:String in cardsOwners){		
 				arr.push(["cardsOwners["+id+"]: "+AS3_vs_AS2.dictionarySize(cardsOwners[id])])
 			}
-			doTrace("currentState",arr)
-			doTrace("changedCards",JSON.stringify(changedCards))
+			/*doTrace("currentState",arr)
+			doTrace("changedCards",JSON.stringify(changedCards))*/
 			if(changedCards.length!=0)	cardGraphics.dispatchEvent(new GotCardsEvent(changedCards,addedData))
 		}
 		

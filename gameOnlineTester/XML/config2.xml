@@ -865,6 +865,45 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 				<open_status>2</open_status>
 			</room>
 		</rooms>
+		
+		
+		
+		
+		
+		
+		<additional_players_info type="optional,list">
+		  <player>
+		  	<user_id>999</user_id>
+			<params>
+			  	  <is_male>true</is_male>
+			  	  <is_veteran_user>false</is_veteran_user>
+			  	  <is_guest>false</is_guest>
+			  	  <site_name>zapak</site_name>
+				  <name>%26amp%3B%22A%26amp%3Bquot%3B+%26amp%3B</name>
+			  	  <firstName>%26amp%3B%22A%26amp%3Bquot%3B+%26amp%3B</firstName>
+			 	  <lastName>%26amp%3B%22A%26amp%3Bquot%3B+%26amp%3B</lastName>
+				  <avatar_url>images/Avatar_2.gif</avatar_url>
+				  <supervisor>Supervisor</supervisor>
+				  <credibility>100</credibility>
+				  <tokens>1:2510:isToken=true,4737047001:1:name=Viking+Hat&amp;imageURL=virtual%5Fhat%2Eswf&amp;value=7500&amp;isToken=false&amp;rewardClass=9,4737042001:1:name=Spinning+Flower&amp;imageURL=virtual%5Fflower%2Eswf&amp;value=2500&amp;isToken=false&amp;rewardClass=12,4146357001:1:name=Jumping+Penguin&amp;imageURL=virtual%5Fping%2Eswf&amp;value=7500&amp;isToken=false&amp;rewardClass=10,4142032001:1:name=Jumping+Frog&amp;imageURL=virtual%5Ffrogy%2Eswf&amp;value=2500&amp;isToken=false&amp;rewardClass=11,4142007001:1:name=Diamond+Necklace&amp;imageURL=virtual%5Fmoney%5Fjewlery%2Eswf&amp;value=3500&amp;isToken=false&amp;rewardClass=16,4142002001:1:name=Princess+of+Gamers&amp;imageURL=virtual%5Froyal%5Fprincess%2Eswf&amp;value=5500&amp;isToken=false&amp;rewardClass=25,4141992001:1:name=King+of+Gamers&amp;imageURL=virtual%5Froyal%5Fking%2Eswf&amp;value=8000&amp;isToken=false&amp;rewardClass=24,3551657001:1:name=Electric+Guitar&amp;imageURL=musicalinstruments%2Fvirtual%5Fguitar%2Eswf&amp;value=3500&amp;isToken=false&amp;rewardClass=262,2915887001:1:name=Canada&amp;imageURL=flags%2Fvirtual%5Fflag%5F5%5Fcanada%2Eswf&amp;value=500&amp;isToken=false&amp;rewardClass=97,2915882001:1:name=Chile&amp;imageURL=flags%2Fvirtual%5Fflag%5F6%5Fchile%2Eswf&amp;value=500&amp;isToken=false&amp;rewardClass=102,2915872001:1:name=France&amp;imageURL=flags%2Fvirtual%5Fflag%5F8%5Ffrance%2Eswf&amp;value=500&amp;isToken=false&amp;rewardClass=112,2915862001:1:name=Germany&amp;imageURL=flags%2Fvirtual%5Fflag%5F9%5Fgermany%2Eswf&amp;value=500&amp;isToken=false&amp;rewardClass=117,1835267001:1:name=Queen+of+Gamers&amp;imageURL=virtual%5Froyal%5Fqueen%2Eswf&amp;value=8000&amp;isToken=false&amp;rewardClass=23,1835242001:1:name=Venezuela&amp;imageURL=flags%2Fvirtual%5Fflag%5F16%5Fvenezuela%2Eswf&amp;value=500&amp;isToken=false&amp;rewardClass=152,1835232001:1:name=Mexico&amp;imageURL=flags%2Fvirtual%5Fflag%5F13%5Fmexico%2Eswf&amp;value=500&amp;isToken=false&amp;rewardClass=137,1835237001:1:name=Spain&amp;imageURL=flags%2Fvirtual%5Fflag%5F14%5Fspain2%2Eswf&amp;value=500&amp;isToken=false&amp;rewardClass=142,1835227001:1:name=Italy&amp;imageURL=flags%2Fvirtual%5Fflag%5F12%5Fitaly%2Eswf&amp;value=500&amp;isToken=false&amp;rewardClass=132,1835212001:1:name=Greece&amp;imageURL=flags%2Fvirtual%5Fflag%5F10%5Fgreece%2Eswf&amp;value=500&amp;isToken=false&amp;rewardClass=122,1835192001:1:name=Colombia&amp;imageURL=flags%2Fvirtual%5Fflag%5F7%5Fcolombia%2Eswf&amp;value=500&amp;isToken=false&amp;rewardClass=107,1352392001:1:name=Australia&amp;imageURL=flags%2Fvirtual%5Fflag%5F3%5Faustralia%2Eswf&amp;value=500&amp;isToken=false&amp;rewardClass=77,1233577001:1:name=UK&amp;imageURL=flags%2Fvirtual%5Fflag%5F15%5Fuk%2Eswf&amp;value=500&amp;isToken=false&amp;rewardClass=147,1233572001:1:name=India&amp;imageURL=flags%2Fvirtual%5Fflag%5F11%5Findia%2Eswf&amp;value=500&amp;isToken=false&amp;rewardClass=127,1233567001:1:name=Brazil&amp;imageURL=flags%2Fvirtual%5Fflag%5F4%5Fbrazil%2Eswf&amp;value=500&amp;isToken=false&amp;rewardClass=92,1233562001:1:name=USA&amp;imageURL=flags%2Fvirtual%5Fflag%5F2%5Fusa%2Eswf&amp;value=500&amp;isToken=false&amp;rewardClass=87,1233547001:1:name=Turkey&amp;imageURL=flags%2Fvirtual%5Fflag%5F1%5Fturky%2Eswf&amp;value=500&amp;isToken=false&amp;rewardClass=82,1221277001:1:name=Pig+Zodiac&amp;imageURL=zodiac%2Fvirtual%5Fzodiac%5Fpig%2Eswf&amp;value=700&amp;isToken=false&amp;rewardClass=212,1221272001:1:name=Dog+Zodiac&amp;imageURL=zodiac%2Fvirtual%5Fzodiac%5Fdog%2Eswf&amp;value=700&amp;isToken=false&amp;rewardClass=207,1221267001:1:name=Rooster+Zodiac&amp;imageURL=zodiac%2Fvirtual%5Fzodiac%5Frooster%2Eswf&amp;value=700&amp;isToken=false&amp;rewardClass=202,1221262001:1:name=Monkey+Zodiac&amp;imageURL=zodiac%2Fvirtual%5Fzodiac%5Fmonkey%2Eswf&amp;value=700&amp;isToken=false&amp;rewardClass=197,1221257001:1:name=Ram+Zodiac&amp;imageURL=zodiac%2Fvirtual%5Fzodiac%5Fram%2Eswf&amp;value=700&amp;isToken=false&amp;rewardClass=192,1221252001:1:name=Dragon+Zodiac&amp;imageURL=zodiac%2Fvirtual%5Fzodiac%5Fdragon%2Eswf&amp;value=700&amp;isToken=false&amp;rewardClass=177,1221232001:1:name=Horse+Zodiac&amp;imageURL=zodiac%2Fvirtual%5Fzodiac%5Fhorse%2Eswf&amp;value=700&amp;isToken=false&amp;rewardClass=187,1221227001:1:name=Snake+Zodiac&amp;imageURL=zodiac%2Fvirtual%5Fzodiac%5Fsnake%2Eswf&amp;value=700&amp;isToken=false&amp;rewardClass=182,330637001:1:name=Rabbit+Zodiac&amp;imageURL=zodiac%2Fvirtual%5Fzodiac%5Frabbit%2Eswf&amp;value=650&amp;isToken=false&amp;rewardClass=172,330632001:1:name=Tiger+Zodiac&amp;imageURL=zodiac%2Fvirtual%5Fzodiac%5Ftiger%2Eswf&amp;value=650&amp;isToken=false&amp;rewardClass=167,330627001:1:name=Ox+Zodiac&amp;imageURL=zodiac%2Fvirtual%5Fzodiac%5Fox%2Eswf&amp;value=650&amp;isToken=false&amp;rewardClass=162,330622001:1:name=Rat+Zodiac&amp;imageURL=zodiac%2Fvirtual%5Fzodiac%5Frat%2Eswf&amp;value=650&amp;isToken=false&amp;rewardClass=157,210032001:1:name=Baby+Duke&amp;imageURL=virtual%5Fsimplefish%5F1%2Eswf&amp;value=0&amp;isToken=false&amp;rewardClass=32,201782001:1:name=Tokens+Safe&amp;imageURL=virtual%5Fmoney%5Fsafe%2Eswf&amp;value=3500&amp;isToken=false&amp;rewardClass=17,201777001:1:name=Tropical+Coconut&amp;imageURL=newdrinks%2Fvirtual%5Fdrink%5Ftropynut%2Eswf&amp;value=750&amp;isToken=false&amp;rewardClass=18,201772001:1:name=Japanese+Tea&amp;imageURL=newdrinks%2Fvirtual%5Fdrink%5Ftea%2Eswf&amp;value=750&amp;isToken=false&amp;rewardClass=19,201767001:1:name=freshly+squeezed&amp;imageURL=newdrinks%2Fvirtual%5Fdrink%5Fsquiorange%2Eswf&amp;value=750&amp;isToken=false&amp;rewardClass=20,201762001:1:name=Frozen+Pink+Shake&amp;imageURL=newdrinks%2Fvirtual%5Fdrink%5Fpinkshake%2Eswf&amp;value=750&amp;isToken=false&amp;rewardClass=21,154267001:1:name=Princess+BlueFins&amp;imageURL=virtual%5Fsimplefish%5F9%2Eswf&amp;value=0&amp;isToken=false&amp;rewardClass=72,154272001:1:name=Princess+GreenFins&amp;imageURL=virtual%5Fsimplefish%5F8%2Eswf&amp;value=0&amp;isToken=false&amp;rewardClass=67,154282001:1:name=Admiral+Sticky+Fins&amp;imageURL=virtual%5Fsimplefish%5F6%2Eswf&amp;value=0&amp;isToken=false&amp;rewardClass=57,154287001:1:name=King+Finneous&amp;imageURL=virtual%5Fsimplefish%5F5%2Eswf&amp;value=0&amp;isToken=false&amp;rewardClass=52,154292001:1:name=Earvin+The+Mischievous&amp;imageURL=virtual%5Fsimplefish%5F4%2Eswf&amp;value=0&amp;isToken=false&amp;rewardClass=47,154297001:1:name=Bubba+The+Cook&amp;imageURL=virtual%5Fsimplefish%5F3%2Eswf&amp;value=0&amp;isToken=false&amp;rewardClass=42</tokens>
+				  <votes_sum>9</votes_sum>
+				  <votes_count>54</votes_count>		
+		    	  <!-- config.game_name is prefixed to the rating, e.g., game_rating_chess . I do this to make sure the ratings of different games don't override one another -->
+				  <game_rating>2010</game_rating>	
+				  <playerLabels>1,2</playerLabels>
+				  <playerStatus>I+am+very+cool</playerStatus>
+				  <playingSince>12/01/1987</playingSince>
+				  <country>israel</country>
+				  <age>12</age>
+				  <maxTokensAchieved>15K</maxTokensAchieved>
+				  <maxTokensWon>17K</maxTokensWon>
+				  <buddies>134</buddies>
+				  <favoriteGames>22</favoriteGames>
+				  <recommendations>1</recommendations>
+				  <achievements>1,2,3</achievements>	    
+			</params>
+		  </player>
+		</additional_players_info>
 	</room_parameters>
 
 	<extra_args>

@@ -190,7 +190,7 @@ package come2play_as3.dominoGame
 		}
 		static public var isSinglePlayer:Boolean
 		override public function gotMatchStarted(allPlayerIds:Array, finishedPlayerIds:Array, serverEntries:Array):void{
-			this.allPlayerIds = allPlayerIds;
+			this.allPlayerIds = allPlayerIds.concat();
 			isSinglePlayer = (allPlayerIds.length == 1);
 			if(isSinglePlayer){
 				this.allPlayerIds.push(-1)

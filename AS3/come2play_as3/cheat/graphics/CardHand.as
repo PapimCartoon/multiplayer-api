@@ -73,7 +73,6 @@ package come2play_as3.cheat.graphics
 			Tweener.addTween(card, {time:0.2, x:cardEndX, y:cardEndY, transition:"linear",onComplete:function():void{
 				cardDrawn(callFinishFunc)
 			}} );	
-		
 		}	
 		
 		private function removeCardKeyFromArr(cardsArr:Array/*CardGraphic*/,cardData:CardKey):CardGraphic{

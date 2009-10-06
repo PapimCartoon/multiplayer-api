@@ -33,13 +33,20 @@ package come2play_as3.cheat.graphics
 			}
 		}
 		override public function updateData(card:CardChange):Boolean{
-			StaticFunctions.assert(cardsToDraw.length ==0,"can't have cards waitng")
+			//StaticFunctions.assert(cardsToDraw.length ==0,"can't have cards waitng")
 			for each(var cardGraphic:CardGraphic in cards){
 				if(cardGraphic.isSameCard(card.card)){
 					cardGraphic.setKey(card.cardKey)
 					return true;
 				}
 			}
+			for each(cardGraphic in cardsToDraw){
+				if(cardGraphic.isSameCard(card.card)){
+					cardGraphic.setKey(card.cardKey)
+					return true;
+				}
+			}
+			
 			return false;
 		}
 		private function tryMovingCards(ev:MouseEvent):void{

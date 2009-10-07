@@ -42,6 +42,12 @@ package come2play_as3.cheat.graphics
 		public function getCardValue():int{
 			return cardData.value;
 		}
+		public function assertLegealCardData():void{
+			StaticFunctions.assert(cardData!=null,"Card Graphic should not be null")
+		}
+		public function fixData(cardData:Card):void{
+			if(cardData == null)	this.cardData = cardData;
+		}
 		public function isSame(card:CardKey):Boolean{
 			return card.num == cardKey.num
 		}

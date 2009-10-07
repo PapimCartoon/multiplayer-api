@@ -38,7 +38,7 @@ package come2play_as3.cheat{
 		private var menuController:MenuController;
 		private var lowerBackground:LowerBackground =  new LowerBackground()
 		private var myGraphics:MovieClip = new MovieClip()
-		private var upperBackground:UpperBackground = new UpperBackground
+		private var upperBackground:UpperBackground = new UpperBackground()
 		private var cardDeck:CardDeck
 		
 		private var middleCards:MiddleCards
@@ -69,7 +69,7 @@ package come2play_as3.cheat{
 			addChild(upperBackground)
 			backgroundSound = new  BackgroundLoop()	
 			cardDeck = new CardDeck()
-			gameMessage =new GameMessage()
+			gameMessage = new GameMessage()
 			soundController = new SoundController()
 			soundController.stop();
 			soundController.buttonMode = true;
@@ -80,6 +80,7 @@ package come2play_as3.cheat{
 			AS3_vs_AS2.myAddEventListener("soundController",soundController,MouseEvent.CLICK,changeSound)	
 		}
 		private function changeSound(ev:MouseEvent):void{
+			if(soundChannel==null)	return;
 			if(soundController.currentFrame == 1){
 				soundController.gotoAndStop(2)
 				soundChannel.soundTransform = new SoundTransform(0)
@@ -89,19 +90,25 @@ package come2play_as3.cheat{
 			}	
 		}
 		public function init(isViewer:Boolean,myUserId:int,rivalId:int):void{
+			CheatMain.myTraces.log("init",isViewer,myUserId,rivalId)
 			if(menuController==null){	
 				menuController = new MenuController()
 				AS3_vs_AS2.myAddEventListener("menuController",menuController,MenuClickEvent.MENU_EVENT,menuAction)
 				AS3_vs_AS2.myAddEventListener("menuController",menuController,"JokerValue",jokerAction)
 			}
+			CheatMain.myTraces.log("part 1",soundChannel)
 			var oldSoundChannel:SoundChannel
 			if(soundChannel!=null){
 				oldSoundChannel = soundChannel
 				oldSoundChannel.stop()
 			}
+			CheatMain.myTraces.log("part 2",oldSoundChannel,backgroundSound)
 			soundChannel = backgroundSound.play(0,100);
-			soundChannel.soundTransform = (oldSoundChannel==null)?(new SoundTransform(0.30)):(oldSoundChannel.soundTransform);
+			CheatMain.myTraces.log("part 2.1",soundChannel)
+			if(soundChannel!=null)	soundChannel.soundTransform = (oldSoundChannel==null)?(new SoundTransform(0.30)):(oldSoundChannel.soundTransform);
+			CheatMain.myTraces.log("part 2.2",gameMessage)
 			gameMessage.setBackgroundSound(soundChannel)
+			CheatMain.myTraces.log("part 2.3")
 			waitingCards = []
 			waitingActions = []
 			isPlaying = true;
@@ -110,6 +117,7 @@ package come2play_as3.cheat{
 			this.isViewer = isViewer;
 			this.myUserId = myUserId;
 			this.rivalId = rivalId;
+			CheatMain.myTraces.log("part 3")
 			scaleX = ( T.custom(API_Message.CUSTOM_INFO_KEY_gameWidth,400) as int)/550 
 			scaleY = ( T.custom(API_Message.CUSTOM_INFO_KEY_gameHeight,400) as int)/450 
 			
@@ -117,7 +125,7 @@ package come2play_as3.cheat{
 			myGraphics.addChild(cardDeck)
 			cardDeck.x = 480;
 			cardDeck.y = 215;
-			
+			CheatMain.myTraces.log("part 4",myHand,rivalHand,middleCards)
 			if(myHand!=null){
 				myHand.clear()
 				myGraphics.removeChild(myHand)
@@ -130,13 +138,11 @@ package come2play_as3.cheat{
 				middleCards.clear();
 				myGraphics.removeChild(middleCards) 
 			}
-			
+			CheatMain.myTraces.log("part 5")
 			middleCards = new MiddleCards()
 			myHand = isViewer?new CardHand():new YourHand()
 			rivalHand = new CardHand(rivalId == 0)
 			if(isViewer)	myHand.endY = 400
-			
-			
 			drawingCards = [[],[]]
 			AS3_vs_AS2.myAddEventListener("CardHand",rivalHand,CardDrawEndedEvent.CARD_DRAW_ENDED,drawCardGraphic)
 			AS3_vs_AS2.myAddEventListener("CardHand",myHand,CardDrawEndedEvent.CARD_DRAW_ENDED,drawCardGraphic)
@@ -157,7 +163,9 @@ package come2play_as3.cheat{
 			return card;
 		}
 		private function removeMyChild(disp:DisplayObject):void{
-			if(disp.parent != null)	disp.parent.removeChild(disp)
+			if(disp == null)	return
+			if(disp.parent == null)	return;
+			disp.parent.removeChild(disp)
 		}	
 		private function canPerformAutoTrust(arr:Array,ev:Event):Boolean{
 			if(isCheaterLock){
@@ -184,6 +192,7 @@ package come2play_as3.cheat{
 					myGraphics.addChild(menuController)
 					menuController.showJokerChoiceMenu(ev.cardKey)
 				}else{
+					CheatMain.sentData.log("clickedCard",ev.cardKey)
 					CardsAPI.cardsData.putCards([ev.cardKey],true)
 				}
 				myHand.myTurn(false)
@@ -194,6 +203,7 @@ package come2play_as3.cheat{
 			}else if(middleCards.choosenAmount()>5){
 				return;
 			}else if(myHand.removeCard(ev.cardKey)!=null){
+				card.fixData(ev.cardData)
 				middleCards.pickCard(card)
 			}else{
 				StaticFunctions.assert(false,"should not happen");
@@ -206,6 +216,7 @@ package come2play_as3.cheat{
 		
 		
 		public function putFirst(cardChangeArr:Array/*CardChange*/,jokerValue:JokerValue = null):void{
+			if(!isPlaying)	return
 			var cardChange:CardChange
 			if(lastCardHold == null){
 				setNextTurn()
@@ -235,6 +246,7 @@ package come2play_as3.cheat{
 					if(!isViewer){
 						gameMessage.amIRight(isUserCheater,lastCardHold.cheatingUser == myUserId,rivalId)
 						myGraphics.addChild(gameMessage)
+						CheatMain.sentData.log("amIRight",middleCards.getThrownIds())
 						CardsAPI.cardsData.takeCardsToHand(middleCards.getThrownIds(),isUserCheater?lastCardHold.cheatingUser:lastCardHold.callingUser)
 					}
 					lastCardHold = null;
@@ -248,6 +260,7 @@ package come2play_as3.cheat{
 			}
 		}
 		public function drawCards(cards:Array/*CardChange*/):void{
+			if(!isPlaying)	return
 			var cardChange:CardChange
 			var cardsToDraw:Array = []
 			if(!takeCards){
@@ -312,10 +325,12 @@ package come2play_as3.cheat{
 		}
 		
 		public function putKeysInMiddle(cardsToHold:CardsToHold):void{
+			if(!isPlaying)	return
 			setNextTurn()
 			lastCardHold = cardsToHold
 			middleCards.setCardValue(cardsToHold.declaredValue);
 			var cardGraphic:CardGraphic 
+			CheatMain.myTraces.log("putKeysInMiddle part 1")
 			for each(var cardKey:CardKey in cardsToHold.keys){
 				cardGraphic = rivalHand.removeCard(cardKey)
 				if((isViewer) && (cardGraphic==null)){
@@ -328,9 +343,11 @@ package come2play_as3.cheat{
 					middleCards.addCard(cardGraphic)
 				}
 			}
+			CheatMain.myTraces.log("putKeysInMiddle part 2",currentTurn,myUserId)
 			if(isViewer){
 				
 			}else if(myUserId == currentTurn){
+				
 				var rivalCards:Array = CardsAPI.cardsData.getCardsInUserHand(rivalId)
 				menuController.showCheatChoiseMenu(cardsToHold,rivalHand.getCardCount()!=0)
 				if(rivalHand.getCardCount() != 0){
@@ -339,6 +356,7 @@ package come2play_as3.cheat{
 					cardDeck.canDraw(true)
 				}
 				myGraphics.addChild(menuController)	
+				CheatMain.myTraces.log("end putKeysInMiddle part 2")
 			}else{
 				var isMoveCheat:Boolean = middleCards.isMoveCheat(cardsToHold.declaredValue)
 				gameMessage.willCallBluff(isMoveCheat,rivalId)
@@ -362,17 +380,19 @@ package come2play_as3.cheat{
 			}
 		}
 		public function callCheater(callCheater:CallCheater):void{
+			if(!isPlaying)	return
 			menuController.stopCheatTimer()
 			isCheaterLock = false;
 			removeMyChild(gameMessage)
 			if(callCheater.isCheater){
 				myHand.myTurn(false)
+				CheatMain.sentData.log("callCheater",lastCardHold.keys)
 				CardsAPI.cardsData.putCards(lastCardHold.keys,callCheater.callingUser == myUserId)
 			}else{
 				CardsAPI.cardsData.animationStarted("bluffSuccess")
 				if(isViewer){
 					bluffSuccessEnd()
-				}else if((lastCardHold.cheatingUser == myUserId) && (middleCards.isMoveCheat(lastCardHold.declaredValue))){
+				}else if((lastCardHold!=null) && (lastCardHold.cheatingUser == myUserId) && (middleCards.isMoveCheat(lastCardHold.declaredValue))){
 					myGraphics.addChild(gameMessage)
 					gameMessage.bluffSuccess();
 					ErrorHandler.myTimeout("bluffSuccessEnd",bluffSuccessEnd,1000)
@@ -388,9 +408,7 @@ package come2play_as3.cheat{
 			}
 		}
 		private function bluffSuccessEnd():void{
-			if(gameMessage.parent!=null){
-				gameMessage.parent.removeChild(gameMessage);
-			}
+			removeMyChild(gameMessage)
 			CardsAPI.cardsData.animationEnded("bluffSuccess")
 			middleCards.throwMiddle(isViewer?0:myHand.getCardCount())
 			finishedDrawing()	
@@ -427,7 +445,7 @@ package come2play_as3.cheat{
 		}
 		
 		public function finishedDrawing():void{
-			if(isViewer)	return
+			if((isViewer) || (!isPlaying))	return
 			if(currentTurn == myUserId){
 				myHand.myTurn(true)
 				if(middleCards.noDeck()){
@@ -447,8 +465,7 @@ package come2play_as3.cheat{
 					myHand.myTurn(false)
 				}
 			}
-			setCardCount()
-				
+			setCardCount()			
 		}
 		
 		private function declareWinner(rivalHandCount:int,myHandCount:int):Boolean{
@@ -474,6 +491,7 @@ package come2play_as3.cheat{
 				var cardKey:CardKey = rivalHand.getRandomNewCard([])
 				if(cardKey == null)	return;
 				var cardData:Card = rivalHand.getCardData(cardKey)
+				CheatMain.sentData.log("doComputerMove",cardKey)
 				if(cardData.value == 14){
 					CardsAPI.cardsData.putCards([cardKey],false,JokerValue.create(Math.random()*13+1,cardKey))
 				}else{
@@ -496,6 +514,7 @@ package come2play_as3.cheat{
 				}else if(cardDeck.availableCards < 1){
 					doComputerMove()
 				}else{
+					CheatMain.sentData.log("singlePlayerDrawCards")
 					CardsAPI.cardsData.singlePlayerDrawCards(true,1,false);
 				}
 			}
@@ -509,6 +528,7 @@ package come2play_as3.cheat{
 			removeMenuController()
 		}
 		private function jokerAction(ev:JokerValue):void{
+			CheatMain.sentData.log("jokerAction",ev)
 			CardsAPI.cardsData.putCards([ev.cardKey],true,ev)
 		}
 		
@@ -523,6 +543,7 @@ package come2play_as3.cheat{
 					if(middleCardsNum!=0)	return;
 					if(cardDeck.availableCards == 0)	return;
 					myHand.myTurn(false)
+					CheatMain.sentData.log("DRAW_CARD",rivalId)
 					if(rivalId == 0){
 						CardsAPI.cardsData.singlePlayerDrawCards(false,1,false);
 					}else{
@@ -544,10 +565,12 @@ package come2play_as3.cheat{
 				//recieving player
 				case MenuClickEvent.DO_NOT_CALL_CHEATER:
 					isCheaterLock = false;
+					myHand.myTurn(false)
 					dispatchEvent(CallCheater.create(false,myUserId))
 				break;
 				case MenuClickEvent.CALL_CHEATER:
 					isCheaterLock = false;
+					myHand.myTurn(false)
 					dispatchEvent(CallCheater.create(true,myUserId))
 				break;
 				
@@ -557,6 +580,7 @@ package come2play_as3.cheat{
 			removeMenuController()
 		}
 		public function setTurn(userId:int):void{
+			if(!isPlaying)	return
 			currentTurn = userId
 			if(currentTurn == myUserId){
 				if(userId == myUserId){
@@ -584,8 +608,6 @@ package come2play_as3.cheat{
 			txt.setTextFormat(tf)
 			txt.defaultTextFormat = tf;
 		}
-		
-		
 		public function setRivalName():void{
 			var playerName:String = rivalId == 0?T.i18n("computer"):T.getUserValue(rivalId,API_Message.USER_INFO_KEY_name,"Player") as String
 			setNameAndNumber(upperBackground.rivalName_txt,rivalHand.getCardCount(),playerName)

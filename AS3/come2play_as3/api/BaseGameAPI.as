@@ -67,27 +67,22 @@ package come2play_as3.api {
 				"\nmsgsInTransaction="+JSON.stringify(msgsInTransaction)+
 				"\nSingle Player games done="+singlePlayerGamesDone+
 				"\nMulti Player games done="+normalGamesDone+
-				"\n\nfake gotMatchStarted : \n\n"+JSON.stringify(gotMatchStarted)+
+				"\n\nfake gotMatchStarted for user("+getMyUserId()+"): \n\n"+JSON.stringify(gotMatchStarted)+
 				"\n"+output.join("");					
 		}
 		
-		private function keyPressed(is_key_down:Boolean, charCode:int, keyCode:int, keyLocation:int, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean):void
-		{
+		private function keyPressed(is_key_down:Boolean, charCode:int, keyCode:int, keyLocation:int, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean):void{
 			KEYBOARD_LOG.log("is_key_down=",is_key_down,"charCode=",charCode,"keyCode=",keyCode,"keyLocation=",keyLocation,"altKey=",altKey,"ctrlKey=",ctrlKey,"shiftKey=",shiftKey);
 			
 			if((shiftKey) && (ctrlKey) && (altKey) && (is_key_down) && T.custom("ENABLE COMMANDS",true) ) {
-				if('G'.charCodeAt(0) == charCode)
-				{	
-					AS3_vs_AS2.showMessage(StaticFunctions.getTraces(), "traces");
-				}
+				if('G'.charCodeAt(0) == charCode)	AS3_vs_AS2.showMessage(StaticFunctions.getTraces(), "traces");
 				if('E'.charCodeAt(0) == charCode) {
 					// testing throwing an error	
-					throw new Error("Testing throwing an error!");
+					//throw new Error("Testing throwing an error!");
 				}
 			}
 			if (!T.custom(API_Message.CUSTOM_INFO_KEY_isFocusInChat,false) &&
-				!T.custom(API_Message.CUSTOM_INFO_KEY_isPause,false))
-				 {				 	
+				!T.custom(API_Message.CUSTOM_INFO_KEY_isPause,false)){				 	
 					var keyBoardEvent:API_GotKeyboardEvent = API_GotKeyboardEvent.create(is_key_down, charCode, keyCode, keyLocation, altKey, ctrlKey, shiftKey)					
 					dispatchMessage(keyBoardEvent);
 				 }

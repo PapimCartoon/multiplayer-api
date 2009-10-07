@@ -93,7 +93,7 @@ package come2play_as3.cheat.graphics
 			removeGraphics()
 			var userName:String = getUserName(id)
 			if(isBluff){
-				if(backgroundSoundChannel.soundTransform.volume == 0.3){
+				if((backgroundSoundChannel!=null) && (backgroundSoundChannel.soundTransform.volume == 0.3)){
 					backgroundSoundChannel.soundTransform = new SoundTransform(0.1)
 				}
 				heartBeatSoundChannel = heartBeat.play(0,1000);
@@ -136,7 +136,7 @@ package come2play_as3.cheat.graphics
 		public function closeMessage():void{
 			if(heartBeatSoundChannel!=null){	
 				heartBeatSoundChannel.stop()
-				if(backgroundSoundChannel.soundTransform.volume == 0.1){
+				if((backgroundSoundChannel!=null) && (backgroundSoundChannel.soundTransform.volume == 0.1)){
 					backgroundSoundChannel.soundTransform = new SoundTransform(0.3)
 				}
 			

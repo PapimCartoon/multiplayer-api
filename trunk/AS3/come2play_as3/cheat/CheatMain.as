@@ -3,6 +3,7 @@ package come2play_as3.cheat
 	
 	import come2play_as3.api.auto_copied.AS3_vs_AS2;
 	import come2play_as3.api.auto_copied.ErrorHandler;
+	import come2play_as3.api.auto_copied.Logger;
 	import come2play_as3.api.auto_copied.T;
 	import come2play_as3.api.auto_generated.ServerEntry;
 	import come2play_as3.api.auto_generated.UserEntry;
@@ -26,8 +27,10 @@ package come2play_as3.cheat
 		private var cheatGraphics:CheatGraphics
 		private var isSinglePlayer:Boolean
 		private var allPlayerIds:Array
-		
-
+		private var isViewer:Boolean
+		static public var sentData:Logger = new Logger("CheatSentData",12);
+		static public var recievedData:Logger = new Logger("CheatRecievedData",12);
+		static public var myTraces:Logger = new Logger("cheatTraces",20)
 		public function CheatMain(cardsGraphic:MovieClip)
 		{
 			super(cardsGraphic)	
@@ -46,11 +49,13 @@ package come2play_as3.cheat
 		}	
 
 		private function callCheater(ev:CallCheater):void{
-			if(!isPlaying)	return;
+			if((!isPlaying) || (isViewer))	return;
+			sentData.log("callCheater",ev)
 			doStoreState([UserEntry.create(ev,ev)])
 		}
 		private function putCardsOnTableHidden(ev:CardsToHold):void{
-			if(!isPlaying)	return;
+			if((!isPlaying) || (isViewer))	return;
+			sentData.log("putCardsOnTableHidden",ev)
 			doStoreState([UserEntry.create(PlayerAction.create(myUserId,PlayerAction.PUT_HIDDEN),ev)])
 		}
 		private function handleChangedCards(ev:GotCardsEvent):void{
@@ -73,11 +78,11 @@ package come2play_as3.cheat
 		}
 		
 		override public function gotMatchStarted(allPlayerIds:Array, finishedPlayerIds:Array, serverEntries:Array):void{
-			
+			recievedData.log("gotMatchStarted",allPlayerIds, finishedPlayerIds, serverEntries)
 			this.allPlayerIds = allPlayerIds.concat();
 			isSinglePlayer = (this.allPlayerIds.length == 1);
 			myUserId = T.custom(CUSTOM_INFO_KEY_myUserId,42) as int
-			var isViewer:Boolean = this.allPlayerIds.indexOf(myUserId)==-1
+			isViewer = this.allPlayerIds.indexOf(myUserId)==-1
 			var sendMyUserId:int
 			if(isViewer){
 				sendMyUserId = this.allPlayerIds[0]
@@ -92,7 +97,9 @@ package come2play_as3.cheat
 			super.gotMatchStarted(this.allPlayerIds, finishedPlayerIds, serverEntries)
 			cheatGraphics.setRivalName()
 			cheatGraphics.setUserName()
-			if(isSinglePlayer){	
+			if(isViewer){
+				
+			}else if(isSinglePlayer){	
 				storeDecks(1,true)
 				singlePlayerDrawCards(true,8)
 				singlePlayerDrawCards(false,8)
@@ -110,7 +117,8 @@ package come2play_as3.cheat
 
 		private function setTurn(playerTurn:PlayerTurn):void{
 			var userTurn:int = allPlayerIds[playerTurn.turnNum%allPlayerIds.length];
-			doAllSetTurn(userTurn,-1)
+			sentData.log("doAllSetTurn",userTurn)
+			if(!isViewer)	doAllSetTurn(userTurn,-1)
 			if(isSinglePlayer){
 				cheatGraphics.setTurn((playerTurn.turnNum%2 == 1)?myUserId:rivalUserId)
 			}else{
@@ -118,14 +126,16 @@ package come2play_as3.cheat
 			}
 		}
 		override public function gotMatchEnded(finishedPlayerIds:Array):void{
+			recievedData.log("gotMatchEnded",finishedPlayerIds)
 			super.gotMatchEnded(finishedPlayerIds)
 			cheatGraphics.gameEnded()
 			animationStarted("waitForReset")
 			ErrorHandler.myTimeout("waitForReset",function():void{
 				animationEnded("waitForReset")
-			},2000)
+			},4000)
 		}
 		override public function gotStateChanged(serverEntries:Array):void{
+			recievedData.log("gotStateChanged",serverEntries)
 			super.gotStateChanged(serverEntries)
 			for each(var serverEntry:ServerEntry in serverEntries){
 				if(serverEntry.value is CardsToHold){

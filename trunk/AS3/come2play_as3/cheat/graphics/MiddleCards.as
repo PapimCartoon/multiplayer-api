@@ -7,7 +7,6 @@ package come2play_as3.cheat.graphics
 	import come2play_as3.cheat.caurina.transitions.Tweener;
 	
 	import flash.display.Sprite;
-	import flash.geom.ColorTransform;
 
 	public class MiddleCards extends Sprite
 	{
@@ -104,10 +103,11 @@ package come2play_as3.cheat.graphics
 		}
 		public function isMoveCheat(value:int):Boolean{
 			for each(var card:CardGraphic in choosenCardsArray){
-				if(card.getCardValue() == 14)	continue;
+				var cardValue:int = card.getCardValue()
+				if(cardValue == 14)	continue;
 				if(value == 14){	
-					value = card.getCardValue()
-				}else if(card.getCardValue() != value){
+					value = cardValue
+				}else if(cardValue != value){
 					return true
 				}
 			}

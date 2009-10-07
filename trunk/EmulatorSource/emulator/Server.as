@@ -972,16 +972,13 @@ package emulator {
 			for each(var checkedQueueEntry:QueueEntry in doAllArray)
 			{
 				checkedMsg = checkedQueueEntry.transaction.messageArray[0];
-				if(StaticFunctions.getMethodName(checkedMsg) != StaticFunctions.getMethodName(msg))		
-				{
+				if(StaticFunctions.getMethodName(checkedMsg) != StaticFunctions.getMethodName(msg))	{
 					errorHandler(checkedQueueEntry.user.Name + " : called " + StaticFunctions.getMethodName(checkedMsg) + "\n while " + queueEntry.user.Name+" : called  "+ StaticFunctions.getMethodName(msg))
 					gameOver();
 					return false;
 				}
-				
-				if(!ObjectDictionary.areEqual(StaticFunctions.getMethodParameters(checkedMsg),StaticFunctions.getMethodParameters(msg)))
-				{
-					errorHandler(StaticFunctions.getMethodName(checkedMsg)+" : "+StaticFunctions.getMethodParameters(checkedMsg)+" is diffrent then "+StaticFunctions.getMethodName(msg)+" : "+StaticFunctions.getMethodParameters(msg));
+				if(!ObjectDictionary.areEqual(StaticFunctions.getMethodParameters(checkedMsg),StaticFunctions.getMethodParameters(msg))){
+					errorHandler(StaticFunctions.getMethodName(checkedMsg)+" : "+JSON.stringify(StaticFunctions.getMethodParameters(checkedMsg))+" is diffrent then "+StaticFunctions.getMethodName(msg)+" : "+JSON.stringify(StaticFunctions.getMethodParameters(msg)));
 					gameOver();
 					return false
 				}

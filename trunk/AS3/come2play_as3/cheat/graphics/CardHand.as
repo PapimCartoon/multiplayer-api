@@ -13,7 +13,7 @@ package come2play_as3.cheat.graphics
 	{
 		private var drawingFromDeck:DrawingCardFromDeck
 		private var cardAngle:int = 8
-		protected var cards:Array
+		protected var cards:Array = []
 		protected var maxHolderX:int
 		protected var minHolderX:int
 		protected var cardEndX:int
@@ -21,7 +21,7 @@ package come2play_as3.cheat.graphics
 		protected var isCardDirectionRight:Boolean
 		protected var cardHolder:Sprite = new Sprite()
 		protected var isDrawing:Boolean
-		protected var cardsToDraw:Array/*CardGraphic*/
+		protected var cardsToDraw:Array/*CardGraphic*/ = []
 		protected var isMyTurn:Boolean
 		private var isComputer:Boolean
 		public function CardHand(isComputer:Boolean=false)
@@ -29,8 +29,6 @@ package come2play_as3.cheat.graphics
 			drawingFromDeck = new DrawingCardFromDeck()
 			this.isComputer = isComputer;
 			addChild(cardHolder)
-			cards = [];
-			cardsToDraw = []
 			cardEndX = 300
 			cardEndY = 30
 		}

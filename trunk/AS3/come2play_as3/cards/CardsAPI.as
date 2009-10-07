@@ -2,7 +2,6 @@ package come2play_as3.cards
 {
 
 	import come2play_as3.api.auto_copied.AS3_vs_AS2;
-	import come2play_as3.api.auto_copied.JSON;
 	import come2play_as3.api.auto_copied.SerializableClass;
 	import come2play_as3.api.auto_copied.StaticFunctions;
 	import come2play_as3.api.auto_copied.T;
@@ -32,8 +31,8 @@ package come2play_as3.cards
 		private var userCards:int
 		private var isSinglePlayer:Boolean
 		private var canShowCards:int
+		private var isViewer:Boolean
 		protected var isPlaying:Boolean
-		
 		
 		private var testStr:String = '[{ $ServerEntry$ "changedTimeInMilliSeconds":2484 , "key":{ $CardKey$ "num":17} , "storedByUserId":-1 , "value":null , "visibleToUserIds":[]},{ $ServerEntry$ "changedTimeInMilliSeconds":2484 , "key":{ $CardKey$ "num":18} , "storedByUserId":-1 , "value":null , "visibleToUserIds":[]},{ $ServerEntry$ "changedTimeInMilliSeconds":2483 , "key":{ $CardKey$ "num":19} , "storedByUserId":-1 , "value":null , "visibleToUserIds":[]},{ $ServerEntry$ "changedTimeInMilliSeconds":2483 , "key":{ $CardKey$ "num":20} , "storedByUserId":-1 , "value":null , "visibleToUserIds":[]},{ $ServerEntry$ "changedTimeInMilliSeconds":2483 , "key":{ $CardKey$ "num":21} , "storedByUserId":-1 , "value":null , "visibleToUserIds":[]},{ $ServerEntry$ "changedTimeInMilliSeconds":2482 , "key":{ $CardKey$ "num":22} , "storedByUserId":-1 , "value":null , "visibleToUserIds":[]},{ $ServerEntry$ "changedTimeInMilliSeconds":2482 , "key":{ $CardKey$ "num":23} , "storedByUserId":-1 , "value":null , "visibleToUserIds":[]},{ $ServerEntry$ "changedTimeInMilliSeconds":2482 , "key":{ $CardKey$ "num":24} , "storedByUserId":-1 , "value":null , "visibleToUserIds":[]},{ $ServerEntry$ "changedTimeInMilliSeconds":2481 , "key":{ $CardKey$ "num":25} , "storedByUserId":-1 , "value":null , "visibleToUserIds":[]},{ $ServerEntry$ "changedTimeInMilliSeconds":2481 , "key":{ $CardKey$ "num":26} , "storedByUserId":-1 , "value":null , "visibleToUserIds":[]},{ $ServerEntry$ "changedTimeInMilliSeconds":2481 , "key":{ $CardKey$ "num":27} , "storedByUserId":-1 , "value":null , "visibleToUserIds":[]},{ $ServerEntry$ "changedTimeInMilliSeconds":2480 , "key":{ $CardKey$ "num":28} , "storedByUserId":-1 , "value":null , "visibleToUserIds":[]},{ $ServerEntry$ "changedTimeInMilliSeconds":2480 , "key":{ $CardKey$ "num":29} , "storedByUserId":-1 , "value":null , "visibleToUserIds":[]},{ $ServerEntry$ "changedTimeInMilliSeconds":2480 , "key":{ $CardKey$ "num":30} , "storedByUserId":-1 , "value":null , "visibleToUserIds":[]},{ $ServerEntry$ "changedTimeInMilliSeconds":2479 , "key":{ $CardKey$ "num":31} , "storedByUserId":-1 , "value":null , "visibleToUserIds":[]},{ $ServerEntry$ "changedTimeInMilliSeconds":2479 , "key":{ $CardKey$ "num":32} , "storedByUserId":-1 , "value":null , "visibleToUserIds":[]},{ $ServerEntry$ "changedTimeInMilliSeconds":2478 , "key":{ $CardKey$ "num":33} , "storedByUserId":-1 , "value":null , "visibleToUserIds":[]},{ $ServerEntry$ "changedTimeInMilliSeconds":2478 , "key":{ $CardKey$ "num":34} , "storedByUserId":-1 , "value":null , "visibleToUserIds":[]},{ $ServerEntry$ "changedTimeInMilliSeconds":2478 , "key":{ $CardKey$ "num":35} , "storedByUserId":-1 , "value":null , "visibleToUserIds":[]},{ $ServerEntry$ "changedTimeInMilliSeconds":2477 , "key":{ $CardKey$ "num":36} , "storedByUserId":-1 , "value":null , "visibleToUserIds":[]},{ $ServerEntry$ "changedTimeInMilliSeconds":2477 , "key":{ $CardKey$ "num":37} , "storedByUserId":-1 , "value":null , "visibleToUserIds":[]},{ $ServerEntry$ "changedTimeInMilliSeconds":2476 , "key":{ $CardKey$ "num":38} , "storedByUserId":-1 , "value":null , "visibleToUserIds":[]},{ $ServerEntry$ "changedTimeInMilliSeconds":2476 , "key":{ $CardKey$ "num":39} , "storedByUserId":-1 , "value":null , "visibleToUserIds":[]},{ $ServerEntry$ "changedTimeInMilliSeconds":2476 , "key":{ $CardKey$ "num":40} , "storedByUserId":-1 , "value":null , "visibleToUserIds":[]},{ $ServerEntry$ "changedTimeInMilliSeconds":2475 , "key":{ $CardKey$ "num":41} , "storedByUserId":-1 , "value":null , "visibleToUserIds":[]},{ $ServerEntry$ "changedTimeInMilliSeconds":2474 , "key":{ $CardKey$ "num":42} , "storedByUserId":-1 , "value":null , "visibleToUserIds":[]},{ $ServerEntry$ "changedTimeInMilliSeconds":2474 , "key":{ $CardKey$ "num":43} , "storedByUserId":-1 , "value":null , "visibleToUserIds":[]},{ $ServerEntry$ "changedTimeInMilliSeconds":2473 , "key":{ $CardKey$ "num":44} , "storedByUserId":-1 , "value":null , "visibleToUserIds":[]},{ $ServerEntry$ "changedTimeInMilliSeconds":2473 , "key":{ $CardKey$ "num":45} , "storedByUserId":-1 , "value":null , "visibleToUserIds":[]},{ $ServerEntry$ "changedTimeInMilliSeconds":2472 , "key":{ $CardKey$ "num":46} , "storedByUserId":-1 , "value":null , "visibleToUserIds":[]},{ $ServerEntry$ "changedTimeInMilliSeconds":2472 , "key":{ $CardKey$ "num":47} , "storedByUserId":-1 , "value":null , "visibleToUserIds":[]},{ $ServerEntry$ "changedTimeInMilliSeconds":2471 , "key":{ $CardKey$ "num":48} , "storedByUserId":-1 , "value":null , "visibleToUserIds":[]},{ $ServerEntry$ "changedTimeInMilliSeconds":2471 , "key":{ $CardKey$ "num":49} , "storedByUserId":-1 , "value":null , "visibleToUserIds":[]},{ $ServerEntry$ "changedTimeInMilliSeconds":2470 , "key":{ $CardKey$ "num":50} , "storedByUserId":-1 , "value":null , "visibleToUserIds":[]},{ $ServerEntry$ "changedTimeInMilliSeconds":2469 , "key":{ $CardKey$ "num":51} , "storedByUserId":-1 , "value":null , "visibleToUserIds":[]},{ $ServerEntry$ "changedTimeInMilliSeconds":2469 , "key":{ $CardKey$ "num":52} , "storedByUserId":-1 , "value":null , "visibleToUserIds":[]},{ $ServerEntry$ "changedTimeInMilliSeconds":2468 , "key":{ $CardKey$ "num":53} , "storedByUserId":-1 , "value":null , "visibleToUserIds":[]},{ $ServerEntry$ "changedTimeInMilliSeconds":2468 , "key":{ $CardKey$ "num":54} , "storedByUserId":-1 , "value":null , "visibleToUserIds":[]},{ $ServerEntry$ "changedTimeInMilliSeconds":2487 , "key":{ $CardKey$ "num":1} , "storedByUserId":-1 , "value":{ $Card$ "sign":"Daimond" , "value":1} , "visibleToUserIds":[42]},{ $ServerEntry$ "changedTimeInMilliSeconds":2488 , "key":{ $CardKey$ "num":2} , "storedByUserId":-1 , "value":{ $Card$ "sign":"Club" , "value":8} , "visibleToUserIds":[42]},{ $ServerEntry$ "changedTimeInMilliSeconds":2489 , "key":{ $CardKey$ "num":3} , "storedByUserId":-1 , "value":{ $Card$ "sign":"Heart" , "value":2} , "visibleToUserIds":[42]},{ $ServerEntry$ "changedTimeInMilliSeconds":2491 , "key":{ $CardKey$ "num":4} , "storedByUserId":-1 , "value":{ $Card$ "sign":"Spade" , "value":3} , "visibleToUserIds":[42]},{ $ServerEntry$ "changedTimeInMilliSeconds":2492 , "key":{ $CardKey$ "num":5} , "storedByUserId":-1 , "value":{ $Card$ "sign":"Heart" , "value":5} , "visibleToUserIds":[42]},{ $ServerEntry$ "changedTimeInMilliSeconds":2493 , "key":{ $CardKey$ "num":6} , "storedByUserId":-1 , "value":{ $Card$ "sign":"Club" , "value":11} , "visibleToUserIds":[42]},{ $ServerEntry$ "changedTimeInMilliSeconds":2494 , "key":{ $CardKey$ "num":7} , "storedByUserId":-1 , "value":{ $Card$ "sign":"Club" , "value":1} , "visibleToUserIds":[42]},{ $ServerEntry$ "changedTimeInMilliSeconds":2495 , "key":{ $CardKey$ "num":8} , "storedByUserId":-1 , "value":{ $Card$ "sign":"Club" , "value":3} , "visibleToUserIds":[42]},{ $ServerEntry$ "changedTimeInMilliSeconds":2496 , "key":{ $CardKey$ "num":9} , "storedByUserId":-1 , "value":{ $Card$ "sign":"Heart" , "value":12} , "visibleToUserIds":[42]},{ $ServerEntry$ "changedTimeInMilliSeconds":2497 , "key":{ $CardKey$ "num":10} , "storedByUserId":-1 , "value":{ $Card$ "sign":"Daimond" , "value":10} , "visibleToUserIds":[42]},{ $ServerEntry$ "changedTimeInMilliSeconds":2498 , "key":{ $CardKey$ "num":11} , "storedByUserId":-1 , "value":{ $Card$ "sign":"Heart" , "value":8} , "visibleToUserIds":[42]},{ $ServerEntry$ "changedTimeInMilliSeconds":2499 , "key":{ $CardKey$ "num":12} , "storedByUserId":-1 , "value":{ $Card$ "sign":"Spade" , "value":5} , "visibleToUserIds":[42]},{ $ServerEntry$ "changedTimeInMilliSeconds":2500 , "key":{ $CardKey$ "num":13} , "storedByUserId":-1 , "value":{ $Card$ "sign":"Heart" , "value":13} , "visibleToUserIds":[42]},{ $ServerEntry$ "changedTimeInMilliSeconds":2501 , "key":{ $CardKey$ "num":14} , "storedByUserId":-1 , "value":{ $Card$ "sign":"Club" , "value":7} , "visibleToUserIds":[42]},{ $ServerEntry$ "changedTimeInMilliSeconds":2502 , "key":{ $CardKey$ "num":15} , "storedByUserId":-1 , "value":{ $Card$ "sign":"Daimond" , "value":5} , "visibleToUserIds":[42]},{ $ServerEntry$ "changedTimeInMilliSeconds":2503 , "key":{ $CardKey$ "num":16} , "storedByUserId":-1 , "value":{ $Card$ "sign":"Club" , "value":12} , "visibleToUserIds":[42]}]'
 		
@@ -80,6 +79,7 @@ package come2play_as3.cards
 				}
 			}	
 			canShowCards+=(cardNum-1)
+			if(isViewer)	return
 			doAllStoreState(doAllStore)
 			doAllShuffleState(doAllShuffle)
 		}
@@ -104,7 +104,7 @@ package come2play_as3.cards
 				if(isSinglePlayer)	cardsNumToDraw++;
 			}
 			if(addedData==null)	addedData = CardGameAction.create(CardGameAction.PUT_CARD)
-			doStoreState([UserEntry.create(CardGameAction.create(CardGameAction.PUT_CARD),addedData)],revealKeys)
+			if(!isViewer)doStoreState([UserEntry.create(CardGameAction.create(CardGameAction.PUT_CARD),addedData)],revealKeys)
 		}
 		
 		public function singlePlayerDrawCards(isComputer:Boolean,amount:int,isByAll:Boolean = true):void{
@@ -116,7 +116,7 @@ package come2play_as3.cards
 			drawCards(allPlayerIds,amount,isByAll);
 		}
 		public function drawCards(userIds:Array,amount:int,isByAll:Boolean):void{
-			if ((!isPlaying) || (canShowCards<=currentCard) )	return;
+			if ((!isPlaying) || (canShowCards<=currentCard))	return;
 			var drawKey:Array = []
 			var reavealArr:Array = []
 			var keyStr:String
@@ -131,6 +131,7 @@ package come2play_as3.cards
 				drawingCards[keyStr] = key;
 				reavealArr.push(RevealEntry.create(key,userIds))
 			}
+			if(isViewer)	return;
 			if(isByAll){
 				doAllRevealState(reavealArr)
 			}else{
@@ -157,7 +158,7 @@ package come2play_as3.cards
 				allCards.push(cardKey)
 			}
 			allCards.sortOn("num",Array.NUMERIC)
-			doAllShuffleState(allCards)
+			if(!isViewer)	doAllShuffleState(allCards)
 			var isComputer:Boolean
 			if(isSinglePlayer){
 				isComputer = (userId == 0)
@@ -177,17 +178,16 @@ package come2play_as3.cards
 				}
 			}
 				
-			doAllRevealState(revealEntries)
+			if(!isViewer)	doAllRevealState(revealEntries)
 		}
 		private var allPlayerIds:Array
 		private var myUserId:int
 		override public function gotMatchStarted(allPlayerIds:Array, finishedPlayerIds:Array, serverEntries:Array):void{
-			trace("ok "+testStr)
-			//serverEntries = SerializableClass.deserializeString(testStr) as Array;
-			
+			doTrace("start init of cardsAPI","start init of cardsAPI")
 			isPlaying = true
 			this.allPlayerIds = allPlayerIds.concat();
 			myUserId = T.custom(CUSTOM_INFO_KEY_myUserId,42) as int
+			isViewer = (this.allPlayerIds.indexOf(myUserId) == -1)
 			isSinglePlayer = (this.allPlayerIds.length == 1);
 			currentCard = 0
 			cardsNumToDraw = 0;
@@ -209,6 +209,7 @@ package come2play_as3.cards
 				}
 			}
 			if(serverEntries.length > 0)	handleServerEntries(serverEntries,true)
+			doTrace("end init of cardsAPI","end init of cardsAPI")
 		}
 		private function deletFromDic(dic:Dictionary,key:String):Boolean{
 			if(dic[key]==null)	return false;
@@ -299,8 +300,6 @@ package come2play_as3.cards
 			for(var id:String in cardsOwners){		
 				arr.push(["cardsOwners["+id+"]: "+AS3_vs_AS2.dictionarySize(cardsOwners[id])])
 			}
-			/*doTrace("currentState",arr)
-			doTrace("changedCards",JSON.stringify(changedCards))*/
 			if(changedCards.length!=0)	cardGraphics.dispatchEvent(new GotCardsEvent(changedCards,addedData))
 		}
 		
@@ -314,7 +313,7 @@ package come2play_as3.cards
 					finishedPlayers.push(PlayerMatchOver.create(id,0,0))
 			}
 			
-			doAllEndMatch(finishedPlayers)
+			if(!isViewer)	doAllEndMatch(finishedPlayers)
 		}
 		
 		override public function gotMatchEnded(finishedPlayerIds:Array):void{

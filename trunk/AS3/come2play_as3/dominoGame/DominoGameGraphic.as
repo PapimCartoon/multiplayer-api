@@ -133,7 +133,7 @@ package come2play_as3.dominoGame
 			dominoDraw.enabled = ((currentDominoAmount>0) && (!didReachMaxHand()) && isMyTurn);
 		}
 		private function tryEnablePass():void{
-			dominoPass.enabled = (!hasMoves() && (!dominoDraw.enabled))
+			dominoPass.enabled = (!hasMoves() && (!dominoDraw.enabled) && isMyTurn)
 		}
 		private function hasMoves():Boolean{
 			if(isViewer)	return false;
@@ -144,8 +144,8 @@ package come2play_as3.dominoGame
 		}
 		
 		public function drawDomino(ev:MouseEvent):void{
+			dominoDraw.enabled = false;
 			dispatchEvent(DominoDraw.create())
-			tryEnableDraw()
 		}
 		public function didReachMaxHand():Boolean{
 			return ((myHand.dominoInHand + dominoesDelayed.length ) >= DominoGameMain.dominoMaxHand) 
@@ -176,7 +176,11 @@ package come2play_as3.dominoGame
 			var dominoGraphic:DominoBrickGraphic = rivalHand.findBrick(key)
 			dominoGraphic.show(dominoCube)
 		}
+		
+		
+		
 		public function rivalDraw(key:String,rivalNum:int):void{
+			dispatchEvent(new AnimationEvent(true,"drawDomino"))
 			if(rivalNum==0)
 				rivalHand.draw(key)	
 			else
@@ -184,6 +188,7 @@ package come2play_as3.dominoGame
 		}
 
 		public function draw(dominoCube:DominoCube,key:String):void{
+			dispatchEvent(new AnimationEvent(true,"drawDomino"))
 			for(var i:int =0;i<dominoesDelayed.length;i++){
 				var waitingKey:String = dominoesDelayed[i]
 				if(key == waitingKey){
@@ -223,6 +228,7 @@ package come2play_as3.dominoGame
 		}
 		public var dominoesDelayed:Array
 		public function takeDominoFromDeck(ev:DrawEvent):void{
+			dispatchEvent(new AnimationEvent(false,"drawDomino"))
 			currentDominoAmount--;
 			dominoBack.stockText1.text = "x "+currentDominoAmount;
 			tryEnableDraw()

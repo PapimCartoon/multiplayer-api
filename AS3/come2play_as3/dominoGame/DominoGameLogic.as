@@ -6,6 +6,7 @@ package come2play_as3.dominoGame
 	import come2play_as3.api.auto_generated.RevealEntry;
 	import come2play_as3.api.auto_generated.ServerEntry;
 	import come2play_as3.dominoGame.LogicClasses.MiddleBoard;
+	import come2play_as3.dominoGame.events.AnimationEvent;
 	import come2play_as3.dominoGame.events.GrabEvent;
 	import come2play_as3.dominoGame.events.WinnerEvent;
 	import come2play_as3.dominoGame.serverClasses.DominoComputerDraw;

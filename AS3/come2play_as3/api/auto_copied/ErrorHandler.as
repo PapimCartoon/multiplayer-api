@@ -152,7 +152,7 @@ public final class ErrorHandler
 		myInterval("logMemoryInterval",AS3_vs_AS2.logMemory,MEM_INTERVAL_MILLI);
 		LAST_CATCH_ERRORS_ON = getTimer();
 	}
-	
+	public static var IGNORE_FREEZE_BUG:Boolean = false;
 	public static var FREEZE_CALLBACK:Function/*function (deltaMilli:int):void*/ = null; 
 	public static var MEM_INTERVAL_MILLI:int = 5*1000; //5 secs
 	public static var FREEZING_BUCKETS_MILLI:int = 10*1000; // must be more than 2*MEM_INTERVAL_MILLI 
@@ -217,7 +217,7 @@ public final class ErrorHandler
 					// the flash froze!
 					if (delta<IGNORE_FREEZE_LONGER_THAN) {
 						// regular freeze
-						alwaysTraceAndSendReport("The flash froze!", ["LAST_CATCH_ERRORS_ON=",lastCatch," now=",now]);
+						if(!IGNORE_FREEZE_BUG)	alwaysTraceAndSendReport("The flash froze!", ["LAST_CATCH_ERRORS_ON=",lastCatch," now=",now]);
 					} else {
 						// the computer probably went into sleep mode
 						didReportError = true; 	

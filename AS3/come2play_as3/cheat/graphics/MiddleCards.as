@@ -79,7 +79,7 @@ package come2play_as3.cheat.graphics
 			var start:int = cardEndX - (jump * choosenCardsArray.length)/2
 			for(var i:int = 0;i<choosenCardsArray.length;i++){
 				var card:CardGraphic = choosenCardsArray[i];
-				card.x = start + jump*i;
+				card.x = start + jump * i;
 				choosenCards.addChild(card)
 			}
 		}

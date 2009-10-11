@@ -96,19 +96,14 @@ package come2play_as3.cheat{
 				AS3_vs_AS2.myAddEventListener("menuController",menuController,MenuClickEvent.MENU_EVENT,menuAction)
 				AS3_vs_AS2.myAddEventListener("menuController",menuController,"JokerValue",jokerAction)
 			}
-			CheatMain.myTraces.log("part 1",soundChannel)
 			var oldSoundChannel:SoundChannel
 			if(soundChannel!=null){
 				oldSoundChannel = soundChannel
 				oldSoundChannel.stop()
 			}
-			CheatMain.myTraces.log("part 2",oldSoundChannel,backgroundSound)
 			soundChannel = backgroundSound.play(0,100);
-			CheatMain.myTraces.log("part 2.1",soundChannel)
 			if(soundChannel!=null)	soundChannel.soundTransform = (oldSoundChannel==null)?(new SoundTransform(0.30)):(oldSoundChannel.soundTransform);
-			CheatMain.myTraces.log("part 2.2",gameMessage)
 			gameMessage.setBackgroundSound(soundChannel)
-			CheatMain.myTraces.log("part 2.3")
 			waitingCards = []
 			waitingActions = []
 			isPlaying = true;
@@ -117,7 +112,6 @@ package come2play_as3.cheat{
 			this.isViewer = isViewer;
 			this.myUserId = myUserId;
 			this.rivalId = rivalId;
-			CheatMain.myTraces.log("part 3")
 			scaleX = ( T.custom(API_Message.CUSTOM_INFO_KEY_gameWidth,400) as int)/550 
 			scaleY = ( T.custom(API_Message.CUSTOM_INFO_KEY_gameHeight,400) as int)/450 
 			
@@ -125,7 +119,6 @@ package come2play_as3.cheat{
 			myGraphics.addChild(cardDeck)
 			cardDeck.x = 480;
 			cardDeck.y = 215;
-			CheatMain.myTraces.log("part 4",myHand,rivalHand,middleCards)
 			if(myHand!=null){
 				myHand.clear()
 				myGraphics.removeChild(myHand)
@@ -138,7 +131,6 @@ package come2play_as3.cheat{
 				middleCards.clear();
 				myGraphics.removeChild(middleCards) 
 			}
-			CheatMain.myTraces.log("part 5")
 			middleCards = new MiddleCards()
 			myHand = isViewer?new CardHand():new YourHand()
 			rivalHand = new CardHand(rivalId == 0)
@@ -149,11 +141,8 @@ package come2play_as3.cheat{
 			myGraphics.addChild(rivalHand)
 			myGraphics.addChild(middleCards) 	
 			myGraphics.addChild(myHand)
-			
 			gameMessage.showHelp()
 			myGraphics.addChild(gameMessage)
-			
-			
 		}
 		private function getEventCard(cardData:CardChange,isPlayer:Boolean):CardGraphic{
 			var card:CardGraphic = new CardGraphic(cardData.cardKey,cardData.card)
@@ -204,6 +193,7 @@ package come2play_as3.cheat{
 				return;
 			}else if(myHand.removeCard(ev.cardKey)!=null){
 				card.fixData(ev.cardData)
+				card.assertLegealCardData();
 				middleCards.pickCard(card)
 			}else{
 				StaticFunctions.assert(false,"should not happen");
@@ -347,7 +337,6 @@ package come2play_as3.cheat{
 			if(isViewer){
 				
 			}else if(myUserId == currentTurn){
-				
 				var rivalCards:Array = CardsAPI.cardsData.getCardsInUserHand(rivalId)
 				menuController.showCheatChoiseMenu(cardsToHold,rivalHand.getCardCount()!=0)
 				if(rivalHand.getCardCount() != 0){
@@ -361,7 +350,7 @@ package come2play_as3.cheat{
 				var isMoveCheat:Boolean = middleCards.isMoveCheat(cardsToHold.declaredValue)
 				gameMessage.willCallBluff(isMoveCheat,rivalId)
 				myGraphics.addChild(gameMessage)
-				if(rivalId == 0){
+				if(rivalId == 0){	
 					var isComputerCallCheat:Boolean
 					var rand:int = Math.random() * 10
 					if(myHand.getCardCount() == 0){
@@ -375,7 +364,7 @@ package come2play_as3.cheat{
 					ErrorHandler.myTimeout("CallCheater",function():void{
 						dispatchEvent(CallCheater.create(isComputerCallCheat,rivalId))
 						CardsAPI.cardsData.animationEnded("callCheater")
-					},isMoveCheat?2000:1000)
+					},isMoveCheat?2000:1000);
 				}
 			}
 		}
@@ -413,7 +402,6 @@ package come2play_as3.cheat{
 			middleCards.throwMiddle(isViewer?0:myHand.getCardCount())
 			finishedDrawing()	
 		}
-		
 		private function drawCardGraphic(ev:CardDrawEndedEvent=null):void{		
 			var callEndFunc:Boolean = ev==null?false:ev.callFinishFunc;	
 			var drawFrom:Array
@@ -442,8 +430,7 @@ package come2play_as3.cheat{
 				isDrawingPlayer = !isDrawingPlayer;
 			}
 			setCardCount()
-		}
-		
+		}	
 		public function finishedDrawing():void{
 			if((isViewer) || (!isPlaying))	return
 			if(currentTurn == myUserId){

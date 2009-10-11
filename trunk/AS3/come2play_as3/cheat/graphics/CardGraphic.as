@@ -137,7 +137,7 @@ package come2play_as3.cheat.graphics
 		
 		
 		override public function toString():String{
-			return cardKey.toString();
+			return cardKey.toString() +(cardData==null?"null":cardData.toString());
 		}	
 	}
 }

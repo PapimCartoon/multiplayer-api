@@ -40,7 +40,7 @@ package come2play_as3.cheat.graphics
 			return cardData==null?0:(cardData.value * 9 + cardData.intSign())
 		}
 		public function getCardValue():int{
-			return cardData.value;
+			return cardData==null?-1:cardData.value;
 		}
 		public function assertLegealCardData():void{
 			StaticFunctions.assert(cardData!=null,"Card Graphic should not be null")

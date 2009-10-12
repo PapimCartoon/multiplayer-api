@@ -4,6 +4,8 @@ package come2play_as3.dominoGame.serverClasses
 
 	public class PlayerTurn extends SerializableClass
 	{
+		static public const PLAYER_TURN:String = "PlayerTurn"
+		static public const PLAYER_TURN_REQUEST:String = "PlayerTurnRequest"
 		public var playerTurn:int
 		static public function create(playerTurn:int):PlayerTurn{
 			var res:PlayerTurn = new PlayerTurn();

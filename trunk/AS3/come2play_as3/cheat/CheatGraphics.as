@@ -333,10 +333,10 @@ package come2play_as3.cheat{
 					middleCards.addCard(cardGraphic)
 				}
 			}
-			CheatMain.myTraces.log("putKeysInMiddle part 2",currentTurn,myUserId)
+			CheatMain.myTraces.log("putKeysInMiddle part 2",cardsToHold.callingUser,myUserId)
 			if(isViewer){
 				
-			}else if(myUserId == currentTurn){
+			}else if(myUserId == cardsToHold.callingUser){
 				var rivalCards:Array = CardsAPI.cardsData.getCardsInUserHand(rivalId)
 				menuController.showCheatChoiseMenu(cardsToHold,rivalHand.getCardCount()!=0)
 				if(rivalHand.getCardCount() != 0){

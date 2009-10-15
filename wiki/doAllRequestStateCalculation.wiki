@@ -8,7 +8,7 @@ doAllRequestStateCalculation(keys:Array/*Object*/)
 === Description ===
 
 Call this function when you need secret calculations that require logic to be made.
-to make this function work properly sell also [gotRequestStateCalculation]
+to make this function work properly see also [gotRequestStateCalculation]
 
 This function will trigger a [gotStateChanged]
 
@@ -34,9 +34,9 @@ a secret random serverEntry as a random seed for the mine positions on the board
 override public function gotMatchStarted(allPlayerIds:Array, finishedPlayerIds:Array, extraMatchInfo:Object, matchStartedTime:int, serverEntries:Array):void
 {
 	doAllRequestRandomState("randomSeed",false);
-	var serverEntries:Array = new Array();
-	serverEntries.push("randomSeed");
-	doAllRequestStateCalculation(serverEntries);
+	var keysArray:Array = new Array();
+	keysArray.push("randomSeed");
+	doAllRequestStateCalculation(keysArray);
 }
 
 override public function gotStateChanged(serverEntries:Array):void

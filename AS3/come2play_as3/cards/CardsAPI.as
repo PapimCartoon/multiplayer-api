@@ -2,6 +2,7 @@ package come2play_as3.cards
 {
 
 	import come2play_as3.api.auto_copied.AS3_vs_AS2;
+	import come2play_as3.api.auto_copied.Logger;
 	import come2play_as3.api.auto_copied.SerializableClass;
 	import come2play_as3.api.auto_copied.StaticFunctions;
 	import come2play_as3.api.auto_copied.T;
@@ -16,6 +17,7 @@ package come2play_as3.cards
 	
 	public class CardsAPI extends ClientGameAPI
 	{
+		static private var CARDS_API_LOGGER:Logger = new Logger("CardAPILogger",20)
 		static public var cardsData:CardsAPI
 		private var currentCard:int
 		private var cardGraphics:MovieClip;
@@ -220,7 +222,7 @@ package come2play_as3.cards
 			if(deletFromDic(waitingCards,key))	return true ;
 			if(deletFromDic(flippedCards,key))	return true;
 			if(deletFromDic(drawingCards,key))	return true;
-			if(deletFromDic(deckCards,key))	return true;		
+			if(deletFromDic(deckCards,key))	return true;
 			for each(var userId:int in allPlayerIds){
 				if(deletFromDic(cardsOwners[userId],key))	return true;
 			}
@@ -229,6 +231,19 @@ package come2play_as3.cards
 			}
 			return false;
 		}
+		public function getDicData():String{
+			var resArr:Array = []
+			var dics:Array = [waitingCards,flippedCards,drawingCards,deckCards]
+			resArr.push("")
+			for	each(var dic:Dictionary in dics){
+				resArr.push("---------------------------------")
+				for(var str:String in dic){
+					resArr.push([str,dic[str]])
+				}
+			}
+			return resArr.join("\n")
+		}
+		
 		
 		override public function gotStateChanged(serverEntries:Array):void{
 			StaticFunctions.assert(allPlayerIds!=null,"must call super.gotMatchStarted(serverEntries:Array) to use cards API")
@@ -256,7 +271,7 @@ package come2play_as3.cards
 				if(serverEntry.key is CardKey){
 					var key:CardKey = serverEntry.key as CardKey
 					var keyString:String = key.toString();
-					if(!isLoad)	StaticFunctions.assert(deleteOldPosition(keyString),"can't delete a non existing key",keyString)
+					if(!isLoad)	StaticFunctions.assert(deleteOldPosition(keyString),"can't delete a non existing key",keyString,"getDicData",new dataPrinter(getDicData))
 					if((serverEntry.visibleToUserIds == null) || (allPlayerIds.length == serverEntry.visibleToUserIds.length)){
 						if(isSinglePlayer){
 							if(userCards>0){
@@ -297,9 +312,7 @@ package come2play_as3.cards
 			arr.push(["drawingCards: "+AS3_vs_AS2.dictionarySize(drawingCards)])
 			arr.push(["flippedCards: "+AS3_vs_AS2.dictionarySize(flippedCards)])
 			arr.push(["deckCards: "+AS3_vs_AS2.dictionarySize(deckCards)])
-			for(var id:String in cardsOwners){		
-				arr.push(["cardsOwners["+id+"]: "+AS3_vs_AS2.dictionarySize(cardsOwners[id])])
-			}
+			CARDS_API_LOGGER.log("sent cards Data",arr,"changedCards",changedCards)
 			if(changedCards.length!=0)	cardGraphics.dispatchEvent(new GotCardsEvent(changedCards,addedData))
 		}
 		
@@ -321,4 +334,15 @@ package come2play_as3.cards
 		}
 
 	}
+}
+class dataPrinter{
+	private var printFunction:Function
+	public function dataPrinter(printFunction:Function):void{
+		this.printFunction = printFunction;
+	}
+	
+	public function toString():String{
+		return	printFunction()	
+	}
+		
 }

@@ -35,6 +35,7 @@ package come2play_as3.cheat.graphics.menuItems
 		}
 		public function reStartCount(num:int,count:int,canTrust:Boolean):void{
 			this.canTrust = canTrust;
+			doNotTrustButtonImp.enabled = true;
 			notCheat_txt.visible = trustButtonImp.visible = canTrust
 			if(count==1){
 				headerText.text = T.i18nReplace("opponent put a $cardType$",{cardType:num})
@@ -47,6 +48,7 @@ package come2play_as3.cheat.graphics.menuItems
 		}
 		public function stopTimer():void{
 			timePassed.stop();
+			doNotTrustButtonImp.enabled = false;
 		}
 	}
 }

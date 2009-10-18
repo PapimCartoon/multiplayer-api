@@ -59,6 +59,7 @@ package come2play_as3.cheat
 			doStoreState([UserEntry.create(PlayerAction.create(myUserId,PlayerAction.PUT_HIDDEN),ev)])
 		}
 		private function handleChangedCards(ev:GotCardsEvent):void{
+			recievedData.log("handleChangedCards",ev.cardsChanged,"addedAction=",ev.addedAction)
 			var cardsChanged:Array = ev.cardsChanged;
 			var cardToDraw:Array = []
 			var cardsToPut:Array = []

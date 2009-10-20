@@ -660,7 +660,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 		
 		
 		<load_saved_match type="optional">
-			<saved_match_id type="int">242</saved_match_id>
+			<saved_match_id type="int">22</saved_match_id>
 			<match_state></match_state>
 			<saved_player_ids></saved_player_ids>
 			<saved_match_md5>alltembels</saved_match_md5>

@@ -97,6 +97,9 @@ package come2play_as3.api {
 				infoEntries.push(InfoEntry.create(str,custom[str]))
 			return infoEntries;
 		}
+		public function tryIncreaseBet():void{
+			StaticFunctions.someMovieClip.dispatchEvent(new Event(StaticFunctions.INCREASE_BET_EVENT))
+		}
 		public function getMyUserId():int {
 			return AS3_vs_AS2.as_int(T.custom(API_Message.CUSTOM_INFO_KEY_myUserId,0));
 		}

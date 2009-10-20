@@ -117,7 +117,7 @@ package emulator.auto_copied
     			// isPause is called when the game is in progress,
     			// and other info is passed before the game starts.
 			} else if (gotMsg is API_GotKeyboardEvent) {						    			
-    			checkInProgress(true,gotMsg);
+    			//checkInProgress(true,gotMsg);
     			
 				// can be sent whether the game is in progress or not
 			} else if (gotMsg is API_GotUserInfo) { 

@@ -9,7 +9,8 @@ package come2play_as3.api.auto_copied
 	
 // Only StaticFunctions and JSON are copied to flex_utils 
 public final class StaticFunctions
-{			
+{	
+	public static var INCREASE_BET_EVENT:String = "IncreaseBetEvent";		
 	public static var GOOGLE_REVISION_NUMBER:int = 1158;
 	public static var COME2PLAY_REVISION_NUMBER:int = 4521;
 	public static var ERRORS_THROWN_LOGGER:Logger = new Logger("Throw",5);

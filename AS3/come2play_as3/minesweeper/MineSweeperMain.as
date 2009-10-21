@@ -12,7 +12,7 @@ import flash.utils.*;
 		//consts
 		static public const squareSize:int = 19;
 		
-		private var graphics:MovieClip;
+		private var _graphics:MovieClip;
 		private static var boardWidth:int=10;
 		private static var mineAmount:int=10;
 		//calculator variables
@@ -31,27 +31,27 @@ import flash.utils.*;
 	/** 
 	 * Written by: Ofir Vainshtein (ofir@come2play.com)
  	**/
-		public function MineSweeperMain(graphics:MovieClip)
+		public function MineSweeperMain(_graphics:MovieClip)
 		{ 
 			(new PlayerMove).register();
 			(new ServerBox).register();
 			(new ComputerMove).register();
-			super(graphics);
-			this.graphics = graphics;
-			AS3_vs_AS2.waitForStage(graphics,constructGame);
+			super(_graphics);
+			this._graphics = _graphics;
+			AS3_vs_AS2.waitForStage(_graphics,constructGame);
 			computerMoveTimer = new AS3_Timer("computerMoveTimer",100,0);	
 			AS3_vs_AS2.myAddEventListener("computerMoveTimer",computerMoveTimer,TimerEvent.TIMER,computerMakeMove)
 		}
 		public function constructGame():void
 		{ 
 			graphicPlayed = false;
-			graphics.addChild(new Background);
-			mineSweeperLogic  = new MineSweeperLogic(this,graphics);	
+			_graphics.addChild(new Background);
+			mineSweeperLogic  = new MineSweeperLogic(this,_graphics);	
 			startGraphic= new Starter()
 			startGraphic.x=170;
 			startGraphic.y=160;
 			startGraphic.stop();
-			graphics.addChild(startGraphic);
+			_graphics.addChild(startGraphic);
 			AS3_vs_AS2.myAddEventListener("startGraphic",startGraphic,"starterEnd",startGame);
 			doRegisterOnServer();
 		}
@@ -88,9 +88,9 @@ import flash.utils.*;
 			if(!computerMoveTimer.running)	computerMoveTimer.delay = T.custom("ComputerSpeed",2000) as int;
 			for each(var info:InfoEntry in infoEntries){
 				if(info.key == CUSTOM_INFO_KEY_gameWidth){
-					graphics.width = T.custom(CUSTOM_INFO_KEY_gameWidth,int(graphics.width)) as int;
+					_graphics.width = T.custom(CUSTOM_INFO_KEY_gameWidth,int(_graphics.width)) as int;
 				}else if(info.key == CUSTOM_INFO_KEY_gameHeight){
-					graphics.height = T.custom(CUSTOM_INFO_KEY_gameHeight,int(graphics.height)) as int;
+					_graphics.height = T.custom(CUSTOM_INFO_KEY_gameHeight,int(_graphics.height)) as int;
 				}
 			}		
 			boardWidth = T.custom("Board Width", 12) as int;

@@ -23,7 +23,7 @@ import nl.demonsters.debugger.MonsterDebugger;
  * Written by: Yoav Zibin (yoav@zibin.net)
  */
 public final class TictactoeMain extends ClientGameAPI {
-	public static function createGame(graphics:MovieClip):void {
+	public static function createGame(_graphics:MovieClip):void {
 		//var arr:Array = ["a","b","a","a","a","a","a","a","a","a","a","b","ccc","x"];
 		//trace(StaticFunctions.sortAndCountOccurrences(arr));
 		
@@ -67,14 +67,14 @@ public final class TictactoeMain extends ClientGameAPI {
 		}
 		
 		BaseGameAPI.GAME_USE_KEYBOARD = TICTACTOE_USE_KEYBOARD;
-		new TictactoeMain(graphics);	  
+		new TictactoeMain(_graphics);	  
 	}
 	private static const VIEWER:int = -1; 	
 	
 	// grid creates all the cell movieclips and places them in a grid
 	private var grid:CreateGrid;
 	// graphics is the root movieclip which will contain all the cell movieclips
-	private var graphics:MovieClip;
+	private var _graphics:MovieClip;
 	// allCells contains all TictactoeSquare objects
 	private var allCells:Array/*TictactoeSquare*/;
 	// squares[row][col] is the square at position TictactoeSquare(row,col)
@@ -108,18 +108,18 @@ public final class TictactoeMain extends ClientGameAPI {
 	private var gameWidth:int;
 	
 	
-	public function TictactoeMain(graphics:MovieClip) {
-		super(graphics);	
+	public function TictactoeMain(_graphics:MovieClip) {
+		super(_graphics);	
 									
-		//new MonsterDebugger(graphics);
+		//new MonsterDebugger(_graphics);
 		
 		new TictactoeSquare().register();	 
-		this.graphics = graphics;	
+		this._graphics = _graphics;	
 		// It's best to hide the board until the game starts.
-		AS3_vs_AS2.setVisible(graphics,false);	
-		graphics.stop();
+		AS3_vs_AS2.setVisible(_graphics,false);	
+		_graphics.stop();
 				
-		AS3_vs_AS2.waitForStage(graphics, AS3_vs_AS2.delegate(this,this.constructGame));
+		AS3_vs_AS2.waitForStage(_graphics, AS3_vs_AS2.delegate(this,this.constructGame));
 	}
 	public function constructGame():void {
 		doRegisterOnServer();
@@ -165,7 +165,7 @@ public final class TictactoeMain extends ClientGameAPI {
 		// the number of rows&cols cannot be changed
 		if (grid==null) {  					
 			grid = new CreateGrid();
-			grid.createMovieClips(graphics, "TicTacToeSquare");
+			grid.createMovieClips(_graphics, "TicTacToeSquare");
 		
 			allCells = [];
 			squares = new Array(ROWS());
@@ -173,7 +173,7 @@ public final class TictactoeMain extends ClientGameAPI {
 				squares[row] = new Array(COLS());
 				for(var col:int=0; col<COLS(); col++) {
 					var cell:TictactoeSquare = TictactoeSquare.create(row, col);
-					setSquareGraphic(cell, new TictactoeSquareGraphic(this, AS3_vs_AS2.getMovieChild(graphics,"Square_"+row+"_"+col), cell) ); 
+					setSquareGraphic(cell, new TictactoeSquareGraphic(this, AS3_vs_AS2.getMovieChild(_graphics,"Square_"+row+"_"+col), cell) ); 
 					allCells.push(cell);
 				}
 			}		
@@ -212,10 +212,10 @@ public final class TictactoeMain extends ClientGameAPI {
 			gameWidth = newWidth;
 			gameHeight = newHeight;			
 			StaticFunctions.storeTrace(["dimensions=",gameHeight,"x",gameWidth," gridDimesions=",grid.height(),"x",grid.width()]);
-			AS3_vs_AS2.scaleMovieY(graphics, 100*gameHeight/grid.height());	
-			AS3_vs_AS2.scaleMovieX(graphics, 100*gameWidth/grid.width());
+			AS3_vs_AS2.scaleMovieY(_graphics, 100*gameHeight/grid.height());	
+			AS3_vs_AS2.scaleMovieX(_graphics, 100*gameWidth/grid.width());
 		}			
-		AS3_vs_AS2.setVisible(graphics, true);	
+		AS3_vs_AS2.setVisible(_graphics, true);	
 		
 		
 		this.allPlayerIds = allPlayerIds;

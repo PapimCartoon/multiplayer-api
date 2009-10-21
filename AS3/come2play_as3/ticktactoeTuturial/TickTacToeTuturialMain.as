@@ -16,11 +16,11 @@ package come2play_as3.ticktactoeTuturial
 		private var myUserId:int;
 		private var userDataArray:Array;
 		private var isGameOver:Boolean;
-		private var graphics:MovieClip;
+		private var _graphics:MovieClip;
 		public function TickTacToeTuturialMain(stageMovieClip:MovieClip)
 		{
 			(new TickTacToeMove).register();
-			graphics = stageMovieClip;
+			_graphics = stageMovieClip;
 			gameLogic = new TickTacToeTuturialLogic(stageMovieClip);
 			gameLogic.addEventListener(TickTacToeMove.TickTacToeMoveEvent,gotUserMove);
 			gameLogic.addEventListener(SetNextTurnEvent.SetNextTurnEvent,nextTurn);

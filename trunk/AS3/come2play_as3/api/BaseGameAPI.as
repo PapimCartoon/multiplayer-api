@@ -48,7 +48,7 @@ package come2play_as3.api {
 				errMessage = errMessage + StaticFunctions.cutString(StaticFunctions.getTraces(),10000); 
 			sendMessage( API_DoAllFoundHacker.create(hackerUserId,errMessage) ); 
 		}
-		public function toString():String {
+		override public function toString():String {
 			var output:Array/*String*/ = [];
 			output.push("Server State(client side) : \n\n");					
 			var serverEntries:Array/*ServerEntry*/ = new Array();

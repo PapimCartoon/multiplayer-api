@@ -6,7 +6,7 @@ package come2play_as3.api.auto_copied
 	import flash.external.*;
 	import flash.net.*;
 	 
-	public class LocalConnectionUser
+	public class LocalConnectionUser extends MovieClip
 	{
 		public static var REVIEW_USER_ID:int = -1; // special userId that is used for reviewing games
 		public static var IS_LOCAL_CONNECTION_UDERSCORE:Boolean = false;		

@@ -11,7 +11,6 @@ package emulator {
 	import flash.text.*;
 	import flash.utils.Timer;
 	public class InfoContainer extends MovieClip {
- 
 		private var ldr:Loader;
 		private var gameWidth:int
 		private var gameHeight:int
@@ -46,15 +45,9 @@ package emulator {
 		private var ddsGotOperations:DelayDoSomething;
 		private var frameSprite:Sprite;	
 		private var isPlaying:Boolean;
-		
 		private var messageQueue:Array;
 		private var delayConstructor:Timer;
 	
-		public function InfoContainer()
-		{
-
-		}
-
 		public function constructInfoContainer():void{
 			messageQueue = new Array();
 			stage.addEventListener(KeyboardEvent.KEY_UP, reportKeyUp);

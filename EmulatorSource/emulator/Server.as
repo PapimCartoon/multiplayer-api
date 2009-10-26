@@ -98,8 +98,8 @@ package emulator {
 		private var cmbCommand:ComboBox;
 		private var cmbTarget:ComboBox;
 		private var txtTooltip:TextField;
-		private var startWidth:int = 620;
-		private var startHeight:int = 470;
+		private var startWidth:int = 560;
+		private var startHeight:int = 420;
 		private var pnlSave:MovieClip;
 		private var txtSaveName:TextField;
 		private var btnSaveOK:Button;
@@ -315,7 +315,7 @@ package emulator {
 			messageBoxGraphic.y =  tbsPanel.height/2;
 			goBackToHistory = new Button()
 			goBackToHistory.x = 410;
-			goBackToHistory.y = startHeight - 80;
+			goBackToHistory.y = startHeight - 90;
 			goBackToHistory.width = 60;
 			goBackToHistory.label ="Revert"
 			goBackToHistory.addEventListener(MouseEvent.CLICK, doGoBack);
@@ -323,7 +323,7 @@ package emulator {
 			this.addChild(goBackToHistory);
 			playByPlay = new Button
 			playByPlay.x = 480;
-			playByPlay.y = 306;
+			playByPlay.y = startHeight - 90;
 			playByPlay.width = 60;
 			playByPlay.label ="Replay"
 			playByPlay.addEventListener(MouseEvent.CLICK, doPlayByPlay);
@@ -1059,7 +1059,7 @@ package emulator {
 		public function addMessageLog(user:String, funcname:String, message:String):void {
 			if(isLoging){
 				var msg:Message = new Message();
-				msg.message = message//message.replace(/(\s)+/gm, " ");
+				msg.message =/* message*/message.replace(/(\s)+/gm, " ");
 				msg.sender = user;
 				msg.funcname = funcname;
 				msg.num = iMessages++;
@@ -2110,7 +2110,6 @@ class MessagQueue
 	}
 	public function shiftDoAll():Array{
 		var doAllMessages:Array = new Array;
-		//var ongoingPlayers:Array = serverPointer.getOngoingPlayerIds();
 		for each (var playerMessages:Array in allPlayerMessages){
 			var tempQueueEntry:QueueEntry = playerMessages.shift();
 			if(tempQueueEntry != null)	doAllMessages.push(tempQueueEntry);

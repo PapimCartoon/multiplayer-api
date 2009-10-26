@@ -97,7 +97,7 @@ public final class ObjectDictionary extends SerializableClass
 				
 				// Note that I check for oldKey (not key), so I can use indexOf that checks using object identity (not areEqual)
 				var indexInAll:int = AS3_vs_AS2.IndexOf(allKeys,oldKey);
-				if (indexInAll==-1) throw new Error("Internal error in ObjectDictionary");
+				//if (indexInAll==-1) throw new Error("Internal error in ObjectDictionary"); // todo: yoav this causes a bug in loading
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 

@@ -42,8 +42,7 @@ import flash.utils.*;
 			computerMoveTimer = new AS3_Timer("computerMoveTimer",100,0);	
 			AS3_vs_AS2.myAddEventListener("computerMoveTimer",computerMoveTimer,TimerEvent.TIMER,computerMakeMove)
 		}
-		public function constructGame():void
-		{ 
+		public function constructGame():void{ 
 			graphicPlayed = false;
 			_graphics.addChild(new Background);
 			mineSweeperLogic  = new MineSweeperLogic(this,_graphics);	
@@ -56,8 +55,7 @@ import flash.utils.*;
 			doRegisterOnServer();
 		}
 		
-		private function startGame(ev:Event = null):void
-		{
+		private function startGame(ev:Event = null):void{
 			if(loadServerEntries != null)
 				mineSweeperLogic.loadBoard(loadServerEntries);
 			if((allPlayerIds.indexOf(-1) != -1) && isPlaying){ 
@@ -65,24 +63,20 @@ import flash.utils.*;
 					computerMoveTimer.start();
 			}
 			allowMoves = true;
-			if(! ((isBack()) || (isInReview())) )
-				animationEnded("startGraphicAnimation");
+			if(! ((isBack()) || (isInReview())) )	animationEnded("startGraphicAnimation");
 		}
-		public function gameOver(playerMatchOverArr:Array/*PlayerMatchOver*/):void
-		{
+		public function gameOver(playerMatchOverArr:Array/*PlayerMatchOver*/):void{
 			doAllEndMatch(playerMatchOverArr);
 			isPlaying = false;
 			allowMoves = false;
 		}
-		public function makePlayerMove(playerMove:PlayerMove):void
-		{
+		public function makePlayerMove(playerMove:PlayerMove):void{
 			var key:Object ={xPos:playerMove.xPos,yPos:playerMove.yPos,playerId:playerMove.playerId}
 			var serverKey:Object = {xPos:playerMove.xPos,yPos:playerMove.yPos}
 			doStoreState([UserEntry.create(key,playerMove,false)],[RevealEntry.create(serverKey,null,1)]);
 		}
 		
-		override public function gotCustomInfo(infoEntries:Array):void
-		{
+		override public function gotCustomInfo(infoEntries:Array):void{
 			myUserId = T.custom(CUSTOM_INFO_KEY_myUserId, null) as int;
 
 			if(!computerMoveTimer.running)	computerMoveTimer.delay = T.custom("ComputerSpeed",2000) as int;
@@ -97,10 +91,8 @@ import flash.utils.*;
 			mineAmount = T.custom("Mine Amount", 20) as int;
 
 		}
-		override public function gotRequestStateCalculation(requestId:int, serverEntries:Array):void
-		{
-			for each (var serverEntry:ServerEntry in serverEntries)
-			{
+		override public function gotRequestStateCalculation(requestId:int, serverEntries:Array):void{
+			for each (var serverEntry:ServerEntry in serverEntries){
 				if(serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" stored a random key");
 				if (serverEntry.key == "Board Width") 
 					var calcWidth:int = serverEntry.value as int;
@@ -111,8 +103,7 @@ import flash.utils.*;
 			}
 			doAllStoreStateCalculation(requestId,MineSweeperCalculatorLogic.createMineBoard(calcRandomSeed,calcMineAmount,calcWidth));	
 		}
-		override public function gotUserInfo(userId:int, entries:Array/*InfoEntry*/):void 
-		{
+		override public function gotUserInfo(userId:int, entries:Array/*InfoEntry*/):void {
 
 		}
 		private var canSendMove:Boolean = false;
@@ -135,14 +126,12 @@ import flash.utils.*;
 			return T.custom(API_Message.CUSTOM_INFO_KEY_isInReview,false) as Boolean
 		}
 		
-		override public function gotMatchStarted(allPlayerIds:Array, finishedPlayerIds:Array, serverEntries:Array):void
-		{
+		override public function gotMatchStarted(allPlayerIds:Array, finishedPlayerIds:Array, serverEntries:Array):void{
 			canSendMove = true;
 			isPlaying = true;
 			this.allPlayerIds = allPlayerIds.concat();
 			loadServerEntries = null;
 			graphicPlayed = false;
-			
 			startGraphic.visible = !isInReview();
 			if((this.allPlayerIds.length == 1) && (!isInReview())){
 				this.allPlayerIds.push(-1);
@@ -170,8 +159,7 @@ import flash.utils.*;
 				mineSweeperLogic.mine = false;
 			
 		}
-		override public function gotMatchEnded(finishedPlayerIds:Array/*int*/):void 
-		{
+		override public function gotMatchEnded(finishedPlayerIds:Array/*int*/):void {
 			AS3_GATracker.COME2PLAY_TRACKER.trackEvent("Tests","Minesweeper send","sent data");
 			computerMoveTimer.reset();
 			mineSweeperLogic.isPlaying = false;
@@ -182,62 +170,48 @@ import flash.utils.*;
 				
 			}else if (serverEntry.value == null){
 				if(serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" deleting a move must be agreed by all users");
-				//if(!isPlaying) return;
-			}else if(serverEntry.value is ServerBox)//state changed due to RevealEntry caused by a player move
-			{
+			}else if(serverEntry.value is ServerBox){//state changed due to RevealEntry caused by a player move
 				var serverBox:ServerBox = serverEntry.value as ServerBox;
 				if(serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" stored the data and not the calculator");
 				if(!isPlaying) return;
 				mineSweeperLogic.addServerBox(serverBox);
 			}else if (serverEntry.value == null){
 				if(serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" deleting a move must be agreed by all users");
-				//if(!isPlaying) return;
-			}else if(serverEntry.value.type == "deadSpace")//player found a safe zone
-			{
+			}else if(serverEntry.value.type == "deadSpace"){//player found a safe zone
 				serverEntry = serverEntries[2];
 				if(serverEntry == null) return;
 				if(serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" stored the data and not the calculator");
 				if(!isPlaying) return;
-				if(serverEntry.value is Array)
-				{
+				if(serverEntry.value is Array){
 					var safeSquares:Array = serverEntry.value as Array;
 					mineSweeperLogic.addSafeZone(safeSquares);
 				}
 			}		
 			doAllSetMove();
 		}
-		override public function gotStateChanged(serverEntries:Array):void
-		{
-			if(!isPlaying)
-				return;
+		override public function gotStateChanged(serverEntries:Array):void{
+			if(!isPlaying)	return;
 			var newMove:Boolean;
 			var serverEntry:ServerEntry = serverEntries[0]
-			if(serverEntry.key == "randomSeed")
-			{
+			if(serverEntry.key == "randomSeed"){
 				if(serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" tryed to change custom info or random seed");
-			}
-			else if(serverEntries.length >= (boardWidth * boardWidth))//state changed due to creation of board by calculators
-			{
+			}else if(serverEntries.length >= (boardWidth * boardWidth)){//state changed due to creation of board by calculators
 				//got calculations made by calculator	
 				if(serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" stored the data and not the calculator");
 				if(!isPlaying) return;
-				if(!graphicPlayed)
-				{
+				if(!graphicPlayed){
 					if(! ((isBack()) || isInReview())){
 						animationStarted("startGraphicAnimation");
 						startGraphic.play();
 					}
 				}
-			}
-			else if(serverEntry.value is PlayerMove)//state changed due to player move
-			{
+			}else if(serverEntry.value is PlayerMove){//state changed due to player move
 				var playerMove:PlayerMove = serverEntry.value as PlayerMove;
 				if(playerMove.playerId != serverEntry.storedByUserId) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" stored the data for another user");
 				if(playerMove.playerId != serverEntry.key.playerId) doAllFoundHacker(serverEntry.storedByUserId,serverEntry.storedByUserId+" key did not match the value");
 				if(!isPlaying) return;
 				newMove = mineSweeperLogic.addPlayerMove(playerMove);
-				if(newMove)	
-				{	
+				if(newMove)	{	
 					addNewMove(serverEntries)
 					return;
 				}
@@ -254,10 +228,8 @@ import flash.utils.*;
 				
 			}
 		}
-		override public function gotKeyboardEvent(isKeyDown:Boolean, charCode:int, keyCode:int, keyLocation:int, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean):void
-		{
-			if(mineSweeperLogic!=null)
-				mineSweeperLogic.mine = shiftKey;
+		override public function gotKeyboardEvent(isKeyDown:Boolean, charCode:int, keyCode:int, keyLocation:int, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean):void{
+			if(mineSweeperLogic!=null)	mineSweeperLogic.mine = shiftKey;
 		}
 
 	}

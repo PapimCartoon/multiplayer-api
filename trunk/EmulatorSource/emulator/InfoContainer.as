@@ -38,7 +38,6 @@ package emulator {
 		private var lblClient:Label;
 		private var btnDown:SimpleButton;
 		private var btnUp:SimpleButton;
-		private var txtMyName:TextField;
 		private var pnlBackground:MovieClip;
 		private var lblWait:TextField;
 		private var ddsDoOperations:DelayDoSomething;
@@ -66,8 +65,7 @@ package emulator {
 			lblWait.visible = false;
 			lblWait.autoSize = TextFieldAutoSize.LEFT;
 			this.addChild(lblWait);
-			if((root.loaderInfo.parameters["width"] != null) &&  (root.loaderInfo.parameters["height"] != null))
-			{
+			if((root.loaderInfo.parameters["width"] != null) &&  (root.loaderInfo.parameters["height"] != null)){
 				gameWidth = Number(root.loaderInfo.parameters["width"])
 				gameHeight =Number(root.loaderInfo.parameters["height"])
 			}
@@ -130,6 +128,7 @@ package emulator {
 			lblClient.x = 8;
 			lblClient.y = 1;
 			lblClient.height = 22;
+			lblClient.text = ""
 			this.addChild(lblClient);
 			
 			var hit:MovieClip = new MovieClip();
@@ -182,14 +181,7 @@ package emulator {
 			btnUp.addEventListener(MouseEvent.CLICK, btnUpClick);
 			lblClient.addChild(btnUp);
 			
-			txtMyName = new TextField();
-			txtMyName.textColor = 0x000000;
-			txtMyName.selectable = false;
-			txtMyName.width = 55;
-			txtMyName.height = 22;
-			txtMyName.x = 3;
-			lblClient.addChild(txtMyName);
-			
+
 			this.addChild(MsgBox);
 			
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, MsgBox.keyDown);
@@ -219,11 +211,9 @@ package emulator {
 			ddsGotOperations = new DelayDoSomething(function (msg:API_Message):void { doSomething(msg, false) }, fromDelay, toDelay);
 			
 			
-			if(root.loaderInfo.parameters["calculatorsOn"] == "true" )
-			{
-				txtMyName.text = "Calculator";
+			if(root.loaderInfo.parameters["calculatorsOn"] == "true" ){
+				lblClient.text = "Calculator";
 				if(root.loaderInfo.parameters["oldgame"]=="0"){
-					// useful code
 					var rqst:URLRequest = new URLRequest(root.loaderInfo.parameters["game"] + "?prefix=" + sInnerPrefix);
 				}else {
 					if(root.loaderInfo.parameters["old_container"] == null){
@@ -236,14 +226,11 @@ package emulator {
 				ldr.contentLoaderInfo.addEventListener(Event.COMPLETE, onLoadComplete);
 				ldr.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, onLoadError);
 				ldr.load(rqst);
+			}else{
+				btnStart.addEventListener(MouseEvent.CLICK, btnStartClick);
+				this.addChild(btnStart);
 			}
-			else
-			{
-			btnStart.addEventListener(MouseEvent.CLICK, btnStartClick);
-			this.addChild(btnStart);
-			}
-			resizeStage(null);
-			
+			resizeStage(null);	
 		}
 		private function reportKeyUp(event:KeyboardEvent):void {
 			reportKey(false, event);
@@ -269,10 +256,8 @@ package emulator {
 			var doTrace:API_DoTrace = msg as API_DoTrace;
 			sendDoOperation(doTrace);
 		}
-		public function nextMessage():void
-		{
-			if(messageQueue.length > 0)
-			{
+		public function nextMessage():void{
+			if(messageQueue.length > 0){
 				var messageToSend:API_Message = messageQueue[0];
 				connectionToGame.sendMessage(messageToSend);
 			}
@@ -280,26 +265,19 @@ package emulator {
 		
 		
 		public function doSomething(msg:API_Message, isServer:Boolean):void {
-			if(isServer)
-			{
+			if(isServer){
 				connectionToServer.sendMessage(msg);
-				if(msg is API_Transaction)
-				{
+				if(msg is API_Transaction){
 					var apiTransaction:API_Transaction = msg as API_Transaction;
-					if(apiTransaction.callback != null)
-					{
+					if(apiTransaction.callback != null){
 						messageQueue.shift();
 						nextMessage();
 					}
-
 				}
 				//send message to server 
-			}
-			else
-			{
+			}else{
 				messageQueue.push(msg);
-				if (messageQueue.length == 1)
-					nextMessage();
+				if (messageQueue.length == 1)	nextMessage();
 			}
 		}
 		public function onConnectionStatus(evt:StatusEvent):void {
@@ -324,13 +302,10 @@ package emulator {
 		}
 		
 		private function btnStartClick(evt:Event):void {
-			if (!btnStart.visible) {
-				return;
-			}
+			if (!btnStart.visible) return;
 			btnStart.visible = false;
 			lblWait.visible = true;
 			if(root.loaderInfo.parameters["oldgame"]=="0"){
-				// useful code
 				var rqst:URLRequest = new URLRequest(root.loaderInfo.parameters["game"] + "?prefix=" + sInnerPrefix);
 			}else {
 				if(root.loaderInfo.parameters["old_container"] == null){
@@ -345,8 +320,6 @@ package emulator {
 			ldr.load(rqst);
 		}
 		
-		
-		
 		private function onLoadError(evt:IOErrorEvent):void {
 			MsgBox.Show("Can't load game file", "Error");
 		}
@@ -355,29 +328,11 @@ package emulator {
 			loaded = true;			
 		}
 		
-		private function centerGraphic(graphic:DisplayObject):void
-		{
+		private function centerGraphic(graphic:DisplayObject):void{
 			graphic.x =(gameWidth -graphic.width)/2 + ldr.x ;
 			graphic.y = (gameHeight- graphic.height)/2 + ldr.y ;
 		}
 		private function resizeStage(evt:Event):void {
-			/*var _x:int, _y:int;
-			_x = stage.stageWidth - 20+2;
-			_y = stage.stageHeight - 42+2;
-			
-			pnlBackground.graphics.clear();
-			pnlBackground.graphics.beginFill(0xFFFFFF);
-			pnlBackground.graphics.drawRect(0, 0, stage.stageWidth, stage.stageHeight);
-			pnlBackground.graphics.lineStyle(1, 0xb9baba);
-			pnlBackground.graphics.drawRect(2, 22, _x, _y);			
-			pnlBackground.graphics.endFill();
-			
-			pnlInfo.graphics.clear();
-			pnlInfo.graphics.lineStyle(1, 0x000000, 0);
-			pnlInfo.graphics.beginFill(0x80BE40);
-			pnlInfo.graphics.drawRect(2, 22,175,_y);
-			pnlInfo.graphics.endFill();
-			*/
 			centerGraphic(btnStart);
 			centerGraphic(lblWait);
 			txtSize.text = "Game Size: " + Math.round(stage.stageWidth) + "x" + Math.round(stage.stageHeight);
@@ -385,18 +340,13 @@ package emulator {
 		}
 		
 		
-        public function gotMessage(msg:API_Message,isServer:Boolean):void
-        {
-        try{	
-        		if(msg is API_GotCustomInfo)
-				{
+        public function gotMessage(msg:API_Message,isServer:Boolean):void{
+        	try{	
+        		if(msg is API_GotCustomInfo){
 					var CustomMessage:API_GotCustomInfo = msg as API_GotCustomInfo
-					for each(var infoEntry:InfoEntry in CustomMessage.infoEntries)
-					{
-						if(infoEntry.key == API_Message.CUSTOM_INFO_KEY_myUserId)
-						{
+					for each(var infoEntry:InfoEntry in CustomMessage.infoEntries){
+						if(infoEntry.key == API_Message.CUSTOM_INFO_KEY_myUserId){
 							bStarted = true;
-							
 							iMyID = infoEntry.value as int;
 							break;
 						}
@@ -404,32 +354,24 @@ package emulator {
 					sendGotOperation(msg);
 					return;
 				}
-        		
-				if (msg is API_GotMatchStarted)
+				if (msg is API_GotMatchStarted){
 					gotMatchStarted(msg as API_GotMatchStarted);		
-				else if(msg is API_GotUserInfo)
+				}else if(msg is API_GotUserInfo){
 					gotUserInfo(msg as API_GotUserInfo);
-				else if(msg is API_GotMatchEnded)
+				}else if(msg is API_GotMatchEnded){
 					gotMatchEnded(msg as API_GotMatchEnded);
-				else if(msg is API_Transaction)
-				{
+				}else if(msg is API_Transaction){
 					var msg_transaction:API_Transaction = msg as API_Transaction;
-					for each(var apiMsg:API_Message in msg_transaction.messages)
-					{
-						if(apiMsg is API_DoAllSetTurn)
-							doAllSetTurn(apiMsg as API_DoAllSetTurn)
-					}
-					
+					for each(var apiMsg:API_Message in msg_transaction.messages){
+						if(apiMsg is API_DoAllSetTurn)	doAllSetTurn(apiMsg as API_DoAllSetTurn)
+					}	
 				}
 
-				if (isServer)
+				if (isServer){
 					sendDoOperation(msg);
-				else  
+				}else{ 
 					sendGotOperation(msg);
-
-
-				
-
+				}
 			} catch (err:Error) { 
 				MsgBox.Show(err.message, "Error: "+ err.getStackTrace());
 			}	
@@ -463,32 +405,32 @@ package emulator {
 					str=info.userName+"(user_id="+info.userID+", viewer)";
 				}
 				if(info.userID==iMyID){
-					txtMyName.text = info.userName;
+					lblClient.text = info.userName
 				}
 				txtUsers.htmlText+=str + "<br>";
 		}
 		public function gotMatchStarted(msg:API_GotMatchStarted):void { 
-				isPlaying =true;
-				txtTurn.text = "";
-				lblWait.visible = false;
-				txtUsers.htmlText = "<b>Users:</b><br>";
-				var j:int,str:String,u:UserInfo;
-				for (var i:int = 0; i < aUsers.length; i++) {
-					u = aUsers[i];
-					str = u.userName + "(user_id=" + u.userID+", ";
-					if (msg.allPlayerIds.indexOf(u.userID) != -1) {
-						str += "player";
-						u.isPlayer = true;
-						u.gameOver = false;
-					}else {
-						str += "viewer";
-						u.isPlayer = false;
-						u.gameOver = false;
-					}
-					str += ")";
-					txtUsers.htmlText+=str + "<br>";
+			isPlaying =true;
+			txtTurn.text = "";
+			lblWait.visible = false;
+			txtUsers.htmlText = "<b>Users:</b><br>";
+			var j:int,str:String,u:UserInfo;
+			for (var i:int = 0; i < aUsers.length; i++) {
+				u = aUsers[i];
+				str = u.userName + "(user_id=" + u.userID+", ";
+				if (msg.allPlayerIds.indexOf(u.userID) != -1) {
+					str += "player";
+					u.isPlayer = true;
+					u.gameOver = false;
+				}else {
+					str += "viewer";
+					u.isPlayer = false;
+					u.gameOver = false;
 				}
-				matchOverForIds(msg.finishedPlayerIds);
+				str += ")";
+				txtUsers.htmlText+=str + "<br>";
+			}
+			matchOverForIds(msg.finishedPlayerIds);
 		}
 		private function matchOverForIds(user_ids:Array):void { 
 			if(user_ids.indexOf(iMyID)!=-1){
@@ -510,17 +452,12 @@ package emulator {
 				txtTurn.text = "Game over";
 			}
 		}
-		public function doAllSetTurn(msg:API_DoAllSetTurn):void
-		{
-			for each(var user:UserInfo in aUsers)
-			{
-				if(user.userID ==msg.userId)
-				{
+		public function doAllSetTurn(msg:API_DoAllSetTurn):void{
+			for each(var user:UserInfo in aUsers){
+				if(user.userID ==msg.userId){
 					txtTurn.text =user.userName+"'s Turn";	
 				}
 			}
-			
-		
 		}
 		public function gotMatchEnded(msg:API_GotMatchEnded):void { 
 			matchOverForIds(msg.finishedPlayerIds);
@@ -528,7 +465,7 @@ package emulator {
 		
 		//Do functions
 		public function do_client_protocol_error_with_description(error_description:Object):void {
-				MsgBox.Show(error_description.toString(), "Error");
+			MsgBox.Show(error_description.toString(), "Error");
 		}
 		
 	}

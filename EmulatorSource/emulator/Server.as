@@ -27,7 +27,7 @@ package emulator {
 		private static const COL_User:String="Sending_user_Id";
 		private static const COL_Message:String="Message";
 		private static const COL_key:String="key";
-		private static const COL_data:String="data";
+		private static const COL_data:String="value";
 		private static const COL_name:String="Name";
 		private static const COL_numberOfPlayers:String="Number_Of_Players";
 		private static const COL_userIdThatAreStillPlaying:String="User_ids_that_are_still_playing";
@@ -330,27 +330,27 @@ package emulator {
 			playByPlay.visible = false;
 			this.addChild(playByPlay);
 			btnNewGame = new Button();
-			btnNewGame.x = 490;
+			btnNewGame.x = 0;
 			btnNewGame.width = 50;
 			btnNewGame.label = "New";
 			btnNewGame.addEventListener(MouseEvent.CLICK, btnNewGameClick);
 			this.addChild(btnNewGame);
 			btnCancelGame = new Button();
-			btnCancelGame.x = 490;
+			btnCancelGame.x = 0;
 			btnCancelGame.width = 50;
 			btnCancelGame.visible = false;
 			btnCancelGame.label = "Cancel";
 			btnCancelGame.addEventListener(MouseEvent.CLICK, btnCancelGameClick);
 			this.addChild(btnCancelGame);
 			btnLoadGame = new Button();
-			btnLoadGame.x = 150;
+			btnLoadGame.x = 60;
 			btnLoadGame.width = 70;
 			btnLoadGame.label = "Load game";
 			btnLoadGame.addEventListener(MouseEvent.CLICK, btnLoadGameClick);
 			this.addChild(btnLoadGame);
 			
 			btnSaveGame = new Button();
-			btnSaveGame.x = 150;
+			btnSaveGame.x = 60;
 			btnSaveGame.width = 70;
 			btnSaveGame.visible = false;
 			btnSaveGame.label = "Save game";
@@ -358,7 +358,7 @@ package emulator {
 			this.addChild(btnSaveGame);
 			
 			pnlLoad = new MovieClip();
-			pnlLoad.x = 150;
+			pnlLoad.x = 60;
 			pnlLoad.y = 22;
 			pnlLoad.graphics.beginFill(0xEEEEEE);
 			pnlLoad.graphics.lineStyle(1, 0xAAAAAA);
@@ -378,7 +378,7 @@ package emulator {
 			cmbLoadName.y = 5;
 			cmbLoadName.width = 190;
 			cmbLoadName.prompt = "Select game";
-			cmbLoadName.addEventListener(FocusEvent.FOCUS_OUT, loadFocusOut);
+			//cmbLoadName.addEventListener(FocusEvent.FOCUS_OUT, loadFocusOut);
 			pnlLoad.addChild(cmbLoadName);
 			
 			btnLoadOK = new Button();
@@ -387,7 +387,7 @@ package emulator {
 			btnLoadOK.width = 93;
 			btnLoadOK.label = "Load";
 			btnLoadOK.addEventListener(MouseEvent.CLICK, loadOkClick);
-			btnLoadOK.addEventListener(FocusEvent.FOCUS_OUT, loadFocusOut);
+			//btnLoadOK.addEventListener(FocusEvent.FOCUS_OUT, loadFocusOut);
 			pnlLoad.addChild(btnLoadOK);
 			
 			btnLoadDelete = new Button();
@@ -396,11 +396,11 @@ package emulator {
 			btnLoadDelete.width = 93;
 			btnLoadDelete.label = "Delete";
 			btnLoadDelete.addEventListener(MouseEvent.CLICK, loadDeleteClick);
-			btnLoadDelete.addEventListener(FocusEvent.FOCUS_OUT, loadFocusOut);
+			//btnLoadDelete.addEventListener(FocusEvent.FOCUS_OUT, loadFocusOut);
 			pnlLoad.addChild(btnLoadDelete);
 			
 			pnlSave = new MovieClip();
-			pnlSave.x = 150;
+			pnlSave.x = 60;
 			pnlSave.y = 22;
 			pnlSave.graphics.beginFill(0xEEEEEE);
 			pnlSave.graphics.lineStyle(1, 0xAAAAAA);
@@ -437,7 +437,7 @@ package emulator {
 			pnlSave.addChild(btnSaveOK);
 			afterResize(null);
 			
-			lblServer = new Label();
+			/*lblServer = new Label();
 			lblServer.x = 8;
 			lblServer.y = 2;
 			txt = new TextField();
@@ -446,7 +446,7 @@ package emulator {
 			txt.text = "Logs & Commands";
 			txt.x = 23;
 			lblServer.addChild(txt);
-			this.addChild(lblServer);
+			this.addChild(lblServer);*/
 						
 			logingCheckBox = new DisableLoging();
 			logingCheckBox.isLoging.label = "Log calls";
@@ -1159,16 +1159,16 @@ package emulator {
 			var innerData:Array = [] 
 			switch(iInfoMode){
 				case 1:
-					innerData = [["user_id: ",evt.target.selectedItem[COL_player_ids] ],[ "key: ",evt.target.selectedItem[COL_key] ],[ "data: ",evt.target.selectedItem[COL_data]]];
+					innerData = [["user_id: ",evt.target.selectedItem[COL_player_ids] ],[ "key: ",evt.target.selectedItem[COL_key] ],[ "value: ",evt.target.selectedItem[COL_data]]];
 				break;
 				case 2:
 					innerData = [["user_id: ",evt.target.selectedItem[COL_User]] , ["Message: ",evt.target.selectedItem[COL_Message]]];
 				break;
 				case 3:
-					innerData = [["key: ",evt.target.selectedItem[COL_key]] , ["data: ",evt.target.selectedItem[COL_data]]];
+					innerData = [["key: ",evt.target.selectedItem[COL_key]] , ["value: ",evt.target.selectedItem[COL_data]]];
 				break;
 				case 4:
-					innerData = [["user_id: ",evt.target.selectedItem[COL_player_ids] ],[ "key: ",evt.target.selectedItem[COL_key] ], ["data: ",evt.target.selectedItem[COL_data]]];
+					innerData = [["user_id: ",evt.target.selectedItem[COL_player_ids] ],[ "key: ",evt.target.selectedItem[COL_key] ], ["value: ",evt.target.selectedItem[COL_data]]];
 				break;
 				case 5:
 					innerData = [["users_id: ",evt.target.selectedItem[COL_player_ids] ],[ "score: ",evt.target.selectedItem[COL_scores] ],[ "pot_percentage: ",evt.target.selectedItem[COL_pot_percentages]]];
@@ -1676,7 +1676,7 @@ package emulator {
 			gameOver();
 		}
 		
-		private function btnLoadGameClick(evt:MouseEvent):void {
+		private function btnLoadGameClick(evt:MouseEvent = null):void {
 			cmbLoadName.removeAll();
 			for each (var savedGame:SavedGame in allSavedGames) {
 				if (savedGame.players.length <= User.PlayersNum && savedGame.gameName==root.loaderInfo.parameters["game"]) {
@@ -1730,10 +1730,12 @@ package emulator {
 			var savedGame:SavedGame = cmbLoadName.selectedItem.data;
 			allSavedGames.splice( allSavedGames.indexOf(savedGame), 1);
 			saveToSharedObject();
-			pnlLoad.visible = false;
+			//pnlLoad.visible = false;
 			showSavedGames();
-			showMsg("Saved game was deleted","Message");
+			//showMsg("Saved game was deleted","Message");
 			enableSavedGames();
+			btnLoadGameClick();
+			
 		}
 		
 		private function loadFocusOut(evt:FocusEvent):void {

@@ -615,7 +615,7 @@ function btn_click(){
 		if( single_popup!= null ){
 		single_popup.close();
 		}
-        server=window.open("ServerWindow.html?"+flashvars+initPrefix+"&"+addparams+old+"&single_popup=0&calculatorsOn="+isCalculator+"&serverEntries="+serverEntries,"server","width=570,height=470,menubar=0,titlebar=0,toolbar=0,resizable=1,statusbar=0");
+        server=window.open("ServerWindow.html?"+flashvars+initPrefix+"&"+addparams+old+"&single_popup=0&calculatorsOn="+isCalculator+"&serverEntries="+serverEntries,"server","width=580,height=490,menubar=0,titlebar=0,toolbar=0,resizable=1,statusbar=0");
         var str="<a style=\"cursor:pointer;color:blue;\" onclick=\"serverClick();\">Server</a>";
 	clients=new Array();
 	for(i=0;i<players_num;i++){
@@ -663,14 +663,14 @@ function clientClick(num){
 	    to=document.getElementById("delay_to").value;
 	    from=document.getElementById("delay_from").value;
 		if(num>=players_num){
-			clients[num]=window.open("ClientWindow.html?game="+ampSymb(safeName())+"&isPlayer=false&clientNum="+(num-players_num)+"&width="+swf_width+"&height="+swf_height+"&"+flashvars+(initPrefix+num)+old+"&delay_from="+from+"&delay_to="+to+"&old_container="+document.getElementById("old_container").value,"client"+num,"width="+(swf_width+70)+",height="+(swf_height+65)+",left="+(50*(num+1))+",top="+(50*(num+1))+",menubar=0,titlebar=0,toolbar=0,resizable=1");
+			clients[num]=window.open("ClientWindow.html?game="+ampSymb(safeName())+"&isPlayer=false&clientNum="+(num-players_num)+"&width="+swf_width+"&height="+swf_height+"&"+flashvars+(initPrefix+num)+old+"&delay_from="+from+"&delay_to="+to+"&old_container="+document.getElementById("old_container").value,"client"+num,"width="+(swf_width+185)+",height="+(swf_height+190)+",left="+(50*(num+1))+",top="+(50*(num+1))+",menubar=0,titlebar=0,toolbar=0,resizable=1");
 	    }
 		else if(num >=(viewers_num + players_num)){
-			clients[num]=window.open("ClientWindow.html?game="+ampSymb(safeName())+"&isPlayer=true&clientNum="+num+"&width="+swf_width+"&height="+swf_height+"&"+flashvars+(initPrefix+num)+old+"&delay_from="+from+"&delay_to="+to+"&old_container="+document.getElementById("old_container").value,"client"+num,"width="+(swf_width+70)+",height="+(swf_height+65)+",left="+(50*(num+1))+",top="+(50*(num+1))+",menubar=0,titlebar=0,toolbar=0,resizable=1");
+			clients[num]=window.open("ClientWindow.html?game="+ampSymb(safeName())+"&isPlayer=true&clientNum="+num+"&width="+swf_width+"&height="+swf_height+"&"+flashvars+(initPrefix+num)+old+"&delay_from="+from+"&delay_to="+to+"&old_container="+document.getElementById("old_container").value,"client"+num,"width="+(swf_width+185)+",height="+(swf_height+190)+",left="+(50*(num+1))+",top="+(50*(num+1))+",menubar=0,titlebar=0,toolbar=0,resizable=1");
 		}
 		else
 		{
-			clients[num]=window.open("ClientWindow.html?game="+ampSymb(safeName())+"&isPlayer=true&clientNum="+num+"&width="+swf_width+"&height="+swf_height+"&"+flashvars+(initPrefix+num)+old+"&delay_from="+from+"&delay_to="+to+"&old_container="+document.getElementById("old_container").value+"&calculatorsOn=true","client"+num,"width="+(swf_width+70)+",height="+(swf_height+65)+",left="+(50*(num+1))+",top="+(50*(num+1))+",menubar=0,titlebar=0,toolbar=0,resizable=1");
+			clients[num]=window.open("ClientWindow.html?game="+ampSymb(safeName())+"&isPlayer=true&clientNum="+num+"&width="+swf_width+"&height="+swf_height+"&"+flashvars+(initPrefix+num)+old+"&delay_from="+from+"&delay_to="+to+"&old_container="+document.getElementById("old_container").value+"&calculatorsOn=true","client"+num,"width="+(swf_width+185)+",height="+(swf_height+190)+",left="+(50*(num+1))+",top="+(50*(num+1))+",menubar=0,titlebar=0,toolbar=0,resizable=1");
 		}
 	}else{
 	clients[num].focus();

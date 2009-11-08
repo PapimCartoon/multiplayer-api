@@ -1,5 +1,4 @@
 package emulator {
-	import emulator.auto_copied.StaticFunctions;
 	import emulator.auto_generated.*;
 	
 	import fl.controls.*;
@@ -35,9 +34,6 @@ package emulator {
 		private var btnStart:Button;
 		private var iMyID:int;
 		private var MsgBox:MessageBox;
-		private var lblClient:Label;
-		private var btnDown:SimpleButton;
-		private var btnUp:SimpleButton;
 		private var pnlBackground:MovieClip;
 		private var lblWait:TextField;
 		private var ddsDoOperations:DelayDoSomething;
@@ -46,6 +42,8 @@ package emulator {
 		private var isPlaying:Boolean;
 		private var messageQueue:Array;
 		private var delayConstructor:Timer;
+		
+		private var userVisualInfo:UserVisualInfo;	//ron
 	
 		public function constructInfoContainer():void{
 			messageQueue = new Array();
@@ -70,14 +68,20 @@ package emulator {
 				gameHeight =Number(root.loaderInfo.parameters["height"])
 			}
 			frameSprite = new Sprite();
-			randomMod = Math.round(Math.random() *120);
+			randomMod = Math.round(Math.random() *80);
 			frameSprite.graphics.lineStyle(2,0x0000ff);
 			frameSprite.graphics.drawRect(0,0,gameWidth,gameHeight);
-			frameSprite.x = 36 + randomMod;
+			frameSprite.x = 80 + randomMod;
 			frameSprite.y = 30 + randomMod;
 			this.addChild(frameSprite);
+			
+			
+			//ron
+			userVisualInfo = new UserVisualInfo(1, 1);
+			this.addChild(userVisualInfo);
+			
 			ldr = new Loader();
-			ldr.x = 36 + randomMod;
+			ldr.x = 80 + randomMod;
 			ldr.y = 30 + randomMod;	
 			this.addChild(ldr);
 			pnlBackground = new MovieClip();
@@ -124,64 +128,14 @@ package emulator {
 			
 			MsgBox = new MessageBox();
 
-			lblClient = new Label();
-			lblClient.x = 8;
-			lblClient.y = 1;
-			lblClient.height = 22;
-			lblClient.text = ""
-			this.addChild(lblClient);
-			
 			var hit:MovieClip = new MovieClip();
 			hit.graphics.beginFill(0x000000);
 			hit.graphics.drawRect(0, 0, 70, 18);
-			
-			var mov:MovieClip = new MovieClip();
-			var txt:TextField = new TextField();
-			txt.textColor = 0x000000;
-			txt.autoSize = TextFieldAutoSize.LEFT;
-			txt.htmlText = "<b>|</b> Open Info";
-			txt.height = 22;
-			txt.y = -3;
-			mov.addChild(txt);
-			var arr:MovieClip = new DownArrow();
-			arr.x = 54;
-			mov.addChild(arr);
-			
-			btnDown = new SimpleButton(mov, mov, mov, hit);
-			btnDown.upState = mov;
-			btnDown.hitTestState = hit;
-			btnDown.y = 3;
-			btnDown.x = 57;
-			btnDown.addEventListener(MouseEvent.CLICK, btnDownClick);
-			lblClient.addChild(btnDown);
 			
 			btnStart = new Button();
 			btnStart.label = "Start";
 			btnStart.textField.selectable = false;
 			
-			mov = new MovieClip();
-			txt = new TextField();
-			txt.textColor = 0x000000;
-			txt.autoSize = TextFieldAutoSize.LEFT;
-			txt.htmlText = "<b>|</b> Close Info";
-			txt.height = 22;
-			txt.x = -15;
-			txt.y = -3;
-			mov.addChild(txt);
-			arr = new UpArrow();
-			arr.x = 54;
-			mov.addChild(arr);
-			
-			btnUp = new SimpleButton(mov, mov, mov, hit);
-			btnUp.upState = mov;
-			btnUp.hitTestState = hit;
-			btnUp.x = 57;
-			btnUp.y = 3;
-			btnUp.visible = false;
-			btnUp.addEventListener(MouseEvent.CLICK, btnUpClick);
-			lblClient.addChild(btnUp);
-			
-
 			this.addChild(MsgBox);
 			
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, MsgBox.keyDown);
@@ -212,7 +166,7 @@ package emulator {
 			
 			
 			if(root.loaderInfo.parameters["calculatorsOn"] == "true" ){
-				lblClient.text = "Calculator";
+				//lblClient.text = "Calculator";
 				if(root.loaderInfo.parameters["oldgame"]=="0"){
 					var rqst:URLRequest = new URLRequest(root.loaderInfo.parameters["game"] + "?prefix=" + sInnerPrefix);
 				}else {
@@ -287,19 +241,6 @@ package emulator {
 			}
 		}
 		
-		private function btnDownClick(evt:MouseEvent):void {
-			if(bStarted){
-				btnDown.visible = false;
-				btnUp.visible = true;
-				pnlInfo.visible = true;
-			}
-		}
-		
-		private function btnUpClick(evt:MouseEvent):void {
-			btnDown.visible = true;
-			btnUp.visible = false;
-			pnlInfo.visible = false;
-		}
 		
 		private function btnStartClick(evt:Event):void {
 			if (!btnStart.visible) return;
@@ -405,7 +346,10 @@ package emulator {
 					str=info.userName+"(user_id="+info.userID+", viewer)";
 				}
 				if(info.userID==iMyID){
-					lblClient.text = info.userName
+					//lblClient.text = info.userName;
+					userVisualInfo.userId = info.userID;
+					userVisualInfo.userName = info.userName
+					userVisualInfo.load( info.userPicture );	//ron
 				}
 				txtUsers.htmlText+=str + "<br>";
 		}
@@ -453,14 +397,13 @@ package emulator {
 			}
 		}
 		public function doAllSetTurn(msg:API_DoAllSetTurn):void{
-			for each(var user:UserInfo in aUsers){
-				if(user.userID ==msg.userId){
-					txtTurn.text =user.userName+"'s Turn";	
-				}
-			}
+			userVisualInfo.setTurn(iMyID == msg.userId);
 		}
+		
 		public function gotMatchEnded(msg:API_GotMatchEnded):void { 
 			matchOverForIds(msg.finishedPlayerIds);
+			userVisualInfo.setTurn(false);
+			
 		}
 		
 		//Do functions

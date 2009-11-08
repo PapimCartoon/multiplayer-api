@@ -2,7 +2,9 @@
 	<room>
 		<room_id>999</room_id>
 		<all_java_ips></all_java_ips> 		
-		<room_name>Chess room</room_name> 
+		<room_name>Chess room</room_name>
+		<buddiesCount>13</buddiesCount>
+		<language>English</language> 
 		<cur_users>5</cur_users> 
 		<max_users>20</max_users> 
 		<open_in_seconds>0</open_in_seconds>
@@ -18,7 +20,9 @@
 	<room>
 		<room_id>2</room_id> 
 		<all_java_ips></all_java_ips> 	
-		<room_name>BackGammon room</room_name> 
+		<room_name>BackGammon room</room_name>
+		<buddiesCount>13</buddiesCount>
+		<language>English</language> 
 		<cur_users>1</cur_users> 
 		<max_users>20</max_users> 
 		<open_in_seconds>0</open_in_seconds>
@@ -35,6 +39,8 @@
 		<room_id>3</room_id> 
 		<all_java_ips></all_java_ips> 	
 		<room_name>Connect4 room</room_name> 
+		<buddiesCount>13</buddiesCount>
+		<language>English</language>
 		<cur_users>1</cur_users> 
 		<max_users>20</max_users> 
 		<open_in_seconds>0</open_in_seconds>

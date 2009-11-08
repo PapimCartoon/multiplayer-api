@@ -16,7 +16,7 @@ package emulator {
 	import flash.utils.setTimeout;
 	public class Server extends MovieClip {
 			 
-		private static const COL_player_ids:String = "player_ids";
+		private static const COL_id:String = "id";
 		private static const COL_scores:String = "scores";
 		private static const COL_changeNum:String = "Num";
 		private static const COL_pot_percentages:String = "pot_percentages";
@@ -27,9 +27,8 @@ package emulator {
 		private static const COL_User:String="Sending_user_Id";
 		private static const COL_Message:String="Message";
 		private static const COL_key:String="key";
-		private static const COL_data:String="value";
+		private static const COL_value:String="value";
 		private static const COL_name:String="Name";
-		private static const COL_url:String="url";		//ron
 		private static const COL_numberOfPlayers:String="Number_Of_Players";
 		private static const COL_userIdThatAreStillPlaying:String="User_ids_that_are_still_playing";
 		private static const COL_matchState:String="Match_state";
@@ -1160,19 +1159,19 @@ package emulator {
 			var innerData:Array = [] 
 			switch(iInfoMode){
 				case 1:
-					innerData = [["user_id: ",evt.target.selectedItem[COL_player_ids] ],[ "key: ",evt.target.selectedItem[COL_key] ],[ "value: ",evt.target.selectedItem[COL_data]]];
+					innerData = [["user_id: ",evt.target.selectedItem[COL_id] ],[ "key: ",evt.target.selectedItem[COL_key] ],[ "value: ",evt.target.selectedItem[COL_value]]];
 				break;
 				case 2:
 					innerData = [["user_id: ",evt.target.selectedItem[COL_User]] , ["Message: ",evt.target.selectedItem[COL_Message]]];
 				break;
 				case 3:
-					innerData = [["key: ",evt.target.selectedItem[COL_key]] , ["value: ",evt.target.selectedItem[COL_data]]];
+					innerData = [["key: ",evt.target.selectedItem[COL_key]] , ["value: ",evt.target.selectedItem[COL_value]]];
 				break;
 				case 4:
-					innerData = [["user_id: ",evt.target.selectedItem[COL_player_ids] ],[ "key: ",evt.target.selectedItem[COL_key] ], ["value: ",evt.target.selectedItem[COL_data]]];
+					innerData = [["user_id: ",evt.target.selectedItem[COL_id] ],[ "key: ",evt.target.selectedItem[COL_key] ], ["value: ",evt.target.selectedItem[COL_value]]];
 				break;
 				case 5:
-					innerData = [["users_id: ",evt.target.selectedItem[COL_player_ids] ],[ "score: ",evt.target.selectedItem[COL_scores] ],[ "pot_percentage: ",evt.target.selectedItem[COL_pot_percentages]]];
+					innerData = [["users_id: ",evt.target.selectedItem[COL_id] ],[ "score: ",evt.target.selectedItem[COL_scores] ],[ "pot_percentage: ",evt.target.selectedItem[COL_pot_percentages]]];
 				break;
 				case 6:
 					innerData = [["name: ",evt.target.selectedItem[COL_name]],
@@ -1191,7 +1190,7 @@ package emulator {
 						changedToDelta = evt.target.selectedItem[COL_changeNum];
 					innerData = [["num: " ,evt.target.selectedItem[COL_changeNum]],
 						["State Change time :",evt.target.selectedItem[COL_TimeSent]],
-						["Player_ID's: ",evt.target.selectedItem[COL_player_ids]],
+						["Player_ID's: ",evt.target.selectedItem[COL_id]],
 						["Server Entries: ",evt.target.selectedItem[COL_serverEntries]]];
 				break;
 			}
@@ -1288,7 +1287,7 @@ package emulator {
 			pnlInfo.visible=true;
 			if(iInfoMode!=1){
 				iInfoMode=1;	
-				tblInfo.columns=[COL_player_ids,COL_key,COL_data];
+				tblInfo.columns=[COL_id,COL_key,COL_value];
 				showMatchState();
 			}
 		}
@@ -1300,7 +1299,7 @@ package emulator {
 			pnlInfo.visible=true;
 			if(iInfoMode!=3){
 				iInfoMode=3;
-				tblInfo.columns=[COL_key,COL_data];
+				tblInfo.columns=[COL_key,COL_value];
 				showGeneralInfo();
 			}
 		}
@@ -1332,7 +1331,7 @@ package emulator {
 			pnlInfo.visible=true;
 			if(iInfoMode!=4){
 				iInfoMode=4;
-				tblInfo.columns=[COL_player_ids,COL_key,COL_data, COL_url];	
+				tblInfo.columns=[COL_id,COL_key,COL_value];	
 				showUserInfo();
 			}
 		}
@@ -1344,7 +1343,7 @@ package emulator {
 			pnlInfo.visible=true;
 			if(iInfoMode!=5){
 				iInfoMode=5;	
-				tblInfo.columns=[COL_player_ids, COL_scores , COL_pot_percentages,COL_total_pot_percentages];
+				tblInfo.columns=[COL_id, COL_scores , COL_pot_percentages,COL_total_pot_percentages];
 				showMatchOver();
 			}
 		}
@@ -1369,7 +1368,7 @@ package emulator {
 			if(iInfoMode!=8){
 				changedToDelta = -1;
 				iInfoMode=8;	
-				tblInfo.columns=[COL_changeNum,COL_TimeSent,COL_player_ids,COL_serverEntries];
+				tblInfo.columns=[COL_changeNum,COL_TimeSent,COL_id,COL_serverEntries];
 				showHistory();
 			}	
 		}
@@ -1502,7 +1501,7 @@ package emulator {
 					itemObj=new Object();
 					itemObj[COL_changeNum] = counter;
 					itemObj[COL_TimeSent] = palyerDelta.changedTime;
-					itemObj[COL_player_ids] = palyerDelta.playerIds;
+					itemObj[COL_id] = palyerDelta.playerIds;
 					itemObj[COL_serverEntries]=palyerDelta.serverEntries.length > 0 ? palyerDelta.serverEntries:palyerDelta.finishHistory;
 					tblInfo.addItem(itemObj);
 					counter++;	
@@ -1552,9 +1551,9 @@ package emulator {
 				myParent.removeChild(tblInfo)
 				for each(var tempServerEntry:ServerEntry in serverStateEntrys){
 					itemObj=new Object();
-					itemObj[COL_player_ids]=tempServerEntry.storedByUserId;
+					itemObj[COL_id]=tempServerEntry.storedByUserId;
 					itemObj[COL_key]=JSON.stringify(tempServerEntry.key);
-					itemObj[COL_data]=JSON.stringify(tempServerEntry.value);
+					itemObj[COL_value]=JSON.stringify(tempServerEntry.value);
 					tblInfo.addItem(itemObj);
 					position+=30
 				}
@@ -1573,7 +1572,7 @@ package emulator {
 					itemObj=new Object();
 					var tempServerInfo:InfoEntry = serverInfoEnteries[i];
 					itemObj[COL_key]=tempServerInfo.key;
-					itemObj[COL_data]=tempServerInfo.value;
+					itemObj[COL_value]=tempServerInfo.value;
 					tblInfo.addItem(itemObj);
 					tblInfo.verticalScrollPosition = tblInfo.maxVerticalScrollPosition+30;
 				}
@@ -1587,17 +1586,49 @@ package emulator {
 				var user:User;
 				var itemObj:Object;
 				var i:int = 0;
+				var j:int = 0;
 				
-				for each (user in aUsers){
-					itemObj=new Object();
-					itemObj[COL_player_ids]=user.ID;
-					itemObj[COL_key]="Name";
-					itemObj[COL_data]=user.Name;
-					itemObj[COL_url]= root.loaderInfo.parameters["val_" + i + "_2"];
-					i++;
-					tblInfo.addItem(itemObj);
-					tblInfo.verticalScrollPosition = tblInfo.maxVerticalScrollPosition+30;
+				var key:Object;
+				var value:Object;
+				
+				var rows:int = 0;
+				var cols:int = 0;
+				
+				
+				do {
+					key = root.loaderInfo.parameters["col_" + j];
+					if ( key != null ) j++;
+				} while ( key != null );
+				
+				cols = j;
+			
+				do {
+					value = root.loaderInfo.parameters["val_" + i + "_" + 0];
+					if ( value != null ) i++;
+				} while ( value != null );	
+			
+				rows = i;
+				
+				for ( i=0; i<rows; i++)
+				{
+					for ( j=1; j<cols; j++)
+					{
+						itemObj = new Object();
+						itemObj["id"] = root.loaderInfo.parameters["val_" + i + "_" + 0];
+						itemObj["key"] = root.loaderInfo.parameters["col_" + j];
+						itemObj["value"] = root.loaderInfo.parameters["val_" + i +"_"+ j];
+						tblInfo.addItem(itemObj);
+					}
 				}
+				
+//				for each (user in aUsers){
+//					itemObj=new Object();
+//					itemObj[COL_id]=user.ID;
+//					itemObj[COL_key]="Name";
+//					itemObj[COL_value]= user.Name;
+//					tblInfo.addItem(itemObj);
+//					tblInfo.verticalScrollPosition = tblInfo.maxVerticalScrollPosition+30;
+//				}
 				txtInfo.text="";				
 			}
 		}	
@@ -1608,25 +1639,25 @@ package emulator {
 				var tempLen:int;
 				for each (var matchOver:FinishHistory in afinishedPlayers){
 					itemObj=new Object();
-					itemObj[COL_player_ids] = "[";
+					itemObj[COL_id] = "[";
 					itemObj[COL_scores] = "[";
 					itemObj[COL_pot_percentages] = "[";
 					itemObj[COL_total_pot_percentages] = "[";
 					tempLen=matchOver.finishedPlayers.length;
 					for(var i:int=0;i<tempLen;i++){
 						var playerMatchOver:PlayerMatchOver = matchOver.finishedPlayers[i];
-						itemObj[COL_player_ids] += playerMatchOver.playerId;
+						itemObj[COL_id] += playerMatchOver.playerId;
 						itemObj[COL_scores] += playerMatchOver.score;
 						itemObj[COL_pot_percentages] += playerMatchOver.potPercentage;	
 						itemObj[COL_total_pot_percentages] +=String(((matchOver.pot*playerMatchOver.potPercentage)/100))
 						if((tempLen) != (i+1)){
-							itemObj[COL_player_ids] += ",";
+							itemObj[COL_id] += ",";
 							itemObj[COL_scores] += ",";
 							itemObj[COL_pot_percentages] += ",";
 							itemObj[COL_total_pot_percentages] += ","
 						}
 					}
-					itemObj[COL_player_ids] += "]";
+					itemObj[COL_id] += "]";
 					itemObj[COL_scores] += "]";
 					itemObj[COL_pot_percentages] += "]";
 					itemObj[COL_total_pot_percentages] += "]"

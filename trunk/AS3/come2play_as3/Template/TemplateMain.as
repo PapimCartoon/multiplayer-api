@@ -29,14 +29,12 @@ package come2play_as3.Template
 			*/
 			
 		}
-		private function constructGame():void
-		{
+		private function constructGame():void{
 			templateLogic = new TemplateLogic(this);
 			doRegisterOnServer();// registers user on server should be the first command called
 		}
 		
-		override public function gotCustomInfo(infoEntries:Array):void
-		{
+		override public function gotCustomInfo(infoEntries:Array):void{
 			/*
 			This function gets info which is used to customize your game.
 			such as:
@@ -46,22 +44,19 @@ package come2play_as3.Template
 			etc...
 			*/
 		}
-		override public function gotMyUserId(myUserId:int):void
-		{
+		override public function gotMyUserId(myUserId:int):void{
 			/*
 			Called after connecting to the server
 			and passes the user id
 			*/
 		}
-		override public function gotUserInfo(userId:int, infoEntries:Array):void
-		{
+		override public function gotUserInfo(userId:int, infoEntries:Array):void{
 			/*
 			Used to pass specific info about each user playing the game.
 			called for each of the playing users
 			*/
 		}
-		override public function gotRequestStateCalculation(serverEntries:Array):void
-		{
+		override public function gotRequestStateCalculation(serverEntries:Array):void{
 			/*
 			Called after a doAllRequestStateCalculation(keys)
 			serverEntries - an Array of ServerEntry containing,server entries the users choose to show the calculator.
@@ -91,22 +86,19 @@ package come2play_as3.Template
 			
 			
 		}
-		override public function gotKeyboardEvent(isKeyDown:Boolean, charCode:int, keyCode:int, keyLocation:int, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean):void
-		{
+		override public function gotKeyboardEvent(isKeyDown:Boolean, charCode:int, keyCode:int, keyLocation:int, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean):void{
 			/*
 			Your game is extended among other things,by a chat, to make sure that the keyboard user input you are
 			getting is intended for your game,you should only use this function to get keyboard events 
 			*/
 		}
-		override public function gotMatchEnded(finishedPlayerIds:Array):void
-		{
+		override public function gotMatchEnded(finishedPlayerIds:Array):void{
 			/*
 			Called when one or all users have finished the game
 			contains the ids of the finishing players
 			*/
 		}
-		override public function gotMatchStarted(allPlayerIds:Array, finishedPlayerIds:Array, extraMatchInfo:Object, matchStartedTime:int, serverEntries:Array):void
-		{
+		override public function gotMatchStarted(allPlayerIds:Array, finishedPlayerIds:Array, extraMatchInfo:Object, matchStartedTime:int, serverEntries:Array):void{
 			/*
 			Called when all players made a doRegisterOnServer() call contains:
 			allPlayerIds - array of all player ids
@@ -197,8 +189,7 @@ package come2play_as3.Template
 			sends all the server entries corresponding to the keys in the array,to a calculator					
 			*/			
 		}
-		override public function gotStateChanged(serverEntries:Array):void
-		{
+		override public function gotStateChanged(serverEntries:Array):void{
 			/*
 			Called whenever something changes the game state,with the newly created/changed/deleted ServerEntry
 			serverEntries - an array of ServerEntry Objects changed.

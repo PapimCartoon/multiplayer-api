@@ -1,6 +1,7 @@
 package emulator
 {
 	import flash.display.Loader;
+	import flash.events.IOErrorEvent;
 	import flash.net.URLRequest;
 	
 	public class UserVisualInfo extends UserVisualInfo_mc
@@ -15,12 +16,17 @@ package emulator
 			this.frame.gotoAndStop("blue");
 			
 			loader  = new Loader();
+			loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandler);
 			this.bck.addChild(loader);
 		}
 		
 		public function load(url:String):void
 		{
-			loader.load( new URLRequest(url) );
+			 try {
+               loader.load( new URLRequest(url) );
+            } catch (error:Error) {
+                trace("Unable to load requested document.");
+            }
 		}
 		
 		public function setTurn( myTurn:Boolean):void
@@ -40,7 +46,10 @@ package emulator
 			this.userId_txt.text = "id: " + id.toString(); 
 		}
 		
-		
+		 private function ioErrorHandler(event:IOErrorEvent):void {
+            trace("ioErrorHandler: " + event);
+        }
+
 
 	}
 }

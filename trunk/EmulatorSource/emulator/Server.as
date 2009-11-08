@@ -29,6 +29,7 @@ package emulator {
 		private static const COL_key:String="key";
 		private static const COL_data:String="value";
 		private static const COL_name:String="Name";
+		private static const COL_url:String="url";		//ron
 		private static const COL_numberOfPlayers:String="Number_Of_Players";
 		private static const COL_userIdThatAreStillPlaying:String="User_ids_that_are_still_playing";
 		private static const COL_matchState:String="Match_state";
@@ -1331,7 +1332,7 @@ package emulator {
 			pnlInfo.visible=true;
 			if(iInfoMode!=4){
 				iInfoMode=4;
-				tblInfo.columns=[COL_player_ids,COL_key,COL_data];	
+				tblInfo.columns=[COL_player_ids,COL_key,COL_data, COL_url];	
 				showUserInfo();
 			}
 		}
@@ -1585,11 +1586,15 @@ package emulator {
 				tblInfo.removeAll();
 				var user:User;
 				var itemObj:Object;
+				var i:int = 0;
+				
 				for each (user in aUsers){
 					itemObj=new Object();
 					itemObj[COL_player_ids]=user.ID;
 					itemObj[COL_key]="Name";
 					itemObj[COL_data]=user.Name;
+					itemObj[COL_url]= root.loaderInfo.parameters["val_" + i + "_2"];
+					i++;
 					tblInfo.addItem(itemObj);
 					tblInfo.verticalScrollPosition = tblInfo.maxVerticalScrollPosition+30;
 				}

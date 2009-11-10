@@ -107,6 +107,7 @@ Not used by the graphics yet (but should be displayed):
 	user_id="int"
 	room_id="int"
 	buddiesCount="int"
+	min_bet="int"
 	default_room_id="int"		
 	cur_users="int"
 	max_users="int"
@@ -798,6 +799,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 			<room_name>Chess room</room_name> 
 			<buddiesCount>13</buddiesCount>
 			<language>English</language>
+			<min_bet>0</min_bet>
 			<cur_users>-1</cur_users>
 			<max_users>20</max_users> 
 			<open_in_seconds>0</open_in_seconds>
@@ -826,6 +828,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 				<room_name>Connect4 room</room_name> 
 				<buddiesCount>13</buddiesCount>
 				<language>International</language>
+				<min_bet>0</min_bet>
 				<cur_users>1</cur_users> 
 				<max_users>20</max_users> 
 				<open_in_seconds>0</open_in_seconds>
@@ -844,6 +847,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 				<room_name>Chess room</room_name> 
 				<buddiesCount>13</buddiesCount>
 				<language>English</language>
+				<min_bet>0</min_bet>
 				<cur_users>5</cur_users> 
 				<max_users>20</max_users> 
 				<open_in_seconds>0</open_in_seconds>
@@ -862,6 +866,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 				<room_name>BackGammon room</room_name> 
 				<buddiesCount>10</buddiesCount>
 				<language>English</language>
+				<min_bet>0</min_bet>
 				<cur_users>1</cur_users> 
 				<max_users>20</max_users> 
 				<open_in_seconds>0</open_in_seconds>
@@ -880,6 +885,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 				<room_name>Connect4 room</room_name> 
 				<buddiesCount>13</buddiesCount>
 				<language>English</language>
+				<min_bet>0</min_bet>
 				<cur_users>20</cur_users> 
 				<max_users>20</max_users> 
 				<open_in_seconds>0</open_in_seconds>
@@ -898,6 +904,7 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 				<room_name>Connect4 room</room_name> 
 				<buddiesCount>13</buddiesCount>
 				<language>International</language>
+				<min_bet>0</min_bet>
 				<cur_users>1</cur_users> 
 				<max_users>20</max_users> 
 				<open_in_seconds>0</open_in_seconds>

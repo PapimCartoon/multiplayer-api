@@ -11,8 +11,8 @@ package come2play_as3.api.auto_copied
 public final class StaticFunctions
 {	
 	public static var INCREASE_BET_EVENT:String = "IncreaseBetEvent";		
-	public static var GOOGLE_REVISION_NUMBER:int = 1160;
-	public static var COME2PLAY_REVISION_NUMBER:int = 4523;
+	public static var GOOGLE_REVISION_NUMBER:int = 1161;
+	public static var COME2PLAY_REVISION_NUMBER:int = 4524;
 	public static var ERRORS_THROWN_LOGGER:Logger = new Logger("Throw",5);
 	public static function getRevision():String {
 		return (SerializableClass.IS_IN_FRAMEWORK ? "Container" : "Game")+

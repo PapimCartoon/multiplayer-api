@@ -627,7 +627,7 @@ public final class AS3_vs_AS2
 		var stageTimer:MyInterval = new MyInterval("waitForStage");
 		trace('waitForStage...');
 		stageTimer.start(function():void {
-					if(graphics.stage) {
+					if(graphics.stage!=null) {
 						trace('stage loaded!');
 						startTimer = getTimer();
 						graphics.stage.addEventListener(Event.ENTER_FRAME,onEnterFrame);

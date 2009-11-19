@@ -1,8 +1,9 @@
-package come2play_as3.Template
+﻿package come2play_as3.Template
 {
 	import come2play_as3.api.auto_generated.*;
 	
 	import flash.display.MovieClip;
+	import come2play_as3.api.auto_copied.AS3_vs_AS2;
 	/**
 	 * your main class should extend ClientGameAPI,in case you want your main class to extend another class,
 	 * as in the case of a document class extending MovieClip.
@@ -12,18 +13,16 @@ package come2play_as3.Template
 	public class TemplateMain extends ClientGameAPI
 	{
 		private var templateLogic:TemplateLogic;
-		private var graphics:MovieClip;
-		public function TemplateMain(graphics:MovieClip)
+		public function TemplateMain()
 		{
 			/*
 			Your main game constructor should be empty besides the foloowing lines of code
 			*/
 			
 			(new SomeClass).register();
-			this.graphics = graphics;
-			super(graphics); //sends the stage to the ClientGameAPI
+			super(this); //sends the stage to the ClientGameAPI
 			
-			AS3_vs_AS2.waitForStage(graphics,constructGame);
+			AS3_vs_AS2.waitForStage(this,constructGame);
 			/*
 			The function above should call your constructor,to avoid a case where the stage is not loaded	
 			*/
@@ -34,7 +33,7 @@ package come2play_as3.Template
 			doRegisterOnServer();// registers user on server should be the first command called
 		}
 		
-		override public function gotCustomInfo(infoEntries:Array):void{
+		override public function gotCustomInfo(infoEntries:Array/*InfoEntry*/):void{
 			/*
 			This function gets info which is used to customize your game.
 			such as:
@@ -44,19 +43,14 @@ package come2play_as3.Template
 			etc...
 			*/
 		}
-		override public function gotMyUserId(myUserId:int):void{
-			/*
-			Called after connecting to the server
-			and passes the user id
-			*/
-		}
-		override public function gotUserInfo(userId:int, infoEntries:Array):void{
+
+		override public function gotUserInfo(userId:int, infoEntries:Array/*InfoEntry*/):void{
 			/*
 			Used to pass specific info about each user playing the game.
 			called for each of the playing users
 			*/
 		}
-		override public function gotRequestStateCalculation(serverEntries:Array):void{
+		override public function gotRequestStateCalculation(requestId:int, serverEntries:Array/*ServerEntry*/):void {
 			/*
 			Called after a doAllRequestStateCalculation(keys)
 			serverEntries - an Array of ServerEntry containing,server entries the users choose to show the calculator.
@@ -72,13 +66,13 @@ package come2play_as3.Template
 			*/
 			
 			
-			var userEntries:Array/*UserEntry*/templateCalculatorLogic.getUserEntries()
+			var userEntries:Array = /*UserEntry*/templateCalculatorLogic.getUserEntries()
 			/*
 			After making the game calculations, get the relevant information from your 
 			"TemplateCalculatorLogic" class via a special function.
 			*/
 			
-			doAllStoreStateCalculation(userEntries);
+			//doAllStoreStateCalculation(userEntries);
 			
 			/*
 			After getting the userEntries store them in the serverstate
@@ -92,18 +86,16 @@ package come2play_as3.Template
 			getting is intended for your game,you should only use this function to get keyboard events 
 			*/
 		}
-		override public function gotMatchEnded(finishedPlayerIds:Array):void{
+		override public function gotMatchEnded(finishedPlayerIds:Array/*int*/):void{
 			/*
 			Called when one or all users have finished the game
 			contains the ids of the finishing players
 			*/
 		}
-		override public function gotMatchStarted(allPlayerIds:Array, finishedPlayerIds:Array, extraMatchInfo:Object, matchStartedTime:int, serverEntries:Array):void{
+		override public function gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, serverEntries:Array/*ServerEntry*/):void{
 			/*
 			Called when all players made a doRegisterOnServer() call contains:
 			allPlayerIds - array of all player ids
-			extraMatchInfo - object containing extra match info
-			matchStartedTime - the time at which the game has started
 			serverEntries - in case of a saved game or a viewer connecting,this will contain the entire game state
 			finishedPlayerIds - in case of a saved game or a viewer connecting,the ids of the players that finished the game
 			*/
@@ -112,7 +104,7 @@ package come2play_as3.Template
 			//After the match starts,you might want to use one of the following calls
 			
 			
-			doAllEndMatch(finishedPlayers:Array/*PlayerMatchOver*/);
+			//doAllEndMatch(finishedPlayers:Array/*PlayerMatchOver*/);
 			/*
 			Has to be called by all the game players with the exact same parameters 
 			when a player finished the game, contains the finishing players pot percentage and score.
@@ -120,7 +112,7 @@ package come2play_as3.Template
 			*/
 			
 			
-			doAllFoundHacker(userId:int,errorDescription:String);
+			//doAllFoundHacker(userId:int,errorDescription:String);
 			/*
 			Called when a user suspects another user is a hacker,and is trying to cheat
 			should be called when an unexpected ServerEntry arrives,or whenever one of
@@ -131,7 +123,7 @@ package come2play_as3.Template
 			*/
 			
 			
-			doAllRequestRandomState(key:Object,isSecret:Boolean);
+			//doAllRequestRandomState(key:Object,isSecret:Boolean);
 			/*
 			Has to be called by all the game players  with the exact same parameters 
 			when the players  want to get a random value.
@@ -141,7 +133,7 @@ package come2play_as3.Template
 			*/
 			
 			
-			doAllRevealState(revealEntries:Array/*RevealEntry*/);
+			//doAllRevealState(revealEntries:Array/*RevealEntry*/);
 			/*
 			Has to be called by all the game players with the exact same parameters
 			when the players want to reveal a secret state entry to one or all players
@@ -149,7 +141,7 @@ package come2play_as3.Template
 			*/
 			
 			
-			doAllSetTurn(userId:int,miliSecondsInTurn:int);
+			//doAllSetTurn(userId:int,miliSecondsInTurn:int);
 			/*
 			Has to be called by all the game players with the exact same parameters
 			used to force one or all player to play
@@ -159,7 +151,7 @@ package come2play_as3.Template
 			*/
 			
 			
-			doAllShuffleState(keys:Array/*Object*/);
+			//doAllShuffleState(keys:Array/*Object*/);
 			/*
 			Has to be called by all the game players with the exact same parameters
 			shuffles all the server entries corresponding to the keys in the array
@@ -168,14 +160,14 @@ package come2play_as3.Template
 			*/
 			
 			
-			doAllStoreState(userEntries:Array/*UserEntry*/);
+			//doAllStoreState(userEntries:Array/*UserEntry*/);
 			/*
 			Stores/changes/deletes any data needed on the server state
 			userEntries - an array of userEntry which will change/make/delete 
 			server entries in the game state
 			*/
 			
-			doAllStoreStateCalculation(userEntries:Array/*UserEntry*/)
+			//doAllStoreStateCalculation(userEntries:Array/*UserEntry*/)
 			/*
 			Has to be called by all the game players with the exact same parameters
 			stores/changes/deletes any data needed on the server state
@@ -183,7 +175,7 @@ package come2play_as3.Template
 			server entries in the game state
 			*/
 			
-			doAllRequestStateCalculation(keys:Array/*Object*/);
+			//doAllRequestStateCalculation(keys:Array/*Object*/);
 			/*
 			Has to be called by all the game players with the exact same parameters
 			sends all the server entries corresponding to the keys in the array,to a calculator					

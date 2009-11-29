@@ -103,6 +103,9 @@ package come2play_as3.api {
 		public function getMyUserId():int {
 			return AS3_vs_AS2.as_int(T.custom(API_Message.CUSTOM_INFO_KEY_myUserId,0));
 		}
+		public function trackEvent(catagory:String,action:String,label:String=null,value:Number=1):void{
+			
+		}
 		/**
 		 * If your overriding 'got' methods will throw an Error,
 		 * 	then hackerUserId will be declared as a hacker.

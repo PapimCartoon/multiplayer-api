@@ -159,7 +159,7 @@ public final class TictactoeMain extends ClientGameAPI {
 		}		
 	}
 	override public function gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, userStateEntries:Array/*ServerEntry*/):void {
-		// your userId may change if your game as the back&forward option
+		// your userId may change if your game has the back&forward option
 		myUserId = getMyUserId();
 		 
 		// the number of rows&cols cannot be changed

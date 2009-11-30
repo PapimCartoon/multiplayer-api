@@ -8,10 +8,10 @@
 	public class TickTacToeTuturialMain extends ClientGameAPI
 	{
 		private var gameLogic:TickTacToeTuturialLogic;// An instance of the game's Logic class
-		public function TickTacToeTuturialMain(stageMovieClip:MovieClip)
+		public function TickTacToeTuturialMain()
 		{
-			super(stageMovieClip);
-			gameLogic = new TickTacToeTuturialLogic(stageMovieClip);
+			super(this);
+			gameLogic = new TickTacToeTuturialLogic(this);
 			gameLogic.addEventListener(TickTacToeMove.TickTacToeMoveEvent,gotUserMove);
 			gameLogic.startNewGame(2);//Start a game with 2 players
 			doRegisterOnServer();//registers your game on the server

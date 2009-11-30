@@ -479,7 +479,7 @@ Not used by the graphics yet (but should be displayed):
 		</params>
 	</UnknownUserTemplate>
 	
-	<stage_frameRate type="int">60</stage_frameRate>
+	<stage_frameRate type="int">24</stage_frameRate>
 	<!-- flash_type: room, game --> 
 	<flash_type type="EnumFlashType">room</flash_type>
 	

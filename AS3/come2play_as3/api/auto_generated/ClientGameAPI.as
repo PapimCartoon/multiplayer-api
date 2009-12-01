@@ -107,5 +107,6 @@ package come2play_as3.api.auto_generated {
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
 		public static const CUSTOM_INFO_KEY_isInReview:String = "CONTAINER_isInReview";
+		public static const CUSTOM_INFO_KEY_stakePot:String = "stakePot";
 	}
 }

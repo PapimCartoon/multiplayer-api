@@ -24,10 +24,10 @@ package emulator.auto_copied
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
 		public static var DEFAULT_LOCALCONNECTION_PREFIX:String = ""+AS3_vs_AS2.convertToInt(10000*Math.random());
-		public static var MILL_WAIT_BEFORE_DO_REGISTER:int = 500;
+		public static var MILL_WAIT_BEFORE_DO_REGISTER:int = 100;
 		public static var TRACE_RETRY:Boolean = false;	
 		
-		public static var MILL_AFTER_ALLOW_DOMAINS:int = 500;
+		public static var MILL_AFTER_ALLOW_DOMAINS:int = 100;
 		public static var AGREE_ON_PREFIX:Boolean = true;
 		public static var ALLOW_DOMAIN:String = "*";
 		public static function showError(msg:String):void {

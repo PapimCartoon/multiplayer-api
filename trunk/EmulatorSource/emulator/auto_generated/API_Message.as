@@ -5,7 +5,7 @@ package emulator.auto_generated {
 	import emulator.*;
 	import emulator.auto_copied.*;
 	public  class API_Message extends SerializableClass {
-		public static var LAST_RAN_JAVA_DATE:String = "Wed Nov 11 13:07:18 IST 2009";
+		public static var LAST_RAN_JAVA_DATE:String = "Tue Dec 01 12:23:32 IST 2009";
 		public static const USER_INFO_KEY_name:String = "name";
 		public static const USER_INFO_KEY_avatar_url:String = "avatar_url";
 		public static const USER_INFO_KEY_supervisor:String = "supervisor";
@@ -32,5 +32,6 @@ package emulator.auto_generated {
 		public static const CUSTOM_INFO_KEY_checkThrowingAnError:String = "CONTAINER_checkThrowingAnError";
 		public static const CUSTOM_INFO_KEY_isBack:String = "CONTAINER_isBack";
 		public static const CUSTOM_INFO_KEY_isInReview:String = "CONTAINER_isInReview";
+		public static const CUSTOM_INFO_KEY_stakePot:String = "stakePot";
 	}
 }

@@ -9,7 +9,7 @@ function getRandomTokens(){
 	return "0:"+Math.ceil(1000*Math.random())+","+"1:"+Math.ceil(300*Math.random())
 }
 function getOldBoard(game){
-	return "../../svn/as3_old_boards/bin-debug/as3_old_boards.swf?oldboard_swf=../../svn/as3_old_boards/boards/"+game+"_board.swf&game_type="+game+"&variant_str=&"
+	return "../../svn/as3_old_boards/bin-debug/OldBoardContainer.swf?oldboard_swf=../../svn/as3_old_boards/boards/"+game+"_board.swf&game_type="+game+"&variant_str=&"
 }
 function getPlayerName(){
 	var playerInit = Math.ceil(5*Math.random()-1);

@@ -920,10 +920,6 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 		</rooms>
 		
 		
-		
-		
-		
-		
 		<additional_players_info type="optional,list">
 		  <player>
 		  	<user_id>999</user_id>

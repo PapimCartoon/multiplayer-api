@@ -315,7 +315,6 @@ public final class AS3_Loader
 		urlloader = new URLLoader();	
 		urlloader.dataFormat = URLLoaderDataFormat.BINARY;
 		dispatcher = urlloader;
-		HTTPStatusEvent
 				
 		// garbage-collection bug: we must refer to loader to prevent it from being garbage-collected!
 		var failTimer:AS3_Timer = new AS3_Timer("LoadFailTimer",TIMEOUT_TIMER_MILLI);	

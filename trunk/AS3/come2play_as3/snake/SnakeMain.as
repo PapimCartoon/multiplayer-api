@@ -1,11 +1,11 @@
 package come2play_as3.snake
 {
+	import come2play_as3.api.BaseGameAPI;
 	import come2play_as3.api.auto_copied.AS3_vs_AS2;
 	import come2play_as3.api.auto_copied.T;
 	import come2play_as3.api.auto_generated.*;
 	
 	import flash.display.MovieClip;
-	import flash.display.Sprite;
 
 	public class SnakeMain extends ClientGameAPI
 	{
@@ -23,7 +23,7 @@ package come2play_as3.snake
 		public var tick:int;
 		public var paused:Boolean;
 		public function SnakeMain(_graphics:MovieClip)
-		{
+		{	
 			(new PlayerMove).register();
 			super(_graphics);
 			this._graphics = _graphics;

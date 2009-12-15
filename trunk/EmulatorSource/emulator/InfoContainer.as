@@ -434,7 +434,7 @@ class LocalConnectionImplementation extends LocalConnectionUser
 	override public function gotMessage(msg:API_Message):void{
 		infoContainer.gotMessage(msg, isServer);
 	}
-	public function toString():String
+	override public function toString():String
 	{
 		return "prefix: "+prefix+" isServer : "+isServer
 	}

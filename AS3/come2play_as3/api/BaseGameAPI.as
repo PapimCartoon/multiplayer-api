@@ -32,6 +32,9 @@ package come2play_as3.api {
 		
 		public function BaseGameAPI(_someMovieClip:DisplayObjectContainer) {
 			super(_someMovieClip, false, getPrefixFromFlashVars(_someMovieClip),true);	
+			
+			if (GAME_USE_RTMFP) RTMFP = new RtmfpConnection(this);
+			
 			ErrorHandler.IGNORE_FREEZE_BUG = true;
 			ALL_LOG.hugeLog(this);
 			ErrorHandler.SEND_BUG_REPORT = AS3_vs_AS2.delegate(this, this.sendBugReport);
@@ -191,13 +194,21 @@ package come2play_as3.api {
 				
         		hackerUserId = -1;
         		
+        		var isRTMFPMessage:Boolean = false;
+        		
 	    		if (msg is API_GotStateChanged) {
 	    			var stateChanged:API_GotStateChanged = /*as*/msg as API_GotStateChanged;
-	    			if (stateChanged.serverEntries.length >= 1) {
+	    			if (RTMFP!=null) isRTMFPMessage = RTMFP.gotStateChanged(stateChanged.serverEntries);
+	    			 
+	    			if (!isRTMFPMessage && stateChanged.serverEntries.length >= 1) {
 	    				updateMirorServerState(stateChanged.serverEntries);
 		    			var serverEntry:ServerEntry = stateChanged.serverEntries[0];
 		    			hackerUserId = serverEntry.storedByUserId;
 		    		}
+		    		
+	    		} else if (msg is API_GotMatchEnded) {
+					if (RTMFP!=null) RTMFP.gotMatchEnded();
+					
 	    		} else if (msg is API_GotMatchStarted) {
 	    			serverStateMiror = new ObjectDictionary();
 					var matchStarted:API_GotMatchStarted = /*as*/msg as API_GotMatchStarted;
@@ -207,6 +218,7 @@ package come2play_as3.api {
 						normalGamesDone++;
 					}
 					updateMirorServerState(matchStarted.serverEntries);
+					if (RTMFP!=null) RTMFP.gotMatchStarted();
 	    		} else if (msg is API_GotCustomInfo) {	 					    			
 					var customInfo:API_GotCustomInfo = /*as*/msg as API_GotCustomInfo;
 					var i18nObj:Object = {};
@@ -236,7 +248,7 @@ package come2play_as3.api {
 					T.updateUser(infoMessage.userId, userObject);
 					
 				}
-				dispatchMessage(msg)
+				if (!isRTMFPMessage) dispatchMessage(msg)
 
         	} catch (err:Error) {
         		try{				
@@ -260,7 +272,7 @@ package come2play_as3.api {
 			}
 			func.apply(this, params);
         }
-        override public function sendMessage(doMsg:API_Message):void {
+        override public function sendMessage(doMsg:API_Message):void {        	
         	if (doMsg is API_DoAllFoundHacker) {
         		var stackTraces:String = AS3_vs_AS2.myGetStackTrace(new Error());
         		if (stackTraces!=null)
@@ -276,6 +288,21 @@ package come2play_as3.api {
 				throwError(ERROR_DO_ALL);	
 			
 			msgsInTransaction.push(doMsg);			
+        }
+        
+        
+        /**
+         * Added support for RTMFP
+         */  
+        public static var GAME_USE_RTMFP:Boolean = false;
+		private static var RTMFP:RtmfpConnection;
+		
+        public final function doDirectBroadcast(msg:Object):void {
+        	assert(RTMFP!=null, "You must set GAME_USE_RTMFP to true if you want to use doDirectBroadcast"); 
+        	RTMFP.broadcast(msg);        	
+        }        
+        public function gotDirectBroadcast(fromUserId:int, msg:Object):void {
+        	// You should override this method
         }
 	}
 }

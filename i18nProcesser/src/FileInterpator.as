@@ -24,10 +24,10 @@ package
 		static private var secondI18nReplaceReg:RegExp=
 				new RegExp("T[.]i18nReplace[ \\t\\n]*[(]([ \\t\\n]*['](.*?[^\\\\])['][ \\t\\n]*[,])?","g");
 		
-		static public var forbiddenTypes:String = "MovieClip Stage Function DisplayObjectContainer";		
+		static public var forbiddenTypes:String = "MovieClip Stage Logger Function DisplayObjectContainer";		
 		static private var staticVarReg1:RegExp = new RegExp('public\\s+static\\s+var\\s+(\\w+)\\s*:\\s*(\\w+)',"g");
 		static private var staticVarReg2:RegExp = new RegExp('static\\s+public\\s+var\\s+(\\w+)\\s*:\\s*(\\w+)',"g");		
-		static private var staticFolderReg:RegExp = new RegExp('package\\s+((\\w|\\s|[.])+)',"g");
+		static private var staticFolderReg:RegExp = new RegExp('package\\s+((\\w|\\s|[.])+)');
 		static private var errorCollection:Array = new Array();
 		
 		static public function getCustom(file:File,xmlCustom:XML,xmli18n:XML,xmlreflection:XML,errorView:DataGrid):void
@@ -73,7 +73,7 @@ package
 			var packge:String="";
 			if(res != null)
 				if(res[1] != null)
-					String(res[1]).replace(new RegExp("\\s","g"),"");
+					packge = String(res[1]).replace(new RegExp("\\s","g"),"");
 			var fileParts:Array = fileName.split(".");
 			if(packge!="")
 				packge += "::" + fileParts[0];

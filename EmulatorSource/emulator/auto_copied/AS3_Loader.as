@@ -418,15 +418,14 @@ public final class AS3_Loader
 		urlloader = new URLLoader();	
 		urlloader.dataFormat = URLLoaderDataFormat.BINARY;
 		dispatcher = urlloader;
-		HTTPStatusEvent
 				
 		// garbage-collection bug: we must refer to loader to prevent it from being garbage-collected!
 		var failTimer:AS3_Timer = new AS3_Timer("LoadFailTimer",TIMEOUT_TIMER_MILLI);	
 		var newSuccFunction:Function = function (ev:Event):void { removeLoadUrlListeners(false,urlRequest,dispatcher,ev,successHandler, failureHandler,progressHandler, context, retryCount,failTimer); };
+		var newFailFunction:Function = function (ev:Event):void { removeLoadUrlListeners(true ,urlRequest,dispatcher,ev,successHandler, failureHandler,progressHandler, context, retryCount,failTimer); };
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		var newFailFunction:Function = function (ev:Event):void { removeLoadUrlListeners(true ,urlRequest,dispatcher,ev,successHandler, failureHandler,progressHandler, context, retryCount,failTimer); };
 		AS3_vs_AS2.myAddEventListener("failTimer",failTimer,TimerEvent.TIMER, newFailFunction); 
 		
 		var traceFunc:Function = function (ev:Event):void {
@@ -436,10 +435,10 @@ public final class AS3_Loader
 		var allTraceEvents:Array = [Event.ACTIVATE, Event.DEACTIVATE,Event.INIT,Event.OPEN,Event.UNLOAD,HTTPStatusEvent.HTTP_STATUS];			
 		for each (var event:String in allTraceEvents)
 			AS3_vs_AS2.myAddEventListener("loadURL",dispatcher,event, traceFunc); 			
+			
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			
 		AS3_vs_AS2.myAddEventListener("loadURL",dispatcher,Event.COMPLETE, newSuccFunction); 
 		AS3_vs_AS2.myAddEventListener("loadURL",dispatcher,IOErrorEvent.IO_ERROR, newFailFunction);
     	AS3_vs_AS2.myAddEventListener("loadURL",dispatcher, SecurityErrorEvent.SECURITY_ERROR, newFailFunction);
@@ -449,10 +448,10 @@ public final class AS3_Loader
     		if(progressHandler !=null)	progressHandler(ev);
     		failTimer.reset();
     		failTimer.start();
+    	};	    	
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-    	};	    	
 		AS3_vs_AS2.myAddEventListener("loadURL",dispatcher,ProgressEvent.PROGRESS,newProgressHandler)
   		try {
 	  		urlloader.load(urlRequest);
@@ -462,10 +461,10 @@ public final class AS3_Loader
      	}		
 	}
 	public static var RETRY_DELAY_MILLI:int = 3000;
+	public static var MIN_LEN:int = 3;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	public static var MIN_LEN:int = 3;
 	private static function removeLoadUrlListeners(isFailure:Boolean, urlRequest:URLRequest,dispatcher:IEventDispatcher, ev:Event, successHandler:Function,failureHandler:Function, progressHandler:Function,context:LoaderContext, retryCount:int,failTimer:AS3_Timer):void {
 		// I don't use the loader, but I still pass it to prevent garbage collection
 		failTimer.stop();
@@ -475,10 +474,10 @@ public final class AS3_Loader
 		if (ev!=null && ev.target!=null && ev.target.hasOwnProperty("data")) data = ev.target.data;
 		var len:int = data==null ? int.MAX_VALUE : // null is a legal case! e.g., (todo: find an example)
 			data is String ? (data as String).length : 
+			data is ByteArray ? (data as ByteArray).length : 
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			data is ByteArray ? (data as ByteArray).length : 
 			-1;
 		StaticFunctions.assert(len>=0, "Loaded an illegal type for data: ",data);
 			
@@ -488,10 +487,10 @@ public final class AS3_Loader
 		}
 								
 		tmpTrace("loaded url=",urlRequest," isFailure=",isFailure," event=",ev, " len=",len, " ev.target.data=", 
+			// if you load a SWF, then .data is a very long $ByteArray$ "arr":[67,87...] 
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			// if you load a SWF, then .data is a very long $ByteArray$ "arr":[67,87...] 
 			data==null ? 			"no ev.target.data" :
 			data is String ? 		StaticFunctions.cutString(data as String,EVENT_DATA_DEBUG_LEN)  : 
 						  			"ByteArray");
@@ -501,10 +500,10 @@ public final class AS3_Loader
 				 AS3_GATracker.COME2PLAY_TRACKER.trackEvent("Loading","Image Loading","Succeded retry "+retryCount+" on "+removeQueryString(urlRequest.url),1)
 			}
 			tmpTrace("calling successHandler=",successHandler)
+			successHandler(ev);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			successHandler(ev);
 		} else {
 			AS3_GATracker.COME2PLAY_TRACKER.trackEvent("Loading","Image Loading","Failed retry "+retryCount+" on "+removeQueryString(urlRequest.url),1)
 			if (dispatcher is URLLoader)  {
@@ -514,10 +513,10 @@ public final class AS3_Loader
 				}catch(err:Error){
 					tmpTrace(err,"Stream was already closed for ",urlLoader);
 				}
+			}		
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-			}		
 			if (retryCount+1<imageLoadingRetry) {
 				tmpTrace("We retry to load the url=",urlRequest,"retry delay is",RETRY_DELAY_MILLI);
 				var urlString:String = urlRequest.url;
@@ -527,10 +526,10 @@ public final class AS3_Loader
 					loadURL(urlRequest,successHandler,failureHandler,progressHandler,context,retryCount+1);
 				},RETRY_DELAY_MILLI);
 			} else {
+				failureHandler(ev);
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-				failureHandler(ev);
 			}
 		}
 	}
@@ -540,10 +539,10 @@ public final class AS3_Loader
         // we already do tracing in tmpTrace
     }
 	public static function criticalError(ev:Event,url:String):void{
+		tmpTrace(" Error loading URL: ",url)
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-		tmpTrace(" Error loading URL: ",url)
 		var msg:String;
 		if(ev is IOErrorEvent){
 			msg = "critical IOErrorEvent" + JSON.stringify(ev as IOErrorEvent);
@@ -554,8 +553,8 @@ public final class AS3_Loader
 		StaticFunctions.showError(msg+" in url="+url);
 	}
 
-// This is a AUTOMATICALLY GENERATED! Do not change!
 
+// This is a AUTOMATICALLY GENERATED! Do not change!
 
 }
 }
@@ -566,10 +565,10 @@ class ImageLoadRequest {
 	public var reqId:int = CURR_REQ_ID++;
 	
 	public var justCach:Boolean
+	public var imageURLRequest:URLRequest;
 
 // This is a AUTOMATICALLY GENERATED! Do not change!
 
-	public var imageURLRequest:URLRequest;
 	public var context:LoaderContext;
 	public var successHandler:Function;
 	public var progressHandler:Function;

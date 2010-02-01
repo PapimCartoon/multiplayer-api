@@ -124,58 +124,61 @@ package emulator.auto_copied
 			if ( typeR == "int") typeR = "Number";
 			StaticFunctions.assert(typeD==typeR, "In T.custom and the T.getUserValue the type of defaultValue and the return value must be identical! DefaultValue=",[defaultValue," type of DefaultValue=",typeD," result=",res," type of result=",typeR]); 
 		}
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		public static function custom(key:String, defaultValue:Object/*Type*/):Object/*Type*/ {
 			var res:Object = _custom[key];
 			if (res==null) return defaultValue;			
 			// the type of defaultValue must be identical to res
 			isSameType(res,defaultValue);
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 			return res; 
 		}
 		
 		// for internationalization	
 		// i18n stands for "i"(nternationalizatio)"n"	
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		public static var POST_PROCESS:Function = null; 
 		public static function i18n(str:String):String { //internationalization			
 			var res:String = innerI18n(str)
 			return POST_PROCESS==null?res:POST_PROCESS(res);
 		}	
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 		private static function innerI18n(str:String):String { //internationalization			
 			var res:Object = _dictionary[str];
 			return  res==null ? str : res.toString();
 		}		
 		public static function i18nReplace(str:String, replacement:Object):String {
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 			var res:String = innerI18n(str);
 			for (var key:String in replacement) {
 				res = StaticFunctions.replaceAll(res, "$"+key+"$", ''+replacement[key]); 
 			} 
 			return POST_PROCESS==null?res:POST_PROCESS(res);			
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 		}
 		
 		
 		public static var isLeftToRight:Boolean = true;
 		
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		private var arr:Array;
 		public function T() {
 			arr = [];
 		}
 		public function add(str:String):void {
-
-// This is a AUTOMATICALLY GENERATED! Do not change!
-
 			if (isLeftToRight) 
 				arr.push(str);
 			else
 				arr.unshift(str);
 		}
+
+// This is a AUTOMATICALLY GENERATED! Do not change!
+
 		public function join():String {
 			return arr.join("");
 		}

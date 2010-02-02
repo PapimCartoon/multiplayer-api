@@ -139,6 +139,7 @@ Not used by the graphics yet (but should be displayed):
 	favoriteGames ="int"
 	recommendations ="int"
 	achievements ="int_array"
+	stats = "int_array"
 	min_delay_milliseconds="int"
 	saved_player_ids="int_array"
 	player_ids="int_array"
@@ -475,7 +476,8 @@ Not used by the graphics yet (but should be displayed):
 			  <buddies>134</buddies>
 			  <favoriteGames>22</favoriteGames>
 			  <recommendations>1</recommendations>
-			  <achievements>1,2,3</achievements>		  	  
+			  <achievements>1,2,3</achievements>	
+			  <stats>34,20,2</stats>	  	  
 		</params>
 	</UnknownUserTemplate>
 	
@@ -660,8 +662,9 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 		
 		tic tac toe turnbased
 			<match_state>Zs1i9V2mHXaFY/Q+Wzcgs1I+JeCAf5xc5mxqlt0SzD+MqxxAOqMooabN+nUe6Uj0QXSmogjGgn+e7YKGYKk7XDrTw7cLnBVaKAGqL4sttuKb5FkmNP/pEc4BodApiAoezzlrlNZssv1lq1gxLDVpCyGC/3yFXebQtehAgDg0AcpTsEqW3PQIET6hPz620RuTQ97ARzpiRoZEzvvh9zEdUdLF5cytfpPt/W1QdI6sB1KjgDt3zGiZZbG9WzPjjLXSlBegMRehCb5RFTGOtPXJ+0UfDkg3hlTKaPI7Ms97vjis9EkeAgee/XrCL8VQBT59C0u/8//LQqHQ+VdBArsbUVY7Zc3txBMWswA1sErt5ehsGAOODltltSt6DWZiqoZOa/T9vu0OUzERzfh1W1PWYUhAELaLzuXxqSgyThn+EYzZ9q8RqcKcnpoip+cEMjg+47bOjXiHr3497AW8h8LHZ5+TciG53pTtUHKOv+ABfkHn4yfjSi3TSVCa9uy2K8E+vkSp02zHaFHBDEP3ci+Zw6oS8LOqJA3JAGmsbpYVRGHwPvNlLAckzj5PBfJgwx5W64VmM0d4g8Vqm6Q0/nUFA325F3zxJHQvU1BA55AlCISWrrOsX77y5F8K0S2v/H4quFhoLL3G0WAOGp840CKW3xgZ727vP/WwMR7P81De5LaYaTe5teTNBfIdTfNPE34j9RCHMqDJq3A=</match_state>	
+		-->
 		
-		
+		<!--
 		<load_saved_match type="optional">
 			<saved_match_id type="int">22</saved_match_id>
 			<match_state></match_state>
@@ -756,7 +759,8 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 				  <buddies>134</buddies>
 				  <favoriteGames>22</favoriteGames>
 				  <recommendations>1</recommendations>
-				  <achievements>1,2,3</achievements>	    
+				  <achievements>1,2,3</achievements>
+				  <stats>34,20,2</stats>	    
 			</params>
 		  </player>
 		</players_info>
@@ -949,7 +953,8 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 				  <buddies>134</buddies>
 				  <favoriteGames>22</favoriteGames>
 				  <recommendations>1</recommendations>
-				  <achievements>1,2,3</achievements>	    
+				  <achievements>1,2,3</achievements>
+				  <stats>34,20,2</stats>	    
 			</params>
 		  </player>
 		</additional_players_info>
@@ -1042,7 +1047,8 @@ For example: &do_cancel_is_visible=false&  or do_make_animations_on_forward_is_o
 		  <buddies>134</buddies>
 	      <favoriteGames>22</favoriteGames>
 		  <recommendations>1</recommendations>
-		  <achievements>1,2,3</achievements>		  
+		  <achievements>1,2,3</achievements>
+		  <stats>34,20,2</stats>		  
 	  </params>
 	  <!-- user_info_md5 is:
 	  	MD5( SECRET + 

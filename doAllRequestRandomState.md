@@ -1,0 +1,64 @@
+
+```
+doAllRequestRandomState(key:Object, isSecret:Boolean = false)
+```
+
+### Description ###
+
+Call this function when you need a random number for any reason, you should use this function to avoid people faking random numbers.
+the [gotStateChange](gotStateChange.md) of this function will have a server entry with storedByUserId of -1,to signify the server saved it.
+
+This function will trigger a [gotStateChanged](gotStateChanged.md).
+
+For more information about storing information go to [MatchState](MatchState.md).
+
+### Parameters ###
+
+key - the key of the newly created random number
+
+isSecret - a Boolean stating whether the number will be public or secret to the game's players
+
+
+### Triggered gotStateChange on users ###
+
+A [ServerEntry](ServerEntry.md) with the following attributes
+
+key - the one given by us in the Parameters
+
+value - a random number between 0 and 2147483647 or null if the isSecret parameter was true
+
+storedByUserId - (-1) representing that this was saved by the user
+
+visibleToUserIds - null or empty array in case isSecret parameter was true
+
+
+### Example ###
+
+When a game of backgammon starts we want to call a random number, if its odd player one goes first, and if its even player two goes first
+```
+override public function gotMatchStarted(allPlayerIds:Array, finishedPlayerIds:Array, extraMatchInfo:Object, matchStartedTime:int, serverEntries:Array):void
+{
+	doAllRequestRandomState("TurnOf",false);
+}
+
+override public function gotStateChanged(serverEntries:Array):void
+{
+	serverEntry.storedByUserId
+	var serverEntry:ServerEntry = serverEntries[0];
+	if (serverEntry.key == "TurnOf")
+	{
+		if (serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,"If the storedByUserId is different from -1,then this was not saved by the server and player which saved it there probably broke protocol");
+		if(serverEntry.value % 2 == 0)
+		{
+			//let player two be first
+		}
+		else if(serverEntry.value % 2 == 1)
+		{
+			//let player one be first
+		}
+	}
+}
+```
+
+
+

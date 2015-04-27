@@ -1,0 +1,49 @@
+
+```
+doAllStoreState(userEntries:Array/*UserEntry*/)
+```
+
+### Description ###
+
+Call this function to store values the entire set of user may reach using calculations,
+like who's turn it is or the cards a deck of cards needs to hold.
+
+This function will trigger a [gotStateChanged](gotStateChanged.md)
+
+For more information about storing information go to [MatchState](MatchState.md).
+
+### Parameters ###
+
+userEntries - an Array of [UserEntry](UserEntry.md) elements to be stored by all the game users.
+
+### Triggered gotStateChange on users ###
+
+An array of [ServerEntry](ServerEntry.md) elements, each representing a [UserEntry](UserEntry.md) stored,
+all with storedByUserId of -1
+
+
+### Example ###
+
+One of the players threw a dart at a certain vector,
+
+first the player stores the values of his shot,
+
+and then all the players make the calculation,
+
+eventually they all call `doAllStoreState` and save the score of the shot.
+
+If one of the players claims the outcome is different than the other player/s,
+
+then the data will be sent to a jury which will decide who is cheating.
+
+
+### Why should I use this? ###
+
+This function is used to prevent hacking,
+
+every time you need to store a state which will give a unanimous answer,
+
+Use this function to store values you want the entire set of players to agree upon.
+
+
+

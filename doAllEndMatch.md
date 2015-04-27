@@ -1,0 +1,61 @@
+
+```
+doAllEndMatch(finishedPlayers:Array/*PlayerMatchOver*/)
+```
+
+
+### Description ###
+
+Call this function to end the game for some or all players.
+all the players who's ID's are in the finishedPlayers array are considered as finished players
+and are treated as viewers from that point on.
+
+see also [gotMatchEnded](gotMatchEnded.md)
+
+### Parameters ###
+
+finishedPlayers:Array - an array containing an instance of [PlayerMatchOver](PlayerMatchOver.md) for each finishing player.
+
+
+
+### Example ###
+
+lets say we have a player who's id is 1, the player has a score of 50
+and therefore gets 30% of the pot.
+the call each of the users will make would look like this:
+```
+
+var playerMatchOver:PlayerMatchOver = PlayerMatchOver.create(1,50,30);
+var finishingPlayers:Array = new Array();
+finishingPlayers.push(playerMatchOver);
+doAllEndMatch(finishingPlayers);
+
+```
+
+
+
+it is possible that only a subset of the players end the match (but in any case, all players must call `doAllEndMatch`).
+
+Each element of the array `finishedPlayers` is of type [PlayerMatchOver](PlayerMatchOver.md):
+
+For example, suppose you have 3 players with `playerIds`=41, 42, 43.
+
+Suppose userId=42 ended the match with score 90, and he should get 20% of the pot.
+
+Then all the players (users 41, 42, 43) should call:
+
+```
+  doAllEndMatch([ PlayerMatchOver.create(42, 90, 20) ])
+```
+
+Now users 41 and 43 continue to play,
+
+The match is over with the score=100 to userId=41, and score=10 to userId=43,
+
+In addition you wish to give 90% of the pot to user 41.
+
+In this case all players (users 41 and 43) should call:
+
+```
+  doAllEndMatch([ PlayerMatchOver.create(41, 100, 10) , PlayerMatchOver.create(43, 10, 10) ])
+```

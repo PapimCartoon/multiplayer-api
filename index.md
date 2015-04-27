@@ -1,0 +1,56 @@
+[![](http://www.come2play.com/SiteFiles/Image/developer/C2P_Multi_API_Logo.gif)](http://www.come2play.com/Developer.asp)
+
+Welcome to the Multiplayer API project!
+
+The reason you are viewing this project here on Google code and not on the [come2play](http://www.come2play.com) site,
+is because this API is an open source project, and although we sponsor it, we want it to be open and free to
+the wide audience so that anyone can use, change or contribute to the API.
+
+
+### So what is the API? ###
+
+The API represents an easy yet effective way of developing multiplayer games, by extending your main game class with our own you add a list of functions which will allow your game multiplayer support, which will be discussed and explained in this wiki project.
+
+The Multiplayer API is a bridge between two parties:
+  * **Game developers**, that develop a _game_ as an SWF
+  * **Websites that host games**, that develop a _container_ that includes the _game_ SWF.
+The _game_ and _container_ communicate using a LocalConnection, and thus each can use either AS2 or AS3.
+
+
+
+### How to use this project ###
+
+  * Start by reading the [coding conventions](codeConventions.md)
+  * Read the wiki pages, start in the [API Documentation Overview](apiDocumentationOverview.md)
+  * Checkout the latest version of the [Emulator](Emulator.md) from http://multiplayer-api.googlecode.com/svn/trunk/. If you are not familiar with SVN, you can also [download](http://code.google.com/p/multiplayer-api/downloads/list) the emulator.
+  * Look at the [issue tracker](http://code.google.com/p/multiplayer-api/issues/list) to check for future releases, bugs, and requested features.
+  * Mailing list: If you join, you will receive emails from codesite-noreply@google.com
+
+### These are the current mailing lists : ###
+
+  * [Game developers](http://groups.google.com/group/multiplayer-api) - game developers who use this API and wish to share their experiences
+  * [API and Emulator developers](http://groups.google.com/group/multiplayer-api-developers) - programmers who work on extending this API and its Emulator
+  * [SVN commits](http://groups.google.com/group/multiplayer-api-svn-commits) - those who wish to get notifications on each commit in the SVN
+  * [Issue changes](http://groups.google.com/group/multiplayer-api-issue-changes) - those who wish to get notifications on each change in an Issue (e.g., if a new issue opens, or an old one being fixed)
+
+#### How to contribute: ####
+
+  * Comment on the wiki pages, create issues, request enhancements, reports bugs, etc
+  * Join the mailing list, and help other developers with problems
+  * Become a project member, and help us write the wiki pages, add new games, create more game tutorials, create videos of using the emulator
+  * Become an API or Emulator developer, and help us add features to the emulator
+
+#### How to work with the SVN: ####
+
+  * Firs you should open your own Gmail account.
+  * Install an SVN client on your computer (I recommend [Tortoise SVN](http://tortoisesvn.tigris.org)), press [here](http://tortoisesvn.net/docs/release/TortoiseSVN_en/tsvn-dug-checkout.html) for help
+  * Generate a password corresponding to you Gmail account [here](http://code.google.com/hosting/settings)
+  * Checkout the code from https://multiplayer-api.googlecode.com/svn/trunk/ using your Gmail account and the special password you got in the previous step.
+  * _Before_ reporting a bug, make sure you UPDATE your SVN to the latest version.
+
+#### License note: ####
+
+The API and Emulator are open source, and anyone can use, modify, or distribute them, both in open source projects or in commercial projects. Phrased differently, you may develop commercial games using this API, or develop a commercial container for API games; you do not even have to mention you are using this open source API.
+
+The API is open source, and we hope that many companies will endorse it, and game developers will have many places to submit their multiplayer games.
+[Come2Play](Come2Play.md) is a company that started this Multiplayer API project and it opened-sourced its documentation and Emulator.

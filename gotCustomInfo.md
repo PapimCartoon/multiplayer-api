@@ -1,0 +1,71 @@
+
+```
+gotCustomInfo(infoEntries:Array/*InfoEntry*/)  
+```
+
+### Description ###
+
+`gotCustomInfo` is the second callback called when the game starts
+this callback is used to transfer custom information regarding the game.
+such as the game's : frameRate,width,height,x position in the container, y position in the container etc.
+
+
+
+### Parameters received ###
+
+infoEntries -  an Array of [InfoEntry](InfoEntry.md) elements, each containing a key and its corresponding value.
+
+
+### Available keys ###
+
+All keys provided have a static String representing them in the [ClientGameAPI](ClientGameAPI.md), the available static string are:
+
+1. **CUSTOM\_INFO\_KEY\_myUserId :** represents the unique user Id of the player.
+
+2. **CUSTOM\_INFO\_KEY\_logoFullUrl :**  represents a full URL (starting with `http://`)
+That points to a logo SWF or Jpg file of 70x70 pixels in diameter, preferably vector based.
+
+The game should place the logo in various places in the game
+(e.g., in every square in a TicTacToe game, or on every Chess piece, etc)
+
+
+Because the logo is vector based,
+it can be placed in a rectangular space of any size,
+e.g., if you want to put the logo in a 40x40 space,
+Then modify the logo movie clip (called `logoMovieClip`):
+```
+  logoMovieClip._xscale = 40;
+  logoMovieClip._yscale = 40;
+```
+
+3. **CUSTOM\_INFO\_KEY\_gameStageX :** - represents the x value where the game is positioned in the container, because the container holds many features such as a chat,
+turn time, playing users and more. therefore your game will not always be positioned at x = 0 and y = 0,and then in case you want to make calculations
+based on the absolute stageX and StageY you should subtract these values
+
+4.**CUSTOM\_INFO\_KEY\_gameStageY :** - represents the y value where the game is positioned in the container. see explanation above.
+
+5.**CUSTOM\_INFO\_KEY\_gameHeight :** - represents the height at which the game will be shown( in case you game can be stretched and shrinked)
+
+6.**CUSTOM\_INFO\_KEY\_gameWidth :** -represents the width at which the game will be shown( in case you game can be stretched and shrinked)
+
+7.**CUSTOM\_INFO\_KEY\_gameFrameRate :** - represents the frame rate at which your game will run.
+
+
+8.**CUSTOM\_INFO\_KEY\_secondsPerMove :** - represents the amount of second's allotted to each move in the game in games where [doAllSetTurn](doAllSetTurn.md) `milliSecondsInTurn` is set to -1
+
+9.**CUSTOM\_INFO\_KEY\_secondsPerMatch :** - represents the amount of seconds allotted to the entire game
+
+
+### Example ###
+
+In a game of TicTacToe, changing all the cell backgrounds into a specified logo
+
+```
+override gotCustomInfo(infoEntries:Array/*InfoEntry*/):void
+{
+  var logoURL:String = T.custom(CUSTOM_INFO_KEY_logoFullUrl,"");
+  /*
+    and then loading the logoURL into all the game squares
+  */
+}
+```

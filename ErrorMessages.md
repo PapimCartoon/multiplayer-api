@@ -1,0 +1,65 @@
+While developing a game in the emulator toy might stumble upon a few of our custom made errors,
+most of them should be self explanatory but if you still find you are having to understand them, you might refer to this page
+
+# Error List : #
+
+
+
+### "called do\_register\_on\_server twice" ###
+
+On of the clients called [doRegisterOnServer](doRegisterOnServer.md) more then once
+
+### "doStoreState must get at least 1 UserEntry" ###
+
+Every [doStoreState](doStoreState.md) call should at least contain 1 UserEntry
+
+### "Can't store match state, key is empty" ###
+
+You can't use a null key's to either store, pass on reveal serverEntries(don't use null keys at all)
+
+
+### "(Timed out Transaction) Timed out" ###
+
+Called when a doALL call is made by only part of the users, and to much time has passed.
+
+### "calculator sent wrong requestId" ###
+
+Called when you pass a wrong requestId to the server after processing a [doAllrequestStateCalculations](doAllrequestStateCalculations.md)
+
+### "can't do ( Method Name ) game not started" ###
+
+The server can't process messaged before the game has started.
+
+### "( User Name )  called  ( Method Name )  while ( Other User Name )  called  ( Other Method Name )" ###
+
+This is called when users called doAll's in different order
+
+#### Example ####
+
+If user "one" called doAllSetTurn(1,100) and then doAllRequestRandomState({type:"secretNum"})
+and user "Two" called doAllRequestRandomState({type:"secretNum"}) and then  doAllSetTurn(1,100)
+
+you'll get:
+
+(one)  called  (doAllSetTurn)  while (two)  called  (doAllRequestRandomState)
+
+### "To call doAllRequestStateCalculations you must enable calculators" ###
+
+If you use [doAllRequestStateCalculations](doAllRequestStateCalculations.md) you must enable this in the emulator index page.
+
+### "can't call a new calculation before finishing the first" ###
+
+Means you tired to call a [doAllRequestStateCalculations](doAllRequestStateCalculations.md) before getting the calls results
+
+
+### "can't do ( Method Name ) game ended" ###
+
+The server can't process messaged after the game has ended.
+
+### "There is a LocalConnection error. Please test your game only inside the Come2Play emulator." ###
+
+If this Error happens while using the emulator, contact ofir@come2play.com for additional help.
+
+### "Contact come2Play" ###
+
+Error's which were caused by the emulator , you should contact ofir@come2play.com to file the bug report.

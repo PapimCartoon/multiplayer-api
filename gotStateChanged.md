@@ -1,0 +1,47 @@
+
+```
+gotStateChanged(serverEntries:Array/*ServerEntry*/)
+```
+
+### Description ###
+
+This callback is triggered by any change in the [MatchState](MatchState.md).
+
+### Parameters received ###
+
+serverEntries - an Array of [ServerEntry](ServerEntry.md) elements, containing the server entries changed by the transaction the players made.
+
+A transaction can contain more then one call.
+
+
+### Example ###
+
+player 1 stores a secret number on user input
+
+```
+
+public function onUserInput(num:int):void
+{
+	var keyObj:Object = new Object();
+	keyObj.userId = myUserId;
+	keyObj.type = "number";
+	var userEntry:UserEntry = UserEntry.create(keyObj,num,false);
+	var userEntries:Arrat = new Array();
+	userEntries.push(userEntry);
+	doStoreState(userEntries);
+}
+
+
+override public function gotStateChanged(serverEntries:Array):void
+{
+	var serverEntry:ServerEntry = serverEntries[0];
+	if(serverEntry.type == "number")
+	{
+		if (serverEntry.storedByUserId != serverEntry.key.userId) doAllFoundHacker(serverEntry.storedByUserId,"player tried to store a value on someone else's key");
+		trace("player " + serverEntry.key.userId + " typed "+serverEntry.value);
+	
+	}
+	
+}
+
+```

@@ -1,0 +1,100 @@
+This wiki contains documentation about the Multiplayer API, the [Emulator](Emulator.md), and tutorials for creating multiplayer games in flash.
+This project main target audience is game developers that wish to create new multiplayer flash games, or to convert single-player flash games to multiplayer.
+Make sure you read the [index](index.md) page that contains general info, target audience, mailing lists and licensing comments.
+
+# Multiplayer API #
+The Multiplayer API is a set of APIs to develop multiplayer flash games.
+Each API is a set of functions in actionscript (AS) that communicate using LocalConnection with a container that should communicate these operations to a multiplayer server.
+The resulting game is a SWF file, written either in actionscript2 (AS2) or actionscript3 (AS3),  published for flash version 8 or higher.
+
+
+### Multiplayer APIs ###
+The Multiplayer API is composed of 2 APIs:
+  * [ClientGameAPI](ClientGameAPI.md) - for developing multiplayer games.
+  * ConnectedGameAPI - for adding small multiplayer fetures to a single player game(not yet available).
+
+You should write a class that extends one of the above APIs, and when your SWF is loaded, it should create one instance of that class.
+
+[The Multiplayer API Implementation](MultiplayerAPI_Implementation.md) describes the internal implementation that uses LocalConnection.
+The implementation details should not concern game developers, but they are important for websites hosting the games.
+
+You may either test the games in the [Emulator](Emulator.md), or submit your game online to a gaming website that supports this API.
+One such website is [Come2Play](http://www.come2play.com).
+Another distribution channel is Skype GameXN - in the near future we will write a container that translates this Multiplayer API to Skype GameXN platform.
+
+
+
+### AS2 vs AS3 ###
+Although AS2 and AS3 have major differences, we tried to abstract away these differences by hiding them behind a LocalConnection and using almost identical signatures for the class ClientGameAPI.
+The only difference in the signatures between the AS2 and AS3 versions, is that the type `Number` in AS2 was changed into `int` in AS3, and `void` to `Void`.
+The remainder of this wiki describes the AS3 version.
+We recommend using AS3 because it is more stable, fast, and easier to debug.
+
+To learn more about these differences go to [Online\_vs\_Emulator](Online_vs_Emulator.md)
+
+### Debugging and error handling in AS3 ###
+In "Publish Setting" you should select the option "Permit debugging".
+This will include the line number of the error in the stacktraces, e.g.
+```
+at MyAPI/sendDoOperation()[X:\Come2Play\API_GoogleCodeSVN\AS3\TestClientGameAPI\TestClientGameAPI.as:121]
+```
+Remember that the stack traces of an error are available only in the debugger version of the flash player (and not in the release version), see `Error.getStackTrace()`.
+Therefore you should run the [Emulator](Emulator.md) and do online testing using the [Adobe Flash Player Debugger](http://www.adobe.com/support/flashplayer/downloads.html).
+
+### trace() function ###
+If your game is using the built-in `trace()` function, and you want to see the traces, then you should create a file `mm.cfg` in
+```
+C:\Documents and Settings\<USER_NAME>
+```
+The content of `mm.cfg` should be
+```
+ErrorReportingEnable=1
+TraceOutputFileEnable=1
+```
+After creating this file, the traces should be written to
+```
+C:\Documents and Settings\<USER_NAME>\Application Data\Macromedia\Flash Player\Logs\flashlog.txt
+```
+
+See http://livedocs.adobe.com/flex/3/html/help.html?content=logging_04.html#196092 for more explanations.
+
+
+### FPS ###
+Frame per seconds (FPS):
+Your game may run in any fps you may choose.
+We recommend using less than 40 fps to avoid overloading slow computers.
+
+### Keyboard and Mouse events ###
+
+Note that the game and chat might be in the same window.
+which means you are going to get Keyboard and Mouse input, from your game and from
+the container of your game.
+this issues represents a serious problem in case of a keyboard event, and therefore we have
+created a special callback function you should use called [gotKeyboardEvent](gotKeyboardEvent.md) to receive your keyboard input from.
+
+in the case of mouse events, the problem is less serious and you can rely on listening to game mouse Events directly.
+but in case you use the mouse's absolute position in your calculations you should take your game position into account,
+This will be passed down to your game through the [gotCustomInfo](gotCustomInfo.md) callback.
+
+
+### obfuscate ###
+We suggest that you encrypt/obfuscate your code to make it difficult for users to crack or steal your code.
+There are many programs for that purpose; one of them is Amayeta (http://www.amayeta.com/).
+
+# Emulator #
+When developing your game, you should use the [Emulator](Emulator.md).
+After you finished testing in the emulator, you may submit the game to any company that endorses this multiplayer API.
+One such company is [Come2Play](http://www.come2play.com).
+
+[Online testing vs the Emulator](Online_vs_Emulator.md) discusses the differences you may find between the emulator and the online version, and common pitfalls.
+
+
+# Creating multiplayer games #
+This section contains [pseudo code examples](PsuedoCodeExamples.md) describing the way you should use the API to communicate with the server, the [pseudo code examples](PsuedoCodeExamples.md)
+use real flash commands to make the code easier to read and use.
+
+you will also find [full game source](FullGames.md) code for you to learn and work on.
+
+And after learning and understanding the API we offer a basic [Template](http://code.google.com/p/multiplayer-api/downloads/list) to work on
+
+TicTacToe explains about the implementation of TicTacToe using [ClientGameAPI](ClientGameAPI.md).

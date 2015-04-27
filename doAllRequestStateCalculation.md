@@ -1,0 +1,76 @@
+
+```
+doAllRequestStateCalculation(keys:Array/*Object*/)
+```
+
+
+### Description ###
+
+Call this function when you need secret calculations that require logic to be made.
+to make this function work properly see also [gotRequestStateCalculation](gotRequestStateCalculation.md)
+
+This function will trigger a [gotStateChanged](gotStateChanged.md)
+
+For more information about storing information go to [MatchState](MatchState.md).
+
+### Parameters ###
+
+keys - an Array of Objects each representing a key to be sent to the calculating flash.
+
+
+### Triggered gotStateChange on users ###
+
+an array of [ServerEntry](ServerEntry.md) with the results of the state calculations made by the calculator flash,
+all the calculated [ServerEntry](ServerEntry.md) elements will have a storedByUserId of -1
+
+
+
+### Example ###
+
+in this example the users call a calculator to create a mine sweeper board, they call the calculator with
+a secret random serverEntry as a random seed for the mine positions on the board.
+```
+override public function gotMatchStarted(allPlayerIds:Array, finishedPlayerIds:Array, extraMatchInfo:Object, matchStartedTime:int, serverEntries:Array):void
+{
+	doAllRequestRandomState("randomSeed",false);
+	var keysArray:Array = new Array();
+	keysArray.push("randomSeed");
+	doAllRequestStateCalculation(keysArray);
+}
+
+override public function gotStateChanged(serverEntries:Array):void
+{
+	var serverEntry:ServerEntry = serverEntries[0];
+	if (serverEntry.storedByUserId != -1) doAllFoundHacker(serverEntry.storedByUserId,"If the storedByUserId is different from -1,then this was not saved by the server and player which saved it there probably broke protocol");
+	/*
+	after getting a callback about the board,
+	call the function which starts the game. 
+	all the server entries will be empty because the board should be secret
+	*/	
+}
+```
+
+
+### Why should I use this? ###
+
+
+In game development there are many games which need secret game calculations;
+
+unlike checkers where all players can calculate if a move is legal,
+
+there are games where the game board should be a secret one, and should only be revealed as the game progresses.
+
+
+Take mine sweeper for example,
+
+The game cannot simply be shuffled because whenever you press a brick without a mine you should get an indication of how many mines are around the brick,
+
+On the other hand the game cannot be calculated by one of the players because we must assume one of the players can be a hacker,
+
+And therefore the data is not safe in his hands.
+
+Which means we must choose a third party outside the game to make the calculations for us.
+
+This third party will be called a calculator.
+
+**Calculator :**  a calculator is a different user playing in another game room which will do the calculations for both players to keep them secret.

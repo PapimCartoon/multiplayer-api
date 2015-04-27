@@ -1,0 +1,47 @@
+# Call types #
+
+In game development using the API, there are two kinds of calls that the developer can use
+
+either a [doStoreState](doStoreState.md) call or a doAll call.
+
+## doStoreState ##
+
+This call is used to transfer any kind of data from the user to the other game clients, and the server state,
+This call can be made in any part of the game, and should be mainly triggered by user input.
+
+**Important** the [doStoreState](doStoreState.md) call should only be used to send data about a specific game client to the server and the rest of the clients
+
+### Example ###
+
+  * if a user made his snake turn right in a snake game the input should be sent through a [doStoreState](doStoreState.md) call.
+  * but if a user needs to store the entire set of cards for a game he should call [doAllStoreState](doAllStoreState.md) because, the call is not user specific and represents a call that would have been usually made by the server.
+
+It is important that all data received by the other clients that was stored using [doStoreState](doStoreState.md) will be verified thoroughly by the receiving
+game clients as to the fact that this is the most easy to fake data in the game.
+
+**Note** a [doStoreState](doStoreState.md) call cannot be called from a [gotMatchStarted](gotMatchStarted.md) , [gotStateChanged](gotStateChanged.md) and [gotMathEnded](gotMathEnded.md) callbacks.
+
+## doAll calls ##
+
+This refers to all the call's starting with a doAll as a prefix, these calls must be called by the entire set of the game's players,
+each with the same parameters, and represent a decision which would have been made by server side logic, because you won't have any server side logic in you games
+it will be replaced by clients side logic that will be enforced by the entire set of clients, represented in the doAll call's.
+
+In case one of the players doesn't call the doAll, or calls it with different values.
+Then the rest of the players will call a [doAllFoundHacker](doAllFoundHacker.md) with his user ID, to decide if he is a hacker,
+thus enforcing the game rules in a client side manner.
+
+**Note** a doAll call can only be triggered by a [gotMatchStarted](gotMatchStarted.md) , [gotStateChanged](gotStateChanged.md) and [gotMathEnded](gotMathEnded.md) callbacks,
+and cannot in any circumstances be called due to user input or anything else for that matter.
+
+# Correct Programming #
+
+To allow several automatic features our container gives.
+Such as play by play functionality and the ability to easily save and load your game at any state,
+You should make sure to make changes in the game's logic only as a result of a received state change.
+
+This may seem strange but imagine a real time game of minesweeper where both players pressed one of the mines
+Almost simultaneously.
+In this case both will think they found the mine and you will have inconsistency between the players.
+But if you mark the mine as someone's only after the state changed callback, then both will get one of the calls first
+and will mark the callback owner as the one who discovered the mine, and will disregard the second callback

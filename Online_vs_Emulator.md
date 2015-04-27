@@ -1,0 +1,25 @@
+Note that testing online and on the emulator have differences, and the game should always be tested online as well.
+
+This is a list of known differences:
+  * Network delay:
+> Online you have network delay and might have network errors.
+> We simulated network delay on the emulator.
+  * Game positioning:
+> Every time you restart the emulator your game will be in a slightly different position, this is made to simulate the fact that your game can
+> be played on a variety of containers, depending on the site at which they are presented, and therefore you should use the 'CONTAINER\_gameStageX' and the
+> 'CONTAINER\_gameStageY' passed to you in the [gotCustomInfo](gotCustomInfo.md) callback to modify your mouse based calculations.
+  * Loading process:
+> A flash SWF starts running even before it was downloaded completely.
+> You should call [doRegisterOnServer](doRegisterOnServer.md) only after your SWF is ready to start a match.
+> In the emulator the loading is instant because the SWF is stored locally.
+  * Spamming protection:
+> The online server has spamming protection, i.e.,   if your game sends too many messages too quickly then the server will ignore them.
+> Similarly, if the messages are too big, the server may throw them as well.
+> Therefore, make your messages smaller than 1KB, and try grouping messages together to avoid sending too many messages too quickly.
+  * Games for 3-players or more:
+> Currently our platform only supports 2 players with multiple viewers.
+> We plan to support multiple players in about 3 months.
+> The API is general for any number of players, so you may develop a game for 3 players or more, but it will be available online only in 3 months.
+> In 2-player games, when one player disconnects the game ends.
+> In 3-player games, the game may continue. Handling such cases is tricky and should be done with care.
+> In the future, the emulator will allow testing for a user disconnecting.

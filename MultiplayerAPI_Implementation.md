@@ -1,0 +1,108 @@
+We use LocalConnection to pass commands; therefore, there is a 40K limit on arguments to these methods.
+
+
+`doFinishedCallback` is called by the game after every time the container calls some callback `got*`.
+
+
+In [Multiplayer API](apiDocumentationOverview.md) section we explained that the API is a bridge between the _game_ (written by game developers) and the _container_ (written by the website hosting the game).
+The game SWF is loaded by a _container_ that communicates with the _game_ using a LocalConnection.
+There are two issues:
+  * How to determine the channel name that the container and game should use, and
+  * What happens to objects of type [ServerEntry](ServerEntry.md), [UserEntry](UserEntry.md), [RevealEntry](RevealEntry.md), and [PlayerMatchOver](PlayerMatchOver.md) when they are passed over a LocalConnection?
+
+The later question:
+Each class that we would like to pass over the LocalConnection must:
+  1. Be a Subclasses of SerializableClass
+  1. Have a constructor without arguments which calls a super with a string that will represent your shor class name(you may choose whatever name you want)
+  1. Be a public class
+  1. should create an instance of the class in your game constructor, and call its register function
+
+It is important that all of the above will be followed, or else the Class will not be transferred properly.
+
+Good Example:
+
+```
+package somePackage {
+  public class PublicClass1 extends SerializableClass {
+  
+    public static var staticVar:int; // static vars will NOT be serialized
+    public var __dontSerialize:int;// vars starting with __ will not be serialized
+    public var serializedField1:int;  
+    private var serializedField2:int; // private vars will not be serialized
+    public var serializedField3:Array; // serialization is recursive, and goes into Arrays
+    public var serializedField4:PublicClass2; // again, serialization is recursive
+  
+    // you must have a constructor without any arguments!
+    public function PublicClass1() { 
+    super("PublicClass1")
+      ...
+    }
+
+  }
+}
+
+```
+
+```
+
+package somePackage {
+  public class PublicClass2 extends SerializableClass {
+
+  public function PublicClass2 ()
+  {
+    super("PublicClass2") 
+      ...
+  }
+  }
+}
+
+```
+
+
+> BAD Example:
+
+```
+ 
+ package somePackage {
+ 
+   public class PublicClass extends SerializableClass {
+   
+     // The constructor must not have any arguments!
+     
+     public function PublicClass(argument:int) {
+       ...
+     }
+     ...
+   }
+ }
+ 
+ class PrivateClass extends SerializableClass { 
+   ...
+ } 
+ 
+```
+
+Explanation on why private classes cannot be serialized:
+Only public should inherit from SerializableClass.
+If the class is not public, then flash chooses some random name for its package.
+For example, in the BAD code above, the qualified name of PrivateClass will be:
+> PublicClass.as$54::PrivateClass.
+This number may change, if you recompile a slightly modified code.
+
+Explanation on the implementation of serialization:
+
+- When an object is sent over a LocalConnection, flash removes all type-information and turns that object into a primitive object (that has only primitive types, Array and Object fields).
+
+- When class  inherits from SerializableClass, it gets the field CLASS\_NAME, which is set in the constructor.
+
+- When you deserialize an object, a new instance of the correct class is created (that is why you must have an empty constructor), and then we traverse and the object and set all the fields.
+Note that deserialize( object) modifies the object.
+
+
+The former question:
+To make sure the container and game use the same LocalConnection channel, we use a flashvar parameter called `prefix` , to determine the channel name.
+There is one channel for `do` operations, and another for `got` callbacks:
+```
+"DO_CHANEL_" + prefix
+"GOT_CHANEL_" + prefix
+```

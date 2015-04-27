@@ -1,0 +1,149 @@
+The communication between your game and our server is done by writing a class that extends `ClientGameAPI.as`, and instantiating one instance of your class.
+
+The functions in `ClientGameAPI` can be divided into two categories: Operations and Callbacks.
+
+Before elaborating on the subject, you must be aware of a few convention used:
+
+We write `Array/*int*/` to denote an `Array` that contains only `int` objects;
+Similarly, `Array/*String*/` is an `Array` that contains only `String` objects.
+
+We use the following auxiliary classes: [ServerEntry](ServerEntry.md) , [UserEntry](UserEntry.md) , [InfoEntry](InfoEntry.md) , [PlayerMatchOver](PlayerMatchOver.md) and [RevealEntry](RevealEntry.md) .
+
+## Operations ##
+
+Operations are functions starting with `do`
+
+The Operations are divided into two groups as well:
+
+`do` operations which may be called by a single player
+```
+doRegisterOnServer()
+doStoreState(userEntries:Array/*UserEntry*/,revealEntries:Array/*RevealEntry*/)
+doTrace(name:String, message:Object)
+```
+
+and `doAll` operations which have to be called by all players
+```
+doAllRequestRandomState(key:Object, isSecret:Boolean = false)
+doAllShuffleState(keys:Array/*Object*/)
+doAllRequestStateCalculation(keys:Array/*Object*/)
+doAllStoreStateCalculation(userEntries:Array/*UserEntry*/)
+doAllRevealState(revealEntries:Array/*RevealEntry*/)
+doAllSetTurn(userId:int, milliSecondsInTurn:int = -1)
+doAllStoreState(userEntries:Array/*UserEntry*/)
+doAllEndMatch(finishedPlayers:Array/*PlayerMatchOver*/)
+doAllFoundHacker(userId:int, errorDescription:String)
+```
+
+## Callbacks ##
+
+Callbacks are functions starting with `got`
+```
+gotCustomInfo(infoEntries:Array/*InfoEntry*/) 
+gotStateChanged(serverEntries:Array/*ServerEntry*/) 
+gotRequestStateCalculation(serverEntries:Array/*ServerEntry*/)
+gotKeyboardEvent(isKeyDown:Boolean, charCode:int, keyCode:int, keyLocation:int, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean)
+gotMatchEnded(finishedPlayerIds:Array/*int*/)
+gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, extraMatchInfo:Object, matchStartedTime:int, serverEntries:Array/*ServerEntry*/)
+gotUserDisconnected(userId:int)
+gotUserInfo(userId:int, infoEntries:Array/*InfoEntry*/)
+```
+
+Operations are functions that your _game_ may call,
+and callbacks are functions that the _container_ may call on your game.
+Your class may override some of the callbacks and respond appropriately to them; it is not mandatory to override _all_ the callbacks.
+
+## Auxiliary functions ##
+
+This are functions that are used to help the developer,this functions do not effect the server state in any way
+```
+animationStarted()
+animationEnded()
+getServerEntry(Key:Object)
+```
+
+## Auxiliary classes ##
+
+### T ###
+
+A class devoted to translating your game automatically, and helping you transfer custom info to your game.
+```
+T.i18n(str:String)
+T.i18nReplace(str:String,replacement:Object)
+T.custom(key:String,defaultValue:Object)
+```
+
+
+
+You may call an operation (except [doRegisterOnServer](doRegisterOnServer.md),[doAllFoundHacker](doAllFoundHacker.md) and [doTrace](doTrace.md)) only when the game is in progress,
+i.e., there is a player that hasn't finished playing.
+
+### High level description of the functions ###
+
+| **Function** | **Description** |
+|:-------------|:----------------|
+| [doRegisterOnServer](doRegisterOnServer.md) | Call it after your _game_ finished loading |
+| [doStoreState](doStoreState.md) | Call it to store/update/reveal/delete your match state |
+| [doTrace](doTrace.md) | Call it to store traces to help you debug your application in the emulator and online |
+| [doAllRequestRandomState](doAllRequestRandomState.md) | Call to receive a random state |
+| [doAllShuffleState](doAllShuffleState.md) | Call to shuffle an array of ServerEntry |
+| [doAllRequestStateCalculation](doAllRequestStateCalculation.md) | Call to request calculations from a set of impartial calculators |
+| [doAllStoreStateCalculation](doAllStoreStateCalculation.md) | Call to store calculations made by a calculator |
+| [doAllRevealState](doAllRevealState.md) | Call to reveal a secret ServerEntry to a player |
+| [doAllSetTurn](doAllSetTurn.md) | Call to set next player's turn |
+| [doAllStoreState](doAllStoreState.md) | Call it to store/update/delete your match state unanimously |
+| [doAllEndMatch](doAllEndMatch.md) | Call it to end the match |
+| [doAllFoundHacker](doAllFoundHacker.md) | Call when one of the users has detected a hacker |
+| [gotCustomInfo](gotCustomInfo.md) | Called to pass custom info, e.g., URL of a logo for branding your game, seconds per turn, etc. |
+| [gotStateChanged](gotStateChanged.md) | Called after the match state changed  |
+| [gotRequestStateCalculation](gotRequestStateCalculation.md) | Called on the calculators after all players requested `doAllRequestStateCalculation`|
+| [gotKeyboardEvent](gotKeyboardEvent.md) | Called to pass keyboard events (see KeyboardEvent) |
+| [gotMatchEnded](gotMatchEnded.md) | Called when the match is over |
+| [gotMatchStarted](gotMatchStarted.md) | Called when a match starts |
+| [gotUserDisconnected](gotUserDisconnected.md) | Called to inform that a user disconnected |
+| [gotUserInfo](gotUserInfo.md) | Called to pass user specific info, e.g., user name or avatar |
+| [getServerEntry](getServerEntry.md)| Call it to get a specific [ServerEntry](ServerEntry.md) by its key|
+| [animationStarted](animationStarted.md) | Call this function when animation starts |
+| [animationEnded](animationEnded.md) | Call this function when animation ends |
+| [i18n](i18n.md) | call this function with a sentence in English the sentence will be translated according to the language of the playing user |
+| [i18nReplace](i18nReplace.md) | call this function on a dynamic sentence in English the sentence will be translated according to the language of the playing user |
+| [custom](custom.md) | call with the key of a custom info entry and you will get its value  |
+
+### Initialization: order of the first callbacks ###
+The first callback is `gotCustomInfo`, then you get `gotUserInfo`.
+afterwards when a match starts you will get `gotMatchStarted`.
+
+### Viewers and players ###
+The set of connected users is partitioned into players and viewers.
+New players cannot join an existing match; players may only leave the match (either by disconnecting or losing/winning the match).
+When a player leaves the match (e.g., by winning or choosing to lose) he becomes a viewer.
+
+Viewers may call the `doAll*` operations along with all the players.
+
+In a future version of the API, we plan to add the ability to add new players to an ongoing match.
+
+
+### Harming the server ###
+Come2Play have several mechanisms to protect its servers from bad game developers:
+  * Spamming protection
+  * Limiting the size of the match state
+
+To avoid overloading the server, you can send at most 10 operations every second.
+The message size should generally be smaller than 1KB (and must always be smaller than 10KB!).
+
+To avoid running out of memory on the server,
+And the total memory of the map is limited to 1MB.
+The Come2Play platform tracks the maximum match state that your game uses,
+And automatically sends the game developer warning when the game is about to reach the maximum match state.
+
+
+
+### Saved matches ###
+The users may agree to save their match, and may decide to load it later.
+A saved match contains the following information:
+  * The game name (in the emulator we use the SWF name as the identifier for the game)
+  * match state (user ids, keys, values)
+  * ids of current players and the ids of players that already ended the match
+
+Note that the following is not saved and should be restarted after the match is loaded:
+  * who has the current turn.

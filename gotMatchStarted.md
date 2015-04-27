@@ -1,0 +1,26 @@
+
+```
+gotMatchStarted(allPlayerIds:Array/*int*/, finishedPlayerIds:Array/*int*/, serverEntries:Array/*ServerEntry*/)
+```
+
+
+### Description ###
+
+`gotMatchStarted` is called when a new match  starts, or when a saved game loads
+
+### Parameters received ###
+
+allPlayerIds -  an Array with all the ID's of the playing users.
+finishedPlayerIds -  an Array with all the ID's of the players which finished the game, will be empty in case of a loaded game.
+serverEntries - an array of [ServerEntry](ServerEntry.md) elements representing the [MatchState](MatchState.md), if empty the its a new game.
+
+
+### Example ###
+
+If a viewer connects after some players already disconnected,
+
+then the viewer will get in `finishedPlayerIds` the set of players that have already disconnected.
+
+Same thing happens if the players load a saved match which was saved after some players disconnected.
+
+See example in [gotUserInfo](gotUserInfo.md).

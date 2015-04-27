@@ -1,0 +1,39 @@
+
+```
+gotKeyboardEvent(isKeyDown:Boolean, charCode:int, keyCode:int, keyLocation:int, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean)
+```
+
+### Description ###
+
+This callback is called every time a keyboard event is made that is relevant to you game,
+and not to the chat application or any other feature surrounding your game.
+
+**Important Note**
+
+Your game should not listen to keyboard events directly,
+because some of these events may be sent by the container, and your game should not respond to them.
+
+### Example ###
+
+If I want the game to notify the rest of the users every time I press enter
+
+```
+
+override public function gotKeyboardEvent(isKeyDown:Boolean, charCode:int, keyCode:int, keyLocation:int, altKey:Boolean, ctrlKey:Boolean, shiftKey:Boolean):void
+{
+	if(isKeyDown)
+	{
+		if(keyCode == Keyboard.SPACE)
+		{
+			var keyObj:Object = new Object();
+			keyObj.userId = MyUserId;
+			keyObj.type = "space"
+			var userEntry:UserEntry = UserEntry.create(keyObj,true,false);
+			var userEntries:Array = new Array();
+			userEntries.push(userEntry);
+			doStoreState(userEntries);
+		}
+	}
+}
+
+```

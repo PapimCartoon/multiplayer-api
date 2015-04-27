@@ -1,0 +1,132 @@
+## Important Notice ##
+
+Although the Emulator and Server are derived from the same API,there are differences between the two,
+To learn more about them visit [Online vs Emulator](Online_vs_Emulator.md) .
+
+## Download the emulator ##
+
+Press [here](http://code.google.com/p/multiplayer-api/downloads/list) if you want to download the emulator,
+although we strongly encourage you to use our SVN instead, as it will usually contain updates before they are officially released in here.
+
+for an explanation on our SVN and on using an SVN in general go to the [index page](index.md) .
+## Setting up the Emulator ##
+
+Unlike many other API emulators the come2play Emulator uses flash as its engine which means
+you only need to follow [this link](http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager04.html)  and give permissions to your emulator directory, and your all setup to use the Emulator.
+
+
+## The file name: ##
+
+Here you should put the relative path from the emulator to the flash file you have created.
+
+## Custom Info: ##
+
+Each custom info entry is divided into two:
+
+"key" - the key by which the entry will be called when sent to your flash.
+
+"value" - the value the entry will have.
+
+This entries represent the custom info you want to be sent to you flash, and will be received
+through the [gotCustomInfo](gotCustomInfo.md) method.
+
+You will notice the first four info entry keys cannot be changed, that is because these are crucial entries that affect your game
+Appearance directly and not indirectly by transferring data as the rest of the entries do, these four crucial entries are:
+
+"CONTAINER\_gameFrameRate" - will determine the frame rate at which your game will run.
+"CONTAINER\_gameWidth" - will determine the width in which you game will be shown.
+"CONTAINER\_gameHeight" - will determine the height in which you game will be shown.
+"CONTAINER\_logoFullUrl" - will hold a logo which you should use if you intend to franchise your game.
+
+Your game will also get two more entries which you will have no control over, this is done to simulate the real server where you will not have control over these values as well.
+
+"CONTAINER\_gameStageY" - will tell you the y position at which you game will be placed in the container.
+"CONTAINER\_gameStageX" - will tell you the x position at which you game will be placed in the container.
+
+
+You will notice an add parameter link at the bottom of the custom info table, this is used to add your own custom info entries.
+You will notice that the entries we provide start with a "CONTAINER_" prefix, your entries should not use this prefix
+Because they might get overridden in the future._
+
+## Number of Players ##
+
+Will determine the amount of players connecting to the server to simulate.
+
+## Number of Viewers ##
+
+Will determine the amount of viewers connecting to the server to simulate.
+
+## Client parameters ##
+
+This will help you simulate data that might be received from the users, this data will be received via the [gotUserInfo](gotUserInfo.md) method.
+
+The table contains a row for each user(player or viewer) in the game, the default parameters are :
+
+"name" - the name of the user
+"avatar\_url" - the full path of the user avatar
+
+You may add additional parameters as well by clicking add parameter
+
+**Important** note that you will have no control over the parameters the users pass in the real server, but you can expect to get a name and an avatar.
+
+
+# Testing the game #
+
+You can either test you game in a single popup or in multiple popups.
+
+when lunching the game in a single popup or multiple popup mode, the server will act the same.
+
+## Log ##
+
+Will hold the entire message history sent from the users to the server
+and from the server to the users.
+
+Notice in the bottom left part of the screen a checked checkbox called log calls, you may click this in
+a case of a real-time game to lower resource demand.
+
+## User Call Queue ##
+
+Lists all the calls the users in the game have made and were not processed yet.
+
+## Custom Info ##
+
+Holds all of the custom info received by the server and sent to your game.
+
+## User Info ##
+
+Holds all of the user info received by the server and sent to your game.
+
+## Match Over ##
+
+Holds all the players that finished the game, their pot percentage and score.
+
+## Saved games ##
+
+Holds all of the saved games, made in the current game you are running
+for example if you are developing a game of domino and a game of minesweeper, the saved games of each game will not be available to the other game.
+
+## History ##
+
+Allows you to look at the changes made to the game state, by each of you transactions.
+
+Notice in the bottom right corner of the server that you have two buttons:
+
+Revert - to get back to the selected position in the game history.
+
+Replay - these reverts to the selected position in the game history, and then continuous to play
+the game move by move, according to the packet sending time.
+
+
+## New ##
+
+Starts a new game by clearing the server state and calling the [gotStateChanged](gotStateChanged.md) methods on all the users.
+
+## Load ##
+
+Starts a loaded game by loading the saved server state and calling the [gotStateChanged](gotStateChanged.md) methods on all the users with all the Server Entries saved in the server state.
+
+## Save ##
+
+Saves the server state and history of the game.
+
+Coming soon (TODO): a video showing how to use the emulator.
